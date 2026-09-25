@@ -16,6 +16,7 @@ export function renderPage({
   onSearch,
   onSelectCategory,
   onSelectFilter,
+  onOpenEvent,
 }) {
   const shown = visibleEvents(events, query, activeCategory, activeFilter)
 
@@ -104,7 +105,7 @@ export function renderPage({
               ? html`<p class=${styles.empty}>
                   No events match your search yet.
                 </p>`
-              : shown.map((event) => renderCard({ event }))}
+              : shown.map((event) => renderCard({ event, onOpen: onOpenEvent }))}
       </main>
 
       <nav class=${styles.tabbar}>

@@ -57,6 +57,7 @@ function toViewModel(row) {
       title: row.title,
       tag: genreLabels[row.details.genre] ?? row.details.genre,
       filterValue: row.details.genre,
+      facts: [{ label: "Headliner", value: row.details.headliner }],
     }
   }
 
@@ -66,6 +67,51 @@ function toViewModel(row) {
     title: couple,
     tag: styleLabels[row.details.style] ?? row.details.style,
     filterValue: row.details.style,
+    facts: [{ label: "Spouses", value: couple }],
+  }
+}
+
+export function countdownLabel(event) {
+  if (event.isNew && event.daysLeft > 2) return "Just opened — apply early"
+  if (event.daysLeft > 1) return `Applications close in ${event.daysLeft} days`
+  if (event.hoursLeft > 1)
+    return `Applications close in ${event.hoursLeft} hours`
+  if (event.hoursLeft === 1) return "Applications close in 1 hour"
+  return "Applications are closed"
+}
+
+export async function fetchEventDetail(id) {
+  const { data: event, error } = await supabase
+    .from("events")
+    .select(
+      "id, category, sender_id, title, location, event_date, application_deadline, max_applicants, created_at, details",
+    )
+    .eq("id", id)
+    .eq("status", "open")
+    .single()
+  if (error) throw error
+
+  const { data: sender, error: senderError } = await supabase
+    .from("sender_profiles_public")
+    .select("full_name")
+    .eq("id", event.sender_id)
+    .single()
+  if (senderError) throw senderError
+
+  const view = toViewModel(event)
+  return {
+    event: {
+      ...view,
+      maxApplicants: event.max_applicants,
+      hoursLeft: Math.max(
+        0,
+        Math.ceil(
+          (new Date(event.application_deadline).getTime() - Date.now()) /
+            3600000,
+        ),
+      ),
+    },
+    senderName: sender.full_name,
   }
 }
 

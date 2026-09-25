@@ -27,6 +27,7 @@ export const MarketPage = {
       onSelectCategory: (categoryId) =>
         api.notify(`#${id}:selectCategory`, categoryId),
       onSelectFilter: (filterId) => api.notify(`#${id}:selectFilter`, filterId),
+      onOpenEvent: (eventId) => api.notify("#detail:open", eventId),
     })
   },
 }

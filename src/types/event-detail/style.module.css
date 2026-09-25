@@ -1,0 +1,201 @@
+.page {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--vbg);
+  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  color: var(--vink);
+}
+
+.back {
+  border: none;
+  background: none;
+  color: var(--vmuted);
+  font-size: 14.5px;
+  cursor: pointer;
+  padding: 6px 0 14px;
+}
+
+.banner {
+  height: 150px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bannerMonogram {
+  font-family: var(--vtitle-font);
+  font-size: 34px;
+  letter-spacing: 1px;
+  color: rgba(255, 253, 247, 0.92);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: 26px;
+  color: var(--vink);
+}
+
+.meta {
+  margin: 4px 0 10px;
+  font-size: 14.5px;
+  color: var(--vmuted);
+}
+
+.badge {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--vbadge-text);
+  background: var(--vbadge-bg);
+  border-radius: 999px;
+  padding: 4px 9px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 11.5px;
+  letter-spacing: 0.3px;
+  color: var(--vtag-text);
+  border: 1px solid var(--vtag-border);
+  background: var(--vsurface);
+  border-radius: 999px;
+  padding: 3px 11px;
+}
+
+.facts {
+  margin: 16px 0 0;
+  border-top: 1px solid var(--vline);
+}
+
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--vline);
+  font-size: 14.5px;
+}
+
+.fact dt {
+  color: var(--vmuted);
+}
+
+.fact dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.sender {
+  font-size: 14px;
+  color: var(--vmuted);
+}
+
+.countdown {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--vaccent);
+}
+
+.sectionTitle {
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: 20px;
+  margin: 22px 0 12px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--vmuted);
+}
+
+.field input,
+.field textarea {
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 10px;
+  padding: 11px 13px;
+  outline: none;
+  resize: vertical;
+}
+
+.disclaimer {
+  font-size: 13px;
+  color: var(--vmuted);
+  background: var(--vbadge-bg);
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 0;
+}
+
+.submit {
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vchip-active-text);
+  background: var(--vchip-active-bg);
+  border-radius: 999px;
+  padding: 14px;
+  margin-top: 4px;
+}
+
+.submit:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.submitted {
+  text-align: center;
+  padding: 48px 0;
+}
+
+.check {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--vchip-active-text);
+  background: var(--vchip-active-bg);
+}
+
+.feedback {
+  color: var(--vmuted);
+  font-size: 14.5px;
+  margin: 8px 0 22px;
+}
+
+.empty {
+  text-align: center;
+  color: var(--vmuted);
+  font-size: 14px;
+  padding: 40px 0;
+}

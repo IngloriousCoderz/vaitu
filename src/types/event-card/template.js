@@ -4,9 +4,12 @@ import { deadlineBadge, monogram, thumbGradient } from "./helpers.js"
 import styles from "./style.module.css"
 
 // Generic card: renders title/subtitle/tag slots, whatever the category mapped.
-export function renderCard({ event }) {
+export function renderCard({ event, onOpen }) {
   return html`
-    <article class=${styles.card}>
+    <article
+      class=${styles.card}
+      @click=${onOpen ? () => onOpen(event.id) : null}
+    >
       <div class=${styles.thumb} style="background:${thumbGradient(event.hue)}">
         <span class=${styles.monogram}>${monogram(event.title)}</span>
       </div>

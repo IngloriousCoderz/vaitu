@@ -31,17 +31,17 @@
 }
 
 [data-category="festival"] {
-  --vbg: #1e201b;
-  --vsurface: #272b24;
-  --vink: #ede8d8;
-  --vmuted: #a6ab96;
-  --vline: #383e33;
-  --vaccent: #cfe06e;
-  --vchip-border: #454b3e;
-  --vchip-active-bg: #cfe06e;
-  --vchip-active-text: #1e201b;
-  --vbadge-bg: #2e342a;
-  --vbadge-text: #cfe06e;
-  --vtag-text: #cfe06e;
-  --vtag-border: #454b3e;
+  --vbg: #e8dfc7;
+  --vsurface: #faf8f2;
+  --vink: #262233;
+  --vmuted: #7c7689;
+  --vline: #d3cec2;
+  --vaccent: #6d28d9;
+  --vchip-border: #c3bccd;
+  --vchip-active-bg: #6d28d9;
+  --vchip-active-text: #f4f1ea;
+  --vbadge-bg: #dcd4ec;
+  --vbadge-text: #4c1d95;
+  --vtag-text: #6d28d9;
+  --vtag-border: #c3bccd;
 }
