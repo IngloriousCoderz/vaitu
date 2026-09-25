@@ -22,7 +22,9 @@
   "dependencies": {
     "@capacitor/core": "^8.5.1",
     "@inglorious/store": "^11.0.1",
-    "@inglorious/web": "^6.4.1"
+    "@inglorious/web": "^6.4.1",
+    "@supabase/supabase-js": "^2.117.2",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.1",

@@ -17,6 +17,8 @@ const weddingDetailsSchema = z
         "fine_art",
       ])
       .optional(),
+    spouseFirstName1: z.string().trim().min(1),
+    spouseFirstName2: z.string().trim().min(1),
   })
   .passthrough()
 

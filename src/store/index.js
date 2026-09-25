@@ -1,11 +1,11 @@
 import { createStore } from "@inglorious/store"
 
-import { Message } from "../types/message"
+import { MarketPage } from "../types/market-page/index.js"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 
 export const store = createStore({
-  types: { Message },
+  types: { MarketPage },
   entities,
   middlewares,
 })

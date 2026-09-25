@@ -4,4 +4,11 @@
 
 body {
   margin: 0;
+  background: #e7e2d3;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
