@@ -1,29 +1,13 @@
-const styleLabels = {
-  editorial: "Editorial",
-  documentary: "Documentary",
-  reportage: "Reportage",
-  classic: "Classic",
-  film: "Film",
-  fine_art: "Fine Art",
-}
-
-export function styleLabel(value) {
-  return styleLabels[value] ?? value
-}
-
-export function coupleName(event) {
-  return `${event.spouseFirstName1} & ${event.spouseFirstName2}`
-}
-
-export function monogram(event) {
-  return `${event.spouseFirstName1[0]}&${event.spouseFirstName2[0]}`
-}
-
 export function deadlineBadge(event) {
   if (event.isNew) return "NEW"
   if (event.daysLeft <= 1) return "CLOSING"
   if (event.daysLeft < 7) return `${event.daysLeft}D LEFT`
   return `${Math.round(event.daysLeft / 7)}W LEFT`
+}
+
+export function monogram(title) {
+  const words = title.split(" ")
+  return `${words[0][0]}${words[1]?.[0] ?? ""}`
 }
 
 export function thumbGradient(hue) {

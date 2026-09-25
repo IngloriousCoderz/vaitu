@@ -8,16 +8,19 @@ export function renderPage({
   events,
   status,
   error,
+  categories,
+  activeCategory,
   filters,
   query,
   activeFilter,
   onSearch,
+  onSelectCategory,
   onSelectFilter,
 }) {
-  const shown = visibleEvents(events, query, activeFilter)
+  const shown = visibleEvents(events, query, activeCategory, activeFilter)
 
   return html`
-    <div class=${styles.page}>
+    <div class=${styles.page} data-category=${activeCategory}>
       <header class=${styles.header}>
         <span class=${styles.logo}>vaitu<span class=${styles.logoDot}>•</span></span>
         <button class=${styles.iconButton} aria-label="Filters" type="button">
@@ -54,10 +57,26 @@ export function renderPage({
         <input
           class=${styles.searchInput}
           type="search"
-          placeholder="Find events by city or style..."
+          placeholder="Find events by city, style or genre..."
           .value=${query}
           @input=${(e) => onSearch(e.target.value)}
         />
+      </div>
+
+      <div class=${styles.chips}>
+        ${categories.map(
+          (category) => html`
+            <button
+              type="button"
+              class=${category.id === activeCategory
+                ? `${styles.chip} ${styles.chipActive}`
+                : styles.chip}
+              @click=${() => onSelectCategory(category.id)}
+            >
+              ${category.label}
+            </button>
+          `,
+        )}
       </div>
 
       <div class=${styles.chips}>

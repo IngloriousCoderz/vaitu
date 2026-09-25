@@ -1,19 +1,13 @@
-export const filters = [
-  { id: "all", label: "All Regions" },
-  { id: "editorial", label: "Editorial" },
-  { id: "documentary", label: "Documentary" },
-  { id: "fine_art", label: "Fine Art" },
-]
-
-export function visibleEvents(allEvents, query, activeFilter) {
+export function visibleEvents(allEvents, query, activeCategory, activeFilter) {
   const q = query.trim().toLowerCase()
   return allEvents.filter((event) => {
-    const matchesFilter = activeFilter === "all" || event.style === activeFilter
+    const matchesCategory = event.category === activeCategory
+    const matchesFilter =
+      activeFilter === "all" || event.filterValue === activeFilter
     const matchesQuery =
       q === "" ||
-      event.spouseFirstName1.toLowerCase().includes(q) ||
-      event.spouseFirstName2.toLowerCase().includes(q) ||
-      event.location.toLowerCase().includes(q)
-    return matchesFilter && matchesQuery
+      event.title.toLowerCase().includes(q) ||
+      event.subtitle.toLowerCase().includes(q)
+    return matchesCategory && matchesFilter && matchesQuery
   })
 }

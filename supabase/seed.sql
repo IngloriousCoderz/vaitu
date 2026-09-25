@@ -42,6 +42,10 @@ begin
     (v_sender_id, 'wedding', 'Luca & Mia', 'Venice', 'Italy', 'Veneto', '2026-10-18', now() + interval '3 days', 5, 'open',
       '{"style":"reportage","spouseFirstName1":"Luca","spouseFirstName2":"Mia"}', now() - interval '10 days'),
     (v_sender_id, 'wedding', 'Anna & Sam', 'Cotswolds', 'UK', 'England', '2026-12-05', now() + interval '7 days', 5, 'open',
-      '{"style":"documentary","spouseFirstName1":"Anna","spouseFirstName2":"Sam"}', now() - interval '10 days');
+      '{"style":"documentary","spouseFirstName1":"Anna","spouseFirstName2":"Sam"}', now() - interval '10 days'),
+    (v_sender_id, 'festival', 'Sundance Beats', 'Palm Springs', 'USA', 'California', '2026-11-14', now() + interval '4 days', 5, 'open',
+      '{"genre":"electronic","headliner":"Neon Coastline"}', now() - interval '10 days'),
+    (v_sender_id, 'festival', 'Solstice Folk', 'Asheville', 'USA', 'North Carolina', '2026-10-31', now() + interval '6 days', 5, 'open',
+      '{"genre":"indie","headliner":"The Wandering Lights"}', now() - interval '10 days');
 end;
 $$;

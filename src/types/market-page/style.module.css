@@ -2,9 +2,9 @@
   max-width: 430px;
   margin: 0 auto;
   min-height: 100dvh;
-  background: #f6f3ea;
-  padding: 18px 18px 92px;
-  color: #22301f;
+  background: var(--vbg);
+  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  color: var(--vink);
 }
 
 .header {
@@ -15,10 +15,11 @@
 }
 
 .logo {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--vtitle-font);
   font-size: 30px;
   letter-spacing: 1.5px;
-  color: #24402f;
+  color: var(--vaccent);
+  font-weight: var(--vtitle-weight);
 }
 
 .logoDot {
@@ -29,7 +30,7 @@
 .iconButton {
   border: none;
   background: none;
-  color: #24402f;
+  color: var(--vaccent);
   cursor: pointer;
   padding: 6px;
 }
@@ -38,10 +39,10 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  background: #fffdf7;
+  background: var(--vsurface);
   border-radius: 10px;
   padding: 12px 14px;
-  color: #8a8f7f;
+  color: var(--vmuted);
 }
 
 .searchInput {
@@ -50,11 +51,11 @@
   outline: none;
   background: none;
   font-size: 14.5px;
-  color: #22301f;
+  color: var(--vink);
 }
 
 .searchInput::placeholder {
-  color: #a3a798;
+  color: var(--vmuted);
 }
 
 .chips {
@@ -72,18 +73,18 @@
 .chip {
   flex-shrink: 0;
   font-size: 13px;
-  color: #5c6656;
+  color: var(--vmuted);
   background: transparent;
-  border: 1px solid #cfc7ae;
+  border: 1px solid var(--vchip-border);
   border-radius: 999px;
   padding: 8px 16px;
   cursor: pointer;
 }
 
 .chipActive {
-  color: #f6f3ea;
-  background: #6b7a5e;
-  border-color: #6b7a5e;
+  color: var(--vchip-active-text);
+  background: var(--vchip-active-bg);
+  border-color: var(--vchip-active-bg);
 }
 
 .list {
@@ -92,7 +93,7 @@
 
 .empty {
   text-align: center;
-  color: #8a8f7f;
+  color: var(--vmuted);
   font-size: 14px;
   padding: 40px 0;
 }
@@ -104,8 +105,8 @@
   transform: translateX(-50%);
   width: min(430px, 100%);
   display: flex;
-  background: #f6f3ea;
-  border-top: 1px solid #e3dcc9;
+  background: var(--vbg);
+  border-top: 1px solid var(--vline);
   padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
 }
 
@@ -116,10 +117,10 @@
   align-items: center;
   gap: 3px;
   font-size: 11.5px;
-  color: #8a8f7f;
+  color: var(--vmuted);
 }
 
 .tabActive {
-  color: #24402f;
+  color: var(--vaccent);
   font-weight: 700;
 }

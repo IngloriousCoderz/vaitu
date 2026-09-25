@@ -6,6 +6,11 @@ export function search(entity, query) {
   entity.query = query
 }
 
+export function selectCategory(entity, categoryId) {
+  entity.activeCategory = categoryId
+  entity.activeFilter = "all"
+}
+
 export function selectFilter(entity, filterId) {
   entity.activeFilter = filterId
 }

@@ -1,9 +1,15 @@
-import { loadEvents, search, selectFilter } from "./handlers.js"
-import { filters } from "./helpers.js"
+import { categories, filtersForCategory } from "./categories.js"
+import {
+  loadEvents,
+  search,
+  selectCategory,
+  selectFilter,
+} from "./handlers.js"
 import { renderPage } from "./template.js"
 
 export const MarketPage = {
   search,
+  selectCategory,
   selectFilter,
   ...loadEvents,
   render(entity, api) {
@@ -12,10 +18,14 @@ export const MarketPage = {
       events: entity.events,
       status: entity.status,
       error: entity.error,
-      filters,
+      categories,
+      activeCategory: entity.activeCategory,
+      filters: filtersForCategory(entity.activeCategory),
       query: entity.query,
       activeFilter: entity.activeFilter,
       onSearch: (value) => api.notify(`#${id}:search`, value),
+      onSelectCategory: (categoryId) =>
+        api.notify(`#${id}:selectCategory`, categoryId),
       onSelectFilter: (filterId) => api.notify(`#${id}:selectFilter`, filterId),
     })
   },

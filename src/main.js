@@ -1,5 +1,6 @@
 import { mount } from "@inglorious/web"
 import "./pwa"
+import "./theme/tokens.css"
 
 import { App } from "./app"
 import { store } from "./store"

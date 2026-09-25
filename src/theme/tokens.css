@@ -1,0 +1,47 @@
+/* Vaitu theme tokens. Neutral chrome + per-category skins.
+   Page root carries data-category="wedding|festival"; tokens flip the skin. */
+
+/* Smooth skin change when data-category flips. Only color properties
+   transition, so layout is unaffected; remounted cards appear instantly. */
+[data-category],
+[data-category] * {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+:root,
+[data-category="wedding"] {
+  --vbg: #f6f3ea;
+  --vsurface: #fffdf7;
+  --vink: #22301f;
+  --vmuted: #8a8f7f;
+  --vline: #e3dcc9;
+  --vaccent: #24402f;
+  --vchip-border: #cfc7ae;
+  --vchip-active-bg: #6b7a5e;
+  --vchip-active-text: #f6f3ea;
+  --vbadge-bg: #dde3d2;
+  --vbadge-text: #4a5a48;
+  --vtag-text: #9a6b4f;
+  --vtag-border: #d8cfbc;
+  --vtitle-font: Georgia, "Times New Roman", serif;
+  --vtitle-weight: 400;
+}
+
+[data-category="festival"] {
+  --vbg: #1e201b;
+  --vsurface: #272b24;
+  --vink: #ede8d8;
+  --vmuted: #a6ab96;
+  --vline: #383e33;
+  --vaccent: #cfe06e;
+  --vchip-border: #454b3e;
+  --vchip-active-bg: #cfe06e;
+  --vchip-active-text: #1e201b;
+  --vbadge-bg: #2e342a;
+  --vbadge-text: #cfe06e;
+  --vtag-text: #cfe06e;
+  --vtag-border: #454b3e;
+}
