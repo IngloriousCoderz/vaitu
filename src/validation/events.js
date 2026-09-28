@@ -1,7 +1,5 @@
 import { z } from "zod"
 
-// Requires: pnpm add zod
-//
 // Per-category details schemas. Each category owns its fields independently —
 // a future category adds its own entry here without reusing wedding's lists.
 
@@ -21,8 +19,8 @@ const weddingStyle = z.enum(weddingStyles.map((s) => s.value))
 const weddingDetailsSchema = z
   .object({
     style: weddingStyle.optional(),
-    spouseFirstName1: z.string().trim().min(1),
-    spouseFirstName2: z.string().trim().min(1),
+    spouse_first_name_1: z.string().trim().min(1),
+    spouse_first_name_2: z.string().trim().min(1),
   })
   .passthrough()
 

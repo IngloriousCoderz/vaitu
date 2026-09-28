@@ -6,13 +6,13 @@ export function search(entity, query) {
   entity.query = query
 }
 
-export function selectCategory(entity, categoryId) {
-  entity.activeCategory = categoryId
-  entity.activeFilter = "all"
+export function selectCategory(entity, category_id) {
+  entity.active_category = category_id
+  entity.active_filter = "all"
 }
 
-export function selectFilter(entity, filterId) {
-  entity.activeFilter = filterId
+export function selectFilter(entity, filter_id) {
+  entity.active_filter = filter_id
 }
 
 export const loadEvents = handleAsync("loadEvents", {

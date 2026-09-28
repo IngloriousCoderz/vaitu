@@ -1,8 +1,8 @@
 export function deadlineBadge(event) {
-  if (event.isNew) return "NEW"
-  if (event.daysLeft <= 1) return "CLOSING"
-  if (event.daysLeft < 7) return `${event.daysLeft}D LEFT`
-  return `${Math.round(event.daysLeft / 7)}W LEFT`
+  if (event.is_new) return "NEW"
+  if (event.days_left <= 1) return "CLOSING"
+  if (event.days_left < 7) return `${event.days_left}D LEFT`
+  return `${Math.round(event.days_left / 7)}W LEFT`
 }
 
 export function monogram(title) {

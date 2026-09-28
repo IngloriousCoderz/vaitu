@@ -2,22 +2,22 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { fetchEventDetail } from "../../api/events.js"
 
-export function open(entity, eventId, api) {
-  entity.eventId = eventId
+export function open(entity, event_id, api) {
+  entity.event_id = event_id
   entity.event = null
-  entity.senderName = null
+  entity.sender_name = null
   entity.submitted = false
   entity.motivation = ""
-  entity.fullName = ""
+  entity.full_name = ""
   entity.website = ""
   entity.instagram = ""
-  api.notify(`#${entity.id}:loadDetail`, eventId)
+  api.notify(`#${entity.id}:loadDetail`, event_id)
 }
 
 export function close(entity) {
-  entity.eventId = null
+  entity.event_id = null
   entity.event = null
-  entity.senderName = null
+  entity.sender_name = null
   entity.status = "idle"
   entity.error = null
   entity.submitted = false
@@ -37,13 +37,13 @@ export const loadDetail = handleAsync("loadDetail", {
     entity.status = "loading"
     entity.error = null
   },
-  run(eventId) {
-    return fetchEventDetail(eventId)
+  run(event_id) {
+    return fetchEventDetail(event_id)
   },
-  success(entity, { event, senderName }) {
+  success(entity, { event, sender_name }) {
     entity.status = "ready"
     entity.event = event
-    entity.senderName = senderName
+    entity.sender_name = sender_name
   },
   error(entity, err) {
     entity.status = "error"

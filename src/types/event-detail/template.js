@@ -1,6 +1,7 @@
 import { html } from "@inglorious/web"
 
 import { countdownLabel } from "../../api/events.js"
+import { renderIcon } from "../icon/index.js"
 import {
   deadlineBadge,
   monogram,
@@ -39,9 +40,9 @@ function renderForm({ entity, onField, onSubmit }) {
         <input
           type="text"
           placeholder="Your name"
-          .value=${entity.fullName}
+          .value=${entity.full_name}
           @input=${(e) =>
-            onField({ field: "fullName", value: e.target.value })}
+            onField({ field: "full_name", value: e.target.value })}
         />
       </label>
       <label class=${styles.field}>
@@ -64,7 +65,7 @@ function renderForm({ entity, onField, onSubmit }) {
         />
       </label>
       <p class=${styles.disclaimer}>
-        Only ${entity.event.maxApplicants} names will be forwarded to the
+        Only ${entity.event.max_applicants} names will be forwarded to the
         organizer.
       </p>
       <label class=${styles.field}>
@@ -114,7 +115,8 @@ export function renderDetail({
   return html`
     <div class=${styles.page} data-category=${event?.category ?? "wedding"}>
       <button class=${styles.back} type="button" @click=${onBack}>
-        ← Back
+        ${renderIcon({ name: "arrow-left", size: 16 })}
+        <span>Back</span>
       </button>
 
       ${status === "loading"
@@ -142,7 +144,7 @@ export function renderDetail({
                 <span class=${styles.tag}>${event.tag}</span>
                 ${renderFacts(event)}
                 <p class=${styles.sender}>
-                  Organized by ${entity.senderName}
+                  Organized by ${entity.sender_name}
                 </p>
                 <p class=${styles.countdown}>
                   ${countdownLabel(event)}

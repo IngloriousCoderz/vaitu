@@ -34,19 +34,19 @@ const styleLabels = {
   fine_art: "Fine Art",
 }
 
-// Boundary layer: snake_case rows → generic camelCase view models.
-// Each category maps its details into the same slots (title, subtitle, tag,
-// filterValue) so templates never branch on category.
+// Boundary layer: rows → generic view models. Field names mirror the DB
+// (snake_case, no conversion); only display derivations happen here.
 function toViewModel(row) {
   const [year, month, day] = row.event_date.split("-").map(Number)
   const base = {
     id: row.id,
     category: row.category,
     subtitle: `${row.location} • ${MONTHS[month - 1]} ${String(day).padStart(2, "0")}`,
-    daysLeft: Math.ceil(
+    days_left: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
     ),
-    isNew: Date.now() - new Date(row.created_at).getTime() < NEW_THRESHOLD_MS,
+    is_new:
+      Date.now() - new Date(row.created_at).getTime() < NEW_THRESHOLD_MS,
     hue: [...row.id].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7),
     year,
   }
@@ -56,27 +56,28 @@ function toViewModel(row) {
       ...base,
       title: row.title,
       tag: genreLabels[row.details.genre] ?? row.details.genre,
-      filterValue: row.details.genre,
+      filter_value: row.details.genre,
       facts: [{ label: "Headliner", value: row.details.headliner }],
     }
   }
 
-  const couple = `${row.details.spouseFirstName1} & ${row.details.spouseFirstName2}`
+  const couple = `${row.details.spouse_first_name_1} & ${row.details.spouse_first_name_2}`
   return {
     ...base,
     title: couple,
     tag: styleLabels[row.details.style] ?? row.details.style,
-    filterValue: row.details.style,
+    filter_value: row.details.style,
     facts: [{ label: "Spouses", value: couple }],
   }
 }
 
 export function countdownLabel(event) {
-  if (event.isNew && event.daysLeft > 2) return "Just opened — apply early"
-  if (event.daysLeft > 1) return `Applications close in ${event.daysLeft} days`
-  if (event.hoursLeft > 1)
-    return `Applications close in ${event.hoursLeft} hours`
-  if (event.hoursLeft === 1) return "Applications close in 1 hour"
+  if (event.is_new && event.days_left > 2) return "Just opened — apply early"
+  if (event.days_left > 1)
+    return `Applications close in ${event.days_left} days`
+  if (event.hours_left > 1)
+    return `Applications close in ${event.hours_left} hours`
+  if (event.hours_left === 1) return "Applications close in 1 hour"
   return "Applications are closed"
 }
 
@@ -102,8 +103,8 @@ export async function fetchEventDetail(id) {
   return {
     event: {
       ...view,
-      maxApplicants: event.max_applicants,
-      hoursLeft: Math.max(
+      max_applicants: event.max_applicants,
+      hours_left: Math.max(
         0,
         Math.ceil(
           (new Date(event.application_deadline).getTime() - Date.now()) /
@@ -111,7 +112,7 @@ export async function fetchEventDetail(id) {
         ),
       ),
     },
-    senderName: sender.full_name,
+    sender_name: sender.full_name,
   }
 }
 

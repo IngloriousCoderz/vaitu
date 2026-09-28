@@ -19,15 +19,16 @@ export const MarketPage = {
       status: entity.status,
       error: entity.error,
       categories,
-      activeCategory: entity.activeCategory,
-      filters: filtersForCategory(entity.activeCategory),
+      active_category: entity.active_category,
+      filters: filtersForCategory(entity.active_category),
       query: entity.query,
-      activeFilter: entity.activeFilter,
+      active_filter: entity.active_filter,
       onSearch: (value) => api.notify(`#${id}:search`, value),
-      onSelectCategory: (categoryId) =>
-        api.notify(`#${id}:selectCategory`, categoryId),
-      onSelectFilter: (filterId) => api.notify(`#${id}:selectFilter`, filterId),
-      onOpenEvent: (eventId) => api.notify("#detail:open", eventId),
+      onSelectCategory: (category_id) =>
+        api.notify(`#${id}:selectCategory`, category_id),
+      onSelectFilter: (filter_id) =>
+        api.notify(`#${id}:selectFilter`, filter_id),
+      onOpenEvent: (event_id) => api.notify("#detail:open", event_id),
     })
   },
 }

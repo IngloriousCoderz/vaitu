@@ -1,7 +1,7 @@
 export const App = {
   render(_, api) {
     const detail = api.getEntity("detail")
-    if (detail.eventId) return api.render("detail")
+    if (detail.event_id) return api.render("detail")
     return api.render("market")
   },
 }

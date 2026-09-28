@@ -8,6 +8,9 @@
 }
 
 .back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: none;
   background: none;
   color: var(--vmuted);
