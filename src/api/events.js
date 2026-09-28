@@ -41,6 +41,11 @@ function toViewModel(row) {
   const base = {
     id: row.id,
     category: row.category,
+    region: row.region,
+    event_date: row.event_date,
+    event_in_days: Math.ceil(
+      (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
+    ),
     subtitle: `${row.location} • ${MONTHS[month - 1]} ${String(day).padStart(2, "0")}`,
     days_left: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
@@ -85,7 +90,7 @@ export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, category, sender_id, title, location, event_date, application_deadline, max_applicants, created_at, details",
+      "id, category, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, details",
     )
     .eq("id", id)
     .eq("status", "open")
@@ -120,7 +125,7 @@ export async function fetchOpenEvents() {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, event_date, application_deadline, created_at, details",
+      "id, category, title, location, region, event_date, application_deadline, created_at, details",
     )
     .eq("status", "open")
     .order("application_deadline", { ascending: true })

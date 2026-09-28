@@ -12,20 +12,44 @@ export function renderPage({
   categories,
   active_category,
   filters,
+  regions,
+  periods,
   query,
   active_filter,
+  active_region,
+  active_period,
+  show_filters,
+  has_active_filters,
   onSearch,
   onSelectCategory,
   onSelectFilter,
+  onToggleFilters,
+  onSelectRegion,
+  onSelectPeriod,
+  onClearFilters,
   onOpenEvent,
 }) {
-  const shown = visibleEvents(events, query, active_category, active_filter)
+  const shown = visibleEvents(
+    events,
+    query,
+    active_category,
+    active_filter,
+    active_region,
+    active_period,
+  )
 
   return html`
     <div class=${styles.page} data-category=${active_category}>
       <header class=${styles.header}>
         <span class=${styles.logo}>vaitu<span class=${styles.logoDot}>•</span></span>
-        <button class=${styles.iconButton} aria-label="Filters" type="button">
+        <button
+          class=${has_active_filters
+            ? `${styles.iconButton} ${styles.iconButtonActive}`
+            : styles.iconButton}
+          aria-label="Filters"
+          type="button"
+          @click=${onToggleFilters}
+        >
           ${renderIcon({ name: "sliders" })}
         </button>
       </header>
@@ -73,6 +97,65 @@ export function renderPage({
         )}
       </div>
 
+      ${show_filters
+        ? html`
+            <div class=${styles.backdrop} @click=${onToggleFilters}>
+              <div
+                class=${styles.sheet}
+                @click=${(e) => e.stopPropagation()}
+              >
+                <h3 class=${styles.sheetTitle}>Region</h3>
+                <div class=${styles.chips}>
+                  <button
+                    type="button"
+                    class=${active_region === "all"
+                      ? `${styles.chip} ${styles.chipActive}`
+                      : styles.chip}
+                    @click=${() => onSelectRegion("all")}
+                  >
+                    All regions
+                  </button>
+                  ${regions.map(
+                    (region) => html`
+                      <button
+                        type="button"
+                        class=${region === active_region
+                          ? `${styles.chip} ${styles.chipActive}`
+                          : styles.chip}
+                        @click=${() => onSelectRegion(region)}
+                      >
+                        ${region}
+                      </button>
+                    `,
+                  )}
+                </div>
+                <h3 class=${styles.sheetTitle}>Period</h3>
+                <div class=${styles.chips}>
+                  ${periods.map(
+                    (period) => html`
+                      <button
+                        type="button"
+                        class=${period.id === active_period
+                          ? `${styles.chip} ${styles.chipActive}`
+                          : styles.chip}
+                        @click=${() => onSelectPeriod(period.id)}
+                      >
+                        ${period.label}
+                      </button>
+                    `,
+                  )}
+                </div>
+                <button
+                  class=${styles.clearButton}
+                  type="button"
+                  @click=${onClearFilters}
+                >
+                  Clear all
+                </button>
+              </div>
+            </div>
+          `
+        : ""}
       <main class=${styles.list}>
         ${status === "loading"
           ? html`<p class=${styles.empty}>Loading events…</p>`
