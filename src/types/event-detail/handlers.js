@@ -27,8 +27,14 @@ export function setField(entity, { field, value }) {
   entity[field] = value
 }
 
-// Mocked until auth lands: flips to the feedback state without inserting.
-export function submitApplication(entity) {
+// Mocked until auth-backed insert lands: requires a session, then flips to
+// the feedback state without inserting.
+export function submitApplication(entity, _, api) {
+  const session = api.getEntity("session")
+  if (!session?.user_id) {
+    api.notify("#auth:open")
+    return
+  }
   entity.submitted = true
 }
 

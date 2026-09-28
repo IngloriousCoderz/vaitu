@@ -28,6 +28,8 @@ export function renderPage({
   onSelectPeriod,
   onClearFilters,
   onOpenEvent,
+  onSeeker,
+  seeker_tab,
 }) {
   const shown = visibleEvents(
     events,
@@ -177,9 +179,18 @@ export function renderPage({
           ${renderIcon({ name: "ticket" })}
           <span>My Bids</span>
         </span>
-        <span class=${styles.tab}>
-          ${renderIcon({ name: "user" })}
-          <span>Seeker</span>
+        <span class=${styles.tab} @click=${onSeeker}>
+          ${seeker_tab
+            ? html`
+                <span class=${styles.avatarTab}>
+                  ${seeker_tab.initials}
+                </span>
+                <span>${seeker_tab.label}</span>
+              `
+            : html`
+                ${renderIcon({ name: "user" })}
+                <span>Seeker</span>
+              `}
         </span>
       </nav>
     </div>

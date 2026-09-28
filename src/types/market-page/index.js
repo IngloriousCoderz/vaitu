@@ -1,5 +1,6 @@
 import { categories, filtersForCategory } from "./categories.js"
 import { distinctRegions, periods } from "./helpers.js"
+import { initials } from "../profile/helpers.js"
 import {
   clearFilters,
   loadEvents,
@@ -23,6 +24,9 @@ export const MarketPage = {
   ...loadEvents,
   render(entity, api) {
     const id = entity.id
+    const session = api.getEntity("session")
+    const profile = api.getEntity("profile")
+    const full_name = profile.profile?.full_name
     return renderPage({
       events: entity.events,
       status: entity.status,
@@ -50,6 +54,16 @@ export const MarketPage = {
         api.notify(`#${id}:selectPeriod`, period_id),
       onClearFilters: () => api.notify(`#${id}:clearFilters`),
       onOpenEvent: (event_id) => api.notify("#detail:open", event_id),
+      seeker_tab: session?.user_id
+        ? {
+            initials: initials(full_name),
+            label: full_name?.split(" ")[0] ?? "Seeker",
+          }
+        : null,
+      onSeeker: () => {
+        const session = api.getEntity("session")
+        api.notify(session?.user_id ? "#profile:open" : "#auth:open")
+      },
     })
   },
 }

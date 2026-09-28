@@ -170,9 +170,23 @@
   gap: 3px;
   font-size: 11.5px;
   color: var(--vmuted);
+  cursor: pointer;
 }
 
 .tabActive {
   color: var(--vaccent);
   font-weight: 700;
+}
+
+.avatarTab {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fffdf7;
+  background: var(--vaccent);
 }
