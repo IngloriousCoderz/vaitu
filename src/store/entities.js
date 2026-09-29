@@ -57,17 +57,17 @@ export const entities = {
     status: "idle",
     error: null,
   },
-  bids: {
-    type: "BidsPage",
+  applications: {
+    type: "ApplicationsPage",
     open: false,
-    bids: [],
+    applications: [],
     status: "idle",
     error: null,
   },
-  bid_detail: {
-    type: "BidDetail",
+  application_detail: {
+    type: "ApplicationDetail",
     application_id: null,
-    bid: null,
+    application: null,
     motivation: "",
     confirming_withdraw: false,
     status: "idle",

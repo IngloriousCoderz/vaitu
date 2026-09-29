@@ -53,13 +53,13 @@ export const EventsPage = {
       onOpenEvent: (event_id) => api.notify("#detail:open", event_id),
       onNavigate: (value) => {
         if (value === "profile") {
-          api.notify("#bids:close")
+          api.notify("#applications:close")
           api.notify("#detail:close")
           api.notify("#profile:open")
         }
         if (value === "applications") {
           api.notify("#detail:close")
-          api.notify("#bids:open")
+          api.notify("#applications:open")
         }
       },
     })

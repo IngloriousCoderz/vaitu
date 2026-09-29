@@ -22,13 +22,13 @@ export const Profile = {
       onNavigate: (value) => {
         if (value === "events") {
           api.notify(`#${id}:close`)
-          api.notify("#bids:close")
+          api.notify("#applications:close")
           api.notify("#detail:close")
         }
         if (value === "applications") {
           api.notify(`#${id}:close`)
           api.notify("#detail:close")
-          api.notify("#bids:open")
+          api.notify("#applications:open")
         }
       },
     })

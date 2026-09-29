@@ -1,8 +1,8 @@
 import { createStore } from "@inglorious/store"
 
 import { AuthPage } from "../types/auth-page/index.js"
-import { BidDetail } from "../types/bid-detail/index.js"
-import { BidsPage } from "../types/bids-page/index.js"
+import { ApplicationDetail } from "../types/application-detail/index.js"
+import { ApplicationsPage } from "../types/applications-page/index.js"
 import { EventDetail } from "../types/event-detail/index.js"
 import { EventsPage } from "../types/events-page/index.js"
 import { Profile } from "../types/profile/index.js"
@@ -15,8 +15,8 @@ export const store = createStore({
     EventsPage,
     EventDetail,
     AuthPage,
-    BidsPage,
-    BidDetail,
+    ApplicationsPage,
+    ApplicationDetail,
     Profile,
     Session,
   },

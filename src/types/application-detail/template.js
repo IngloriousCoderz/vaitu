@@ -17,7 +17,7 @@ function statusLabel(status) {
   return status[0].toUpperCase() + status.slice(1)
 }
 
-export function renderBidDetail({
+export function renderApplicationDetail({
   entity,
   onField,
   onSave,
@@ -27,12 +27,13 @@ export function renderBidDetail({
   onBack,
   onNavigate,
 }) {
-  const { bid, status, error } = entity
+  const { application, status, error } = entity
   const busy = status === "saving" || status === "withdrawing"
-  const canSave = bid && entity.motivation.trim().length > 0 && !busy
+  const canSave =
+    application && entity.motivation.trim().length > 0 && !busy
 
   return html`
-    <div class=${styles.page} data-category=${bid?.category ?? "wedding"}>
+    <div class=${styles.page} data-category=${application?.category ?? "wedding"}>
       <button class=${styles.back} type="button" @click=${onBack}>
         ${renderIcon({ name: "arrow-left", size: 16 })}
         <span>Back</span>
@@ -40,14 +41,14 @@ export function renderBidDetail({
 
       ${status === "loading"
         ? html`<p class=${styles.empty}>Loading application…</p>`
-        : !bid
+        : !application
           ? html`<p class=${styles.empty}>${error}</p>`
           : html`
-              ${renderCard({ event: bid })}
+              ${renderCard({ event: application })}
               <div class=${styles.statusRow}>
                 ${Chip.render({
-                  children: statusLabel(bid.application_status),
-                  color: statusColors[bid.application_status] ?? "default",
+                  children: statusLabel(application.application_status),
+                  color: statusColors[application.application_status] ?? "default",
                 })}
               </div>
 

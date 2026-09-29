@@ -1,22 +1,22 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import {
-  fetchBidDetail,
+  fetchApplicationDetail,
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
 
 export function open(entity, application_id, api) {
   entity.application_id = application_id
-  entity.bid = null
+  entity.application = null
   entity.motivation = ""
   entity.confirming_withdraw = false
-  api.notify(`#${entity.id}:loadBid`, application_id)
+  api.notify(`#${entity.id}:loadApplication`, application_id)
 }
 
 export function close(entity) {
   entity.application_id = null
-  entity.bid = null
+  entity.application = null
   entity.status = "idle"
   entity.error = null
 }
@@ -33,18 +33,18 @@ export function cancelWithdraw(entity) {
   entity.confirming_withdraw = false
 }
 
-export const loadBid = handleAsync("loadBid", {
+export const loadApplication = handleAsync("loadApplication", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
   },
   run(application_id) {
-    return fetchBidDetail(application_id)
+    return fetchApplicationDetail(application_id)
   },
-  success(entity, bid) {
+  success(entity, application) {
     entity.status = "ready"
-    entity.bid = bid
-    entity.motivation = bid.motivation
+    entity.application = application
+    entity.motivation = application.motivation
   },
   error(entity, err) {
     entity.status = "error"
@@ -63,7 +63,7 @@ export const save = handleAsync("save", {
   success(entity, _, api) {
     entity.status = "ready"
     api.notify(`#${entity.id}:close`)
-    api.notify("#bids:open")
+    api.notify("#applications:open")
   },
   error(entity, err) {
     entity.status = "error"
@@ -83,7 +83,7 @@ export const withdraw = handleAsync("withdraw", {
     entity.status = "ready"
     entity.confirming_withdraw = false
     api.notify(`#${entity.id}:close`)
-    api.notify("#bids:open")
+    api.notify("#applications:open")
   },
   error(entity, err) {
     entity.status = "error"

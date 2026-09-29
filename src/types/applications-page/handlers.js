@@ -1,10 +1,10 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { fetchMyBids } from "../../api/applications.js"
+import { fetchMyApplications } from "../../api/applications.js"
 
 export function open(entity, _, api) {
   entity.open = true
-  api.notify(`#${entity.id}:loadBids`)
+  api.notify(`#${entity.id}:loadApplications`)
 }
 
 export function close(entity) {
@@ -13,17 +13,17 @@ export function close(entity) {
   entity.error = null
 }
 
-export const loadBids = handleAsync("loadBids", {
+export const loadApplications = handleAsync("loadApplications", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
   },
   run() {
-    return fetchMyBids()
+    return fetchMyApplications()
   },
-  success(entity, bids) {
+  success(entity, applications) {
     entity.status = "ready"
-    entity.bids = bids
+    entity.applications = applications
   },
   error(entity, err) {
     entity.status = "error"

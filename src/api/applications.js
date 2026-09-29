@@ -3,7 +3,7 @@ import { toViewModel } from "./events.js"
 
 // My applications with their events, newest first. Shape reuses the event
 // view model plus application fields so cards render unchanged.
-export async function fetchMyBids() {
+export async function fetchMyApplications() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -39,7 +39,7 @@ export async function fetchMyApplicationEventIds() {
   return data.map((row) => row.event_id)
 }
 
-export async function fetchBidDetail(application_id) {
+export async function fetchApplicationDetail(application_id) {
   const {
     data: { user },
   } = await supabase.auth.getUser()

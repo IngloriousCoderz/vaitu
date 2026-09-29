@@ -1,18 +1,18 @@
 import * as handlers from "./handlers.js"
-import { renderBids } from "./template.js"
+import { renderApplications } from "./template.js"
 
-const { loadBids, ...syncHandlers } = handlers
+const { loadApplications, ...syncHandlers } = handlers
 
-export const BidsPage = {
+export const ApplicationsPage = {
   ...syncHandlers,
-  ...loadBids,
+  ...loadApplications,
   render(entity, api) {
     const id = entity.id
-    return renderBids({
+    return renderApplications({
       entity,
       onOpenEvent: (event_id) => {
-        const bid = entity.bids.find((b) => b.id === event_id)
-        if (bid) api.notify("#bid-detail:open", bid.application_id)
+        const application = entity.applications.find((a) => a.id === event_id)
+        if (application) api.notify("#application-detail:open", application.application_id)
       },
       onNavigate: (value) => {
         if (value === "events") {
