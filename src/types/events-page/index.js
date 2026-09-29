@@ -25,6 +25,7 @@ export const EventsPage = {
     const id = entity.id
     return renderPage({
       events: entity.events,
+      applied_event_ids: entity.applied_event_ids,
       status: entity.status,
       error: entity.error,
       categories,
@@ -51,7 +52,15 @@ export const EventsPage = {
       onClearFilters: () => api.notify(`#${id}:clearFilters`),
       onOpenEvent: (event_id) => api.notify("#detail:open", event_id),
       onNavigate: (value) => {
-        if (value === "profile") api.notify("#profile:open")
+        if (value === "profile") {
+          api.notify("#bids:close")
+          api.notify("#detail:close")
+          api.notify("#profile:open")
+        }
+        if (value === "applications") {
+          api.notify("#detail:close")
+          api.notify("#bids:open")
+        }
       },
     })
   },

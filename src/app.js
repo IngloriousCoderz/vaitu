@@ -16,10 +16,14 @@ export const App = {
     if (session.status === "unknown") return renderSplash()
     // Gated: logged out always lands on login.
     if (!session.user_id) return api.render("auth")
-    const profile = api.getEntity("profile")
-    if (profile.open) return api.render("profile")
     const detail = api.getEntity("detail")
     if (detail.event_id) return api.render("detail")
+    const bid_detail = api.getEntity("bid_detail")
+    if (bid_detail.application_id) return api.render("bid_detail")
+    const bids = api.getEntity("bids")
+    if (bids.open) return api.render("bids")
+    const profile = api.getEntity("profile")
+    if (profile.open) return api.render("profile")
     return api.render("events")
   },
 }

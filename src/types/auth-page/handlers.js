@@ -41,23 +41,6 @@ export function backToSignup(entity) {
   entity.error = null
 }
 
-export function continueToRoles(entity) {
-  if (entity.full_name.trim().length === 0) {
-    entity.error = "Name is required"
-    return
-  }
-  if (entity.password.length < 6) {
-    entity.error = "Password must be at least 6 characters"
-    return
-  }
-  if (entity.password !== entity.confirm_password) {
-    entity.error = "Passwords do not match"
-    return
-  }
-  entity.error = null
-  entity.step = "role"
-}
-
 export function selectRole(entity, role) {
   entity.role = role
   entity.error = null

@@ -6,18 +6,44 @@ do $$
 declare
   v_sender_id uuid := gen_random_uuid();
 begin
-  -- auth user (handle_new_user trigger auto-creates the profile row)
-  insert into auth.users (id, aud, role, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
+  -- auth user (handle_new_user trigger auto-creates the profile row).
+  -- raw_app_meta_data must list the email provider or password login fails.
+  insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, confirmation_token, recovery_token, email_change_token_new, email_change_token_current, email_change, phone_change_token, phone_change, reauthentication_token, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
   values (
+    '00000000-0000-0000-0000-000000000000',
     v_sender_id,
     'authenticated',
     'authenticated',
     'sender@vaitu.local',
     extensions.crypt('test1234', extensions.gen_salt('bf')),
     now(),
-    '{"full_name":"Test Sender"}'
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Test Sender"}',
+    now(),
+    now()
   )
   on conflict (id) do nothing;
+
+  -- GoTrue v2 requires an identity row for login.
+  insert into auth.identities (user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+  values (
+    v_sender_id,
+    jsonb_build_object('sub', v_sender_id::text, 'email', 'sender@vaitu.local'),
+    'email',
+    v_sender_id::text,
+    now(),
+    now(),
+    now()
+  )
+  on conflict (provider_id, provider) do nothing;
 
   update public.profiles
   set role = 'sender',

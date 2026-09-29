@@ -34,7 +34,14 @@ export const AuthPage = {
             email: entity.email,
             password: entity.password,
           }),
-        onContinue: () => api.notify(`#${id}:continueToRoles`),
+        onContinue: () =>
+          api.notify(`#${id}:signup`, {
+            full_name: entity.full_name,
+            email: entity.email,
+            password: entity.password,
+            confirm_password: entity.confirm_password,
+            role: entity.role,
+          }),
         onSelectRole: (role) => api.notify(`#${id}:selectRole`, role),
         onBackToEmail: () => api.notify(`#${id}:backToEmail`),
         onBackToRoles: () => api.notify(`#${id}:backToRoles`),

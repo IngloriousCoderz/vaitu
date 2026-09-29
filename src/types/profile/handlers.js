@@ -11,6 +11,24 @@ export function close(entity) {
   entity.open = false
   entity.status = "idle"
   entity.error = null
+  entity.editing = false
+  entity.draft = null
+}
+
+export function startEdit(entity) {
+  entity.editing = true
+  entity.draft = { ...entity.profile }
+  entity.error = null
+}
+
+export function cancelEdit(entity) {
+  entity.editing = false
+  entity.draft = null
+  entity.error = null
+}
+
+export function setProfileField(entity, { field, value }) {
+  if (entity.draft) entity.draft[field] = value
 }
 
 export const loadProfile = handleAsync("loadProfile", {
@@ -25,15 +43,17 @@ export const loadProfile = handleAsync("loadProfile", {
     if (!user) throw new Error("Not logged in")
     const { data: profile, error } = await supabase
       .from("profiles")
-      .select("full_name, role, sub_role, country, region")
+      .select("full_name, role, sub_role, country, region, website, instagram_handle")
       .eq("id", user.id)
       .single()
     if (error) throw error
     return { ...profile, email: user.email }
   },
-  success(entity, profile) {
+  success(entity, profile, api) {
     entity.status = "ready"
     entity.profile = profile
+    // Detail may have opened before the profile arrived — fill its blanks.
+    api.notify("#detail:prefill", profile)
   },
   error(entity, err) {
     entity.status = "error"
@@ -41,8 +61,52 @@ export const loadProfile = handleAsync("loadProfile", {
   },
 })
 
-export const logout = handleAsync("logout", {
-  async run() {
+export const saveProfile = handleAsync("saveProfile", {
+  start(entity) {
+    entity.status = "saving"
+    entity.error = null
+  },
+  async run(profile) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error("Not logged in")
+    const website = (profile.website ?? "").trim().toLowerCase()
+    const instagram = (profile.instagram_handle ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/^@+/, "")
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        full_name: profile.full_name.trim(),
+        website:
+          website === ""
+            ? ""
+            : /^https?:\/\//i.test(website)
+              ? website
+              : `https://${website}`,
+        instagram_handle: instagram === "" ? "" : `@${instagram}`,
+        country: (profile.country ?? "").trim(),
+        region: (profile.region ?? "").trim(),
+      })
+      .eq("id", user.id)
+    if (error) throw error
+    return profile
+  },
+  success(entity, profile) {
+    entity.status = "ready"
+    entity.profile = profile
+    entity.draft = null
+    entity.editing = false
+  },
+  error(entity, err) {
+    entity.status = "error"
+    entity.error = err.message ?? "Failed to save profile"
+  },
+})
+
+export const logout = handleAsync("logout", {  async run() {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     return true

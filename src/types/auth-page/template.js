@@ -30,6 +30,9 @@ function renderEmailStep({ entity, busy, onField, onCheckEmail }) {
         <input
           type="email"
           placeholder="you@example.com"
+          autocapitalize="none"
+          autocorrect="off"
+          spellcheck="false"
           .value=${entity.email}
           @input=${(e) => onField({ field: "email", value: e.target.value })}
         />

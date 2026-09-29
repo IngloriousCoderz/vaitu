@@ -2,28 +2,99 @@ import { html } from "@inglorious/web"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { Select } from "@inglorious/ui/select"
 
-import { initials } from "./helpers.js"
+import { countries } from "../../data/countries.js"
+
+import {
+  displayInstagram,
+  displayWebsite,
+  instagramUrl,
+  initials,
+} from "./helpers.js"
 import { renderTabbar } from "../tab-bar/template.js"
 import styles from "./style.module.css"
 
-function renderRow(label, value) {
+function renderRow(label, value, href) {
   return html`
     <div class=${styles.row}>
       <dt>${label}</dt>
-      <dd>${value || "—"}</dd>
+      <dd>
+        ${href
+          ? html`
+              <a
+                class=${styles.rowLink}
+                href=${href}
+                target="_blank"
+                rel="noopener"
+              >
+                ${value || "—"}
+              </a>
+            `
+          : (value || "—")}
+      </dd>
     </div>
   `
 }
 
-export function renderProfile({ entity, onLogout, onNavigate }) {
+function renderEditField({
+  label,
+  field,
+  value,
+  placeholder,
+  prefix,
+  lowercase,
+  inputmode,
+  onField,
+}) {
+  const handleInput = (e) => {
+    const raw = e.target.value
+    onField({ field, value: lowercase ? raw.toLowerCase() : raw })
+  }
+  const input = html`
+    <input
+      type="text"
+      placeholder=${placeholder}
+      spellcheck="false"
+      autocapitalize="none"
+      autocorrect="off"
+      autocomplete="off"
+      inputmode=${inputmode ?? "text"}
+      .value=${value ?? ""}
+      @input=${handleInput}
+    />
+  `
+  return html`
+    <label class=${styles.field}>
+      <span>${label}</span>
+      <div class=${styles.urlWrap}>
+        ${prefix
+          ? html`<span class=${styles.urlPrefix}>${prefix}</span>`
+          : ""}
+        ${input}
+      </div>
+    </label>
+  `
+}
+
+export function renderProfile({
+  entity,
+  onEdit,
+  onCancel,
+  onField,
+  onSave,
+  onLogout,
+  onNavigate,
+}) {
   const { profile, status, error } = entity
+  const saving = status === "saving"
+  const shown = entity.editing && entity.draft ? entity.draft : profile
 
   return html`
     <div class=${styles.page} data-category="wedding">
       ${status === "loading"
         ? html`<p class=${styles.empty}>Loading profile…</p>`
-        : status === "error"
+        : status === "error" && !profile
           ? html`<p class=${styles.empty}>${error}</p>`
           : html`
               ${Avatar.render({
@@ -36,11 +107,112 @@ export function renderProfile({ entity, onLogout, onNavigate }) {
               <h2 class=${styles.name}>${profile.full_name}</h2>
               <p class=${styles.email}>${profile.email}</p>
               ${Chip.render({ children: profile.role })}
-              <dl class=${styles.rows}>
-                ${renderRow("Country", profile.country)}
-                ${renderRow("Region", profile.region)}
-                ${renderRow("Sub-role", profile.sub_role)}
-              </dl>
+              ${entity.editing
+                ? html`
+                    <h3 class=${styles.sectionTitle}>Edit profile</h3>
+                    ${renderEditField({
+                      label: "Full name",
+                      field: "full_name",
+                      value: shown.full_name,
+                      placeholder: "Your name",
+                      onField,
+                    })}
+                    ${renderEditField({
+                      label: "Website",
+                      field: "website",
+                      value: (shown.website ?? "").replace(
+                        /^https?:\/\//i,
+                        "",
+                      ),
+                      placeholder: "your-site.com",
+                      prefix: "https://",
+                      lowercase: true,
+                      inputmode: "url",
+                      onField,
+                    })}
+                    ${renderEditField({
+                      label: "Instagram",
+                      field: "instagram_handle",
+                      value: (shown.instagram_handle ?? "").replace(
+                        /^@+/,
+                        "",
+                      ),
+                      placeholder: "handle",
+                      prefix: "@",
+                      lowercase: true,
+                      onField,
+                    })}
+                    <label class=${styles.field}>
+                      <span>Country</span>
+                      ${Select.render({
+                        value: shown.country ?? "",
+                        isFullWidth: true,
+                        options: [{ value: "", label: "Select…" }].concat(
+                          countries.map((country) => ({
+                            value: country,
+                            label: country,
+                          })),
+                        ),
+                        onChange: (value) =>
+                          onField({ field: "country", value }),
+                      })}
+                    </label>
+                    ${renderEditField({
+                      label: "Region",
+                      field: "region",
+                      value: shown.region,
+                      placeholder: "Region (optional)",
+                      onField,
+                    })}
+                    ${status === "error" && error
+                      ? html`<p class=${styles.error}>${error}</p>`
+                      : ""}
+                    ${Button.render({
+                      children: saving ? "Saving…" : "Save profile",
+                      color: "primary",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      isDisabled: saving,
+                      className: styles.editButton,
+                      onClick: onSave,
+                    })}
+                    ${Button.render({
+                      children: "Cancel",
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      className: styles.cancelButton,
+                      onClick: onCancel,
+                    })}
+                  `
+                : html`
+                    <dl class=${styles.rows}>
+                      ${renderRow(
+                        "Website",
+                        displayWebsite(profile.website),
+                        displayWebsite(profile.website) || null,
+                      )}
+                      ${renderRow(
+                        "Instagram",
+                        displayInstagram(profile.instagram_handle),
+                        instagramUrl(profile.instagram_handle),
+                      )}
+                      ${renderRow("Country", profile.country)}
+                      ${renderRow("Region", profile.region)}
+                      ${renderRow("Sub-role", profile.sub_role)}
+                    </dl>
+                    ${Button.render({
+                      children: "Edit profile",
+                      color: "primary",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      className: styles.editButton,
+                      onClick: onEdit,
+                    })}
+                  `}
               ${Button.render({
                 children: "Log out",
                 variant: "outline",

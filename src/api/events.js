@@ -36,7 +36,7 @@ const styleLabels = {
 
 // Boundary layer: rows → generic view models. Field names mirror the DB
 // (snake_case, no conversion); only display derivations happen here.
-function toViewModel(row) {
+export function toViewModel(row) {
   const [year, month, day] = row.event_date.split("-").map(Number)
   const base = {
     id: row.id,

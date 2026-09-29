@@ -27,8 +27,36 @@ function renderFacts(event) {
   `
 }
 
-function renderForm({ entity, onField, onSubmit }) {
-  const canSubmit = entity.motivation.trim().length > 0
+function renderForm({
+  entity,
+  profile_complete,
+  onField,
+  onSubmit,
+  onCompleteProfile,
+}) {
+  const sending = entity.apply_status === "sending"
+  const canSubmit =
+    profile_complete && entity.motivation.trim().length > 0 && !sending
+
+  if (!profile_complete) {
+    return html`
+      <h3 class=${styles.sectionTitle}>Apply for this event</h3>
+      <p class=${styles.warn}>
+        Complete your profile (name, website and Instagram) before applying.
+      </p>
+      <div class=${styles.bottomBar}>
+        ${Button.render({
+          children: "Complete profile",
+          color: "primary",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          onClick: onCompleteProfile,
+        })}
+      </div>
+    `
+  }
+
   return html`
     <form
       class=${styles.form}
@@ -40,32 +68,15 @@ function renderForm({ entity, onField, onSubmit }) {
       <h3 class=${styles.sectionTitle}>Apply for this event</h3>
       <label class=${styles.field}>
         <span>Full name</span>
-        <input
-          type="text"
-          placeholder="Your name"
-          .value=${entity.full_name}
-          @input=${(e) =>
-            onField({ field: "full_name", value: e.target.value })}
-        />
+        <input type="text" .value=${entity.full_name} disabled />
       </label>
       <label class=${styles.field}>
         <span>Website</span>
-        <input
-          type="url"
-          placeholder="https://…"
-          .value=${entity.website}
-          @input=${(e) => onField({ field: "website", value: e.target.value })}
-        />
+        <input type="url" .value=${entity.website} disabled />
       </label>
       <label class=${styles.field}>
         <span>Instagram</span>
-        <input
-          type="text"
-          placeholder="@handle"
-          .value=${entity.instagram}
-          @input=${(e) =>
-            onField({ field: "instagram", value: e.target.value })}
-        />
+        <input type="text" .value=${entity.instagram} disabled />
       </label>
       <p class=${styles.disclaimer}>
         Only ${entity.event.max_applicants} names will be forwarded to the
@@ -82,7 +93,7 @@ function renderForm({ entity, onField, onSubmit }) {
         ></textarea>
       </label>
       ${Button.render({
-        children: "Apply",
+        children: sending ? "Sending…" : "Apply",
         color: "primary",
         shape: "pill",
         size: "md",
@@ -92,6 +103,9 @@ function renderForm({ entity, onField, onSubmit }) {
           if (canSubmit) onSubmit()
         },
       })}
+      ${entity.apply_error
+        ? html`<p class=${styles.error}>${entity.apply_error}</p>`
+        : ""}
     </form>
   `
 }
@@ -118,9 +132,11 @@ function renderSubmitted({ onBack }) {
 
 export function renderDetail({
   entity,
+  profile_complete,
   onBack,
   onField,
   onSubmit,
+  onCompleteProfile,
 }) {
   const { event, status, error } = entity
 
@@ -162,7 +178,13 @@ export function renderDetail({
                 <p class=${styles.countdown}>
                   ${countdownLabel(event)}
                 </p>
-                ${renderForm({ entity, onField, onSubmit })}
+                ${renderForm({
+                  entity,
+                  profile_complete,
+                  onField,
+                  onSubmit,
+                  onCompleteProfile,
+                })}
               `}
     </div>
   `

@@ -1,0 +1,82 @@
+.page {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: var(--vbg);
+  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  color: var(--vink);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: none;
+  color: var(--vmuted);
+  font-size: 14.5px;
+  cursor: pointer;
+  padding: 6px 0 14px;
+}
+
+.statusRow {
+  display: flex;
+  margin-top: 10px;
+}
+
+.sectionTitle {
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: 20px;
+  margin: 22px 0 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field textarea {
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 12px;
+  padding: 11px 13px;
+  outline: none;
+  resize: vertical;
+}
+
+.error {
+  font-size: 13.5px;
+  color: #b3261e;
+  background: rgba(179, 38, 30, 0.08);
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 12px 0 0;
+}
+
+.warn {
+  font-size: 13.5px;
+  color: var(--vmuted);
+  background: var(--vbadge-bg);
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 18px 0 0;
+}
+
+.withdrawRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.empty {
+  text-align: center;
+  color: var(--vmuted);
+  font-size: 14px;
+  padding: 40px 0;
+}

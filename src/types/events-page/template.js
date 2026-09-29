@@ -32,6 +32,7 @@ function renderChipRow({ items, active_id, onSelect, getLabel }) {
 
 export function renderPage({
   events,
+  applied_event_ids,
   status,
   error,
   categories,
@@ -147,7 +148,13 @@ export function renderPage({
               ? html`<p class=${styles.empty}>
                   No events match your search yet.
                 </p>`
-              : shown.map((event) => renderCard({ event, onOpen: onOpenEvent }))}
+              : shown.map((event) =>
+                  renderCard({
+                    event,
+                    applied: applied_event_ids.includes(event.id),
+                    onOpen: onOpenEvent,
+                  }),
+                )}
       </main>
 
       ${renderTabbar({ active: "events", onNavigate })}
