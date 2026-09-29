@@ -56,27 +56,7 @@
   color: var(--vmuted);
 }
 
-.badge {
-  flex-shrink: 0;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  color: var(--vbadge-text);
-  background: var(--vbadge-bg);
-  border-radius: 999px;
-  padding: 4px 9px;
-}
 
-.tag {
-  display: inline-block;
-  font-size: 11.5px;
-  letter-spacing: 0.3px;
-  color: var(--vtag-text);
-  border: 1px solid var(--vtag-border);
-  background: var(--vsurface);
-  border-radius: 999px;
-  padding: 3px 11px;
-}
 
 .facts {
   margin: 16px 0 0;
@@ -155,17 +135,6 @@
   margin: 0;
 }
 
-.submit {
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--vchip-active-text);
-  background: var(--vchip-active-bg);
-  border-radius: 999px;
-  padding: 14px;
-  margin-top: 4px;
-}
 
 .submit:disabled {
   opacity: 0.45;

@@ -2,6 +2,68 @@
   box-sizing: border-box;
 }
 
+/* UI package primary lives in src/theme/tokens.css (per-category bridge) */
+
+/* Calibrate UI package primitives to our sizing/colors.
+   NOTE: selectors carry an element prefix on purpose — package rules are
+   .iw-x.iw-y (0,2,0) and inject after this file, so bare classes lose. */
+/* UI package calibration (buttons, chips) */
+
+button.iw-button {
+  min-height: 48px;
+}
+
+button.iw-button.iw-button-primary {
+  --iw-button-text: var(--iw-color-primary-text);
+}
+
+span.iw-chip.iw-chip {
+  border: 1px solid var(--vchip-border);
+  background: transparent;
+  color: var(--vmuted);
+}
+
+span.iw-chip.iw-chip-primary {
+  background: var(--iw-color-primary);
+  color: var(--iw-color-primary-text);
+  border-color: var(--iw-color-primary);
+}
+
+/* Search box rebuilt on the UI Input frame. Lives here (not in the module)
+   because public/ edits force a full reload, unlike module HMR. */
+.vaitu-search .iw-input-field .iw-input-frame {
+  background: var(--vsurface);
+  border-radius: 10px;
+  padding: 12px 14px;
+  gap: 9px;
+}
+
+.vaitu-search .iw-input-field input.iw-input {
+  border: none;
+  background: transparent;
+  min-height: 0;
+  height: auto;
+  padding: 0 0 0 20px;
+  font-size: 14.5px;
+  color: #22301f;
+}
+
+.vaitu-search .iw-input-field input.iw-input::placeholder {
+  color: #8a8f7f;
+}
+
+.vaitu-search .iw-input-field input.iw-input:hover,
+.vaitu-search .iw-input-field input.iw-input:focus {
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.vaitu-search .iw-input-field span.iw-input-icon {
+  color: var(--vmuted);
+}
+
 body {
   margin: 0;
   background: #e7e2d3;

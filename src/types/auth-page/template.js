@@ -1,7 +1,20 @@
 import { html } from "@inglorious/web"
+import { Button } from "@inglorious/ui/button"
 
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
+
+function renderSubmit({ busy, label, onClick }) {
+  return Button.render({
+    children: busy ? "Please wait…" : label,
+    color: "primary",
+    shape: "pill",
+    size: "md",
+    isFullWidth: true,
+    isDisabled: busy,
+    onClick,
+  })
+}
 
 function renderError(error) {
   return error ? html`<p class=${styles.error}>${error}</p>` : ""
@@ -23,14 +36,15 @@ function renderEmailStep({ entity, busy, onField, onCheckEmail }) {
       </label>
       ${renderError(entity.error)}
       <div class=${styles.bottomBar}>
-        <button
-          class=${styles.submit}
-          type="button"
-          @click=${onCheckEmail}
-          ?disabled=${busy}
-        >
-          ${busy ? "Checking…" : "Continue"}
-        </button>
+        ${Button.render({
+          children: busy ? "Checking…" : "Continue",
+          color: "primary",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          isDisabled: busy,
+          onClick: onCheckEmail,
+        })}
       </div>
     </div>
   `
@@ -85,14 +99,7 @@ function renderLoginStep({
       </label>
       ${renderError(entity.error)}
       <div class=${styles.bottomBar}>
-        <button
-          class=${styles.submit}
-          type="button"
-          @click=${onLogin}
-          ?disabled=${busy}
-        >
-          ${busy ? "Please wait…" : "Log in"}
-        </button>
+        ${renderSubmit({ busy, label: "Log in", onClick: onLogin })}
       </div>
     </div>
   `
@@ -194,14 +201,7 @@ function renderSignupStep({
       </label>
       ${renderError(entity.error)}
       <div class=${styles.bottomBar}>
-        <button
-          class=${styles.submit}
-          type="button"
-          @click=${onContinue}
-          ?disabled=${busy}
-        >
-          Continue
-        </button>
+        ${renderSubmit({ busy, label: "Continue", onClick: onContinue })}
       </div>
     </div>
   `

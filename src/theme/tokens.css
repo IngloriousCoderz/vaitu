@@ -1,8 +1,33 @@
 /* Vaitu theme tokens. Neutral chrome + per-category skins.
    Page root carries data-category="wedding|festival"; tokens flip the skin. */
 
-/* Smooth skin change when data-category flips. Only color properties
-   transition, so layout is unaffected; remounted cards appear instantly. */
+/* Bridge: UI package tokens follow our skins. Component colors resolve
+   through --iw-color-primary, which flips per category below. */
+:root {
+  --iw-color-primary: #6b7a5e;
+  --iw-color-primary-hover: #5f6d53;
+  --iw-color-primary-active: #54614a;
+  --iw-font-family-sans:
+    system-ui, -apple-system, "Segoe UI", sans-serif;
+  --iw-input-text: var(--vink);
+  --iw-input-text-placeholder: var(--vmuted);
+  --iw-card-bg: var(--vsurface);
+  --iw-card-radius: 14px;
+  --iw-card-shadow: none;
+  --iw-card-shadow-hover: none;
+}
+
+[data-category="wedding"] {
+  --iw-color-primary: #6b7a5e;
+  --iw-color-primary-hover: #5f6d53;
+  --iw-color-primary-active: #54614a;
+}
+
+[data-category="festival"] {
+  --iw-color-primary: #6d28d9;
+  --iw-color-primary-hover: #5b21b6;
+  --iw-color-primary-active: #4c1d95;
+}
 [data-category],
 [data-category] * {
   transition:

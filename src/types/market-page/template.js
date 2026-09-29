@@ -1,9 +1,34 @@
 import { html } from "@inglorious/web"
+import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
+import { Button } from "@inglorious/ui/button"
+import { Chip } from "@inglorious/ui/chip"
+import { Input } from "@inglorious/ui/input"
 
 import { renderCard } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
+
+function renderChipRow({ items, active_id, onSelect, getLabel }) {
+  return html`
+    <div class=${styles.chips}>
+      ${items.map(
+        (item) => html`
+          <button
+            type="button"
+            class=${styles.chipButton}
+            @click=${() => onSelect(item.id)}
+          >
+            ${Chip.render({
+              children: getLabel(item),
+              color: item.id === active_id ? "primary" : "default",
+            })}
+          </button>
+        `,
+      )}
+    </div>
+  `
+}
 
 export function renderPage({
   events,
@@ -56,48 +81,30 @@ export function renderPage({
         </button>
       </header>
 
-      <div class=${styles.search}>
-        ${renderIcon({ name: "search", size: 15 })}
-        <input
-          class=${styles.searchInput}
-          type="search"
-          placeholder="Find events by city, style or genre..."
-          .value=${query}
-          @input=${(e) => onSearch(e.target.value)}
-        />
+      <div class="vaitu-search">
+        ${Input.render({
+          inputType: "search",
+          isFullWidth: true,
+          placeholder: "Find events by city, style or genre...",
+          value: query,
+          icon: renderIcon({ name: "search", size: 15 }),
+          onChange: (value) => onSearch(value),
+        })}
       </div>
 
-      <div class=${styles.chips}>
-        ${categories.map(
-          (category) => html`
-            <button
-              type="button"
-              class=${category.id === active_category
-                ? `${styles.chip} ${styles.chipActive}`
-                : styles.chip}
-              @click=${() => onSelectCategory(category.id)}
-            >
-              ${category.label}
-            </button>
-          `,
-        )}
-      </div>
+      ${renderChipRow({
+        items: categories,
+        active_id: active_category,
+        onSelect: onSelectCategory,
+        getLabel: (category) => category.label,
+      })}
 
-      <div class=${styles.chips}>
-        ${filters.map(
-          (filter) => html`
-            <button
-              type="button"
-              class=${filter.id === active_filter
-                ? `${styles.chip} ${styles.chipActive}`
-                : styles.chip}
-              @click=${() => onSelectFilter(filter.id)}
-            >
-              ${filter.label}
-            </button>
-          `,
-        )}
-      </div>
+      ${renderChipRow({
+        items: filters,
+        active_id: active_filter,
+        onSelect: onSelectFilter,
+        getLabel: (filter) => filter.label,
+      })}
 
       ${show_filters
         ? html`
@@ -107,53 +114,27 @@ export function renderPage({
                 @click=${(e) => e.stopPropagation()}
               >
                 <h3 class=${styles.sheetTitle}>Region</h3>
-                <div class=${styles.chips}>
-                  <button
-                    type="button"
-                    class=${active_region === "all"
-                      ? `${styles.chip} ${styles.chipActive}`
-                      : styles.chip}
-                    @click=${() => onSelectRegion("all")}
-                  >
-                    All regions
-                  </button>
-                  ${regions.map(
-                    (region) => html`
-                      <button
-                        type="button"
-                        class=${region === active_region
-                          ? `${styles.chip} ${styles.chipActive}`
-                          : styles.chip}
-                        @click=${() => onSelectRegion(region)}
-                      >
-                        ${region}
-                      </button>
-                    `,
-                  )}
-                </div>
+                ${renderChipRow({
+                  items: [{ id: "all", label: "All regions" }].concat(
+                    regions.map((region) => ({ id: region, label: region })),
+                  ),
+                  active_id: active_region,
+                  onSelect: onSelectRegion,
+                  getLabel: (item) => item.label,
+                })}
                 <h3 class=${styles.sheetTitle}>Period</h3>
-                <div class=${styles.chips}>
-                  ${periods.map(
-                    (period) => html`
-                      <button
-                        type="button"
-                        class=${period.id === active_period
-                          ? `${styles.chip} ${styles.chipActive}`
-                          : styles.chip}
-                        @click=${() => onSelectPeriod(period.id)}
-                      >
-                        ${period.label}
-                      </button>
-                    `,
-                  )}
-                </div>
-                <button
-                  class=${styles.clearButton}
-                  type="button"
-                  @click=${onClearFilters}
-                >
-                  Clear all
-                </button>
+                ${renderChipRow({
+                  items: periods,
+                  active_id: active_period,
+                  onSelect: onSelectPeriod,
+                  getLabel: (period) => period.label,
+                })}
+                ${Button.render({
+                  children: "Clear all",
+                  variant: "ghost",
+                  isFullWidth: true,
+                  onClick: onClearFilters,
+                })}
               </div>
             </div>
           `
@@ -171,27 +152,35 @@ export function renderPage({
       </main>
 
       <nav class=${styles.tabbar}>
-        <span class=${`${styles.tab} ${styles.tabActive}`}>
-          ${renderIcon({ name: "bag" })}
-          <span>Market</span>
-        </span>
-        <span class=${styles.tab}>
-          ${renderIcon({ name: "ticket" })}
-          <span>My Bids</span>
-        </span>
-        <span class=${styles.tab} @click=${onSeeker}>
-          ${seeker_tab
-            ? html`
-                <span class=${styles.avatarTab}>
-                  ${seeker_tab.initials}
-                </span>
-                <span>${seeker_tab.label}</span>
-              `
-            : html`
-                ${renderIcon({ name: "user" })}
-                <span>Seeker</span>
-              `}
-        </span>
+        ${BottomNavigation.render({
+          value: "market",
+          onChange: (value) => {
+            if (value === "seeker") onSeeker()
+          },
+          actions: [
+            {
+              value: "market",
+              label: "Market",
+              icon: renderIcon({ name: "bag" }),
+            },
+            {
+              value: "bids",
+              label: "My Bids",
+              icon: renderIcon({ name: "ticket" }),
+            },
+            {
+              value: "seeker",
+              label: seeker_tab ? seeker_tab.label : "Seeker",
+              icon: seeker_tab
+                ? html`
+                    <span class=${styles.avatarTab}>
+                      ${seeker_tab.initials}
+                    </span>
+                  `
+                : renderIcon({ name: "user" }),
+            },
+          ],
+        })}
       </nav>
     </div>
   `

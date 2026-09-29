@@ -20,19 +20,6 @@
   padding: 6px 0 14px;
 }
 
-.avatar {
-  width: 84px;
-  height: 84px;
-  margin: 12px auto 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--vtitle-font);
-  font-size: 28px;
-  color: #fffdf7;
-  background: linear-gradient(135deg, #6b7a5e, #24402f);
-}
 
 .name {
   margin: 14px 0 0;
@@ -47,17 +34,6 @@
   color: var(--vmuted);
 }
 
-.roleChip {
-  display: inline-block;
-  font-size: 11.5px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: var(--vbadge-text);
-  background: var(--vbadge-bg);
-  border-radius: 999px;
-  padding: 4px 12px;
-}
 
 .rows {
   margin: 20px 0 0;
@@ -83,16 +59,8 @@
   font-weight: 600;
 }
 
-.logout {
-  width: 100%;
-  border: 1px solid var(--vchip-border);
-  background: none;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--vink);
-  border-radius: 999px;
-  padding: 14px;
+
+.logoutButton {
   margin-top: 26px;
 }
 

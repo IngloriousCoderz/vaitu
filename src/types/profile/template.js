@@ -1,4 +1,7 @@
 import { html } from "@inglorious/web"
+import { Avatar } from "@inglorious/ui/avatar"
+import { Button } from "@inglorious/ui/button"
+import { Chip } from "@inglorious/ui/chip"
 
 import { renderIcon } from "../icon/index.js"
 import { initials } from "./helpers.js"
@@ -28,22 +31,28 @@ export function renderProfile({ entity, onBack, onLogout }) {
         : status === "error"
           ? html`<p class=${styles.empty}>${error}</p>`
           : html`
-              <div class=${styles.avatar}>${initials(profile.full_name)}</div>
+              ${Avatar.render({
+                initials: initials(profile.full_name),
+                size: "lg",
+                backgroundColor:
+                  "linear-gradient(135deg, #6b7a5e, #24402f)",
+                textColor: "#fffdf7",
+              })}
               <h2 class=${styles.name}>${profile.full_name}</h2>
               <p class=${styles.email}>${profile.email}</p>
-              <span class=${styles.roleChip}>${profile.role}</span>
+              ${Chip.render({ children: profile.role })}
               <dl class=${styles.rows}>
                 ${renderRow("Country", profile.country)}
                 ${renderRow("Region", profile.region)}
                 ${renderRow("Sub-role", profile.sub_role)}
               </dl>
-              <button
-                class=${styles.logout}
-                type="button"
-                @click=${onLogout}
-              >
-                Log out
-              </button>
+              ${Button.render({
+                children: "Log out",
+                variant: "outline",
+                isFullWidth: true,
+                className: styles.logoutButton,
+                onClick: onLogout,
+              })}
             `}
     </div>
   `

@@ -1,4 +1,7 @@
 import { html } from "@inglorious/web"
+import { Badge } from "@inglorious/ui/badge"
+import { Button } from "@inglorious/ui/button"
+import { Chip } from "@inglorious/ui/chip"
 
 import { countdownLabel } from "../../api/events.js"
 import { renderIcon } from "../icon/index.js"
@@ -78,13 +81,17 @@ function renderForm({ entity, onField, onSubmit }) {
             onField({ field: "motivation", value: e.target.value })}
         ></textarea>
       </label>
-      <button
-        class=${styles.submit}
-        type="submit"
-        ?disabled=${!canSubmit}
-      >
-        Apply
-      </button>
+      ${Button.render({
+        children: "Apply",
+        color: "primary",
+        shape: "pill",
+        size: "md",
+        isFullWidth: true,
+        isDisabled: !canSubmit,
+        onClick: () => {
+          if (canSubmit) onSubmit()
+        },
+      })}
     </form>
   `
 }
@@ -97,9 +104,14 @@ function renderSubmitted({ onBack }) {
       <p class=${styles.feedback}>
         You will receive feedback within a few days.
       </p>
-      <button class=${styles.submit} type="button" @click=${onBack}>
-        Back to events
-      </button>
+      ${Button.render({
+        children: "Back to events",
+        color: "primary",
+        shape: "pill",
+        size: "md",
+        isFullWidth: true,
+        onClick: onBack,
+      })}
     </div>
   `
 }
@@ -136,12 +148,13 @@ export function renderDetail({
                 </div>
                 <div class=${styles.topRow}>
                   <h2 class=${styles.title}>${event.title}</h2>
-                  <span class=${styles.badge}>
-                    ${deadlineBadge(event)}
-                  </span>
+                  ${Badge.render({
+                    children: deadlineBadge(event),
+                    shape: "pill",
+                  })}
                 </div>
                 <p class=${styles.meta}>${event.subtitle}</p>
-                <span class=${styles.tag}>${event.tag}</span>
+                ${Chip.render({ children: event.tag })}
                 ${renderFacts(event)}
                 <p class=${styles.sender}>
                   Organized by ${entity.sender_name}
