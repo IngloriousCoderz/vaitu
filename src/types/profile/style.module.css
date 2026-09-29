@@ -8,17 +8,6 @@
   text-align: center;
 }
 
-.back {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  background: none;
-  color: var(--vmuted);
-  font-size: 14.5px;
-  cursor: pointer;
-  padding: 6px 0 14px;
-}
 
 
 .name {

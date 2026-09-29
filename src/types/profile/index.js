@@ -11,8 +11,13 @@ export const Profile = {
     const id = entity.id
     return renderProfile({
       entity,
-      onBack: () => api.notify(`#${id}:close`),
       onLogout: () => api.notify(`#${id}:logout`),
+      onNavigate: (value) => {
+        if (value === "events") {
+          api.notify(`#${id}:close`)
+          api.notify("#detail:close")
+        }
+      },
     })
   },
 }

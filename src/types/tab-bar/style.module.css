@@ -1,0 +1,15 @@
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(430px, 100%);
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 10;
+  --iw-color-surface: var(--vbg);
+  --iw-color-border: var(--vline);
+}
+
+.tabbar nav {
+  width: 100%;
+}

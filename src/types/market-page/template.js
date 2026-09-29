@@ -1,11 +1,11 @@
 import { html } from "@inglorious/web"
-import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Input } from "@inglorious/ui/input"
 
 import { renderCard } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
+import { renderTabbar } from "../tab-bar/template.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -53,8 +53,7 @@ export function renderPage({
   onSelectPeriod,
   onClearFilters,
   onOpenEvent,
-  onSeeker,
-  seeker_tab,
+  onNavigate,
 }) {
   const shown = visibleEvents(
     events,
@@ -151,37 +150,7 @@ export function renderPage({
               : shown.map((event) => renderCard({ event, onOpen: onOpenEvent }))}
       </main>
 
-      <nav class=${styles.tabbar}>
-        ${BottomNavigation.render({
-          value: "market",
-          onChange: (value) => {
-            if (value === "seeker") onSeeker()
-          },
-          actions: [
-            {
-              value: "market",
-              label: "Market",
-              icon: renderIcon({ name: "bag" }),
-            },
-            {
-              value: "bids",
-              label: "My Bids",
-              icon: renderIcon({ name: "ticket" }),
-            },
-            {
-              value: "seeker",
-              label: seeker_tab ? seeker_tab.label : "Seeker",
-              icon: seeker_tab
-                ? html`
-                    <span class=${styles.avatarTab}>
-                      ${seeker_tab.initials}
-                    </span>
-                  `
-                : renderIcon({ name: "user" }),
-            },
-          ],
-        })}
-      </nav>
+      ${renderTabbar({ active: "events", onNavigate })}
     </div>
   `
 }

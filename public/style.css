@@ -29,6 +29,14 @@ span.iw-chip.iw-chip-primary {
   border-color: var(--iw-color-primary);
 }
 
+.iw-bottom-navigation-action-selected .iw-bottom-navigation-label {
+  font-weight: 800;
+}
+
+nav.iw-bottom-navigation .iw-bottom-navigation-action-selected {
+  color: var(--vchip-active-bg);
+}
+
 /* Search box rebuilt on the UI Input frame. Lives here (not in the module)
    because public/ edits force a full reload, unlike module HMR. */
 .vaitu-search .iw-input-field .iw-input-frame {

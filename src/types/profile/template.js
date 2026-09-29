@@ -3,8 +3,8 @@ import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 
-import { renderIcon } from "../icon/index.js"
 import { initials } from "./helpers.js"
+import { renderTabbar } from "../tab-bar/template.js"
 import styles from "./style.module.css"
 
 function renderRow(label, value) {
@@ -16,16 +16,11 @@ function renderRow(label, value) {
   `
 }
 
-export function renderProfile({ entity, onBack, onLogout }) {
+export function renderProfile({ entity, onLogout, onNavigate }) {
   const { profile, status, error } = entity
 
   return html`
     <div class=${styles.page} data-category="wedding">
-      <button class=${styles.back} type="button" @click=${onBack}>
-        ${renderIcon({ name: "arrow-left", size: 16 })}
-        <span>Back</span>
-      </button>
-
       ${status === "loading"
         ? html`<p class=${styles.empty}>Loading profile…</p>`
         : status === "error"
@@ -54,6 +49,7 @@ export function renderProfile({ entity, onBack, onLogout }) {
                 onClick: onLogout,
               })}
             `}
+      ${renderTabbar({ active: "profile", onNavigate })}
     </div>
   `
 }
