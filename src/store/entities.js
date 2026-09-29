@@ -8,7 +8,7 @@ export const entities = {
     active_period: "all",
     show_filters: false,
     events: [],
-    applied_event_ids: [],
+    applied_map: {},
     status: "loading",
     error: null,
   },
@@ -64,9 +64,10 @@ export const entities = {
     status: "idle",
     error: null,
   },
-  application_detail: {
+  "application-detail": {
     type: "ApplicationDetail",
     application_id: null,
+    return_to: null,
     application: null,
     motivation: "",
     confirming_withdraw: false,

@@ -6,12 +6,19 @@ import {
   withdrawApplication,
 } from "../../api/applications.js"
 
-export function open(entity, application_id, api) {
+export function open(entity, { application_id, return_to }, api) {
   entity.application_id = application_id
+  entity.return_to = return_to ?? "applications"
   entity.application = null
   entity.motivation = ""
   entity.confirming_withdraw = false
   api.notify(`#${entity.id}:loadApplication`, application_id)
+}
+
+export function back(entity, _, api) {
+  const return_to = entity.return_to ?? "applications"
+  api.notify(`#${entity.id}:close`)
+  if (return_to === "applications") api.notify("#applications:open")
 }
 
 export function close(entity) {
@@ -83,6 +90,7 @@ export const withdraw = handleAsync("withdraw", {
     entity.status = "ready"
     entity.confirming_withdraw = false
     api.notify(`#${entity.id}:close`)
+    api.notify("#events:loadEvents")
     api.notify("#applications:open")
   },
   error(entity, err) {

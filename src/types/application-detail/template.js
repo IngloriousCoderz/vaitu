@@ -68,6 +68,7 @@ export function renderApplicationDetail({
                 size: "md",
                 isFullWidth: true,
                 isDisabled: !canSave,
+                className: styles.saveButton,
                 onClick: () => {
                   if (canSave) onSave()
                 },
@@ -79,8 +80,8 @@ export function renderApplicationDetail({
               ${entity.confirming_withdraw
                 ? html`
                     <p class=${styles.warn}>
-                      Withdraw this application? The organizer will no longer
-                      see it.
+                      Are you sure you want to withdraw your application?
+                      The organizer will no longer see it.
                     </p>
                     <div class=${styles.withdrawRow}>
                       ${Button.render({
@@ -89,6 +90,7 @@ export function renderApplicationDetail({
                             ? "Withdrawing…"
                             : "Yes, withdraw",
                         color: "error",
+                        variant: "outline",
                         shape: "pill",
                         size: "md",
                         isFullWidth: true,
@@ -110,10 +112,12 @@ export function renderApplicationDetail({
                 : html`
                     ${Button.render({
                       children: "Withdraw application",
+                      color: "error",
                       variant: "outline",
                       shape: "pill",
                       size: "md",
                       isFullWidth: true,
+                      className: styles.withdrawButton,
                       onClick: onAskWithdraw,
                     })}
                   `}

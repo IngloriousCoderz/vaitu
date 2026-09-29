@@ -32,7 +32,7 @@ function renderChipRow({ items, active_id, onSelect, getLabel }) {
 
 export function renderPage({
   events,
-  applied_event_ids,
+  applied_map,
   status,
   error,
   categories,
@@ -151,7 +151,7 @@ export function renderPage({
               : shown.map((event) =>
                   renderCard({
                     event,
-                    applied: applied_event_ids.includes(event.id),
+                    applied: Boolean(applied_map[event.id]),
                     onOpen: onOpenEvent,
                   }),
                 )}

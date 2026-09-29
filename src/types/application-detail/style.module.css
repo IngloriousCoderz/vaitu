@@ -47,6 +47,15 @@
   padding: 11px 13px;
   outline: none;
   resize: vertical;
+  margin-bottom: 6px;
+}
+
+.saveButton {
+  margin-top: 14px;
+}
+
+.withdrawButton {
+  margin-top: 12px;
 }
 
 .error {

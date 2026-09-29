@@ -25,18 +25,18 @@ export async function fetchMyApplications() {
   }))
 }
 
-export async function fetchMyApplicationEventIds() {
+export async function fetchMyApplicationMap() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) return []
+  if (!user) return {}
   const { data, error } = await supabase
     .from("applications")
-    .select("event_id")
+    .select("id,event_id")
     .eq("applicant_id", user.id)
     .abortSignal(AbortSignal.timeout(15000))
   if (error) throw error
-  return data.map((row) => row.event_id)
+  return Object.fromEntries(data.map((row) => [row.event_id, row.id]))
 }
 
 export async function fetchApplicationDetail(application_id) {

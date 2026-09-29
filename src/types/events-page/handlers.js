@@ -1,6 +1,6 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { fetchMyApplicationEventIds } from "../../api/applications.js"
+import { fetchMyApplicationMap } from "../../api/applications.js"
 import { fetchOpenEvents } from "../../api/events.js"
 
 export function search(entity, query) {
@@ -39,16 +39,16 @@ export const loadEvents = handleAsync("loadEvents", {
     entity.error = null
   },
   async run() {
-    const [events, applied_event_ids] = await Promise.all([
+    const [events, applied_map] = await Promise.all([
       fetchOpenEvents(),
-      fetchMyApplicationEventIds(),
+      fetchMyApplicationMap(),
     ])
-    return { events, applied_event_ids }
+    return { events, applied_map }
   },
-  success(entity, { events, applied_event_ids }) {
+  success(entity, { events, applied_map }) {
     entity.status = "ready"
     entity.events = events
-    entity.applied_event_ids = applied_event_ids
+    entity.applied_map = applied_map
   },
   error(entity, err) {
     entity.status = "error"

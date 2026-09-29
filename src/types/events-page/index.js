@@ -25,7 +25,7 @@ export const EventsPage = {
     const id = entity.id
     return renderPage({
       events: entity.events,
-      applied_event_ids: entity.applied_event_ids,
+      applied_map: entity.applied_map,
       status: entity.status,
       error: entity.error,
       categories,
@@ -50,7 +50,17 @@ export const EventsPage = {
       onSelectPeriod: (period_id) =>
         api.notify(`#${id}:selectPeriod`, period_id),
       onClearFilters: () => api.notify(`#${id}:clearFilters`),
-      onOpenEvent: (event_id) => api.notify("#detail:open", event_id),
+      onOpenEvent: (event_id) => {
+        const application_id = entity.applied_map[event_id]
+        if (application_id) {
+          api.notify("#application-detail:open", {
+            application_id,
+            return_to: "events",
+          })
+        } else {
+          api.notify("#detail:open", event_id)
+        }
+      },
       onNavigate: (value) => {
         if (value === "profile") {
           api.notify("#applications:close")

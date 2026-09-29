@@ -12,7 +12,11 @@ export const ApplicationsPage = {
       entity,
       onOpenEvent: (event_id) => {
         const application = entity.applications.find((a) => a.id === event_id)
-        if (application) api.notify("#application-detail:open", application.application_id)
+        if (application)
+          api.notify("#application-detail:open", {
+            application_id: application.application_id,
+            return_to: "applications",
+          })
       },
       onNavigate: (value) => {
         if (value === "events") {

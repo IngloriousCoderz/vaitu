@@ -23,10 +23,7 @@ export const ApplicationDetail = {
       onWithdraw: () =>
         api.notify(`#${id}:withdraw`, entity.application_id),
       onCancelWithdraw: () => api.notify(`#${id}:cancelWithdraw`),
-      onBack: () => {
-        api.notify(`#${id}:close`)
-        api.notify("#applications:open")
-      },
+      onBack: () => api.notify(`#${id}:back`),
       onNavigate: (value) => {
         if (value === "events") {
           api.notify(`#${id}:close`)
