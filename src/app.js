@@ -20,6 +20,6 @@ export const App = {
     if (profile.open) return api.render("profile")
     const detail = api.getEntity("detail")
     if (detail.event_id) return api.render("detail")
-    return api.render("market")
+    return api.render("events")
   },
 }

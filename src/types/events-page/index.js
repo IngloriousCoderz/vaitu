@@ -12,7 +12,7 @@ import {
 } from "./handlers.js"
 import { renderPage } from "./template.js"
 
-export const MarketPage = {
+export const EventsPage = {
   search,
   selectCategory,
   selectFilter,

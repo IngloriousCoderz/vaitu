@@ -1,6 +1,6 @@
 export const entities = {
-  market: {
-    type: "MarketPage",
+  events: {
+    type: "EventsPage",
     query: "",
     active_category: "wedding",
     active_filter: "all",

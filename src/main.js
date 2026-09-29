@@ -16,7 +16,7 @@ import { store } from "./store"
 
 mount(store, (api) => App.render(null, api), document.getElementById("root"))
 
-store.notify("#market:loadEvents")
+store.notify("#events:loadEvents")
 
 function trackSession(session) {
   if (session) {
