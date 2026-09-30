@@ -33,6 +33,10 @@ export function clearFilters(entity) {
   entity.active_period = "all"
 }
 
+export function clearApplied(entity) {
+  entity.applied_map = {}
+}
+
 export const loadEvents = handleAsync("loadEvents", {
   start(entity) {
     entity.status = "loading"
