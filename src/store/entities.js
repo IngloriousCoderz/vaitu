@@ -100,6 +100,7 @@ export const entities = {
     event_id: null,
     event_title: "",
     max_applicants: 5,
+    expanded_application_id: null,
     items: [],
     status: "idle",
     error: null,

@@ -48,11 +48,89 @@
   padding: 14px;
 }
 
-.topRow {
+.row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
+}
+
+.rowButton {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.rowButton .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quickActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.chevron {
+  display: flex;
+  color: var(--vmuted);
+  transition: transform 0.25s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.expanded {
+  animation: expand-in 0.25s ease;
+}
+
+@keyframes expand-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.iconButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vsurface);
+}
+
+.iconButton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.approveButton {
+  border: none;
+  color: #fffdf7;
+  background: var(--vchip-active-bg);
+}
+
+.rejectButton {
+  border: 1px solid var(--vchip-border);
+  color: var(--vmuted);
 }
 
 .name {
@@ -62,22 +140,41 @@
   font-size: 19px;
 }
 
-.meta {
-  margin: 4px 0 8px;
-  font-size: 13px;
-  color: var(--vmuted);
-}
-
 .metaLink {
   color: var(--vaccent);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 16px 0 20px;
+}
+
+.links .metaLink,
+.metaRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+}
+
+.metaRow {
+  color: var(--vmuted);
+}
+
 .motivation {
   margin: 0 0 12px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--vink);
+  background: var(--vsurface);
+  border-left: 3px solid var(--vaccent);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 14px;
 }
 
 .actions {

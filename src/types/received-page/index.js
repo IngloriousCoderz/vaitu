@@ -11,6 +11,8 @@ export const ReceivedPage = {
     const id = entity.id
     return renderReceived({
       entity,
+      onToggle: (application_id) =>
+        api.notify(`#${id}:toggleExpand`, application_id),
       onSelect: (application_id) =>
         api.notify(`#${id}:setStatus`, {
           application_id,

@@ -78,3 +78,24 @@ export async function withdrawApplication(application_id) {
   if (error) throw error
   return true
 }
+
+export async function updateApplicationStatus(application_id, status) {
+  const { error } = await supabase
+    .from("applications")
+    .update({ status })
+    .eq("id", application_id)
+  if (error) throw error
+  return true
+}
+
+export async function fetchReceivedDetail(application_id) {
+  const { data, error } = await supabase
+    .from("applications")
+    .select(
+      "id, status, motivation, created_at, event_id, applicant:profiles!applications_applicant_id_fkey(full_name, website, instagram_handle, country)",
+    )
+    .eq("id", application_id)
+    .single()
+  if (error) throw error
+  return data
+}

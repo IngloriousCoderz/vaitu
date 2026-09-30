@@ -5,7 +5,9 @@ import { supabase } from "../../api/client.js"
 export function open(entity, event_id, api) {
   entity.event_id = event_id
   entity.event_title = ""
+  entity.max_applicants = 5
   entity.items = []
+  entity.expanded_application_id = null
   api.notify(`#${entity.id}:loadReceived`, event_id)
 }
 
@@ -13,8 +15,14 @@ export function close(entity) {
   entity.event_id = null
   entity.event_title = ""
   entity.items = []
+  entity.expanded_application_id = null
   entity.status = "idle"
   entity.error = null
+}
+
+export function toggleExpand(entity, application_id) {
+  entity.expanded_application_id =
+    entity.expanded_application_id === application_id ? null : application_id
 }
 
 export const loadReceived = handleAsync("loadReceived", {
