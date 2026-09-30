@@ -37,6 +37,7 @@ export function renderMyEvents({ entity, onOpenEvent }) {
                     <div class=${styles.event}>
                       ${renderCard({
                         event,
+                        divider: false,
                         onOpen: onOpenEvent,
                       })}
                       <div class=${styles.eventFooter}>

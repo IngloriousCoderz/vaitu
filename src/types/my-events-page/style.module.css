@@ -23,6 +23,7 @@
 
 .event {
   padding-bottom: 14px;
+  border-bottom: 1px solid var(--vline);
 }
 
 .eventFooter {
