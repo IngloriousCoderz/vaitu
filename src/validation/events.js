@@ -72,3 +72,26 @@ export const eventSchema = z
       }
     }
   })
+
+// Stricter shape for the creation form: everything the NOT NULL columns need.
+// Standalone (not .extend) because Zod v4 forbids extending refined schemas.
+export const createEventSchema = z
+  .object({
+    category: z.string().default("wedding"),
+    title: z.string().trim().min(1),
+    location: z.string().trim().min(1),
+    country: z.string().trim().min(1),
+    region: z.string().trim().min(1),
+    event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date"),
+    application_deadline: z.string().datetime({ message: "Pick a deadline" }),
+    max_applicants: z.number().int().positive().default(5),
+    details: z.record(z.string(), z.unknown()).default({}),
+  })
+  .superRefine((event, ctx) => {
+    const parsed = detailsSchemaFor(event.category).safeParse(event.details)
+    if (!parsed.success) {
+      for (const issue of parsed.error.issues) {
+        ctx.addIssue({ ...issue, path: ["details", ...issue.path] })
+      }
+    }
+  })

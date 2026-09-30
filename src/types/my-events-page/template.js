@@ -59,6 +59,7 @@ export function renderMyEvents({ entity, onNavigate }) {
         onNavigate,
         tabs: [
           { value: "events", label: "My Events", icon: "compass" },
+          { value: "new", label: "New", icon: "plus" },
           { value: "profile", label: "Profile", icon: "user" },
         ],
       })}

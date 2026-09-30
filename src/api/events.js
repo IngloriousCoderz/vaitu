@@ -1,4 +1,5 @@
 import { supabase } from "./client.js"
+import { createEventSchema } from "../validation/events.js"
 
 const DAY_MS = 86400000
 const NEW_THRESHOLD_MS = 3 * DAY_MS
@@ -167,4 +168,22 @@ export async function fetchOpenEvents() {
     .abortSignal(AbortSignal.timeout(15000))
   if (error) throw error
   return data.map(toViewModel)
+}
+
+export async function createEvent(payload) {
+  const parsed = createEventSchema.safeParse(payload)
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? "Invalid event")
+  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Not logged in")
+  const { error } = await supabase.from("events").insert({
+    ...parsed.data,
+    sender_id: user.id,
+    status: "open",
+  })
+  if (error) throw error
+  return true
 }

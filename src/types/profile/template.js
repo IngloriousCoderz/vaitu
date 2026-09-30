@@ -79,6 +79,7 @@ function renderEditField({
 
 export function renderProfile({
   entity,
+  tabs,
   onEdit,
   onCancel,
   onField,
@@ -221,7 +222,7 @@ export function renderProfile({
                 onClick: onLogout,
               })}
             `}
-      ${renderTabbar({ active: "profile", onNavigate })}
+      ${renderTabbar({ active: "profile", tabs, onNavigate })}
     </div>
   `
 }

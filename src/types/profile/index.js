@@ -12,6 +12,14 @@ export const Profile = {
     const id = entity.id
     return renderProfile({
       entity,
+      tabs:
+        api.getEntity("profile").profile?.role === "sender"
+          ? [
+              { value: "events", label: "My Events", icon: "compass" },
+              { value: "new", label: "New", icon: "plus" },
+              { value: "profile", label: "Profile", icon: "user" },
+            ]
+          : undefined,
       onEdit: () => api.notify(`#${id}:startEdit`),
       onCancel: () => api.notify(`#${id}:cancelEdit`),
       onField: ({ field, value }) =>
@@ -29,6 +37,10 @@ export const Profile = {
           api.notify(`#${id}:close`)
           api.notify("#detail:close")
           api.notify("#applications:open")
+        }
+        if (value === "new") {
+          api.notify(`#${id}:close`)
+          api.notify("#create_event:open")
         }
       },
     })

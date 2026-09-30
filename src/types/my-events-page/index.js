@@ -7,14 +7,11 @@ export const MyEventsPage = {
   ...syncHandlers,
   ...loadMyEvents,
   render(entity, api) {
-    const id = entity.id
     return renderMyEvents({
       entity,
       onNavigate: (value) => {
-        if (value === "profile") {
-          api.notify(`#${id}:close`)
-          api.notify("#profile:open")
-        }
+        if (value === "profile") api.notify("#profile:open")
+        if (value === "new") api.notify("#create_event:open")
       },
     })
   },
