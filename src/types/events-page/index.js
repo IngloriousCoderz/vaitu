@@ -61,17 +61,6 @@ export const EventsPage = {
           api.notify("#detail:open", event_id)
         }
       },
-      onNavigate: (value) => {
-        if (value === "profile") {
-          api.notify("#applications:close")
-          api.notify("#detail:close")
-          api.notify("#profile:open")
-        }
-        if (value === "applications") {
-          api.notify("#detail:close")
-          api.notify("#applications:open")
-        }
-      },
     })
   },
 }

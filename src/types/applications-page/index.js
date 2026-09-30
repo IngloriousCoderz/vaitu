@@ -18,17 +18,6 @@ export const ApplicationsPage = {
             returnTo: "applications",
           })
       },
-      onNavigate: (value) => {
-        if (value === "events") {
-          api.notify(`#${id}:close`)
-          api.notify("#detail:close")
-        }
-        if (value === "profile") {
-          api.notify(`#${id}:close`)
-          api.notify("#detail:close")
-          api.notify("#profile:open")
-        }
-      },
     })
   },
 }

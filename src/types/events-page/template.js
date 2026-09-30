@@ -5,7 +5,6 @@ import { Input } from "@inglorious/ui/input"
 
 import { renderCard } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
-import { renderTabbar } from "../tab-bar/template.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -54,7 +53,7 @@ export function renderPage({
   onSelectPeriod,
   onClearFilters,
   onOpenEvent,
-  onNavigate,
+
 }) {
   const shown = visibleEvents(
     events,
@@ -157,7 +156,6 @@ export function renderPage({
                 )}
       </main>
 
-      ${renderTabbar({ active: "events", onNavigate })}
     </div>
   `
 }

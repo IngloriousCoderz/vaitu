@@ -2,7 +2,6 @@ import { html } from "@inglorious/web"
 import { Chip } from "@inglorious/ui/chip"
 
 import { renderCard } from "../event-card/index.js"
-import { renderTabbar } from "../tab-bar/template.js"
 import styles from "./style.module.css"
 
 const statusColors = {
@@ -29,7 +28,7 @@ function renderApplication({ application, onOpenEvent }) {
   `
 }
 
-export function renderApplications({ entity, onOpenEvent, onNavigate }) {
+export function renderApplications({ entity, onOpenEvent }) {
   const { applications, status, error } = entity
 
   return html`
@@ -49,8 +48,6 @@ export function renderApplications({ entity, onOpenEvent, onNavigate }) {
                 </p>`
               : applications.map((application) => renderApplication({ application, onOpenEvent }))}
       </main>
-
-      ${renderTabbar({ active: "applications", onNavigate })}
     </div>
   `
 }

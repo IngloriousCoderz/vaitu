@@ -12,4 +12,41 @@
 
 .tabbar nav {
   width: 100%;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tabbarHidden nav {
+  transform: translateY(110%);
+}
+
+.fab {
+  position: fixed;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  right: max(18px, calc((100% - 430px) / 2 + 18px));
+  z-index: 15;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vchip-active-text);
+  background: var(--vchip-active-bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition:
+    bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.3s ease;
+}
+
+.fabLow {
+  bottom: calc(18px + env(safe-area-inset-bottom));
+}
+
+.fabHidden {
+  transform: translateY(24px);
+  opacity: 0;
+  pointer-events: none;
 }

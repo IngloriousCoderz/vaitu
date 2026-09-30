@@ -12,7 +12,6 @@ import {
   instagramUrl,
   initials,
 } from "./helpers.js"
-import { renderTabbar } from "../tab-bar/template.js"
 import styles from "./style.module.css"
 
 function renderRow(label, value, href) {
@@ -79,13 +78,11 @@ function renderEditField({
 
 export function renderProfile({
   entity,
-  tabs,
   onEdit,
   onCancel,
   onField,
   onSave,
   onLogout,
-  onNavigate,
 }) {
   const { profile, status, error } = entity
   const saving = status === "saving"
@@ -222,7 +219,6 @@ export function renderProfile({
                 onClick: onLogout,
               })}
             `}
-      ${renderTabbar({ active: "profile", tabs, onNavigate })}
     </div>
   `
 }

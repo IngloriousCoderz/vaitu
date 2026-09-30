@@ -2,7 +2,6 @@ import { html } from "@inglorious/web"
 import { Chip } from "@inglorious/ui/chip"
 
 import { renderCard } from "../event-card/index.js"
-import { renderTabbar } from "../tab-bar/template.js"
 import styles from "./style.module.css"
 
 const statusColors = {
@@ -15,7 +14,7 @@ function statusLabel(status) {
   return status[0].toUpperCase() + status.slice(1)
 }
 
-export function renderMyEvents({ entity, onOpenEvent, onNavigate }) {
+export function renderMyEvents({ entity, onOpenEvent }) {
   const { events, status, error } = entity
 
   return html`
@@ -56,16 +55,6 @@ export function renderMyEvents({ entity, onOpenEvent, onNavigate }) {
                   `,
                 )}
       </main>
-
-      ${renderTabbar({
-        active: "events",
-        onNavigate,
-        tabs: [
-          { value: "events", label: "My Events", icon: "compass" },
-          { value: "new", label: "New", icon: "plus" },
-          { value: "profile", label: "Profile", icon: "user" },
-        ],
-      })}
     </div>
   `
 }

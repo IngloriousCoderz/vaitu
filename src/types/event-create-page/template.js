@@ -4,7 +4,6 @@ import { Chip } from "@inglorious/ui/chip"
 import { Select } from "@inglorious/ui/select"
 
 import { countries } from "../../data/countries.js"
-import { renderTabbar } from "../tab-bar/template.js"
 import { categories, categoryById } from "../events-page/categories.js"
 import styles from "./style.module.css"
 
@@ -49,7 +48,7 @@ function renderDetailField({ spec, details, onDetailField }) {
   })
 }
 
-export function renderCreateEvent({ entity, onField, onDetailField, onCategory, onSave, onNavigate }) {
+export function renderCreateEvent({ entity, onField, onDetailField, onCategory, onSave, onBack }) {
   const busy = entity.status === "saving"
   const category = categoryById(entity.category)
   const identityFields = category.createFields.filter(
@@ -62,6 +61,10 @@ export function renderCreateEvent({ entity, onField, onDetailField, onCategory, 
 
   return html`
     <div class=${styles.page} data-category=${entity.category}>
+      <button class=${styles.back} type="button" @click=${onBack}>
+        ← Back
+      </button>
+
       <header class=${styles.header}>
         <span class=${styles.title}>New event</span>
       </header>
@@ -159,16 +162,6 @@ export function renderCreateEvent({ entity, onField, onDetailField, onCategory, 
           onClick: onSave,
         })}
       </div>
-
-      ${renderTabbar({
-        active: "new",
-        onNavigate,
-        tabs: [
-          { value: "events", label: "My Events", icon: "compass" },
-          { value: "new", label: "New", icon: "plus" },
-          { value: "profile", label: "Profile", icon: "user" },
-        ],
-      })}
     </div>
   `
 }

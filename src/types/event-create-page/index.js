@@ -16,6 +16,7 @@ export const CreateEventPage = {
       onDetailField: ({ field, value }) =>
         api.notify(`#${id}:setDetailField`, { field, value }),
       onCategory: (category) => api.notify(`#${id}:selectCategory`, category),
+      onBack: () => api.notify(`#${id}:close`),
       onSave: () => {
         const title_from = categoryById(entity.category).title_from
         const title = title_from.input
@@ -34,15 +35,6 @@ export const CreateEventPage = {
           max_applicants: entity.max_applicants,
           details: entity.details,
         })
-      },
-      onNavigate: (value) => {
-        if (value === "events") {
-          api.notify(`#${id}:close`)
-        }
-        if (value === "profile") {
-          api.notify(`#${id}:close`)
-          api.notify("#profile:open")
-        }
       },
     })
   },
