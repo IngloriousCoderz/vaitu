@@ -34,6 +34,18 @@ span.iw-chip.iw-chip-primary {
   border-color: var(--iw-color-primary);
 }
 
+span.iw-chip.iw-chip-success {
+  background: var(--iw-color-primary);
+  color: var(--iw-color-primary-text);
+  border-color: var(--iw-color-primary);
+}
+
+span.iw-chip.iw-chip-error {
+  background: rgba(179, 38, 30, 0.12);
+  color: #8f1d18;
+  border-color: rgba(179, 38, 30, 0.35);
+}
+
 /* UI Select tuned to our inputs (same box, only the picker differs) */
 select.iw-select {
   min-height: 46px;
