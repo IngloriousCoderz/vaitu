@@ -10,12 +10,15 @@
   --iw-color-border: var(--vline);
 }
 
-.tabbar nav {
-  width: 100%;
+.tabbar {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.tabbarHidden nav {
+.tabbar nav {
+  width: 100%;
+}
+
+.tabbar.tabbarHidden {
   transform: translateY(110%);
 }
 

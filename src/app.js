@@ -83,7 +83,7 @@ export const App = {
         const create_event = api.getEntity("create_event")
         if (create_event.isOpen) {
           page = api.render("create_event")
-          tabbar = bar(null, false)
+          tabbar = bar(null, true)
         } else {
           const received = api.getEntity("received")
           if (received.event_id) {
