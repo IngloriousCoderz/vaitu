@@ -95,4 +95,13 @@ export const entities = {
     status: "idle",
     error: null,
   },
+  received: {
+    type: "ReceivedPage",
+    event_id: null,
+    event_title: "",
+    max_applicants: 5,
+    items: [],
+    status: "idle",
+    error: null,
+  },
 }

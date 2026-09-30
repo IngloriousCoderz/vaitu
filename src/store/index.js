@@ -8,6 +8,7 @@ import { EventDetail } from "../types/event-detail/index.js"
 import { EventsPage } from "../types/events-page/index.js"
 import { MyEventsPage } from "../types/my-events-page/index.js"
 import { Profile } from "../types/profile/index.js"
+import { ReceivedPage } from "../types/received-page/index.js"
 import { Session } from "../types/session/index.js"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
@@ -21,6 +22,7 @@ export const store = createStore({
     ApplicationDetail,
     MyEventsPage,
     CreateEventPage,
+    ReceivedPage,
     Profile,
     Session,
   },

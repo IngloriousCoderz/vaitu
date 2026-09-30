@@ -15,7 +15,7 @@ function statusLabel(status) {
   return status[0].toUpperCase() + status.slice(1)
 }
 
-export function renderMyEvents({ entity, onNavigate }) {
+export function renderMyEvents({ entity, onOpenEvent, onNavigate }) {
   const { events, status, error } = entity
 
   return html`
@@ -36,7 +36,10 @@ export function renderMyEvents({ entity, onNavigate }) {
               : events.map(
                   (event) => html`
                     <div class=${styles.event}>
-                      ${renderCard({ event })}
+                      ${renderCard({
+                        event,
+                        onOpen: onOpenEvent,
+                      })}
                       <div class=${styles.eventFooter}>
                         ${Chip.render({
                           children: statusLabel(event.status),

@@ -9,6 +9,7 @@ export const MyEventsPage = {
   render(entity, api) {
     return renderMyEvents({
       entity,
+      onOpenEvent: (event_id) => api.notify("#received:open", event_id),
       onNavigate: (value) => {
         if (value === "profile") api.notify("#profile:open")
         if (value === "new") api.notify("#create_event:open")

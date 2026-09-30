@@ -29,6 +29,8 @@ export const App = {
     if (profile.profile?.role === "sender") {
       const create_event = api.getEntity("create_event")
       if (create_event.isOpen) return api.render("create_event")
+      const received = api.getEntity("received")
+      if (received.event_id) return api.render("received")
       return api.render("my_events")
     }
     return api.render("events")
