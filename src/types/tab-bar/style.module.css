@@ -35,10 +35,7 @@
   color: var(--vchip-active-text);
   background: var(--vchip-active-bg);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition:
-    bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.3s ease;
+  transition: bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .fabLow {
@@ -46,7 +43,5 @@
 }
 
 .fabHidden {
-  transform: translateY(24px);
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
