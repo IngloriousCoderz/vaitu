@@ -74,4 +74,10 @@ export const entities = {
     status: "idle",
     error: null,
   },
+  my_events: {
+    type: "MyEventsPage",
+    events: [],
+    status: "idle",
+    error: null,
+  },
 }

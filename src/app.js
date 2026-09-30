@@ -25,6 +25,8 @@ export const App = {
     if (applications.open) return api.render("applications")
     const profile = api.getEntity("profile")
     if (profile.isOpen) return api.render("profile")
+    if (!profile.profile && !profile.error) return renderSplash()
+    if (profile.profile?.role === "sender") return api.render("my_events")
     return api.render("events")
   },
 }

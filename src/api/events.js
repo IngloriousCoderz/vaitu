@@ -41,6 +41,7 @@ export function toViewModel(row) {
   const base = {
     id: row.id,
     category: row.category,
+    status: row.status,
     region: row.region,
     event_date: row.event_date,
     eventInDays: Math.ceil(
@@ -119,6 +120,40 @@ export async function fetchEventDetail(id) {
     },
     senderName: sender.full_name,
   }
+}
+
+export async function fetchMyEvents() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Not logged in")
+  const { data: events, error } = await supabase
+    .from("events")
+    .select(
+      "id, category, title, location, region, event_date, application_deadline, status, created_at, details",
+    )
+    .eq("sender_id", user.id)
+    .order("event_date", { ascending: true })
+    .abortSignal(AbortSignal.timeout(15000))
+  if (error) throw error
+  if (events.length === 0) return []
+  const { data: applications, error: applicationsError } = await supabase
+    .from("applications")
+    .select("event_id")
+    .in(
+      "event_id",
+      events.map((event) => event.id),
+    )
+    .abortSignal(AbortSignal.timeout(15000))
+  if (applicationsError) throw applicationsError
+  const counts = {}
+  for (const row of applications ?? []) {
+    counts[row.event_id] = (counts[row.event_id] ?? 0) + 1
+  }
+  return events.map((row) => ({
+    ...toViewModel(row),
+    applications_count: counts[row.id] ?? 0,
+  }))
 }
 
 export async function fetchOpenEvents() {
