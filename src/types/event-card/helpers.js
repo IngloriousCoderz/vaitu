@@ -6,8 +6,10 @@ export function deadlineBadge(event) {
 }
 
 export function monogram(title) {
-  const words = title.split(" ")
-  return `${words[0][0]}${words[1]?.[0] ?? ""}`
+  const parts = title.split(" ").filter((word) => word && word !== "&")
+  const first = parts[0]?.[0] ?? ""
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : ""
+  return last === "" ? first : `${first}&${last}`
 }
 
 export function thumbGradient(hue) {
