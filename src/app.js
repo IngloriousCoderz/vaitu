@@ -22,13 +22,13 @@ export const App = {
     if (applicationDetail.application_id)
       return api.render("application-detail")
     const applications = api.getEntity("applications")
-    if (applications.open) return api.render("applications")
+    if (applications.isOpen) return api.render("applications")
     const profile = api.getEntity("profile")
     if (profile.isOpen) return api.render("profile")
     if (!profile.profile && !profile.error) return renderSplash()
     if (profile.profile?.role === "sender") {
       const create_event = api.getEntity("create_event")
-      if (create_event.open) return api.render("create_event")
+      if (create_event.isOpen) return api.render("create_event")
       return api.render("my_events")
     }
     return api.render("events")

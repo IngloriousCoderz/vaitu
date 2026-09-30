@@ -3,13 +3,13 @@ import { handleAsync } from "@inglorious/store/async"
 import { createEvent } from "../../api/events.js"
 
 export function open(entity) {
-  entity.open = true
+  entity.isOpen = true
   entity.status = "idle"
   entity.error = null
 }
 
 export function close(entity) {
-  entity.open = false
+  entity.isOpen = false
   entity.status = "idle"
   entity.error = null
 }

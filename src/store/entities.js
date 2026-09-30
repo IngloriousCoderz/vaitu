@@ -82,7 +82,7 @@ export const entities = {
   },
   create_event: {
     type: "CreateEventPage",
-    open: false,
+    isOpen: false,
     category: "wedding",
     title: "",
     location: "",
