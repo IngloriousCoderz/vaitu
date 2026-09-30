@@ -6,19 +6,19 @@ import {
   withdrawApplication,
 } from "../../api/applications.js"
 
-export function open(entity, { application_id, return_to }, api) {
+export function open(entity, { application_id, returnTo }, api) {
   entity.application_id = application_id
-  entity.return_to = return_to ?? "applications"
+  entity.returnTo = returnTo ?? "applications"
   entity.application = null
   entity.motivation = ""
-  entity.confirming_withdraw = false
+  entity.isConfirmingWithdraw = false
   api.notify(`#${entity.id}:loadApplication`, application_id)
 }
 
 export function back(entity, _, api) {
-  const return_to = entity.return_to ?? "applications"
+  const returnTo = entity.returnTo ?? "applications"
   api.notify(`#${entity.id}:close`)
-  if (return_to === "applications") api.notify("#applications:open")
+  if (returnTo === "applications") api.notify("#applications:open")
 }
 
 export function close(entity) {
@@ -33,11 +33,11 @@ export function setField(entity, { field, value }) {
 }
 
 export function askWithdraw(entity) {
-  entity.confirming_withdraw = true
+  entity.isConfirmingWithdraw = true
 }
 
 export function cancelWithdraw(entity) {
-  entity.confirming_withdraw = false
+  entity.isConfirmingWithdraw = false
 }
 
 export const loadApplication = handleAsync("loadApplication", {
@@ -88,7 +88,7 @@ export const withdraw = handleAsync("withdraw", {
   },
   success(entity, _, api) {
     entity.status = "ready"
-    entity.confirming_withdraw = false
+    entity.isConfirmingWithdraw = false
     api.notify(`#${entity.id}:close`)
     api.notify("#events:loadEvents")
     api.notify("#applications:open")

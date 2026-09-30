@@ -8,27 +8,27 @@ export function setField(entity, { field, value }) {
 }
 
 export function togglePassword(entity) {
-  entity.show_password = !entity.show_password
+  entity.isPasswordVisible = !entity.isPasswordVisible
 }
 
 export function toggleConfirmPassword(entity) {
-  entity.show_confirm_password = !entity.show_confirm_password
+  entity.isConfirmPasswordVisible = !entity.isConfirmPasswordVisible
 }
 
 export function open(entity) {
-  entity.open = true
+  entity.isOpen = true
   entity.step = "email"
   entity.status = "idle"
   entity.error = null
 }
 
 export function close(entity) {
-  entity.open = false
+  entity.isOpen = false
   entity.step = "email"
   entity.status = "idle"
   entity.error = null
   entity.password = ""
-  entity.confirm_password = ""
+  entity.confirmPassword = ""
 }
 
 export function backToEmail(entity) {
@@ -113,11 +113,11 @@ export const signup = handleAsync("signup", {
     entity.status = "loading"
     entity.error = null
   },
-  async run({ full_name, email, password, confirm_password, role }) {
+  async run({ full_name, email, password, confirmPassword, role }) {
     if (full_name.trim().length === 0) throw new Error("Name is required")
     if (password.length < 6)
       throw new Error("Password must be at least 6 characters")
-    if (password !== confirm_password)
+    if (password !== confirmPassword)
       throw new Error("Passwords do not match")
     const { data, error } = await supabase.auth.signUp({
       email,

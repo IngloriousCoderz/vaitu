@@ -12,7 +12,7 @@ export const EventDetail = {
     const id = entity.id
     return renderDetail({
       entity,
-      profile_complete: isProfileComplete(api.getEntity("profile").profile),
+      profileComplete: isProfileComplete(api.getEntity("profile").profile),
       onBack: () => api.notify(`#${id}:close`),
       onField: ({ field, value }) =>
         api.notify(`#${id}:setField`, { field, value }),

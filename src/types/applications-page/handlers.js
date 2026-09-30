@@ -3,12 +3,12 @@ import { handleAsync } from "@inglorious/store/async"
 import { fetchMyApplications } from "../../api/applications.js"
 
 export function open(entity, _, api) {
-  entity.open = true
+  entity.isOpen = true
   api.notify(`#${entity.id}:loadApplications`)
 }
 
 export function close(entity) {
-  entity.open = false
+  entity.isOpen = false
   entity.status = "idle"
   entity.error = null
 }

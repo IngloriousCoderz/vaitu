@@ -28,9 +28,9 @@ export function renderApplicationDetail({
   onNavigate,
 }) {
   const { application, status, error } = entity
-  const busy = status === "saving" || status === "withdrawing"
+  const isBusy = status === "saving" || status === "withdrawing"
   const canSave =
-    application && entity.motivation.trim().length > 0 && !busy
+    application && entity.motivation.trim().length > 0 && !isBusy
 
   return html`
     <div class=${styles.page} data-category=${application?.category ?? "wedding"}>
@@ -47,8 +47,8 @@ export function renderApplicationDetail({
               ${renderCard({ event: application })}
               <div class=${styles.statusRow}>
                 ${Chip.render({
-                  children: statusLabel(application.application_status),
-                  color: statusColors[application.application_status] ?? "default",
+                  children: statusLabel(application.applicationStatus),
+                  color: statusColors[application.applicationStatus] ?? "default",
                 })}
               </div>
 
@@ -77,7 +77,7 @@ export function renderApplicationDetail({
                 ? html`<p class=${styles.error}>${error}</p>`
                 : ""}
 
-              ${entity.confirming_withdraw
+              ${entity.isConfirmingWithdraw
                 ? html`
                     <p class=${styles.warn}>
                       Are you sure you want to withdraw your application?
@@ -94,9 +94,9 @@ export function renderApplicationDetail({
                         shape: "pill",
                         size: "md",
                         isFullWidth: true,
-                        isDisabled: busy,
+                        isDisabled: isBusy,
                         onClick: () => {
-                          if (!busy) onWithdraw()
+                          if (!isBusy) onWithdraw()
                         },
                       })}
                       ${Button.render({

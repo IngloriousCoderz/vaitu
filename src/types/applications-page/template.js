@@ -21,8 +21,8 @@ function renderApplication({ application, onOpenEvent }) {
       ${renderCard({ event: application, onOpen: onOpenEvent })}
       <div class=${styles.applicationFooter}>
         ${Chip.render({
-          children: statusLabel(application.application_status),
-          color: statusColors[application.application_status] ?? "default",
+          children: statusLabel(application.applicationStatus),
+          color: statusColors[application.applicationStatus] ?? "default",
         })}
       </div>
     </div>

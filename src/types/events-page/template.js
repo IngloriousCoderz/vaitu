@@ -9,7 +9,7 @@ import { renderTabbar } from "../tab-bar/template.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
 
-function renderChipRow({ items, active_id, onSelect, getLabel }) {
+function renderChipRow({ items, activeId, onSelect, getLabel }) {
   return html`
     <div class=${styles.chips}>
       ${items.map(
@@ -21,7 +21,7 @@ function renderChipRow({ items, active_id, onSelect, getLabel }) {
           >
             ${Chip.render({
               children: getLabel(item),
-              color: item.id === active_id ? "primary" : "default",
+              color: item.id === activeId ? "primary" : "default",
             })}
           </button>
         `,
@@ -32,20 +32,20 @@ function renderChipRow({ items, active_id, onSelect, getLabel }) {
 
 export function renderPage({
   events,
-  applied_map,
+  appliedMap,
   status,
   error,
   categories,
-  active_category,
+  activeCategory,
   filters,
   regions,
   periods,
   query,
-  active_filter,
-  active_region,
-  active_period,
-  show_filters,
-  has_active_filters,
+  activeFilter,
+  activeRegion,
+  activePeriod,
+  isFiltersVisible,
+  hasActiveFilters,
   onSearch,
   onSelectCategory,
   onSelectFilter,
@@ -59,18 +59,18 @@ export function renderPage({
   const shown = visibleEvents(
     events,
     query,
-    active_category,
-    active_filter,
-    active_region,
-    active_period,
+    activeCategory,
+    activeFilter,
+    activeRegion,
+    activePeriod,
   )
 
   return html`
-    <div class=${styles.page} data-category=${active_category}>
+    <div class=${styles.page} data-category=${activeCategory}>
       <header class=${styles.header}>
         <span class=${styles.logo}>vaitu<span class=${styles.logoDot}>•</span></span>
         <button
-          class=${has_active_filters
+          class=${hasActiveFilters
             ? `${styles.iconButton} ${styles.iconButtonActive}`
             : styles.iconButton}
           aria-label="Filters"
@@ -94,19 +94,19 @@ export function renderPage({
 
       ${renderChipRow({
         items: categories,
-        active_id: active_category,
+        activeId: activeCategory,
         onSelect: onSelectCategory,
         getLabel: (category) => category.label,
       })}
 
       ${renderChipRow({
         items: filters,
-        active_id: active_filter,
+        activeId: activeFilter,
         onSelect: onSelectFilter,
         getLabel: (filter) => filter.label,
       })}
 
-      ${show_filters
+      ${isFiltersVisible
         ? html`
             <div class=${styles.backdrop} @click=${onToggleFilters}>
               <div
@@ -118,14 +118,14 @@ export function renderPage({
                   items: [{ id: "all", label: "All regions" }].concat(
                     regions.map((region) => ({ id: region, label: region })),
                   ),
-                  active_id: active_region,
+                  activeId: activeRegion,
                   onSelect: onSelectRegion,
                   getLabel: (item) => item.label,
                 })}
                 <h3 class=${styles.sheetTitle}>Period</h3>
                 ${renderChipRow({
                   items: periods,
-                  active_id: active_period,
+                  activeId: activePeriod,
                   onSelect: onSelectPeriod,
                   getLabel: (period) => period.label,
                 })}
@@ -151,7 +151,7 @@ export function renderPage({
               : shown.map((event) =>
                   renderCard({
                     event,
-                    applied: Boolean(applied_map[event.id]),
+                    isApplied: Boolean(appliedMap[event.id]),
                     onOpen: onOpenEvent,
                   }),
                 )}

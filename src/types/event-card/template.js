@@ -6,7 +6,7 @@ import { deadlineBadge, monogram, thumbGradient } from "./helpers.js"
 import styles from "./style.module.css"
 
 // Generic card: renders title/subtitle/tag slots, whatever the category mapped.
-export function renderCard({ event, applied, onOpen }) {
+export function renderCard({ event, isApplied, onOpen }) {
   return html`
     <article
       class=${styles.card}
@@ -23,7 +23,7 @@ export function renderCard({ event, applied, onOpen }) {
         <p class=${styles.meta}>${event.subtitle}</p>
         <div class=${styles.tagRow}>
           ${Chip.render({ children: event.tag })}
-          ${applied
+          ${isApplied
             ? Chip.render({ children: "✓ Applied", color: "success" })
             : ""}
         </div>

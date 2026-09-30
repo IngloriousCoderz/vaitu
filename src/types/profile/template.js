@@ -88,7 +88,7 @@ export function renderProfile({
 }) {
   const { profile, status, error } = entity
   const saving = status === "saving"
-  const shown = entity.editing && entity.draft ? entity.draft : profile
+  const shown = entity.isEditing && entity.draft ? entity.draft : profile
 
   return html`
     <div class=${styles.page} data-category="wedding">
@@ -107,7 +107,7 @@ export function renderProfile({
               <h2 class=${styles.name}>${profile.full_name}</h2>
               <p class=${styles.email}>${profile.email}</p>
               ${Chip.render({ children: profile.role })}
-              ${entity.editing
+              ${entity.isEditing
                 ? html`
                     <h3 class=${styles.sectionTitle}>Edit profile</h3>
                     ${renderEditField({

@@ -3,26 +3,26 @@ import { handleAsync } from "@inglorious/store/async"
 import { supabase } from "../../api/client.js"
 
 export function open(entity, _, api) {
-  entity.open = true
+  entity.isOpen = true
   api.notify(`#${entity.id}:loadProfile`)
 }
 
 export function close(entity) {
-  entity.open = false
+  entity.isOpen = false
   entity.status = "idle"
   entity.error = null
-  entity.editing = false
+  entity.isEditing = false
   entity.draft = null
 }
 
 export function startEdit(entity) {
-  entity.editing = true
+  entity.isEditing = true
   entity.draft = { ...entity.profile }
   entity.error = null
 }
 
 export function cancelEdit(entity) {
-  entity.editing = false
+  entity.isEditing = false
   entity.draft = null
   entity.error = null
 }
@@ -98,7 +98,7 @@ export const saveProfile = handleAsync("saveProfile", {
     entity.status = "ready"
     entity.profile = profile
     entity.draft = null
-    entity.editing = false
+    entity.isEditing = false
   },
   error(entity, err) {
     entity.status = "error"
@@ -112,7 +112,7 @@ export const logout = handleAsync("logout", {  async run() {
     return true
   },
   success(entity, _, api) {
-    entity.open = false
+    entity.isOpen = false
     entity.profile = null
     entity.status = "idle"
     api.notify("#detail:close")

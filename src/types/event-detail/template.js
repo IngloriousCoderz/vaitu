@@ -29,16 +29,16 @@ function renderFacts(event) {
 
 function renderForm({
   entity,
-  profile_complete,
+  profileComplete,
   onField,
   onSubmit,
   onCompleteProfile,
 }) {
-  const sending = entity.apply_status === "sending"
+  const sending = entity.applyStatus === "sending"
   const canSubmit =
-    profile_complete && entity.motivation.trim().length > 0 && !sending
+    profileComplete && entity.motivation.trim().length > 0 && !sending
 
-  if (!profile_complete) {
+  if (!profileComplete) {
     return html`
       <h3 class=${styles.sectionTitle}>Apply for this event</h3>
       <p class=${styles.warn}>
@@ -103,8 +103,8 @@ function renderForm({
           if (canSubmit) onSubmit()
         },
       })}
-      ${entity.apply_error
-        ? html`<p class=${styles.error}>${entity.apply_error}</p>`
+      ${entity.applyError
+        ? html`<p class=${styles.error}>${entity.applyError}</p>`
         : ""}
     </form>
   `
@@ -132,7 +132,7 @@ function renderSubmitted({ onBack }) {
 
 export function renderDetail({
   entity,
-  profile_complete,
+  profileComplete,
   onBack,
   onField,
   onSubmit,
@@ -151,7 +151,7 @@ export function renderDetail({
         ? html`<p class=${styles.empty}>Loading event…</p>`
         : status === "error"
           ? html`<p class=${styles.empty}>${error}</p>`
-          : entity.submitted
+          : entity.isSubmitted
             ? renderSubmitted({ onBack })
             : html`
                 <div
@@ -173,14 +173,14 @@ export function renderDetail({
                 ${Chip.render({ children: event.tag })}
                 ${renderFacts(event)}
                 <p class=${styles.sender}>
-                  Organized by ${entity.sender_name}
+                  Organized by ${entity.senderName}
                 </p>
                 <p class=${styles.countdown}>
                   ${countdownLabel(event)}
                 </p>
                 ${renderForm({
                   entity,
-                  profile_complete,
+                  profileComplete,
                   onField,
                   onSubmit,
                   onCompleteProfile,

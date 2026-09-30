@@ -4,14 +4,14 @@ import { Button } from "@inglorious/ui/button"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
-function renderSubmit({ busy, label, onClick }) {
+function renderSubmit({ isBusy, label, onClick }) {
   return Button.render({
-    children: busy ? "Please wait…" : label,
+    children: isBusy ? "Please wait…" : label,
     color: "primary",
     shape: "pill",
     size: "md",
     isFullWidth: true,
-    isDisabled: busy,
+    isDisabled: isBusy,
     onClick,
   })
 }
@@ -20,7 +20,7 @@ function renderError(error) {
   return error ? html`<p class=${styles.error}>${error}</p>` : ""
 }
 
-function renderEmailStep({ entity, busy, onField, onCheckEmail }) {
+function renderEmailStep({ entity, isBusy, onField, onCheckEmail }) {
   return html`
     <div class=${styles.step} key="email">
       <h2 class=${styles.title}>Welcome to vaitu</h2>
@@ -40,12 +40,12 @@ function renderEmailStep({ entity, busy, onField, onCheckEmail }) {
       ${renderError(entity.error)}
       <div class=${styles.bottomBar}>
         ${Button.render({
-          children: busy ? "Checking…" : "Continue",
+          children: isBusy ? "Checking…" : "Continue",
           color: "primary",
           shape: "pill",
           size: "md",
           isFullWidth: true,
-          isDisabled: busy,
+          isDisabled: isBusy,
           onClick: onCheckEmail,
         })}
       </div>
@@ -55,7 +55,7 @@ function renderEmailStep({ entity, busy, onField, onCheckEmail }) {
 
 function renderLoginStep({
   entity,
-  busy,
+  isBusy,
   onField,
   onLogin,
   onBackToEmail,
@@ -80,7 +80,7 @@ function renderLoginStep({
           <input
             id="login_password"
             data-pw
-            type=${entity.show_password ? "text" : "password"}
+            type=${entity.isPasswordVisible ? "text" : "password"}
             placeholder="••••••••"
             .value=${entity.password}
             @input=${(e) =>
@@ -89,12 +89,12 @@ function renderLoginStep({
           <button
             class=${styles.eyeButton}
             type="button"
-            aria-label=${entity.show_password ? "Hide password" : "Show password"}
+            aria-label=${entity.isPasswordVisible ? "Hide password" : "Show password"}
             @mousedown=${(e) => e.preventDefault()}
             @click=${() => onTogglePassword("login_password")}
           >
             ${renderIcon({
-              name: entity.show_password ? "eye-off" : "eye",
+              name: entity.isPasswordVisible ? "eye-off" : "eye",
               size: 18,
             })}
           </button>
@@ -102,7 +102,7 @@ function renderLoginStep({
       </label>
       ${renderError(entity.error)}
       <div class=${styles.bottomBar}>
-        ${renderSubmit({ busy, label: "Log in", onClick: onLogin })}
+        ${renderSubmit({ isBusy, label: "Log in", onClick: onLogin })}
       </div>
     </div>
   `
@@ -110,7 +110,7 @@ function renderLoginStep({
 
 function renderSignupStep({
   entity,
-  busy,
+  isBusy,
   onField,
   onContinue,
   onBackToEmail,
@@ -156,7 +156,7 @@ function renderSignupStep({
           <input
             id="signup_password"
             data-pw
-            type=${entity.show_password ? "text" : "password"}
+            type=${entity.isPasswordVisible ? "text" : "password"}
             placeholder="••••••••"
             .value=${entity.password}
             @input=${(e) =>
@@ -165,12 +165,12 @@ function renderSignupStep({
           <button
             class=${styles.eyeButton}
             type="button"
-            aria-label=${entity.show_password ? "Hide password" : "Show password"}
+            aria-label=${entity.isPasswordVisible ? "Hide password" : "Show password"}
             @mousedown=${(e) => e.preventDefault()}
             @click=${() => onTogglePassword("signup_password")}
           >
             ${renderIcon({
-              name: entity.show_password ? "eye-off" : "eye",
+              name: entity.isPasswordVisible ? "eye-off" : "eye",
               size: 18,
             })}
           </button>
@@ -182,21 +182,21 @@ function renderSignupStep({
           <input
             id="signup_confirm"
             data-pw
-            type=${entity.show_confirm_password ? "text" : "password"}
+            type=${entity.isConfirmPasswordVisible ? "text" : "password"}
             placeholder="••••••••"
-            .value=${entity.confirm_password}
+            .value=${entity.confirmPassword}
             @input=${(e) =>
-              onField({ field: "confirm_password", value: e.target.value })}
+              onField({ field: "confirmPassword", value: e.target.value })}
           />
           <button
             class=${styles.eyeButton}
             type="button"
-            aria-label=${entity.show_confirm_password ? "Hide password" : "Show password"}
+            aria-label=${entity.isConfirmPasswordVisible ? "Hide password" : "Show password"}
             @mousedown=${(e) => e.preventDefault()}
             @click=${() => onToggleConfirmPassword("signup_confirm")}
           >
             ${renderIcon({
-              name: entity.show_confirm_password ? "eye-off" : "eye",
+              name: entity.isConfirmPasswordVisible ? "eye-off" : "eye",
               size: 18,
             })}
           </button>
@@ -204,13 +204,13 @@ function renderSignupStep({
       </label>
       ${renderError(entity.error)}
       <div class=${styles.bottomBar}>
-        ${renderSubmit({ busy, label: "Continue", onClick: onContinue })}
+        ${renderSubmit({ isBusy, label: "Continue", onClick: onContinue })}
       </div>
     </div>
   `
 }
 
-function renderRoleStep({ busy, onSelectRole, onBackToEmail }) {
+function renderRoleStep({ isBusy, onSelectRole, onBackToEmail }) {
   return html`
     <div class=${styles.step} key="role">
       <h2 class=${styles.title}>You are a...</h2>
@@ -225,7 +225,7 @@ function renderRoleStep({ busy, onSelectRole, onBackToEmail }) {
               type="button"
               class=${styles.roleBig}
               @click=${() => onSelectRole(option.id)}
-              ?disabled=${busy}
+              ?disabled=${isBusy}
             >
               <span class=${styles.roleLabel}>${option.label}</span>
               <span class=${styles.roleHint}>${option.hint}</span>
@@ -247,19 +247,19 @@ function renderRoleStep({ busy, onSelectRole, onBackToEmail }) {
 }
 
 export function renderAuth({ entity, callbacks }) {
-  const busy = entity.status === "loading"
+  const isBusy = entity.status === "loading"
   return html`
     <div class=${styles.page} data-category="wedding">
       ${entity.step === "email"
-        ? renderEmailStep({ entity, busy, ...callbacks })
+        ? renderEmailStep({ entity, isBusy, ...callbacks })
         : ""}
       ${entity.step === "login"
-        ? renderLoginStep({ entity, busy, ...callbacks })
+        ? renderLoginStep({ entity, isBusy, ...callbacks })
         : ""}
       ${entity.step === "signup"
-        ? renderSignupStep({ entity, busy, ...callbacks })
+        ? renderSignupStep({ entity, isBusy, ...callbacks })
         : ""}
-      ${entity.step === "role" ? renderRoleStep({ busy, ...callbacks }) : ""}
+      ${entity.step === "role" ? renderRoleStep({ isBusy, ...callbacks }) : ""}
     </div>
   `
 }

@@ -20,8 +20,7 @@ export async function fetchMyApplications() {
   return data.map((row) => ({
     ...toViewModel(row.events),
     application_id: row.id,
-    application_status: row.status,
-    applied_at: row.created_at,
+    applicationStatus: row.status,
   }))
 }
 
@@ -56,8 +55,7 @@ export async function fetchApplicationDetail(application_id) {
   return {
     ...toViewModel(data.events),
     application_id: data.id,
-    application_status: data.status,
-    applied_at: data.created_at,
+    applicationStatus: data.status,
     motivation: data.motivation,
   }
 }

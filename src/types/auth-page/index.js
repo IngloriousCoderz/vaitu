@@ -6,9 +6,9 @@ const { checkEmail, login, signup, ...syncHandlers } = handlers
 // After the visibility toggle re-renders (type password<->text resets the
 // cursor to 0), put focus back at the end of that same field so typing can
 // continue. "Cursor" = the blinking text-insertion point.
-function restoreCursor(input_id) {
+function restoreCursor(inputId) {
   requestAnimationFrame(() => {
-    const el = document.getElementById(input_id)
+    const el = document.getElementById(inputId)
     if (!el) return
     el.focus()
     el.setSelectionRange(el.value.length, el.value.length)
@@ -39,19 +39,19 @@ export const AuthPage = {
             full_name: entity.full_name,
             email: entity.email,
             password: entity.password,
-            confirm_password: entity.confirm_password,
+            confirmPassword: entity.confirmPassword,
             role: entity.role,
           }),
         onSelectRole: (role) => api.notify(`#${id}:selectRole`, role),
         onBackToEmail: () => api.notify(`#${id}:backToEmail`),
         onBackToRoles: () => api.notify(`#${id}:backToRoles`),
-        onTogglePassword: (input_id) => {
+        onTogglePassword: (inputId) => {
           api.notify(`#${id}:togglePassword`)
-          restoreCursor(input_id)
+          restoreCursor(inputId)
         },
-        onToggleConfirmPassword: (input_id) => {
+        onToggleConfirmPassword: (inputId) => {
           api.notify(`#${id}:toggleConfirmPassword`)
-          restoreCursor(input_id)
+          restoreCursor(inputId)
         },
       },
     })

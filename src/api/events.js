@@ -43,14 +43,14 @@ export function toViewModel(row) {
     category: row.category,
     region: row.region,
     event_date: row.event_date,
-    event_in_days: Math.ceil(
+    eventInDays: Math.ceil(
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
     subtitle: `${row.location} • ${MONTHS[month - 1]} ${String(day).padStart(2, "0")}`,
-    days_left: Math.ceil(
+    daysLeft: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
     ),
-    is_new:
+    isNew:
       Date.now() - new Date(row.created_at).getTime() < NEW_THRESHOLD_MS,
     hue: [...row.id].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7),
     year,
@@ -61,7 +61,7 @@ export function toViewModel(row) {
       ...base,
       title: row.title,
       tag: genreLabels[row.details.genre] ?? row.details.genre,
-      filter_value: row.details.genre,
+      filterValue: row.details.genre,
       facts: [{ label: "Headliner", value: row.details.headliner }],
     }
   }
@@ -71,18 +71,18 @@ export function toViewModel(row) {
     ...base,
     title: couple,
     tag: styleLabels[row.details.style] ?? row.details.style,
-    filter_value: row.details.style,
+    filterValue: row.details.style,
     facts: [{ label: "Spouses", value: couple }],
   }
 }
 
 export function countdownLabel(event) {
-  if (event.is_new && event.days_left > 2) return "Just opened — apply early"
-  if (event.days_left > 1)
-    return `Applications close in ${event.days_left} days`
-  if (event.hours_left > 1)
-    return `Applications close in ${event.hours_left} hours`
-  if (event.hours_left === 1) return "Applications close in 1 hour"
+  if (event.isNew && event.daysLeft > 2) return "Just opened — apply early"
+  if (event.daysLeft > 1)
+    return `Applications close in ${event.daysLeft} days`
+  if (event.hoursLeft > 1)
+    return `Applications close in ${event.hoursLeft} hours`
+  if (event.hoursLeft === 1) return "Applications close in 1 hour"
   return "Applications are closed"
 }
 
@@ -109,7 +109,7 @@ export async function fetchEventDetail(id) {
     event: {
       ...view,
       max_applicants: event.max_applicants,
-      hours_left: Math.max(
+      hoursLeft: Math.max(
         0,
         Math.ceil(
           (new Date(event.application_deadline).getTime() - Date.now()) /
@@ -117,7 +117,7 @@ export async function fetchEventDetail(id) {
         ),
       ),
     },
-    sender_name: sender.full_name,
+    senderName: sender.full_name,
   }
 }
 

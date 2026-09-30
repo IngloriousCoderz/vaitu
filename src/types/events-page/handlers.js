@@ -7,34 +7,34 @@ export function search(entity, query) {
   entity.query = query
 }
 
-export function selectCategory(entity, category_id) {
-  entity.active_category = category_id
-  entity.active_filter = "all"
+export function selectCategory(entity, categoryId) {
+  entity.activeCategory = categoryId
+  entity.activeFilter = "all"
 }
 
-export function selectFilter(entity, filter_id) {
-  entity.active_filter = filter_id
+export function selectFilter(entity, filterId) {
+  entity.activeFilter = filterId
 }
 
 export function toggleFilters(entity) {
-  entity.show_filters = !entity.show_filters
+  entity.isFiltersVisible = !entity.isFiltersVisible
 }
 
 export function selectRegion(entity, region) {
-  entity.active_region = region
+  entity.activeRegion = region
 }
 
-export function selectPeriod(entity, period_id) {
-  entity.active_period = period_id
+export function selectPeriod(entity, periodId) {
+  entity.activePeriod = periodId
 }
 
 export function clearFilters(entity) {
-  entity.active_region = "all"
-  entity.active_period = "all"
+  entity.activeRegion = "all"
+  entity.activePeriod = "all"
 }
 
 export function clearApplied(entity) {
-  entity.applied_map = {}
+  entity.appliedMap = {}
 }
 
 export const loadEvents = handleAsync("loadEvents", {
@@ -43,16 +43,16 @@ export const loadEvents = handleAsync("loadEvents", {
     entity.error = null
   },
   async run() {
-    const [events, applied_map] = await Promise.all([
+    const [events, appliedMap] = await Promise.all([
       fetchOpenEvents(),
       fetchMyApplicationMap(),
     ])
-    return { events, applied_map }
+    return { events, appliedMap }
   },
-  success(entity, { events, applied_map }) {
+  success(entity, { events, appliedMap }) {
     entity.status = "ready"
     entity.events = events
-    entity.applied_map = applied_map
+    entity.appliedMap = appliedMap
   },
   error(entity, err) {
     entity.status = "error"

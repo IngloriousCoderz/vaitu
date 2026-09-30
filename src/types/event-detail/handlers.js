@@ -6,12 +6,12 @@ import { fetchEventDetail } from "../../api/events.js"
 export function open(entity, event_id, api) {
   entity.event_id = event_id
   entity.event = null
-  entity.sender_name = null
+  entity.senderName = null
   entity.status = "idle"
   entity.error = null
-  entity.submitted = false
-  entity.apply_status = "idle"
-  entity.apply_error = null
+  entity.isSubmitted = false
+  entity.applyStatus = "idle"
+  entity.applyError = null
   entity.motivation = ""
   // Prefill identity from the user's profile (source of truth).
   const profile = api.getEntity("profile").profile
@@ -24,10 +24,10 @@ export function open(entity, event_id, api) {
 export function close(entity) {
   entity.event_id = null
   entity.event = null
-  entity.sender_name = null
+  entity.senderName = null
   entity.status = "idle"
   entity.error = null
-  entity.submitted = false
+  entity.isSubmitted = false
 }
 
 export function setField(entity, { field, value }) {
@@ -60,8 +60,8 @@ export function submitApplication(entity, _, api) {
 
 export const apply = handleAsync("apply", {
   start(entity) {
-    entity.apply_status = "sending"
-    entity.apply_error = null
+    entity.applyStatus = "sending"
+    entity.applyError = null
   },
   async run({ event_id, full_name, website, instagram, motivation }) {
     const {
@@ -91,13 +91,13 @@ export const apply = handleAsync("apply", {
     return true
   },
   success(entity, _, api) {
-    entity.apply_status = "ready"
-    entity.submitted = true
+    entity.applyStatus = "ready"
+    entity.isSubmitted = true
     api.notify("#events:loadEvents")
   },
   error(entity, err) {
-    entity.apply_status = "error"
-    entity.apply_error = err.message ?? "Application failed"
+    entity.applyStatus = "error"
+    entity.applyError = err.message ?? "Application failed"
   },
 })
 
@@ -109,10 +109,10 @@ export const loadDetail = handleAsync("loadDetail", {
   run(event_id) {
     return fetchEventDetail(event_id)
   },
-  success(entity, { event, sender_name }) {
+  success(entity, { event, senderName }) {
     entity.status = "ready"
     entity.event = event
-    entity.sender_name = sender_name
+    entity.senderName = senderName
   },
   error(entity, err) {
     entity.status = "error"

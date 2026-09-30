@@ -18,13 +18,13 @@ export const App = {
     if (!session.user_id) return api.render("auth")
     const detail = api.getEntity("detail")
     if (detail.event_id) return api.render("detail")
-    const application_detail = api.getEntity("application-detail")
-    if (application_detail.application_id)
+    const applicationDetail = api.getEntity("application-detail")
+    if (applicationDetail.application_id)
       return api.render("application-detail")
     const applications = api.getEntity("applications")
     if (applications.open) return api.render("applications")
     const profile = api.getEntity("profile")
-    if (profile.open) return api.render("profile")
+    if (profile.isOpen) return api.render("profile")
     return api.render("events")
   },
 }

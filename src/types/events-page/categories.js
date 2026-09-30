@@ -7,14 +7,14 @@ export const categories = [
     id: "wedding",
     label: "Weddings",
     filters: [
-      { id: "style", all_label: "All Styles", options: weddingStyles },
+      { id: "style", allLabel: "All Styles", options: weddingStyles },
     ],
   },
   {
     id: "festival",
     label: "Festivals",
     filters: [
-      { id: "genre", all_label: "All Genres", options: festivalGenres },
+      { id: "genre", allLabel: "All Genres", options: festivalGenres },
     ],
   },
 ]
@@ -26,10 +26,10 @@ export function categoryById(id) {
 // Chips for the active category: "show all" + one per valid option.
 // Option values come from the same source the Zod schema validates,
 // so filter and validation can never diverge.
-export function filtersForCategory(category_id) {
-  const [dimension] = categoryById(category_id).filters
+export function filtersForCategory(categoryId) {
+  const [dimension] = categoryById(categoryId).filters
   return [
-    { id: "all", label: dimension.all_label },
+    { id: "all", label: dimension.allLabel },
     ...dimension.options.map((option) => ({
       id: option.value,
       label: option.label,

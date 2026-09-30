@@ -25,37 +25,37 @@ export const EventsPage = {
     const id = entity.id
     return renderPage({
       events: entity.events,
-      applied_map: entity.applied_map,
+      appliedMap: entity.appliedMap,
       status: entity.status,
       error: entity.error,
       categories,
-      active_category: entity.active_category,
-      filters: filtersForCategory(entity.active_category),
+      activeCategory: entity.activeCategory,
+      filters: filtersForCategory(entity.activeCategory),
       regions: distinctRegions(entity.events),
       periods,
       query: entity.query,
-      active_filter: entity.active_filter,
-      active_region: entity.active_region,
-      active_period: entity.active_period,
-      show_filters: entity.show_filters,
-      has_active_filters:
-        entity.active_region !== "all" || entity.active_period !== "all",
+      activeFilter: entity.activeFilter,
+      activeRegion: entity.activeRegion,
+      activePeriod: entity.activePeriod,
+      isFiltersVisible: entity.isFiltersVisible,
+      hasActiveFilters:
+        entity.activeRegion !== "all" || entity.activePeriod !== "all",
       onSearch: (value) => api.notify(`#${id}:search`, value),
-      onSelectCategory: (category_id) =>
-        api.notify(`#${id}:selectCategory`, category_id),
-      onSelectFilter: (filter_id) =>
-        api.notify(`#${id}:selectFilter`, filter_id),
+      onSelectCategory: (categoryId) =>
+        api.notify(`#${id}:selectCategory`, categoryId),
+      onSelectFilter: (filterId) =>
+        api.notify(`#${id}:selectFilter`, filterId),
       onToggleFilters: () => api.notify(`#${id}:toggleFilters`),
       onSelectRegion: (region) => api.notify(`#${id}:selectRegion`, region),
-      onSelectPeriod: (period_id) =>
-        api.notify(`#${id}:selectPeriod`, period_id),
+      onSelectPeriod: (periodId) =>
+        api.notify(`#${id}:selectPeriod`, periodId),
       onClearFilters: () => api.notify(`#${id}:clearFilters`),
       onOpenEvent: (event_id) => {
-        const application_id = entity.applied_map[event_id]
+        const application_id = entity.appliedMap[event_id]
         if (application_id) {
           api.notify("#application-detail:open", {
             application_id,
-            return_to: "events",
+            returnTo: "events",
           })
         } else {
           api.notify("#detail:open", event_id)

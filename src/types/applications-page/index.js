@@ -15,7 +15,7 @@ export const ApplicationsPage = {
         if (application)
           api.notify("#application-detail:open", {
             application_id: application.application_id,
-            return_to: "applications",
+            returnTo: "applications",
           })
       },
       onNavigate: (value) => {
