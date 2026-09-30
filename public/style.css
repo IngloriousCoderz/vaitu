@@ -46,6 +46,12 @@ span.iw-chip.iw-chip-error {
   border-color: rgba(179, 38, 30, 0.35);
 }
 
+span.iw-chip.iw-chip-info {
+  background: #64748b;
+  color: #fffdf7;
+  border-color: #64748b;
+}
+
 /* UI Select tuned to our inputs (same box, only the picker differs) */
 select.iw-select {
   min-height: 46px;

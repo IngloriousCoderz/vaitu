@@ -7,6 +7,7 @@ import styles from "./style.module.css"
 
 const statusColors = {
   pending: "default",
+  shortlisted: "info",
   selected: "success",
   rejected: "error",
 }
@@ -19,9 +20,14 @@ function renderApplicant({
   item,
   expanded,
   max_reached,
+  confirming_assign,
+  event_assigned,
   onToggle,
   onSelect,
   onReject,
+  onAskAssign,
+  onAssign,
+  onCancelAssign,
 }) {
   const applicant = item.applicant ?? {}
   const instagram = (applicant.instagram_handle ?? "").trim().replace(/^@+/, "")
@@ -82,25 +88,70 @@ function renderApplicant({
                   : ""}
               </div>
               <p class=${styles.motivation}>${item.motivation}</p>
-              ${item.status === "pending"
+              ${(item.status === "pending" || item.status === "rejected") && !event_assigned
                 ? html`
                     <div class=${styles.actions}>
                       ${Button.render({
-                        children: "Select",
+                        children: "Shortlist",
                         color: "primary",
                         shape: "pill",
                         size: "md",
                         isDisabled: max_reached,
                         onClick: () => onSelect(item.id),
                       })}
-                      ${Button.render({
-                        children: "Reject",
-                        variant: "outline",
-                        shape: "pill",
-                        size: "md",
-                        onClick: () => onReject(item.id),
-                      })}
+                      ${item.status === "pending"
+                        ? html`
+                            ${Button.render({
+                              children: "Reject",
+                              variant: "outline",
+                              shape: "pill",
+                              size: "md",
+                              onClick: () => onReject(item.id),
+                            })}
+                          `
+                        : ""}
                     </div>
+                  `
+                : ""}
+              ${item.status === "shortlisted" && !event_assigned
+                ? html`
+                    ${confirming_assign
+                      ? html`
+                          <p id="assign-confirm" class=${styles.warn}>
+                            Assign this applicant as the winner? The event
+                            will close and the others will be rejected.
+                          </p>
+                          <div class=${styles.actions}>
+                            ${Button.render({
+                              children:
+                                status === "saving"
+                                  ? "Assigning…"
+                                  : "Yes, assign",
+                              color: "primary",
+                              shape: "pill",
+                              size: "md",
+                              isDisabled: status === "saving",
+                              onClick: () => onAssign(item.id),
+                            })}
+                            ${Button.render({
+                              children: "Keep shortlist",
+                              variant: "outline",
+                              shape: "pill",
+                              size: "md",
+                              onClick: onCancelAssign,
+                            })}
+                          </div>
+                        `
+                      : html`
+                          ${Button.render({
+                            children: "Assign winner",
+                            variant: "outline",
+                            shape: "pill",
+                            size: "md",
+                            isFullWidth: true,
+                            onClick: () => onAskAssign(item.id),
+                          })}
+                        `}
                   `
                 : ""}
             </div>
@@ -115,10 +166,16 @@ export function renderReceived({
   onToggle,
   onSelect,
   onReject,
+  onAskAssign,
+  onAssign,
+  onCancelAssign,
+  onAskReopen,
+  onReopen,
+  onCancelReopen,
   onBack,
 }) {
   const { items, status, error } = entity
-  const selected_count = items.filter((i) => i.status === "selected").length
+  const selected_count = items.filter((i) => i.status === "shortlisted").length
   const max_reached =
     entity.max_applicants != null && selected_count >= entity.max_applicants
 
@@ -131,8 +188,47 @@ export function renderReceived({
       <header class=${styles.header}>
         <span class=${styles.title}>${entity.event_title}</span>
         <p class=${styles.subtitle}>
-          ${selected_count} selected · ${items.length} received
+          ${selected_count} shortlisted · ${items.length} received
         </p>
+        ${entity.event_status === "assigned"
+          ? html`
+              ${entity.confirming_reopen
+                ? html`
+                    <p class=${styles.warn}>
+                      Reopen this event? Applications keep their status and
+                      you can adjust the shortlist again.
+                    </p>
+                    <div class=${styles.actions}>
+                      ${Button.render({
+                        children:
+                          status === "saving" ? "Reopening…" : "Yes, reopen",
+                        color: "primary",
+                        shape: "pill",
+                        size: "md",
+                        isDisabled: status === "saving",
+                        onClick: onReopen,
+                      })}
+                      ${Button.render({
+                        children: "Keep assigned",
+                        variant: "outline",
+                        shape: "pill",
+                        size: "md",
+                        onClick: onCancelReopen,
+                      })}
+                    </div>
+                  `
+                : html`
+                    ${Button.render({
+                      children: "Reopen event",
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      onClick: onAskReopen,
+                    })}
+                  `}
+            `
+          : ""}
       </header>
 
       <main class=${styles.list}>
@@ -148,9 +244,15 @@ export function renderReceived({
                     expanded:
                       entity.expanded_application_id === item.id,
                     max_reached,
+                    confirming_assign:
+                      entity.confirming_assign === item.id,
+                    event_assigned: entity.event_status === "assigned",
                     onToggle,
                     onSelect,
                     onReject,
+                    onAskAssign,
+                    onAssign,
+                    onCancelAssign,
                   }),
                 )}
         ${status === "error" && items.length > 0
