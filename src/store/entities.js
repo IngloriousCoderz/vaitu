@@ -52,6 +52,7 @@ export const entities = {
     type: "Profile",
     isOpen: false,
     profile: null,
+    stats: null,
     isEditing: false,
     draft: null,
     status: "idle",

@@ -14,8 +14,7 @@ import {
 } from "./helpers.js"
 import styles from "./style.module.css"
 
-function renderRow(label, value, href) {
-  return html`
+function renderRow(label, value, href) {  return html`
     <div class=${styles.row}>
       <dt>${label}</dt>
       <dd>
@@ -32,6 +31,15 @@ function renderRow(label, value, href) {
             `
           : (value || "—")}
       </dd>
+    </div>
+  `
+}
+
+function renderStat(value, label) {
+  return html`
+    <div class=${styles.stat}>
+      <span class=${styles.statValue}>${value}</span>
+      <span class=${styles.statLabel}>${label}</span>
     </div>
   `
 }
@@ -105,6 +113,21 @@ export function renderProfile({
               <h2 class=${styles.name}>${profile.full_name}</h2>
               <p class=${styles.email}>${profile.email}</p>
               ${Chip.render({ children: profile.role })}
+              ${profile.role === "seeker" && entity.stats
+                ? html`
+                    <div class=${styles.stats}>
+                      ${renderStat(
+                        entity.stats.applications_count,
+                        "Applications",
+                      )}
+                      ${renderStat(
+                        entity.stats.shortlists_count,
+                        "Shortlisted",
+                      )}
+                      ${renderStat(entity.stats.selections_count, "Wins")}
+                    </div>
+                  `
+                : ""}
               ${entity.isEditing
                 ? html`
                     <h3 class=${styles.sectionTitle}>Edit profile</h3>

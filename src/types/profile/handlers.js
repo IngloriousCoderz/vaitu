@@ -47,11 +47,24 @@ export const loadProfile = handleAsync("loadProfile", {
       .eq("id", user.id)
       .single()
     if (error) throw error
-    return { ...profile, email: user.email }
+    const { data: stats } = await supabase
+      .from("seeker_stats")
+      .select("applications_count, shortlists_count, selections_count")
+      .eq("applicant_id", user.id)
+      .maybeSingle()
+    return {
+      profile: { ...profile, email: user.email },
+      stats: stats ?? {
+        applications_count: 0,
+        shortlists_count: 0,
+        selections_count: 0,
+      },
+    }
   },
-  success(entity, profile, api) {
+  success(entity, { profile, stats }, api) {
     entity.status = "ready"
     entity.profile = profile
+    entity.stats = stats
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#detail:prefill", profile)
     if (profile.role === "sender") api.notify("#my_events:loadMyEvents")
