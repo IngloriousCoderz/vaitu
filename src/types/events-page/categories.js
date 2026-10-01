@@ -1,3 +1,4 @@
+import { FIRST_INDEX } from "../../constants.js"
 import { festivalGenres, weddingStyles } from "../../validation/events.js"
 
 // Per-category registry. Each category owns its label, filter dimensions and
@@ -35,7 +36,7 @@ export const categories = [
 ]
 
 export function categoryById(id) {
-  return categories.find((c) => c.id === id) ?? categories[0]
+  return categories.find((c) => c.id === id) ?? categories[FIRST_INDEX]
 }
 
 // Chips for the active category: "show all" + one per valid option.

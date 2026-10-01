@@ -1,16 +1,15 @@
-import { html } from "@inglorious/web"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Select } from "@inglorious/ui/select"
+import { html } from "@inglorious/web"
 
 import { countries } from "../../data/countries.js"
-
 import {
   displayInstagram,
   displayWebsite,
-  instagramUrl,
   initials,
+  instagramUrl,
 } from "./helpers.js"
 import styles from "./style.module.css"
 

@@ -1,5 +1,5 @@
-import * as handlers from "./handlers.js"
 import { isProfileComplete } from "../profile/helpers.js"
+import * as handlers from "./handlers.js"
 import { renderDetail } from "./template.js"
 
 const { apply, loadDetail, ...syncHandlers } = handlers

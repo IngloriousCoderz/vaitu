@@ -1,7 +1,9 @@
-import { html } from "@inglorious/web"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { html } from "@inglorious/web"
 
+import { SINGULAR } from "../../constants.js"
+import { capitalize } from "../../text.js"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
@@ -10,10 +12,6 @@ const statusColors = {
   shortlisted: "info",
   selected: "success",
   rejected: "error",
-}
-
-function statusLabel(status) {
-  return status[0].toUpperCase() + status.slice(1)
 }
 
 function renderApplicant({
@@ -41,7 +39,7 @@ function renderApplicant({
       >
         <span class=${styles.name}>${applicant.full_name ?? "—"}</span>
         ${Chip.render({
-          children: statusLabel(item.status),
+          children: capitalize(item.status),
           color: statusColors[item.status] ?? "default",
         })}
         <span class=${expanded ? `${styles.chevron} ${styles.chevronOpen}` : styles.chevron}>
@@ -234,9 +232,9 @@ export function renderReceived({
       <main class=${styles.list}>
         ${status === "loading"
           ? html`<p class=${styles.empty}>Loading applications…</p>`
-          : status === "error" && items.length === 0
+          : status === "error" && !items.length
             ? html`<p class=${styles.empty}>${error}</p>`
-            : items.length === 0
+            : !items.length
               ? html`<p class=${styles.empty}>No applications yet.</p>`
               : items.map((item) =>
                   renderApplicant({
@@ -255,7 +253,7 @@ export function renderReceived({
                     onCancelAssign,
                   }),
                 )}
-        ${status === "error" && items.length > 0
+        ${status === "error" && items.length >= SINGULAR
           ? html`<p class=${styles.error}>${error}</p>`
           : ""}
       </main>

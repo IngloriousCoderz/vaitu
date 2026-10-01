@@ -1,3 +1,4 @@
+import { MIN_TEXT_LENGTH, REQUEST_TIMEOUT_MS } from "../constants.js"
 import { supabase } from "./client.js"
 import { toViewModel } from "./events.js"
 
@@ -15,7 +16,7 @@ export async function fetchMyApplications() {
     )
     .eq("applicant_id", user.id)
     .order("created_at", { ascending: false })
-    .abortSignal(AbortSignal.timeout(15000))
+    .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return data.map((row) => ({
     ...toViewModel(row.events),
@@ -33,7 +34,7 @@ export async function fetchMyApplicationMap() {
     .from("applications")
     .select("id,event_id")
     .eq("applicant_id", user.id)
-    .abortSignal(AbortSignal.timeout(15000))
+    .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return Object.fromEntries(data.map((row) => [row.event_id, row.id]))
 }
@@ -61,7 +62,7 @@ export async function fetchApplicationDetail(application_id) {
 }
 
 export async function updateMotivation(application_id, motivation) {
-  if (motivation.trim().length === 0) throw new Error("Motivation is required")
+  if (motivation.trim().length < MIN_TEXT_LENGTH) throw new Error("Motivation is required")
   const { error } = await supabase
     .from("applications")
     .update({ motivation: motivation.trim() })

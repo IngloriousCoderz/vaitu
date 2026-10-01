@@ -1,6 +1,10 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
+import {
+  MIN_PASSWORD_LENGTH,
+  REQUEST_TIMEOUT_MS,
+} from "../../constants.js"
 
 export function setField(entity, { field, value }) {
   entity[field] = value
@@ -71,7 +75,10 @@ export const checkEmail = handleAsync("checkEmail", {
       throw new Error("Enter a valid email")
     }
     const timeout = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error("Request timed out")), 15000)
+      setTimeout(
+        () => reject(new Error("Request timed out")),
+        REQUEST_TIMEOUT_MS,
+      )
     })
     const call = supabase.functions.invoke("check-email", {
       body: { email: clean },
@@ -122,8 +129,8 @@ export const signup = handleAsync("signup", {
     entity.error = null
   },
   async run({ full_name, email, password, confirmPassword, role }) {
-    if (full_name.trim().length === 0) throw new Error("Name is required")
-    if (password.length < 6)
+    if (!full_name.trim()) throw new Error("Name is required")
+    if (password.length < MIN_PASSWORD_LENGTH)
       throw new Error("Password must be at least 6 characters")
     if (password !== confirmPassword)
       throw new Error("Passwords do not match")

@@ -1,7 +1,7 @@
-import { html } from "@inglorious/web"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Input } from "@inglorious/ui/input"
+import { html } from "@inglorious/web"
 
 import { renderCard } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
@@ -143,7 +143,7 @@ export function renderPage({
           ? html`<p class=${styles.empty}>Loading events…</p>`
           : status === "error"
             ? html`<p class=${styles.empty}>${error}</p>`
-            : shown.length === 0
+            : !shown.length
               ? html`<p class=${styles.empty}>
                   No events match your search yet.
                 </p>`

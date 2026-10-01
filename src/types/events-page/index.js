@@ -1,5 +1,4 @@
 import { categories, filtersForCategory } from "./categories.js"
-import { distinctRegions, periods } from "./helpers.js"
 import {
   clearFilters,
   loadEvents,
@@ -10,6 +9,7 @@ import {
   selectRegion,
   toggleFilters,
 } from "./handlers.js"
+import { distinctRegions, periods } from "./helpers.js"
 import { renderPage } from "./template.js"
 
 export const EventsPage = {

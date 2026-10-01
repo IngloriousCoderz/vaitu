@@ -1,5 +1,5 @@
-import { html } from "@inglorious/web"
 import { Button } from "@inglorious/ui/button"
+import { html } from "@inglorious/web"
 
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"

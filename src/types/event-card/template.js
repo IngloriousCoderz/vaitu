@@ -1,6 +1,6 @@
-import { html } from "@inglorious/web"
 import { Badge } from "@inglorious/ui/badge"
 import { Chip } from "@inglorious/ui/chip"
+import { html } from "@inglorious/web"
 
 import { deadlineBadge, monogram, thumbGradient } from "./helpers.js"
 import styles from "./style.module.css"

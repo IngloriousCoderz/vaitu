@@ -9,6 +9,8 @@ export function distinctRegions(allEvents) {
   return [...new Set(allEvents.map((event) => event.region))].sort()
 }
 
+import { FIRST_INDEX, ZERO } from "../../constants.js"
+
 export function visibleEvents(
   allEvents,
   query,
@@ -18,7 +20,8 @@ export function visibleEvents(
   activePeriod,
 ) {
   const q = query.trim().toLowerCase()
-  const period = periods.find((p) => p.id === activePeriod) ?? periods[0]
+  const period =
+    periods.find((p) => p.id === activePeriod) ?? periods[FIRST_INDEX]
   return allEvents.filter((event) => {
     const matchesCategory = event.category === activeCategory
     const matchesFilter =
@@ -27,7 +30,7 @@ export function visibleEvents(
       activeRegion === "all" || event.region === activeRegion
     const matchesPeriod =
       period.days === null ||
-      (event.eventInDays >= 0 && event.eventInDays <= period.days)
+      (event.eventInDays >= ZERO && event.eventInDays <= period.days)
     const matchesQuery =
       q === "" ||
       event.title.toLowerCase().includes(q) ||

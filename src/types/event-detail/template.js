@@ -1,15 +1,15 @@
-import { html } from "@inglorious/web"
 import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { html } from "@inglorious/web"
 
 import { countdownLabel } from "../../api/events.js"
-import { renderIcon } from "../icon/index.js"
 import {
   deadlineBadge,
   monogram,
   thumbGradient,
 } from "../event-card/index.js"
+import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
 function renderFacts(event) {
@@ -36,7 +36,7 @@ function renderForm({
 }) {
   const sending = entity.applyStatus === "sending"
   const canSubmit =
-    profileComplete && entity.motivation.trim().length > 0 && !sending
+    profileComplete && entity.motivation.trim() !== "" && !sending
 
   if (!profileComplete) {
     return html`

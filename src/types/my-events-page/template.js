@@ -1,8 +1,10 @@
-import { html } from "@inglorious/web"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
+import { html } from "@inglorious/web"
 
+import { SINGULAR } from "../../constants.js"
+import { capitalize } from "../../text.js"
 import { renderCard } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
@@ -11,10 +13,6 @@ const statusColors = {
   open: "success",
   closed: "default",
   assigned: "info",
-}
-
-function statusLabel(status) {
-  return status[0].toUpperCase() + status.slice(1)
 }
 
 export function renderMyEvents({
@@ -38,7 +36,7 @@ export function renderMyEvents({
           ? html`<p class=${styles.empty}>Loading events…</p>`
           : status === "error"
             ? html`<p class=${styles.empty}>${error}</p>`
-            : events.length === 0
+            : !events.length
               ? html`<p class=${styles.empty}>
                   You haven't posted any event yet.
                 </p>`
@@ -52,12 +50,12 @@ export function renderMyEvents({
                       })}
                       <div class=${styles.eventFooter}>
                         ${Chip.render({
-                          children: statusLabel(event.status),
+                          children: capitalize(event.status),
                           color: statusColors[event.status] ?? "default",
                         })}
                         <span class=${styles.count}>
                           ${event.applications_count} application${event.applications_count ===
-                          1
+                          SINGULAR
                             ? ""
                             : "s"}
                         </span>

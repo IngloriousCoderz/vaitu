@@ -1,6 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
+import { REQUEST_TIMEOUT_MS } from "../../constants.js"
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id
@@ -71,7 +72,7 @@ export const loadReceived = handleAsync("loadReceived", {
       )
       .eq("event_id", event_id)
       .order("created_at", { ascending: true })
-      .abortSignal(AbortSignal.timeout(15000))
+      .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
     if (error) throw error
     return { event, items }
   },

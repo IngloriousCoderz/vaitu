@@ -1,7 +1,7 @@
-import { html } from "@inglorious/web"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Select } from "@inglorious/ui/select"
+import { html } from "@inglorious/web"
 
 import { countries } from "../../data/countries.js"
 import { categories, categoryById } from "../events-page/categories.js"

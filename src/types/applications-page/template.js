@@ -1,6 +1,7 @@
-import { html } from "@inglorious/web"
 import { Chip } from "@inglorious/ui/chip"
+import { html } from "@inglorious/web"
 
+import { capitalize } from "../../text.js"
 import { renderCard } from "../event-card/index.js"
 import styles from "./style.module.css"
 
@@ -19,17 +20,13 @@ const filterOptions = [
   { id: "rejected", label: "Rejected" },
 ]
 
-function statusLabel(status) {
-  return status[0].toUpperCase() + status.slice(1)
-}
-
 function renderApplication({ application, onOpenEvent }) {
   return html`
     <div class=${styles.application}>
       ${renderCard({ event: application, divider: false, onOpen: onOpenEvent })}
       <div class=${styles.applicationFooter}>
         ${Chip.render({
-          children: statusLabel(application.applicationStatus),
+          children: capitalize(application.applicationStatus),
           color: statusColors[application.applicationStatus] ?? "default",
         })}
       </div>
@@ -72,9 +69,9 @@ export function renderApplications({ entity, onOpenEvent, onSelectStatus }) {
           ? html`<p class=${styles.empty}>Loading applications…</p>`
           : status === "error"
             ? html`<p class=${styles.empty}>${error}</p>`
-            : shown.length === 0
+            : !shown.length
               ? html`<p class=${styles.empty}>
-                  ${applications.length === 0
+                  ${!applications.length
                     ? "You haven't applied for any event yet."
                     : "Nothing with this status."}
                 </p>`

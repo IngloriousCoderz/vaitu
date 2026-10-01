@@ -1,7 +1,8 @@
-import { html } from "@inglorious/web"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { html } from "@inglorious/web"
 
+import { capitalize } from "../../text.js"
 import { renderCard } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
 import { renderTabbar } from "../tab-bar/template.js"
@@ -11,10 +12,6 @@ const statusColors = {
   pending: "default",
   selected: "success",
   rejected: "error",
-}
-
-function statusLabel(status) {
-  return status[0].toUpperCase() + status.slice(1)
 }
 
 export function renderApplicationDetail({
@@ -30,7 +27,7 @@ export function renderApplicationDetail({
   const { application, status, error } = entity
   const isBusy = status === "saving" || status === "withdrawing"
   const canSave =
-    application && entity.motivation.trim().length > 0 && !isBusy
+    application && entity.motivation.trim() !== "" && !isBusy
 
   return html`
     <div class=${styles.page} data-category=${application?.category ?? "wedding"}>
@@ -47,7 +44,7 @@ export function renderApplicationDetail({
               ${renderCard({ event: application })}
               <div class=${styles.statusRow}>
                 ${Chip.render({
-                  children: statusLabel(application.applicationStatus),
+                  children: capitalize(application.applicationStatus),
                   color: statusColors[application.applicationStatus] ?? "default",
                 })}
               </div>

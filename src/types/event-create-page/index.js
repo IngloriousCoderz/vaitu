@@ -1,5 +1,5 @@
-import * as handlers from "./handlers.js"
 import { categoryById } from "../events-page/categories.js"
+import * as handlers from "./handlers.js"
 import { renderCreateEvent } from "./template.js"
 
 const { save, loadForEdit, ...syncHandlers } = handlers

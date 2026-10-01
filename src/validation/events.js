@@ -1,5 +1,10 @@
 import { z } from "zod"
 
+import {
+  DEFAULT_MAX_APPLICANTS,
+  MIN_TEXT_LENGTH,
+} from "../constants.js"
+
 // Per-category details schemas. Each category owns its fields independently —
 // a future category adds its own entry here without reusing wedding's lists.
 
@@ -19,8 +24,8 @@ const weddingStyle = z.enum(weddingStyles.map((s) => s.value))
 const weddingDetailsSchema = z
   .object({
     style: weddingStyle.optional(),
-    spouse_first_name_1: z.string().trim().min(1),
-    spouse_first_name_2: z.string().trim().min(1),
+    spouse_first_name_1: z.string().trim().min(MIN_TEXT_LENGTH),
+    spouse_first_name_2: z.string().trim().min(MIN_TEXT_LENGTH),
   })
   .passthrough()
 
@@ -36,7 +41,7 @@ export const festivalGenres = [
 const festivalDetailsSchema = z
   .object({
     genre: z.enum(festivalGenres.map((g) => g.value)).optional(),
-    headliner: z.string().trim().min(1),
+    headliner: z.string().trim().min(MIN_TEXT_LENGTH),
   })
   .passthrough()
 
@@ -54,13 +59,13 @@ export function detailsSchemaFor(category) {
 export const eventSchema = z
   .object({
     category: z.string().default("wedding"),
-    title: z.string().trim().min(1),
+    title: z.string().trim().min(MIN_TEXT_LENGTH),
     location: z.string().optional(),
     country: z.string().optional(),
     region: z.string().optional(),
     event_date: z.string().optional(), // ISO date, YYYY-MM-DD
     application_deadline: z.string().datetime().optional(),
-    max_applicants: z.number().int().positive().default(5),
+    max_applicants: z.number().int().positive().default(DEFAULT_MAX_APPLICANTS),
     status: z.enum(["open", "closed", "assigned"]).default("open"),
     details: z.record(z.string(), z.unknown()).default({}),
   })
@@ -78,13 +83,13 @@ export const eventSchema = z
 export const createEventSchema = z
   .object({
     category: z.string().default("wedding"),
-    title: z.string().trim().min(1),
-    location: z.string().trim().min(1),
-    country: z.string().trim().min(1),
-    region: z.string().trim().min(1),
+    title: z.string().trim().min(MIN_TEXT_LENGTH),
+    location: z.string().trim().min(MIN_TEXT_LENGTH),
+    country: z.string().trim().min(MIN_TEXT_LENGTH),
+    region: z.string().trim().min(MIN_TEXT_LENGTH),
     event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date"),
     application_deadline: z.string().datetime({ message: "Pick a deadline" }),
-    max_applicants: z.number().int().positive().default(5),
+    max_applicants: z.number().int().positive().default(DEFAULT_MAX_APPLICANTS),
     details: z.record(z.string(), z.unknown()).default({}),
   })
   .superRefine((event, ctx) => {

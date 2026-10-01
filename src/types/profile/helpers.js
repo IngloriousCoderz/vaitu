@@ -1,7 +1,10 @@
+import { FIRST_INDEX, LAST_INDEX_OFFSET, SINGULAR } from "../../constants.js"
+
 export function initials(name) {
   const words = (name ?? "").split(" ").filter(Boolean)
-  if (words.length <= 1) return (words[0]?.[0] ?? "?").toUpperCase()
-  return `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
+  if (words.length <= SINGULAR)
+    return (words.at(FIRST_INDEX)?.at(FIRST_INDEX) ?? "?").toUpperCase()
+  return `${words.at(FIRST_INDEX)?.at(FIRST_INDEX)}${words.at(words.length - LAST_INDEX_OFFSET)?.at(FIRST_INDEX)}`.toUpperCase()
 }
 
 export function displayWebsite(value) {

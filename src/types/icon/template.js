@@ -24,7 +24,9 @@ const paths = {
   "chevron-down": svg`<path d="m6 9 6 6 6-6" />`,
 }
 
-export function renderIcon({ name, size = 20 }) {
+import { DEFAULT_ICON_SIZE } from "../../constants.js"
+
+export function renderIcon({ name, size = DEFAULT_ICON_SIZE }) {
   if (!paths[name]) console.warn(`Unknown icon: ${name}`)
   return html`
     <svg

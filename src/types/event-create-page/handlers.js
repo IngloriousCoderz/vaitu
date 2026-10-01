@@ -1,6 +1,11 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { createEvent, fetchEventForEdit, updateEvent } from "../../api/events.js"
+import {
+  DATETIME_LOCAL_LENGTH,
+  DEFAULT_MAX_APPLICANTS,
+  FIRST_INDEX,
+} from "../../constants.js"
 
 export function open(entity, { event_id } = {}, api) {
   entity.isOpen = true
@@ -59,10 +64,11 @@ export const save = handleAsync("save", {
       region: event.region,
       event_date: event.event_date,
       application_deadline:
-        event.application_deadline.length === 16
+        event.application_deadline.length === DATETIME_LOCAL_LENGTH
           ? new Date(event.application_deadline).toISOString()
           : event.application_deadline,
-      max_applicants: Number(event.max_applicants) || 5,
+      max_applicants:
+        Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
       details: event.details,
     }
     if (event.editing_event_id) {
@@ -97,7 +103,10 @@ export const loadForEdit = handleAsync("loadForEdit", {
     entity.country = row.country
     entity.region = row.region
     entity.event_date = row.event_date
-    entity.application_deadline = row.application_deadline.slice(0, 16)
+    entity.application_deadline = row.application_deadline.slice(
+      FIRST_INDEX,
+      DATETIME_LOCAL_LENGTH,
+    )
     entity.max_applicants = row.max_applicants
     entity.details = row.details
   },
