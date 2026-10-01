@@ -1,0 +1,80 @@
+.page {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--vbg);
+  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  color: var(--vink);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: 26px;
+  text-align: center;
+}
+
+.subtitle {
+  margin: 6px 0 18px;
+  font-size: 14px;
+  color: var(--vmuted);
+  text-align: center;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--vmuted);
+  margin-bottom: 12px;
+}
+
+.field input {
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 10px;
+  padding: 11px 13px;
+  outline: none;
+}
+
+.fieldError select {
+  border-color: #b3261e;
+}
+
+.error {
+  font-size: 13.5px;
+  color: #b3261e;
+  background: rgba(179, 38, 30, 0.08);
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 0;
+}
+
+.bottomBar {
+  margin-top: auto;
+  padding-top: 18px;
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.linkButton {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--vaccent);
+  padding: 0;
+}

@@ -18,6 +18,8 @@ export const App = {
     if (session.status === "unknown") return renderSplash()
     // Gated: logged out always lands on login.
     if (!session.user_id) return api.render("auth")
+    const auth = api.getEntity("auth")
+    if (auth.justSignedUp) return api.render("onboarding")
 
     const closeOverlays = () => {
       api.notify("#detail:close")

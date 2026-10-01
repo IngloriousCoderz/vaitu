@@ -31,6 +31,10 @@ export function close(entity) {
   entity.confirmPassword = ""
 }
 
+export function finishOnboarding(entity) {
+  entity.justSignedUp = false
+}
+
 export function backToEmail(entity) {
   entity.step = "email"
   entity.error = null
@@ -135,6 +139,7 @@ export const signup = handleAsync("signup", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.password = ""
+    entity.justSignedUp = true
     api.notify(`#${entity.id}:close`)
   },
   error(entity, err) {
