@@ -145,13 +145,18 @@
   margin-top: 16px;
 }
 
-.stat {
+button.stat {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   background: var(--vsurface);
+  border: 1px solid var(--vline);
   border-radius: 12px;
   padding: 12px 0 10px;
+  min-height: 0;
+  cursor: pointer;
+  font: inherit;
 }
 
 .statValue {

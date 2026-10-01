@@ -21,8 +21,29 @@
   padding-top: 6px;
 }
 
+.chips {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding: 6px 2px 4px;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chipButton {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 .application {
   padding-bottom: 14px;
+  border-bottom: 1px solid var(--vline);
 }
 
 .applicationFooter {

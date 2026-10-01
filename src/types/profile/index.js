@@ -19,6 +19,10 @@ export const Profile = {
       onSave: () =>
         api.notify(`#${id}:saveProfile`, { ...entity.draft }),
       onLogout: () => api.notify(`#${id}:logout`),
+      onOpenApplications: (status_filter) => {
+        api.notify(`#${id}:close`)
+        api.notify("#applications:open", status_filter)
+      },
     })
   },
 }

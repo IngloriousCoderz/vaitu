@@ -18,6 +18,8 @@ export const ApplicationsPage = {
             returnTo: "applications",
           })
       },
+      onSelectStatus: (status_filter) =>
+        api.notify(`#${id}:selectStatusFilter`, status_filter),
     })
   },
 }

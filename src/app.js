@@ -70,8 +70,8 @@ export const App = {
       const bar = (active, hidden) =>
         renderTabbar({ active, tabs, hidden, onNavigate })
 
-      const bids = api.getEntity("applications")
-      if (bids.isOpen) {
+      const applications = api.getEntity("applications")
+      if (applications.isOpen) {
         page = api.render("applications")
         tabbar = bar("applications", false)
       } else if (profile.isOpen) {

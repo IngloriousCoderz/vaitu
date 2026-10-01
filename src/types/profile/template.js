@@ -35,13 +35,15 @@ function renderRow(label, value, href) {  return html`
   `
 }
 
-function renderStat(value, label) {
-  return html`
-    <div class=${styles.stat}>
+function renderStat(value, label, status_filter, onOpenApplications) {
+  return Button.render({
+    children: html`
       <span class=${styles.statValue}>${value}</span>
       <span class=${styles.statLabel}>${label}</span>
-    </div>
-  `
+    `,
+    className: styles.stat,
+    onClick: () => onOpenApplications(status_filter),
+  })
 }
 
 function renderEditField({
@@ -91,6 +93,7 @@ export function renderProfile({
   onField,
   onSave,
   onLogout,
+  onOpenApplications,
 }) {
   const { profile, status, error } = entity
   const saving = status === "saving"
@@ -119,12 +122,21 @@ export function renderProfile({
                       ${renderStat(
                         entity.stats.applications_count,
                         "Applications",
+                        "all",
+                        onOpenApplications,
                       )}
                       ${renderStat(
                         entity.stats.shortlists_count,
                         "Shortlisted",
+                        "shortlisted",
+                        onOpenApplications,
                       )}
-                      ${renderStat(entity.stats.selections_count, "Wins")}
+                      ${renderStat(
+                        entity.stats.selections_count,
+                        "Wins",
+                        "selected",
+                        onOpenApplications,
+                      )}
                     </div>
                   `
                 : ""}

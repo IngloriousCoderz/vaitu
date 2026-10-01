@@ -62,6 +62,7 @@ export const entities = {
     type: "ApplicationsPage",
     isOpen: false,
     applications: [],
+    status_filter: "all",
     status: "idle",
     error: null,
   },
