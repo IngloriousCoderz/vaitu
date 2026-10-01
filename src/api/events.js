@@ -187,3 +187,39 @@ export async function createEvent(payload) {
   if (error) throw error
   return true
 }
+
+export async function fetchEventForEdit(event_id) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Not logged in")
+  const { data, error } = await supabase
+    .from("events")
+    .select(
+      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, details",
+    )
+    .eq("id", event_id)
+    .eq("sender_id", user.id)
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function updateEvent(event_id, payload) {
+  const parsed = createEventSchema.safeParse(payload)
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? "Invalid event")
+  }
+  const { error } = await supabase
+    .from("events")
+    .update({ ...parsed.data, updated_at: new Date().toISOString() })
+    .eq("id", event_id)
+  if (error) throw error
+  return true
+}
+
+export async function deleteEvent(event_id) {
+  const { error } = await supabase.from("events").delete().eq("id", event_id)
+  if (error) throw error
+  return true
+}

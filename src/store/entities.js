@@ -77,12 +77,14 @@ export const entities = {
   my_events: {
     type: "MyEventsPage",
     events: [],
+    confirming_delete: null,
     status: "idle",
     error: null,
   },
   create_event: {
     type: "CreateEventPage",
     isOpen: false,
+    editing_event_id: null,
     category: "wedding",
     title: "",
     location: "",

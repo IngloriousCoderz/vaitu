@@ -2,11 +2,12 @@ import * as handlers from "./handlers.js"
 import { categoryById } from "../events-page/categories.js"
 import { renderCreateEvent } from "./template.js"
 
-const { save, ...syncHandlers } = handlers
+const { save, loadForEdit, ...syncHandlers } = handlers
 
 export const CreateEventPage = {
   ...syncHandlers,
   ...save,
+  ...loadForEdit,
   render(entity, api) {
     const id = entity.id
     return renderCreateEvent({
@@ -25,6 +26,7 @@ export const CreateEventPage = {
               .map((field) => (entity.details[field] ?? "").trim())
               .join(title_from.join)
         return api.notify(`#${id}:save`, {
+          editing_event_id: entity.editing_event_id,
           category: entity.category,
           title,
           location: entity.location,

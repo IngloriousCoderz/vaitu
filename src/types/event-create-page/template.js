@@ -66,7 +66,9 @@ export function renderCreateEvent({ entity, onField, onDetailField, onCategory, 
       </button>
 
       <header class=${styles.header}>
-        <span class=${styles.title}>New event</span>
+        <span class=${styles.title}>
+          ${entity.editing_event_id ? "Edit event" : "New event"}
+        </span>
       </header>
 
       <div class=${styles.chips}>
@@ -153,7 +155,13 @@ export function renderCreateEvent({ entity, onField, onDetailField, onCategory, 
         : ""}
       <div class=${styles.bottomBar}>
         ${Button.render({
-          children: busy ? "Creating…" : "Create event",
+          children: busy
+            ? entity.editing_event_id
+              ? "Saving…"
+              : "Creating…"
+            : entity.editing_event_id
+              ? "Save changes"
+              : "Create event",
           color: "primary",
           shape: "pill",
           size: "md",
