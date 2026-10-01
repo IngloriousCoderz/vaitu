@@ -14,6 +14,11 @@ export function close(entity) {
   entity.error = null
 }
 
+export function closeOverlays(entity) {
+  close(entity)
+}
+
+
 export function selectStatusFilter(entity, status_filter) {
   entity.status_filter = status_filter
 }

@@ -24,6 +24,10 @@ export function close(entity) {
   entity.error = null
 }
 
+export function closeOverlays(entity) {
+  close(entity)
+}
+
 export function toggleExpand(entity, application_id) {
   entity.expanded_application_id =
     entity.expanded_application_id === application_id ? null : application_id

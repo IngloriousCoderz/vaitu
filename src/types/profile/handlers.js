@@ -15,6 +15,10 @@ export function close(entity) {
   entity.draft = null
 }
 
+export function closeOverlays(entity) {
+  close(entity)
+}
+
 export function startEdit(entity) {
   entity.isEditing = true
   entity.draft = { ...entity.profile }

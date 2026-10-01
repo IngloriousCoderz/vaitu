@@ -21,22 +21,14 @@ export const App = {
     const auth = api.getEntity("auth")
     if (auth.justSignedUp) return api.render("onboarding")
 
-    const closeOverlays = () => {
-      api.notify("#detail:close")
-      api.notify("#application-detail:close")
-      api.notify("#applications:close")
-      api.notify("#profile:close")
-      api.notify("#create_event:close")
-      api.notify("#received:close")
-    }
     const onNavigate = (value) => {
-      if (value === "events") closeOverlays()
+      if (value === "events") api.notify("closeOverlays")
       if (value === "applications") {
-        closeOverlays()
+        api.notify("closeOverlays")
         api.notify("#applications:open")
       }
       if (value === "profile") {
-        closeOverlays()
+        api.notify("closeOverlays")
         api.notify("#profile:open")
       }
     }

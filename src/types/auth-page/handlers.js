@@ -31,6 +31,10 @@ export function close(entity) {
   entity.confirmPassword = ""
 }
 
+export function closeOverlays(entity) {
+  close(entity)
+}
+
 export function finishOnboarding(entity) {
   entity.justSignedUp = false
 }
