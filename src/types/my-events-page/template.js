@@ -1,7 +1,10 @@
 import { html } from "@inglorious/web"
+import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { IconButton } from "@inglorious/ui/icon-button"
 
 import { renderCard } from "../event-card/index.js"
+import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
 const statusColors = {
@@ -14,7 +17,14 @@ function statusLabel(status) {
   return status[0].toUpperCase() + status.slice(1)
 }
 
-export function renderMyEvents({ entity, onOpenEvent }) {
+export function renderMyEvents({
+  entity,
+  onOpenEvent,
+  onEdit,
+  onAskDelete,
+  onDelete,
+  onCancelDelete,
+}) {
   const { events, status, error } = entity
 
   return html`
@@ -51,7 +61,45 @@ export function renderMyEvents({ entity, onOpenEvent }) {
                             ? ""
                             : "s"}
                         </span>
+                        <span class=${styles.rowActions}>
+                          ${IconButton.render({
+                            icon: renderIcon({ name: "pencil", size: 16 }),
+                            ariaLabel: "Edit event",
+                            className: `${styles.miniButton} ${styles.editTint}`,
+                            onClick: () => onEdit(event.id),
+                          })}
+                          ${IconButton.render({
+                            icon: renderIcon({ name: "trash", size: 16 }),
+                            ariaLabel: "Delete event",
+                            className: `${styles.miniButton} ${styles.deleteTint}`,
+                            onClick: () => onAskDelete(event.id),
+                          })}
+                        </span>
                       </div>
+                      ${entity.confirming_delete === event.id
+                        ? html`
+                            <p class=${styles.warn}>
+                              Delete this event and all its applications?
+                            </p>
+                            <div class=${styles.deleteRow}>
+                              ${Button.render({
+                                children: "Yes, delete",
+                                color: "error",
+                                variant: "outline",
+                                shape: "pill",
+                                size: "md",
+                                onClick: () => onDelete(event.id),
+                              })}
+                              ${Button.render({
+                                children: "Keep it",
+                                variant: "outline",
+                                shape: "pill",
+                                size: "md",
+                                onClick: onCancelDelete,
+                              })}
+                            </div>
+                          `
+                        : ""}
                     </div>
                   `,
                 )}

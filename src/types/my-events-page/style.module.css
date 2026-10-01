@@ -38,6 +38,46 @@
   color: var(--vmuted);
 }
 
+.rowActions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+button.miniButton {
+  border: none;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 6px;
+  min-height: 0;
+  display: flex;
+}
+
+.editTint {
+  color: var(--vaccent);
+}
+
+.deleteTint {
+  color: #b3261e;
+}
+
+.warn {
+  font-size: 13.5px;
+  color: var(--vmuted);
+  background: var(--vbadge-bg);
+  border-radius: 10px;
+  padding: 10px 13px;
+  margin: 10px 0 0;
+}
+
+.deleteRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .empty {
   text-align: center;
   color: var(--vmuted);
