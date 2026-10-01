@@ -3,8 +3,8 @@ import { fileURLToPath } from "node:url"
 
 import { minifyTemplateLiterals } from "rollup-plugin-minify-template-literals"
 import { defineConfig } from "vite"
-import { VitePWA } from "vite-plugin-pwa"
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
+import { VitePWA } from "vite-plugin-pwa"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
