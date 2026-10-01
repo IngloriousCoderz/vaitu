@@ -10,7 +10,6 @@
   color: var(--vink);
 }
 
-
 .title {
   margin: 0;
   font-family: var(--vtitle-font);
@@ -46,7 +45,6 @@
   color: var(--vaccent);
   padding: 0;
 }
-
 
 .field {
   display: flex;
@@ -128,7 +126,6 @@
   padding: 20px;
 }
 
-
 .roleSwitch strong {
   color: var(--vink);
   text-transform: capitalize;
@@ -153,7 +150,6 @@
   padding: 10px 13px;
   margin: 0;
 }
-
 
 .submit:disabled {
   opacity: 0.6;

@@ -1,6 +1,10 @@
 import { html } from "@inglorious/web"
 
-import { renderFab, renderTabbar, senderTabs } from "./types/tab-bar/template.js"
+import {
+  renderFab,
+  renderTabbar,
+  senderTabs,
+} from "./types/tab-bar/template.js"
 
 function renderSplash() {
   return html`
@@ -96,10 +100,6 @@ export const App = {
       }
     }
 
-    return html`
-      ${page}
-      ${fab}
-      ${tabbar}
-    `
+    return html` ${page} ${fab} ${tabbar} `
   },
 }

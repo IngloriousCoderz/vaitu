@@ -20,8 +20,7 @@ export const ApplicationDetail = {
           motivation: entity.motivation,
         }),
       onAskWithdraw: () => api.notify(`#${id}:askWithdraw`),
-      onWithdraw: () =>
-        api.notify(`#${id}:withdraw`, entity.application_id),
+      onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
       onCancelWithdraw: () => api.notify(`#${id}:cancelWithdraw`),
       onBack: () => api.notify(`#${id}:back`),
       onNavigate: (value) => {

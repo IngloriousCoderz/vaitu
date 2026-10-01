@@ -66,9 +66,12 @@ export function toViewModel(row) {
     daysLeft: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
     ),
-    isNew:
-      Date.now() - new Date(row.created_at).getTime() < NEW_THRESHOLD_MS,
-    hue: [...row.id].reduce((h, ch) => (h * HASH_MULTIPLIER + ch.charCodeAt(FIRST_INDEX)) % HUE_DEGREES, HASH_SEED),
+    isNew: Date.now() - new Date(row.created_at).getTime() < NEW_THRESHOLD_MS,
+    hue: [...row.id].reduce(
+      (h, ch) =>
+        (h * HASH_MULTIPLIER + ch.charCodeAt(FIRST_INDEX)) % HUE_DEGREES,
+      HASH_SEED,
+    ),
     year,
   }
 
@@ -93,7 +96,8 @@ export function toViewModel(row) {
 }
 
 export function countdownLabel(event) {
-  if (event.isNew && event.daysLeft > JUST_OPENED_MIN_DAYS) return "Just opened — apply early"
+  if (event.isNew && event.daysLeft > JUST_OPENED_MIN_DAYS)
+    return "Just opened — apply early"
   if (event.daysLeft > SINGULAR)
     return `Applications close in ${event.daysLeft} days`
   if (event.hoursLeft > SINGULAR)
@@ -187,7 +191,9 @@ export async function fetchOpenEvents() {
 export async function createEvent(payload) {
   const parsed = createEventSchema.safeParse(payload)
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[FIRST_INDEX]?.message ?? "Invalid event")
+    throw new Error(
+      parsed.error.issues[FIRST_INDEX]?.message ?? "Invalid event",
+    )
   }
   const {
     data: { user },
@@ -222,7 +228,9 @@ export async function fetchEventForEdit(event_id) {
 export async function updateEvent(event_id, payload) {
   const parsed = createEventSchema.safeParse(payload)
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[FIRST_INDEX]?.message ?? "Invalid event")
+    throw new Error(
+      parsed.error.issues[FIRST_INDEX]?.message ?? "Invalid event",
+    )
   }
   const { error } = await supabase
     .from("events")

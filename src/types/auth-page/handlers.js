@@ -1,10 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
-import {
-  MIN_PASSWORD_LENGTH,
-  REQUEST_TIMEOUT_MS,
-} from "../../constants.js"
+import { MIN_PASSWORD_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
 
 export function setField(entity, { field, value }) {
   entity[field] = value
@@ -132,8 +129,7 @@ export const signup = handleAsync("signup", {
     if (!full_name.trim()) throw new Error("Name is required")
     if (password.length < MIN_PASSWORD_LENGTH)
       throw new Error("Password must be at least 6 characters")
-    if (password !== confirmPassword)
-      throw new Error("Passwords do not match")
+    if (password !== confirmPassword) throw new Error("Passwords do not match")
     const { data, error } = await supabase.auth.signUp({
       email,
       password,

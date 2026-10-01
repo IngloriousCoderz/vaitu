@@ -4,11 +4,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
 import { countdownLabel } from "../../api/events.js"
-import {
-  deadlineBadge,
-  monogram,
-  thumbGradient,
-} from "../event-card/index.js"
+import { deadlineBadge, monogram, thumbGradient } from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
@@ -103,9 +99,11 @@ function renderForm({
           if (canSubmit) onSubmit()
         },
       })}
-      ${entity.applyError
-        ? html`<p class=${styles.error}>${entity.applyError}</p>`
-        : ""}
+      ${
+        entity.applyError
+          ? html`<p class=${styles.error}>${entity.applyError}</p>`
+          : ""
+      }
     </form>
   `
 }
@@ -147,45 +145,44 @@ export function renderDetail({
         <span>Back</span>
       </button>
 
-      ${status === "loading"
-        ? html`<p class=${styles.empty}>Loading event…</p>`
-        : status === "error"
-          ? html`<p class=${styles.empty}>${error}</p>`
-          : entity.isSubmitted
-            ? renderSubmitted({ onBack })
-            : html`
-                <div
-                  class=${styles.banner}
-                  style="background:${thumbGradient(event.hue)}"
-                >
-                  <span class=${styles.bannerMonogram}>
-                    ${monogram(event.title)}
-                  </span>
-                </div>
-                <div class=${styles.topRow}>
-                  <h2 class=${styles.title}>${event.title}</h2>
-                  ${Badge.render({
-                    children: deadlineBadge(event),
-                    shape: "pill",
+      ${
+        status === "loading"
+          ? html`<p class=${styles.empty}>Loading event…</p>`
+          : status === "error"
+            ? html`<p class=${styles.empty}>${error}</p>`
+            : entity.isSubmitted
+              ? renderSubmitted({ onBack })
+              : html`
+                  <div
+                    class=${styles.banner}
+                    style="background:${thumbGradient(event.hue)}"
+                  >
+                    <span class=${styles.bannerMonogram}>
+                      ${monogram(event.title)}
+                    </span>
+                  </div>
+                  <div class=${styles.topRow}>
+                    <h2 class=${styles.title}>${event.title}</h2>
+                    ${Badge.render({
+                      children: deadlineBadge(event),
+                      shape: "pill",
+                    })}
+                  </div>
+                  <p class=${styles.meta}>${event.subtitle}</p>
+                  ${Chip.render({ children: event.tag })} ${renderFacts(event)}
+                  <p class=${styles.sender}>
+                    Organized by ${entity.senderName}
+                  </p>
+                  <p class=${styles.countdown}>${countdownLabel(event)}</p>
+                  ${renderForm({
+                    entity,
+                    profileComplete,
+                    onField,
+                    onSubmit,
+                    onCompleteProfile,
                   })}
-                </div>
-                <p class=${styles.meta}>${event.subtitle}</p>
-                ${Chip.render({ children: event.tag })}
-                ${renderFacts(event)}
-                <p class=${styles.sender}>
-                  Organized by ${entity.senderName}
-                </p>
-                <p class=${styles.countdown}>
-                  ${countdownLabel(event)}
-                </p>
-                ${renderForm({
-                  entity,
-                  profileComplete,
-                  onField,
-                  onSubmit,
-                  onCompleteProfile,
-                })}
-              `}
+                `
+      }
     </div>
   `
 }

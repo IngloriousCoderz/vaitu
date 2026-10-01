@@ -53,7 +53,6 @@ export function renderPage({
   onSelectPeriod,
   onClearFilters,
   onOpenEvent,
-
 }) {
   const shown = visibleEvents(
     events,
@@ -67,11 +66,15 @@ export function renderPage({
   return html`
     <div class=${styles.page} data-category=${activeCategory}>
       <header class=${styles.header}>
-        <span class=${styles.logo}>vaitu<span class=${styles.logoDot}>•</span></span>
+        <span class=${styles.logo}
+          >vaitu<span class=${styles.logoDot}>•</span></span
+        >
         <button
-          class=${hasActiveFilters
-            ? `${styles.iconButton} ${styles.iconButtonActive}`
-            : styles.iconButton}
+          class=${
+            hasActiveFilters
+              ? `${styles.iconButton} ${styles.iconButtonActive}`
+              : styles.iconButton
+          }
           aria-label="Filters"
           type="button"
           @click=${onToggleFilters}
@@ -97,65 +100,63 @@ export function renderPage({
         onSelect: onSelectCategory,
         getLabel: (category) => category.label,
       })}
-
       ${renderChipRow({
         items: filters,
         activeId: activeFilter,
         onSelect: onSelectFilter,
         getLabel: (filter) => filter.label,
       })}
-
-      ${isFiltersVisible
-        ? html`
-            <div class=${styles.backdrop} @click=${onToggleFilters}>
-              <div
-                class=${styles.sheet}
-                @click=${(e) => e.stopPropagation()}
-              >
-                <h3 class=${styles.sheetTitle}>Region</h3>
-                ${renderChipRow({
-                  items: [{ id: "all", label: "All regions" }].concat(
-                    regions.map((region) => ({ id: region, label: region })),
-                  ),
-                  activeId: activeRegion,
-                  onSelect: onSelectRegion,
-                  getLabel: (item) => item.label,
-                })}
-                <h3 class=${styles.sheetTitle}>Period</h3>
-                ${renderChipRow({
-                  items: periods,
-                  activeId: activePeriod,
-                  onSelect: onSelectPeriod,
-                  getLabel: (period) => period.label,
-                })}
-                ${Button.render({
-                  children: "Clear all",
-                  variant: "ghost",
-                  isFullWidth: true,
-                  onClick: onClearFilters,
-                })}
+      ${
+        isFiltersVisible
+          ? html`
+              <div class=${styles.backdrop} @click=${onToggleFilters}>
+                <div class=${styles.sheet} @click=${(e) => e.stopPropagation()}>
+                  <h3 class=${styles.sheetTitle}>Region</h3>
+                  ${renderChipRow({
+                    items: [{ id: "all", label: "All regions" }].concat(
+                      regions.map((region) => ({ id: region, label: region })),
+                    ),
+                    activeId: activeRegion,
+                    onSelect: onSelectRegion,
+                    getLabel: (item) => item.label,
+                  })}
+                  <h3 class=${styles.sheetTitle}>Period</h3>
+                  ${renderChipRow({
+                    items: periods,
+                    activeId: activePeriod,
+                    onSelect: onSelectPeriod,
+                    getLabel: (period) => period.label,
+                  })}
+                  ${Button.render({
+                    children: "Clear all",
+                    variant: "ghost",
+                    isFullWidth: true,
+                    onClick: onClearFilters,
+                  })}
+                </div>
               </div>
-            </div>
-          `
-        : ""}
+            `
+          : ""
+      }
       <main class=${styles.list}>
-        ${status === "loading"
-          ? html`<p class=${styles.empty}>Loading events…</p>`
-          : status === "error"
-            ? html`<p class=${styles.empty}>${error}</p>`
-            : !shown.length
-              ? html`<p class=${styles.empty}>
-                  No events match your search yet.
-                </p>`
-              : shown.map((event) =>
-                  renderCard({
-                    event,
-                    isApplied: Boolean(appliedMap[event.id]),
-                    onOpen: onOpenEvent,
-                  }),
-                )}
+        ${
+          status === "loading"
+            ? html`<p class=${styles.empty}>Loading events…</p>`
+            : status === "error"
+              ? html`<p class=${styles.empty}>${error}</p>`
+              : !shown.length
+                ? html`<p class=${styles.empty}>
+                    No events match your search yet.
+                  </p>`
+                : shown.map((event) =>
+                    renderCard({
+                      event,
+                      isApplied: Boolean(appliedMap[event.id]),
+                      onOpen: onOpenEvent,
+                    }),
+                  )
+        }
       </main>
-
     </div>
   `
 }

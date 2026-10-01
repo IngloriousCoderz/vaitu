@@ -34,7 +34,6 @@ export function closeOverlays(entity) {
   close(entity)
 }
 
-
 export function setField(entity, { field, value }) {
   entity[field] = value
 }

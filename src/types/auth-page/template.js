@@ -250,15 +250,21 @@ export function renderAuth({ entity, callbacks }) {
   const isBusy = entity.status === "loading"
   return html`
     <div class=${styles.page} data-category="wedding">
-      ${entity.step === "email"
-        ? renderEmailStep({ entity, isBusy, ...callbacks })
-        : ""}
-      ${entity.step === "login"
-        ? renderLoginStep({ entity, isBusy, ...callbacks })
-        : ""}
-      ${entity.step === "signup"
-        ? renderSignupStep({ entity, isBusy, ...callbacks })
-        : ""}
+      ${
+        entity.step === "email"
+          ? renderEmailStep({ entity, isBusy, ...callbacks })
+          : ""
+      }
+      ${
+        entity.step === "login"
+          ? renderLoginStep({ entity, isBusy, ...callbacks })
+          : ""
+      }
+      ${
+        entity.step === "signup"
+          ? renderSignupStep({ entity, isBusy, ...callbacks })
+          : ""
+      }
       ${entity.step === "role" ? renderRoleStep({ isBusy, ...callbacks }) : ""}
     </div>
   `

@@ -35,8 +35,6 @@
   padding: 6px;
 }
 
-
-
 .chips {
   display: flex;
   gap: 9px;
@@ -98,7 +96,6 @@
   font-size: 17px;
   margin: 14px 0 0;
 }
-
 
 .list {
   padding-top: 6px;

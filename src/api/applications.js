@@ -62,7 +62,8 @@ export async function fetchApplicationDetail(application_id) {
 }
 
 export async function updateMotivation(application_id, motivation) {
-  if (motivation.trim().length < MIN_TEXT_LENGTH) throw new Error("Motivation is required")
+  if (motivation.trim().length < MIN_TEXT_LENGTH)
+    throw new Error("Motivation is required")
   const { error } = await supabase
     .from("applications")
     .update({ motivation: motivation.trim() })

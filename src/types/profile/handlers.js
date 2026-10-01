@@ -47,7 +47,9 @@ export const loadProfile = handleAsync("loadProfile", {
     if (!user) throw new Error("Not logged in")
     const { data: profile, error } = await supabase
       .from("profiles")
-      .select("full_name, role, sub_role, country, region, website, instagram_handle")
+      .select(
+        "full_name, role, sub_role, country, region, website, instagram_handle",
+      )
       .eq("id", user.id)
       .single()
     if (error) throw error
@@ -124,7 +126,8 @@ export const saveProfile = handleAsync("saveProfile", {
   },
 })
 
-export const logout = handleAsync("logout", {  async run() {
+export const logout = handleAsync("logout", {
+  async run() {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     return true

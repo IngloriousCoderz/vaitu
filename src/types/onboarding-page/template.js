@@ -16,9 +16,11 @@ export function renderOnboarding({ entity, onField, onSave, onSkip }) {
       </p>
 
       <label
-        class=${entity.error && !entity.country
-          ? `${styles.field} ${styles.fieldError}`
-          : styles.field}
+        class=${
+          entity.error && !entity.country
+            ? `${styles.field} ${styles.fieldError}`
+            : styles.field
+        }
       >
         <span>Country</span>
         ${Select.render({
@@ -75,9 +77,7 @@ export function renderOnboarding({ entity, onField, onSave, onSkip }) {
         />
       </label>
 
-      ${entity.error
-        ? html`<p class=${styles.error}>${entity.error}</p>`
-        : ""}
+      ${entity.error ? html`<p class=${styles.error}>${entity.error}</p>` : ""}
       <div class=${styles.bottomBar}>
         ${Button.render({
           children: saving ? "Saving…" : "Continue",
@@ -88,11 +88,7 @@ export function renderOnboarding({ entity, onField, onSave, onSkip }) {
           isDisabled: saving,
           onClick: onSave,
         })}
-        <button
-          class=${styles.linkButton}
-          type="button"
-          @click=${onSkip}
-        >
+        <button class=${styles.linkButton} type="button" @click=${onSkip}>
           Skip for now
         </button>
       </div>

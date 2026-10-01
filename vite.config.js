@@ -28,7 +28,9 @@ export default defineConfig({
         display: "standalone",
         start_url: "/",
       },
-    }),ViteImageOptimizer()],
+    }),
+    ViteImageOptimizer(),
+  ],
 
   build: {
     rollupOptions: {

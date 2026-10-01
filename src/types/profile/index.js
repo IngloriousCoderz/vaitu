@@ -16,8 +16,7 @@ export const Profile = {
       onCancel: () => api.notify(`#${id}:cancelEdit`),
       onField: ({ field, value }) =>
         api.notify(`#${id}:setProfileField`, { field, value }),
-      onSave: () =>
-        api.notify(`#${id}:saveProfile`, { ...entity.draft }),
+      onSave: () => api.notify(`#${id}:saveProfile`, { ...entity.draft }),
       onLogout: () => api.notify(`#${id}:logout`),
       onOpenApplications: (status_filter) => {
         api.notify(`#${id}:close`)

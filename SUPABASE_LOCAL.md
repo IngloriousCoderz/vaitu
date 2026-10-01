@@ -41,12 +41,12 @@ Three terminals:
 
 ## Ports
 
-| Service | URL                        |
-| ------- | -------------------------- |
-| API     | http://127.0.0.1:54321     |
-| Studio  | http://127.0.0.1:54323     |
+| Service | URL                                                     |
+| ------- | ------------------------------------------------------- |
+| API     | http://127.0.0.1:54321                                  |
+| Studio  | http://127.0.0.1:54323                                  |
 | DB      | postgresql://postgres:postgres@127.0.0.1:54322/postgres |
-| Mailpit | http://127.0.0.1:54324     |
+| Mailpit | http://127.0.0.1:54324                                  |
 
 ## Test accounts (seed)
 

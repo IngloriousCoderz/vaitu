@@ -65,19 +65,23 @@ export function renderApplications({ entity, onOpenEvent, onSelectStatus }) {
       </div>
 
       <main class=${styles.list}>
-        ${status === "loading"
-          ? html`<p class=${styles.empty}>Loading applications…</p>`
-          : status === "error"
-            ? html`<p class=${styles.empty}>${error}</p>`
-            : !shown.length
-              ? html`<p class=${styles.empty}>
-                  ${!applications.length
-                    ? "You haven't applied for any event yet."
-                    : "Nothing with this status."}
-                </p>`
-              : shown.map((application) =>
-                  renderApplication({ application, onOpenEvent }),
-                )}
+        ${
+          status === "loading"
+            ? html`<p class=${styles.empty}>Loading applications…</p>`
+            : status === "error"
+              ? html`<p class=${styles.empty}>${error}</p>`
+              : !shown.length
+                ? html`<p class=${styles.empty}>
+                    ${
+                      !applications.length
+                        ? "You haven't applied for any event yet."
+                        : "Nothing with this status."
+                    }
+                  </p>`
+                : shown.map((application) =>
+                    renderApplication({ application, onOpenEvent }),
+                  )
+        }
       </main>
     </div>
   `

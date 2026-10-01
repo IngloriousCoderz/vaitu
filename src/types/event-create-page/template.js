@@ -48,7 +48,14 @@ function renderDetailField({ spec, details, onDetailField }) {
   })
 }
 
-export function renderCreateEvent({ entity, onField, onDetailField, onCategory, onSave, onBack }) {
+export function renderCreateEvent({
+  entity,
+  onField,
+  onDetailField,
+  onCategory,
+  onSave,
+  onBack,
+}) {
   const busy = entity.status === "saving"
   const category = categoryById(entity.category)
   const identityFields = category.createFields.filter(
@@ -91,15 +98,17 @@ export function renderCreateEvent({ entity, onField, onDetailField, onCategory, 
       ${identityFields.map((spec) =>
         renderDetailField({ spec, details: entity.details, onDetailField }),
       )}
-      ${title_is_derived
-        ? ""
-        : renderTextField({
-            label: "Title",
-            field: "title",
-            value: entity.title,
-            placeholder: "Sundance Beats",
-            onField,
-          })}
+      ${
+        title_is_derived
+          ? ""
+          : renderTextField({
+              label: "Title",
+              field: "title",
+              value: entity.title,
+              placeholder: "Sundance Beats",
+              onField,
+            })
+      }
       ${renderTextField({
         label: "Location",
         field: "location",
@@ -149,10 +158,7 @@ export function renderCreateEvent({ entity, onField, onDetailField, onCategory, 
         type: "number",
         onField,
       })}
-
-      ${entity.error
-        ? html`<p class=${styles.error}>${entity.error}</p>`
-        : ""}
+      ${entity.error ? html`<p class=${styles.error}>${entity.error}</p>` : ""}
       <div class=${styles.bottomBar}>
         ${Button.render({
           children: busy

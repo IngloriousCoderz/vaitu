@@ -1,7 +1,8 @@
 import * as handlers from "./handlers.js"
 import { renderReceived } from "./template.js"
 
-const { loadReceived, setStatus, assignWinner, reopenEvent, ...syncHandlers } = handlers
+const { loadReceived, setStatus, assignWinner, reopenEvent, ...syncHandlers } =
+  handlers
 
 export const ReceivedPage = {
   ...syncHandlers,

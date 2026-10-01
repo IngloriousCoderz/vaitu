@@ -23,9 +23,11 @@ export function renderCard({ event, isApplied, onOpen, divider = true }) {
         <p class=${styles.meta}>${event.subtitle}</p>
         <div class=${styles.tagRow}>
           ${Chip.render({ children: event.tag })}
-          ${isApplied
-            ? Chip.render({ children: "✓ Applied", color: "success" })
-            : ""}
+          ${
+            isApplied
+              ? Chip.render({ children: "✓ Applied", color: "success" })
+              : ""
+          }
         </div>
       </div>
     </article>

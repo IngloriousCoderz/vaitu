@@ -23,10 +23,7 @@ export const save = handleAsync("save", {
     } = await supabase.auth.getUser()
     if (!user) throw new Error("Not logged in")
     const site = (website ?? "").trim().toLowerCase()
-    const handle = (instagram ?? "")
-      .trim()
-      .toLowerCase()
-      .replace(/^@+/, "")
+    const handle = (instagram ?? "").trim().toLowerCase().replace(/^@+/, "")
     const { error } = await supabase
       .from("profiles")
       .update({

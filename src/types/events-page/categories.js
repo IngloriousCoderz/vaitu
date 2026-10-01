@@ -7,30 +7,53 @@ export const categories = [
   {
     id: "wedding",
     label: "Weddings",
-    filters: [
-      { id: "style", allLabel: "All Styles", options: weddingStyles },
-    ],
+    filters: [{ id: "style", allLabel: "All Styles", options: weddingStyles }],
     // Title is derived from the spouses, not typed.
     title_from: {
       fields: ["spouse_first_name_1", "spouse_first_name_2"],
       join: " & ",
     },
     createFields: [
-      { field: "spouse_first_name_1", label: "Spouse 1 first name", type: "text", section: "identity" },
-      { field: "spouse_first_name_2", label: "Spouse 2 first name", type: "text", section: "identity" },
-      { field: "style", label: "Style", type: "select", options: weddingStyles, section: "style" },
+      {
+        field: "spouse_first_name_1",
+        label: "Spouse 1 first name",
+        type: "text",
+        section: "identity",
+      },
+      {
+        field: "spouse_first_name_2",
+        label: "Spouse 2 first name",
+        type: "text",
+        section: "identity",
+      },
+      {
+        field: "style",
+        label: "Style",
+        type: "select",
+        options: weddingStyles,
+        section: "style",
+      },
     ],
   },
   {
     id: "festival",
     label: "Festivals",
-    filters: [
-      { id: "genre", allLabel: "All Genres", options: festivalGenres },
-    ],
+    filters: [{ id: "genre", allLabel: "All Genres", options: festivalGenres }],
     title_from: { input: true },
     createFields: [
-      { field: "headliner", label: "Headliner", type: "text", section: "identity" },
-      { field: "genre", label: "Genre", type: "select", options: festivalGenres, section: "style" },
+      {
+        field: "headliner",
+        label: "Headliner",
+        type: "text",
+        section: "identity",
+      },
+      {
+        field: "genre",
+        label: "Genre",
+        type: "select",
+        options: festivalGenres,
+        section: "style",
+      },
     ],
   },
 ]

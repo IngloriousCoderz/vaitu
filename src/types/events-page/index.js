@@ -43,12 +43,10 @@ export const EventsPage = {
       onSearch: (value) => api.notify(`#${id}:search`, value),
       onSelectCategory: (categoryId) =>
         api.notify(`#${id}:selectCategory`, categoryId),
-      onSelectFilter: (filterId) =>
-        api.notify(`#${id}:selectFilter`, filterId),
+      onSelectFilter: (filterId) => api.notify(`#${id}:selectFilter`, filterId),
       onToggleFilters: () => api.notify(`#${id}:toggleFilters`),
       onSelectRegion: (region) => api.notify(`#${id}:selectRegion`, region),
-      onSelectPeriod: (periodId) =>
-        api.notify(`#${id}:selectPeriod`, periodId),
+      onSelectPeriod: (periodId) => api.notify(`#${id}:selectPeriod`, periodId),
       onClearFilters: () => api.notify(`#${id}:clearFilters`),
       onOpenEvent: (event_id) => {
         const application_id = entity.appliedMap[event_id]

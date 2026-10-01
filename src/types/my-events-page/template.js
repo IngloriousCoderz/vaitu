@@ -32,75 +32,79 @@ export function renderMyEvents({
       </header>
 
       <main class=${styles.list}>
-        ${status === "loading"
-          ? html`<p class=${styles.empty}>Loading events…</p>`
-          : status === "error"
-            ? html`<p class=${styles.empty}>${error}</p>`
-            : !events.length
-              ? html`<p class=${styles.empty}>
-                  You haven't posted any event yet.
-                </p>`
-              : events.map(
-                  (event) => html`
-                    <div class=${styles.event}>
-                      ${renderCard({
-                        event,
-                        divider: false,
-                        onOpen: onOpenEvent,
-                      })}
-                      <div class=${styles.eventFooter}>
-                        ${Chip.render({
-                          children: capitalize(event.status),
-                          color: statusColors[event.status] ?? "default",
+        ${
+          status === "loading"
+            ? html`<p class=${styles.empty}>Loading events…</p>`
+            : status === "error"
+              ? html`<p class=${styles.empty}>${error}</p>`
+              : !events.length
+                ? html`<p class=${styles.empty}>
+                    You haven't posted any event yet.
+                  </p>`
+                : events.map(
+                    (event) => html`
+                      <div class=${styles.event}>
+                        ${renderCard({
+                          event,
+                          divider: false,
+                          onOpen: onOpenEvent,
                         })}
-                        <span class=${styles.count}>
-                          ${event.applications_count} application${event.applications_count ===
-                          SINGULAR
-                            ? ""
-                            : "s"}
-                        </span>
-                        <span class=${styles.rowActions}>
-                          ${IconButton.render({
-                            icon: renderIcon({ name: "pencil", size: 16 }),
-                            ariaLabel: "Edit event",
-                            className: `${styles.miniButton} ${styles.editTint}`,
-                            onClick: () => onEdit(event.id),
+                        <div class=${styles.eventFooter}>
+                          ${Chip.render({
+                            children: capitalize(event.status),
+                            color: statusColors[event.status] ?? "default",
                           })}
-                          ${IconButton.render({
-                            icon: renderIcon({ name: "trash", size: 16 }),
-                            ariaLabel: "Delete event",
-                            className: `${styles.miniButton} ${styles.deleteTint}`,
-                            onClick: () => onAskDelete(event.id),
-                          })}
-                        </span>
+                          <span class=${styles.count}>
+                            ${event.applications_count}
+                            application${
+                              event.applications_count === SINGULAR ? "" : "s"
+                            }
+                          </span>
+                          <span class=${styles.rowActions}>
+                            ${IconButton.render({
+                              icon: renderIcon({ name: "pencil", size: 16 }),
+                              ariaLabel: "Edit event",
+                              className: `${styles.miniButton} ${styles.editTint}`,
+                              onClick: () => onEdit(event.id),
+                            })}
+                            ${IconButton.render({
+                              icon: renderIcon({ name: "trash", size: 16 }),
+                              ariaLabel: "Delete event",
+                              className: `${styles.miniButton} ${styles.deleteTint}`,
+                              onClick: () => onAskDelete(event.id),
+                            })}
+                          </span>
+                        </div>
+                        ${
+                          entity.confirming_delete === event.id
+                            ? html`
+                                <p class=${styles.warn}>
+                                  Delete this event and all its applications?
+                                </p>
+                                <div class=${styles.deleteRow}>
+                                  ${Button.render({
+                                    children: "Yes, delete",
+                                    color: "error",
+                                    variant: "outline",
+                                    shape: "pill",
+                                    size: "md",
+                                    onClick: () => onDelete(event.id),
+                                  })}
+                                  ${Button.render({
+                                    children: "Keep it",
+                                    variant: "outline",
+                                    shape: "pill",
+                                    size: "md",
+                                    onClick: onCancelDelete,
+                                  })}
+                                </div>
+                              `
+                            : ""
+                        }
                       </div>
-                      ${entity.confirming_delete === event.id
-                        ? html`
-                            <p class=${styles.warn}>
-                              Delete this event and all its applications?
-                            </p>
-                            <div class=${styles.deleteRow}>
-                              ${Button.render({
-                                children: "Yes, delete",
-                                color: "error",
-                                variant: "outline",
-                                shape: "pill",
-                                size: "md",
-                                onClick: () => onDelete(event.id),
-                              })}
-                              ${Button.render({
-                                children: "Keep it",
-                                variant: "outline",
-                                shape: "pill",
-                                size: "md",
-                                onClick: onCancelDelete,
-                              })}
-                            </div>
-                          `
-                        : ""}
-                    </div>
-                  `,
-                )}
+                    `,
+                  )
+        }
       </main>
     </div>
   `

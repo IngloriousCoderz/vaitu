@@ -89,7 +89,8 @@ export const loadReceived = handleAsync("loadReceived", {
   },
 })
 
-export const setStatus = handleAsync("setStatus", {  start(entity) {
+export const setStatus = handleAsync("setStatus", {
+  start(entity) {
     entity.status = "saving"
     entity.error = null
   },

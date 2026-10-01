@@ -1,6 +1,10 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { createEvent, fetchEventForEdit, updateEvent } from "../../api/events.js"
+import {
+  createEvent,
+  fetchEventForEdit,
+  updateEvent,
+} from "../../api/events.js"
 import {
   DATETIME_LOCAL_LENGTH,
   DEFAULT_MAX_APPLICANTS,
@@ -67,8 +71,7 @@ export const save = handleAsync("save", {
         event.application_deadline.length === DATETIME_LOCAL_LENGTH
           ? new Date(event.application_deadline).toISOString()
           : event.application_deadline,
-      max_applicants:
-        Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
+      max_applicants: Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
       details: event.details,
     }
     if (event.editing_event_id) {

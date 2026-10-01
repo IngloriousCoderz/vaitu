@@ -7,7 +7,9 @@ import styles from "./style.module.css"
 // via CSS instead of remounting per page.
 export function renderTabbar({ active, tabs, hidden, onNavigate }) {
   return html`
-    <nav class=${hidden ? `${styles.tabbar} ${styles.tabbarHidden}` : styles.tabbar}>
+    <nav
+      class=${hidden ? `${styles.tabbar} ${styles.tabbarHidden}` : styles.tabbar}
+    >
       ${BottomNavigation.render({
         value: active,
         onChange: (value) => onNavigate(value),
@@ -37,11 +39,13 @@ export const senderTabs = [
 export function renderFab({ onClick, low, hidden }) {
   return html`
     <button
-      class=${hidden
-        ? `${styles.fab} ${styles.fabLow} ${styles.fabHidden}`
-        : low
-          ? `${styles.fab} ${styles.fabLow}`
-          : styles.fab}
+      class=${
+        hidden
+          ? `${styles.fab} ${styles.fabLow} ${styles.fabHidden}`
+          : low
+            ? `${styles.fab} ${styles.fabLow}`
+            : styles.fab
+      }
       type="button"
       aria-label="New event"
       @click=${onClick}
