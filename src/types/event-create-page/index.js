@@ -2,21 +2,21 @@ import { categoryById } from "../events-page/categories.js"
 import * as handlers from "./handlers.js"
 import { renderCreateEvent } from "./template.js"
 
-const { save, loadForEdit, ...syncHandlers } = handlers
+const { save, editLoad, ...syncHandlers } = handlers
 
 export const CreateEventPage = {
   ...syncHandlers,
   ...save,
-  ...loadForEdit,
+  ...editLoad,
   render(entity, api) {
     const id = entity.id
     return renderCreateEvent({
       entity,
       onField: ({ field, value }) =>
-        api.notify(`#${id}:setField`, { field, value }),
+        api.notify(`#${id}:fieldSet`, { field, value }),
       onDetailField: ({ field, value }) =>
-        api.notify(`#${id}:setDetailField`, { field, value }),
-      onCategory: (category) => api.notify(`#${id}:selectCategory`, category),
+        api.notify(`#${id}:detailFieldSet`, { field, value }),
+      onCategory: (category) => api.notify(`#${id}:categorySelect`, category),
       onBack: () => api.notify(`#${id}:close`),
       onSave: () => {
         const title_from = categoryById(entity.category).title_from

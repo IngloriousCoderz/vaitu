@@ -3,16 +3,16 @@ import { handleAsync } from "@inglorious/store/async"
 import { supabase } from "../../api/client.js"
 import { MIN_PASSWORD_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
 
-export function setField(entity, { field, value }) {
+export function fieldSet(entity, { field, value }) {
   entity[field] = value
   entity.error = null
 }
 
-export function togglePassword(entity) {
+export function passwordToggle(entity) {
   entity.isPasswordVisible = !entity.isPasswordVisible
 }
 
-export function toggleConfirmPassword(entity) {
+export function confirmPasswordToggle(entity) {
   entity.isConfirmPasswordVisible = !entity.isConfirmPasswordVisible
 }
 
@@ -32,36 +32,36 @@ export function close(entity) {
   entity.confirmPassword = ""
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function finishOnboarding(entity) {
+export function onboardingFinish(entity) {
   entity.justSignedUp = false
 }
 
-export function backToEmail(entity) {
+export function emailBack(entity) {
   entity.step = "email"
   entity.error = null
 }
 
-export function backToSignup(entity) {
+export function signupBack(entity) {
   entity.step = "signup"
   entity.error = null
 }
 
-export function selectRole(entity, role) {
+export function roleSelect(entity, role) {
   entity.role = role
   entity.error = null
   entity.step = "signup"
 }
 
-export function backToRoles(entity) {
+export function rolesBack(entity) {
   entity.step = "role"
   entity.error = null
 }
 
-export const checkEmail = handleAsync("checkEmail", {
+export const emailCheck = handleAsync("emailCheck", {
   start(entity) {
     entity.status = "loading"
     entity.error = null

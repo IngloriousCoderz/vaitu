@@ -1,7 +1,7 @@
 import * as handlers from "./handlers.js"
 import { renderAuth } from "./template.js"
 
-const { checkEmail, login, signup, ...syncHandlers } = handlers
+const { emailCheck, login, signup, ...syncHandlers } = handlers
 
 // After the visibility toggle re-renders (type password<->text resets the
 // cursor to 0), put focus back at the end of that same field so typing can
@@ -17,7 +17,7 @@ function restoreCursor(inputId) {
 
 export const AuthPage = {
   ...syncHandlers,
-  ...checkEmail,
+  ...emailCheck,
   ...login,
   ...signup,
   render(entity, api) {
@@ -26,9 +26,9 @@ export const AuthPage = {
       entity,
       callbacks: {
         onField: ({ field, value }) =>
-          api.notify(`#${id}:setField`, { field, value }),
+          api.notify(`#${id}:fieldSet`, { field, value }),
         onCheckEmail: () =>
-          api.notify(`#${id}:checkEmail`, { email: entity.email }),
+          api.notify(`#${id}:emailCheck`, { email: entity.email }),
         onLogin: () =>
           api.notify(`#${id}:login`, {
             email: entity.email,
@@ -42,15 +42,15 @@ export const AuthPage = {
             confirmPassword: entity.confirmPassword,
             role: entity.role,
           }),
-        onSelectRole: (role) => api.notify(`#${id}:selectRole`, role),
-        onBackToEmail: () => api.notify(`#${id}:backToEmail`),
-        onBackToRoles: () => api.notify(`#${id}:backToRoles`),
+        onSelectRole: (role) => api.notify(`#${id}:roleSelect`, role),
+        onBackToEmail: () => api.notify(`#${id}:emailBack`),
+        onBackToRoles: () => api.notify(`#${id}:rolesBack`),
         onTogglePassword: (inputId) => {
-          api.notify(`#${id}:togglePassword`)
+          api.notify(`#${id}:passwordToggle`)
           restoreCursor(inputId)
         },
         onToggleConfirmPassword: (inputId) => {
-          api.notify(`#${id}:toggleConfirmPassword`)
+          api.notify(`#${id}:confirmPasswordToggle`)
           restoreCursor(inputId)
         },
       },

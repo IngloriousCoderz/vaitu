@@ -20,7 +20,7 @@ import { store } from "./store"
 
 mount(store, (api) => App.render(null, api), document.getElementById("root"))
 
-store.notify("#events:loadEvents")
+store.notify("#events:eventsLoad")
 
 function trackSession(session) {
   if (session) {

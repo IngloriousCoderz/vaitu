@@ -1,11 +1,11 @@
 import * as handlers from "./handlers.js"
 import { renderApplications } from "./template.js"
 
-const { loadApplications, ...syncHandlers } = handlers
+const { applicationsLoad, ...syncHandlers } = handlers
 
 export const ApplicationsPage = {
   ...syncHandlers,
-  ...loadApplications,
+  ...applicationsLoad,
   render(entity, api) {
     const id = entity.id
     return renderApplications({
@@ -19,7 +19,7 @@ export const ApplicationsPage = {
           })
       },
       onSelectStatus: (status_filter) =>
-        api.notify(`#${id}:selectStatusFilter`, status_filter),
+        api.notify(`#${id}:statusFilterSelect`, status_filter),
     })
   },
 }

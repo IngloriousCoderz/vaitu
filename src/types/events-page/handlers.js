@@ -7,37 +7,37 @@ export function search(entity, query) {
   entity.query = query
 }
 
-export function selectCategory(entity, categoryId) {
+export function categorySelect(entity, categoryId) {
   entity.activeCategory = categoryId
   entity.activeFilter = "all"
 }
 
-export function selectFilter(entity, filterId) {
+export function filterSelect(entity, filterId) {
   entity.activeFilter = filterId
 }
 
-export function toggleFilters(entity) {
+export function filtersToggle(entity) {
   entity.isFiltersVisible = !entity.isFiltersVisible
 }
 
-export function selectRegion(entity, region) {
+export function regionSelect(entity, region) {
   entity.activeRegion = region
 }
 
-export function selectPeriod(entity, periodId) {
+export function periodSelect(entity, periodId) {
   entity.activePeriod = periodId
 }
 
-export function clearFilters(entity) {
+export function filtersClear(entity) {
   entity.activeRegion = "all"
   entity.activePeriod = "all"
 }
 
-export function clearApplied(entity) {
+export function appliedClear(entity) {
   entity.appliedMap = {}
 }
 
-export const loadEvents = handleAsync("loadEvents", {
+export const eventsLoad = handleAsync("eventsLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null

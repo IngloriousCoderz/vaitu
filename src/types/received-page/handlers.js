@@ -10,7 +10,7 @@ export function open(entity, event_id, api) {
   entity.items = []
   entity.expanded_application_id = null
   entity.confirming_assign = null
-  api.notify(`#${entity.id}:loadReceived`, event_id)
+  api.notify(`#${entity.id}:receivedLoad`, event_id)
 }
 
 export function close(entity) {
@@ -25,35 +25,35 @@ export function close(entity) {
   entity.error = null
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function toggleExpand(entity, application_id) {
+export function expandToggle(entity, application_id) {
   entity.expanded_application_id =
     entity.expanded_application_id === application_id ? null : application_id
   entity.confirming_assign = null
 }
 
-export function askAssign(entity, application_id) {
+export function assignAsk(entity, application_id) {
   entity.confirming_assign = application_id
   entity.confirming_reopen = false
 }
 
-export function cancelAssign(entity) {
+export function assignCancel(entity) {
   entity.confirming_assign = null
 }
 
-export function askReopen(entity) {
+export function reopenAsk(entity) {
   entity.confirming_reopen = true
   entity.confirming_assign = null
 }
 
-export function cancelReopen(entity) {
+export function reopenCancel(entity) {
   entity.confirming_reopen = false
 }
 
-export const loadReceived = handleAsync("loadReceived", {
+export const receivedLoad = handleAsync("receivedLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -89,7 +89,7 @@ export const loadReceived = handleAsync("loadReceived", {
   },
 })
 
-export const setStatus = handleAsync("setStatus", {
+export const statusSet = handleAsync("statusSet", {
   start(entity) {
     entity.status = "saving"
     entity.error = null
@@ -104,7 +104,7 @@ export const setStatus = handleAsync("setStatus", {
   },
   success(entity, event_id, api) {
     entity.status = "ready"
-    api.notify(`#${entity.id}:loadReceived`, event_id)
+    api.notify(`#${entity.id}:receivedLoad`, event_id)
   },
   error(entity, err) {
     entity.status = "error"
@@ -112,7 +112,7 @@ export const setStatus = handleAsync("setStatus", {
   },
 })
 
-export const assignWinner = handleAsync("assignWinner", {
+export const winnerAssign = handleAsync("winnerAssign", {
   start(entity) {
     entity.status = "saving"
     entity.error = null
@@ -128,7 +128,7 @@ export const assignWinner = handleAsync("assignWinner", {
   success(entity, event_id, api) {
     entity.status = "ready"
     entity.confirming_assign = null
-    api.notify(`#${entity.id}:loadReceived`, event_id)
+    api.notify(`#${entity.id}:receivedLoad`, event_id)
   },
   error(entity, err) {
     entity.status = "error"
@@ -136,7 +136,7 @@ export const assignWinner = handleAsync("assignWinner", {
   },
 })
 
-export const reopenEvent = handleAsync("reopenEvent", {
+export const eventReopen = handleAsync("eventReopen", {
   start(entity) {
     entity.status = "saving"
     entity.error = null
@@ -152,7 +152,7 @@ export const reopenEvent = handleAsync("reopenEvent", {
   success(entity, event_id, api) {
     entity.status = "ready"
     entity.confirming_reopen = false
-    api.notify(`#${entity.id}:loadReceived`, event_id)
+    api.notify(`#${entity.id}:receivedLoad`, event_id)
   },
   error(entity, err) {
     entity.status = "error"

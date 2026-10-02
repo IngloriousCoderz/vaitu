@@ -26,13 +26,13 @@ export const App = {
     if (auth.justSignedUp) return api.render("onboarding")
 
     const onNavigate = (value) => {
-      if (value === "events") api.notify("closeOverlays")
+      if (value === "events") api.notify("overlaysClose")
       if (value === "applications") {
-        api.notify("closeOverlays")
+        api.notify("overlaysClose")
         api.notify("#applications:open")
       }
       if (value === "profile") {
-        api.notify("closeOverlays")
+        api.notify("overlaysClose")
         api.notify("#profile:open")
       }
     }

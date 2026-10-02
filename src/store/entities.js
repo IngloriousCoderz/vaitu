@@ -154,7 +154,7 @@ export const entities = {
     status: "idle",
     error: null,
   },
-  "country-onboarding": countrySelect("onboarding", "setField"),
-  "country-profile": countrySelect("profile", "setProfileField"),
-  "country-create": countrySelect("create_event", "setField"),
+  "country-onboarding": countrySelect("onboarding", "fieldSet"),
+  "country-profile": countrySelect("profile", "profileFieldSet"),
+  "country-create": countrySelect("create_event", "fieldSet"),
 }

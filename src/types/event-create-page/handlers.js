@@ -26,7 +26,7 @@ export function open(entity, { event_id } = {}, api) {
   entity.max_applicants = 5
   entity.details = {}
   api.notify("#country-create:sync", "")
-  if (event_id) api.notify(`#${entity.id}:loadForEdit`, event_id)
+  if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
 }
 
 export function close(entity) {
@@ -35,21 +35,21 @@ export function close(entity) {
   entity.error = null
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function setField(entity, { field, value }) {
+export function fieldSet(entity, { field, value }) {
   entity[field] = value
   entity.error = null
 }
 
-export function setDetailField(entity, { field, value }) {
+export function detailFieldSet(entity, { field, value }) {
   entity.details = { ...entity.details, [field]: value }
   entity.error = null
 }
 
-export function selectCategory(entity, category) {
+export function categorySelect(entity, category) {
   entity.category = category
   entity.details = {}
   entity.error = null
@@ -83,7 +83,7 @@ export const save = handleAsync("save", {
   success(entity, _, api) {
     entity.status = "ready"
     api.notify(`#${entity.id}:close`)
-    api.notify("#my_events:loadMyEvents")
+    api.notify("#my_events:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"
@@ -91,7 +91,7 @@ export const save = handleAsync("save", {
   },
 })
 
-export const loadForEdit = handleAsync("loadForEdit", {
+export const editLoad = handleAsync("editLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null

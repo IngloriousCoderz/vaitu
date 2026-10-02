@@ -11,7 +11,7 @@ export const OnboardingPage = {
     return renderOnboarding({
       entity,
       onField: ({ field, value }) =>
-        api.notify(`#${id}:setField`, { field, value }),
+        api.notify(`#${id}:fieldSet`, { field, value }),
       onSave: () =>
         api.notify(`#${id}:save`, {
           country: entity.country,

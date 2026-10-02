@@ -1,11 +1,11 @@
 import * as handlers from "./handlers.js"
 import { renderApplicationDetail } from "./template.js"
 
-const { loadApplication, save, withdraw, ...syncHandlers } = handlers
+const { applicationLoad, save, withdraw, ...syncHandlers } = handlers
 
 export const ApplicationDetail = {
   ...syncHandlers,
-  ...loadApplication,
+  ...applicationLoad,
   ...save,
   ...withdraw,
   render(entity, api) {
@@ -13,15 +13,15 @@ export const ApplicationDetail = {
     return renderApplicationDetail({
       entity,
       onField: ({ field, value }) =>
-        api.notify(`#${id}:setField`, { field, value }),
+        api.notify(`#${id}:fieldSet`, { field, value }),
       onSave: () =>
         api.notify(`#${id}:save`, {
           application_id: entity.application_id,
           motivation: entity.motivation,
         }),
-      onAskWithdraw: () => api.notify(`#${id}:askWithdraw`),
+      onAskWithdraw: () => api.notify(`#${id}:withdrawAsk`),
       onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
-      onCancelWithdraw: () => api.notify(`#${id}:cancelWithdraw`),
+      onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
       onBack: () => api.notify(`#${id}:back`),
       onNavigate: (value) => {
         if (value === "events") {

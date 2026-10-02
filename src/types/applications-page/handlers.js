@@ -5,7 +5,7 @@ import { fetchMyApplications } from "../../api/applications.js"
 export function open(entity, status_filter, api) {
   entity.isOpen = true
   entity.status_filter = status_filter ?? "all"
-  api.notify(`#${entity.id}:loadApplications`)
+  api.notify(`#${entity.id}:applicationsLoad`)
 }
 
 export function close(entity) {
@@ -14,15 +14,15 @@ export function close(entity) {
   entity.error = null
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function selectStatusFilter(entity, status_filter) {
+export function statusFilterSelect(entity, status_filter) {
   entity.status_filter = status_filter
 }
 
-export const loadApplications = handleAsync("loadApplications", {
+export const applicationsLoad = handleAsync("applicationsLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null

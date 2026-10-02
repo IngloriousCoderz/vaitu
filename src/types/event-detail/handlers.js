@@ -18,7 +18,7 @@ export function open(entity, event_id, api) {
   entity.full_name = profile?.full_name ?? ""
   entity.website = profile?.website ?? ""
   entity.instagram = profile?.instagram_handle ?? ""
-  api.notify(`#${entity.id}:loadDetail`, event_id)
+  api.notify(`#${entity.id}:detailLoad`, event_id)
 }
 
 export function close(entity) {
@@ -30,11 +30,11 @@ export function close(entity) {
   entity.isSubmitted = false
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function setField(entity, { field, value }) {
+export function fieldSet(entity, { field, value }) {
   entity[field] = value
 }
 
@@ -47,7 +47,7 @@ export function prefill(entity, profile) {
 }
 
 // Requires a session, then runs the real insert via `apply`.
-export function submitApplication(entity, _, api) {
+export function applicationSubmit(entity, _, api) {
   const session = api.getEntity("session")
   if (!session?.user_id) {
     api.notify("#auth:open")
@@ -97,7 +97,7 @@ export const apply = handleAsync("apply", {
   success(entity, _, api) {
     entity.applyStatus = "ready"
     entity.isSubmitted = true
-    api.notify("#events:loadEvents")
+    api.notify("#events:eventsLoad")
   },
   error(entity, err) {
     entity.applyStatus = "error"
@@ -105,7 +105,7 @@ export const apply = handleAsync("apply", {
   },
 })
 
-export const loadDetail = handleAsync("loadDetail", {
+export const detailLoad = handleAsync("detailLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null

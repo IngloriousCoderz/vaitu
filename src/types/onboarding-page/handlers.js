@@ -2,13 +2,13 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 
-export function setField(entity, { field, value }) {
+export function fieldSet(entity, { field, value }) {
   entity[field] = value
   entity.error = null
 }
 
 export function skip(entity, _, api) {
-  api.notify("#auth:finishOnboarding")
+  api.notify("#auth:onboardingFinish")
 }
 
 export const save = handleAsync("save", {
@@ -43,8 +43,8 @@ export const save = handleAsync("save", {
   },
   success(entity, _, api) {
     entity.status = "ready"
-    api.notify("#auth:finishOnboarding")
-    api.notify("#profile:loadProfile")
+    api.notify("#auth:onboardingFinish")
+    api.notify("#profile:profileLoad")
   },
   error(entity, err) {
     entity.status = "error"

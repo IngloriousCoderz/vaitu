@@ -4,7 +4,7 @@ import { supabase } from "../../api/client.js"
 
 export function open(entity, _, api) {
   entity.isOpen = true
-  api.notify(`#${entity.id}:loadProfile`)
+  api.notify(`#${entity.id}:profileLoad`)
 }
 
 export function close(entity) {
@@ -15,28 +15,28 @@ export function close(entity) {
   entity.draft = null
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function startEdit(entity, _, api) {
+export function editStart(entity, _, api) {
   entity.isEditing = true
   entity.draft = { ...entity.profile }
   entity.error = null
   api.notify("#country-profile:sync", entity.draft.country ?? "")
 }
 
-export function cancelEdit(entity) {
+export function editCancel(entity) {
   entity.isEditing = false
   entity.draft = null
   entity.error = null
 }
 
-export function setProfileField(entity, { field, value }) {
+export function profileFieldSet(entity, { field, value }) {
   if (entity.draft) entity.draft[field] = value
 }
 
-export const loadProfile = handleAsync("loadProfile", {
+export const profileLoad = handleAsync("profileLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -74,7 +74,7 @@ export const loadProfile = handleAsync("loadProfile", {
     entity.stats = stats
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#detail:prefill", profile)
-    if (profile.role === "sender") api.notify("#my_events:loadMyEvents")
+    if (profile.role === "sender") api.notify("#my_events:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"
@@ -82,7 +82,7 @@ export const loadProfile = handleAsync("loadProfile", {
   },
 })
 
-export const saveProfile = handleAsync("saveProfile", {
+export const profileSave = handleAsync("profileSave", {
   start(entity) {
     entity.status = "saving"
     entity.error = null

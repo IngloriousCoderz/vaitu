@@ -12,7 +12,7 @@ export function open(entity, { application_id, returnTo }, api) {
   entity.application = null
   entity.motivation = ""
   entity.isConfirmingWithdraw = false
-  api.notify(`#${entity.id}:loadApplication`, application_id)
+  api.notify(`#${entity.id}:applicationLoad`, application_id)
 }
 
 export function back(entity, _, api) {
@@ -28,23 +28,23 @@ export function close(entity) {
   entity.error = null
 }
 
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   close(entity)
 }
 
-export function setField(entity, { field, value }) {
+export function fieldSet(entity, { field, value }) {
   entity[field] = value
 }
 
-export function askWithdraw(entity) {
+export function withdrawAsk(entity) {
   entity.isConfirmingWithdraw = true
 }
 
-export function cancelWithdraw(entity) {
+export function withdrawCancel(entity) {
   entity.isConfirmingWithdraw = false
 }
 
-export const loadApplication = handleAsync("loadApplication", {
+export const applicationLoad = handleAsync("applicationLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -94,7 +94,7 @@ export const withdraw = handleAsync("withdraw", {
     entity.status = "ready"
     entity.isConfirmingWithdraw = false
     api.notify(`#${entity.id}:close`)
-    api.notify("#events:loadEvents")
+    api.notify("#events:eventsLoad")
     api.notify("#applications:open")
   },
   error(entity, err) {

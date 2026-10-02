@@ -155,6 +155,6 @@ export function sync(entity, value) {
 }
 
 /** @param {any} entity */
-export function closeOverlays(entity) {
+export function overlaysClose(entity) {
   doClose(entity)
 }

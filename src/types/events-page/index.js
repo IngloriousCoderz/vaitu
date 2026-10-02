@@ -1,26 +1,26 @@
 import { categories, filtersForCategory } from "./categories.js"
 import {
-  clearFilters,
-  loadEvents,
+  filtersClear,
+  eventsLoad,
   search,
-  selectCategory,
-  selectFilter,
-  selectPeriod,
-  selectRegion,
-  toggleFilters,
+  categorySelect,
+  filterSelect,
+  periodSelect,
+  regionSelect,
+  filtersToggle,
 } from "./handlers.js"
 import { distinctRegions, periods } from "./helpers.js"
 import { renderPage } from "./template.js"
 
 export const EventsPage = {
   search,
-  selectCategory,
-  selectFilter,
-  selectPeriod,
-  selectRegion,
-  toggleFilters,
-  clearFilters,
-  ...loadEvents,
+  categorySelect,
+  filterSelect,
+  periodSelect,
+  regionSelect,
+  filtersToggle,
+  filtersClear,
+  ...eventsLoad,
   render(entity, api) {
     const id = entity.id
     return renderPage({
@@ -42,12 +42,12 @@ export const EventsPage = {
         entity.activeRegion !== "all" || entity.activePeriod !== "all",
       onSearch: (value) => api.notify(`#${id}:search`, value),
       onSelectCategory: (categoryId) =>
-        api.notify(`#${id}:selectCategory`, categoryId),
-      onSelectFilter: (filterId) => api.notify(`#${id}:selectFilter`, filterId),
-      onToggleFilters: () => api.notify(`#${id}:toggleFilters`),
-      onSelectRegion: (region) => api.notify(`#${id}:selectRegion`, region),
-      onSelectPeriod: (periodId) => api.notify(`#${id}:selectPeriod`, periodId),
-      onClearFilters: () => api.notify(`#${id}:clearFilters`),
+        api.notify(`#${id}:categorySelect`, categoryId),
+      onSelectFilter: (filterId) => api.notify(`#${id}:filterSelect`, filterId),
+      onToggleFilters: () => api.notify(`#${id}:filtersToggle`),
+      onSelectRegion: (region) => api.notify(`#${id}:regionSelect`, region),
+      onSelectPeriod: (periodId) => api.notify(`#${id}:periodSelect`, periodId),
+      onClearFilters: () => api.notify(`#${id}:filtersClear`),
       onOpenEvent: (event_id) => {
         const application_id = entity.appliedMap[event_id]
         if (application_id) {

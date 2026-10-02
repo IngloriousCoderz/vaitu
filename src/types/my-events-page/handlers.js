@@ -2,15 +2,15 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { deleteEvent, fetchMyEvents } from "../../api/events.js"
 
-export function askDelete(entity, event_id) {
+export function deleteAsk(entity, event_id) {
   entity.confirming_delete = event_id
 }
 
-export function cancelDelete(entity) {
+export function deleteCancel(entity) {
   entity.confirming_delete = null
 }
 
-export const loadMyEvents = handleAsync("loadMyEvents", {
+export const eventsLoad = handleAsync("eventsLoad", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -28,7 +28,7 @@ export const loadMyEvents = handleAsync("loadMyEvents", {
   },
 })
 
-export const removeEvent = handleAsync("removeEvent", {
+export const eventRemove = handleAsync("eventRemove", {
   start(entity) {
     entity.status = "saving"
     entity.error = null
@@ -39,7 +39,7 @@ export const removeEvent = handleAsync("removeEvent", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.confirming_delete = null
-    api.notify(`#${entity.id}:loadMyEvents`)
+    api.notify(`#${entity.id}:eventsLoad`)
   },
   error(entity, err) {
     entity.status = "error"
