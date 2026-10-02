@@ -1,0 +1,67 @@
+/* Country combobox dressed like the app's own inputs (.field input):
+   same surface, line, radius and padding. Scoped under the wrapper so the
+   UI package styles elsewhere are untouched. */
+
+.vaitu-country-select .iw-combobox-control {
+  height: auto;
+  font: inherit;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 10px;
+  padding: 11px 2.5rem 11px 13px;
+}
+
+.vaitu-country-select
+  .iw-combobox-control.iw-combobox-control-open {
+  border-color: var(--vline);
+  box-shadow: none;
+  background: var(--vsurface);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.vaitu-country-select .iw-combobox-placeholder {
+  color: var(--vmuted);
+}
+
+.vaitu-country-select .iw-combobox-clear {
+  color: var(--vmuted);
+}
+
+.vaitu-country-select .iw-combobox-dropdown {
+  background: var(--vsurface);
+  border-color: var(--vline);
+  border-radius: 0 0 10px 10px;
+}
+
+.vaitu-country-select .iw-combobox-dropdown-search {
+  color: var(--vink);
+  border-bottom-color: var(--vline);
+  font-size: 14.5px;
+}
+
+.vaitu-country-select
+  .iw-combobox-dropdown-options
+  .iw-combobox-dropdown-options-option {
+  color: var(--vink);
+  font-size: 14.5px;
+}
+
+.vaitu-country-select
+  .iw-combobox-dropdown-options
+  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-focused {
+  background: var(--vbadge-bg);
+}
+
+.vaitu-country-select
+  .iw-combobox-dropdown-options
+  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-selected {
+  background: var(--vbadge-bg);
+}
+
+.vaitu-country-select .iw-combobox-no-options {
+  color: var(--vmuted);
+}

@@ -19,10 +19,11 @@ export function closeOverlays(entity) {
   close(entity)
 }
 
-export function startEdit(entity) {
+export function startEdit(entity, _, api) {
   entity.isEditing = true
   entity.draft = { ...entity.profile }
   entity.error = null
+  api.notify("#country-profile:sync", entity.draft.country ?? "")
 }
 
 export function cancelEdit(entity) {

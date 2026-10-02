@@ -25,6 +25,7 @@ export function open(entity, { event_id } = {}, api) {
   entity.application_deadline = ""
   entity.max_applicants = 5
   entity.details = {}
+  api.notify("#country-create:sync", "")
   if (event_id) api.notify(`#${entity.id}:loadForEdit`, event_id)
 }
 
@@ -98,7 +99,7 @@ export const loadForEdit = handleAsync("loadForEdit", {
   run(event_id) {
     return fetchEventForEdit(event_id)
   },
-  success(entity, row) {
+  success(entity, row, api) {
     entity.status = "ready"
     entity.category = row.category
     entity.title = row.title
@@ -112,6 +113,7 @@ export const loadForEdit = handleAsync("loadForEdit", {
     )
     entity.max_applicants = row.max_applicants
     entity.details = row.details
+    api.notify("#country-create:sync", row.country ?? "")
   },
   error(entity, err) {
     entity.status = "error"

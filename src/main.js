@@ -8,6 +8,7 @@ import "@inglorious/ui/avatar.css"
 import "@inglorious/ui/bottom-navigation.css"
 import "@inglorious/ui/icon-button.css"
 import "@inglorious/ui/select.css"
+import "@inglorious/ui/combobox.css"
 import "./pwa"
 import "./theme/tokens.css"
 

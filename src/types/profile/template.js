@@ -1,10 +1,8 @@
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
-import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 
-import { countries } from "../../data/countries.js"
 import {
   displayInstagram,
   displayWebsite,
@@ -94,6 +92,7 @@ export function renderProfile({
   onSave,
   onLogout,
   onOpenApplications,
+  renderCountry,
 }) {
   const { profile, status, error } = entity
   const saving = status === "saving"
@@ -180,18 +179,7 @@ export function renderProfile({
                         })}
                         <label class=${styles.field}>
                           <span>Country</span>
-                          ${Select.render({
-                            value: shown.country ?? "",
-                            isFullWidth: true,
-                            options: [{ value: "", label: "Select…" }].concat(
-                              countries.map((country) => ({
-                                value: country,
-                                label: country,
-                              })),
-                            ),
-                            onChange: (value) =>
-                              onField({ field: "country", value }),
-                          })}
+                          ${renderCountry()}
                         </label>
                         ${renderEditField({
                           label: "Region",

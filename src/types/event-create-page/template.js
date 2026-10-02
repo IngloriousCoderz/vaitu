@@ -3,7 +3,6 @@ import { Chip } from "@inglorious/ui/chip"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 
-import { countries } from "../../data/countries.js"
 import { categories, categoryById } from "../events-page/categories.js"
 import styles from "./style.module.css"
 
@@ -55,6 +54,7 @@ export function renderCreateEvent({
   onCategory,
   onSave,
   onBack,
+  renderCountry,
 }) {
   const busy = entity.status === "saving"
   const category = categoryById(entity.category)
@@ -118,14 +118,7 @@ export function renderCreateEvent({
       })}
       <label class=${styles.field}>
         <span>Country</span>
-        ${Select.render({
-          value: entity.country ?? "",
-          isFullWidth: true,
-          options: [{ value: "", label: "Select…" }].concat(
-            countries.map((country) => ({ value: country, label: country })),
-          ),
-          onChange: (value) => onField({ field: "country", value }),
-        })}
+        ${renderCountry()}
       </label>
       ${renderTextField({
         label: "Region",

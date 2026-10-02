@@ -3,6 +3,7 @@ import { createStore } from "@inglorious/store"
 import { ApplicationDetail } from "../types/application-detail/index.js"
 import { ApplicationsPage } from "../types/applications-page/index.js"
 import { AuthPage } from "../types/auth-page/index.js"
+import { CountrySelect } from "../types/country-select/index.js"
 import { CreateEventPage } from "../types/event-create-page/index.js"
 import { EventDetail } from "../types/event-detail/index.js"
 import { EventsPage } from "../types/events-page/index.js"
@@ -22,6 +23,7 @@ export const store = createStore({
     ApplicationsPage,
     ApplicationDetail,
     MyEventsPage,
+    CountrySelect,
     CreateEventPage,
     ReceivedPage,
     OnboardingPage,

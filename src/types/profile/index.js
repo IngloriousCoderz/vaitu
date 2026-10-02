@@ -22,6 +22,7 @@ export const Profile = {
         api.notify(`#${id}:close`)
         api.notify("#applications:open", status_filter)
       },
+      renderCountry: () => api.render("country-profile"),
     })
   },
 }

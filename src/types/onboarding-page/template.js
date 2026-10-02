@@ -1,11 +1,15 @@
 import { Button } from "@inglorious/ui/button"
-import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 
-import { countries } from "../../data/countries.js"
 import styles from "./style.module.css"
 
-export function renderOnboarding({ entity, onField, onSave, onSkip }) {
+export function renderOnboarding({
+  entity,
+  onField,
+  onSave,
+  onSkip,
+  renderCountry,
+}) {
   const saving = entity.status === "saving"
 
   return html`
@@ -23,14 +27,7 @@ export function renderOnboarding({ entity, onField, onSave, onSkip }) {
         }
       >
         <span>Country</span>
-        ${Select.render({
-          value: entity.country ?? "",
-          isFullWidth: true,
-          options: [{ value: "", label: "Select…" }].concat(
-            countries.map((country) => ({ value: country, label: country })),
-          ),
-          onChange: (value) => onField({ field: "country", value }),
-        })}
+        ${renderCountry()}
       </label>
       <label class=${styles.field}>
         <span>Region (optional)</span>

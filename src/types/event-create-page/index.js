@@ -38,6 +38,7 @@ export const CreateEventPage = {
           details: entity.details,
         })
       },
+      renderCountry: () => api.render("country-create"),
     })
   },
 }

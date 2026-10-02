@@ -20,6 +20,7 @@ export const OnboardingPage = {
           instagram: entity.instagram,
         }),
       onSkip: () => api.notify(`#${id}:skip`),
+      renderCountry: () => api.render("country-onboarding"),
     })
   },
 }
