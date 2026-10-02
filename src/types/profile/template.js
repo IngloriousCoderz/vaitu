@@ -97,6 +97,9 @@ function renderTierBlock({ stats, tiers, onOpenRanks }) {
         ${
           progress.current
             ? html`
+                <span class=${styles.tierMedal} data-tier=${progress.current}>
+                  ${renderIcon({ name: "medal", size: 22 })}
+                </span>
                 <span class=${styles[`tier${capitalize(progress.current)}`]}>
                   ${Chip.render({ children: capitalize(progress.current) })}
                 </span>

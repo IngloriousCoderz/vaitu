@@ -1,5 +1,4 @@
 import { Button } from "@inglorious/ui/button"
-import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
 import { capitalize } from "../../text.js"
@@ -13,6 +12,19 @@ function rankMin(tiers, rank) {
   if (rank === "gold") return tiers.goldMin
   if (rank === "silver") return tiers.silverMin
   return tiers.bronzeMin
+}
+
+function howRow({ icon, points, label }) {
+  return html`
+    <div class=${styles.howRow}>
+      <span class=${styles.howIcon}
+        >${renderIcon({ name: icon, size: 17 })}</span
+      >
+      <span class=${styles.howText}>
+        <strong>${points} pts</strong> ${label}
+      </span>
+    </div>
+  `
 }
 
 export function renderRanks({ entity, onBack }) {
@@ -44,6 +56,11 @@ export function renderRanks({ entity, onBack }) {
         progress
           ? html`
               <div class=${styles.hero}>
+                <span
+                  class=${`${styles.heroMedal} ${progress.current ? styles[`${progress.current}Medal`] : ""}`}
+                >
+                  ${renderIcon({ name: "medal", size: 36 })}
+                </span>
                 <span class=${styles.heroTier}>
                   ${progress.current ? capitalize(progress.current) : "No rank"}
                 </span>
@@ -75,7 +92,8 @@ export function renderRanks({ entity, onBack }) {
                         class=${`${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`}
                       >
                         <span class=${styles.rankName}>
-                          ${Chip.render({ children: capitalize(rank) })}
+                          ${renderIcon({ name: "medal", size: 20 })}
+                          ${capitalize(rank)}
                         </span>
                         <span class=${styles.rankPoints}>
                           ${rankMin(tiers, rank)}+ pts
@@ -90,15 +108,21 @@ export function renderRanks({ entity, onBack }) {
             ? html`
                 <div class=${styles.howCard}>
                   <span class=${styles.howTitle}>How points work</span>
-                  <span class=${styles.howRow}>
-                    ${tiers.perApplication} pts per application
-                  </span>
-                  <span class=${styles.howRow}>
-                    ${tiers.perShortlist} pts per shortlist
-                  </span>
-                  <span class=${styles.howRow}>
-                    ${tiers.perSelection} pts per win
-                  </span>
+                  ${howRow({
+                    icon: "clipboard-list",
+                    points: tiers.perApplication,
+                    label: "per application",
+                  })}
+                  ${howRow({
+                    icon: "star",
+                    points: tiers.perShortlist,
+                    label: "per shortlist",
+                  })}
+                  ${howRow({
+                    icon: "trophy",
+                    points: tiers.perSelection,
+                    label: "per win",
+                  })}
                 </div>
               `
             : ""

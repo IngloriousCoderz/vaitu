@@ -9,7 +9,7 @@
 }
 
 .name {
-  margin: 14px 0 0;
+  margin: 8px 0 0;
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
   font-size: 24px;
@@ -41,6 +41,22 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.tierMedal {
+  display: inline-flex;
+}
+
+.tierMedal[data-tier="bronze"] {
+  color: #9a6b4f;
+}
+
+.tierMedal[data-tier="silver"] {
+  color: #7c7689;
+}
+
+.tierMedal[data-tier="gold"] {
+  color: #e07b39;
 }
 
 .progressTrack {
@@ -211,11 +227,11 @@ button.ranksHelp {
 }
 
 .logoutButton {
-  margin-top: 26px;
+  margin-top: 14px;
 }
 
 .editButton {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 .cancelButton {
@@ -231,9 +247,9 @@ button.ranksHelp {
 
 .stats {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 button.stat {
@@ -244,7 +260,7 @@ button.stat {
   background: var(--vsurface);
   border: 1px solid var(--vline);
   border-radius: 12px;
-  padding: 12px 0 10px;
+  padding: 8px 0 7px;
   min-height: 0;
   cursor: pointer;
   font: inherit;
@@ -252,7 +268,7 @@ button.stat {
 
 .statValue {
   font-family: var(--vtitle-font);
-  font-size: 22px;
+  font-size: 19px;
   color: var(--vink);
 }
 

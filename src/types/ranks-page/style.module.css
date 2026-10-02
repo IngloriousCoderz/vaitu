@@ -51,6 +51,23 @@ button.back.back {
   margin-bottom: 10px;
 }
 
+.heroMedal {
+  display: inline-flex;
+  color: var(--vmuted);
+}
+
+.bronzeMedal {
+  color: #9a6b4f;
+}
+
+.silverMedal {
+  color: #7c7689;
+}
+
+.goldMedal {
+  color: #e07b39;
+}
+
 .heroTier {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
@@ -114,6 +131,22 @@ button.back.back {
 
 .rankName {
   display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.bronzeCard .rankName {
+  color: #9a6b4f;
+}
+
+.silverCard .rankName {
+  color: #7c7689;
+}
+
+.goldCard .rankName {
+  color: #e07b39;
 }
 
 .rankPoints {
@@ -140,16 +173,38 @@ button.back.back {
   background: var(--vsurface);
   border: 1px solid var(--vline);
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 18px;
   margin-top: 6px;
 }
 
 .howTitle {
-  font-size: 14.5px;
-  font-weight: 600;
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: 18px;
+  padding-left: 6px;
+  margin-bottom: 8px;
 }
 
 .howRow {
   font-size: 14px;
   color: var(--vmuted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.howIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--vbg);
+  color: var(--vaccent);
+}
+
+.howText strong {
+  color: var(--vink);
 }
