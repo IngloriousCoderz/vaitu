@@ -1,0 +1,37 @@
+/* App-like page transitions. The App wraps the current page in .vaitu-page
+   keyed by page id, so the slide animation runs only when the page changes
+   (same page re-renders update in place). Tab switches carry no direction
+   class and swap instantly, like native tabs. */
+
+/* Keep the incoming page from widening the viewport mid-slide. `clip`
+   (unlike `hidden`) doesn't break sticky descendants. */
+body {
+  overflow-x: clip;
+}
+
+.vaitu-page-forward {
+  animation: vaitu-page-in-right 0.25s ease-out;
+}
+
+.vaitu-page-back {
+  animation: vaitu-page-in-left 0.25s ease-out;
+}
+
+@keyframes vaitu-page-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes vaitu-page-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vaitu-page-forward,
+  .vaitu-page-back {
+    animation: none;
+  }
+}

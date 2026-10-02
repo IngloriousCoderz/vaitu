@@ -11,6 +11,7 @@ import "@inglorious/ui/select.css"
 import "@inglorious/ui/combobox.css"
 import "./pwa"
 import "./theme/tokens.css"
+import "./page-transitions.css"
 
 import { mount } from "@inglorious/web"
 
