@@ -14,8 +14,7 @@
   padding: 11px 2.5rem 11px 13px;
 }
 
-.vaitu-country-select
-  .iw-combobox-control.iw-combobox-control-open {
+.vaitu-country-select .iw-combobox-control.iw-combobox-control-open {
   border-color: var(--vline);
   box-shadow: none;
   background: var(--vsurface);

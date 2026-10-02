@@ -3,12 +3,11 @@ import {
   filterOptions,
   formatOption,
   getOptionValue,
-} from "./helpers.js"
+} from "@inglorious/ui/combobox"
 
 const NO_FOCUSED_INDEX = -1
 const NOT_FOUND = -1
 const REMOVE_ONE = 1
-
 
 function doOpen(entity) {
   if (entity.isDisabled) return
