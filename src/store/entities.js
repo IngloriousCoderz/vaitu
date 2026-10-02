@@ -157,4 +157,11 @@ export const entities = {
   "country-onboarding": countrySelect("onboarding", "fieldSet"),
   "country-profile": countrySelect("profile", "profileFieldSet"),
   "country-create": countrySelect("create_event", "fieldSet"),
+  ranks: {
+    type: "RanksPage",
+    isOpen: false,
+    tiers: null,
+    status: "idle",
+    error: null,
+  },
 }

@@ -10,6 +10,7 @@ import { EventsPage } from "../types/events-page/index.js"
 import { MyEventsPage } from "../types/my-events-page/index.js"
 import { OnboardingPage } from "../types/onboarding-page/index.js"
 import { Profile } from "../types/profile/index.js"
+import { RanksPage } from "../types/ranks-page/index.js"
 import { ReceivedPage } from "../types/received-page/index.js"
 import { Session } from "../types/session/index.js"
 import { entities } from "./entities"
@@ -28,6 +29,7 @@ export const store = createStore({
     ReceivedPage,
     OnboardingPage,
     Profile,
+    RanksPage,
     Session,
   },
   entities,

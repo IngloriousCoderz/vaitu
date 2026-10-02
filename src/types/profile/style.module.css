@@ -21,6 +21,100 @@
   color: var(--vmuted);
 }
 
+.pointsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tierBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tierTop {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.progressTrack {
+  width: 100%;
+  max-width: 240px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--vline);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--vaccent);
+  transition: width 0.4s ease-out;
+}
+
+.progressLabel {
+  font-size: 13px;
+  color: var(--vmuted);
+}
+
+.progressRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--vmuted);
+}
+
+button.ranksHelp {
+  border: none;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 6px;
+  min-height: 0;
+  display: flex;
+  color: var(--vmuted);
+}
+
+.tierBronze .iw-chip,
+.tierSilver .iw-chip,
+.tierGold .iw-chip,
+.tierNone .iw-chip {
+  border: 1px solid;
+}
+
+.tierBronze .iw-chip {
+  background: rgba(154, 107, 79, 0.14);
+  color: #9a6b4f;
+  border-color: #d8cfbc;
+}
+
+.tierSilver .iw-chip {
+  background: rgba(124, 118, 137, 0.14);
+  color: #7c7689;
+  border-color: #d3cec2;
+}
+
+.tierGold .iw-chip {
+  background: rgba(224, 123, 57, 0.16);
+  color: #e07b39;
+  border-color: #e8c88f;
+}
+
+.tierNone .iw-chip {
+  background: transparent;
+  color: var(--vmuted);
+  border-color: var(--vline);
+}
+
 .rows {
   margin: 20px 0 0;
   border-top: 1px solid var(--vline);

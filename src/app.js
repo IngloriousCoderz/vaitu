@@ -93,6 +93,13 @@ export const App = {
 
     const detail = api.getEntity("detail")
     const applicationDetail = api.getEntity("application-detail")
+    const ranks = api.getEntity("ranks")
+    const profile = api.getEntity("profile")
+    const sender = profile.profile?.role === "sender"
+    const tabs = sender ? senderTabs : undefined
+    const bar = (active, hidden) =>
+      renderTabbar({ active, tabs, hidden, onNavigate })
+
     let pageKey = null
     if (detail.event_id) {
       page = api.render("detail")
@@ -100,13 +107,11 @@ export const App = {
     } else if (applicationDetail.application_id) {
       page = api.render("application-detail")
       pageKey = `application-detail:${applicationDetail.application_id}`
+    } else if (ranks.isOpen) {
+      page = api.render("ranks")
+      pageKey = "ranks"
+      tabbar = bar(null, true)
     } else {
-      const profile = api.getEntity("profile")
-      const sender = profile.profile?.role === "sender"
-      const tabs = sender ? senderTabs : undefined
-      const bar = (active, hidden) =>
-        renderTabbar({ active, tabs, hidden, onNavigate })
-
       const applications = api.getEntity("applications")
       if (applications.isOpen) {
         page = api.render("applications")

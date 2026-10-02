@@ -26,3 +26,11 @@ export const ZERO = 0
 export const MONTH_INDEX_OFFSET = 1
 export const PAD_LENGTH = 2
 export const DATETIME_LOCAL_LENGTH = 16
+// Tier thresholds fallback (live values come from app_config).
+export const TIER_BRONZE_MIN_POINTS = 75
+export const TIER_SILVER_MIN_POINTS = 125
+export const TIER_GOLD_MIN_POINTS = 200
+export const POINTS_PER_APPLICATION = 2
+export const POINTS_PER_SHORTLIST = 5
+export const POINTS_PER_SELECTION = 10
+export const PERCENT_MAX = 100

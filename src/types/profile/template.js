@@ -1,6 +1,7 @@
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 
 import {
@@ -8,7 +9,11 @@ import {
   displayWebsite,
   initials,
   instagramUrl,
+  progressLabel,
+  tierProgress,
 } from "./helpers.js"
+import { capitalize } from "../../text.js"
+import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
 function renderRow(label, value, href) {
@@ -84,6 +89,44 @@ function renderEditField({
   `
 }
 
+function renderTierBlock({ stats, tiers, onOpenRanks }) {
+  const progress = tierProgress(stats.points, tiers)
+  return html`
+    <div class=${styles.tierBlock}>
+      <div class=${styles.tierTop}>
+        ${
+          progress.current
+            ? html`
+                <span class=${styles[`tier${capitalize(progress.current)}`]}>
+                  ${Chip.render({ children: capitalize(progress.current) })}
+                </span>
+              `
+            : html`
+                <span class=${styles.tierNone}>
+                  ${Chip.render({ children: "No rank" })}
+                </span>
+              `
+        }
+      </div>
+      <div class=${styles.progressTrack}>
+        <div
+          class=${styles.progressFill}
+          style=${`width: ${progress.percent}%`}
+        ></div>
+      </div>
+      <span class=${styles.progressRow}>
+        <span>${progressLabel(stats.points, tiers)}</span>
+        ${IconButton.render({
+          icon: renderIcon({ name: "help-circle", size: 13 }),
+          ariaLabel: "How ranks work",
+          className: styles.ranksHelp,
+          onClick: onOpenRanks,
+        })}
+      </span>
+    </div>
+  `
+}
+
 export function renderProfile({
   entity,
   onEdit,
@@ -92,6 +135,7 @@ export function renderProfile({
   onSave,
   onLogout,
   onOpenApplications,
+  onOpenRanks,
   renderCountry,
 }) {
   const { profile, status, error } = entity
@@ -115,6 +159,15 @@ export function renderProfile({
                 <h2 class=${styles.name}>${profile.full_name}</h2>
                 <p class=${styles.email}>${profile.email}</p>
                 ${Chip.render({ children: profile.role })}
+                ${
+                  profile.role === "seeker" && entity.stats && entity.tierConfig
+                    ? renderTierBlock({
+                        stats: entity.stats,
+                        tiers: entity.tierConfig,
+                        onOpenRanks,
+                      })
+                    : ""
+                }
                 ${
                   profile.role === "seeker" && entity.stats
                     ? html`

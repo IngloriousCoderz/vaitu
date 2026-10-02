@@ -18,6 +18,7 @@ export const Profile = {
         api.notify(`#${id}:profileFieldSet`, { field, value }),
       onSave: () => api.notify(`#${id}:profileSave`, { ...entity.draft }),
       onLogout: () => api.notify(`#${id}:logout`),
+      onOpenRanks: () => api.notify("#ranks:open"),
       onOpenApplications: (status_filter) => {
         api.notify(`#${id}:close`)
         api.notify("#applications:open", status_filter)

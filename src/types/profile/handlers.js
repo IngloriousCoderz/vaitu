@@ -1,6 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
+import { defaultTiers } from "./helpers.js"
 
 export function open(entity, _, api) {
   entity.isOpen = true
@@ -56,22 +57,42 @@ export const profileLoad = handleAsync("profileLoad", {
     if (error) throw error
     const { data: stats } = await supabase
       .from("seeker_stats")
-      .select("applications_count, shortlists_count, selections_count")
+      .select(
+        "applications_count, shortlists_count, selections_count, points, tier",
+      )
       .eq("applicant_id", user.id)
       .maybeSingle()
+    const { data: config } = await supabase
+      .from("app_config")
+      .select("key, value")
+    const byKey = Object.fromEntries(
+      (config ?? []).map((row) => [row.key, row.value]),
+    )
+    const defaults = defaultTiers()
     return {
       profile: { ...profile, email: user.email },
       stats: stats ?? {
         applications_count: 0,
         shortlists_count: 0,
         selections_count: 0,
+        points: 0,
+        tier: null,
+      },
+      tiers: {
+        bronzeMin: byKey.tier_bronze_min_points ?? defaults.bronzeMin,
+        silverMin: byKey.tier_silver_min_points ?? defaults.silverMin,
+        goldMin: byKey.tier_gold_min_points ?? defaults.goldMin,
+        perApplication: byKey.points_per_application ?? defaults.perApplication,
+        perShortlist: byKey.points_per_shortlist ?? defaults.perShortlist,
+        perSelection: byKey.points_per_selection ?? defaults.perSelection,
       },
     }
   },
-  success(entity, { profile, stats }, api) {
+  success(entity, { profile, stats, tiers }, api) {
     entity.status = "ready"
     entity.profile = profile
     entity.stats = stats
+    entity.tierConfig = tiers
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#detail:prefill", profile)
     if (profile.role === "sender") api.notify("#my_events:eventsLoad")
