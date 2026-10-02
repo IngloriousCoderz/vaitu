@@ -13,6 +13,7 @@ export function close(entity) {
   entity.status = "idle"
   entity.error = null
   entity.isEditing = false
+  entity.isMenuOpen = false
   entity.draft = null
 }
 
@@ -20,8 +21,17 @@ export function overlaysClose(entity) {
   close(entity)
 }
 
+export function menuToggle(entity) {
+  entity.isMenuOpen = !entity.isMenuOpen
+}
+
+export function menuClose(entity) {
+  entity.isMenuOpen = false
+}
+
 export function editStart(entity, _, api) {
   entity.isEditing = true
+  entity.isMenuOpen = false
   entity.draft = { ...entity.profile }
   entity.error = null
   api.notify("#country-profile:sync", entity.draft.country ?? "")

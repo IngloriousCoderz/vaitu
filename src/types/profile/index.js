@@ -19,6 +19,8 @@ export const Profile = {
       onSave: () => api.notify(`#${id}:profileSave`, { ...entity.draft }),
       onLogout: () => api.notify(`#${id}:logout`),
       onOpenRanks: () => api.notify("#ranks:open"),
+      onToggleMenu: () => api.notify(`#${id}:menuToggle`),
+      onCloseMenu: () => api.notify(`#${id}:menuClose`),
       onOpenApplications: (status_filter) => {
         api.notify(`#${id}:close`)
         api.notify("#applications:open", status_filter)

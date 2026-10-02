@@ -87,6 +87,7 @@ export const entities = {
     profile: null,
     stats: null,
     isEditing: false,
+    isMenuOpen: false,
     draft: null,
     status: "idle",
     error: null,

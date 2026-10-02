@@ -8,6 +8,69 @@
   text-align: center;
 }
 
+.header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+button.gearButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 6px;
+  min-height: 0;
+  display: flex;
+  color: var(--vmuted);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.gearButton:active {
+  background: none;
+}
+
+.menu {
+  position: absolute;
+  top: 34px;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.menuBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  cursor: default;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: none;
+  color: var(--vink);
+  font-size: 14.5px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: left;
+}
+
 .name {
   margin: 8px 0 0;
   font-family: var(--vtitle-font);
@@ -33,18 +96,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 12px;
-}
-
-.tierTop {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 14px;
+  padding: 16px;
 }
 
 .tierMedal {
   display: inline-flex;
+  color: var(--vmuted);
 }
 
 .tierMedal[data-tier="bronze"] {
@@ -57,6 +119,17 @@
 
 .tierMedal[data-tier="gold"] {
   color: #e07b39;
+}
+
+.tierName {
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: 22px;
+}
+
+.tierPoints {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .progressTrack {
@@ -81,11 +154,20 @@
 }
 
 .progressRow {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 2px;
   font-size: 13px;
   color: var(--vmuted);
+}
+
+.progressRow button.ranksHelp {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 2px;
 }
 
 button.ranksHelp {
@@ -98,37 +180,12 @@ button.ranksHelp {
   min-height: 0;
   display: flex;
   color: var(--vmuted);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.tierBronze .iw-chip,
-.tierSilver .iw-chip,
-.tierGold .iw-chip,
-.tierNone .iw-chip {
-  border: 1px solid;
-}
-
-.tierBronze .iw-chip {
-  background: rgba(154, 107, 79, 0.14);
-  color: #9a6b4f;
-  border-color: #d8cfbc;
-}
-
-.tierSilver .iw-chip {
-  background: rgba(124, 118, 137, 0.14);
-  color: #7c7689;
-  border-color: #d3cec2;
-}
-
-.tierGold .iw-chip {
-  background: rgba(224, 123, 57, 0.16);
-  color: #e07b39;
-  border-color: #e8c88f;
-}
-
-.tierNone .iw-chip {
-  background: transparent;
-  color: var(--vmuted);
-  border-color: var(--vline);
+button.ranksHelp:active {
+  background: none;
 }
 
 .rows {
@@ -224,10 +281,6 @@ button.ranksHelp {
 .rowLink {
   color: var(--vaccent);
   text-decoration: none;
-}
-
-.logoutButton {
-  margin-top: 14px;
 }
 
 .editButton {

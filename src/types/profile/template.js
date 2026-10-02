@@ -93,24 +93,13 @@ function renderTierBlock({ stats, tiers, onOpenRanks }) {
   const progress = tierProgress(stats.points, tiers)
   return html`
     <div class=${styles.tierBlock}>
-      <div class=${styles.tierTop}>
-        ${
-          progress.current
-            ? html`
-                <span class=${styles.tierMedal} data-tier=${progress.current}>
-                  ${renderIcon({ name: "medal", size: 22 })}
-                </span>
-                <span class=${styles[`tier${capitalize(progress.current)}`]}>
-                  ${Chip.render({ children: capitalize(progress.current) })}
-                </span>
-              `
-            : html`
-                <span class=${styles.tierNone}>
-                  ${Chip.render({ children: "No rank" })}
-                </span>
-              `
-        }
-      </div>
+      <span class=${styles.tierMedal} data-tier=${progress.current ?? "none"}>
+        ${renderIcon({ name: "medal", size: 28 })}
+      </span>
+      <span class=${styles.tierName}>
+        ${progress.current ? capitalize(progress.current) : "No rank"}
+      </span>
+      <span class=${styles.tierPoints}>${stats.points ?? 0} pts</span>
       <div class=${styles.progressTrack}>
         <div
           class=${styles.progressFill}
@@ -139,6 +128,8 @@ export function renderProfile({
   onLogout,
   onOpenApplications,
   onOpenRanks,
+  onToggleMenu,
+  onCloseMenu,
   renderCountry,
 }) {
   const { profile, status, error } = entity
@@ -153,12 +144,49 @@ export function renderProfile({
           : status === "error" && !profile
             ? html`<p class=${styles.empty}>${error}</p>`
             : html`
-                ${Avatar.render({
-                  initials: initials(profile.full_name),
-                  size: "lg",
-                  backgroundColor: "linear-gradient(135deg, #6b7a5e, #24402f)",
-                  textColor: "#fffdf7",
-                })}
+                <div class=${styles.header}>
+                  ${Avatar.render({
+                    initials: initials(profile.full_name),
+                    size: "lg",
+                    backgroundColor:
+                      "linear-gradient(135deg, #6b7a5e, #24402f)",
+                    textColor: "#fffdf7",
+                  })}
+                  ${IconButton.render({
+                    icon: renderIcon({ name: "settings", size: 22 }),
+                    ariaLabel: "Profile options",
+                    className: styles.gearButton,
+                    onClick: onToggleMenu,
+                  })}
+                  ${
+                    entity.isMenuOpen
+                      ? html`
+                          <div
+                            class=${styles.menuBackdrop}
+                            @click=${onCloseMenu}
+                          ></div>
+                          <div class=${styles.menu}>
+                            <button
+                              class=${styles.menuItem}
+                              type="button"
+                              @click=${onEdit}
+                            >
+                              ${renderIcon({ name: "pencil", size: 15 })}
+                              <span>Edit profile</span>
+                            </button>
+                            <button
+                              class=${styles.menuItem}
+                              type="button"
+                              @click=${onLogout}
+                            >
+                              ${renderIcon({ name: "x", size: 15 })}
+                              <span>Log out</span>
+                            </button>
+                          </div>
+                        `
+                      : ""
+                  }
+                </div>
                 <h2 class=${styles.name}>${profile.full_name}</h2>
                 <p class=${styles.email}>${profile.email}</p>
                 ${Chip.render({ children: profile.role })}
@@ -285,24 +313,8 @@ export function renderProfile({
                           ${renderRow("Region", profile.region)}
                           ${renderRow("Sub-role", profile.sub_role)}
                         </dl>
-                        ${Button.render({
-                          children: "Edit profile",
-                          color: "primary",
-                          shape: "pill",
-                          size: "md",
-                          isFullWidth: true,
-                          className: styles.editButton,
-                          onClick: onEdit,
-                        })}
                       `
                 }
-                ${Button.render({
-                  children: "Log out",
-                  variant: "outline",
-                  isFullWidth: true,
-                  className: styles.logoutButton,
-                  onClick: onLogout,
-                })}
               `
       }
     </div>
