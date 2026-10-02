@@ -2,6 +2,18 @@
   box-sizing: border-box;
 }
 
+/* App feel: no tap flash, no sticky focus rings from touch/mouse.
+   Keyboard focus keeps its ring via :focus-visible. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible) {
+  outline: none;
+}
+
 input,
 textarea {
   line-height: 1.5;
