@@ -1,10 +1,11 @@
--- Vaitu · local seed: 1 sender + 6 open wedding events.
+-- Vaitu · local seed: sender + seeker + 6 open wedding events.
 -- Mirrors the former static mock (src/data/events.js, since removed).
 -- Applied on `supabase db reset`. Rerunning on a non-fresh DB duplicates rows.
 
 do $$
 declare
   v_sender_id uuid := gen_random_uuid();
+  v_seeker_id uuid := gen_random_uuid();
 begin
   -- auth user (handle_new_user trigger auto-creates the profile row).
   -- raw_app_meta_data must list the email provider or password login fails.
@@ -53,6 +54,52 @@ begin
       website = 'https://example.com',
       instagram_handle = '@testsender'
   where id = v_sender_id;
+
+  -- second test user: seeker, profile pre-filled so it can apply right away.
+  insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, confirmation_token, recovery_token, email_change_token_new, email_change_token_current, email_change, phone_change_token, phone_change, reauthentication_token, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
+  values (
+    '00000000-0000-0000-0000-000000000000',
+    v_seeker_id,
+    'authenticated',
+    'authenticated',
+    'seeker@vaitu.local',
+    extensions.crypt('test1234', extensions.gen_salt('bf')),
+    now(),
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '{"provider":"email","providers":["email"]}',
+    '{"full_name":"Test Seeker"}',
+    now(),
+    now()
+  )
+  on conflict (id) do nothing;
+
+  insert into auth.identities (user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
+  values (
+    v_seeker_id,
+    jsonb_build_object('sub', v_seeker_id::text, 'email', 'seeker@vaitu.local'),
+    'email',
+    v_seeker_id::text,
+    now(),
+    now(),
+    now()
+  )
+  on conflict (provider_id, provider) do nothing;
+
+  update public.profiles
+  set role = 'seeker',
+      full_name = 'Test Seeker',
+      country = 'Italy',
+      region = 'Lombardy',
+      website = 'https://seeker.example.com',
+      instagram_handle = '@testseeker'
+  where id = v_seeker_id;
 
   insert into public.events
     (sender_id, category, title, location, country, region, event_date, application_deadline, max_applicants, status, details, created_at)
