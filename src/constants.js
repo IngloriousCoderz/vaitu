@@ -34,3 +34,6 @@ export const POINTS_PER_APPLICATION = 2
 export const POINTS_PER_SHORTLIST = 5
 export const POINTS_PER_SELECTION = 10
 export const PERCENT_MAX = 100
+// Local Supabase ports (dev over LAN: same host as the page serves these).
+export const SUPABASE_API_PORT = 54321
+export const VITE_DEV_PORT = 5173

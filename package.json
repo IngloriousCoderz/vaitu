@@ -18,7 +18,9 @@
     "mobile:init:android": "cap add android",
     "mobile:sync": "pnpm build && cap sync",
     "mobile:ios": "pnpm build && cap run ios",
-    "mobile:android": "pnpm build && cap run android"
+    "mobile:android": "pnpm build && cap run android",
+    "mobile:ios:dev": "CAP_LIVE=1 cap run ios",
+    "mobile:android:dev": "CAP_LIVE=1 cap run android"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.1",
