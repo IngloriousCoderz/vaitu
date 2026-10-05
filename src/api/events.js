@@ -63,6 +63,9 @@ export function toViewModel(row) {
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
     subtitle: `${row.location} • ${MONTHS[month - MONTH_INDEX_OFFSET]} ${String(day).padStart(PAD_LENGTH, "0")}`,
+    audio_url: row.audio_url ?? null,
+    transcript: row.transcript ?? null,
+    transcript_status: row.transcript_status ?? "none",
     daysLeft: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
     ),
@@ -110,7 +113,7 @@ export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, category, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, details",
+      "id, category, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, transcript, transcript_status, details",
     )
     .eq("id", id)
     .eq("status", "open")
@@ -216,7 +219,7 @@ export async function fetchEventForEdit(event_id) {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, details",
+      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, details",
     )
     .eq("id", event_id)
     .eq("sender_id", user.id)
@@ -244,4 +247,20 @@ export async function deleteEvent(event_id) {
   const { error } = await supabase.from("events").delete().eq("id", event_id)
   if (error) throw error
   return true
+}
+
+const AUDIO_BUCKET = "event-audio"
+
+export async function uploadEventAudio(blob) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Not logged in")
+  const ext = blob.type.includes("mp4") ? "m4a" : "webm"
+  const path = `${user.id}/${crypto.randomUUID()}.${ext}`
+  const { error } = await supabase.storage
+    .from(AUDIO_BUCKET)
+    .upload(path, blob, { contentType: blob.type || "audio/webm" })
+  if (error) throw error
+  return supabase.storage.from(AUDIO_BUCKET).getPublicUrl(path).data.publicUrl
 }

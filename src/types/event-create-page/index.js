@@ -2,12 +2,13 @@ import { categoryById } from "../events-page/categories.js"
 import * as handlers from "./handlers.js"
 import { renderCreateEvent } from "./template.js"
 
-const { save, editLoad, ...syncHandlers } = handlers
+const { save, editLoad, audioRecord, ...syncHandlers } = handlers
 
 export const CreateEventPage = {
   ...syncHandlers,
   ...save,
   ...editLoad,
+  ...audioRecord,
   render(entity, api) {
     const id = entity.id
     return renderCreateEvent({
@@ -18,6 +19,9 @@ export const CreateEventPage = {
         api.notify(`#${id}:detailFieldSet`, { field, value }),
       onCategory: (category) => api.notify(`#${id}:categorySelect`, category),
       onBack: () => api.notify(`#${id}:close`),
+      onRecordStart: () => api.notify(`#${id}:audioRecord`),
+      onRecordStop: () => api.notify(`#${id}:audioRecordStop`),
+      onRemoveAudio: () => api.notify(`#${id}:audioRemove`),
       onSave: () => {
         const title_from = categoryById(entity.category).title_from
         const title = title_from.input
@@ -35,6 +39,7 @@ export const CreateEventPage = {
           event_date: entity.event_date,
           application_deadline: entity.application_deadline,
           max_applicants: entity.max_applicants,
+          audio_url: entity.audio_url,
           details: entity.details,
         })
       },

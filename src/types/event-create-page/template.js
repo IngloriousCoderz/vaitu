@@ -1,9 +1,11 @@
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { IconButton } from "@inglorious/ui/icon-button"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 
 import { categories, categoryById } from "../events-page/categories.js"
+import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
 function renderTextField({ label, field, value, placeholder, type, onField }) {
@@ -47,6 +49,65 @@ function renderDetailField({ spec, details, onDetailField }) {
   })
 }
 
+function renderAudio({ entity, onRecordStart, onRecordStop, onRemoveAudio }) {
+  const src = entity.audio_preview_url ?? entity.audio_url
+  if (!entity.is_recording && !src && !entity.audio_error) return ""
+  return html`
+    <div class=${styles.audioBox}>
+      <span class=${styles.audioLabel}>Describe by voice</span>
+      ${
+        entity.is_recording
+          ? html`
+              <p class=${styles.recording}>
+                <span class=${styles.recDot}></span> Listening… tell us about
+                your event
+              </p>
+              ${Button.render({
+                children: "Stop",
+                variant: "outline",
+                shape: "pill",
+                size: "md",
+                isFullWidth: true,
+                onClick: onRecordStop,
+              })}
+            `
+          : src
+            ? html`
+                <audio controls src=${src} class=${styles.player}></audio>
+                <div class=${styles.audioActions}>
+                  ${Button.render({
+                    children: "Record again",
+                    variant: "outline",
+                    shape: "pill",
+                    size: "md",
+                    isFullWidth: true,
+                    onClick: onRecordStart,
+                  })}
+                  ${Button.render({
+                    children: "Remove",
+                    variant: "ghost",
+                    shape: "pill",
+                    size: "md",
+                    isFullWidth: true,
+                    onClick: onRemoveAudio,
+                  })}
+                </div>
+              `
+            : ""
+      }
+      ${
+        entity.audio_error
+          ? html`<p class=${styles.error}>${entity.audio_error}</p>`
+          : ""
+      }
+      <p class=${styles.hint}>
+        Talk through your event instead of typing — it will be transcribed into
+        the fields below.
+      </p>
+    </div>
+  `
+}
+
 export function renderCreateEvent({
   entity,
   onField,
@@ -54,6 +115,9 @@ export function renderCreateEvent({
   onCategory,
   onSave,
   onBack,
+  onRecordStart,
+  onRecordStop,
+  onRemoveAudio,
   renderCountry,
 }) {
   const busy = entity.status === "saving"
@@ -76,7 +140,20 @@ export function renderCreateEvent({
         <span class=${styles.title}>
           ${entity.editing_event_id ? "Edit event" : "New event"}
         </span>
+        ${IconButton.render({
+          icon: renderIcon({ name: "mic", size: 22 }),
+          ariaLabel: "Describe by voice",
+          className: styles.micButton,
+          onClick: entity.is_recording ? onRecordStop : onRecordStart,
+        })}
       </header>
+
+      ${renderAudio({
+        entity,
+        onRecordStart,
+        onRecordStop,
+        onRemoveAudio,
+      })}
 
       <div class=${styles.chips}>
         ${categories.map(
@@ -155,12 +232,10 @@ export function renderCreateEvent({
       <div class=${styles.bottomBar}>
         ${Button.render({
           children: busy
-            ? entity.editing_event_id
-              ? "Saving…"
-              : "Creating…"
+            ? "Saving…"
             : entity.editing_event_id
               ? "Save changes"
-              : "Create event",
+              : "Save event",
           color: "primary",
           shape: "pill",
           size: "md",

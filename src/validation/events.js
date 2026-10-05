@@ -64,6 +64,11 @@ export const eventSchema = z
     application_deadline: z.string().datetime().optional(),
     max_applicants: z.number().int().positive().default(DEFAULT_MAX_APPLICANTS),
     status: z.enum(["open", "closed", "assigned"]).default("open"),
+    audio_url: z.string().url().nullish(),
+    transcript: z.string().optional(),
+    transcript_status: z
+      .enum(["none", "pending", "done", "error"])
+      .default("none"),
     details: z.record(z.string(), z.unknown()).default({}),
   })
   .superRefine((event, ctx) => {
@@ -87,6 +92,10 @@ export const createEventSchema = z
     event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Pick a date"),
     application_deadline: z.string().datetime({ message: "Pick a deadline" }),
     max_applicants: z.number().int().positive().default(DEFAULT_MAX_APPLICANTS),
+    audio_url: z.string().url().nullish(),
+    transcript_status: z
+      .enum(["none", "pending", "done", "error"])
+      .default("none"),
     details: z.record(z.string(), z.unknown()).default({}),
   })
   .superRefine((event, ctx) => {
