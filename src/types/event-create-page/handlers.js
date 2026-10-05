@@ -58,6 +58,7 @@ export function open(entity, { event_id } = {}, api) {
   entity.audio_url = null
   entity.audio_preview_url = null
   entity.is_recording = false
+  entity.is_audio_open = false
   entity.audio_error = null
   releaseRecorder()
   clearPendingAudio()
@@ -69,6 +70,7 @@ export function close(entity) {
   entity.isOpen = false
   entity.status = "idle"
   entity.error = null
+  entity.is_audio_open = false
   releaseRecorder()
   clearPendingAudio()
 }
@@ -148,6 +150,18 @@ export function audioRecordStop(entity, _, api) {
   mediaRecorder.stop()
 }
 
+export function audioOpen(entity) {
+  entity.is_audio_open = true
+  entity.audio_error = null
+}
+
+export function audioCancel(entity) {
+  releaseRecorder()
+  entity.is_recording = false
+  entity.is_audio_open = false
+  entity.audio_error = null
+}
+
 export function audioClipReady(entity, { url }) {
   entity.audio_preview_url = url
   entity.audio_error = null
@@ -157,6 +171,7 @@ export function audioRemove(entity) {
   releaseRecorder()
   clearPendingAudio()
   entity.is_recording = false
+  entity.is_audio_open = false
   entity.audio_preview_url = null
   entity.audio_url = null
   entity.audio_error = null
@@ -235,6 +250,7 @@ export const editLoad = handleAsync("editLoad", {
     entity.audio_url = row.audio_url ?? null
     entity.audio_preview_url = null
     entity.is_recording = false
+    entity.is_audio_open = false
     entity.audio_error = null
     api.notify("#country-create:sync", row.country ?? "")
   },

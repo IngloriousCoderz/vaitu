@@ -25,21 +25,26 @@
 }
 
 button.micButton {
+  width: 44px;
+  height: 44px;
   border: none;
-  background: none;
-  border-radius: 0;
-  box-shadow: none;
+  border-radius: 50%;
+  background: var(--vchip-active-bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   cursor: pointer;
-  padding: 6px;
+  padding: 0;
   min-height: 0;
   display: flex;
-  color: var(--vmuted);
+  align-items: center;
+  justify-content: center;
+  color: var(--vchip-active-text);
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 button.micButton:active {
-  background: none;
+  background: var(--vchip-active-bg);
+  filter: brightness(0.92);
 }
 
 .title {
@@ -150,4 +155,16 @@ button.micButton:active {
   font-size: 12.5px;
   color: var(--vmuted);
   margin: 0;
+}
+
+.cancelButton {
+  cursor: pointer;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 999px;
+  padding: 11px 13px;
 }

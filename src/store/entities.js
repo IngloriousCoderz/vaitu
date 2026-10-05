@@ -133,6 +133,7 @@ export const entities = {
     audio_url: null,
     audio_preview_url: null,
     is_recording: false,
+    is_audio_open: false,
     audio_error: null,
     status: "idle",
     error: null,

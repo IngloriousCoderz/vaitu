@@ -49,9 +49,21 @@ function renderDetailField({ spec, details, onDetailField }) {
   })
 }
 
-function renderAudio({ entity, onRecordStart, onRecordStop, onRemoveAudio }) {
+function renderAudio({
+  entity,
+  onRecordStart,
+  onRecordStop,
+  onCancelAudio,
+  onRemoveAudio,
+}) {
   const src = entity.audio_preview_url ?? entity.audio_url
-  if (!entity.is_recording && !src && !entity.audio_error) return ""
+  if (
+    !entity.is_audio_open &&
+    !entity.is_recording &&
+    !src &&
+    !entity.audio_error
+  )
+    return ""
   return html`
     <div class=${styles.audioBox}>
       <span class=${styles.audioLabel}>Describe by voice</span>
@@ -70,6 +82,13 @@ function renderAudio({ entity, onRecordStart, onRecordStop, onRemoveAudio }) {
                 isFullWidth: true,
                 onClick: onRecordStop,
               })}
+              <button
+                class=${styles.cancelButton}
+                type="button"
+                @click=${onCancelAudio}
+              >
+                Cancel
+              </button>
             `
           : src
             ? html`
@@ -85,7 +104,7 @@ function renderAudio({ entity, onRecordStart, onRecordStop, onRemoveAudio }) {
                   })}
                   ${Button.render({
                     children: "Remove",
-                    variant: "ghost",
+                    variant: "outline",
                     shape: "pill",
                     size: "md",
                     isFullWidth: true,
@@ -93,7 +112,23 @@ function renderAudio({ entity, onRecordStart, onRecordStop, onRemoveAudio }) {
                   })}
                 </div>
               `
-            : ""
+            : html`
+                ${Button.render({
+                  children: "Start",
+                  color: "primary",
+                  shape: "pill",
+                  size: "md",
+                  isFullWidth: true,
+                  onClick: onRecordStart,
+                })}
+                <button
+                  class=${styles.cancelButton}
+                  type="button"
+                  @click=${onCancelAudio}
+                >
+                  Cancel
+                </button>
+              `
       }
       ${
         entity.audio_error
@@ -117,6 +152,8 @@ export function renderCreateEvent({
   onBack,
   onRecordStart,
   onRecordStop,
+  onOpenAudio,
+  onCancelAudio,
   onRemoveAudio,
   renderCountry,
 }) {
@@ -144,7 +181,7 @@ export function renderCreateEvent({
           icon: renderIcon({ name: "mic", size: 22 }),
           ariaLabel: "Describe by voice",
           className: styles.micButton,
-          onClick: entity.is_recording ? onRecordStop : onRecordStart,
+          onClick: entity.is_recording ? onRecordStop : onOpenAudio,
         })}
       </header>
 
@@ -152,6 +189,7 @@ export function renderCreateEvent({
         entity,
         onRecordStart,
         onRecordStop,
+        onCancelAudio,
         onRemoveAudio,
       })}
 
