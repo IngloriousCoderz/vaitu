@@ -25,7 +25,12 @@ const config: CapacitorConfig = {
   appId: "com.inglorious.vaituFe",
   appName: "vaitu-fe",
   webDir: "dist",
-  ...(devServerUrl ? { server: { url: devServerUrl, cleartext: true } } : {}),
+  server: {
+    // http://localhost stays a secure context (mic works) and same-scheme
+    // http API calls avoid mixed-content blocks.
+    androidScheme: "http",
+    ...(devServerUrl ? { url: devServerUrl, cleartext: true } : {}),
+  },
 }
 
 export default config

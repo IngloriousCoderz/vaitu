@@ -40,6 +40,8 @@ export const AUDIO_MAX_SECONDS = 120
 // Wedding application window: deadline defaults this far before the event.
 export const APPLICATION_DEADLINE_LEAD_DAYS = 45
 export const DEADLINE_END_OF_DAY = "23:59"
+// Recordings smaller than this are treated as empty (bytes).
+export const MIN_AUDIO_BYTES = 1024
 // Local Supabase ports (dev over LAN: same host as the page serves these).
 export const SUPABASE_API_PORT = 54321
 export const VITE_DEV_PORT = 5173

@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import fixWebmDuration from "fix-webm-duration"
 
 import {
   createEvent,
@@ -17,6 +18,7 @@ import {
   DEADLINE_END_OF_DAY,
   DEFAULT_MAX_APPLICANTS,
   FIRST_INDEX,
+  MIN_AUDIO_BYTES,
   SINGULAR,
   ZERO,
 } from "../../constants.js"
@@ -32,6 +34,7 @@ let previewUrl = null
 let pendingPath = null
 let pendingUrl = null
 let removedPath = null
+let recordStartedAt = null
 
 function audioPathFromUrl(url) {
   if (typeof url !== "string") return null
@@ -65,12 +68,13 @@ function clearPendingAudio() {
 }
 
 // Drops the un-saved take; deletes its bucket file when asked.
-async function dropPendingAudio(deleteFile) {
+// Keeps the preview URL when the current take still needs its player.
+async function dropPendingAudio(deleteFile, keepPreview = false) {
   const path = pendingPath
   pendingBlob = null
   pendingPath = null
   pendingUrl = null
-  if (previewUrl) {
+  if (!keepPreview && previewUrl) {
     URL.revokeObjectURL(previewUrl)
     previewUrl = null
   }
@@ -192,6 +196,7 @@ export const audioRecord = handleAsync("audioRecord", {
       if (e.data.size > ZERO) audioChunks.push(e.data)
     }
     mediaRecorder.start()
+    recordStartedAt = Date.now()
     return true
   },
   success(entity) {
@@ -218,20 +223,43 @@ export function audioRecordStop(entity, _, api) {
   if (!mediaRecorder || mediaRecorder.state === "inactive") return
   const id = entity.id
   entity.is_recording = false
-  mediaRecorder.onstop = () => {
+  mediaRecorder.onstop = async () => {
     const type = mediaRecorder.mimeType || "audio/webm"
-    pendingBlob = new Blob(audioChunks, { type })
+    const durationMs =
+      recordStartedAt == null ? null : Date.now() - recordStartedAt
+    recordStartedAt = null
+    let blob = new Blob(audioChunks, { type })
     audioChunks = []
+    if (blob.type.includes("webm") && durationMs != null) {
+      try {
+        // Firefox omits Duration in WebM — the player shows 0:00 and stalls.
+        blob = await fixWebmDuration(blob, durationMs, { logger: false })
+      } catch {
+        // Keep the raw blob: transcription still works, only duration suffers.
+      }
+    }
+    pendingBlob = blob
     if (mediaStream) {
       for (const track of mediaStream.getTracks()) track.stop()
       mediaStream = null
     }
     mediaRecorder = null
+    if (!pendingBlob || pendingBlob.size < MIN_AUDIO_BYTES) {
+      pendingBlob = null
+      api.notify(`#${id}:audioEmpty`)
+      return
+    }
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     previewUrl = URL.createObjectURL(pendingBlob)
     api.notify(`#${id}:audioClipReady`, { url: previewUrl })
   }
   mediaRecorder.stop()
+}
+
+export function audioEmpty(entity) {
+  entity.audio_preview_url = null
+  entity.audio_transcript = null
+  entity.audio_error = "Recording came out empty — try again"
 }
 
 export function audioOpen(entity) {
@@ -263,17 +291,23 @@ export const audioProcess = handleAsync("audioProcess", {
   async run() {
     if (!pendingBlob) throw new Error("No audio to process")
     const blob = pendingBlob
-    await dropPendingAudio(true)
+    await dropPendingAudio(true, true)
     pendingBlob = blob
     const uploaded = await uploadEventAudio(blob)
     pendingPath = uploaded.path
     pendingUrl = uploaded.url
-    return transcribeAudio(pendingPath)
+    return { transcript: await transcribeAudio(pendingPath), url: pendingUrl }
   },
-  success(entity, text, api) {
+  success(entity, { transcript, url }, api) {
     entity.is_transcribing = false
-    entity.audio_transcript = text || null
-    if (text) api.notify(`#${entity.id}:audioParse`, { text })
+    // Stable bucket URL from now on — the object URL dies with the swap.
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+      previewUrl = null
+    }
+    entity.audio_preview_url = url
+    entity.audio_transcript = transcript || null
+    if (transcript) api.notify(`#${entity.id}:audioParse`, { text: transcript })
   },
   error(entity, err) {
     entity.is_transcribing = false

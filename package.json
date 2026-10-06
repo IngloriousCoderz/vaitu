@@ -28,6 +28,7 @@
     "@inglorious/ui": "^7.1.1",
     "@inglorious/web": "^6.4.1",
     "@supabase/supabase-js": "^2.117.2",
+    "fix-webm-duration": "^1.0.6",
     "zod": "^4.6.5"
   },
   "devDependencies": {
