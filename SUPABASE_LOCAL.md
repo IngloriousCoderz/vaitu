@@ -110,3 +110,25 @@ If the app can't reach them, check in order:
    # expect: {"exists":true}
    ```
 4. `pnpm edge` is only needed for hot-reload while editing a function.
+
+## Voice AI (transcription + field parsing)
+
+Two external providers, currently on personal test keys. Keys live in
+`supabase/functions/.env` (gitignored, never committed) — to switch
+accounts, create your own and replace the values (restart the stack or
+`pnpm edge` after changing):
+
+| Step | Provider | Function | Model |
+| ---- | -------- | -------- | ----- |
+| Speech-to-text (Italian) | Deepgram | `transcribe-audio` | `nova-3` (`language=it`) |
+| Transcript → event fields | OpenRouter | `parse-event` | `nvidia/nemotron-3-super-120b-a12b:free` |
+
+Notes:
+
+- Free OpenRouter models rotate and rate-limit (`429` = swap `MODEL` in
+  `parse-event/index.ts` for another `:free` one from
+  `openrouter.ai/api/v1/models`).
+- Audio stays in the `event-audio` bucket (one file per event, replaced
+  or deleted with the event); only the transcript fills the form.
+- Local Whisper was evaluated and dropped: worse on Italian proper nouns
+  plus a ~150MB model download per device.
