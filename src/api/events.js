@@ -219,7 +219,7 @@ export async function fetchEventForEdit(event_id) {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, details",
+      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, transcript, details",
     )
     .eq("id", event_id)
     .eq("sender_id", user.id)
@@ -262,5 +262,29 @@ export async function uploadEventAudio(blob) {
     .from(AUDIO_BUCKET)
     .upload(path, blob, { contentType: blob.type || "audio/webm" })
   if (error) throw error
-  return supabase.storage.from(AUDIO_BUCKET).getPublicUrl(path).data.publicUrl
+  return {
+    path,
+    url: supabase.storage.from(AUDIO_BUCKET).getPublicUrl(path).data.publicUrl,
+  }
+}
+
+export async function transcribeAudio(path) {
+  const { data, error } = await supabase.functions.invoke("transcribe-audio", {
+    body: { audio_path: path },
+  })
+  if (error) throw error
+  return data?.transcript ?? null
+}
+
+export async function deleteEventAudio(path) {
+  const { error } = await supabase.storage.from(AUDIO_BUCKET).remove([path])
+  if (error) throw error
+}
+
+export async function parseEvent(transcript) {
+  const { data, error } = await supabase.functions.invoke("parse-event", {
+    body: { transcript },
+  })
+  if (error) throw error
+  return data?.fields ?? {}
 }

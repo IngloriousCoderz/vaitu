@@ -1,20 +1,39 @@
 import { categoryById } from "../events-page/categories.js"
 import * as handlers from "./handlers.js"
 import { renderCreateEvent } from "./template.js"
+import { isTicking, startTick } from "./ticker.js"
 
-const { save, editLoad, audioRecord, ...syncHandlers } = handlers
+const {
+  save,
+  editLoad,
+  audioRecord,
+  audioProcess,
+  audioParse,
+  ...syncHandlers
+} = handlers
 
 export const CreateEventPage = {
   ...syncHandlers,
   ...save,
   ...editLoad,
   ...audioRecord,
+  ...audioProcess,
+  ...audioParse,
   render(entity, api) {
     const id = entity.id
+    if (entity.is_recording && entity.isOpen && !isTicking()) {
+      startTick(() => api.notify(`#${id}:audioTick`))
+    }
     return renderCreateEvent({
       entity,
       onField: ({ field, value }) =>
-        api.notify(`#${id}:fieldSet`, { field, value }),
+        api.notify(
+          `#${id}:${field === "event_date" ? "eventDateSet" : "fieldSet"}`,
+          {
+            field,
+            value,
+          },
+        ),
       onDetailField: ({ field, value }) =>
         api.notify(`#${id}:detailFieldSet`, { field, value }),
       onCategory: (category) => api.notify(`#${id}:categorySelect`, category),
@@ -42,6 +61,7 @@ export const CreateEventPage = {
           application_deadline: entity.application_deadline,
           max_applicants: entity.max_applicants,
           audio_url: entity.audio_url,
+          audio_transcript: entity.audio_transcript,
           details: entity.details,
         })
       },

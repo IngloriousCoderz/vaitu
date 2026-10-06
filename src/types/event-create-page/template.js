@@ -4,9 +4,24 @@ import { IconButton } from "@inglorious/ui/icon-button"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 
+import {
+  AUDIO_MAX_SECONDS,
+  PAD_LENGTH,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from "../../constants.js"
 import { categories, categoryById } from "../events-page/categories.js"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
+
+function formatElapsed(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE)
+  const seconds = String(totalSeconds % SECONDS_PER_MINUTE).padStart(
+    PAD_LENGTH,
+    "0",
+  )
+  return `${minutes}:${seconds}`
+}
 
 function renderTextField({ label, field, value, placeholder, type, onField }) {
   return html`
@@ -57,10 +72,14 @@ function renderAudio({
   onRemoveAudio,
 }) {
   const src = entity.audio_preview_url ?? entity.audio_url
+  // Edit mode with saved audio stays mic-only until tapped: a fresh take
+  // (preview) always shows, saved audio alone does not.
   if (
     !entity.is_audio_open &&
     !entity.is_recording &&
-    !src &&
+    !entity.is_transcribing &&
+    !entity.is_parsing &&
+    !entity.audio_preview_url &&
     !entity.audio_error
   )
     return ""
@@ -73,6 +92,10 @@ function renderAudio({
               <p class=${styles.recording}>
                 <span class=${styles.recDot}></span> Listening… tell us about
                 your event
+              </p>
+              <p class=${styles.timer}>
+                ${formatElapsed(entity.audio_elapsed ?? ZERO)} /
+                ${formatElapsed(AUDIO_MAX_SECONDS)}
               </p>
               ${Button.render({
                 children: "Stop",
@@ -93,6 +116,21 @@ function renderAudio({
           : src
             ? html`
                 <audio controls src=${src} class=${styles.player}></audio>
+                ${
+                  entity.is_transcribing
+                    ? html` <p class=${styles.transcribing}>Transcribing…</p> `
+                    : entity.is_parsing
+                      ? html`
+                          <p class=${styles.transcribing}>Filling fields…</p>
+                        `
+                      : entity.audio_transcript
+                        ? html`
+                            <p class=${styles.transcript}>
+                              “${entity.audio_transcript}”
+                            </p>
+                          `
+                        : ""
+                }
                 <div class=${styles.audioActions}>
                   ${Button.render({
                     children: "Record again",

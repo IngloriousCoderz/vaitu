@@ -151,10 +151,30 @@ button.micButton:active {
   background: #b3261e;
 }
 
+.timer {
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--vmuted);
+  margin: 0;
+}
+
 .hint {
   font-size: 12.5px;
   color: var(--vmuted);
   margin: 0;
+}
+
+.transcribing {
+  font-size: 13.5px;
+  color: var(--vmuted);
+  margin: 0;
+}
+
+.transcript {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
 }
 
 .cancelButton {

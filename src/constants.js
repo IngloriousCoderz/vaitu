@@ -26,6 +26,7 @@ export const ZERO = 0
 export const MONTH_INDEX_OFFSET = 1
 export const PAD_LENGTH = 2
 export const DATETIME_LOCAL_LENGTH = 16
+export const DATE_ISO_LENGTH = 10
 // Tier thresholds fallback (live values come from app_config).
 export const TIER_BRONZE_MIN_POINTS = 75
 export const TIER_SILVER_MIN_POINTS = 125
@@ -34,6 +35,11 @@ export const POINTS_PER_APPLICATION = 2
 export const POINTS_PER_SHORTLIST = 5
 export const POINTS_PER_SELECTION = 10
 export const PERCENT_MAX = 100
+// Voice dictation cap (auto-stops, shows elapsed).
+export const AUDIO_MAX_SECONDS = 120
+// Wedding application window: deadline defaults this far before the event.
+export const APPLICATION_DEADLINE_LEAD_DAYS = 45
+export const DEADLINE_END_OF_DAY = "23:59"
 // Local Supabase ports (dev over LAN: same host as the page serves these).
 export const SUPABASE_API_PORT = 54321
 export const VITE_DEV_PORT = 5173
