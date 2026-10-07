@@ -70,7 +70,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "full_name, role, sub_role, country, region, website, instagram_handle",
+        "id, full_name, role, sub_role, country, region, website, instagram_handle",
       )
       .eq("id", user.id)
       .single()

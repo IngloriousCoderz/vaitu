@@ -2,8 +2,10 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
+import { stopTick } from "../../ticker.js"
 
 export function open(entity, event_id, api) {
+  stopTick("clock")
   entity.event_id = event_id
   entity.event = null
   entity.senderName = null
@@ -22,6 +24,7 @@ export function open(entity, event_id, api) {
 }
 
 export function close(entity) {
+  stopTick("clock")
   entity.event_id = null
   entity.event = null
   entity.senderName = null
@@ -36,6 +39,10 @@ export function overlaysClose(entity) {
 
 export function fieldSet(entity, { field, value }) {
   entity[field] = value
+}
+
+export function clockTick(entity) {
+  entity.nowTs = Date.now()
 }
 
 // Fill blanks from the profile without clobbering what the user typed.

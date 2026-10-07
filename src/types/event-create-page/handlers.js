@@ -19,11 +19,13 @@ import {
   DEFAULT_MAX_APPLICANTS,
   FIRST_INDEX,
   MIN_AUDIO_BYTES,
+  MONTH_INDEX_OFFSET,
+  PAD_LENGTH,
   SINGULAR,
   ZERO,
 } from "../../constants.js"
+import { stopTick } from "../../ticker.js"
 import { weddingStyles } from "../../validation/events.js"
-import { stopTick } from "./ticker.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
 let mediaRecorder = null
@@ -43,7 +45,7 @@ function audioPathFromUrl(url) {
 }
 
 function releaseRecorder() {
-  stopTick()
+  stopTick("audio")
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
     mediaRecorder.onstop = null
     mediaRecorder.stop()
@@ -141,6 +143,18 @@ function shiftDate(dateStr, days) {
   return shifted.toISOString().slice(FIRST_INDEX, DATE_ISO_LENGTH)
 }
 
+// UTC ISO from the DB back to local "YYYY-MM-DDTHH:MM" for datetime-local.
+// Without this, 17:30 local saved as 15:30Z shows back as 15:30.
+function toLocalInput(iso) {
+  if (typeof iso !== "string" || !iso) return ""
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+  const pad = (value) => String(value).padStart(PAD_LENGTH, "0")
+  const month = pad(date.getMonth() + MONTH_INDEX_OFFSET)
+  const day = pad(date.getDate())
+  return `${date.getFullYear()}-${month}-${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 // Wedding default: deadline ~45 days before the event, end of day.
 // Only fills when empty (never overwrites the sender) and never in the past.
 function autofillDeadline(entity) {
@@ -219,7 +233,7 @@ export function audioTick(entity, _, api) {
 }
 
 export function audioRecordStop(entity, _, api) {
-  stopTick()
+  stopTick("audio")
   if (!mediaRecorder || mediaRecorder.state === "inactive") return
   const id = entity.id
   entity.is_recording = false
@@ -402,6 +416,10 @@ export const save = handleAsync("save", {
     } else if ("audio_url" in event) {
       audio_url = event.audio_url ?? null
     }
+    const deadlineIso =
+      event.application_deadline.length === DATETIME_LOCAL_LENGTH
+        ? new Date(event.application_deadline).toISOString()
+        : event.application_deadline
     const payload = {
       category: event.category,
       title: event.title,
@@ -409,10 +427,7 @@ export const save = handleAsync("save", {
       country: event.country,
       region: event.region,
       event_date: event.event_date,
-      application_deadline:
-        event.application_deadline.length === DATETIME_LOCAL_LENGTH
-          ? new Date(event.application_deadline).toISOString()
-          : event.application_deadline,
+      application_deadline: deadlineIso,
       max_applicants: Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
       audio_url,
       ...(pendingBlob ? { transcript, transcript_status } : {}),
@@ -472,10 +487,7 @@ export const editLoad = handleAsync("editLoad", {
     entity.country = row.country
     entity.region = row.region
     entity.event_date = row.event_date
-    entity.application_deadline = row.application_deadline.slice(
-      FIRST_INDEX,
-      DATETIME_LOCAL_LENGTH,
-    )
+    entity.application_deadline = toLocalInput(row.application_deadline)
     entity.max_applicants = row.max_applicants
     entity.details = row.details
     entity.audio_url = row.audio_url ?? null

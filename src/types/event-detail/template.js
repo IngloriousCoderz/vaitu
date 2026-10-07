@@ -5,6 +5,13 @@ import { html } from "@inglorious/web"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
 import {
+  DAY_MS,
+  MINUTES_PER_HOUR,
+  MS_PER_SECOND,
+  PAD_LENGTH,
+  SECONDS_PER_MINUTE,
+} from "../../constants.js"
+import {
   deadlineBadge,
   deadlineTone,
   monogram,
@@ -21,6 +28,23 @@ const toneClass = {
 function detailToneClass(event) {
   const tone = deadlineTone(event)
   return tone ? toneClass[tone] : ""
+}
+
+function formatClock(totalSeconds) {
+  const hours = String(
+    Math.floor(totalSeconds / (SECONDS_PER_MINUTE * MINUTES_PER_HOUR)),
+  ).padStart(PAD_LENGTH, "0")
+  const minutes = String(
+    Math.floor(
+      (totalSeconds % (SECONDS_PER_MINUTE * MINUTES_PER_HOUR)) /
+        SECONDS_PER_MINUTE,
+    ),
+  ).padStart(PAD_LENGTH, "0")
+  const seconds = String(totalSeconds % SECONDS_PER_MINUTE).padStart(
+    PAD_LENGTH,
+    "0",
+  )
+  return `${hours}:${minutes}:${seconds}`
 }
 
 function renderFacts(event) {
@@ -152,6 +176,12 @@ export function renderDetail({
   onCompleteProfile,
 }) {
   const { event, status, error } = entity
+  const msLeft = event?.application_deadline
+    ? new Date(event.application_deadline).getTime() -
+      (entity.nowTs ?? Date.now())
+    : null
+  const liveClosed = msLeft == null ? null : msLeft <= 0
+  const showClock = msLeft != null && msLeft > 0 && msLeft < DAY_MS
 
   return html`
     <div class=${styles.page} data-category=${event?.category ?? "wedding"}>
@@ -189,9 +219,15 @@ export function renderDetail({
                   <p class=${styles.sender}>
                     Organized by ${entity.senderName}
                   </p>
-                  <p class=${styles.countdown}>${countdownLabel(event)}</p>
+                  <p class=${styles.countdown}>
+                    ${
+                      showClock
+                        ? `Applications close in ${formatClock(Math.floor(msLeft / MS_PER_SECOND))}`
+                        : countdownLabel(event)
+                    }
+                  </p>
                   ${
-                    isApplicationClosed(event)
+                    liveClosed || isApplicationClosed(event)
                       ? html`
                           <div class=${styles.closedBox}>
                             Applications are closed for this event.

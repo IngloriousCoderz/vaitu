@@ -1,7 +1,7 @@
 import { categoryById } from "../events-page/categories.js"
 import * as handlers from "./handlers.js"
 import { renderCreateEvent } from "./template.js"
-import { isTicking, startTick } from "./ticker.js"
+import { isTicking, startTick } from "../../ticker.js"
 
 const {
   save,
@@ -21,8 +21,8 @@ export const CreateEventPage = {
   ...audioParse,
   render(entity, api) {
     const id = entity.id
-    if (entity.is_recording && entity.isOpen && !isTicking()) {
-      startTick(() => api.notify(`#${id}:audioTick`))
+    if (entity.is_recording && entity.isOpen && !isTicking("audio")) {
+      startTick("audio", () => api.notify(`#${id}:audioTick`))
     }
     return renderCreateEvent({
       entity,
