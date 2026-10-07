@@ -47,6 +47,16 @@ export function profileFieldSet(entity, { field, value }) {
   if (entity.draft) entity.draft[field] = value
 }
 
+// Token valid but user row gone (db reset), or auth rejected the token.
+// Network blips must NOT log out — only auth/row-gone errors.
+function isSessionDead(err) {
+  if (!err) return false
+  if (err.code === "PGRST116") return true
+  return /not logged in|jwt|expired|invalid.*token|user not found/i.test(
+    err.message ?? "",
+  )
+}
+
 export const profileLoad = handleAsync("profileLoad", {
   start(entity) {
     entity.status = "loading"
@@ -107,9 +117,10 @@ export const profileLoad = handleAsync("profileLoad", {
     api.notify("#detail:prefill", profile)
     if (profile.role === "sender") api.notify("#my_events:eventsLoad")
   },
-  error(entity, err) {
+  error(entity, err, api) {
     entity.status = "error"
     entity.error = err.message ?? "Failed to load profile"
+    if (isSessionDead(err)) api.notify("#session:sessionExpire")
   },
 })
 

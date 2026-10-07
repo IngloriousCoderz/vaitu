@@ -34,5 +34,11 @@ function trackSession(session) {
   }
 }
 
-supabase.auth.getSession().then(({ data }) => trackSession(data.session))
+// Server-validated boot: a restart/reset can leave a stale local token behind.
+// getSession() trusts localStorage; getUser() asks the server.
+supabase.auth
+  .getUser()
+  .then(({ data }) => trackSession(data.user ? { user: data.user } : null))
+  .catch(() => trackSession(null))
+
 supabase.auth.onAuthStateChange((_event, session) => trackSession(session))
