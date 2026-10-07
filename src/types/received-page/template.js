@@ -23,6 +23,8 @@ function renderApplicant({
   onToggle,
   onSelect,
   onReject,
+  onUnshortlist,
+  onUnreject,
   onAskAssign,
   onAssign,
   onCancelAssign,
@@ -119,7 +121,15 @@ function renderApplicant({
                                     onClick: () => onReject(item.id),
                                   })}
                                 `
-                              : ""
+                              : html`
+                                  ${Button.render({
+                                    children: "Back to pending",
+                                    variant: "outline",
+                                    shape: "pill",
+                                    size: "md",
+                                    onClick: () => onUnreject(item.id),
+                                  })}
+                                `
                           }
                         </div>
                       `
@@ -165,6 +175,14 @@ function renderApplicant({
                                   isFullWidth: true,
                                   onClick: () => onAskAssign(item.id),
                                 })}
+                                ${Button.render({
+                                  children: "Remove from shortlist",
+                                  variant: "ghost",
+                                  shape: "pill",
+                                  size: "md",
+                                  isFullWidth: true,
+                                  onClick: () => onUnshortlist(item.id),
+                                })}
                               `
                         }
                       `
@@ -183,6 +201,8 @@ export function renderReceived({
   onToggle,
   onSelect,
   onReject,
+  onUnshortlist,
+  onUnreject,
   onAskAssign,
   onAssign,
   onCancelAssign,
@@ -272,6 +292,8 @@ export function renderReceived({
                       onToggle,
                       onSelect,
                       onReject,
+                      onUnshortlist,
+                      onUnreject,
                       onAskAssign,
                       onAssign,
                       onCancelAssign,

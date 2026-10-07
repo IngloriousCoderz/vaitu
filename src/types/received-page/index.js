@@ -28,6 +28,18 @@ export const ReceivedPage = {
           status: "rejected",
           event_id: entity.event_id,
         }),
+      onUnshortlist: (application_id) =>
+        api.notify(`#${id}:statusSet`, {
+          application_id,
+          status: "pending",
+          event_id: entity.event_id,
+        }),
+      onUnreject: (application_id) =>
+        api.notify(`#${id}:statusSet`, {
+          application_id,
+          status: "pending",
+          event_id: entity.event_id,
+        }),
       onBack: () => {
         api.notify(`#${id}:close`)
       },
