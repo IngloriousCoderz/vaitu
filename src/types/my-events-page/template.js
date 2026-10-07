@@ -61,12 +61,21 @@ export function renderMyEvents({
                             }
                           </span>
                           <span class=${styles.rowActions}>
-                            ${IconButton.render({
-                              icon: renderIcon({ name: "pencil", size: 16 }),
-                              ariaLabel: "Edit event",
-                              className: `${styles.miniButton} ${styles.editTint}`,
-                              onClick: () => onEdit(event.id),
-                            })}
+                            ${
+                              event.status === "open"
+                                ? html`
+                                    ${IconButton.render({
+                                      icon: renderIcon({
+                                        name: "pencil",
+                                        size: 16,
+                                      }),
+                                      ariaLabel: "Edit event",
+                                      className: `${styles.miniButton} ${styles.editTint}`,
+                                      onClick: () => onEdit(event.id),
+                                    })}
+                                  `
+                                : ""
+                            }
                             ${IconButton.render({
                               icon: renderIcon({ name: "trash", size: 16 }),
                               ariaLabel: "Delete event",

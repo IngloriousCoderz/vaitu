@@ -1,11 +1,13 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
-import { REQUEST_TIMEOUT_MS } from "../../constants.js"
+import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id
   entity.event_title = ""
+  entity.event_deadline = null
+  entity.reopen_deadline = ""
   entity.max_applicants = 5
   entity.items = []
   entity.expanded_application_id = null
@@ -46,11 +48,18 @@ export function assignCancel(entity) {
 
 export function reopenAsk(entity) {
   entity.confirming_reopen = true
+  entity.reopen_deadline = ""
   entity.confirming_assign = null
 }
 
 export function reopenCancel(entity) {
   entity.confirming_reopen = false
+  entity.reopen_deadline = ""
+}
+
+export function reopenDeadlineSet(entity, value) {
+  entity.reopen_deadline = value ?? ""
+  entity.error = null
 }
 
 export const receivedLoad = handleAsync("receivedLoad", {
@@ -61,7 +70,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
   async run(event_id) {
     const { data: event, error: eventError } = await supabase
       .from("events")
-      .select("id, title, status, max_applicants")
+      .select("id, title, status, max_applicants, application_deadline")
       .eq("id", event_id)
       .single()
     if (eventError) throw eventError
@@ -80,6 +89,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
     entity.status = "ready"
     entity.event_title = event.title
     entity.event_status = event.status
+    entity.event_deadline = event.application_deadline
     entity.max_applicants = event.max_applicants
     entity.items = items
   },
@@ -141,10 +151,21 @@ export const eventReopen = handleAsync("eventReopen", {
     entity.status = "saving"
     entity.error = null
   },
-  async run(event_id) {
+  async run({ event_id, application_deadline }) {
+    const patch = { status: "open" }
+    if (application_deadline) {
+      const iso =
+        application_deadline.length === DATETIME_LOCAL_LENGTH
+          ? new Date(application_deadline).toISOString()
+          : application_deadline
+      if (new Date(iso).getTime() <= Date.now()) {
+        throw new Error("Pick a future deadline")
+      }
+      patch.application_deadline = iso
+    }
     const { error } = await supabase
       .from("events")
-      .update({ status: "open" })
+      .update(patch)
       .eq("id", event_id)
     if (error) throw error
     return event_id
@@ -152,7 +173,9 @@ export const eventReopen = handleAsync("eventReopen", {
   success(entity, event_id, api) {
     entity.status = "ready"
     entity.confirming_reopen = false
+    entity.reopen_deadline = ""
     api.notify(`#${entity.id}:receivedLoad`, event_id)
+    api.notify("#my_events:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"

@@ -28,6 +28,26 @@
   margin: 0;
 }
 
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--vmuted);
+  margin-top: 12px;
+}
+
+.field input {
+  font: inherit;
+  font-size: 14.5px;
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 10px;
+  padding: 11px 13px;
+  outline: none;
+}
+
 .subtitle {
   margin: 4px 0 0;
   font-size: 13.5px;

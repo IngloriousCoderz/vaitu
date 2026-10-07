@@ -2,10 +2,15 @@ import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
-import { SINGULAR } from "../../constants.js"
+import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants.js"
 import { capitalize } from "../../text.js"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
+
+function deadlinePast(iso) {
+  if (!iso) return false
+  return new Date(iso).getTime() <= Date.now()
+}
 
 const statusColors = {
   pending: "default",
@@ -207,6 +212,7 @@ export function renderReceived({
   onAssign,
   onCancelAssign,
   onAskReopen,
+  onReopenDeadline,
   onReopen,
   onCancelReopen,
   onBack,
@@ -228,15 +234,33 @@ export function renderReceived({
           ${selected_count} shortlisted · ${items.length} received
         </p>
         ${
-          entity.event_status === "assigned"
+          entity.event_status === "assigned" || entity.event_status === "closed"
             ? html`
                 ${
                   entity.confirming_reopen
                     ? html`
                         <p class=${styles.warn}>
-                          Reopen this event? Applications keep their status and
-                          you can adjust the shortlist again.
+                          ${
+                            entity.event_status === "assigned"
+                              ? "Reopen this event? Applications keep their status and you can adjust the shortlist again."
+                              : "Reopen this event? New applications will be accepted again."
+                          }
                         </p>
+                        ${
+                          deadlinePast(entity.event_deadline)
+                            ? html`
+                                <label class=${styles.field}>
+                                  <span>New application deadline</span>
+                                  <input
+                                    type="datetime-local"
+                                    .value=${entity.reopen_deadline ?? ""}
+                                    @input=${(e) =>
+                                      onReopenDeadline(e.target.value)}
+                                  />
+                                </label>
+                              `
+                            : ""
+                        }
                         <div class=${styles.actions}>
                           ${Button.render({
                             children:
@@ -246,11 +270,18 @@ export function renderReceived({
                             color: "primary",
                             shape: "pill",
                             size: "md",
-                            isDisabled: status === "saving",
+                            isDisabled:
+                              status === "saving" ||
+                              (deadlinePast(entity.event_deadline) &&
+                                (entity.reopen_deadline ?? "").length !==
+                                  DATETIME_LOCAL_LENGTH),
                             onClick: onReopen,
                           })}
                           ${Button.render({
-                            children: "Keep assigned",
+                            children:
+                              entity.event_status === "assigned"
+                                ? "Keep assigned"
+                                : "Keep closed",
                             variant: "outline",
                             shape: "pill",
                             size: "md",
