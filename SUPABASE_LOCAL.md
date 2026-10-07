@@ -113,18 +113,31 @@ If the app can't reach them, check in order:
 
 ## Voice AI (transcription + field parsing)
 
-Two external providers, currently on personal test keys. Keys live in
-`supabase/functions/.env` (gitignored, never committed) — to switch
-accounts, create your own and replace the values (restart the stack or
-`pnpm edge` after changing):
+Two external providers, currently on personal test keys. Both keys go in
+`supabase/functions/.env` (NOT `.env.local` — that one is only for the
+frontend). The file is gitignored, never committed, and functions
+hot-reload it — no restart needed:
 
-| Step | Provider | Function | Model |
-| ---- | -------- | -------- | ----- |
-| Speech-to-text (Italian) | Deepgram | `transcribe-audio` | `nova-3` (`language=it`) |
-| Transcript → event fields | OpenRouter | `parse-event` | `nvidia/nemotron-3-super-120b-a12b:free` |
+```
+DEEPGRAM_API_KEY=<from console.deepgram.com → Project → API Keys>
+OPENROUTER_API_KEY=<from openrouter.ai → Keys>
+```
 
-Notes:
+| Step                      | Provider   | Function           | Model                                    |
+| ------------------------- | ---------- | ------------------ | ---------------------------------------- |
+| Speech-to-text (Italian)  | Deepgram   | `transcribe-audio` | `nova-3` (`language=it`)                 |
+| Transcript → event fields | OpenRouter | `parse-event`      | `nvidia/nemotron-3-super-120b-a12b:free` |
 
+Troubleshooting:
+
+- `500 "DEEPGRAM_API_KEY is not set"` → key in the wrong `.env`. The
+  functions also need `SUPABASE_URL` / `SUPABASE_ANON_KEY` /
+  `SUPABASE_SERVICE_ROLE_KEY` in the same file.
+  (With a full `supabase start` these are auto-injected; with only
+  `pnpm edge` running, the file is the only source.)
+- `401 INVALID_AUTH from Deepgram` → the key itself is bad: regenerate
+  it in the Deepgram console (copy the full value, no spaces, no quotes)
+  and replace it.
 - Free OpenRouter models rotate and rate-limit (`429` = swap `MODEL` in
   `parse-event/index.ts` for another `:free` one from
   `openrouter.ai/api/v1/models`).
