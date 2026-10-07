@@ -1,4 +1,5 @@
 import * as handlers from "./handlers.js"
+import { subscribeApplications } from "../../api/events.js"
 import { renderApplicationDetail } from "./template.js"
 
 const { applicationLoad, save, withdraw, ...syncHandlers } = handlers
@@ -10,6 +11,11 @@ export const ApplicationDetail = {
   ...withdraw,
   render(entity, api) {
     const id = entity.id
+    if (entity.application_id) {
+      subscribeApplications("application-detail", () =>
+        api.notify(`#${id}:applicationLoad`, entity.application_id),
+      )
+    }
     return renderApplicationDetail({
       entity,
       onField: ({ field, value }) =>

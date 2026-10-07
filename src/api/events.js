@@ -6,6 +6,7 @@ import {
   HOUR_MS,
   HUE_DEGREES,
   JUST_OPENED_MIN_DAYS,
+  MINUTES_PER_HOUR,
   MONTH_INDEX_OFFSET,
   PAD_LENGTH,
   REQUEST_TIMEOUT_MS,
@@ -105,6 +106,9 @@ export function countdownLabel(event) {
     return `Applications close in ${event.daysLeft} days`
   if (event.hoursLeft > SINGULAR)
     return `Applications close in ${event.hoursLeft} hours`
+  if (event.minutesLeft > SINGULAR)
+    return `Applications close in ${event.minutesLeft} minutes`
+  if (event.minutesLeft === SINGULAR) return "Applications close in 1 minute"
   if (event.hoursLeft === SINGULAR) return "Applications close in 1 hour"
   return "Applications are closed"
 }
@@ -117,10 +121,9 @@ export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, category, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, transcript, transcript_status, details",
+      "id, category, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, transcript, transcript_status, details",
     )
     .eq("id", id)
-    .eq("status", "open")
     .single()
   if (error) throw error
 
@@ -136,11 +139,19 @@ export async function fetchEventDetail(id) {
     event: {
       ...view,
       max_applicants: event.max_applicants,
+      application_deadline: event.application_deadline,
       hoursLeft: Math.max(
         ZERO,
         Math.ceil(
           (new Date(event.application_deadline).getTime() - Date.now()) /
             HOUR_MS,
+        ),
+      ),
+      minutesLeft: Math.max(
+        ZERO,
+        Math.ceil(
+          (new Date(event.application_deadline).getTime() - Date.now()) /
+            (HOUR_MS / MINUTES_PER_HOUR),
         ),
       ),
     },
@@ -292,24 +303,56 @@ export async function parseEvent(transcript) {
   return data?.fields ?? {}
 }
 
-// Sender counts stay live: one channel for the session, refetch on change.
+// Live lists stay fresh: one channel per page, refetch on change.
 // RLS scopes events to the caller's own rows.
-let applicationsChannel = null
+const applicationChannels = {}
 
-export function subscribeApplications(onChange) {
-  if (applicationsChannel) return
-  applicationsChannel = supabase
-    .channel("my-events-applications")
+export function subscribeApplications(key, onChange, filter) {
+  if (applicationChannels[key]) return
+  applicationChannels[key] = supabase
+    .channel(`applications-${key}`)
     .on(
       "postgres_changes",
-      { event: "*", schema: "public", table: "applications" },
+      {
+        event: "*",
+        schema: "public",
+        table: "applications",
+        ...(filter ? { filter } : {}),
+      },
       onChange,
     )
     .subscribe()
 }
 
 export function unsubscribeApplications() {
-  if (!applicationsChannel) return
-  void supabase.removeChannel(applicationsChannel)
-  applicationsChannel = null
+  for (const key of Object.keys(applicationChannels)) {
+    void supabase.removeChannel(applicationChannels[key])
+    delete applicationChannels[key]
+  }
+}
+
+const eventChannels = {}
+
+export function subscribeEvents(key, onChange, filter) {
+  if (eventChannels[key]) return
+  eventChannels[key] = supabase
+    .channel(`events-${key}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "events",
+        ...(filter ? { filter } : {}),
+      },
+      onChange,
+    )
+    .subscribe()
+}
+
+export function unsubscribeEvents() {
+  for (const key of Object.keys(eventChannels)) {
+    void supabase.removeChannel(eventChannels[key])
+    delete eventChannels[key]
+  }
 }

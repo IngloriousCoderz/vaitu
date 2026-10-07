@@ -1,3 +1,4 @@
+import { subscribeEvents } from "../../api/events.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
   filtersClear,
@@ -23,6 +24,7 @@ export const EventsPage = {
   ...eventsLoad,
   render(entity, api) {
     const id = entity.id
+    subscribeEvents("events", () => api.notify(`#${id}:eventsLoad`))
     return renderPage({
       events: entity.events,
       appliedMap: entity.appliedMap,

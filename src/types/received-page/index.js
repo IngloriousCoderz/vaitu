@@ -1,4 +1,5 @@
 import * as handlers from "./handlers.js"
+import { subscribeApplications } from "../../api/events.js"
 import { renderReceived } from "./template.js"
 
 const { receivedLoad, statusSet, winnerAssign, eventReopen, ...syncHandlers } =
@@ -12,6 +13,11 @@ export const ReceivedPage = {
   ...eventReopen,
   render(entity, api) {
     const id = entity.id
+    if (entity.event_id) {
+      subscribeApplications("received", () =>
+        api.notify(`#${id}:receivedLoad`, entity.event_id),
+      )
+    }
     return renderReceived({
       entity,
       onToggle: (application_id) =>
@@ -58,7 +64,13 @@ export const ReceivedPage = {
         }),
       onCancelAssign: () => api.notify(`#${id}:assignCancel`),
       onAskReopen: () => api.notify(`#${id}:reopenAsk`),
-      onReopen: () => api.notify(`#${id}:eventReopen`, entity.event_id),
+      onReopenDeadline: (value) =>
+        api.notify(`#${id}:reopenDeadlineSet`, value),
+      onReopen: () =>
+        api.notify(`#${id}:eventReopen`, {
+          event_id: entity.event_id,
+          application_deadline: entity.reopen_deadline || undefined,
+        }),
       onCancelReopen: () => api.notify(`#${id}:reopenCancel`),
     })
   },

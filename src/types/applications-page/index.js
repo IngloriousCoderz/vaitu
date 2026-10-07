@@ -1,4 +1,5 @@
 import * as handlers from "./handlers.js"
+import { subscribeApplications } from "../../api/events.js"
 import { renderApplications } from "./template.js"
 
 const { applicationsLoad, ...syncHandlers } = handlers
@@ -8,6 +9,9 @@ export const ApplicationsPage = {
   ...applicationsLoad,
   render(entity, api) {
     const id = entity.id
+    subscribeApplications("applications", () =>
+      api.notify(`#${id}:applicationsLoad`),
+    )
     return renderApplications({
       entity,
       onOpenEvent: (event_id) => {

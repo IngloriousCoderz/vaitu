@@ -1,7 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
-import { unsubscribeApplications } from "../../api/events.js"
 import { supabase } from "../../api/client.js"
+import { unsubscribeApplications, unsubscribeEvents } from "../../api/events.js"
 
 export const sessionExpire = handleAsync("sessionExpire", {
   async run() {
@@ -34,6 +34,7 @@ export const Session = {
   },
   clearSession(entity, _, api) {
     unsubscribeApplications()
+    unsubscribeEvents()
     entity.user_id = null
     entity.email = null
     entity.status = "ready"
