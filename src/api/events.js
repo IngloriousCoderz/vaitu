@@ -254,7 +254,6 @@ export async function deleteEvent(event_id) {
 }
 
 const AUDIO_BUCKET = "event-audio"
-
 export async function uploadEventAudio(blob) {
   const {
     data: { user },
@@ -291,4 +290,26 @@ export async function parseEvent(transcript) {
   })
   if (error) throw error
   return data?.fields ?? {}
+}
+
+// Sender counts stay live: one channel for the session, refetch on change.
+// RLS scopes events to the caller's own rows.
+let applicationsChannel = null
+
+export function subscribeApplications(onChange) {
+  if (applicationsChannel) return
+  applicationsChannel = supabase
+    .channel("my-events-applications")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "applications" },
+      onChange,
+    )
+    .subscribe()
+}
+
+export function unsubscribeApplications() {
+  if (!applicationsChannel) return
+  void supabase.removeChannel(applicationsChannel)
+  applicationsChannel = null
 }
