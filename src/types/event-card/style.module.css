@@ -60,3 +60,13 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
+.badgeClosing {
+  --iw-badge-accent: #f0e3bd;
+  --iw-badge-on-accent: #7a5f22;
+}
+
+.badgeClosed {
+  --iw-badge-accent: #f3d3c8;
+  --iw-badge-on-accent: #8c4632;
+}

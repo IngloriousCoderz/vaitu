@@ -5,6 +5,7 @@ import {
   HUE_SHIFT,
   LAST_INDEX_OFFSET,
   WEEK_DAYS,
+  ZERO,
 } from "../../constants.js"
 
 export function monogram(title) {
@@ -18,10 +19,17 @@ export function monogram(title) {
 }
 
 export function deadlineBadge(event) {
+  if (event.daysLeft <= ZERO) return "CLOSED"
   if (event.isNew) return "NEW"
   if (event.daysLeft <= CLOSING_MAX_DAYS) return "CLOSING"
   if (event.daysLeft < WEEK_DAYS) return `${event.daysLeft}D LEFT`
   return `${Math.round(event.daysLeft / WEEK_DAYS)}W LEFT`
+}
+
+export function deadlineTone(event) {
+  if (event.daysLeft <= ZERO) return "closed"
+  if (!event.isNew && event.daysLeft <= CLOSING_MAX_DAYS) return "closing"
+  return null
 }
 
 export function thumbGradient(hue) {

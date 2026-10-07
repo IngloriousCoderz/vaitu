@@ -109,6 +109,10 @@ export function countdownLabel(event) {
   return "Applications are closed"
 }
 
+export function isApplicationClosed(event) {
+  return event.daysLeft <= ZERO
+}
+
 export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")

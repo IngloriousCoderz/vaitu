@@ -3,10 +3,25 @@ import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
-import { countdownLabel } from "../../api/events.js"
-import { deadlineBadge, monogram, thumbGradient } from "../event-card/index.js"
+import { countdownLabel, isApplicationClosed } from "../../api/events.js"
+import {
+  deadlineBadge,
+  deadlineTone,
+  monogram,
+  thumbGradient,
+} from "../event-card/index.js"
 import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
+
+const toneClass = {
+  closing: styles.badgeClosing,
+  closed: styles.badgeClosed,
+}
+
+function detailToneClass(event) {
+  const tone = deadlineTone(event)
+  return tone ? toneClass[tone] : ""
+}
 
 function renderFacts(event) {
   return html`
@@ -166,6 +181,7 @@ export function renderDetail({
                     ${Badge.render({
                       children: deadlineBadge(event),
                       shape: "pill",
+                      className: detailToneClass(event),
                     })}
                   </div>
                   <p class=${styles.meta}>${event.subtitle}</p>
@@ -174,13 +190,21 @@ export function renderDetail({
                     Organized by ${entity.senderName}
                   </p>
                   <p class=${styles.countdown}>${countdownLabel(event)}</p>
-                  ${renderForm({
-                    entity,
-                    profileComplete,
-                    onField,
-                    onSubmit,
-                    onCompleteProfile,
-                  })}
+                  ${
+                    isApplicationClosed(event)
+                      ? html`
+                          <div class=${styles.closedBox}>
+                            Applications are closed for this event.
+                          </div>
+                        `
+                      : renderForm({
+                          entity,
+                          profileComplete,
+                          onField,
+                          onSubmit,
+                          onCompleteProfile,
+                        })
+                  }
                 `
       }
     </div>
