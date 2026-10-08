@@ -203,6 +203,12 @@
   margin-top: 12px;
 }
 
+.softInfo.softInfo {
+  background: color-mix(in srgb, var(--iw-color-info) 20%, transparent);
+  border-color: transparent;
+  color: var(--vink);
+}
+
 .actions > * {
   flex: 1;
 }

@@ -109,10 +109,11 @@ function renderApplicant({
                         <div class=${styles.actions}>
                           ${Button.render({
                             children: "Shortlist",
-                            color: "primary",
+                            variant: "outline",
                             shape: "pill",
                             size: "md",
                             isDisabled: max_reached,
+                            className: styles.softInfo,
                             onClick: () => onSelect(item.id),
                           })}
                           ${
@@ -120,6 +121,7 @@ function renderApplicant({
                               ? html`
                                   ${Button.render({
                                     children: "Reject",
+                                    color: "error",
                                     variant: "outline",
                                     shape: "pill",
                                     size: "md",
@@ -172,22 +174,22 @@ function renderApplicant({
                                 </div>
                               `
                             : html`
-                                ${Button.render({
-                                  children: "Assign winner",
-                                  variant: "outline",
-                                  shape: "pill",
-                                  size: "md",
-                                  isFullWidth: true,
-                                  onClick: () => onAskAssign(item.id),
-                                })}
-                                ${Button.render({
-                                  children: "Remove from shortlist",
-                                  variant: "ghost",
-                                  shape: "pill",
-                                  size: "md",
-                                  isFullWidth: true,
-                                  onClick: () => onUnshortlist(item.id),
-                                })}
+                                <div class=${styles.actions}>
+                                  ${Button.render({
+                                    children: "Assign winner",
+                                    color: "primary",
+                                    shape: "pill",
+                                    size: "md",
+                                    onClick: () => onAskAssign(item.id),
+                                  })}
+                                  ${Button.render({
+                                    children: "Remove from shortlist",
+                                    variant: "outline",
+                                    shape: "pill",
+                                    size: "md",
+                                    onClick: () => onUnshortlist(item.id),
+                                  })}
+                                </div>
                               `
                         }
                       `

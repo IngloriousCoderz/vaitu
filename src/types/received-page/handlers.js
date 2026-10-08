@@ -112,9 +112,9 @@ export const statusSet = handleAsync("statusSet", {
     if (error) throw error
     return event_id
   },
-  success(entity, event_id, api) {
+  success(entity) {
+    // List refreshes via realtime; a manual reload here double-fires.
     entity.status = "ready"
-    api.notify(`#${entity.id}:receivedLoad`, event_id)
   },
   error(entity, err) {
     entity.status = "error"
@@ -135,10 +135,9 @@ export const winnerAssign = handleAsync("winnerAssign", {
     if (error) throw error
     return event_id
   },
-  success(entity, event_id, api) {
+  success(entity) {
     entity.status = "ready"
     entity.confirming_assign = null
-    api.notify(`#${entity.id}:receivedLoad`, event_id)
   },
   error(entity, err) {
     entity.status = "error"
@@ -170,12 +169,10 @@ export const eventReopen = handleAsync("eventReopen", {
     if (error) throw error
     return event_id
   },
-  success(entity, event_id, api) {
+  success(entity) {
     entity.status = "ready"
     entity.confirming_reopen = false
     entity.reopen_deadline = ""
-    api.notify(`#${entity.id}:receivedLoad`, event_id)
-    api.notify("#my_events:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"
