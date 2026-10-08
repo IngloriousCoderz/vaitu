@@ -292,7 +292,7 @@ export function renderReceived({
                     : html`
                         ${Button.render({
                           children: "Reopen event",
-                          variant: "outline",
+                          color: "primary",
                           shape: "pill",
                           size: "md",
                           isFullWidth: true,
@@ -312,7 +312,13 @@ export function renderReceived({
             : status === "error" && !items.length
               ? html`<p class=${styles.empty}>${error}</p>`
               : !items.length
-                ? html`<p class=${styles.empty}>No applications yet.</p>`
+                ? html`<p class=${styles.empty}>
+                    ${
+                      entity.event_status === "open"
+                        ? "No applications yet."
+                        : "No applications received."
+                    }
+                  </p>`
                 : items.map((item) =>
                     renderApplicant({
                       item,

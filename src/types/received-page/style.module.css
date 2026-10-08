@@ -49,7 +49,7 @@
 }
 
 .subtitle {
-  margin: 4px 0 0;
+  margin: 4px 0 12px;
   font-size: 13.5px;
   color: var(--vmuted);
 }
@@ -200,6 +200,7 @@
 .actions {
   display: flex;
   gap: 10px;
+  margin-top: 12px;
 }
 
 .actions > * {
