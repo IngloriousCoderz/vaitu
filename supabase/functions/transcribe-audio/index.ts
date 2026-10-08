@@ -5,6 +5,7 @@ const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 }
 
 const BUCKET = "event-audio"
@@ -17,7 +18,10 @@ serve(async (req) => {
   try {
     const { audio_path } = await req.json()
     if (!audio_path || typeof audio_path !== "string") {
-      return Response.json({ error: "audio_path is required" }, { status: 400 })
+      return Response.json(
+        { error: "audio_path is required" },
+        { status: 400, headers: cors },
+      )
     }
 
     const supabase = createClient(
@@ -33,10 +37,16 @@ serve(async (req) => {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) {
-      return Response.json({ error: "Not logged in" }, { status: 401 })
+      return Response.json(
+        { error: "Not logged in" },
+        { status: 401, headers: cors },
+      )
     }
     if (audio_path.split("/")[0] !== user.id) {
-      return Response.json({ error: "Not your audio" }, { status: 403 })
+      return Response.json(
+        { error: "Not your audio" },
+        { status: 403, headers: cors },
+      )
     }
 
     const admin = createClient(
@@ -78,7 +88,7 @@ serve(async (req) => {
   } catch (err) {
     return Response.json(
       { error: err.message ?? "transcription failed" },
-      { status: 500 },
+      { status: 500, headers: cors },
     )
   }
 })

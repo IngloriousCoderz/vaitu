@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "dev": "vite",
-    "edge": "supabase functions serve check-email",
+    "edge": "supabase functions serve",
     "build": "vite build",
     "preview": "vite preview",
     "cap": "cap",

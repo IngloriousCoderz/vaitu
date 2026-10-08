@@ -5,6 +5,7 @@ const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 }
 
 const MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
@@ -33,7 +34,7 @@ serve(async (req) => {
     if (!transcript || typeof transcript !== "string") {
       return Response.json(
         { error: "transcript is required" },
-        { status: 400 },
+        { status: 400, headers: cors },
       )
     }
 
@@ -50,7 +51,10 @@ serve(async (req) => {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) {
-      return Response.json({ error: "Not logged in" }, { status: 401 })
+      return Response.json(
+        { error: "Not logged in" },
+        { status: 401, headers: cors },
+      )
     }
 
     const apiKey = Deno.env.get("OPENROUTER_API_KEY") ?? ""
@@ -85,7 +89,7 @@ serve(async (req) => {
   } catch (err) {
     return Response.json(
       { error: err.message ?? "parse failed" },
-      { status: 500 },
+      { status: 500, headers: cors },
     )
   }
 })
