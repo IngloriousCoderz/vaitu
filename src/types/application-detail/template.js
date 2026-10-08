@@ -11,6 +11,7 @@ import styles from "./style.module.css"
 
 const statusColors = {
   pending: "default",
+  shortlisted: "info",
   selected: "success",
   rejected: "error",
 }
