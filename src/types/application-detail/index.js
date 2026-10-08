@@ -1,14 +1,16 @@
 import * as handlers from "./handlers.js"
 import { subscribeApplications } from "../../api/events.js"
+import { downloadIcs } from "./helpers.js"
 import { renderApplicationDetail } from "./template.js"
 
-const { applicationLoad, save, withdraw, ...syncHandlers } = handlers
+const { applicationLoad, save, withdraw, giveUp, ...syncHandlers } = handlers
 
 export const ApplicationDetail = {
   ...syncHandlers,
   ...applicationLoad,
   ...save,
   ...withdraw,
+  ...giveUp,
   render(entity, api) {
     const id = entity.id
     if (entity.application_id) {
@@ -26,6 +28,11 @@ export const ApplicationDetail = {
           motivation: entity.motivation,
         }),
       onAskWithdraw: () => api.notify(`#${id}:withdrawAsk`),
+      onAskGiveUp: () => api.notify(`#${id}:giveUpAsk`),
+      onGiveUp: () => api.notify(`#${id}:giveUp`, entity.application_id),
+      onCancelGiveUp: () => api.notify(`#${id}:giveUpCancel`),
+      onGoogleCalendar: (url) => window.open(url, "_blank", "noopener"),
+      onDownloadIcs: (title, ics) => downloadIcs(`${title}.ics`, ics),
       onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
       onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
       onBack: () => api.notify(`#${id}:back`),

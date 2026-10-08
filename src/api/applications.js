@@ -64,6 +64,15 @@ export async function fetchApplicationDetail(application_id) {
 export async function updateMotivation(application_id, motivation) {
   if (motivation.trim().length < MIN_TEXT_LENGTH)
     throw new Error("Motivation is required")
+  const { data: current, error: readError } = await supabase
+    .from("applications")
+    .select("status")
+    .eq("id", application_id)
+    .single()
+  if (readError) throw readError
+  if (current.status !== "pending" && current.status !== "shortlisted") {
+    throw new Error("Only pending applications can be edited")
+  }
   const { error } = await supabase
     .from("applications")
     .update({ motivation: motivation.trim() })
@@ -73,12 +82,34 @@ export async function updateMotivation(application_id, motivation) {
 }
 
 export async function withdrawApplication(application_id) {
+  const { data: current, error: readError } = await supabase
+    .from("applications")
+    .select("status")
+    .eq("id", application_id)
+    .single()
+  if (readError) throw readError
+  if (current.status === "selected") {
+    throw new Error("Selected applications cannot be withdrawn")
+  }
   const { error } = await supabase
     .from("applications")
     .delete()
     .eq("id", application_id)
   if (error) throw error
   return true
+}
+
+export async function giveUpApplication(application_id) {
+  const { data: current, error: readError } = await supabase
+    .from("applications")
+    .select("status")
+    .eq("id", application_id)
+    .single()
+  if (readError) throw readError
+  if (current.status !== "selected") {
+    throw new Error("Only selected applications can be given up")
+  }
+  return updateApplicationStatus(application_id, "shortlisted")
 }
 
 export async function updateApplicationStatus(application_id, status) {

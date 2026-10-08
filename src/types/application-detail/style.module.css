@@ -83,6 +83,13 @@
   margin-top: 12px;
 }
 
+.calendarRow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
 .empty {
   text-align: center;
   color: var(--vmuted);

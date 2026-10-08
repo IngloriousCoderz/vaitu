@@ -14,6 +14,7 @@ import {
   ZERO,
 } from "../constants.js"
 import { createEventSchema } from "../validation/events.js"
+import { randomId } from "../text.js"
 import { supabase } from "./client.js"
 
 const NEW_THRESHOLD_DAYS = 3
@@ -271,7 +272,7 @@ export async function uploadEventAudio(blob) {
   } = await supabase.auth.getUser()
   if (!user) throw new Error("Not logged in")
   const ext = blob.type.includes("mp4") ? "m4a" : "webm"
-  const path = `${user.id}/${crypto.randomUUID()}.${ext}`
+  const path = `${user.id}/${randomId()}.${ext}`
   const { error } = await supabase.storage
     .from(AUDIO_BUCKET)
     .upload(path, blob, { contentType: blob.type || "audio/webm" })

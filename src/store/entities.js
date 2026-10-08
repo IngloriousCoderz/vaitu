@@ -107,6 +107,7 @@ export const entities = {
     application: null,
     motivation: "",
     isConfirmingWithdraw: false,
+    isConfirmingGiveUp: false,
     status: "idle",
     error: null,
   },

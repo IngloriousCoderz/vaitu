@@ -37,6 +37,16 @@ export const POINTS_PER_SELECTION = 10
 export const PERCENT_MAX = 100
 // Voice dictation cap (auto-stops, shows elapsed).
 export const AUDIO_MAX_SECONDS = 120
+// UUID v4 fallback (insecure contexts lack crypto.randomUUID).
+export const UUID_RANDOM_BYTES = 16
+export const UUID_VERSION_INDEX = 6
+export const UUID_VARIANT_INDEX = 8
+export const UUID_VERSION_MASK = 0x0f
+export const UUID_VERSION_BITS = 0x40
+export const UUID_VARIANT_MASK = 0x3f
+export const UUID_VARIANT_BITS = 0x80
+export const UUID_SECTION_SIZES = [8, 4, 4, 4, 12]
+export const UUID_HEX_RADIX = 16
 // Wedding application window: deadline defaults this far before the event.
 export const APPLICATION_DEADLINE_LEAD_DAYS = 45
 export const DEADLINE_END_OF_DAY = "23:59"
