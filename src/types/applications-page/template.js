@@ -3,6 +3,7 @@ import { html } from "@inglorious/web"
 
 import { capitalize } from "../../text.js"
 import { renderCard } from "../event-card/index.js"
+import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
 const statusColors = {
@@ -21,14 +22,25 @@ const filterOptions = [
 ]
 
 function renderApplication({ application, onOpenEvent }) {
+  const isWinner = application.applicationStatus === "selected"
   return html`
-    <div class=${styles.application}>
+    <div
+      class=${
+        isWinner ? `${styles.application} ${styles.winner}` : styles.application
+      }
+    >
       ${renderCard({ event: application, divider: false, onOpen: onOpenEvent })}
       <div class=${styles.applicationFooter}>
-        ${Chip.render({
-          children: capitalize(application.applicationStatus),
-          color: statusColors[application.applicationStatus] ?? "default",
-        })}
+        ${
+          isWinner
+            ? html`<span class=${styles.winnerTrophy}>
+                ${renderIcon({ name: "trophy", size: 20 })}
+              </span>`
+            : Chip.render({
+                children: capitalize(application.applicationStatus),
+                color: statusColors[application.applicationStatus] ?? "default",
+              })
+        }
       </div>
     </div>
   `

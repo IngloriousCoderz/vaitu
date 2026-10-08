@@ -19,6 +19,7 @@ export function monogram(title) {
 }
 
 export function deadlineBadge(event) {
+  if (event.status === "assigned") return "ASSIGNED"
   if (event.daysLeft <= ZERO) return "CLOSED"
   if (event.daysLeft <= CLOSING_MAX_DAYS) return "CLOSING"
   if (event.daysLeft < WEEK_DAYS) return `${event.daysLeft}D LEFT`

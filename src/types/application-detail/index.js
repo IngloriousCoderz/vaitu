@@ -1,6 +1,9 @@
+import { Capacitor } from "@capacitor/core"
+import { Share } from "@capacitor/share"
+
 import * as handlers from "./handlers.js"
+import { uploadIcsFile } from "../../api/applications.js"
 import { subscribeApplications } from "../../api/events.js"
-import { downloadIcs } from "./helpers.js"
 import { renderApplicationDetail } from "./template.js"
 
 const { applicationLoad, save, withdraw, giveUp, ...syncHandlers } = handlers
@@ -32,7 +35,21 @@ export const ApplicationDetail = {
       onGiveUp: () => api.notify(`#${id}:giveUp`, entity.application_id),
       onCancelGiveUp: () => api.notify(`#${id}:giveUpCancel`),
       onGoogleCalendar: (url) => window.open(url, "_blank", "noopener"),
-      onDownloadIcs: (title, ics) => downloadIcs(`${title}.ics`, ics),
+      onDownloadIcs: (title, ics) => {
+        void (async () => {
+          const url = await uploadIcsFile(entity.application_id, ics)
+          if (Capacitor.isNativePlatform()) {
+            await Share.share({ title, url, dialogTitle: title })
+            return
+          }
+          const link = document.createElement("a")
+          link.href = url
+          link.download = `${title}.ics`
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+        })().catch(() => {})
+      },
       onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
       onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
       onBack: () => api.notify(`#${id}:back`),

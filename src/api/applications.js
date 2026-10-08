@@ -12,7 +12,7 @@ export async function fetchMyApplications() {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, created_at, events(id, category, title, location, region, event_date, application_deadline, created_at, details)",
+      "id, status, created_at, events(id, category, status, title, location, region, event_date, application_deadline, created_at, details)",
     )
     .eq("applicant_id", user.id)
     .order("created_at", { ascending: false })
@@ -47,7 +47,7 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, events(id, category, title, location, region, event_date, application_deadline, created_at, details)",
+      "id, status, motivation, created_at, events(id, category, status, title, location, region, event_date, application_deadline, created_at, details)",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
@@ -131,4 +131,22 @@ export async function fetchReceivedDetail(application_id) {
     .single()
   if (error) throw error
   return data
+}
+
+const ICS_BUCKET = "event-ics"
+
+export async function uploadIcsFile(application_id, ics) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Not logged in")
+  const path = `${user.id}/${application_id}.ics`
+  const { error } = await supabase.storage
+    .from(ICS_BUCKET)
+    .upload(path, new Blob([ics], { type: "text/calendar" }), {
+      contentType: "text/calendar",
+      upsert: true,
+    })
+  if (error) throw error
+  return supabase.storage.from(ICS_BUCKET).getPublicUrl(path).data.publicUrl
 }

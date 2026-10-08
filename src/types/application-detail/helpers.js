@@ -53,14 +53,3 @@ export function calendarLinks({ title, eventDate, location }) {
     ics,
   }
 }
-
-export function downloadIcs(filename, ics) {
-  const url = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }))
-  const link = document.createElement("a")
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 1000)
-}

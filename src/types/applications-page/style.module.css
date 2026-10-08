@@ -46,9 +46,22 @@
   border-bottom: 1px solid var(--vline);
 }
 
+.winner {
+  background: color-mix(in srgb, var(--iw-color-success) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--iw-color-success) 35%, transparent);
+  border-radius: 16px;
+  padding: 12px 12px 14px;
+}
+
 .applicationFooter {
   display: flex;
   margin-top: 10px;
+}
+
+.winnerTrophy {
+  display: inline-flex;
+  margin-left: auto;
+  color: #8c4632;
 }
 
 .empty {
