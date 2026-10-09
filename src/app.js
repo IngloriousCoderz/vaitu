@@ -183,6 +183,7 @@ export const App = {
     } else if (applicationDetail.application_id) {
       page = api.render("applicationDetail")
       pageKey = `application-detail:${applicationDetail.application_id}`
+      tabbar = bar("applications", false)
     } else if (ranks.isOpen) {
       page = api.render("ranks")
       pageKey = "ranks"
@@ -211,7 +212,7 @@ export const App = {
             page = api.render("applicationsReceived")
             pageKey = `applications-received:${applicationsReceived.event_id}`
             tabbar = bar(null, true)
-            fab = showFab(true)
+            fab = hideFab()
           } else {
             page = api.render("myEvents")
             pageKey = "my_events"
