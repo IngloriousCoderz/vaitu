@@ -83,6 +83,24 @@ export function renderPage({
         </button>
       </header>
 
+      <div class=${styles.categoryRow}>
+        ${categories.map(
+          (category) => html`
+            <button
+              type="button"
+              class=${
+                category.id === activeCategory
+                  ? `${styles.categoryButton} ${styles.categoryActive}`
+                  : styles.categoryButton
+              }
+              @click=${() => onSelectCategory(category.id)}
+            >
+              ${category.label}
+            </button>
+          `,
+        )}
+      </div>
+
       <div class="vaitu-search">
         ${Input.render({
           inputType: "search",
@@ -94,12 +112,6 @@ export function renderPage({
         })}
       </div>
 
-      ${renderChipRow({
-        items: categories,
-        activeId: activeCategory,
-        onSelect: onSelectCategory,
-        getLabel: (category) => category.label,
-      })}
       ${renderChipRow({
         items: filters,
         activeId: activeFilter,
