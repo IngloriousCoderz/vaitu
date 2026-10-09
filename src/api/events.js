@@ -64,7 +64,12 @@ export function toViewModel(row) {
     eventInDays: Math.ceil(
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
-    subtitle: `${row.location} • ${MONTHS[month - MONTH_INDEX_OFFSET]} ${String(day).padStart(PAD_LENGTH, "0")}`,
+    subtitle: [row.location, row.region]
+      .filter(Boolean)
+      .join(" • ")
+      .concat(
+        ` • ${MONTHS[month - MONTH_INDEX_OFFSET]} ${String(day).padStart(PAD_LENGTH, "0")}`,
+      ),
     audio_url: row.audio_url ?? null,
     transcript: row.transcript ?? null,
     transcript_status: row.transcript_status ?? "none",
@@ -86,7 +91,10 @@ export function toViewModel(row) {
       title: row.title,
       tag: genreLabels[row.details.genre] ?? row.details.genre,
       filterValue: row.details.genre,
-      facts: [{ label: "Headliner", value: row.details.headliner }],
+      facts: [
+        { label: "Headliner", value: row.details.headliner },
+        ...(row.region ? [{ label: "Region", value: row.region }] : []),
+      ],
     }
   }
 
@@ -96,7 +104,10 @@ export function toViewModel(row) {
     title: couple,
     tag: styleLabels[row.details.style] ?? row.details.style,
     filterValue: row.details.style,
-    facts: [{ label: "Spouses", value: couple }],
+    facts: [
+      { label: "Spouses", value: couple },
+      ...(row.region ? [{ label: "Region", value: row.region }] : []),
+    ],
   }
 }
 
@@ -294,6 +305,20 @@ export async function transcribeAudio(path) {
 export async function deleteEventAudio(path) {
   const { error } = await supabase.storage.from(AUDIO_BUCKET).remove([path])
   if (error) throw error
+}
+
+export async function fetchMyFavoriteRegions() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return []
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("favorite_regions")
+    .eq("id", user.id)
+    .single()
+  if (error) return []
+  return data?.favorite_regions ?? []
 }
 
 export async function parseEvent(transcript) {

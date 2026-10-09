@@ -24,6 +24,9 @@ export const Profile = {
       onCancel: () => api.notify(`#${id}:editCancel`),
       onField: ({ field, value }) =>
         api.notify(`#${id}:profileFieldSet`, { field, value }),
+      onFavoriteInput: (value) => api.notify(`#${id}:favoriteInputSet`, value),
+      onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
+      onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
       onSave: () => api.notify(`#${id}:profileSave`, { ...entity.draft }),
       onLogout: () => api.notify(`#${id}:logout`),
       onOpenRanks: () => api.notify("#ranks:open"),

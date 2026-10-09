@@ -89,6 +89,69 @@ function renderEditField({
   `
 }
 
+function renderFavorites({
+  favorites,
+  input,
+  onFavoriteInput,
+  onFavoriteAdd,
+  onFavoriteRemove,
+}) {
+  return html`
+    <div class=${styles.field}>
+      <span>Favorite regions (optional)</span>
+      ${
+        favorites.length
+          ? html`
+              <div class=${styles.favoriteChips}>
+                ${favorites.map(
+                  (region) => html`
+                    <span class=${styles.favoriteChip}>
+                      ${region}
+                      <button
+                        class=${styles.favoriteRemove}
+                        type="button"
+                        aria-label=${`Remove ${region}`}
+                        @click=${() => onFavoriteRemove(region)}
+                      >
+                        ${renderIcon({ name: "x", size: 13 })}
+                      </button>
+                    </span>
+                  `,
+                )}
+              </div>
+            `
+          : ""
+      }
+      <div class=${styles.urlWrap}>
+        <input
+          type="text"
+          placeholder="Add a region"
+          autocapitalize="none"
+          autocorrect="off"
+          autocomplete="off"
+          spellcheck="false"
+          .value=${input}
+          @input=${(e) => onFavoriteInput(e.target.value)}
+          @keydown=${(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault()
+              onFavoriteAdd(e.target.value)
+            }
+          }}
+        />
+        ${Button.render({
+          children: "Add",
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isDisabled: input.trim() === "",
+          onClick: () => onFavoriteAdd(input),
+        })}
+      </div>
+    </div>
+  `
+}
+
 function renderTierBlock({ stats, tiers, onOpenRanks }) {
   const progress = tierProgress(stats.points, tiers)
   return html`
@@ -130,6 +193,9 @@ export function renderProfile({
   onOpenRanks,
   onToggleMenu,
   onCloseMenu,
+  onFavoriteInput,
+  onFavoriteAdd,
+  onFavoriteRemove,
   renderCountry,
 }) {
   const { profile, status, error } = entity
@@ -271,6 +337,13 @@ export function renderProfile({
                           value: shown.region,
                           placeholder: "Region (optional)",
                           onField,
+                        })}
+                        ${renderFavorites({
+                          favorites: shown.favorite_regions ?? [],
+                          input: entity.favoriteInput ?? "",
+                          onFavoriteInput,
+                          onFavoriteAdd,
+                          onFavoriteRemove,
                         })}
                         ${
                           status === "error" && error

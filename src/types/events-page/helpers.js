@@ -18,6 +18,7 @@ export function visibleEvents(
   activeFilter,
   activeRegion,
   activePeriod,
+  favoriteRegions = [],
 ) {
   const q = query.trim().toLowerCase()
   const period =
@@ -27,7 +28,14 @@ export function visibleEvents(
     const matchesFilter =
       activeFilter === "all" || event.filterValue === activeFilter
     const matchesRegion =
-      activeRegion === "all" || event.region === activeRegion
+      activeRegion === "all" ||
+      (activeRegion === "mine"
+        ? favoriteRegions.some(
+            (favorite) =>
+              favorite.trim().toLowerCase() ===
+              (event.region ?? "").trim().toLowerCase(),
+          )
+        : event.region === activeRegion)
     const matchesPeriod =
       period.days === null ||
       (event.eventInDays >= ZERO && event.eventInDays <= period.days)

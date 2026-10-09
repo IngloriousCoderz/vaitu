@@ -47,6 +47,35 @@ export function profileFieldSet(entity, { field, value }) {
   if (entity.draft) entity.draft[field] = value
 }
 
+export function favoriteInputSet(entity, value) {
+  entity.favoriteInput = value ?? ""
+}
+
+export function favoriteAdd(entity, value) {
+  if (!entity.draft) return
+  const clean = (value ?? "").trim()
+  if (!clean) return
+  const current = entity.draft.favorite_regions ?? []
+  if (current.includes(clean)) {
+    entity.favoriteInput = ""
+    return
+  }
+  entity.draft = { ...entity.draft, favorite_regions: [...current, clean] }
+  entity.favoriteInput = ""
+  entity.error = null
+}
+
+export function favoriteRemove(entity, value) {
+  if (!entity.draft) return
+  entity.draft = {
+    ...entity.draft,
+    favorite_regions: (entity.draft.favorite_regions ?? []).filter(
+      (region) => region !== value,
+    ),
+  }
+  entity.error = null
+}
+
 // Token valid but user row gone (db reset), or auth rejected the token.
 // Network blips must NOT log out — only auth/row-gone errors.
 function isSessionDead(err) {
@@ -70,7 +99,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, role, sub_role, country, region, website, instagram_handle",
+        "id, full_name, role, sub_role, country, region, website, instagram_handle, favorite_regions",
       )
       .eq("id", user.id)
       .single()
@@ -152,6 +181,13 @@ export const profileSave = handleAsync("profileSave", {
         instagram_handle: instagram === "" ? "" : `@${instagram}`,
         country: (profile.country ?? "").trim(),
         region: (profile.region ?? "").trim(),
+        favorite_regions: Array.isArray(profile.favorite_regions)
+          ? [
+              ...new Set(
+                profile.favorite_regions.map((r) => r.trim()).filter(Boolean),
+              ),
+            ]
+          : [],
       })
       .eq("id", user.id)
     if (error) throw error
@@ -162,6 +198,7 @@ export const profileSave = handleAsync("profileSave", {
     entity.profile = profile
     entity.draft = null
     entity.isEditing = false
+    api.notify("#events:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"

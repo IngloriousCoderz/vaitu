@@ -43,6 +43,8 @@ export function renderPage({
   activeFilter,
   activeRegion,
   activePeriod,
+  favoriteRegions,
+  hasFavoriteRegions,
   isFiltersVisible,
   hasActiveFilters,
   onSearch,
@@ -61,6 +63,7 @@ export function renderPage({
     activeFilter,
     activeRegion,
     activePeriod,
+    favoriteRegions,
   )
 
   return html`
@@ -125,9 +128,18 @@ export function renderPage({
                 <div class=${styles.sheet} @click=${(e) => e.stopPropagation()}>
                   <h3 class=${styles.sheetTitle}>Region</h3>
                   ${renderChipRow({
-                    items: [{ id: "all", label: "All regions" }].concat(
-                      regions.map((region) => ({ id: region, label: region })),
-                    ),
+                    items: [{ id: "all", label: "All regions" }]
+                      .concat(
+                        hasFavoriteRegions
+                          ? [{ id: "mine", label: "My regions" }]
+                          : [],
+                      )
+                      .concat(
+                        regions.map((region) => ({
+                          id: region,
+                          label: region,
+                        })),
+                      ),
                     activeId: activeRegion,
                     onSelect: onSelectRegion,
                     getLabel: (item) => item.label,

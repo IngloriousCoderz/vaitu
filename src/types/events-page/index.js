@@ -39,6 +39,8 @@ export const EventsPage = {
       activeFilter: entity.activeFilter,
       activeRegion: entity.activeRegion,
       activePeriod: entity.activePeriod,
+      favoriteRegions: entity.favoriteRegions,
+      hasFavoriteRegions: entity.favoriteRegions.length > 0,
       isFiltersVisible: entity.isFiltersVisible,
       hasActiveFilters:
         entity.activeRegion !== "all" || entity.activePeriod !== "all",
