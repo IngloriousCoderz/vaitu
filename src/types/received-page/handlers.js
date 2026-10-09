@@ -7,6 +7,7 @@ export function open(entity, event_id, api) {
   entity.event_id = event_id
   entity.event_title = ""
   entity.event_deadline = null
+  entity.event_recap = null
   entity.reopen_deadline = ""
   entity.max_applicants = 5
   entity.items = []
@@ -19,6 +20,7 @@ export function close(entity) {
   entity.event_id = null
   entity.event_title = ""
   entity.event_status = "open"
+  entity.event_recap = null
   entity.items = []
   entity.expanded_application_id = null
   entity.confirming_assign = null
@@ -70,7 +72,9 @@ export const receivedLoad = handleAsync("receivedLoad", {
   async run(event_id) {
     const { data: event, error: eventError } = await supabase
       .from("events")
-      .select("id, title, status, max_applicants, application_deadline")
+      .select(
+        "id, title, status, max_applicants, application_deadline, location, country, region, event_date, created_at, details",
+      )
       .eq("id", event_id)
       .single()
     if (eventError) throw eventError
@@ -91,6 +95,20 @@ export const receivedLoad = handleAsync("receivedLoad", {
     entity.event_status = event.status
     entity.event_deadline = event.application_deadline
     entity.max_applicants = event.max_applicants
+    entity.event_recap = {
+      status: event.status,
+      location: [event.location, event.region, event.country]
+        .filter(Boolean)
+        .join(", "),
+      event_date: event.event_date,
+      application_deadline: event.application_deadline,
+      created_at: event.created_at,
+      names:
+        event.details?.spouse_first_name_1 && event.details?.spouse_first_name_2
+          ? `${event.details.spouse_first_name_1} & ${event.details.spouse_first_name_2}`
+          : (event.details?.headliner ?? null),
+      style: event.details?.style ?? event.details?.genre ?? null,
+    }
     entity.items = items
   },
   error(entity, err) {

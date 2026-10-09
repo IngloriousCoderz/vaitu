@@ -149,6 +149,7 @@ export const entities = {
     event_title: "",
     event_status: "open",
     event_deadline: null,
+    event_recap: null,
     reopen_deadline: "",
     max_applicants: 5,
     expanded_application_id: null,

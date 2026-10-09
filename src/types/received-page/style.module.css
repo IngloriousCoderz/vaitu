@@ -48,6 +48,36 @@
   outline: none;
 }
 
+.recap {
+  margin: 0 0 6px;
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: 14px;
+  padding: 6px 14px;
+}
+
+.recapRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 13.5px;
+}
+
+.recapRow + .recapRow {
+  border-top: 1px solid var(--vline);
+}
+
+.recapRow dt {
+  color: var(--vmuted);
+}
+
+.recapRow dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+
 .subtitle {
   margin: 4px 0 12px;
   font-size: 13.5px;

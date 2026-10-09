@@ -12,6 +12,55 @@ function deadlinePast(iso) {
   return new Date(iso).getTime() <= Date.now()
 }
 
+function formatDay(iso) {
+  if (!iso) return "—"
+  return new Date(`${iso}T00:00`).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+function formatDeadline(iso) {
+  if (!iso) return "—"
+  return new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
+function prettyValue(value) {
+  if (!value) return "—"
+  return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function renderRecap(recap, shortlisted, maxApplicants) {
+  const rows = [
+    ["Status", prettyValue(recap.status)],
+    ["Names", recap.names || "—"],
+    ["Style", prettyValue(recap.style)],
+    ["Location", recap.location || "—"],
+    ["Event date", formatDay(recap.event_date)],
+    ["Application deadline", formatDeadline(recap.application_deadline)],
+    ["Shortlist", `${shortlisted}/${maxApplicants ?? "—"}`],
+    ["Created", formatDay((recap.created_at ?? "").slice(0, 10))],
+  ]
+  return html`
+    <dl class=${styles.recap}>
+      ${rows.map(
+        ([label, value]) => html`
+          <div class=${styles.recapRow}>
+            <dt>${label}</dt>
+            <dd>${value}</dd>
+          </div>
+        `,
+      )}
+    </dl>
+  `
+}
+
 const statusColors = {
   pending: "default",
   shortlisted: "info",
@@ -306,6 +355,16 @@ export function renderReceived({
             : ""
         }
       </header>
+
+      ${
+        entity.event_recap
+          ? renderRecap(
+              entity.event_recap,
+              selected_count,
+              entity.max_applicants,
+            )
+          : ""
+      }
 
       <main class=${styles.list}>
         ${
