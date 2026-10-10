@@ -1,4 +1,4 @@
-# vaitu-fe
+# vaitu
 
 This project is a minimal starter template for creating an app with the Inglorious Web framework using plain JavaScript and Vite.
 

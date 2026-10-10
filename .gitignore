@@ -14,6 +14,14 @@ node_modules
 supabase/.temp/
 supabase/.branches/
 
+# Generated icon sources — rebuilt by `pnpm assets` from public/logo.svg.
+# The real outputs (android/res, ios/*.xcassets) ARE tracked: Capacitor reads
+# them directly and a clone must build without running the generator.
+assets/*.png
+
+# Scratch space for one-off asset measurements
+scripts/.tmp/
+
 # Testing
 coverage
 

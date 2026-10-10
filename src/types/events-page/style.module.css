@@ -23,7 +23,7 @@
 }
 
 .logoDot {
-  color: #e07b39;
+  color: var(--vlogo-dot);
   margin-left: 3px;
 }
 

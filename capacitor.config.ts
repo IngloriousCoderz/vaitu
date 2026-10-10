@@ -22,8 +22,8 @@ const devServerUrl =
   liveIp ?? (autoIp ? `http://${autoIp}:${VITE_DEV_PORT}` : undefined)
 
 const config: CapacitorConfig = {
-  appId: "com.inglorious.vaituFe",
-  appName: "vaitu-fe",
+  appId: "it.ingloriouscoderz.vaitu",
+  appName: "vaitu",
   webDir: "dist",
   server: {
     // http://localhost stays a secure context (mic works) and same-scheme

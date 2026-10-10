@@ -1,9 +1,9 @@
 {
-  "name": "vaitu-fe",
+  "name": "vaitu",
   "version": "0.1.0",
   "type": "module",
   "private": true,
-  "description": "A new app created with @inglorious/create-app",
+  "description": "Find wedding work",
   "author": "",
   "license": "MIT",
   "scripts": {
@@ -20,7 +20,9 @@
     "mobile:ios": "pnpm build && cap run ios",
     "mobile:android": "pnpm build && cap run android",
     "mobile:ios:dev": "CAP_LIVE=1 cap run ios",
-    "mobile:android:dev": "CAP_LIVE=1 cap run android"
+    "mobile:android:dev": "CAP_LIVE=1 cap run android",
+    "assets:compose": "node scripts/compose-logo-assets.mjs",
+    "assets": "pnpm assets:compose && capacitor-assets generate --ios --android"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.1",
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.1",
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.5.1",
     "@capacitor/ios": "^8.5.1",
     "@inglorious/eslint-config": "^1.1.2",
@@ -53,5 +56,10 @@
   "packageManager": "pnpm@10.15.0",
   "engines": {
     "node": ">= 22"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

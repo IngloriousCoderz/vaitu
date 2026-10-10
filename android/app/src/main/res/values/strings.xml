@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">vaitu-fe</string>
-    <string name="title_activity_main">vaitu-fe</string>
-    <string name="package_name">com.inglorious.vaituFe</string>
-    <string name="custom_url_scheme">com.inglorious.vaituFe</string>
+    <string name="app_name">vaitu</string>
+    <string name="title_activity_main">vaitu</string>
+    <string name="package_name">it.ingloriouscoderz.vaitu</string>
+    <string name="custom_url_scheme">it.ingloriouscoderz.vaitu</string>
 </resources>

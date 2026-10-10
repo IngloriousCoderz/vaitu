@@ -10,9 +10,13 @@ import {
 function renderSplash() {
   return html`
     <div
-      style="display:flex;align-items:center;justify-content:center;min-height:100dvh;background:#f6f3ea;font-family:Georgia,serif;font-size:30px;letter-spacing:1.5px;color:#24402f;"
+      style="display:flex;align-items:center;justify-content:center;min-height:100dvh;background:#f6f3ea;"
     >
-      vaitu<span style="color:#e07b39;margin-left:3px;">•</span>
+      <img
+        src="/logo.svg"
+        alt="vaitu"
+        style="width:104px;height:104px;display:block;"
+      />
     </div>
   `
 }

@@ -1,4 +1,4 @@
-package com.inglorious.vaituFe;
+package it.ingloriouscoderz.vaitu;
 
 import com.getcapacitor.BridgeActivity;
 

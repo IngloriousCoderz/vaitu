@@ -193,7 +193,7 @@ export const profileSave = handleAsync("profileSave", {
     if (error) throw error
     return profile
   },
-  success(entity, profile) {
+  success(entity, profile, api) {
     entity.status = "ready"
     entity.profile = profile
     entity.draft = null
