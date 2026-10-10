@@ -3,8 +3,7 @@
   margin: 0 auto;
   min-height: 100%;
   background: var(--vbg);
-  padding: 0 18px
-    var(--vpage-gap);
+  padding: 0 18px var(--vpage-gap);
   color: var(--vink);
 }
 

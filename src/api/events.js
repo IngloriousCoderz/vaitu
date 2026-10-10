@@ -13,8 +13,8 @@ import {
   SINGULAR,
   ZERO,
 } from "../constants.js"
-import { createEventSchema } from "../validation/events.js"
 import { randomId } from "../text.js"
+import { createEventSchema } from "../validation/events.js"
 import { supabase } from "./client.js"
 
 const NEW_THRESHOLD_DAYS = 3

@@ -4,6 +4,8 @@ import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 
+import { capitalize } from "../../text.js"
+import { renderIcon } from "../icon/index.js"
 import {
   displayInstagram,
   displayWebsite,
@@ -12,8 +14,6 @@ import {
   progressLabel,
   tierProgress,
 } from "./helpers.js"
-import { capitalize } from "../../text.js"
-import { renderIcon } from "../icon/index.js"
 import styles from "./style.module.css"
 
 function renderRow(label, value, href) {

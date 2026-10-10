@@ -79,9 +79,7 @@ function renderShell({ content, fab, tabbar, isTabbarHidden = true }) {
       Flex.render({
         element: "footer",
         style: { flex: "0 0 auto", overflow: "hidden" },
-        className: isTabbarHidden
-          ? "appFooter appFooterHidden"
-          : "appFooter",
+        className: isTabbarHidden ? "appFooter appFooterHidden" : "appFooter",
         children: [tabbar].filter(Boolean),
       }),
     ],
@@ -244,7 +242,9 @@ export const App = {
           [pageKey],
           (key) => key,
           () =>
-            html`<section class=${pageSectionClass(direction)}>${page}</section>`,
+            html`<section class=${pageSectionClass(direction)}>
+              ${page}
+            </section>`,
         )}
       `,
       fab,

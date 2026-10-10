@@ -1,5 +1,5 @@
-import * as handlers from "./handlers.js"
 import { subscribeApplications, subscribeEvents } from "../../api/events.js"
+import * as handlers from "./handlers.js"
 import { renderMyEvents } from "./template.js"
 
 const { eventsLoad, eventRemove, ...syncHandlers } = handlers

@@ -1,14 +1,14 @@
 import { subscribeEvents } from "../../api/events.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
-  filtersClear,
-  eventsLoad,
-  search,
   categorySelect,
+  eventsLoad,
+  filtersClear,
   filterSelect,
+  filtersToggle,
   periodSelect,
   regionSelect,
-  filtersToggle,
+  search,
 } from "./handlers.js"
 import { distinctRegions, periods } from "./helpers.js"
 import { renderPage } from "./template.js"

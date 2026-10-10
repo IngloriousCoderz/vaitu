@@ -1,9 +1,9 @@
 import { Capacitor } from "@capacitor/core"
 import { Share } from "@capacitor/share"
 
-import * as handlers from "./handlers.js"
 import { uploadIcsFile } from "../../api/applications.js"
 import { subscribeApplications } from "../../api/events.js"
+import * as handlers from "./handlers.js"
 import { renderApplicationDetail } from "./template.js"
 
 const { applicationLoad, save, withdraw, giveUp, ...syncHandlers } = handlers

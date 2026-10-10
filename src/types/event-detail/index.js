@@ -1,7 +1,7 @@
-import { isProfileComplete } from "../profile/helpers.js"
-import { DAY_MS } from "../../constants.js"
 import { subscribeEvents } from "../../api/events.js"
+import { DAY_MS } from "../../constants.js"
 import { isTicking, startTick } from "../../ticker.js"
+import { isProfileComplete } from "../profile/helpers.js"
 import * as handlers from "./handlers.js"
 import { renderDetail } from "./template.js"
 

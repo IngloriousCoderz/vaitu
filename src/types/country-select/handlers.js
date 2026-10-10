@@ -1,9 +1,10 @@
-import { FIRST_INDEX } from "../../constants.js"
 import {
   filterOptions,
   formatOption,
   getOptionValue,
 } from "@inglorious/ui/combobox"
+
+import { FIRST_INDEX } from "../../constants.js"
 
 const NO_FOCUSED_INDEX = -1
 const NOT_FOUND = -1
