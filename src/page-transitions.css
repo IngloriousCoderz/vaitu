@@ -4,7 +4,16 @@
    class and swap instantly, like native tabs. */
 
 /* Keep the incoming page from widening the viewport mid-slide. `clip`
-   (unlike `hidden`) doesn't break sticky descendants. */
+   (unlike `hidden`) doesn't break sticky descendants.
+
+   Clipping has to sit on BOTH #root and body. body alone is not enough on
+   iOS/WKWebView: the sliding page is a transformed child of #root, and body
+   does not establish a clipping context for it. iOS then lays the page out at
+   its pre-transform size, so after the login slide the viewport is stuck too
+   wide and too tall with no way to zoom back out. Android tolerated the body
+   rule; the root rule is what actually contains it. `clip` (not `hidden`) keeps
+   the fixed tab bar and FAB working, since it creates no containing block. */
+#root,
 body {
   overflow-x: clip;
 }

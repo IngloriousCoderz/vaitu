@@ -67,7 +67,7 @@ span.iw-chip.iw-chip-info {
 /* UI Select tuned to our inputs (same box, only the picker differs) */
 select.iw-select {
   min-height: 46px;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: #22301f;
   background-color: #fffdf7;
   border: 1px solid #e3dcc9;
@@ -98,7 +98,7 @@ nav.iw-bottom-navigation .iw-bottom-navigation-action-selected {
   min-height: 0;
   height: auto;
   padding: 0 0 0 20px;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: #22301f;
 }
 

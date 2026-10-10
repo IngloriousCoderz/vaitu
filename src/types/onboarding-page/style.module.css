@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: center;
   background: var(--vbg);
-  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  padding: calc(18px + env(safe-area-inset-top)) 18px var(--vpage-gap);
   color: var(--vink);
 }
 
@@ -36,7 +36,7 @@
 
 .field input {
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);

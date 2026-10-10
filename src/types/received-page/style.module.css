@@ -4,7 +4,7 @@
   min-height: 100dvh;
   background: var(--vbg);
   padding: calc(18px + env(safe-area-inset-top)) 18px
-    calc(18px + env(safe-area-inset-bottom));
+    var(--vtabbar-clearance);
   color: var(--vink);
 }
 
@@ -39,7 +39,7 @@
 
 .field input {
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);

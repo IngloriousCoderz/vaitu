@@ -53,6 +53,41 @@
   --vtag-border: #d8cfbc;
   --vtitle-font: Georgia, "Times New Roman", serif;
   --vtitle-weight: 400;
+
+  /* How far the tab bar keeps its buttons clear of the iOS home indicator.
+     env(safe-area-inset-bottom) is 34px on a notched iPhone and 0 on Android,
+     which is why the bar looks flush on one platform and inset on the other.
+
+     Setting this to 0px seats the bar flush with the screen edge on iOS too.
+     Trade-off: the label then bottoms out ~16px from the edge, inside the
+     home indicator's own band (~8-21px) and the swipe-up-to-go-home zone.
+     It is one value here, so flipping it back is a one-line change. */
+  --vtabbar-inset: 0px; /* env(safe-area-inset-bottom); */
+
+  /* Height of the tab bar itself, excluding --vtabbar-inset.
+     Measured from the bar's own box: nav padding 8+8, border-top 1, action
+     padding 8+8, icon 20 (DEFAULT_ICON_SIZE), gap 4, label 14px (~17).
+     Re-measure if the bar's internals change. */
+  --vtabbar-height: 74px;
+
+  /* Clearance for a page whose only bottom overlay is the tab bar
+     (events, applications, profile). */
+  --vtabbar-clearance: calc(var(--vtabbar-height) + var(--vtabbar-inset));
+
+  /* Clearance for a page that also shows the floating action button.
+     The FAB sits 22px above the bar and is 56px tall, so its top edge is
+     78px beyond the bar's top: 74 + 22 + 56 = 152px. Only my_events pairs a
+     visible bar with the standard-position FAB. */
+  --vfab-clearance: calc(var(--vtabbar-height) + 78px + var(--vtabbar-inset));
+
+  /* Clearance for a page with no bottom overlay (detail, ranks, create). */
+  --vpage-gap: 24px;
+
+  /* iOS zooms the whole viewport when a form control it focuses is under
+     16px, and there is no way to zoom back out. Keep every input, select and
+     textarea at or above this floor; `font-size` below it reintroduces the
+     "page doesn't fit and I can't scroll back" symptom on a fresh bug report. */
+  --vinput-font-size: 1rem;
 }
 
 [data-category="festival"] {

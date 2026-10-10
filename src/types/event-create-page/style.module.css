@@ -85,7 +85,7 @@ button.micButton:active {
 .field input,
 .field select {
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);

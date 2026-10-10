@@ -3,7 +3,7 @@
   margin: 0 auto;
   min-height: 100dvh;
   background: var(--vbg);
-  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  padding: calc(18px + env(safe-area-inset-top)) 18px var(--vpage-gap);
   color: var(--vink);
 }
 
@@ -39,7 +39,7 @@
 
 .field textarea {
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);

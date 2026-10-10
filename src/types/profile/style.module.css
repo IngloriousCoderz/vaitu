@@ -3,7 +3,7 @@
   margin: 0 auto;
   min-height: 100dvh;
   background: var(--vbg);
-  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  padding: calc(18px + env(safe-area-inset-top)) 18px var(--vtabbar-clearance);
   color: var(--vink);
   text-align: center;
 }
@@ -214,7 +214,7 @@ button.ranksHelp:active {
 
 .field input {
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);
@@ -268,7 +268,7 @@ button.ranksHelp:active {
   min-width: 0;
   padding: 2px 0;
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   line-height: 1.5;
   color: var(--vink);
 }

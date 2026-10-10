@@ -3,7 +3,7 @@
   margin: 0 auto;
   min-height: 100dvh;
   background: var(--vbg);
-  padding: calc(18px + env(safe-area-inset-top)) 18px 92px;
+  padding: calc(18px + env(safe-area-inset-top)) 18px var(--vfab-clearance);
   color: var(--vink);
 }
 

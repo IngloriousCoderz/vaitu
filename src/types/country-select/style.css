@@ -5,7 +5,7 @@
 .vaitu-country-select .iw-combobox-control {
   height: auto;
   font: inherit;
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
   line-height: 1.5;
   color: var(--vink);
   background: var(--vsurface);
@@ -39,14 +39,14 @@
 .vaitu-country-select .iw-combobox-dropdown-search {
   color: var(--vink);
   border-bottom-color: var(--vline);
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
 }
 
 .vaitu-country-select
   .iw-combobox-dropdown-options
   .iw-combobox-dropdown-options-option {
   color: var(--vink);
-  font-size: 14.5px;
+  font-size: var(--vinput-font-size);
 }
 
 .vaitu-country-select
