@@ -68,59 +68,61 @@ export function renderPage({
 
   return html`
     <div class=${styles.page} data-category=${activeCategory}>
-      <header class=${styles.header}>
-        <span class=${styles.logo}
-          >vaitu<span class=${styles.logoDot}>•</span></span
-        >
-        <button
-          class=${
-            hasActiveFilters
-              ? `${styles.iconButton} ${styles.iconButtonActive}`
-              : styles.iconButton
-          }
-          aria-label="Filters"
-          type="button"
-          @click=${onToggleFilters}
-        >
-          ${renderIcon({ name: "sliders" })}
-        </button>
-      </header>
+      <div class=${styles.stickyTop}>
+        <header class=${styles.header}>
+          <span class=${styles.logo}
+            >vaitu<span class=${styles.logoDot}>•</span></span
+          >
+          <button
+            class=${
+              hasActiveFilters
+                ? `${styles.iconButton} ${styles.iconButtonActive}`
+                : styles.iconButton
+            }
+            aria-label="Filters"
+            type="button"
+            @click=${onToggleFilters}
+          >
+            ${renderIcon({ name: "sliders" })}
+          </button>
+        </header>
 
-      <div class=${styles.categoryRow}>
-        ${categories.map(
-          (category) => html`
-            <button
-              type="button"
-              class=${
-                category.id === activeCategory
-                  ? `${styles.categoryButton} ${styles.categoryActive}`
-                  : styles.categoryButton
-              }
-              @click=${() => onSelectCategory(category.id)}
-            >
-              ${category.label}
-            </button>
-          `,
-        )}
-      </div>
+        <div class=${styles.categoryRow}>
+          ${categories.map(
+            (category) => html`
+              <button
+                type="button"
+                class=${
+                  category.id === activeCategory
+                    ? `${styles.categoryButton} ${styles.categoryActive}`
+                    : styles.categoryButton
+                }
+                @click=${() => onSelectCategory(category.id)}
+              >
+                ${category.label}
+              </button>
+            `,
+          )}
+        </div>
 
-      <div class="vaitu-search">
-        ${Input.render({
-          inputType: "search",
-          isFullWidth: true,
-          placeholder: "Find events by city, style or genre...",
-          value: query,
-          icon: renderIcon({ name: "search", size: 15 }),
-          onChange: (value) => onSearch(value),
+        <div class="vaitu-search">
+          ${Input.render({
+            inputType: "search",
+            isFullWidth: true,
+            placeholder: "Find events by city, style or genre...",
+            value: query,
+            icon: renderIcon({ name: "search", size: 15 }),
+            onChange: (value) => onSearch(value),
+          })}
+        </div>
+
+        ${renderChipRow({
+          items: filters,
+          activeId: activeFilter,
+          onSelect: onSelectFilter,
+          getLabel: (filter) => filter.label,
         })}
       </div>
-
-      ${renderChipRow({
-        items: filters,
-        activeId: activeFilter,
-        onSelect: onSelectFilter,
-        getLabel: (filter) => filter.label,
-      })}
       ${
         isFiltersVisible
           ? html`

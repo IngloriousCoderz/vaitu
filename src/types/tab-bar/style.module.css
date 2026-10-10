@@ -1,17 +1,11 @@
 .tabbar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Not fixed any more: the app shell (src/app-shell.css) gives the bar its own
+     footer row, so it occupies layout and pages no longer reserve padding for
+     it. Being an overlay was the root of the clearance maths and of the
+     transparent-strip bug. */
   width: min(430px, 100%);
+  margin: 0 auto;
   padding-bottom: var(--vtabbar-inset);
-  z-index: 10;
-  /* The bar is flush to the bottom, but this element also carries the
-     safe-area padding — and the background is painted by the inner
-     .iw-bottom-navigation, not here. Without a background on the wrapper the
-     padding strip is transparent, so page content scrolls visibly beneath the
-     bar and it reads as floating ~34px too high on notched iPhones. Paint the
-     wrapper with the same surface the nav resolves to. */
   background: var(--vbg);
   --iw-color-surface: var(--vbg);
   --iw-color-border: var(--vline);
@@ -25,17 +19,22 @@
   width: 100%;
 }
 
+/* Slide down out of the footer row. The row itself collapses via
+   .appFooterHidden, so this is purely the visual exit. */
 .tabbar.tabbarHidden {
-  transform: translateX(-50%) translateY(110%);
+  transform: translateY(110%);
 }
 
 .fab {
-  position: fixed;
-  bottom: calc(96px + var(--vtabbar-inset));
+  /* Absolute, not fixed: it now floats inside the shell, so it no longer
+     depends on the viewport and no longer has to be offset by a bar height
+     that pages were also compensating for. */
+  position: absolute;
+  bottom: calc(var(--vtabbar-height) + var(--vfab-gap));
   right: max(18px, calc((100% - 430px) / 2 + 18px));
   z-index: 15;
-  width: 56px;
-  height: 56px;
+  width: var(--vfab-size);
+  height: var(--vfab-size);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -49,7 +48,7 @@
 }
 
 .fabLow {
-  bottom: calc(18px + var(--vtabbar-inset));
+  bottom: calc(var(--vfab-gap) + var(--vtabbar-inset));
 }
 
 .fabHidden {

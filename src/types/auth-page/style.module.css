@@ -1,12 +1,12 @@
 .page {
   max-width: 430px;
   margin: 0 auto;
-  min-height: 100dvh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: var(--vbg);
-  padding: calc(18px + env(safe-area-inset-top)) 18px var(--vpage-gap);
+  padding: var(--vpage-top) 18px var(--vpage-gap);
   color: var(--vink);
 }
 

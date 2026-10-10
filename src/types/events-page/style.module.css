@@ -1,17 +1,34 @@
 .page {
   max-width: 430px;
   margin: 0 auto;
-  min-height: 100dvh;
+  min-height: 100%;
   background: var(--vbg);
-  padding: calc(18px + env(safe-area-inset-top)) 18px var(--vtabbar-clearance);
+  padding: 0 18px var(--vpage-gap);
   color: var(--vink);
+}
+
+/* One sticky group: brand bar, category tabs, search and pill filters.
+   They are wrapped in a single element rather than each being sticky
+   individually — four siblings with independent `top` offsets would stack on
+   top of each other instead of travelling together as one bar.
+
+   The negative inline margin cancels the page's 18px gutter so the background
+   spans the full column. Without it the list would scroll visibly through the
+   gutters either side of the pinned group. */
+.stickyTop {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--vbg);
+  margin: 0 -18px;
+  padding: var(--vpage-top) 18px 0;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 2px 14px;
+  padding: 0 2px 14px;
 }
 
 .logo {

@@ -1,0 +1,27 @@
+/* App shell. Structure lives in src/app.js (renderShell) using the Flex
+   primitive from @inglorious/ui, following its ScrollableContent story:
+   column container, a scrolling content row, and a footer row for the tab bar.
+
+   Only the pieces CSS can't express through the primitive's props live here. */
+
+/* The footer owns the bar's height while it is on screen. Pages that keep the
+   bar mounted but translated away (detail, ranks, create_event) must not
+   reserve an empty row, so the row collapses instead. Height is animated rather
+   than display:none so the bar's slide-out is not cut off mid-transition. */
+.appFooter {
+  overflow: hidden;
+  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.appFooterHidden {
+  height: 0;
+}
+
+/* The content row scrolls vertically, but the page-slide transition offsets the
+   page horizontally by a full viewport width. Without this the scroll container
+   would gain a horizontal scrollbar on every transition. `clip` (not `hidden`)
+   so it does not create a scroll container of its own or a containing block
+   for the FAB. */
+.appMain {
+  overflow-x: clip;
+}

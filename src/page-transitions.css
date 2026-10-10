@@ -3,19 +3,27 @@
    (same page re-renders update in place). Tab switches carry no direction
    class and swap instantly, like native tabs. */
 
-/* Keep the incoming page from widening the viewport mid-slide. `clip`
-   (unlike `hidden`) doesn't break sticky descendants.
-
-   Clipping has to sit on BOTH #root and body. body alone is not enough on
-   iOS/WKWebView: the sliding page is a transformed child of #root, and body
-   does not establish a clipping context for it. iOS then lays the page out at
-   its pre-transform size, so after the login slide the viewport is stuck too
-   wide and too tall with no way to zoom back out. Android tolerated the body
-   rule; the root rule is what actually contains it. `clip` (not `hidden`) keeps
-   the fixed tab bar and FAB working, since it creates no containing block. */
+/* The slide offsets the page by a full viewport width. The scrolling content
+   row clips that horizontally (see .appMain in app-shell.css); this is the
+   outer belt-and-braces so the shell itself never gains a horizontal scroll.
+   `clip` rather than `hidden` — hidden would create a containing block and
+   break the absolutely positioned FAB. */
 #root,
 body {
   overflow-x: clip;
+}
+
+.vaitu-page {
+  /* Fill the shell's content row so a short page still paints the full
+     viewport height (the page's own background). main is a flex item of a
+     fixed-height shell, so the percentage resolves.
+
+     Do NOT make this a flex container. Its single child (.page) carries
+     `margin: 0 auto`, and auto margins on a flex cross-axis suppress
+     `align-items: stretch` — the page shrink-wraps to its content width
+     (measured: 430px -> 133px) and every list gains horizontal inset.
+     Verified in Chrome: block layout gives 683x430, flex gives 683x133. */
+  min-height: 100%;
 }
 
 .vaitu-page-forward {

@@ -55,33 +55,39 @@
   --vtitle-weight: 400;
 
   /* How far the tab bar keeps its buttons clear of the iOS home indicator.
-     env(safe-area-inset-bottom) is 34px on a notched iPhone and 0 on Android,
-     which is why the bar looks flush on one platform and inset on the other.
+     env(safe-area-inset-bottom) is 34px on a notched iPhone and 0 on Android.
+     Set to 0 to seat the bar flush on both — see the note in app-shell.css
+     about the footer height. Flip back to env(safe-area-inset-bottom) if the
+     labels ever end up under the home indicator. */
+  --vtabbar-inset: 0px;
 
-     Setting this to 0px seats the bar flush with the screen edge on iOS too.
-     Trade-off: the label then bottoms out ~16px from the edge, inside the
-     home indicator's own band (~8-21px) and the swipe-up-to-go-home zone.
-     It is one value here, so flipping it back is a one-line change. */
-  --vtabbar-inset: 0px; /* env(safe-area-inset-bottom); */
+  /* Top spacing above a page's first element. The shell already absorbs the
+     notch (padding-top), so this is purely breathing room. Pages that own a
+     pinned <header> carry this on the header instead, so the sticky bar has no
+     gap above it for content to show through. */
+  --vpage-top: 18px;
 
-  /* Height of the tab bar itself, excluding --vtabbar-inset.
+  /* Height of the tab bar itself, excluding any safe-area inset.
      Measured from the bar's own box: nav padding 8+8, border-top 1, action
      padding 8+8, icon 20 (DEFAULT_ICON_SIZE), gap 4, label 14px (~17).
      Re-measure if the bar's internals change. */
   --vtabbar-height: 74px;
 
-  /* Clearance for a page whose only bottom overlay is the tab bar
-     (events, applications, profile). */
-  --vtabbar-clearance: calc(var(--vtabbar-height) + var(--vtabbar-inset));
-
-  /* Clearance for a page that also shows the floating action button.
-     The FAB sits 22px above the bar and is 56px tall, so its top edge is
-     78px beyond the bar's top: 74 + 22 + 56 = 152px. Only my_events pairs a
-     visible bar with the standard-position FAB. */
-  --vfab-clearance: calc(var(--vtabbar-height) + 78px + var(--vtabbar-inset));
-
-  /* Clearance for a page with no bottom overlay (detail, ranks, create). */
+  /* Clearance for a page with no bottom overlay (detail, ranks, create).
+     Since the bar became a footer row these pages no longer reserve space for
+     it at all — this is just breathing room above the fold. */
   --vpage-gap: 24px;
+
+  /* Clearance for pages that show the floating action button (my_events,
+     received). The FAB is absolutely positioned in the shell, so it overlaps
+     the scrolling content row rather than occupying a row of its own.
+
+     Measured from the BOTTOM OF THE CONTENT ROW, which is where the last
+     item has to clear the FAB — not from the shell bottom. The shell bottom
+     is lower by the footer's own height, and counting that would double-count
+     space the footer already occupies. So: 22px gap + 56px FAB = 78px. */
+  --vfab-gap: 1rem;
+  --vfab-size: 56px;
 
   /* iOS zooms the whole viewport when a form control it focuses is under
      16px, and there is no way to zoom back out. Keep every input, select and
