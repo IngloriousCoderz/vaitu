@@ -26,12 +26,16 @@
 
 .list {
   padding-top: 6px;
-  padding-bottom: calc(var(--vfab-gap) + var(--vfab-size) + var(--vfab-gap));
+  padding-bottom: calc(var(--vfab-gap) + var(--vfab-size));
 }
 
 .event {
   padding-bottom: 14px;
   border-bottom: 1px solid var(--vline);
+}
+
+.event:last-child {
+  border-bottom: none;
 }
 
 .eventFooter {

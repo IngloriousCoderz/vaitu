@@ -1,14 +1,26 @@
 import * as handlers from "./handlers.js"
-import { renderOnboarding } from "./template.js"
+import { Onboarding as renderers } from "./template.js"
 
 const { save, ...syncHandlers } = handlers
 
-export const OnboardingPage = {
+export const Onboarding = {
   ...syncHandlers,
   ...save,
+  ...renderers,
+
+  create(entity) {
+    entity.country ??= ""
+    entity.region ??= ""
+    entity.website ??= ""
+    entity.instagram ??= ""
+    entity.status ??= "idle"
+    entity.error ??= null
+  },
+
   render(entity, api) {
     const id = entity.id
-    return renderOnboarding({
+
+    return this.renderOnboarding({
       entity,
       onField: ({ field, value }) =>
         api.notify(`#${id}:fieldSet`, { field, value }),

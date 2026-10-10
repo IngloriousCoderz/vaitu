@@ -1,23 +1,34 @@
 import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
-import { renderApplications } from "./template.js"
+import { ApplicationList as renderers } from "./template.js"
 
 const { applicationsLoad, ...syncHandlers } = handlers
 
-export const ApplicationsPage = {
+export const ApplicationList = {
   ...syncHandlers,
   ...applicationsLoad,
+  ...renderers,
+
+  create(entity) {
+    entity.isOpen ??= false
+    entity.applications ??= []
+    entity.status_filter ??= "all"
+    entity.status ??= "idle"
+    entity.error ??= null
+  },
+
   render(entity, api) {
     const id = entity.id
     subscribeApplications("applications", () =>
       api.notify(`#${id}:applicationsLoad`),
     )
-    return renderApplications({
+
+    return this.renderApplicationList({
       entity,
       onOpenEvent: (event_id) => {
         const application = entity.applications.find((a) => a.id === event_id)
         if (application)
-          api.notify("#application-detail:open", {
+          api.notify("#applicationDetail:open", {
             application_id: application.application_id,
             returnTo: "applications",
           })

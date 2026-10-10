@@ -1,1 +1,1 @@
-export { renderIcon } from "./template.js"
+export { Icon } from "./template.js"

@@ -1,16 +1,34 @@
 import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
-import { renderReceived } from "./template.js"
+import { ApplicationsReceived as renderers } from "./template.js"
 
 const { receivedLoad, statusSet, winnerAssign, eventReopen, ...syncHandlers } =
   handlers
 
-export const ReceivedPage = {
+export const ApplicationsReceived = {
   ...syncHandlers,
   ...receivedLoad,
   ...statusSet,
   ...winnerAssign,
   ...eventReopen,
+  ...renderers,
+
+  create(entity) {
+    entity.event_id ??= null
+    entity.event_title ??= ""
+    entity.event_status ??= "open"
+    entity.event_deadline ??= null
+    entity.event_recap ??= null
+    entity.reopen_deadline ??= ""
+    entity.max_applicants ??= 5
+    entity.expanded_application_id ??= null
+    entity.confirming_assign ??= null
+    entity.confirming_reopen ??= false
+    entity.items ??= []
+    entity.status ??= "idle"
+    entity.error ??= null
+  },
+
   render(entity, api) {
     const id = entity.id
     if (entity.event_id) {
@@ -18,7 +36,7 @@ export const ReceivedPage = {
         api.notify(`#${id}:receivedLoad`, entity.event_id),
       )
     }
-    return renderReceived({
+    return this.renderApplicationsReceived({
       entity,
       onToggle: (application_id) =>
         api.notify(`#${id}:expandToggle`, application_id),

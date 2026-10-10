@@ -1,7 +1,7 @@
 import { html, svg } from "@inglorious/web"
 
 // Central icon registry (Lucide-style 24px stroke paths).
-// Add new icons here; consumers use renderIcon({ name }) — never inline SVG.
+// Add new icons here; consumers use Icon.render({ name }) — never inline SVG.
 const paths = {
   search: svg`<circle cx="11" cy="11" r="8" ></circle><path d="m21 21-4.3-4.3" ></path>`,
   sliders: svg`<line x1="21" x2="14" y1="4" y2="4" ></line><line x1="10" x2="3" y1="4" y2="4" ></line><line x1="21" x2="12" y1="12" y2="12" ></line><line x1="8" x2="3" y1="12" y2="12" ></line><line x1="21" x2="16" y1="20" y2="20" ></line><line x1="12" x2="3" y1="20" y2="20" ></line><line x1="14" x2="14" y1="2" y2="6" ></line><line x1="8" x2="8" y1="10" y2="14" ></line><line x1="16" x2="16" y1="18" y2="22" ></line>`,
@@ -32,23 +32,25 @@ const paths = {
 
 import { DEFAULT_ICON_SIZE } from "../../constants.js"
 
-export function renderIcon({ name, size = DEFAULT_ICON_SIZE }) {
-  if (!paths[name]) console.warn(`Unknown icon: ${name}`)
-  // Single <g> root: lit-html svg templates drop sibling roots,
-  // which used to render only the first path of multi-path icons.
-  return html`
-    <svg
-      width=${size}
-      height=${size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <g>${paths[name] ?? ""}</g>
-    </svg>
-  `
+export const Icon = {
+  render({ name, size = DEFAULT_ICON_SIZE }) {
+    if (!paths[name]) console.warn(`Unknown icon: ${name}`)
+    // Single <g> root: lit-html svg templates drop sibling roots,
+    // which used to render only the first path of multi-path icons.
+    return html`
+      <svg
+        width=${size}
+        height=${size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <g>${paths[name] ?? ""}</g>
+      </svg>
+    `
+  },
 }

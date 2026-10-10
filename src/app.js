@@ -2,11 +2,7 @@ import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 import { repeat } from "@inglorious/web/directives/repeat"
 
-import {
-  renderFab,
-  renderTabbar,
-  senderTabs,
-} from "./types/tab-bar/template.js"
+import { Fab, senderTabs, TabBar } from "./types/tab-bar/template.js"
 
 // Pre-login routes (splash, auth, onboarding) have no page-transition
 // direction, but they still need the block <section> wrapper. main is a flex
@@ -134,9 +130,9 @@ export const App = {
     }
     // Gated: logged out always lands on login.
     if (!session.user_id) {
-      return renderBareShell(api.render("auth"))
+      return renderBareShell(api.render("authentication"))
     }
-    const auth = api.getEntity("auth")
+    const auth = api.getEntity("authentication")
     if (auth.justSignedUp) {
       return renderBareShell(api.render("onboarding"))
     }
@@ -145,7 +141,7 @@ export const App = {
       if (value === "events") api.notify("overlaysClose")
       if (value === "applications") {
         api.notify("overlaysClose")
-        api.notify("#applications:open")
+        api.notify("#applicationList:open")
       }
       if (value === "profile") {
         api.notify("overlaysClose")
@@ -158,13 +154,13 @@ export const App = {
     let page = null
     let tabbar = null
     const showFab = (low) =>
-      renderFab({
+      Fab.render({
         low,
         hidden: false,
-        onClick: () => api.notify("#create_event:open"),
+        onClick: () => api.notify("#eventCreate:open"),
       })
     const hideFab = () =>
-      renderFab({
+      Fab.render({
         low: true,
         hidden: true,
         onClick: () => {},
@@ -174,32 +170,32 @@ export const App = {
     // row, so the shell needs to know to collapse it.
     let tabbarHidden = true
 
-    const detail = api.getEntity("detail")
-    const applicationDetail = api.getEntity("application-detail")
+    const eventDetail = api.getEntity("eventDetail")
+    const applicationDetail = api.getEntity("applicationDetail")
     const ranks = api.getEntity("ranks")
     const profile = api.getEntity("profile")
     const sender = profile.profile?.role === "sender"
     const tabs = sender ? senderTabs : undefined
     const bar = (active, hidden) => {
       tabbarHidden = hidden
-      return renderTabbar({ active, tabs, hidden, onNavigate })
+      return TabBar.render({ active, tabs, hidden, onNavigate })
     }
 
     let pageKey = null
-    if (detail.event_id) {
-      page = api.render("detail")
-      pageKey = `detail:${detail.event_id}`
+    if (eventDetail.event_id) {
+      page = api.render("eventDetail")
+      pageKey = `event-detail:${eventDetail.event_id}`
     } else if (applicationDetail.application_id) {
-      page = api.render("application-detail")
+      page = api.render("applicationDetail")
       pageKey = `application-detail:${applicationDetail.application_id}`
     } else if (ranks.isOpen) {
       page = api.render("ranks")
       pageKey = "ranks"
       tabbar = bar(null, true)
     } else {
-      const applications = api.getEntity("applications")
+      const applications = api.getEntity("applicationList")
       if (applications.isOpen) {
-        page = api.render("applications")
+        page = api.render("applicationList")
         pageKey = "applications"
         tabbar = bar("applications", false)
       } else if (profile.isOpen) {
@@ -209,27 +205,27 @@ export const App = {
       } else if (!profile.profile && !profile.error) {
         return renderSplash()
       } else if (sender) {
-        const create_event = api.getEntity("create_event")
-        if (create_event.isOpen) {
-          page = api.render("create_event")
-          pageKey = "create_event"
+        const eventCreate = api.getEntity("eventCreate")
+        if (eventCreate.isOpen) {
+          page = api.render("eventCreate")
+          pageKey = "event-create"
           tabbar = bar(null, true)
         } else {
-          const received = api.getEntity("received")
-          if (received.event_id) {
-            page = api.render("received")
-            pageKey = `received:${received.event_id}`
+          const applicationsReceived = api.getEntity("applicationsReceived")
+          if (applicationsReceived.event_id) {
+            page = api.render("applicationsReceived")
+            pageKey = `applications-received:${applicationsReceived.event_id}`
             tabbar = bar(null, true)
             fab = showFab(true)
           } else {
-            page = api.render("my_events")
+            page = api.render("myEvents")
             pageKey = "my_events"
             tabbar = bar("events", false)
             fab = showFab(false)
           }
         }
       } else {
-        page = api.render("events")
+        page = api.render("eventList")
         pageKey = "events"
         tabbar = bar("events", false)
       }

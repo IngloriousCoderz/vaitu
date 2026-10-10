@@ -4,4 +4,4 @@ export {
   monogram,
   thumbGradient,
 } from "./helpers.js"
-export { renderCard } from "./template.js"
+export { Card } from "./template.js"

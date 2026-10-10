@@ -1,0 +1,141 @@
+import { Button } from "@inglorious/ui/button"
+import { html } from "@inglorious/web"
+
+import { capitalize } from "../../text.js"
+import { Icon } from "../icon/index.js"
+import { progressLabel, tierProgress } from "../profile/helpers.js"
+import styles from "./style.module.css"
+
+export const Ranks = {
+  render(props, api) {
+    return this.renderRanks(props, api)
+  },
+
+  renderRanks({ entity, onBack }) {
+    const { status, error, tiers, mine } = entity
+    const progress =
+      status === "ready" && tiers ? tierProgress(mine?.points, tiers) : null
+
+    return html`
+      <div class=${styles.page} data-category="wedding">
+        <header class=${styles.header}>
+          ${Button.render({
+            children: html`
+              ${Icon.render({ name: "arrow-left", size: 16 })}
+              <span>Back</span>
+            `,
+            variant: "ghost",
+            className: styles.back,
+            ariaLabel: "Back",
+            onClick: onBack,
+          })}
+          <span class=${styles.title}>Ranks</span>
+        </header>
+
+        <p class=${styles.subtitle}>
+          Earn points with every application. Higher ranks show on your profile.
+        </p>
+
+        ${
+          progress
+            ? html`
+                <div class=${styles.hero}>
+                  <span
+                    class=${`${styles.heroMedal} ${progress.current ? styles[`${progress.current}Medal`] : ""}`}
+                  >
+                    ${Icon.render({ name: "medal", size: 36 })}
+                  </span>
+                  <span class=${styles.heroTier}>
+                    ${progress.current ? capitalize(progress.current) : "No rank"}
+                  </span>
+                  <span class=${styles.heroPoints}
+                    >${mine?.points ?? 0} pts</span
+                  >
+                  <div class=${styles.progressTrack}>
+                    <div
+                      class=${styles.progressFill}
+                      style=${`width: ${progress.percent}%`}
+                    ></div>
+                  </div>
+                  <span class=${styles.heroLabel}>
+                    ${progressLabel(mine?.points, tiers)}
+                  </span>
+                </div>
+              `
+            : ""
+        }
+
+        <main class=${styles.list}>
+          ${
+            status === "loading"
+              ? html`<p class=${styles.empty}>Loading ranks…</p>`
+              : status === "error"
+                ? html`<p class=${styles.empty}>${error}</p>`
+                : tiers
+                  ? RANK_ORDER.map(
+                      (rank) => html`
+                        <div
+                          class=${`${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`}
+                        >
+                          <span class=${styles.rankName}>
+                            ${Icon.render({ name: "medal", size: 20 })}
+                            ${capitalize(rank)}
+                          </span>
+                          <span class=${styles.rankPoints}>
+                            ${rankMin(tiers, rank)}+ pts
+                          </span>
+                        </div>
+                      `,
+                    )
+                  : ""
+          }
+          ${
+            status === "ready" && tiers
+              ? html`
+                  <div class=${styles.howCard}>
+                    <span class=${styles.howTitle}>How points work</span>
+                    ${this.howRow({
+                      icon: "clipboard-list",
+                      points: tiers.perApplication,
+                      label: "per application",
+                    })}
+                    ${this.howRow({
+                      icon: "star",
+                      points: tiers.perShortlist,
+                      label: "per shortlist",
+                    })}
+                    ${this.howRow({
+                      icon: "trophy",
+                      points: tiers.perSelection,
+                      label: "per win",
+                    })}
+                  </div>
+                `
+              : ""
+          }
+        </main>
+      </div>
+    `
+  },
+
+  renderHowRow({ icon, points, label }) {
+    return html`
+      <div class=${styles.howRow}>
+        <span class=${styles.howIcon}
+          >${Icon.render({ name: icon, size: 17 })}</span
+        >
+        <span class=${styles.howText}>
+          <strong>${points} pts</strong> ${label}
+        </span>
+      </div>
+    `
+  },
+}
+
+const RANK_ORDER = ["bronze", "silver", "gold"]
+
+function rankMin(tiers, rank) {
+  if (rank === "gold") return tiers.goldMin
+  if (rank === "silver") return tiers.silverMin
+  return tiers.bronzeMin
+}

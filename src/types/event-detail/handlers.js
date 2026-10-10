@@ -57,7 +57,7 @@ export function prefill(entity, profile) {
 export function applicationSubmit(entity, _, api) {
   const session = api.getEntity("session")
   if (!session?.user_id) {
-    api.notify("#auth:open")
+    api.notify("#authentication:open")
     return
   }
   api.notify(`#${entity.id}:apply`, {
@@ -104,7 +104,7 @@ export const apply = handleAsync("apply", {
   success(entity, _, api) {
     entity.applyStatus = "ready"
     entity.isSubmitted = true
-    api.notify("#events:eventsLoad")
+    api.notify("#eventList:eventsLoad")
   },
   error(entity, err) {
     entity.applyStatus = "error"

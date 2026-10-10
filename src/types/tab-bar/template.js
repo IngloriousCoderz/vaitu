@@ -1,26 +1,29 @@
 import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
 import { html } from "@inglorious/web"
 
-import { renderIcon } from "../icon/index.js"
+import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"
+
 // Shared bottom tab bar. Stays mounted at App level so hide/show animates
 // via CSS instead of remounting per page.
-export function renderTabbar({ active, tabs, hidden, onNavigate }) {
-  return html`
-    <nav
-      class=${hidden ? `${styles.tabbar} ${styles.tabbarHidden}` : styles.tabbar}
-    >
-      ${BottomNavigation.render({
-        value: active,
-        onChange: (value) => onNavigate(value),
-        actions: (tabs ?? seekerTabs).map((tab) => ({
-          value: tab.value,
-          label: tab.label,
-          icon: renderIcon({ name: tab.icon }),
-        })),
-      })}
-    </nav>
-  `
+export const TabBar = {
+  render({ active, tabs, hidden, onNavigate }) {
+    return html`
+      <nav
+        class=${hidden ? `${styles.tabbar} ${styles.tabbarHidden}` : styles.tabbar}
+      >
+        ${BottomNavigation.render({
+          value: active,
+          onChange: (value) => onNavigate(value),
+          actions: (tabs ?? seekerTabs).map((tab) => ({
+            value: tab.value,
+            label: tab.label,
+            icon: Icon.render({ name: tab.icon }),
+          })),
+        })}
+      </nav>
+    `
+  },
 }
 
 const seekerTabs = [
@@ -36,21 +39,23 @@ export const senderTabs = [
 
 // Floating action button for event creation (sender only). Stays mounted
 // while visible so position/appear animates instead of remounting.
-export function renderFab({ onClick, low, hidden }) {
-  return html`
-    <button
-      class=${
-        hidden
-          ? `${styles.fab} ${styles.fabLow} ${styles.fabHidden}`
-          : low
-            ? `${styles.fab} ${styles.fabLow}`
-            : styles.fab
-      }
-      type="button"
-      aria-label="New event"
-      @click=${onClick}
-    >
-      ${renderIcon({ name: "plus", size: 24 })}
-    </button>
-  `
+export const Fab = {
+  render({ onClick, low, hidden }) {
+    return html`
+      <button
+        class=${
+          hidden
+            ? `${styles.fab} ${styles.fabLow} ${styles.fabHidden}`
+            : low
+              ? `${styles.fab} ${styles.fabLow}`
+              : styles.fab
+        }
+        type="button"
+        aria-label="New event"
+        @click=${onClick}
+      >
+        ${Icon.render({ name: "plus", size: 24 })}
+      </button>
+    `
+  },
 }

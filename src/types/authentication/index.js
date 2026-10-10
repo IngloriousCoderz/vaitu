@@ -1,28 +1,35 @@
 import * as handlers from "./handlers.js"
-import { renderAuth } from "./template.js"
+import { Authentication as renderers } from "./template.js"
 
 const { emailCheck, login, signup, ...syncHandlers } = handlers
 
-// After the visibility toggle re-renders (type password<->text resets the
-// cursor to 0), put focus back at the end of that same field so typing can
-// continue. "Cursor" = the blinking text-insertion point.
-function restoreCursor(inputId) {
-  requestAnimationFrame(() => {
-    const el = document.getElementById(inputId)
-    if (!el) return
-    el.focus()
-    el.setSelectionRange(el.value.length, el.value.length)
-  })
-}
-
-export const AuthPage = {
+export const Authentication = {
   ...syncHandlers,
   ...emailCheck,
   ...login,
   ...signup,
+  ...renderers,
+
+  create(entity) {
+    entity.step ??= "email"
+    entity.mode ??= "login"
+    entity.isOpen ??= false
+    entity.justSignedUp ??= false
+    entity.full_name ??= ""
+    entity.email ??= ""
+    entity.password ??= ""
+    entity.confirmPassword ??= ""
+    entity.isPasswordVisible ??= false
+    entity.isConfirmPasswordVisible ??= false
+    entity.role ??= "seeker"
+    entity.status ??= "idle"
+    entity.error ??= null
+  },
+
   render(entity, api) {
     const id = entity.id
-    return renderAuth({
+
+    return this.renderAuthentication({
       entity,
       callbacks: {
         onField: ({ field, value }) =>
@@ -56,4 +63,16 @@ export const AuthPage = {
       },
     })
   },
+}
+
+// After the visibility toggle re-renders (type password<->text resets the
+// cursor to 0), put focus back at the end of that same field so typing can
+// continue. "Cursor" = the blinking text-insertion point.
+function restoreCursor(inputId) {
+  requestAnimationFrame(() => {
+    const el = document.getElementById(inputId)
+    if (!el) return
+    el.focus()
+    el.setSelectionRange(el.value.length, el.value.length)
+  })
 }

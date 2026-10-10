@@ -4,7 +4,7 @@ import { Share } from "@capacitor/share"
 import { uploadIcsFile } from "../../api/applications.js"
 import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
-import { renderApplicationDetail } from "./template.js"
+import { ApplicationDetail as renderers } from "./template.js"
 
 const { applicationLoad, save, withdraw, giveUp, ...syncHandlers } = handlers
 
@@ -14,6 +14,19 @@ export const ApplicationDetail = {
   ...save,
   ...withdraw,
   ...giveUp,
+  ...renderers,
+
+  create(entity) {
+    entity.application_id ??= null
+    entity.returnTo ??= null
+    entity.application ??= null
+    entity.motivation ??= ""
+    entity.isConfirmingWithdraw ??= false
+    entity.isConfirmingGiveUp ??= false
+    entity.status ??= "idle"
+    entity.error ??= null
+  },
+
   render(entity, api) {
     const id = entity.id
     if (entity.application_id) {
@@ -21,7 +34,8 @@ export const ApplicationDetail = {
         api.notify(`#${id}:applicationLoad`, entity.application_id),
       )
     }
-    return renderApplicationDetail({
+
+    return this.renderApplicationDetail({
       entity,
       onField: ({ field, value }) =>
         api.notify(`#${id}:fieldSet`, { field, value }),
@@ -56,19 +70,19 @@ export const ApplicationDetail = {
       onNavigate: (value) => {
         if (value === "events") {
           api.notify(`#${id}:close`)
-          api.notify("#detail:close")
-          api.notify("#applications:close")
+          api.notify("#eventDetail:close")
+          api.notify("#applicationList:close")
         }
         if (value === "profile") {
           api.notify(`#${id}:close`)
-          api.notify("#detail:close")
-          api.notify("#applications:close")
+          api.notify("#eventDetail:close")
+          api.notify("#applicationList:close")
           api.notify("#profile:open")
         }
         if (value === "applications") {
           api.notify(`#${id}:close`)
-          api.notify("#detail:close")
-          api.notify("#applications:open")
+          api.notify("#eventDetail:close")
+          api.notify("#applicationList:open")
         }
       },
     })

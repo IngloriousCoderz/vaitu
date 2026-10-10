@@ -144,7 +144,7 @@ export const profileLoad = handleAsync("profileLoad", {
     entity.tierConfig = tiers
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#detail:prefill", profile)
-    if (profile.role === "sender") api.notify("#my_events:eventsLoad")
+    if (profile.role === "sender") api.notify("#myEvents:eventsLoad")
   },
   error(entity, err, api) {
     entity.status = "error"
@@ -198,7 +198,7 @@ export const profileSave = handleAsync("profileSave", {
     entity.profile = profile
     entity.draft = null
     entity.isEditing = false
-    api.notify("#events:eventsLoad")
+    api.notify("#eventList:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"
@@ -216,8 +216,8 @@ export const logout = handleAsync("logout", {
     entity.isOpen = false
     entity.profile = null
     entity.status = "idle"
-    api.notify("#detail:close")
-    api.notify("#auth:open")
+    api.notify("#eventDetail:close")
+    api.notify("#authentication:open")
   },
   error(entity, err) {
     entity.error = err.message ?? "Logout failed"

@@ -19,7 +19,7 @@ export function open(entity, { application_id, returnTo }, api) {
 export function back(entity, _, api) {
   const returnTo = entity.returnTo ?? "applications"
   api.notify(`#${entity.id}:close`)
-  if (returnTo === "applications") api.notify("#applications:open")
+  if (returnTo === "applications") api.notify("#applicationList:open")
 }
 
 export function close(entity) {
@@ -83,7 +83,7 @@ export const save = handleAsync("save", {
   success(entity, _, api) {
     entity.status = "ready"
     api.notify(`#${entity.id}:close`)
-    api.notify("#applications:open")
+    api.notify("#applicationList:open")
   },
   error(entity, err) {
     entity.status = "error"
@@ -103,8 +103,8 @@ export const withdraw = handleAsync("withdraw", {
     entity.status = "ready"
     entity.isConfirmingWithdraw = false
     api.notify(`#${entity.id}:close`)
-    api.notify("#events:eventsLoad")
-    api.notify("#applications:open")
+    api.notify("#eventList:eventsLoad")
+    api.notify("#applicationList:open")
   },
   error(entity, err) {
     entity.status = "error"
@@ -124,7 +124,7 @@ export const giveUp = handleAsync("giveUp", {
     entity.status = "ready"
     entity.isConfirmingGiveUp = false
     api.notify(`#${entity.id}:close`)
-    api.notify("#applications:open")
+    api.notify("#applicationList:open")
   },
   error(entity, err) {
     entity.status = "error"

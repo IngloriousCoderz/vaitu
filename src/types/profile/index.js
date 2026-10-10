@@ -1,6 +1,6 @@
 import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
-import { renderProfile } from "./template.js"
+import { Profile as renderers } from "./template.js"
 
 const { profileLoad, profileSave, logout, ...syncHandlers } = handlers
 
@@ -9,6 +9,20 @@ export const Profile = {
   ...profileLoad,
   ...profileSave,
   ...logout,
+  ...renderers,
+
+  create(entity) {
+    entity.isOpen ??= false
+    entity.profile ??= null
+    entity.stats ??= null
+    entity.isEditing ??= false
+    entity.isMenuOpen ??= false
+    entity.draft ??= null
+    entity.favoriteInput ??= ""
+    entity.status ??= "idle"
+    entity.error ??= null
+  },
+
   render(entity, api) {
     const id = entity.id
     if (entity.profile?.id) {
@@ -18,7 +32,7 @@ export const Profile = {
         `applicant_id=eq.${entity.profile.id}`,
       )
     }
-    return renderProfile({
+    return this.renderProfile({
       entity,
       onEdit: () => api.notify(`#${id}:editStart`),
       onCancel: () => api.notify(`#${id}:editCancel`),
@@ -34,7 +48,7 @@ export const Profile = {
       onCloseMenu: () => api.notify(`#${id}:menuClose`),
       onOpenApplications: (status_filter) => {
         api.notify(`#${id}:close`)
-        api.notify("#applications:open", status_filter)
+        api.notify("#applicationList:open", status_filter)
       },
       renderCountry: () => api.render("country-profile"),
     })

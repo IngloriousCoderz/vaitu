@@ -463,7 +463,7 @@ export const save = handleAsync("save", {
     clearPendingAudio()
     entity.audio_preview_url = null
     api.notify(`#${entity.id}:close`)
-    api.notify("#my_events:eventsLoad")
+    api.notify("#myEvents:eventsLoad")
   },
   error(entity, err) {
     entity.status = "error"

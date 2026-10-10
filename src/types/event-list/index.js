@@ -11,9 +11,9 @@ import {
   search,
 } from "./handlers.js"
 import { distinctRegions, periods } from "./helpers.js"
-import { renderPage } from "./template.js"
+import { EventList as renderers } from "./template.js"
 
-export const EventsPage = {
+export const EventList = {
   search,
   categorySelect,
   filterSelect,
@@ -22,10 +22,13 @@ export const EventsPage = {
   filtersToggle,
   filtersClear,
   ...eventsLoad,
+  ...renderers,
+
   render(entity, api) {
     const id = entity.id
     subscribeEvents("events", () => api.notify(`#${id}:eventsLoad`))
-    return renderPage({
+
+    return this.renderEventList({
       events: entity.events,
       appliedMap: entity.appliedMap,
       status: entity.status,
@@ -55,12 +58,12 @@ export const EventsPage = {
       onOpenEvent: (event_id) => {
         const application_id = entity.appliedMap[event_id]
         if (application_id) {
-          api.notify("#application-detail:open", {
+          api.notify("#applicationDetail:open", {
             application_id,
             returnTo: "events",
           })
         } else {
-          api.notify("#detail:open", event_id)
+          api.notify("#eventDetail:open", event_id)
         }
       },
     })

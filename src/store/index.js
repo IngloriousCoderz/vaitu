@@ -1,37 +1,38 @@
 import { createStore } from "@inglorious/store"
 
 import { ApplicationDetail } from "../types/application-detail/index.js"
-import { ApplicationsPage } from "../types/applications-page/index.js"
-import { AuthPage } from "../types/auth-page/index.js"
+import { ApplicationList } from "../types/application-list/index.js"
+import { ApplicationsReceived } from "../types/applications-received/index.js"
+import { Authentication } from "../types/authentication/index.js"
 import { CountrySelect } from "../types/country-select/index.js"
-import { CreateEventPage } from "../types/event-create-page/index.js"
+import { EventCreate } from "../types/event-create/index.js"
 import { EventDetail } from "../types/event-detail/index.js"
-import { EventsPage } from "../types/events-page/index.js"
-import { MyEventsPage } from "../types/my-events-page/index.js"
-import { OnboardingPage } from "../types/onboarding-page/index.js"
+import { EventList } from "../types/event-list/index.js"
+import { MyEvents } from "../types/my-events/index.js"
+import { Onboarding } from "../types/onboarding/index.js"
 import { Profile } from "../types/profile/index.js"
-import { RanksPage } from "../types/ranks-page/index.js"
-import { ReceivedPage } from "../types/received-page/index.js"
+import { Ranks } from "../types/ranks/index.js"
 import { Session } from "../types/session/index.js"
 import { entities } from "./entities"
 import { middlewares } from "./middlewares"
 
 export const store = createStore({
   types: {
-    EventsPage,
+    Authentication,
+    MyEvents,
+    EventList,
     EventDetail,
-    AuthPage,
-    ApplicationsPage,
+    EventCreate,
+    ApplicationList,
     ApplicationDetail,
-    MyEventsPage,
     CountrySelect,
-    CreateEventPage,
-    ReceivedPage,
-    OnboardingPage,
+    ApplicationsReceived,
+    Onboarding,
     Profile,
-    RanksPage,
+    Ranks,
     Session,
   },
   entities,
   middlewares,
+  autoCreateEntities: true,
 })

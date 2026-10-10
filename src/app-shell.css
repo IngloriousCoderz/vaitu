@@ -5,7 +5,7 @@
    Only the pieces CSS can't express through the primitive's props live here. */
 
 /* The footer owns the bar's height while it is on screen. Pages that keep the
-   bar mounted but translated away (detail, ranks, create_event) must not
+   bar mounted but translated away (detail, ranks, eventCreate) must not
    reserve an empty row, so the row collapses instead. Height is animated rather
    than display:none so the bar's slide-out is not cut off mid-transition. */
 .appFooter {

@@ -1,27 +1,6 @@
 import { FIRST_INDEX, PAD_LENGTH, SINGULAR } from "../../constants.js"
 import { randomId } from "../../text.js"
 
-function toStamp(dateStr) {
-  return (
-    dateStr.slice(FIRST_INDEX, 4) + dateStr.slice(5, 7) + dateStr.slice(8, 10)
-  )
-}
-
-function endExclusive(dateStr) {
-  const [year, month, day] = dateStr.split("-").map(Number)
-  const next = new Date(Date.UTC(year, month - SINGULAR, day + SINGULAR))
-  const pad = (value) => String(value).padStart(PAD_LENGTH, "0")
-  return `${next.getUTCFullYear()}${pad(next.getUTCMonth() + SINGULAR)}${pad(next.getUTCDate())}`
-}
-
-function escapeIcs(text) {
-  return text
-    .replace(/\\/g, "\\\\")
-    .replace(/;/g, "\\;")
-    .replace(/,/g, "\\,")
-    .replace(/\n/g, "\\n")
-}
-
 export function calendarLinks({ title, eventDate, location }) {
   if (!eventDate) return null
   const start = toStamp(eventDate)
@@ -52,4 +31,25 @@ export function calendarLinks({ title, eventDate, location }) {
     googleUrl: `https://calendar.google.com/calendar/render?${params}`,
     ics,
   }
+}
+
+function toStamp(dateStr) {
+  return (
+    dateStr.slice(FIRST_INDEX, 4) + dateStr.slice(5, 7) + dateStr.slice(8, 10)
+  )
+}
+
+function endExclusive(dateStr) {
+  const [year, month, day] = dateStr.split("-").map(Number)
+  const next = new Date(Date.UTC(year, month - SINGULAR, day + SINGULAR))
+  const pad = (value) => String(value).padStart(PAD_LENGTH, "0")
+  return `${next.getUTCFullYear()}${pad(next.getUTCMonth() + SINGULAR)}${pad(next.getUTCDate())}`
+}
+
+function escapeIcs(text) {
+  return text
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\n/g, "\\n")
 }
