@@ -1,7 +1,11 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
+import { Card } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
+import { Menu } from "@inglorious/ui/menu"
+import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
 import { capitalize } from "../../text.js"
@@ -70,24 +74,25 @@ export const Profile = {
                               class=${styles.menuBackdrop}
                               @click=${onCloseMenu}
                             ></div>
-                            <div class=${styles.menu}>
-                              <button
-                                class=${styles.menuItem}
-                                type="button"
-                                @click=${onEdit}
-                              >
-                                ${Icon.render({ name: "pencil", size: 15 })}
-                                <span>Edit profile</span>
-                              </button>
-                              <button
-                                class=${styles.menuItem}
-                                type="button"
-                                @click=${onLogout}
-                              >
-                                ${Icon.render({ name: "x", size: 15 })}
-                                <span>Log out</span>
-                              </button>
-                            </div>
+                            ${Menu.render({
+                              isOpen: true,
+                              className: styles.menu,
+                              items: [
+                                {
+                                  icon: Icon.render({
+                                    name: "pencil",
+                                    size: 15,
+                                  }),
+                                  label: "Edit profile",
+                                  onClick: onEdit,
+                                },
+                                {
+                                  icon: Icon.render({ name: "x", size: 15 }),
+                                  label: "Log out",
+                                  onClick: onLogout,
+                                },
+                              ],
+                            })}
                           `
                         : ""
                     }
@@ -188,7 +193,11 @@ export const Profile = {
                           })}
                           ${
                             status === "error" && error
-                              ? html`<p class=${styles.error}>${error}</p>`
+                              ? Alert.render({
+                                  severity: "error",
+                                  className: `vaitu-alert ${styles.error}`,
+                                  children: error,
+                                })
                               : ""
                           }
                           ${Button.render({
@@ -373,8 +382,10 @@ export const Profile = {
 
   renderTierBlock({ stats, tiers, onOpenRanks }) {
     const progress = tierProgress(stats.points, tiers)
-    return html`
-      <div class=${styles.tierBlock}>
+    return Card.render({
+      element: "div",
+      className: styles.tierBlock,
+      body: html`
         <span class=${styles.tierMedal} data-tier=${progress.current ?? "none"}>
           ${Icon.render({ name: "medal", size: 28 })}
         </span>
@@ -382,12 +393,11 @@ export const Profile = {
           ${progress.current ? capitalize(progress.current) : "No rank"}
         </span>
         <span class=${styles.tierPoints}>${stats.points ?? 0} pts</span>
-        <div class=${styles.progressTrack}>
-          <div
-            class=${styles.progressFill}
-            style=${`width: ${progress.percent}%`}
-          ></div>
-        </div>
+        ${Progress.render({
+          color: "primary",
+          value: progress.percent,
+          className: styles.progressTrack,
+        })}
         <span class=${styles.progressRow}>
           <span>${progressLabel(stats.points, tiers)}</span>
           ${IconButton.render({
@@ -397,7 +407,7 @@ export const Profile = {
             onClick: onOpenRanks,
           })}
         </span>
-      </div>
-    `
+      `,
+    })
   },
 }

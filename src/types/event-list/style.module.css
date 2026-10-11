@@ -1,9 +1,9 @@
 .page {
-  max-width: 430px;
+  max-width: var(--vpage-max-width);
   margin: 0 auto;
   min-height: 100%;
   background: var(--vbg);
-  padding: 0 18px var(--vpage-gap);
+  padding: 0 var(--vpage-gutter) var(--vpage-gap);
   color: var(--vink);
 }
 
@@ -12,59 +12,62 @@
    individually — four siblings with independent `top` offsets would stack on
    top of each other instead of travelling together as one bar.
 
-   The negative inline margin cancels the page's 18px gutter so the background
+   The negative inline margin cancels the page's gutter so the background
    spans the full column. Without it the list would scroll visibly through the
    gutters either side of the pinned group. */
 .stickyTop {
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: var(--iw-z-sticky);
   background: var(--vbg);
-  margin: 0 -18px;
-  padding: var(--vpage-top) 18px 0;
+  margin: 0 calc(-1 * var(--vpage-gutter));
+  padding: var(--vpage-top) var(--vpage-gutter) 0;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2px 14px;
+  padding: 0 0.125rem 0.875rem;
 }
 
 .logo {
   font-family: var(--vtitle-font);
-  font-size: 30px;
-  letter-spacing: 1.5px;
+  font-size: var(--iw-font-size-3xl);
+  letter-spacing: 0.05em;
   color: var(--vaccent);
   font-weight: var(--vtitle-weight);
 }
 
 .logoDot {
   color: var(--vlogo-dot);
-  margin-left: 3px;
+  margin-left: 0.1875rem;
 }
 
+/* Ghost variant: colour and tap target only. The package owns the reset,
+   focus ring and press state. The height-floor opt-out is the global
+   .vaitu-compact, since a bare single class here would lose to
+   button.iw-button in public/style.css. */
 .iconButton {
-  border: none;
-  background: none;
-  color: var(--vaccent);
-  cursor: pointer;
-  padding: 6px;
+  --iw-button-bg: var(--vaccent);
+  --iw-button-color: var(--vaccent);
+  border-radius: var(--iw-radius-md);
+  padding: 0.375rem;
 }
 
 .chips {
   display: flex;
-  gap: 9px;
+  gap: 0.5625rem;
   overflow-x: auto;
-  padding: 14px 2px 4px;
+  padding: 0.875rem 0.125rem var(--iw-space-1);
   scrollbar-width: none;
 }
 
 .categoryRow {
   display: flex;
-  gap: 20px;
+  gap: var(--iw-space-5);
   overflow-x: auto;
-  padding: 4px 2px 0;
+  padding: var(--iw-space-1) 0.125rem 0;
   scrollbar-width: none;
 }
 
@@ -76,11 +79,11 @@
   flex-shrink: 0;
   border: none;
   background: none;
-  padding: 0 0 8px;
+  padding: 0 0 var(--iw-space-2);
   cursor: pointer;
   font: inherit;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--iw-font-size-base);
+  font-weight: var(--iw-font-weight-semibold);
   color: var(--vmuted);
 }
 
@@ -102,13 +105,14 @@
 }
 
 .iconButtonActive {
-  color: var(--vchip-active-bg);
+  --iw-button-bg: var(--vchip-active-bg);
+  --iw-button-color: var(--vchip-active-bg);
 }
 
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: var(--iw-z-modal-backdrop);
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -116,18 +120,19 @@
 }
 
 .sheet {
-  width: min(430px, 100%);
+  width: min(var(--vpage-max-width), 100%);
   max-height: 70dvh;
   overflow-y: auto;
   background: var(--vbg);
-  border-radius: 18px 18px 0 0;
-  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
-  animation: sheet-up 0.25s ease;
+  border-radius: var(--iw-radius-2xl) var(--iw-radius-2xl) 0 0;
+  padding: var(--iw-space-2) var(--vpage-gutter)
+    calc(var(--vpage-gutter) + env(safe-area-inset-bottom));
+  animation: sheet-up var(--iw-transition-normal);
 }
 
 @keyframes sheet-up {
   from {
-    transform: translateY(24px);
+    transform: translateY(var(--iw-space-6));
     opacity: 0.6;
   }
   to {
@@ -139,17 +144,17 @@
 .sheetTitle {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
-  font-size: 17px;
-  margin: 14px 0 0;
+  font-size: var(--iw-font-size-lg);
+  margin: 0.875rem 0 0;
 }
 
 .list {
-  padding-top: 6px;
+  padding-top: 0.375rem;
 }
 
 .empty {
   text-align: center;
   color: var(--vmuted);
-  font-size: 14px;
-  padding: 40px 0;
+  font-size: var(--iw-font-size-sm);
+  padding: var(--iw-space-10) 0;
 }

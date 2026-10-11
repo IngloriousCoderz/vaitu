@@ -1,51 +1,39 @@
 /* Country combobox dressed like the app's own inputs (.field input):
    same surface, line, radius and padding. Scoped under the wrapper so the
-   UI package styles elsewhere are untouched. */
+   UI package styles elsewhere are untouched.
+
+   What is left here is purely sizing and shape. Surface, line, radius, ink and
+   muted ink all resolve through --iw-input-* and --iw-color-*, which
+   src/theme/tokens.css bridges to the app palette. Before that bridge existed
+   this file restated all of them by hand, which is why it used to be the
+   longest override sheet in the app. */
 
 .vaitu-country-select .iw-combobox-control {
   height: auto;
   font: inherit;
   font-size: var(--vinput-font-size);
-  line-height: 1.5;
-  color: var(--vink);
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: 10px;
-  padding: 11px 2.5rem 11px 13px;
+  line-height: var(--iw-line-height-normal);
+  padding: var(--vcontrol-padding-block) 2.5rem var(--vcontrol-padding-block)
+    var(--vcontrol-padding-inline);
 }
 
+/* Joins the control to the panel below it, the way a native <select> does. */
 .vaitu-country-select .iw-combobox-control.iw-combobox-control-open {
-  border-color: var(--vline);
-  box-shadow: none;
-  background: var(--vsurface);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
-.vaitu-country-select .iw-combobox-placeholder {
-  color: var(--vmuted);
-}
-
-.vaitu-country-select .iw-combobox-clear {
-  color: var(--vmuted);
-}
-
 .vaitu-country-select .iw-combobox-dropdown {
-  background: var(--vsurface);
-  border-color: var(--vline);
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 var(--iw-radius-xl) var(--iw-radius-xl);
 }
 
 .vaitu-country-select .iw-combobox-dropdown-search {
-  color: var(--vink);
-  border-bottom-color: var(--vline);
   font-size: var(--vinput-font-size);
 }
 
 .vaitu-country-select
   .iw-combobox-dropdown-options
   .iw-combobox-dropdown-options-option {
-  color: var(--vink);
   font-size: var(--vinput-font-size);
 }
 
@@ -59,8 +47,4 @@
   .iw-combobox-dropdown-options
   .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-selected {
   background: var(--vbadge-bg);
-}
-
-.vaitu-country-select .iw-combobox-no-options {
-  color: var(--vmuted);
 }

@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { html } from "@inglorious/web"
 
@@ -73,7 +74,15 @@ export const Onboarding = {
           />
         </label>
 
-        ${entity.error ? html`<p class=${styles.error}>${entity.error}</p>` : ""}
+        ${
+          entity.error
+            ? Alert.render({
+                severity: "error",
+                className: `vaitu-alert ${styles.error}`,
+                children: entity.error,
+              })
+            : ""
+        }
         <div class=${styles.bottomBar}>
           ${Button.render({
             children: saving ? "Saving…" : "Continue",

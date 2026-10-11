@@ -1,9 +1,9 @@
 .page {
-  max-width: 430px;
+  max-width: var(--vpage-max-width);
   margin: 0 auto;
   min-height: 100%;
   background: var(--vbg);
-  padding: var(--vpage-top) 18px var(--vpage-gap);
+  padding: var(--vpage-top) var(--vpage-gutter) var(--vpage-gap);
   color: var(--vink);
   text-align: center;
 }
@@ -20,10 +20,10 @@ button.gearButton {
   right: 0;
   border: none;
   background: none;
-  border-radius: 0;
+  border-radius: var(--iw-radius-none);
   box-shadow: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 0.375rem;
   min-height: 0;
   display: flex;
   color: var(--vmuted);
@@ -35,52 +35,35 @@ button.gearButton:active {
   background: none;
 }
 
+/* Anchoring only. Surface, items and hover state come from the package
+   (.iw-menu / .iw-menu-item), which already match our sizing. */
 .menu {
   position: absolute;
-  top: 34px;
+  top: 2.125rem;
   right: 0;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  min-width: 160px;
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: 14px;
-  padding: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: var(--iw-z-popover);
+  min-width: 10rem;
+  border-radius: var(--iw-radius-2xl);
+  padding: 0.375rem;
 }
 
 .menuBackdrop {
   position: fixed;
   inset: 0;
-  z-index: 15;
+  z-index: var(--iw-z-modal-backdrop);
   cursor: default;
 }
 
-.menuItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border: none;
-  background: none;
-  color: var(--vink);
-  font-size: 14.5px;
-  cursor: pointer;
-  padding: 10px 12px;
-  border-radius: 10px;
-  text-align: left;
-}
-
 .name {
-  margin: 8px 0 0;
+  margin: var(--iw-space-2) 0 0;
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
-  font-size: 24px;
+  font-size: var(--iw-font-size-2xl);
 }
 
 .email {
-  margin: 4px 0 10px;
-  font-size: 14px;
+  margin: var(--iw-space-1) 0 0.625rem;
+  font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
 }
 
@@ -88,20 +71,23 @@ button.gearButton:active {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
+  gap: var(--iw-space-2);
+  margin-top: 0.625rem;
 }
 
+/* Content and alignment only. Surface, line, radius and padding come from the
+   iw Card (see @inglorious/ui/card.css) — the layout below has to sit on
+   .iw-card-body because that is where the children land. */
 .tierBlock {
+  margin-top: var(--iw-space-3);
+}
+
+.tierBlock :global(.iw-card-body) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: 14px;
-  padding: 16px;
+  gap: var(--iw-space-2);
+  padding: var(--iw-space-4);
 }
 
 .tierMedal {
@@ -110,46 +96,41 @@ button.gearButton:active {
 }
 
 .tierMedal[data-tier="bronze"] {
-  color: #9a6b4f;
+  color: var(--vmedal-bronze);
 }
 
 .tierMedal[data-tier="silver"] {
-  color: #7c7689;
+  color: var(--vmedal-silver);
 }
 
 .tierMedal[data-tier="gold"] {
-  color: #e07b39;
+  color: var(--vmedal-gold);
 }
 
 .tierName {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
-  font-size: 22px;
+  font-size: var(--iw-font-size-xl);
 }
 
 .tierPoints {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-semibold);
 }
 
-.progressTrack {
-  width: 100%;
-  max-width: 240px;
-  height: 8px;
-  border-radius: 999px;
+.progressTrack :global(.iw-progress-linear-track) {
   background: var(--vline);
-  overflow: hidden;
+  border-radius: var(--iw-radius-full);
 }
 
-.progressFill {
-  height: 100%;
-  border-radius: 999px;
+.progressTrack :global(.iw-progress-linear-bar) {
   background: var(--vaccent);
-  transition: width 0.4s ease-out;
+  border-radius: var(--iw-radius-full);
+  transition: width var(--iw-transition-slow);
 }
 
 .progressLabel {
-  font-size: 13px;
+  font-size: var(--iw-font-size-xs);
   color: var(--vmuted);
 }
 
@@ -157,8 +138,8 @@ button.gearButton:active {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  font-size: 13px;
+  gap: 0.125rem;
+  font-size: var(--iw-font-size-xs);
   color: var(--vmuted);
 }
 
@@ -167,16 +148,16 @@ button.gearButton:active {
   left: 100%;
   top: 50%;
   transform: translateY(-50%);
-  margin-left: 2px;
+  margin-left: 0.125rem;
 }
 
 button.ranksHelp {
   border: none;
   background: none;
-  border-radius: 0;
+  border-radius: var(--iw-radius-none);
   box-shadow: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 0.375rem;
   min-height: 0;
   display: flex;
   color: var(--vmuted);
@@ -189,7 +170,7 @@ button.ranksHelp:active {
 }
 
 .rows {
-  margin: 20px 0 0;
+  margin: var(--iw-space-5) 0 0;
   border-top: 1px solid var(--vline);
   text-align: left;
 }
@@ -197,19 +178,19 @@ button.ranksHelp:active {
 .sectionTitle {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
-  font-size: 20px;
-  margin: 22px 0 4px;
+  font-size: var(--iw-font-size-xl);
+  margin: 1.375rem 0 var(--iw-space-1);
   text-align: left;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 13.5px;
+  gap: 0.375rem;
+  font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
   text-align: left;
-  margin-top: 12px;
+  margin-top: var(--iw-space-3);
 }
 
 .field input {
@@ -218,8 +199,8 @@ button.ranksHelp:active {
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);
-  border-radius: 10px;
-  padding: 11px 13px;
+  border-radius: var(--iw-radius-xl);
+  padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
   outline: none;
 }
 
@@ -228,27 +209,27 @@ button.ranksHelp:active {
   align-items: center;
   background: var(--vsurface);
   border: 1px solid var(--vline);
-  border-radius: 10px;
-  padding: 11px 13px;
+  border-radius: var(--iw-radius-xl);
+  padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
 }
 
 .favoriteChips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--iw-space-2);
 }
 
 .favoriteChip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13.5px;
-  font-weight: 600;
+  gap: 0.375rem;
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-semibold);
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);
-  border-radius: 999px;
-  padding: 6px 6px 6px 12px;
+  border-radius: var(--iw-radius-full);
+  padding: 0.375rem 0.375rem 0.375rem var(--iw-space-3);
 }
 
 .favoriteRemove {
@@ -256,7 +237,7 @@ button.ranksHelp:active {
   background: none;
   cursor: pointer;
   display: inline-flex;
-  padding: 2px;
+  padding: 0.125rem;
   color: var(--vmuted);
 }
 
@@ -266,35 +247,32 @@ button.ranksHelp:active {
   outline: none;
   flex: 1;
   min-width: 0;
-  padding: 2px 0;
+  padding: 0.125rem 0;
   font: inherit;
   font-size: var(--vinput-font-size);
-  line-height: 1.5;
+  line-height: var(--iw-line-height-normal);
   color: var(--vink);
 }
 
 .urlPrefix {
-  font-size: 14.5px;
-  line-height: 1.5;
+  font-size: var(--iw-font-size-sm);
+  line-height: var(--iw-line-height-normal);
   color: var(--vmuted);
 }
 
 .error {
-  font-size: 13.5px;
-  color: #b3261e;
-  background: rgba(179, 38, 30, 0.08);
-  border-radius: 10px;
-  padding: 10px 13px;
-  margin: 12px 0 0;
+  /* Spacing only. Colour, surface, radius, padding and font-size come from
+     the iw Alert calibrated as .vaitu-alert in public/style.css. */
+  margin: var(--iw-space-3) 0 0;
   text-align: left;
 }
 .row {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 11px 0;
+  gap: var(--iw-space-3);
+  padding: 0.6875rem 0;
   border-bottom: 1px solid var(--vline);
-  font-size: 14.5px;
+  font-size: var(--iw-font-size-sm);
 }
 
 .row dt {
@@ -303,7 +281,7 @@ button.ranksHelp:active {
 
 .row dd {
   margin: 0;
-  font-weight: 600;
+  font-weight: var(--iw-font-weight-semibold);
 }
 
 .rowLink {
@@ -312,25 +290,25 @@ button.ranksHelp:active {
 }
 
 .editButton {
-  margin-top: 12px;
+  margin-top: var(--iw-space-3);
 }
 
 .cancelButton {
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 
 .empty {
   text-align: center;
   color: var(--vmuted);
-  font-size: 14px;
-  padding: 40px 0;
+  font-size: var(--iw-font-size-sm);
+  padding: var(--iw-space-10) 0;
 }
 
 .stats {
   display: flex;
-  gap: 8px;
+  gap: var(--iw-space-2);
   justify-content: center;
-  margin-top: 12px;
+  margin-top: var(--iw-space-3);
 }
 
 button.stat {
@@ -340,8 +318,8 @@ button.stat {
   align-items: stretch;
   background: var(--vsurface);
   border: 1px solid var(--vline);
-  border-radius: 12px;
-  padding: 8px 0 7px;
+  border-radius: var(--iw-radius-xl);
+  padding: var(--iw-space-2) 0 0.4375rem;
   min-height: 0;
   cursor: pointer;
   font: inherit;
@@ -349,12 +327,12 @@ button.stat {
 
 .statValue {
   font-family: var(--vtitle-font);
-  font-size: 19px;
+  font-size: var(--iw-font-size-lg);
   color: var(--vink);
 }
 
 .statLabel {
-  font-size: 11.5px;
-  letter-spacing: 0.4px;
+  font-size: var(--iw-font-size-xs);
+  letter-spacing: 0.033em;
   color: var(--vmuted);
 }

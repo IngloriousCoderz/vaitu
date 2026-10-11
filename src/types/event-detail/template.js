@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
@@ -43,11 +44,17 @@ export const EventDetail = {
 
     return html`
       <div class=${styles.page} data-category=${event?.category ?? "wedding"}>
-        <button class=${styles.back} type="button" @click=${onBack}>
-          ${Icon.render({ name: "arrow-left", size: 16 })}
-          <span>Back</span>
-        </button>
-
+        ${Button.render({
+          children: html`
+            ${Icon.render({ name: "arrow-left", size: 16 })}
+            <span>Back</span>
+          `,
+          variant: "ghost",
+          shape: "pill",
+          className: "vaitu-back",
+          ariaLabel: "Back",
+          onClick: onBack,
+        })}
         ${
           status === "loading"
             ? html`<p class=${styles.empty}>Loading event…</p>`
@@ -219,7 +226,11 @@ export const EventDetail = {
         })}
         ${
           entity.applyError
-            ? html`<p class=${styles.error}>${entity.applyError}</p>`
+            ? Alert.render({
+                severity: "error",
+                className: `vaitu-alert ${styles.error}`,
+                children: entity.applyError,
+              })
             : ""
         }
       </form>

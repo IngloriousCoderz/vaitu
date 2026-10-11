@@ -3,9 +3,9 @@
      footer row, so it occupies layout and pages no longer reserve padding for
      it. Being an overlay was the root of the clearance maths and of the
      transparent-strip bug. */
-  width: min(430px, 100%);
+  width: min(var(--vpage-max-width), 100%);
   margin: 0 auto;
-  padding-bottom: var(--vtabbar-inset);
+  padding-bottom: var(--vpage-bottom);
   background: var(--vbg);
   --iw-color-surface: var(--vbg);
   --iw-color-border: var(--vline);
@@ -28,29 +28,24 @@
 .fab {
   /* Absolute, not fixed: it now floats inside the shell, so it no longer
      depends on the viewport and no longer has to be offset by a bar height
-     that pages were also compensating for. */
+     that pages were also compensating for.
+
+     Placement only. The box is the package's, via `size` on the component. */
   position: absolute;
-  bottom: calc(var(--vtabbar-height) + var(--vfab-gap));
-  right: max(18px, calc((100% - 430px) / 2 + 18px));
-  z-index: 15;
-  width: var(--vfab-size);
-  height: var(--vfab-size);
-  border: none;
-  border-radius: 50%;
+  bottom: var(--vtabbar-height);
+  right: max(
+    var(--vpage-gutter),
+    calc((100% - var(--vpage-max-width)) / 2 + var(--vpage-gutter))
+  );
+  z-index: var(--iw-z-fixed);
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--vchip-active-text);
-  background: var(--vchip-active-bg);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   transition: bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .fabLow {
-  bottom: calc(var(--vfab-gap) + var(--vtabbar-inset));
+  bottom: var(--vpage-bottom);
 }
 
 .fabHidden {
-  display: none;
+  display: none !important;
 }

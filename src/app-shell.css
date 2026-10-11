@@ -25,3 +25,19 @@
 .appMain {
   overflow-x: clip;
 }
+
+/* Splash screen, built in src/app.js outside any CSS module, so its styles live
+   here rather than in a page's style.module.css. */
+.vaitu-splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  background: var(--iw-color-bg);
+}
+
+.vaitu-splashLogo {
+  display: block;
+  width: var(--iw-space-24);
+  height: var(--iw-space-24);
+}

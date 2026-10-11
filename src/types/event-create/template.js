@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -47,9 +48,17 @@ export const EventCreate = {
 
     return html`
       <div class=${styles.page} data-category=${entity.category}>
-        <button class=${styles.back} type="button" @click=${onBack}>
-          ← Back
-        </button>
+        ${Button.render({
+          children: html`
+            ${Icon.render({ name: "arrow-left", size: 16 })}
+            <span>Back</span>
+          `,
+          variant: "ghost",
+          shape: "pill",
+          className: "vaitu-back",
+          ariaLabel: "Back",
+          onClick: onBack,
+        })}
 
         <header class=${styles.header}>
           <span class=${styles.title}>
@@ -153,7 +162,15 @@ export const EventCreate = {
           type: "number",
           onField,
         })}
-        ${entity.error ? html`<p class=${styles.error}>${entity.error}</p>` : ""}
+        ${
+          entity.error
+            ? Alert.render({
+                severity: "error",
+                className: `vaitu-alert ${styles.error}`,
+                children: entity.error,
+              })
+            : ""
+        }
         <div class=${styles.bottomBar}>
           ${Button.render({
             children: busy
@@ -281,7 +298,11 @@ export const EventCreate = {
         }
         ${
           entity.audio_error
-            ? html`<p class=${styles.error}>${entity.audio_error}</p>`
+            ? Alert.render({
+                severity: "error",
+                className: `vaitu-alert ${styles.error}`,
+                children: entity.audio_error,
+              })
             : ""
         }
         <p class=${styles.hint}>

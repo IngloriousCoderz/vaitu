@@ -1,6 +1,7 @@
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Input } from "@inglorious/ui/input"
+import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 
 import { Card } from "../event-card/index.js"
@@ -71,18 +72,15 @@ export const EventList = {
             <span class=${styles.logo}
               >vaitu<span class=${styles.logoDot}>•</span></span
             >
-            <button
-              class=${
-                hasActiveFilters
-                  ? `${styles.iconButton} ${styles.iconButtonActive}`
-                  : styles.iconButton
-              }
-              aria-label="Filters"
-              type="button"
-              @click=${onToggleFilters}
-            >
-              ${Icon.render({ name: "sliders" })}
-            </button>
+            ${IconButton.render({
+              icon: Icon.render({ name: "sliders" }),
+              variant: "ghost",
+              ariaLabel: "Filters",
+              className: hasActiveFilters
+                ? `vaitu-compact ${styles.iconButton} ${styles.iconButtonActive}`
+                : `vaitu-compact ${styles.iconButton}`,
+              onClick: onToggleFilters,
+            })}
           </header>
 
           <div class=${styles.categoryRow}>

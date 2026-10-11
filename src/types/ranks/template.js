@@ -1,4 +1,5 @@
 import { Button } from "@inglorious/ui/button"
+import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
 import { capitalize } from "../../text.js"
@@ -25,7 +26,7 @@ export const Ranks = {
               <span>Back</span>
             `,
             variant: "ghost",
-            className: styles.back,
+            className: "vaitu-back",
             ariaLabel: "Back",
             onClick: onBack,
           })}
@@ -51,12 +52,10 @@ export const Ranks = {
                   <span class=${styles.heroPoints}
                     >${mine?.points ?? 0} pts</span
                   >
-                  <div class=${styles.progressTrack}>
-                    <div
-                      class=${styles.progressFill}
-                      style=${`width: ${progress.percent}%`}
-                    ></div>
-                  </div>
+                  ${Progress.render({
+                    value: progress.percent,
+                    className: styles.progressTrack,
+                  })}
                   <span class=${styles.heroLabel}>
                     ${progressLabel(mine?.points, tiers)}
                   </span>

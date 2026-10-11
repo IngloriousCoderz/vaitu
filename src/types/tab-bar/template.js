@@ -1,4 +1,5 @@
 import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
+import { Fab as IwFab } from "@inglorious/ui/fab"
 import { html } from "@inglorious/web"
 
 import { Icon } from "../icon/index.js"
@@ -39,23 +40,27 @@ export const senderTabs = [
 
 // Floating action button for event creation (sender only). Stays mounted
 // while visible so position/appear animates instead of remounting.
+//
+// Everything except placement comes from the package: `size` sets the box,
+// `color="primary"` resolves through --iw-color-primary (bridged to the app's
+// dark green in src/theme/tokens.css), and `shape` is fixed to round by the
+// Fab itself. .fab in style.module.css therefore only owns where it sits.
 export const Fab = {
   render({ onClick, low, hidden }) {
-    return html`
-      <button
-        class=${
-          hidden
-            ? `${styles.fab} ${styles.fabLow} ${styles.fabHidden}`
-            : low
-              ? `${styles.fab} ${styles.fabLow}`
-              : styles.fab
-        }
-        type="button"
-        aria-label="New event"
-        @click=${onClick}
-      >
-        ${Icon.render({ name: "plus", size: 24 })}
-      </button>
-    `
+    return IwFab.render({
+      children: Icon.render({ name: "plus", size: 32 }),
+      size: "lg",
+      color: "primary",
+      shape: "round",
+      ariaLabel: "New event",
+      className: [
+        styles.fab,
+        low ? styles.fabLow : "",
+        hidden ? styles.fabHidden : "",
+      ]
+        .filter(Boolean)
+        .join(" "),
+      onClick,
+    })
   },
 }

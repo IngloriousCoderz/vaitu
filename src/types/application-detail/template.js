@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
@@ -53,11 +54,17 @@ export const ApplicationDetail = {
         class=${styles.page}
         data-category=${application?.category ?? "wedding"}
       >
-        <button class=${styles.back} type="button" @click=${onBack}>
-          ${Icon.render({ name: "arrow-left", size: 16 })}
-          <span>Back</span>
-        </button>
-
+        ${Button.render({
+          children: html`
+            ${Icon.render({ name: "arrow-left", size: 16 })}
+            <span>Back</span>
+          `,
+          variant: "ghost",
+          shape: "pill",
+          className: "vaitu-back",
+          ariaLabel: "Back",
+          onClick: onBack,
+        })}
         ${
           status === "loading"
             ? html`<p class=${styles.empty}>Loading application…</p>`
@@ -133,7 +140,11 @@ export const ApplicationDetail = {
                   }
                   ${
                     error && status !== "loading"
-                      ? html`<p class=${styles.error}>${error}</p>`
+                      ? Alert.render({
+                          severity: "error",
+                          className: `vaitu-alert ${styles.error}`,
+                          children: error,
+                        })
                       : ""
                   }
                   ${

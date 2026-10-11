@@ -1,0 +1,185 @@
+/* Vaitu theme tokens. Neutral chrome + per-category skins.
+   Page root carries data-category="wedding|festival"; tokens flip the skin.
+
+   UNITS. Every length here is rem, and the rem base is pinned to 16px in
+   public/style.css, so 1rem === the old 16px. px survives in exactly two
+   places across the whole app: hairline borders (1px/2px/3px) and the
+   screen-reader-only clipping in authentication/. Both are meant to stay
+   thin when the user scales text up — a 1px divider that grows to 3px is a
+   divider, a 3px one is a slab.
+
+   Everything that @inglorious/ui already defines a token for (space scale,
+   radii, type scale, shadows, z-index, easings) is referenced straight from
+   that package at the point of use. Only app-specific concepts that have no
+   iw equivalent get a --v* token, and those alias the iw scale where one
+   fits. */
+
+/* Component tokens.
+   These have to be declared on the SAME ELEMENT the package theme targets, not
+   on :root. `material.css` puts --iw-card-*, --iw-alert-*, --iw-input-* and
+   --iw-color-surface/border/text on `.iw-theme-material`, which is <body>. A
+   declaration on :root still computes correctly there and still loses: a
+   value set directly on an element beats one inherited from an ancestor, and
+   inheritance is the weakest of all the cascade origins. Verified — with the
+   bridge on :root, Card rendered 8px/transparent and Alert 4px, i.e. exactly
+   the package defaults.
+
+   `:root .iw-theme-material` rather than a bare `.iw-theme-material` so the
+   override is (0,2,0) against the package's (0,1,0) and does not depend on
+   import order to hold. */
+:root .iw-theme-material {
+  --iw-color-bg: var(--vsurface);
+  --iw-color-bg-secondary: var(--vsurface);
+  --iw-color-surface: var(--vsurface);
+  --iw-color-surface-hover: color-mix(
+    in srgb,
+    var(--vmuted) 10%,
+    var(--vsurface)
+  );
+  --iw-color-surface-active: color-mix(
+    in srgb,
+    var(--vmuted) 18%,
+    var(--vsurface)
+  );
+  --iw-color-border: var(--vline);
+  --iw-color-text: var(--vink);
+  --iw-color-text-secondary: var(--vink);
+  --iw-color-text-muted: var(--vmuted);
+
+  /* Primary, on the theme host for the same reason as everything above:
+     material.css sets --iw-color-primary on `.iw-theme-material`, so a
+     :root declaration is inherited-and-lost. The festival skin still wins,
+     because [data-category="festival"] sits below <body> and a value set on
+     an element beats an inherited one.
+
+     Derived from --vaccent rather than restating a hex, so the skin carries
+     the base colour and these two are just that colour darkened. */
+  --iw-color-primary: var(--vaccent);
+  --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
+  --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
+
+  --iw-input-text: var(--vink);
+  --iw-input-text-placeholder: var(--vmuted);
+  --iw-input-bg: var(--vsurface);
+  --iw-input-bg-hover: var(--vsurface);
+  --iw-input-bg-focus: var(--vsurface);
+  --iw-input-border: var(--vline);
+  --iw-input-border-hover: var(--vline);
+  --iw-input-border-focus: var(--vline);
+
+  /* Material ships the card border as `transparent`, which is why every
+     hand-rolled surface in the app carried its own border. Now that the pages
+     use iw Card, the line comes from the token. */
+  --iw-card-bg: var(--vsurface);
+  --iw-card-border: var(--vline);
+  --iw-card-radius: var(--iw-radius-2xl);
+  --iw-card-shadow: none;
+  --iw-card-shadow-hover: none;
+
+  --iw-alert-radius: var(--iw-radius-xl);
+  --iw-alert-shadow: none;
+}
+
+[data-category],
+[data-category] * {
+  transition: var(--iw-transition-slow);
+}
+
+:root,
+[data-category="wedding"] {
+  --vlogo-dot: #e0813e;
+  --vchip-border: #cfc7ae;
+  --vchip-active-bg: #6b7a5e;
+  --vchip-active-text: #f6f3ea;
+  --vbadge-bg: #dde3d2;
+  --vbadge-text: #4a5a48;
+  --vtag-text: #9a6b4f;
+  --vtag-border: #d8cfbc;
+  --vtitle-font: Georgia, "Times New Roman", serif;
+  --vtitle-weight: var(--iw-font-weight-normal);
+
+  /* Error ink and the faint wash behind it. Off the iw error scale rather
+     than a hardcoded hex, and the wash is mixed from the ink so the two
+     cannot drift apart when --verror changes. */
+  --verror: var(--iw-color-error-dark);
+  --verror-surface: color-mix(in srgb, var(--verror) 8%, transparent);
+
+  /* Medal tints on the leaderboard and profile. */
+  --vmedal-bronze: #9a6b4f;
+  --vmedal-silver: #7c7689;
+  --vmedal-gold: #e07b39;
+
+  /* ========================================
+     LAYOUT METRICS
+     App-specific lengths with no iw equivalent. Everything that does have
+     one is referenced from @inglorious/ui at the point of use instead.
+     ======================================== */
+
+  /* Width of the centred phone column. Every .page, the tab bar and the
+     filter sheet cap here. */
+  --vpage-max-width: 26.875rem;
+
+  /* Horizontal gutter either side of the column's content. */
+  --vpage-gutter: 1.125rem;
+
+  /* Minimum height of a tappable control (button, select). */
+  --vcontrol-height: 3rem;
+
+  /* Padding inside the app's own inputs, selects and textareas. Split into
+     longhands because the select overrides only its trailing edge — it needs
+     room for the package's chevron where a text input does not. */
+  --vcontrol-padding-block: 0.6875rem;
+  --vcontrol-padding-inline: 0.8125rem;
+
+  /* Top spacing above a page's first element. The shell already absorbs the
+     notch (padding-top), so this is purely breathing room. Pages that own a
+     pinned <header> carry this on the header instead, so the sticky bar has
+     no gap above it for content to show through. */
+  --vpage-top: var(--iw-space-4);
+
+  /* How far the tab bar keeps its buttons clear of the iOS home indicator.
+     env(safe-area-inset-bottom) is ~2.125rem on a notched iPhone and 0 on
+     Android. Set to 0 to seat the bar flush on both — see the note in
+     app-shell.css about the footer height. Flip back to
+     env(safe-area-inset-bottom) if the labels ever end up under the home
+     indicator. */
+  --vpage-bottom: 0;
+
+  /* Height of the tab bar itself, excluding any safe-area inset.
+     Measured from the bar's own box: nav padding 8+8, border-top 1, action
+     padding 8+8, icon 20 (DEFAULT_ICON_SIZE), gap 4, label 14px (~17).
+     Re-measure if the bar's internals change. */
+  --vtabbar-height: 4.75rem;
+
+  /* Clearance for a page with no bottom overlay (detail, ranks, create).
+     Since the bar became a footer row these pages no longer reserve space for
+     it at all — this is just breathing room above the fold. */
+  --vpage-gap: var(--iw-space-6);
+
+  --vfab-size: var(--iw-space-14);
+
+  /* iOS zooms the whole viewport when a form control it focuses is under
+     16px, and there is no way to zoom back out. Keep every input, select and
+     textarea at or above this floor; `font-size` below it reintroduces the
+     "page doesn't fit and I can't scroll back" symptom on a fresh bug report. */
+  --vinput-font-size: var(--iw-font-size-base);
+}
+
+[data-category="festival"] {
+  --vchip-border: #c3bccd;
+  --vchip-active-bg: #6d28d9;
+  --vchip-active-text: #f4f1ea;
+  --vbadge-bg: #dcd4ec;
+  --vbadge-text: #4c1d95;
+  --vtag-text: #6d28d9;
+  --vtag-border: #c3bccd;
+  --vmedal-bronze: #9a6b4f;
+  --vmedal-silver: #7c7689;
+  --vmedal-gold: #e07b39;
+
+  /* Overrides the theme host's primary for this subtree. This block is a
+     descendant of <body>, so a declaration here beats the inherited value. */
+  --iw-color-primary: var(--vaccent);
+  --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
+  --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
+}

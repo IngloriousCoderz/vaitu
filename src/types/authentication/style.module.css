@@ -1,12 +1,12 @@
 .page {
-  max-width: 430px;
+  max-width: var(--vpage-max-width);
   margin: 0 auto;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: var(--vbg);
-  padding: var(--vpage-top) 18px var(--vpage-gap);
+  padding: var(--vpage-top) var(--vpage-gutter) var(--vpage-gap);
   color: var(--vink);
 }
 
@@ -14,25 +14,25 @@
   margin: 0;
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
-  font-size: 26px;
+  font-size: var(--iw-font-size-2xl);
   text-align: center;
 }
 
 .subtitle {
-  margin: 6px 0 18px;
-  font-size: 14px;
+  margin: 0.375rem 0 var(--iw-space-5);
+  font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
   text-align: center;
 }
 
 .bottomBar {
   margin-top: auto;
-  padding-top: 18px;
+  padding-top: var(--iw-space-5);
   padding-bottom: env(safe-area-inset-bottom);
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .linkButton {
@@ -40,8 +40,8 @@
   background: none;
   cursor: pointer;
   font: inherit;
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-bold);
   color: var(--vaccent);
   padding: 0;
 }
@@ -49,8 +49,8 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 13.5px;
+  gap: 0.375rem;
+  font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
 }
 
@@ -62,9 +62,9 @@
   color: var(--vink);
   background: var(--vsurface);
   border: 1px solid var(--vline);
-  border-radius: 12px;
-  padding: 11px 13px;
-  margin-bottom: 10px;
+  border-radius: var(--iw-radius-xl);
+  padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
+  margin-bottom: 0.625rem;
   outline: none;
 }
 
@@ -74,31 +74,32 @@
 }
 
 .passwordWrap input {
-  padding-right: 42px;
-  margin-bottom: 10px;
+  padding-right: 2.625rem;
+  margin-bottom: 0.625rem;
 }
 
 .eyeButton {
   position: absolute;
-  right: 6px;
-  /* input carries margin-bottom:10px, so true center is 5px above middle */
-  top: calc(50% - 5px);
+  right: 0.375rem;
+  /* input carries margin-bottom:0.625rem, so true center is half that
+     above the middle */
+  top: calc(50% - 0.3125rem);
   transform: translateY(-50%);
   border: none;
   background: none;
   cursor: pointer;
   color: var(--vmuted);
-  padding: 6px;
+  padding: 0.375rem;
   display: flex;
 }
 
 .step {
-  animation: step-in 0.25s ease;
+  animation: step-in var(--iw-transition-normal);
 }
 
 @keyframes step-in {
   from {
-    transform: translateX(28px);
+    transform: translateX(1.75rem);
     opacity: 0.4;
   }
   to {
@@ -110,20 +111,20 @@
 .roleList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--iw-space-3);
 }
 
 .roleBig {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--iw-space-1);
   align-items: center;
   text-align: center;
   cursor: pointer;
   background: var(--vsurface);
   border: 1px solid var(--vline);
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: var(--iw-radius-2xl);
+  padding: var(--iw-space-5);
 }
 
 .roleSwitch strong {
@@ -132,22 +133,22 @@
 }
 
 .roleLabel {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--iw-font-size-base);
+  font-weight: var(--iw-font-weight-bold);
   color: var(--vink);
 }
 
 .roleHint {
-  font-size: 12.5px;
+  font-size: var(--iw-font-size-xs);
   color: var(--vmuted);
 }
 
 .error {
-  font-size: 13.5px;
-  color: #b3261e;
-  background: rgba(179, 38, 30, 0.08);
-  border-radius: 10px;
-  padding: 10px 13px;
+  font-size: var(--iw-font-size-sm);
+  color: var(--verror);
+  background: var(--verror-surface);
+  border-radius: var(--iw-radius-xl);
+  padding: 0.625rem var(--vcontrol-padding-inline);
   margin: 0;
 }
 
@@ -160,7 +161,10 @@
    The login and signup steps show the email as static text, so the form has
    no account identifier and browsers decline to save the credential. This
    carries it. Deliberately not the `hidden` attribute: display:none inputs
-   are skipped by some managers. */
+   are skipped by some managers.
+
+   1px stays 1px here on purpose — this is a clipping trick, not a size, and
+   it must stay sub-pixel at any root font size. */
 .srOnly {
   position: absolute;
   width: 1px;

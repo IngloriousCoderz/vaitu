@@ -1,9 +1,9 @@
 .page {
-  max-width: 430px;
+  max-width: var(--vpage-max-width);
   margin: 0 auto;
   min-height: 100%;
   background: var(--vbg);
-  padding: 0 18px var(--vpage-gap);
+  padding: 0 var(--vpage-gutter) var(--vpage-gap);
   color: var(--vink);
 }
 
@@ -13,26 +13,26 @@
    through. The background is what hides the list scrolling underneath. */
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: var(--iw-z-sticky);
   background: var(--vbg);
-  padding: var(--vpage-top) 2px 10px;
+  padding: var(--vpage-top) 0.125rem 0.625rem;
 }
 
 .title {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
-  font-size: 26px;
+  font-size: var(--iw-font-size-2xl);
 }
 
 .list {
-  padding-top: 6px;
+  padding-top: 0.375rem;
 }
 
 .chips {
   display: flex;
-  gap: 9px;
+  gap: 0.5625rem;
   overflow-x: auto;
-  padding: 6px 2px 4px;
+  padding: 0.375rem 0.125rem var(--iw-space-1);
   scrollbar-width: none;
 }
 
@@ -49,20 +49,20 @@
 }
 
 .application {
-  padding-bottom: 14px;
+  padding-bottom: 0.875rem;
   border-bottom: 1px solid var(--vline);
 }
 
 .winner {
   background: color-mix(in srgb, var(--iw-color-success) 10%, transparent);
   border: 1px solid color-mix(in srgb, var(--iw-color-success) 35%, transparent);
-  border-radius: 16px;
-  padding: 12px 12px 14px;
+  border-radius: var(--iw-radius-2xl);
+  padding: var(--iw-space-3) var(--iw-space-3) 0.875rem;
 }
 
 .applicationFooter {
   display: flex;
-  margin-top: 10px;
+  margin-top: 0.625rem;
 }
 
 .winnerTrophy {
@@ -74,6 +74,6 @@
 .empty {
   text-align: center;
   color: var(--vmuted);
-  font-size: 14px;
-  padding: 40px 0;
+  font-size: var(--iw-font-size-sm);
+  padding: var(--iw-space-10) 0;
 }

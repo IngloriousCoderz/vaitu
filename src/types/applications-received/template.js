@@ -1,4 +1,6 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
+import { Card } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
@@ -44,9 +46,17 @@ export const ApplicationsReceived = {
 
     return html`
       <div class=${styles.page} data-category="wedding">
-        <button class=${styles.back} type="button" @click=${onBack}>
-          ← Back
-        </button>
+        ${Button.render({
+          children: html`
+            ${Icon.render({ name: "arrow-left", size: 16 })}
+            <span>Back</span>
+          `,
+          variant: "ghost",
+          shape: "pill",
+          className: "vaitu-back",
+          ariaLabel: "Back",
+          onClick: onBack,
+        })}
 
         <header class=${styles.header}>
           <span class=${styles.title}>${entity.event_title}</span>
@@ -170,7 +180,11 @@ export const ApplicationsReceived = {
           }
           ${
             status === "error" && items.length >= SINGULAR
-              ? html`<p class=${styles.error}>${error}</p>`
+              ? Alert.render({
+                  severity: "error",
+                  className: `vaitu-alert ${styles.error}`,
+                  children: error,
+                })
               : ""
           }
         </main>
@@ -189,18 +203,22 @@ export const ApplicationsReceived = {
       ["Shortlist", `${shortlisted}/${maxApplicants ?? "—"}`],
       ["Created", formatDay((recap.created_at ?? "").slice(0, 10))],
     ]
-    return html`
-      <dl class=${styles.recap}>
-        ${rows.map(
-          ([label, value]) => html`
-            <div class=${styles.recapRow}>
-              <dt>${label}</dt>
-              <dd>${value}</dd>
-            </div>
-          `,
-        )}
-      </dl>
-    `
+    return Card.render({
+      element: "div",
+      className: styles.recap,
+      body: html`
+        <dl class=${styles.recapList}>
+          ${rows.map(
+            ([label, value]) => html`
+              <div class=${styles.recapRow}>
+                <dt>${label}</dt>
+                <dd>${value}</dd>
+              </div>
+            `,
+          )}
+        </dl>
+      `,
+    })
   },
 
   renderApplicant({

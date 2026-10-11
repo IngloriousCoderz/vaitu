@@ -8,8 +8,8 @@ import { Fab, senderTabs, TabBar } from "./types/tab-bar/template.js"
 // direction, but they still need the block <section> wrapper. main is a flex
 // column, and a .page handed to it directly becomes a flex item — where
 // `margin: 0 auto` suppresses stretch and it shrink-wraps (measured 239px
-// instead of 430px). The logged-in routes avoid this because their content is
-// already wrapped.
+// instead of the full 26.875rem column). The logged-in routes avoid this
+// because their content is already wrapped.
 function renderBareShell(content) {
   return renderShell({
     content: html`<section class="vaitu-page">${content}</section>`,
@@ -18,14 +18,8 @@ function renderBareShell(content) {
 
 function renderSplash() {
   return html`
-    <div
-      style="display:flex;align-items:center;justify-content:center;min-height:100%;background:#f6f3ea;"
-    >
-      <img
-        src="/logo.svg"
-        alt="vaitu"
-        style="width:104px;height:104px;display:block;"
-      />
+    <div class="vaitu-splash">
+      <img src="/logo.svg" alt="vaitu" class="vaitu-splashLogo" />
     </div>
   `
 }
@@ -185,6 +179,7 @@ export const App = {
     if (eventDetail.event_id) {
       page = api.render("eventDetail")
       pageKey = `event-detail:${eventDetail.event_id}`
+      fab = showFab(true)
     } else if (applicationDetail.application_id) {
       page = api.render("applicationDetail")
       pageKey = `application-detail:${applicationDetail.application_id}`
