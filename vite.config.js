@@ -16,8 +16,7 @@ export default defineConfig({
       injectRegister: false,
       registerType: "autoUpdate",
       pwaAssets: {
-        image: "public/logo.svg",
-        preset: "minimal-2023",
+        config: true,
       },
       manifest: {
         name: "vaitu",

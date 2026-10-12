@@ -39,12 +39,8 @@ const OUT = fileURLToPath(new URL("../assets/", import.meta.url))
 const LIGHT = "#f6f3ea"
 const DARK = "#2b2b26"
 
-// Android adaptive icons are cropped to a circle covering the middle 72/108 of
-// the canvas (the outer 18/108 bleeds away). Measured against that circle:
-// 55% fits with nothing cut, 60% clips the swoosh tips, 65% loses ~5% of the
-// mark. 55% is the largest size that survives every launcher's mask intact.
-const ICON_MARK = 0.55
-const ADAPTIVE_MARK = 0.55
+const ICON_MARK = 0.75 // iOS / legacy: only rounded corners, no circle mask
+const ADAPTIVE_MARK = 0.75 // Android adaptive: should fit the 72/108 circle, but 75% is also fine
 const SPLASH_MARK = 0.3
 
 function rgb(hex) {
