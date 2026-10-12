@@ -27,11 +27,11 @@ body {
 }
 
 .vaitu-page-forward {
-  animation: vaitu-page-in-right 0.25s ease-out;
+  animation: none;
 }
 
 .vaitu-page-back {
-  animation: vaitu-page-in-left 0.25s ease-out;
+  animation: none;
 }
 
 @keyframes vaitu-page-in-right {

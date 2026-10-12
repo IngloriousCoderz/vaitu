@@ -14,6 +14,9 @@ importers:
       '@capacitor/share':
         specifier: ^8.0.3
         version: 8.0.3(@capacitor/core@8.5.3)
+      '@inglorious/motion':
+        specifier: ^9.0.2
+        version: 9.0.2(@inglorious/web@6.4.2(@inglorious/store@11.0.2(@inglorious/utils@4.0.0)))
       '@inglorious/store':
         specifier: ^11.0.1
         version: 11.0.2(@inglorious/utils@4.0.0)
@@ -855,6 +858,12 @@ packages:
       eslint-plugin-simple-import-sort: ^12.1.1
       eslint-plugin-tailwindcss: 4.0.0-beta.0
       eslint-plugin-turbo: ^2.5.0
+
+  '@inglorious/motion@9.0.2':
+    resolution: {integrity: sha512-2hDQGXQs7uTQTl8TEhkAC+kJ43kj6INyjPUCGpWCjNzzAoeH+F2vsjVKDKy7UcnbVOWED0BIoY2QkFwJoK0X1Q==}
+    engines: {node: '>= 22'}
+    peerDependencies:
+      '@inglorious/web': 6.4.2
 
   '@inglorious/store@11.0.2':
     resolution: {integrity: sha512-fugDvAL3/Zfm/G8LZkSbKu7K5diAUI0yO9poeUpUqHlmqlS3ZKKtGJxuZg5T9UT8cV6wHlx0al5JZ0NGL6uirQ==}
@@ -4696,6 +4705,10 @@ snapshots:
       eslint-plugin-tailwindcss: 4.0.0-beta.0(tailwindcss@4.3.3)
       eslint-plugin-turbo: 2.11.7(eslint@10.12.0(jiti@2.7.0))(turbo@2.11.7)
       globals: 16.5.0
+
+  '@inglorious/motion@9.0.2(@inglorious/web@6.4.2(@inglorious/store@11.0.2(@inglorious/utils@4.0.0)))':
+    dependencies:
+      '@inglorious/web': 6.4.2(@inglorious/store@11.0.2(@inglorious/utils@4.0.0))
 
   '@inglorious/store@11.0.2(@inglorious/utils@4.0.0)':
     dependencies:

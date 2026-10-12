@@ -1,4 +1,5 @@
 import { createStore } from "@inglorious/store"
+import { withMotion } from "@inglorious/motion"
 
 import { ApplicationDetail } from "../types/application-detail/index.js"
 import { ApplicationList } from "../types/application-list/index.js"
@@ -6,7 +7,7 @@ import { ApplicationsReceived } from "../types/applications-received/index.js"
 import { Authentication } from "../types/authentication/index.js"
 import { CountrySelect } from "../types/country-select/index.js"
 import { EventCreate } from "../types/event-create/index.js"
-import { EventDetail } from "../types/event-detail/index.js"
+import { EventDetail as EventDetailType } from "../types/event-detail/index.js"
 import { EventList } from "../types/event-list/index.js"
 import { MyEvents } from "../types/my-events/index.js"
 import { Onboarding } from "../types/onboarding/index.js"
@@ -21,7 +22,21 @@ export const store = createStore({
     Authentication,
     MyEvents,
     EventList,
-    EventDetail,
+    EventDetail: [
+      EventDetailType,
+      withMotion({
+        initial: "enter",
+        variants: {
+          enter: {
+            frames: [
+              { opacity: 0, transform: "translateX(60px)" },
+              { opacity: 1, transform: "translateX(0)" },
+            ],
+            options: { duration: 250, easing: "ease-out" },
+          },
+        },
+      }),
+    ],
     EventCreate,
     ApplicationList,
     ApplicationDetail,

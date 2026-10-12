@@ -27,6 +27,7 @@
   "dependencies": {
     "@capacitor/core": "^8.5.1",
     "@capacitor/share": "^8.0.3",
+    "@inglorious/motion": "^9.0.2",
     "@inglorious/store": "^11.0.1",
     "@inglorious/ui": "^7.1.4",
     "@inglorious/web": "^6.4.1",
