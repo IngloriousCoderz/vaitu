@@ -3,11 +3,18 @@ import { handleAsync } from "@inglorious/store/async"
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
 import { stopTick } from "../../ticker.js"
+import { registerRealtime, unregisterRealtime } from "../../realtime.js"
 
 export function open(entity, event_id, api) {
   stopTick("clock")
   entity.motionVariant = null
   entity.event_id = event_id
+  registerRealtime("event-detail", {
+    table: "events",
+    filter: `id=eq.${event_id}`,
+    event: `#${entity.id}:detailLoad`,
+    payload: event_id,
+  })
   entity.event = null
   entity.senderName = null
   entity.status = "idle"
@@ -26,6 +33,7 @@ export function open(entity, event_id, api) {
 
 export function close(entity) {
   stopTick("clock")
+  unregisterRealtime("event-detail")
   entity.event_id = null
   entity.event = null
   entity.senderName = null

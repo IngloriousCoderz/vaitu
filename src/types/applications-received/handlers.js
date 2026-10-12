@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
+import { registerRealtime, unregisterRealtime } from "../../realtime.js"
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id
@@ -13,10 +14,16 @@ export function open(entity, event_id, api) {
   entity.items = []
   entity.expanded_application_id = null
   entity.confirming_assign = null
+  registerRealtime("received", {
+    table: "applications",
+    event: `#${entity.id}:receivedLoad`,
+    payload: event_id,
+  })
   api.notify(`#${entity.id}:receivedLoad`, event_id)
 }
 
 export function close(entity) {
+  unregisterRealtime("received")
   entity.event_id = null
   entity.event_title = ""
   entity.event_status = "open"

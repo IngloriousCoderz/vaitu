@@ -2,7 +2,6 @@ import { Capacitor } from "@capacitor/core"
 import { Share } from "@capacitor/share"
 
 import { uploadIcsFile } from "../../api/applications.js"
-import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
@@ -29,12 +28,6 @@ export const ApplicationDetail = {
 
   render(entity, api) {
     const id = entity.id
-    if (entity.application_id) {
-      subscribeApplications("application-detail", () =>
-        api.notify(`#${id}:applicationLoad`, entity.application_id),
-      )
-    }
-
     return this.renderApplicationDetail({
       entity,
       onField: ({ field, value }) =>

@@ -1,4 +1,3 @@
-import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
@@ -25,13 +24,6 @@ export const Profile = {
 
   render(entity, api) {
     const id = entity.id
-    if (entity.profile?.id) {
-      subscribeApplications(
-        "profile",
-        () => api.notify(`#${id}:profileLoad`),
-        `applicant_id=eq.${entity.profile.id}`,
-      )
-    }
     return this.renderProfile({
       entity,
       onEdit: () => api.notify(`#${id}:editStart`),

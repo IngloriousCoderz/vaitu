@@ -1,4 +1,3 @@
-import { subscribeApplications } from "../../api/events.js"
 import * as handlers from "./handlers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
 
@@ -31,11 +30,6 @@ export const ApplicationsReceived = {
 
   render(entity, api) {
     const id = entity.id
-    if (entity.event_id) {
-      subscribeApplications("received", () =>
-        api.notify(`#${id}:receivedLoad`, entity.event_id),
-      )
-    }
     return this.renderApplicationsReceived({
       entity,
       onToggle: (application_id) =>

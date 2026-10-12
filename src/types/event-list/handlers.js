@@ -2,6 +2,18 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { fetchMyApplicationMap } from "../../api/applications.js"
 import { fetchMyFavoriteRegions, fetchOpenEvents } from "../../api/events.js"
+import { registerRealtime, unregisterRealtime } from "../../realtime.js"
+
+export function open(entity) {
+  registerRealtime("events", {
+    table: "events",
+    event: `#${entity.id}:eventsLoad`,
+  })
+}
+
+export function close() {
+  unregisterRealtime("events")
+}
 
 export function search(entity, query) {
   entity.query = query

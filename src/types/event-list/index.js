@@ -1,11 +1,12 @@
-import { subscribeEvents } from "../../api/events.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
   categorySelect,
+  close,
   eventsLoad,
   filtersClear,
   filterSelect,
   filtersToggle,
+  open,
   periodSelect,
   regionSelect,
   search,
@@ -21,13 +22,13 @@ export const EventList = {
   regionSelect,
   filtersToggle,
   filtersClear,
+  open,
+  close,
   ...eventsLoad,
   ...renderers,
 
   render(entity, api) {
     const id = entity.id
-    subscribeEvents("events", () => api.notify(`#${id}:eventsLoad`))
-
     return this.renderEventList({
       events: entity.events,
       appliedMap: entity.appliedMap,

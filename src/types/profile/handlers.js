@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { defaultTiers } from "./helpers.js"
+import { registerRealtime, unregisterRealtime } from "../../realtime.js"
 
 export function open(entity, _, api) {
   entity.isOpen = true
@@ -9,6 +10,7 @@ export function open(entity, _, api) {
 }
 
 export function close(entity) {
+  unregisterRealtime("profile")
   entity.isOpen = false
   entity.status = "idle"
   entity.error = null
@@ -142,9 +144,21 @@ export const profileLoad = handleAsync("profileLoad", {
     entity.profile = profile
     entity.stats = stats
     entity.tierConfig = tiers
+    if (profile.id) {
+      registerRealtime("profile", {
+        table: "applications",
+        filter: `applicant_id=eq.${profile.id}`,
+        event: `#${entity.id}:profileLoad`,
+      })
+    }
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#eventDetail:prefill", profile)
-    if (profile.role === "sender") api.notify("#myEvents:eventsLoad")
+    if (profile.role === "sender") {
+      api.notify("#myEvents:open")
+      api.notify("#myEvents:eventsLoad")
+    } else {
+      api.notify("#eventList:open")
+    }
   },
   error(entity, err, api) {
     entity.status = "error"
