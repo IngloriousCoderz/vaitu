@@ -1,5 +1,6 @@
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
+import { getFieldValue } from "@inglorious/web/form"
 
 import { ErrorLabel } from "./error-label"
 import styles from "./style.module.css"
@@ -21,6 +22,7 @@ export const SignupStep = {
         <form
           class=${styles.form}
           action=""
+          novalidate
           @submit=${(e) => {
             e.preventDefault()
             onContinue()
@@ -28,7 +30,8 @@ export const SignupStep = {
         >
           <h2 class=${styles.title}>Create your account</h2>
           <p class=${styles.subtitle}>
-            Signing up as <strong>${entity.email}</strong> as a
+            Signing up as
+            <strong>${getFieldValue(entity, "email", "")}</strong> as a
             <strong>${entity.role}</strong>.
             <button
               class=${styles.linkButton}
@@ -53,7 +56,7 @@ export const SignupStep = {
             autocomplete="username"
             tabindex="-1"
             aria-hidden="true"
-            .value=${entity.email}
+            .value=${getFieldValue(entity, "email", "")}
           />
           <label class=${styles.field}>
             <span>Full name</span>
@@ -62,7 +65,7 @@ export const SignupStep = {
               name="name"
               autocomplete="name"
               placeholder="Your name"
-              .value=${entity.full_name}
+              .value=${getFieldValue(entity, "full_name", "")}
               @input=${(e) =>
                 onField({ field: "full_name", value: e.target.value })}
             />
@@ -77,7 +80,7 @@ export const SignupStep = {
                 autocomplete="new-password"
                 type=${entity.isPasswordVisible ? "text" : "password"}
                 placeholder="••••••••"
-                .value=${entity.password}
+                .value=${getFieldValue(entity, "password", "")}
                 @input=${(e) =>
                   onField({ field: "password", value: e.target.value })}
               />
@@ -105,7 +108,7 @@ export const SignupStep = {
                 autocomplete="new-password"
                 type=${entity.isConfirmPasswordVisible ? "text" : "password"}
                 placeholder="••••••••"
-                .value=${entity.confirmPassword}
+                .value=${getFieldValue(entity, "confirmPassword", "")}
                 @input=${(e) =>
                   onField({ field: "confirmPassword", value: e.target.value })}
               />

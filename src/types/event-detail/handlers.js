@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
@@ -15,12 +16,11 @@ export function open(entity, event_id, api) {
   entity.isSubmitted = false
   entity.applyStatus = "idle"
   entity.applyError = null
-  entity.motivation = ""
-  // Prefill identity from the user's profile (source of truth).
   const profile = api.getEntity("profile").profile
-  entity.full_name = profile?.full_name ?? ""
-  entity.website = profile?.website ?? ""
-  entity.instagram = profile?.instagram_handle ?? ""
+  entity.values.motivation = ""
+  entity.values.full_name = profile?.full_name ?? ""
+  entity.values.website = profile?.website ?? ""
+  entity.values.instagram = profile?.instagram_handle ?? ""
   api.notify(`#${entity.id}:detailLoad`, event_id)
 }
 
@@ -39,7 +39,7 @@ export function overlaysClose(entity) {
 }
 
 export function fieldSet(entity, { field, value }) {
-  entity[field] = value
+  Form.fieldChange(entity, { path: field, value })
 }
 
 export function clockTick(entity) {
@@ -48,10 +48,16 @@ export function clockTick(entity) {
 
 // Fill blanks from the profile without clobbering what the user typed.
 export function prefill(entity, profile) {
-  if (!profile) return
-  if (!entity.full_name) entity.full_name = profile.full_name ?? ""
-  if (!entity.website) entity.website = profile.website ?? ""
-  if (!entity.instagram) entity.instagram = profile.instagram_handle ?? ""
+  if (!profile || !entity.values) return
+  if (!getFieldValue(entity, "full_name", "")) {
+    entity.values.full_name = profile.full_name ?? ""
+  }
+  if (!getFieldValue(entity, "website", "")) {
+    entity.values.website = profile.website ?? ""
+  }
+  if (!getFieldValue(entity, "instagram", "")) {
+    entity.values.instagram = profile.instagram_handle ?? ""
+  }
 }
 
 // Requires a session, then runs the real insert via `apply`.
@@ -63,10 +69,10 @@ export function applicationSubmit(entity, _, api) {
   }
   api.notify(`#${entity.id}:apply`, {
     event_id: entity.event_id,
-    full_name: entity.full_name,
-    website: entity.website,
-    instagram: entity.instagram,
-    motivation: entity.motivation,
+    full_name: entity.values.full_name,
+    website: entity.values.website,
+    instagram: entity.values.instagram,
+    motivation: entity.values.motivation,
   })
 }
 

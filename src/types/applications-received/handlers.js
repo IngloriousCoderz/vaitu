@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
+import { firstError } from "../../forms.js"
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id
@@ -62,6 +63,40 @@ export function reopenCancel(entity) {
 export function reopenDeadlineSet(entity, value) {
   entity.reopen_deadline = value ?? ""
   entity.error = null
+}
+
+export function reopenSubmit(entity, _, api) {
+  entity.values = { reopen_deadline: entity.reopen_deadline ?? "" }
+  api.notify(`#${entity.id}:validate`, {
+    validate(values) {
+      const value = values.reopen_deadline
+      if (!value) return { reopen_deadline: null }
+      const iso =
+        value.length === DATETIME_LOCAL_LENGTH
+          ? new Date(value).toISOString()
+          : value
+      return {
+        reopen_deadline:
+          new Date(iso).getTime() <= Date.now()
+            ? "Pick a future deadline"
+            : null,
+      }
+    },
+  })
+  api.notify(`#${entity.id}:reopenProceed`)
+}
+
+export function reopenProceed(entity, _, api) {
+  const error = firstError(entity.errors)
+  if (error) {
+    entity.error = error
+    return
+  }
+  entity.error = null
+  api.notify(`#${entity.id}:eventReopen`, {
+    event_id: entity.event_id,
+    application_deadline: entity.values.reopen_deadline || undefined,
+  })
 }
 
 export const receivedLoad = handleAsync("receivedLoad", {

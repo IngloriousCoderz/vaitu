@@ -8,6 +8,7 @@ import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
+import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
 import { Icon } from "../icon/index.js"
 import {
@@ -43,205 +44,209 @@ export const Profile = {
   }) {
     const { profile, status, error } = entity
     const saving = status === "saving"
-    const shown = entity.isEditing && entity.draft ? entity.draft : profile
+    const shown = entity.isEditing ? entity.values : profile
 
-    return html`
-      <div class=${styles.page} data-category="wedding">
-        ${
-          status === "loading"
-            ? html`<p class=${styles.empty}>Loading profile…</p>`
-            : status === "error" && !profile
-              ? html`<p class=${styles.empty}>${error}</p>`
-              : html`
-                  <div class=${styles.header}>
-                    ${Avatar.render({
-                      initials: initials(profile.full_name),
-                      size: "lg",
-                      backgroundColor:
-                        "linear-gradient(135deg, #6b7a5e, #24402f)",
-                      textColor: "#fffdf7",
-                    })}
-                    ${IconButton.render({
-                      icon: Icon.render({ name: "settings", size: 22 }),
-                      ariaLabel: "Profile options",
-                      className: styles.gearButton,
-                      onClick: onToggleMenu,
-                    })}
+    return renderPage({
+      variant: "document",
+      className: "vaitu-frame-centerText",
+      children: [
+        html`
+          ${
+            status === "loading"
+              ? html`<p class=${styles.empty}>Loading profile…</p>`
+              : status === "error" && !profile
+                ? html`<p class=${styles.empty}>${error}</p>`
+                : html`
+                    <div class=${styles.header}>
+                      ${Avatar.render({
+                        initials: initials(profile.full_name),
+                        size: "lg",
+                        backgroundColor:
+                          "linear-gradient(135deg, #6b7a5e, #24402f)",
+                        textColor: "#fffdf7",
+                      })}
+                      ${IconButton.render({
+                        icon: Icon.render({ name: "settings", size: 22 }),
+                        ariaLabel: "Profile options",
+                        className: styles.gearButton,
+                        onClick: onToggleMenu,
+                      })}
+                      ${
+                        entity.isMenuOpen
+                          ? html`
+                              <div
+                                class=${styles.menuBackdrop}
+                                @click=${onCloseMenu}
+                              ></div>
+                              ${Menu.render({
+                                isOpen: true,
+                                className: styles.menu,
+                                items: [
+                                  {
+                                    icon: Icon.render({
+                                      name: "pencil",
+                                      size: 15,
+                                    }),
+                                    label: "Edit profile",
+                                    onClick: onEdit,
+                                  },
+                                  {
+                                    icon: Icon.render({ name: "x", size: 15 }),
+                                    label: "Log out",
+                                    onClick: onLogout,
+                                  },
+                                ],
+                              })}
+                            `
+                          : ""
+                      }
+                    </div>
+                    <h2 class=${styles.name}>${profile.full_name}</h2>
+                    <p class=${styles.email}>${profile.email}</p>
+                    ${Chip.render({ children: profile.role })}
                     ${
-                      entity.isMenuOpen
+                      profile.role === "seeker" &&
+                      entity.stats &&
+                      entity.tierConfig
+                        ? this.renderTierBlock({
+                            stats: entity.stats,
+                            tiers: entity.tierConfig,
+                            onOpenRanks,
+                          })
+                        : ""
+                    }
+                    ${
+                      profile.role === "seeker" && entity.stats
                         ? html`
-                            <div
-                              class=${styles.menuBackdrop}
-                              @click=${onCloseMenu}
-                            ></div>
-                            ${Menu.render({
-                              isOpen: true,
-                              className: styles.menu,
-                              items: [
-                                {
-                                  icon: Icon.render({
-                                    name: "pencil",
-                                    size: 15,
-                                  }),
-                                  label: "Edit profile",
-                                  onClick: onEdit,
-                                },
-                                {
-                                  icon: Icon.render({ name: "x", size: 15 }),
-                                  label: "Log out",
-                                  onClick: onLogout,
-                                },
-                              ],
-                            })}
+                            <div class=${styles.stats}>
+                              ${this.renderStat(
+                                entity.stats.applications_count,
+                                "Applications",
+                                "all",
+                                onOpenApplications,
+                              )}
+                              ${this.renderStat(
+                                entity.stats.shortlists_count,
+                                "Shortlisted",
+                                "shortlisted",
+                                onOpenApplications,
+                              )}
+                              ${this.renderStat(
+                                entity.stats.selections_count,
+                                "Wins",
+                                "selected",
+                                onOpenApplications,
+                              )}
+                            </div>
                           `
                         : ""
                     }
-                  </div>
-                  <h2 class=${styles.name}>${profile.full_name}</h2>
-                  <p class=${styles.email}>${profile.email}</p>
-                  ${Chip.render({ children: profile.role })}
-                  ${
-                    profile.role === "seeker" &&
-                    entity.stats &&
-                    entity.tierConfig
-                      ? this.renderTierBlock({
-                          stats: entity.stats,
-                          tiers: entity.tierConfig,
-                          onOpenRanks,
-                        })
-                      : ""
-                  }
-                  ${
-                    profile.role === "seeker" && entity.stats
-                      ? html`
-                          <div class=${styles.stats}>
-                            ${this.renderStat(
-                              entity.stats.applications_count,
-                              "Applications",
-                              "all",
-                              onOpenApplications,
-                            )}
-                            ${this.renderStat(
-                              entity.stats.shortlists_count,
-                              "Shortlisted",
-                              "shortlisted",
-                              onOpenApplications,
-                            )}
-                            ${this.renderStat(
-                              entity.stats.selections_count,
-                              "Wins",
-                              "selected",
-                              onOpenApplications,
-                            )}
-                          </div>
-                        `
-                      : ""
-                  }
-                  ${
-                    entity.isEditing
-                      ? html`
-                          <h3 class=${styles.sectionTitle}>Edit profile</h3>
-                          ${this.renderEditField({
-                            label: "Full name",
-                            field: "full_name",
-                            value: shown.full_name,
-                            placeholder: "Your name",
-                            onField,
-                          })}
-                          ${this.renderEditField({
-                            label: "Website",
-                            field: "website",
-                            value: (shown.website ?? "").replace(
-                              /^https?:\/\//i,
-                              "",
-                            ),
-                            placeholder: "your-site.com",
-                            prefix: "https://",
-                            lowercase: true,
-                            inputmode: "url",
-                            onField,
-                          })}
-                          ${this.renderEditField({
-                            label: "Instagram",
-                            field: "instagram_handle",
-                            value: (shown.instagram_handle ?? "").replace(
-                              /^@+/,
-                              "",
-                            ),
-                            placeholder: "handle",
-                            prefix: "@",
-                            lowercase: true,
-                            onField,
-                          })}
-                          <label class=${styles.field}>
-                            <span>Country</span>
-                            ${renderCountry()}
-                          </label>
-                          ${this.renderEditField({
-                            label: "Region",
-                            field: "region",
-                            value: shown.region,
-                            placeholder: "Region (optional)",
-                            onField,
-                          })}
-                          ${this.renderFavorites({
-                            favorites: shown.favorite_regions ?? [],
-                            input: entity.favoriteInput ?? "",
-                            onFavoriteInput,
-                            onFavoriteAdd,
-                            onFavoriteRemove,
-                          })}
-                          ${
-                            status === "error" && error
-                              ? Alert.render({
-                                  severity: "error",
-                                  className: `vaitu-alert ${styles.error}`,
-                                  children: error,
-                                })
-                              : ""
-                          }
-                          ${Button.render({
-                            children: saving ? "Saving…" : "Save profile",
-                            color: "primary",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            isDisabled: saving,
-                            className: styles.editButton,
-                            onClick: onSave,
-                          })}
-                          ${Button.render({
-                            children: "Cancel",
-                            variant: "outline",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            className: styles.cancelButton,
-                            onClick: onCancel,
-                          })}
-                        `
-                      : html`
-                          <dl class=${styles.rows}>
-                            ${this.renderRow(
-                              "Website",
-                              displayWebsite(profile.website),
-                              displayWebsite(profile.website) || null,
-                            )}
-                            ${this.renderRow(
-                              "Instagram",
-                              displayInstagram(profile.instagram_handle),
-                              instagramUrl(profile.instagram_handle),
-                            )}
-                            ${this.renderRow("Country", profile.country)}
-                            ${this.renderRow("Region", profile.region)}
-                            ${this.renderRow("Sub-role", profile.sub_role)}
-                          </dl>
-                        `
-                  }
-                `
-        }
-      </div>
-    `
+                    ${
+                      entity.isEditing
+                        ? html`
+                            <h3 class=${styles.sectionTitle}>Edit profile</h3>
+                            ${this.renderEditField({
+                              label: "Full name",
+                              field: "full_name",
+                              value: shown.full_name,
+                              placeholder: "Your name",
+                              onField,
+                            })}
+                            ${this.renderEditField({
+                              label: "Website",
+                              field: "website",
+                              value: (shown.website ?? "").replace(
+                                /^https?:\/\//i,
+                                "",
+                              ),
+                              placeholder: "your-site.com",
+                              prefix: "https://",
+                              lowercase: true,
+                              inputmode: "url",
+                              onField,
+                            })}
+                            ${this.renderEditField({
+                              label: "Instagram",
+                              field: "instagram_handle",
+                              value: (shown.instagram_handle ?? "").replace(
+                                /^@+/,
+                                "",
+                              ),
+                              placeholder: "handle",
+                              prefix: "@",
+                              lowercase: true,
+                              onField,
+                            })}
+                            <label class=${styles.field}>
+                              <span>Country</span>
+                              ${renderCountry()}
+                            </label>
+                            ${this.renderEditField({
+                              label: "Region",
+                              field: "region",
+                              value: shown.region,
+                              placeholder: "Region (optional)",
+                              onField,
+                            })}
+                            ${this.renderFavorites({
+                              favorites: shown.favorite_regions ?? [],
+                              input: entity.favoriteInput ?? "",
+                              onFavoriteInput,
+                              onFavoriteAdd,
+                              onFavoriteRemove,
+                            })}
+                            ${
+                              status === "error" && error
+                                ? Alert.render({
+                                    severity: "error",
+                                    className: `vaitu-alert ${styles.error}`,
+                                    children: error,
+                                  })
+                                : ""
+                            }
+                            ${Button.render({
+                              children: saving ? "Saving…" : "Save profile",
+                              color: "primary",
+                              shape: "pill",
+                              size: "md",
+                              isFullWidth: true,
+                              isDisabled: saving,
+                              className: styles.editButton,
+                              onClick: onSave,
+                            })}
+                            ${Button.render({
+                              children: "Cancel",
+                              variant: "outline",
+                              shape: "pill",
+                              size: "md",
+                              isFullWidth: true,
+                              className: styles.cancelButton,
+                              onClick: onCancel,
+                            })}
+                          `
+                        : html`
+                            <dl class=${styles.rows}>
+                              ${this.renderRow(
+                                "Website",
+                                displayWebsite(profile.website),
+                                displayWebsite(profile.website) || null,
+                              )}
+                              ${this.renderRow(
+                                "Instagram",
+                                displayInstagram(profile.instagram_handle),
+                                instagramUrl(profile.instagram_handle),
+                              )}
+                              ${this.renderRow("Country", profile.country)}
+                              ${this.renderRow("Region", profile.region)}
+                              ${this.renderRow("Sub-role", profile.sub_role)}
+                            </dl>
+                          `
+                    }
+                  `
+          }
+        `,
+      ],
+    })
   },
 
   renderRow(label, value, href) {

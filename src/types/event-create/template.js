@@ -11,6 +11,7 @@ import {
   SECONDS_PER_MINUTE,
   ZERO,
 } from "../../constants.js"
+import { renderPage } from "../../page.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"
@@ -46,148 +47,152 @@ export const EventCreate = {
     )
     const title_is_derived = !category.title_from.input
 
-    return html`
-      <div class=${styles.page} data-category=${entity.category}>
-        ${Button.render({
-          children: html`
-            ${Icon.render({ name: "arrow-left", size: 16 })}
-            <span>Back</span>
-          `,
-          variant: "ghost",
-          shape: "pill",
-          className: "vaitu-back",
-          ariaLabel: "Back",
-          onClick: onBack,
-        })}
-
-        <header class=${styles.header}>
-          <span class=${styles.title}>
-            ${entity.editing_event_id ? "Edit event" : "New event"}
-          </span>
-          ${IconButton.render({
-            icon: Icon.render({ name: "mic", size: 22 }),
-            ariaLabel: "Describe by voice",
-            className: styles.micButton,
-            onClick: entity.is_recording ? onRecordStop : onOpenAudio,
-          })}
-        </header>
-
-        ${this.renderAudio({
-          entity,
-          onRecordStart,
-          onRecordStop,
-          onCancelAudio,
-          onRemoveAudio,
-        })}
-
-        <div class=${styles.chips}>
-          ${categories.map(
-            (category) => html`
-              <button
-                type="button"
-                class=${styles.chipButton}
-                @click=${() => onCategory(category.id)}
-              >
-                ${Chip.render({
-                  children: category.label,
-                  color:
-                    category.id === entity.category ? "primary" : "default",
-                })}
-              </button>
-            `,
-          )}
-        </div>
-
-        ${identityFields.map((spec) =>
-          this.renderDetailField({
-            spec,
-            details: entity.details,
-            onDetailField,
-          }),
-        )}
-        ${
-          title_is_derived
-            ? ""
-            : this.renderTextField({
-                label: "Title",
-                field: "title",
-                value: entity.title,
-                placeholder: "E.g. Sundance Beats",
-                onField,
-              })
-        }
-        ${this.renderTextField({
-          label: "Location",
-          field: "location",
-          value: entity.location,
-          placeholder: "Venue Name",
-          onField,
-        })}
-        ${this.renderTextField({
-          label: "Region",
-          field: "region",
-          value: entity.region,
-          placeholder: "E.g. Tuscany",
-          onField,
-        })}
-        <label class=${styles.field}>
-          <span>Country</span>
-          ${api.render("country-create")}
-        </label>
-        ${styleFields.map((spec) =>
-          this.renderDetailField({
-            spec,
-            details: entity.details,
-            onDetailField,
-          }),
-        )}
-        ${this.renderTextField({
-          label: "Event date",
-          field: "event_date",
-          value: entity.event_date,
-          type: "date",
-          onField,
-        })}
-        ${this.renderTextField({
-          label: "Application deadline",
-          field: "application_deadline",
-          value: entity.application_deadline,
-          type: "datetime-local",
-          onField,
-        })}
-        ${this.renderTextField({
-          label: "Max shortlist",
-          field: "max_applicants",
-          value: entity.max_applicants,
-          type: "number",
-          onField,
-        })}
-        ${
-          entity.error
-            ? Alert.render({
-                severity: "error",
-                className: `vaitu-alert ${styles.error}`,
-                children: entity.error,
-              })
-            : ""
-        }
-        <div class=${styles.bottomBar}>
+    return renderPage({
+      variant: "sticky",
+      category: entity.category,
+      children: [
+        html`
           ${Button.render({
-            children: busy
-              ? "Saving…"
-              : entity.editing_event_id
-                ? "Save changes"
-                : "Save event",
-            color: "primary",
+            children: html`
+              ${Icon.render({ name: "arrow-left", size: 16 })}
+              <span>Back</span>
+            `,
+            variant: "ghost",
             shape: "pill",
-            size: "md",
-            isFullWidth: true,
-            isDisabled: busy,
-            onClick: onSave,
+            className: "vaitu-back",
+            ariaLabel: "Back",
+            onClick: onBack,
           })}
-        </div>
-      </div>
-    `
+
+          <header class=${styles.header}>
+            <span class=${styles.title}>
+              ${entity.editing_event_id ? "Edit event" : "New event"}
+            </span>
+            ${IconButton.render({
+              icon: Icon.render({ name: "mic", size: 22 }),
+              ariaLabel: "Describe by voice",
+              className: styles.micButton,
+              onClick: entity.is_recording ? onRecordStop : onOpenAudio,
+            })}
+          </header>
+
+          ${this.renderAudio({
+            entity,
+            onRecordStart,
+            onRecordStop,
+            onCancelAudio,
+            onRemoveAudio,
+          })}
+
+          <div class=${styles.chips}>
+            ${categories.map(
+              (category) => html`
+                <button
+                  type="button"
+                  class=${styles.chipButton}
+                  @click=${() => onCategory(category.id)}
+                >
+                  ${Chip.render({
+                    children: category.label,
+                    color:
+                      category.id === entity.category ? "primary" : "default",
+                  })}
+                </button>
+              `,
+            )}
+          </div>
+
+          ${identityFields.map((spec) =>
+            this.renderDetailField({
+              spec,
+              details: entity.details,
+              onDetailField,
+            }),
+          )}
+          ${
+            title_is_derived
+              ? ""
+              : this.renderTextField({
+                  label: "Title",
+                  field: "title",
+                  value: entity.title,
+                  placeholder: "E.g. Sundance Beats",
+                  onField,
+                })
+          }
+          ${this.renderTextField({
+            label: "Location",
+            field: "location",
+            value: entity.location,
+            placeholder: "Venue Name",
+            onField,
+          })}
+          ${this.renderTextField({
+            label: "Region",
+            field: "region",
+            value: entity.region,
+            placeholder: "E.g. Tuscany",
+            onField,
+          })}
+          <label class=${styles.field}>
+            <span>Country</span>
+            ${api.render("country-create")}
+          </label>
+          ${styleFields.map((spec) =>
+            this.renderDetailField({
+              spec,
+              details: entity.details,
+              onDetailField,
+            }),
+          )}
+          ${this.renderTextField({
+            label: "Event date",
+            field: "event_date",
+            value: entity.event_date,
+            type: "date",
+            onField,
+          })}
+          ${this.renderTextField({
+            label: "Application deadline",
+            field: "application_deadline",
+            value: entity.application_deadline,
+            type: "datetime-local",
+            onField,
+          })}
+          ${this.renderTextField({
+            label: "Max shortlist",
+            field: "max_applicants",
+            value: entity.max_applicants,
+            type: "number",
+            onField,
+          })}
+          ${
+            entity.error
+              ? Alert.render({
+                  severity: "error",
+                  className: `vaitu-alert ${styles.error}`,
+                  children: entity.error,
+                })
+              : ""
+          }
+          <div class=${styles.bottomBar}>
+            ${Button.render({
+              children: busy
+                ? "Saving…"
+                : entity.editing_event_id
+                  ? "Save changes"
+                  : "Save event",
+              color: "primary",
+              shape: "pill",
+              size: "md",
+              isFullWidth: true,
+              isDisabled: busy,
+              onClick: onSave,
+            })}
+          </div>
+        `,
+      ],
+    })
   },
 
   renderAudio({

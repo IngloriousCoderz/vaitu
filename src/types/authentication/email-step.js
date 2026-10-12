@@ -1,4 +1,5 @@
 import { html } from "@inglorious/web"
+import { getFieldValue } from "@inglorious/web/form"
 
 import { ErrorLabel } from "./error-label"
 import styles from "./style.module.css"
@@ -11,6 +12,7 @@ export const EmailStep = {
         <form
           class=${styles.form}
           action=""
+          novalidate
           @submit=${(e) => {
             e.preventDefault()
             onCheckEmail()
@@ -28,7 +30,7 @@ export const EmailStep = {
               autocorrect="off"
               spellcheck="false"
               placeholder="you@example.com"
-              .value=${entity.email}
+              .value=${getFieldValue(entity, "email", "")}
               @input=${(e) => onField({ field: "email", value: e.target.value })}
             />
           </label>

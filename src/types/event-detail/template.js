@@ -3,6 +3,7 @@ import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
+import { getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
 import {
@@ -12,6 +13,7 @@ import {
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
 } from "../../constants.js"
+import { renderPage } from "../../page.js"
 import {
   deadlineBadge,
   deadlineTone,
@@ -42,75 +44,79 @@ export const EventDetail = {
     const liveClosed = msLeft == null ? null : msLeft <= 0
     const showClock = msLeft != null && msLeft > 0 && msLeft < DAY_MS
 
-    return html`
-      <div class=${styles.page} data-category=${event?.category ?? "wedding"}>
-        ${Button.render({
-          children: html`
-            ${Icon.render({ name: "arrow-left", size: 16 })}
-            <span>Back</span>
-          `,
-          variant: "ghost",
-          shape: "pill",
-          className: "vaitu-back",
-          ariaLabel: "Back",
-          onClick: onBack,
-        })}
-        ${
-          status === "loading"
-            ? html`<p class=${styles.empty}>Loading event…</p>`
-            : status === "error"
-              ? html`<p class=${styles.empty}>${error}</p>`
-              : entity.isSubmitted
-                ? this.renderSubmitted({ onBack })
-                : html`
-                    <div
-                      class=${styles.banner}
-                      style="background:${thumbGradient(event.hue)}"
-                    >
-                      <span class=${styles.bannerMonogram}>
-                        ${monogram(event.title)}
-                      </span>
-                    </div>
-                    <div class=${styles.topRow}>
-                      <h2 class=${styles.title}>${event.title}</h2>
-                      ${Badge.render({
-                        children: deadlineBadge(event),
-                        shape: "pill",
-                        className: detailToneClass(event),
-                      })}
-                    </div>
-                    <p class=${styles.meta}>${event.subtitle}</p>
-                    ${Chip.render({ children: event.tag })}
-                    ${this.renderFacts(event)}
-                    <p class=${styles.sender}>
-                      Organized by ${entity.senderName}
-                    </p>
-                    <p class=${styles.countdown}>
+    return renderPage({
+      variant: "document",
+      category: event?.category ?? "wedding",
+      children: [
+        html`
+          ${Button.render({
+            children: html`
+              ${Icon.render({ name: "arrow-left", size: 16 })}
+              <span>Back</span>
+            `,
+            variant: "ghost",
+            shape: "pill",
+            className: "vaitu-back",
+            ariaLabel: "Back",
+            onClick: onBack,
+          })}
+          ${
+            status === "loading"
+              ? html`<p class=${styles.empty}>Loading event…</p>`
+              : status === "error"
+                ? html`<p class=${styles.empty}>${error}</p>`
+                : entity.isSubmitted
+                  ? this.renderSubmitted({ onBack })
+                  : html`
+                      <div
+                        class=${styles.banner}
+                        style="background:${thumbGradient(event.hue)}"
+                      >
+                        <span class=${styles.bannerMonogram}>
+                          ${monogram(event.title)}
+                        </span>
+                      </div>
+                      <div class=${styles.topRow}>
+                        <h2 class=${styles.title}>${event.title}</h2>
+                        ${Badge.render({
+                          children: deadlineBadge(event),
+                          shape: "pill",
+                          className: detailToneClass(event),
+                        })}
+                      </div>
+                      <p class=${styles.meta}>${event.subtitle}</p>
+                      ${Chip.render({ children: event.tag })}
+                      ${this.renderFacts(event)}
+                      <p class=${styles.sender}>
+                        Organized by ${entity.senderName}
+                      </p>
+                      <p class=${styles.countdown}>
+                        ${
+                          showClock
+                            ? `Applications close in ${formatClock(Math.floor(msLeft / MS_PER_SECOND))}`
+                            : countdownLabel(event)
+                        }
+                      </p>
                       ${
-                        showClock
-                          ? `Applications close in ${formatClock(Math.floor(msLeft / MS_PER_SECOND))}`
-                          : countdownLabel(event)
+                        liveClosed || isApplicationClosed(event)
+                          ? html`
+                              <div class=${styles.closedBox}>
+                                Applications are closed for this event.
+                              </div>
+                            `
+                          : this.renderForm({
+                              entity,
+                              profileComplete,
+                              onField,
+                              onSubmit,
+                              onCompleteProfile,
+                            })
                       }
-                    </p>
-                    ${
-                      liveClosed || isApplicationClosed(event)
-                        ? html`
-                            <div class=${styles.closedBox}>
-                              Applications are closed for this event.
-                            </div>
-                          `
-                        : this.renderForm({
-                            entity,
-                            profileComplete,
-                            onField,
-                            onSubmit,
-                            onCompleteProfile,
-                          })
-                    }
-                  `
-        }
-      </div>
-    `
+                    `
+          }
+        `,
+      ],
+    })
   },
 
   renderFacts(event) {
@@ -156,8 +162,8 @@ export const EventDetail = {
     onCompleteProfile,
   }) {
     const sending = entity.applyStatus === "sending"
-    const canSubmit =
-      profileComplete && entity.motivation.trim() !== "" && !sending
+    const motivation = getFieldValue(entity, "motivation", "")
+    const canSubmit = profileComplete && motivation.trim() !== "" && !sending
 
     if (!profileComplete) {
       return html`
@@ -181,6 +187,7 @@ export const EventDetail = {
     return html`
       <form
         class=${styles.form}
+        novalidate
         @submit=${(e) => {
           e.preventDefault()
           if (canSubmit) onSubmit()
@@ -189,15 +196,27 @@ export const EventDetail = {
         <h3 class=${styles.sectionTitle}>Apply for this event</h3>
         <label class=${styles.field}>
           <span>Full name</span>
-          <input type="text" .value=${entity.full_name} disabled />
+          <input
+            type="text"
+            .value=${getFieldValue(entity, "full_name", "")}
+            disabled
+          />
         </label>
         <label class=${styles.field}>
           <span>Website</span>
-          <input type="url" .value=${entity.website} disabled />
+          <input
+            type="url"
+            .value=${getFieldValue(entity, "website", "")}
+            disabled
+          />
         </label>
         <label class=${styles.field}>
           <span>Instagram</span>
-          <input type="text" .value=${entity.instagram} disabled />
+          <input
+            type="text"
+            .value=${getFieldValue(entity, "instagram", "")}
+            disabled
+          />
         </label>
         <p class=${styles.disclaimer}>
           Only ${entity.event.max_applicants} names will be forwarded to the
@@ -208,7 +227,7 @@ export const EventDetail = {
           <textarea
             rows="4"
             placeholder="Tell your story…"
-            .value=${entity.motivation}
+            .value=${motivation}
             @input=${(e) =>
               onField({ field: "motivation", value: e.target.value })}
           ></textarea>

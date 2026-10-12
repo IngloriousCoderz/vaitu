@@ -1,3 +1,5 @@
+import { Form } from "@inglorious/web/form"
+
 import {
   activateRealtime,
   deactivateRealtime,
@@ -10,6 +12,7 @@ const { receivedLoad, statusSet, winnerAssign, eventReopen, ...syncHandlers } =
   handlers
 
 export const ApplicationsReceived = {
+  ...Form,
   ...syncHandlers,
   ...receivedLoad,
   ...statusSet,
@@ -96,11 +99,7 @@ export const ApplicationsReceived = {
       onAskReopen: () => api.notify(`#${id}:reopenAsk`),
       onReopenDeadline: (value) =>
         api.notify(`#${id}:reopenDeadlineSet`, value),
-      onReopen: () =>
-        api.notify(`#${id}:eventReopen`, {
-          event_id: entity.event_id,
-          application_deadline: entity.reopen_deadline || undefined,
-        }),
+      onReopen: () => api.notify(`#${id}:reopenSubmit`),
       onCancelReopen: () => api.notify(`#${id}:reopenCancel`),
     })
   },

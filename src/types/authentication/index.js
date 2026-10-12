@@ -1,9 +1,13 @@
+import { Form } from "@inglorious/web/form"
+
+import { initForm } from "../../forms.js"
 import * as handlers from "./handlers.js"
 import { Authentication as renderers } from "./template.js"
 
 const { emailCheck, login, signup, ...syncHandlers } = handlers
 
 export const Authentication = {
+  ...Form,
   ...syncHandlers,
   ...emailCheck,
   ...login,
@@ -11,14 +15,16 @@ export const Authentication = {
   ...renderers,
 
   create(entity) {
+    initForm(entity, {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      full_name: "",
+    })
     entity.step ??= "email"
     entity.mode ??= "login"
     entity.isOpen ??= false
     entity.justSignedUp ??= false
-    entity.full_name ??= ""
-    entity.email ??= ""
-    entity.password ??= ""
-    entity.confirmPassword ??= ""
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
     entity.role ??= "seeker"
@@ -33,22 +39,10 @@ export const Authentication = {
       entity,
       callbacks: {
         onField: ({ field, value }) =>
-          api.notify(`#${id}:fieldSet`, { field, value }),
-        onCheckEmail: () =>
-          api.notify(`#${id}:emailCheck`, { email: entity.email }),
-        onLogin: () =>
-          api.notify(`#${id}:login`, {
-            email: entity.email,
-            password: entity.password,
-          }),
-        onContinue: () =>
-          api.notify(`#${id}:signup`, {
-            full_name: entity.full_name,
-            email: entity.email,
-            password: entity.password,
-            confirmPassword: entity.confirmPassword,
-            role: entity.role,
-          }),
+          api.notify(`#${id}:fieldChange`, { path: field, value }),
+        onCheckEmail: () => api.notify(`#${id}:emailSubmit`),
+        onLogin: () => api.notify(`#${id}:loginSubmit`),
+        onContinue: () => api.notify(`#${id}:signupSubmit`),
         onSelectRole: (role) => api.notify(`#${id}:roleSelect`, role),
         onBackToEmail: () => api.notify(`#${id}:emailBack`),
         onBackToRoles: () => api.notify(`#${id}:rolesBack`),

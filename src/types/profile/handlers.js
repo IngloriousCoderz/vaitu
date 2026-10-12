@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { defaultTiers } from "./helpers.js"
@@ -14,7 +15,6 @@ export function close(entity) {
   entity.error = null
   entity.isEditing = false
   entity.isMenuOpen = false
-  entity.draft = null
 }
 
 export function overlaysClose(entity) {
@@ -32,19 +32,27 @@ export function menuClose(entity) {
 export function editStart(entity, _, api) {
   entity.isEditing = true
   entity.isMenuOpen = false
-  entity.draft = { ...entity.profile }
+  entity.initialValues = {
+    full_name: entity.profile?.full_name ?? "",
+    website: entity.profile?.website ?? "",
+    instagram_handle: entity.profile?.instagram_handle ?? "",
+    country: entity.profile?.country ?? "",
+    region: entity.profile?.region ?? "",
+    favorite_regions: [...(entity.profile?.favorite_regions ?? [])],
+  }
+  Form.reset(entity)
   entity.error = null
-  api.notify("#country-profile:sync", entity.draft.country ?? "")
+  api.notify("#country-profile:sync", entity.values.country ?? "")
 }
 
 export function editCancel(entity) {
   entity.isEditing = false
-  entity.draft = null
   entity.error = null
 }
 
 export function profileFieldSet(entity, { field, value }) {
-  if (entity.draft) entity.draft[field] = value
+  if (!entity.isEditing) return
+  Form.fieldChange(entity, { path: field, value })
 }
 
 export function favoriteInputSet(entity, value) {
@@ -52,27 +60,30 @@ export function favoriteInputSet(entity, value) {
 }
 
 export function favoriteAdd(entity, value) {
-  if (!entity.draft) return
+  if (!entity.isEditing) return
   const clean = (value ?? "").trim()
   if (!clean) return
-  const current = entity.draft.favorite_regions ?? []
+  const current = entity.values.favorite_regions ?? []
   if (current.includes(clean)) {
     entity.favoriteInput = ""
     return
   }
-  entity.draft = { ...entity.draft, favorite_regions: [...current, clean] }
+  Form.fieldChange(entity, {
+    path: "favorite_regions",
+    value: [...current, clean],
+  })
   entity.favoriteInput = ""
   entity.error = null
 }
 
 export function favoriteRemove(entity, value) {
-  if (!entity.draft) return
-  entity.draft = {
-    ...entity.draft,
-    favorite_regions: (entity.draft.favorite_regions ?? []).filter(
+  if (!entity.isEditing) return
+  Form.fieldChange(entity, {
+    path: "favorite_regions",
+    value: (entity.values.favorite_regions ?? []).filter(
       (region) => region !== value,
     ),
-  }
+  })
   entity.error = null
 }
 
@@ -195,8 +206,7 @@ export const profileSave = handleAsync("profileSave", {
   },
   success(entity, profile, api) {
     entity.status = "ready"
-    entity.profile = profile
-    entity.draft = null
+    entity.profile = { ...entity.profile, ...profile }
     entity.isEditing = false
     api.notify("#eventList:eventsLoad")
   },

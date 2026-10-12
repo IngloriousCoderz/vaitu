@@ -1,3 +1,6 @@
+import { Form } from "@inglorious/web/form"
+
+import { initForm } from "../../forms.js"
 import {
   activateRealtime,
   deactivateRealtime,
@@ -9,6 +12,7 @@ import { Profile as renderers } from "./template.js"
 const { profileLoad, profileSave, logout, ...syncHandlers } = handlers
 
 export const Profile = {
+  ...Form,
   ...syncHandlers,
   ...profileLoad,
   ...profileSave,
@@ -21,7 +25,14 @@ export const Profile = {
     entity.stats ??= null
     entity.isEditing ??= false
     entity.isMenuOpen ??= false
-    entity.draft ??= null
+    initForm(entity, {
+      full_name: "",
+      website: "",
+      instagram_handle: "",
+      country: "",
+      region: "",
+      favorite_regions: [],
+    })
     entity.favoriteInput ??= ""
     entity.status ??= "idle"
     entity.error ??= null
@@ -53,7 +64,7 @@ export const Profile = {
       onFavoriteInput: (value) => api.notify(`#${id}:favoriteInputSet`, value),
       onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
       onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
-      onSave: () => api.notify(`#${id}:profileSave`, { ...entity.draft }),
+      onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
       onLogout: () => api.notify(`#${id}:logout`),
       onOpenRanks: () => api.notify("#ranks:open"),
       onToggleMenu: () => api.notify(`#${id}:menuToggle`),

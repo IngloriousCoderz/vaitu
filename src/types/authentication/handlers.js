@@ -1,10 +1,47 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { MIN_PASSWORD_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
+import { firstError } from "../../forms.js"
 
-export function fieldSet(entity, { field, value }) {
-  entity[field] = value
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function validateEmail(values) {
+  return {
+    email: EMAIL.test(values.email.trim()) ? null : "Enter a valid email",
+  }
+}
+
+function validateLogin(values) {
+  return {
+    password: values.password ? null : "Password is required",
+  }
+}
+
+function validateSignup(values) {
+  return {
+    full_name: values.full_name.trim() ? null : "Name is required",
+    password:
+      values.password.length < MIN_PASSWORD_LENGTH
+        ? "Password must be at least 6 characters"
+        : null,
+    confirmPassword:
+      values.password === values.confirmPassword
+        ? null
+        : "Passwords do not match",
+  }
+}
+
+function rejectInvalid(entity) {
+  const error = firstError(entity.errors)
+  if (!error) return false
+  entity.error = error
+  return true
+}
+
+export function fieldChange(entity, payload) {
+  Form.fieldChange(entity, payload)
   entity.error = null
 }
 
@@ -30,6 +67,10 @@ export function close(entity) {
   entity.error = null
   entity.password = ""
   entity.confirmPassword = ""
+  if (entity.values) {
+    entity.values.password = ""
+    entity.values.confirmPassword = ""
+  }
 }
 
 export function overlaysClose(entity) {
@@ -61,6 +102,50 @@ export function rolesBack(entity) {
   entity.error = null
 }
 
+export function emailSubmit(entity, _, api) {
+  api.notify(`#${entity.id}:validate`, { validate: validateEmail })
+  api.notify(`#${entity.id}:emailProceed`)
+}
+
+export function emailProceed(entity, _, api) {
+  if (rejectInvalid(entity)) return
+  entity.error = null
+  api.notify(`#${entity.id}:emailCheck`, {
+    email: entity.values.email.trim().toLowerCase(),
+  })
+}
+
+export function loginSubmit(entity, _, api) {
+  api.notify(`#${entity.id}:validate`, { validate: validateLogin })
+  api.notify(`#${entity.id}:loginProceed`)
+}
+
+export function loginProceed(entity, _, api) {
+  if (rejectInvalid(entity)) return
+  entity.error = null
+  api.notify(`#${entity.id}:login`, {
+    email: entity.values.email.trim().toLowerCase(),
+    password: entity.values.password,
+  })
+}
+
+export function signupSubmit(entity, _, api) {
+  api.notify(`#${entity.id}:validate`, { validate: validateSignup })
+  api.notify(`#${entity.id}:signupProceed`)
+}
+
+export function signupProceed(entity, _, api) {
+  if (rejectInvalid(entity)) return
+  entity.error = null
+  api.notify(`#${entity.id}:signup`, {
+    full_name: entity.values.full_name,
+    email: entity.values.email,
+    password: entity.values.password,
+    confirmPassword: entity.values.confirmPassword,
+    role: entity.role,
+  })
+}
+
 export const emailCheck = handleAsync("emailCheck", {
   start(entity) {
     entity.status = "loading"
@@ -68,9 +153,6 @@ export const emailCheck = handleAsync("emailCheck", {
   },
   async run({ email }) {
     const clean = email.trim().toLowerCase()
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
-      throw new Error("Enter a valid email")
-    }
     const timeout = new Promise((_, reject) => {
       setTimeout(
         () => reject(new Error("Request timed out")),
@@ -87,7 +169,7 @@ export const emailCheck = handleAsync("emailCheck", {
   success(entity, { mode, email }) {
     entity.status = "ready"
     entity.mode = mode
-    entity.email = email
+    entity.values.email = email
     entity.step = mode === "login" ? "login" : "role"
   },
   error(entity, err) {
@@ -125,11 +207,7 @@ export const signup = handleAsync("signup", {
     entity.status = "loading"
     entity.error = null
   },
-  async run({ full_name, email, password, confirmPassword, role }) {
-    if (!full_name.trim()) throw new Error("Name is required")
-    if (password.length < MIN_PASSWORD_LENGTH)
-      throw new Error("Password must be at least 6 characters")
-    if (password !== confirmPassword) throw new Error("Passwords do not match")
+  async run({ full_name, email, password, role }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,

@@ -1,21 +1,16 @@
-.page {
-  max-width: var(--vpage-max-width);
-  margin: 0 auto;
-  min-height: 100%;
-  background: var(--vbg);
-  padding: 0 var(--vpage-gutter) var(--vpage-gap);
-  color: var(--vink);
-}
-
-.header {
-  /* Pinned to the top of the scrolling content row. The shell absorbs
-   the notch, so top:0 lands just below it with no gap for content to show
-   through. The background is what hides the list scrolling underneath. */
+/* Title and status filters travel as one bar. A sticky header alone let the
+   chips slide underneath it and get sliced in half. */
+.stickyTop {
   position: sticky;
   top: 0;
   z-index: var(--iw-z-sticky);
   background: var(--vbg);
-  padding: var(--vpage-top) 0.125rem 0.625rem;
+  margin: 0 calc(-1 * var(--vpage-gutter));
+  padding: var(--vpage-top) var(--vpage-gutter) 0;
+}
+
+.header {
+  padding: 0 0.125rem 0.625rem;
 }
 
 .title {

@@ -2,13 +2,76 @@
    primitive from @inglorious/ui, following its ScrollableContent story:
    column container, a scrolling content row, and a footer row for the tab bar.
 
-   Only the pieces CSS can't express through the primitive's props live here. */
+   Flex has no props for viewport height, safe area, or flex-grow, so those
+   live here as classes on the Flex nodes — not as inline style objects. */
+
+/* padding-top has to beat .iw-flex.iw-flex-padding-none. That shorthand is
+   padding: 0, and it was cancelling the notch inset, so the logo, sticky
+   headers and the profile avatar sat under the status bar. */
+.iw-flex.iw-flex-padding-none.appShell {
+  height: 100dvh;
+  background: var(--vbg);
+  position: relative;
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Shared page frame. Every screen uses renderPage(); only the padding
+   variant differs.
+
+   The node is a Flex, whose default is display:flex and min-width:auto.
+   That stops vertical margins from collapsing and lets a chip row widen the
+   column past the screen, so the shell scrolls on both axes. Pages that used
+   to be a plain block stay a block. Login and onboarding stay a centred
+   column, which is what their old .page rule was. */
+.iw-flex.vaitu-frame {
+  display: block;
+  width: auto;
+  min-width: 0;
+  max-width: var(--vpage-max-width);
+  margin: 0 auto;
+  min-height: 100%;
+  background: var(--vbg);
+  color: var(--vink);
+  box-sizing: border-box;
+}
+
+.iw-flex.vaitu-frame-centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.iw-flex.vaitu-frame-centered > * {
+  min-width: 0;
+}
+
+/* Padding has to beat .iw-flex.iw-flex-padding-none, which the Flex primitive
+   applies by default and which was wiping the gutter (padding computed to 0).
+   The sticky headers cancel that gutter with a negative margin; with the
+   gutter gone they spill past the screen and the shell grows a scrollbar. */
+.iw-flex.iw-flex-padding-none.vaitu-frame-document,
+.iw-flex.iw-flex-padding-none.vaitu-frame-centered {
+  padding: var(--vpage-top) var(--vpage-gutter) var(--vpage-gap);
+}
+
+.iw-flex.iw-flex-padding-none.vaitu-frame-sticky {
+  padding: 0 var(--vpage-gutter) var(--vpage-gap);
+}
+
+.iw-flex.iw-flex-padding-none.vaitu-frame-stickyFlat {
+  padding: 0 var(--vpage-gutter);
+}
+
+.vaitu-frame-centerText {
+  text-align: center;
+}
 
 /* The footer owns the bar's height while it is on screen. Pages that keep the
    bar mounted but translated away (detail, ranks, eventCreate) must not
    reserve an empty row, so the row collapses instead. Height is animated rather
    than display:none so the bar's slide-out is not cut off mid-transition. */
 .appFooter {
+  flex: 0 0 auto;
   overflow: hidden;
   transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -22,16 +85,18 @@
    would gain a horizontal scrollbar on every transition. `clip` (not `hidden`)
    so it does not create a scroll container of its own or a containing block
    for the FAB. */
-.appMain {
+/* Beat .iw-flex.iw-flex-overflow-auto, whose overflow shorthand would
+   otherwise turn the horizontal axis back into auto and paint a scrollbar
+   whenever a page is a few pixels wider than the column. */
+.appMain.iw-flex.iw-flex-overflow-auto {
+  flex: 1 1 0;
   overflow-x: clip;
+  overflow-y: auto;
 }
 
 /* Splash screen, built in src/app.js outside any CSS module, so its styles live
    here rather than in a page's style.module.css. */
 .vaitu-splash {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100%;
   background: var(--iw-color-bg);
 }

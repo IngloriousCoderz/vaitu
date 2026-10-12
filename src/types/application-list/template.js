@@ -1,6 +1,7 @@
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
+import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
@@ -33,50 +34,59 @@ export const ApplicationList = {
         ? applications
         : applications.filter((a) => a.applicationStatus === status_filter)
 
-    return html`
-      <div class=${styles.page} data-category="wedding">
-        <header class=${styles.header}>
-          <span class=${styles.title}>My Applications</span>
-        </header>
+    return renderPage({
+      variant: "sticky",
+      children: [
+        html`
+          <div class=${styles.stickyTop}>
+            <header class=${styles.header}>
+              <span class=${styles.title}>My Applications</span>
+            </header>
 
-        <div class=${styles.chips}>
-          ${FilterOptions.map(
-            (option) => html`
-              <button
-                type="button"
-                class=${styles.chipButton}
-                @click=${() => onSelectStatus(option.id)}
-              >
-                ${Chip.render({
-                  children: option.label,
-                  color: option.id === status_filter ? "primary" : "default",
-                })}
-              </button>
-            `,
-          )}
-        </div>
+            <div class=${styles.chips}>
+              ${FilterOptions.map(
+                (option) => html`
+                  <button
+                    type="button"
+                    class=${styles.chipButton}
+                    @click=${() => onSelectStatus(option.id)}
+                  >
+                    ${Chip.render({
+                      children: option.label,
+                      color:
+                        option.id === status_filter ? "primary" : "default",
+                    })}
+                  </button>
+                `,
+              )}
+            </div>
+          </div>
 
-        <main class=${styles.list}>
-          ${
-            status === "loading"
-              ? html`<p class=${styles.empty}>Loading applications…</p>`
-              : status === "error"
-                ? html`<p class=${styles.empty}>${error}</p>`
-                : !shown.length
-                  ? html`<p class=${styles.empty}>
-                      ${
-                        !applications.length
-                          ? "You haven't applied for any event yet."
-                          : "Nothing with this status."
-                      }
-                    </p>`
-                  : shown.map((application) =>
-                      this.renderApplicationItem({ application, onOpenEvent }),
-                    )
-          }
-        </main>
-      </div>
-    `
+          <main class=${styles.list}>
+            ${
+              status === "loading"
+                ? html`<p class=${styles.empty}>Loading applications…</p>`
+                : status === "error"
+                  ? html`<p class=${styles.empty}>${error}</p>`
+                  : !shown.length
+                    ? html`<p class=${styles.empty}>
+                        ${
+                          !applications.length
+                            ? "You haven't applied for any event yet."
+                            : "Nothing with this status."
+                        }
+                      </p>`
+                    : shown.map((application) =>
+                        this.renderApplicationItem({
+                          application,
+                          onOpenEvent,
+                        }),
+                      )
+            }
+          </main>
+        `,
+      ],
+    })
   },
 
   renderApplicationItem({ application, onOpenEvent }) {
@@ -89,7 +99,11 @@ export const ApplicationList = {
             : styles.application
         }
       >
-        ${Card.render({ event: application, divider: false, onOpen: onOpenEvent })}
+        ${Card.render({
+          event: application,
+          divider: false,
+          onOpen: onOpenEvent,
+        })}
         <div class=${styles.applicationFooter}>
           ${
             isWinner

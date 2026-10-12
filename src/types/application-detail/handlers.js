@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form } from "@inglorious/web/form"
 
 import {
   fetchApplicationDetail,
@@ -11,7 +12,7 @@ export function open(entity, { application_id, returnTo }, api) {
   entity.application_id = application_id
   entity.returnTo = returnTo ?? "applications"
   entity.application = null
-  entity.motivation = ""
+  if (entity.values) entity.values.motivation = ""
   entity.isConfirmingWithdraw = false
   api.notify(`#${entity.id}:applicationLoad`, application_id)
 }
@@ -34,7 +35,8 @@ export function overlaysClose(entity) {
 }
 
 export function fieldSet(entity, { field, value }) {
-  entity[field] = value
+  Form.fieldChange(entity, { path: field, value })
+  entity.error = null
 }
 
 export function withdrawAsk(entity) {
@@ -64,7 +66,7 @@ export const applicationLoad = handleAsync("applicationLoad", {
   success(entity, application) {
     entity.status = "ready"
     entity.application = application
-    entity.motivation = application.motivation
+    entity.values.motivation = application.motivation
   },
   error(entity, err) {
     entity.status = "error"

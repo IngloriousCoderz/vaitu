@@ -1,14 +1,35 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { firstError } from "../../forms.js"
 
 export function fieldSet(entity, { field, value }) {
-  entity[field] = value
+  Form.fieldChange(entity, { path: field, value })
   entity.error = null
 }
 
 export function skip(entity, _, api) {
   api.notify("#authentication:onboardingFinish")
+}
+
+export function saveSubmit(entity, _, api) {
+  api.notify(`#${entity.id}:validate`, {
+    validate: (values) => ({
+      country: values.country.trim() ? null : "Pick a country",
+    }),
+  })
+  api.notify(`#${entity.id}:saveProceed`)
+}
+
+export function saveProceed(entity, _, api) {
+  const error = firstError(entity.errors)
+  if (error) {
+    entity.error = error
+    return
+  }
+  entity.error = null
+  api.notify(`#${entity.id}:save`, { ...entity.values })
 }
 
 export const save = handleAsync("save", {
@@ -17,7 +38,6 @@ export const save = handleAsync("save", {
     entity.error = null
   },
   async run({ country, region, website, instagram }) {
-    if (!country.trim()) throw new Error("Pick a country")
     const {
       data: { user },
     } = await supabase.auth.getUser()

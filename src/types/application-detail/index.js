@@ -1,7 +1,9 @@
 import { Capacitor } from "@capacitor/core"
 import { Share } from "@capacitor/share"
+import { Form } from "@inglorious/web/form"
 
 import { uploadIcsFile } from "../../api/applications.js"
+import { firstError, initForm } from "../../forms.js"
 import {
   activateRealtime,
   deactivateRealtime,
@@ -13,6 +15,7 @@ import { ApplicationDetail as renderers } from "./template.js"
 const { applicationLoad, save, withdraw, giveUp, ...syncHandlers } = handlers
 
 export const ApplicationDetail = {
+  ...Form,
   ...syncHandlers,
   ...applicationLoad,
   ...save,
@@ -24,7 +27,7 @@ export const ApplicationDetail = {
     entity.application_id ??= null
     entity.returnTo ??= null
     entity.application ??= null
-    entity.motivation ??= ""
+    initForm(entity, { motivation: "" })
     entity.isConfirmingWithdraw ??= false
     entity.isConfirmingGiveUp ??= false
     entity.status ??= "idle"
@@ -47,17 +50,35 @@ export const ApplicationDetail = {
     deactivateRealtime(entity.id)
   },
 
+  saveSubmit(entity, _, api) {
+    api.notify(`#${entity.id}:validate`, {
+      validate: (values) => ({
+        motivation: values.motivation.trim() ? null : "Motivation is required",
+      }),
+    })
+    api.notify(`#${entity.id}:saveIfValid`)
+  },
+
+  saveIfValid(entity, _, api) {
+    const error = firstError(entity.errors)
+    if (error) {
+      entity.error = error
+      return
+    }
+    entity.error = null
+    api.notify(`#${entity.id}:save`, {
+      application_id: entity.application_id,
+      motivation: entity.values.motivation,
+    })
+  },
+
   render(entity, api) {
     const id = entity.id
     return this.renderApplicationDetail({
       entity,
       onField: ({ field, value }) =>
         api.notify(`#${id}:fieldSet`, { field, value }),
-      onSave: () =>
-        api.notify(`#${id}:save`, {
-          application_id: entity.application_id,
-          motivation: entity.motivation,
-        }),
+      onSave: () => api.notify(`#${id}:saveSubmit`),
       onAskWithdraw: () => api.notify(`#${id}:withdrawAsk`),
       onAskGiveUp: () => api.notify(`#${id}:giveUpAsk`),
       onGiveUp: () => api.notify(`#${id}:giveUp`, entity.application_id),

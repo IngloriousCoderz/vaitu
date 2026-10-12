@@ -5,6 +5,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
 import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants.js"
+import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
 import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"
@@ -44,152 +45,156 @@ export const ApplicationsReceived = {
     const max_reached =
       entity.max_applicants != null && selected_count >= entity.max_applicants
 
-    return html`
-      <div class=${styles.page} data-category="wedding">
-        ${Button.render({
-          children: html`
-            ${Icon.render({ name: "arrow-left", size: 16 })}
-            <span>Back</span>
-          `,
-          variant: "ghost",
-          shape: "pill",
-          className: "vaitu-back",
-          ariaLabel: "Back",
-          onClick: onBack,
-        })}
+    return renderPage({
+      variant: "stickyFlat",
+      children: [
+        html`
+          ${Button.render({
+            children: html`
+              ${Icon.render({ name: "arrow-left", size: 16 })}
+              <span>Back</span>
+            `,
+            variant: "ghost",
+            shape: "pill",
+            className: "vaitu-back",
+            ariaLabel: "Back",
+            onClick: onBack,
+          })}
 
-        <header class=${styles.header}>
-          <span class=${styles.title}>${entity.event_title}</span>
-          <p class=${styles.subtitle}>
-            ${selected_count} shortlisted · ${items.length} received
-          </p>
-          ${
-            entity.event_status === "assigned" ||
-            entity.event_status === "closed"
-              ? html`
-                  ${
-                    entity.confirming_reopen
-                      ? html`
-                          <p class=${styles.warn}>
+          <header class=${styles.header}>
+            <span class=${styles.title}>${entity.event_title}</span>
+            <p class=${styles.subtitle}>
+              ${selected_count} shortlisted · ${items.length} received
+            </p>
+            ${
+              entity.event_status === "assigned" ||
+              entity.event_status === "closed"
+                ? html`
+                    ${
+                      entity.confirming_reopen
+                        ? html`
+                            <p class=${styles.warn}>
+                              ${
+                                entity.event_status === "assigned"
+                                  ? "Reopen this event? Applications keep their status and you can adjust the shortlist again."
+                                  : "Reopen this event? New applications will be accepted again."
+                              }
+                            </p>
                             ${
-                              entity.event_status === "assigned"
-                                ? "Reopen this event? Applications keep their status and you can adjust the shortlist again."
-                                : "Reopen this event? New applications will be accepted again."
+                              deadlinePast(entity.event_deadline)
+                                ? html`
+                                    <label class=${styles.field}>
+                                      <span>New application deadline</span>
+                                      <input
+                                        type="datetime-local"
+                                        .value=${entity.reopen_deadline ?? ""}
+                                        @input=${(e) =>
+                                          onReopenDeadline(e.target.value)}
+                                      />
+                                    </label>
+                                  `
+                                : ""
                             }
-                          </p>
-                          ${
-                            deadlinePast(entity.event_deadline)
-                              ? html`
-                                  <label class=${styles.field}>
-                                    <span>New application deadline</span>
-                                    <input
-                                      type="datetime-local"
-                                      .value=${entity.reopen_deadline ?? ""}
-                                      @input=${(e) =>
-                                        onReopenDeadline(e.target.value)}
-                                    />
-                                  </label>
-                                `
-                              : ""
-                          }
-                          <div class=${styles.actions}>
+                            <div class=${styles.actions}>
+                              ${Button.render({
+                                children:
+                                  status === "saving"
+                                    ? "Reopening…"
+                                    : "Yes, reopen",
+                                color: "primary",
+                                shape: "pill",
+                                size: "md",
+                                isDisabled:
+                                  status === "saving" ||
+                                  (deadlinePast(entity.event_deadline) &&
+                                    (entity.reopen_deadline ?? "").length !==
+                                      DATETIME_LOCAL_LENGTH),
+                                onClick: onReopen,
+                              })}
+                              ${Button.render({
+                                children:
+                                  entity.event_status === "assigned"
+                                    ? "Keep assigned"
+                                    : "Keep closed",
+                                variant: "outline",
+                                shape: "pill",
+                                size: "md",
+                                onClick: onCancelReopen,
+                              })}
+                            </div>
+                          `
+                        : html`
                             ${Button.render({
-                              children:
-                                status === "saving"
-                                  ? "Reopening…"
-                                  : "Yes, reopen",
+                              children: "Reopen event",
                               color: "primary",
                               shape: "pill",
                               size: "md",
-                              isDisabled:
-                                status === "saving" ||
-                                (deadlinePast(entity.event_deadline) &&
-                                  (entity.reopen_deadline ?? "").length !==
-                                    DATETIME_LOCAL_LENGTH),
-                              onClick: onReopen,
+                              isFullWidth: true,
+                              onClick: onAskReopen,
                             })}
-                            ${Button.render({
-                              children:
-                                entity.event_status === "assigned"
-                                  ? "Keep assigned"
-                                  : "Keep closed",
-                              variant: "outline",
-                              shape: "pill",
-                              size: "md",
-                              onClick: onCancelReopen,
-                            })}
-                          </div>
-                        `
-                      : html`
-                          ${Button.render({
-                            children: "Reopen event",
-                            color: "primary",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            onClick: onAskReopen,
-                          })}
-                        `
-                  }
-                `
+                          `
+                    }
+                  `
+                : ""
+            }
+          </header>
+
+          ${
+            entity.event_recap
+              ? this.renderRecap(
+                  entity.event_recap,
+                  selected_count,
+                  entity.max_applicants,
+                )
               : ""
           }
-        </header>
 
-        ${
-          entity.event_recap
-            ? this.renderRecap(
-                entity.event_recap,
-                selected_count,
-                entity.max_applicants,
-              )
-            : ""
-        }
-
-        <main class=${styles.list}>
-          ${
-            status === "loading"
-              ? html`<p class=${styles.empty}>Loading applications…</p>`
-              : status === "error" && !items.length
-                ? html`<p class=${styles.empty}>${error}</p>`
-                : !items.length
-                  ? html`<p class=${styles.empty}>
-                      ${
-                        entity.event_status === "open"
-                          ? "No applications yet."
-                          : "No applications received."
-                      }
-                    </p>`
-                  : items.map((item) =>
-                      this.renderApplicant({
-                        item,
-                        expanded: entity.expanded_application_id === item.id,
-                        max_reached,
-                        confirming_assign: entity.confirming_assign === item.id,
-                        event_assigned: entity.event_status === "assigned",
-                        onToggle,
-                        onSelect,
-                        onReject,
-                        onUnshortlist,
-                        onUnreject,
-                        onAskAssign,
-                        onAssign,
-                        onCancelAssign,
-                      }),
-                    )
-          }
-          ${
-            status === "error" && items.length >= SINGULAR
-              ? Alert.render({
-                  severity: "error",
-                  className: `vaitu-alert ${styles.error}`,
-                  children: error,
-                })
-              : ""
-          }
-        </main>
-      </div>
-    `
+          <main class=${styles.list}>
+            ${
+              status === "loading"
+                ? html`<p class=${styles.empty}>Loading applications…</p>`
+                : status === "error" && !items.length
+                  ? html`<p class=${styles.empty}>${error}</p>`
+                  : !items.length
+                    ? html`<p class=${styles.empty}>
+                        ${
+                          entity.event_status === "open"
+                            ? "No applications yet."
+                            : "No applications received."
+                        }
+                      </p>`
+                    : items.map((item) =>
+                        this.renderApplicant({
+                          item,
+                          expanded: entity.expanded_application_id === item.id,
+                          max_reached,
+                          confirming_assign:
+                            entity.confirming_assign === item.id,
+                          event_assigned: entity.event_status === "assigned",
+                          onToggle,
+                          onSelect,
+                          onReject,
+                          onUnshortlist,
+                          onUnreject,
+                          onAskAssign,
+                          onAssign,
+                          onCancelAssign,
+                        }),
+                      )
+            }
+            ${
+              status === "error" && items.length >= SINGULAR
+                ? Alert.render({
+                    severity: "error",
+                    className: `vaitu-alert ${styles.error}`,
+                    children: error,
+                  })
+                : ""
+            }
+          </main>
+        `,
+      ],
+    })
   },
 
   renderRecap(recap, shortlisted, maxApplicants) {

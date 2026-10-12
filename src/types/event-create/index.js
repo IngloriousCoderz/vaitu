@@ -1,4 +1,8 @@
+import { Form } from "@inglorious/web/form"
+
+import { errorsFromZod, firstError } from "../../forms.js"
 import { isTicking, startTick } from "../../ticker.js"
+import { createEventSchema } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
 import * as handlers from "./handlers.js"
 import { EventCreate as renderers } from "./template.js"
@@ -13,6 +17,7 @@ const {
 } = handlers
 
 export const EventCreate = {
+  ...Form,
   ...syncHandlers,
   ...save,
   ...editLoad,
@@ -46,6 +51,44 @@ export const EventCreate = {
     entity.error ??= null
   },
 
+  saveSubmit(entity, _, api) {
+    const title_from = categoryById(entity.category).title_from
+    const title = title_from.input
+      ? entity.title
+      : title_from.fields
+          .map((field) => (entity.details[field] ?? "").trim())
+          .join(title_from.join)
+    const payload = {
+      editing_event_id: entity.editing_event_id,
+      category: entity.category,
+      title,
+      location: entity.location,
+      country: entity.country,
+      region: entity.region,
+      event_date: entity.event_date,
+      application_deadline: entity.application_deadline,
+      max_applicants: entity.max_applicants,
+      audio_url: entity.audio_url,
+      audio_transcript: entity.audio_transcript,
+      details: entity.details,
+    }
+    entity.values = payload
+    api.notify(`#${entity.id}:validate`, {
+      validate: (current) =>
+        errorsFromZod(createEventSchema.safeParse(current)),
+    })
+    api.notify(`#${entity.id}:saveIfValid`, payload)
+  },
+
+  saveIfValid(entity, payload, api) {
+    if (!entity.isValid) {
+      entity.error = firstError(entity.errors) ?? "Invalid event"
+      return
+    }
+    entity.error = null
+    api.notify(`#${entity.id}:save`, payload)
+  },
+
   render(entity, api) {
     const id = entity.id
     if (entity.is_recording && entity.isOpen && !isTicking("audio")) {
@@ -71,28 +114,7 @@ export const EventCreate = {
         onOpenAudio: () => api.notify(`#${id}:audioOpen`),
         onCancelAudio: () => api.notify(`#${id}:audioCancel`),
         onRemoveAudio: () => api.notify(`#${id}:audioRemove`),
-        onSave: () => {
-          const title_from = categoryById(entity.category).title_from
-          const title = title_from.input
-            ? entity.title
-            : title_from.fields
-                .map((field) => (entity.details[field] ?? "").trim())
-                .join(title_from.join)
-          return api.notify(`#${id}:save`, {
-            editing_event_id: entity.editing_event_id,
-            category: entity.category,
-            title,
-            location: entity.location,
-            country: entity.country,
-            region: entity.region,
-            event_date: entity.event_date,
-            application_deadline: entity.application_deadline,
-            max_applicants: entity.max_applicants,
-            audio_url: entity.audio_url,
-            audio_transcript: entity.audio_transcript,
-            details: entity.details,
-          })
-        },
+        onSave: () => api.notify(`#${id}:saveSubmit`),
       },
       api,
     )

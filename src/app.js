@@ -17,11 +17,15 @@ function renderBareShell(content) {
 }
 
 function renderSplash() {
-  return html`
-    <div class="vaitu-splash">
-      <img src="/logo.svg" alt="vaitu" class="vaitu-splashLogo" />
-    </div>
-  `
+  return Flex.render({
+    align: "center",
+    justify: "center",
+    isFullWidth: true,
+    className: "vaitu-splash",
+    children: [
+      html`<img src="/logo.svg" alt="vaitu" class="vaitu-splashLogo" />`,
+    ],
+  })
 }
 
 // App shell: header / scrolling content / footer, per the ScrollableContent
@@ -41,25 +45,13 @@ function renderShell({ content, fab, tabbar, isTabbarHidden = true }) {
     element: "div",
     direction: "column",
     overflow: "hidden",
-    style: {
-      height: "100dvh",
-      background: "var(--vbg)",
-      // Containing block for the absolutely positioned FAB, so "bottom" is
-      // measured inside the shell rather than against the viewport.
-      position: "relative",
-      // The shell spans the full viewport (viewport-fit=cover), so it has to
-      // absorb the notch itself. That also lets a page's sticky <header> pin
-      // at the top of the content row — which now starts below the safe area —
-      // instead of pinning under the notch with a gap above it.
-      paddingTop: "env(safe-area-inset-top)",
-    },
+    className: "appShell",
     children: [
       Flex.render({
         element: "main",
         direction: "column",
         overflow: "auto",
         className: "appMain",
-        style: { flex: "1 1 0" },
         children: [content],
       }),
       // FAB floats over the shell, so it is a direct child of the positioned
@@ -68,7 +60,7 @@ function renderShell({ content, fab, tabbar, isTabbarHidden = true }) {
       ...[fab].filter(Boolean),
       Flex.render({
         element: "footer",
-        style: { flex: "0 0 auto", overflow: "hidden" },
+        overflow: "hidden",
         className: isTabbarHidden ? "appFooter appFooterHidden" : "appFooter",
         children: [tabbar].filter(Boolean),
       }),

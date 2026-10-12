@@ -1,18 +1,24 @@
+import { Form } from "@inglorious/web/form"
+
+import { initForm } from "../../forms.js"
 import * as handlers from "./handlers.js"
 import { Onboarding as renderers } from "./template.js"
 
 const { save, ...syncHandlers } = handlers
 
 export const Onboarding = {
+  ...Form,
   ...syncHandlers,
   ...save,
   ...renderers,
 
   create(entity) {
-    entity.country ??= ""
-    entity.region ??= ""
-    entity.website ??= ""
-    entity.instagram ??= ""
+    initForm(entity, {
+      country: "",
+      region: "",
+      website: "",
+      instagram: "",
+    })
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -24,13 +30,7 @@ export const Onboarding = {
       entity,
       onField: ({ field, value }) =>
         api.notify(`#${id}:fieldSet`, { field, value }),
-      onSave: () =>
-        api.notify(`#${id}:save`, {
-          country: entity.country,
-          region: entity.region,
-          website: entity.website,
-          instagram: entity.instagram,
-        }),
+      onSave: () => api.notify(`#${id}:saveSubmit`),
       onSkip: () => api.notify(`#${id}:skip`),
       renderCountry: () => api.render("country-onboarding"),
     })

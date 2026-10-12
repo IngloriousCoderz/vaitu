@@ -1,12 +1,3 @@
-.page {
-  max-width: var(--vpage-max-width);
-  margin: 0 auto;
-  min-height: 100%;
-  background: var(--vbg);
-  padding: 0 var(--vpage-gutter) var(--vpage-gap);
-  color: var(--vink);
-}
-
 /* One sticky group: brand bar, category tabs, search and pill filters.
    They are wrapped in a single element rather than each being sticky
    individually — four siblings with independent `top` offsets would stack on

@@ -1,4 +1,7 @@
+import { Form } from "@inglorious/web/form"
+
 import { DAY_MS } from "../../constants.js"
+import { firstError, initForm } from "../../forms.js"
 import {
   activateRealtime,
   deactivateRealtime,
@@ -12,6 +15,7 @@ import { EventDetail as renderers } from "./template.js"
 const { apply, detailLoad, ...syncHandlers } = handlers
 
 export const EventDetail = {
+  ...Form,
   ...syncHandlers,
   ...apply,
   ...detailLoad,
@@ -23,10 +27,12 @@ export const EventDetail = {
     entity.senderName ??= null
     entity.status ??= "idle"
     entity.error ??= null
-    entity.full_name ??= ""
-    entity.website ??= ""
-    entity.instagram ??= ""
-    entity.motivation ??= ""
+    initForm(entity, {
+      full_name: "",
+      website: "",
+      instagram: "",
+      motivation: "",
+    })
     entity.isSubmitted ??= false
     entity.applyStatus ??= "idle"
     entity.applyError ??= null
@@ -45,6 +51,25 @@ export const EventDetail = {
     deactivateRealtime(entity.id)
   },
 
+  applySubmit(entity, _, api) {
+    api.notify(`#${entity.id}:validate`, {
+      validate: (values) => ({
+        motivation: values.motivation.trim() ? null : "Motivation is required",
+      }),
+    })
+    api.notify(`#${entity.id}:applyIfValid`)
+  },
+
+  applyIfValid(entity, _, api) {
+    const error = firstError(entity.errors)
+    if (error) {
+      entity.applyError = error
+      return
+    }
+    entity.applyError = null
+    api.notify(`#${entity.id}:applicationSubmit`)
+  },
+
   render(entity, api) {
     const id = entity.id
     if (entity.event_id) {
@@ -58,7 +83,7 @@ export const EventDetail = {
       onBack: () => api.notify(`#${id}:close`),
       onField: ({ field, value }) =>
         api.notify(`#${id}:fieldSet`, { field, value }),
-      onSubmit: () => api.notify(`#${id}:applicationSubmit`),
+      onSubmit: () => api.notify(`#${id}:applySubmit`),
       onCompleteProfile: () => {
         api.notify(`#${id}:close`)
         api.notify("#profile:open")

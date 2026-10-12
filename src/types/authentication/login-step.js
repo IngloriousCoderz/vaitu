@@ -1,5 +1,6 @@
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
+import { getFieldValue } from "@inglorious/web/form"
 
 import { ErrorLabel } from "./error-label"
 import styles from "./style.module.css"
@@ -19,6 +20,7 @@ export const LoginStep = {
         <form
           class=${styles.form}
           action=""
+          novalidate
           @submit=${(e) => {
             e.preventDefault()
             onLogin()
@@ -26,7 +28,8 @@ export const LoginStep = {
         >
           <h2 class=${styles.title}>Welcome back</h2>
           <p class=${styles.subtitle}>
-            Logging in as <strong>${entity.email}</strong>.
+            Logging in as
+            <strong>${getFieldValue(entity, "email", "")}</strong>.
             <button
               class=${styles.linkButton}
               type="button"
@@ -42,7 +45,7 @@ export const LoginStep = {
             autocomplete="username"
             tabindex="-1"
             aria-hidden="true"
-            .value=${entity.email}
+            .value=${getFieldValue(entity, "email", "")}
           />
           <label class=${styles.field}>
             <span>Password</span>
@@ -54,7 +57,7 @@ export const LoginStep = {
                 autocomplete="current-password"
                 type=${entity.isPasswordVisible ? "text" : "password"}
                 placeholder="••••••••"
-                .value=${entity.password}
+                .value=${getFieldValue(entity, "password", "")}
                 @input=${(e) =>
                   onField({ field: "password", value: e.target.value })}
               />
