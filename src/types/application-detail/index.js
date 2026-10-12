@@ -67,24 +67,6 @@ export const ApplicationDetail = {
       onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
       onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
       onBack: () => api.notify(`#${id}:back`),
-      onNavigate: (value) => {
-        if (value === "events") {
-          api.notify(`#${id}:close`)
-          api.notify("#eventDetail:close")
-          api.notify("#applicationList:close")
-        }
-        if (value === "profile") {
-          api.notify(`#${id}:close`)
-          api.notify("#eventDetail:close")
-          api.notify("#applicationList:close")
-          api.notify("#profile:open")
-        }
-        if (value === "applications") {
-          api.notify(`#${id}:close`)
-          api.notify("#eventDetail:close")
-          api.notify("#applicationList:open")
-        }
-      },
     })
   },
 }

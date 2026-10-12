@@ -6,7 +6,6 @@ import { html } from "@inglorious/web"
 import { capitalize } from "../../text.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
-import { TabBar } from "../tab-bar/template.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -33,9 +32,7 @@ export const ApplicationDetail = {
     onCancelGiveUp,
     onCancelWithdraw,
     onGoogleCalendar,
-    onDownloadIcs,
     onBack,
-    onNavigate,
   }) {
     const { application, status, error } = entity
     const isBusy = status === "saving" || status === "withdrawing"
@@ -240,7 +237,6 @@ export const ApplicationDetail = {
                   }
                 `
         }
-        ${TabBar.render({ active: "applications", onNavigate })}
       </div>
     `
   },
