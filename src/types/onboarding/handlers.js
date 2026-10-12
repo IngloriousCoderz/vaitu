@@ -8,7 +8,7 @@ export function fieldSet(entity, { field, value }) {
 }
 
 export function skip(entity, _, api) {
-  api.notify("#auth:onboardingFinish")
+  api.notify("#authentication:onboardingFinish")
 }
 
 export const save = handleAsync("save", {
@@ -43,7 +43,7 @@ export const save = handleAsync("save", {
   },
   success(entity, _, api) {
     entity.status = "ready"
-    api.notify("#auth:onboardingFinish")
+    api.notify("#authentication:onboardingFinish")
     api.notify("#profile:profileLoad")
   },
   error(entity, err) {

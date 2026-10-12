@@ -143,7 +143,7 @@ export const profileLoad = handleAsync("profileLoad", {
     entity.stats = stats
     entity.tierConfig = tiers
     // Detail may have opened before the profile arrived — fill its blanks.
-    api.notify("#detail:prefill", profile)
+    api.notify("#eventDetail:prefill", profile)
     if (profile.role === "sender") api.notify("#myEvents:eventsLoad")
   },
   error(entity, err, api) {

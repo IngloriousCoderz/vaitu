@@ -45,7 +45,7 @@ export const Session = {
     entity.email = null
     entity.status = "ready"
     api.notify("#profile:close")
-    api.notify("#events:appliedClear")
+    api.notify("#eventList:appliedClear")
   },
   ...sessionExpire,
 }

@@ -25,7 +25,8 @@ export const MyEvents = {
 
     return this.renderMyEvents({
       entity,
-      onOpenEvent: (event_id) => api.notify("#received:open", event_id),
+      onOpenEvent: (event_id) =>
+        api.notify("#applicationsReceived:open", event_id),
       onEdit: (event_id) => api.notify("#eventCreate:open", { event_id }),
       onAskDelete: (event_id) => api.notify(`#${id}:deleteAsk`, event_id),
       onDelete: (event_id) => api.notify(`#${id}:eventRemove`, event_id),
