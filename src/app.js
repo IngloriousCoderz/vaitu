@@ -132,11 +132,7 @@ export const App = {
     }
 
     const onNavigate = (value) => {
-      if (value === "events") {
-        api.notify("overlaysClose")
-        const role = api.getEntity("profile").profile?.role
-        api.notify(role === "sender" ? "#myEvents:open" : "#eventList:open")
-      }
+      if (value === "events") api.notify("overlaysClose")
       if (value === "applications") {
         api.notify("overlaysClose")
         api.notify("#applicationList:open")

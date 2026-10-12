@@ -2,6 +2,11 @@ import { Capacitor } from "@capacitor/core"
 import { Share } from "@capacitor/share"
 
 import { uploadIcsFile } from "../../api/applications.js"
+import {
+  activateRealtime,
+  deactivateRealtime,
+  realtimeColumn,
+} from "../../realtime.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
@@ -24,6 +29,22 @@ export const ApplicationDetail = {
     entity.isConfirmingGiveUp ??= false
     entity.status ??= "idle"
     entity.error ??= null
+    activateRealtime(entity.id, {
+      table: "applications",
+      event: `#${entity.id}:applicationLoad`,
+      payload: (state) => state[entity.id].application_id,
+      match: (change, state) => {
+        const applicationId = state[entity.id]?.application_id
+        return (
+          applicationId != null &&
+          realtimeColumn(change, "id") === applicationId
+        )
+      },
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(entity.id)
   },
 
   render(entity, api) {

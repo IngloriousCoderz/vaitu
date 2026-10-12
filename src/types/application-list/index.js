@@ -1,3 +1,4 @@
+import { activateRealtime, deactivateRealtime } from "../../realtime.js"
 import * as handlers from "./handlers.js"
 import { ApplicationList as renderers } from "./template.js"
 
@@ -14,6 +15,14 @@ export const ApplicationList = {
     entity.status_filter ??= "all"
     entity.status ??= "idle"
     entity.error ??= null
+    activateRealtime(entity.id, {
+      table: "applications",
+      event: `#${entity.id}:applicationsLoad`,
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(entity.id)
   },
 
   render(entity, api) {

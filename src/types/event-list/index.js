@@ -1,12 +1,11 @@
+import { activateRealtime, deactivateRealtime } from "../../realtime.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
   categorySelect,
-  close,
   eventsLoad,
   filtersClear,
   filterSelect,
   filtersToggle,
-  open,
   periodSelect,
   regionSelect,
   search,
@@ -22,10 +21,20 @@ export const EventList = {
   regionSelect,
   filtersToggle,
   filtersClear,
-  open,
-  close,
   ...eventsLoad,
   ...renderers,
+
+  create(entity) {
+    renderers.create(entity)
+    activateRealtime(entity.id, {
+      table: "events",
+      event: `#${entity.id}:eventsLoad`,
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(entity.id)
+  },
 
   render(entity, api) {
     const id = entity.id

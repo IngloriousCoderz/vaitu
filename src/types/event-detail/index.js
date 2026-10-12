@@ -1,4 +1,9 @@
 import { DAY_MS } from "../../constants.js"
+import {
+  activateRealtime,
+  deactivateRealtime,
+  realtimeColumn,
+} from "../../realtime.js"
 import { isTicking, startTick } from "../../ticker.js"
 import { isProfileComplete } from "../profile/helpers.js"
 import * as handlers from "./handlers.js"
@@ -25,6 +30,19 @@ export const EventDetail = {
     entity.isSubmitted ??= false
     entity.applyStatus ??= "idle"
     entity.applyError ??= null
+    activateRealtime(entity.id, {
+      table: "events",
+      event: `#${entity.id}:detailLoad`,
+      payload: (state) => state[entity.id].event_id,
+      match: (change, state) => {
+        const eventId = state[entity.id]?.event_id
+        return eventId != null && realtimeColumn(change, "id") === eventId
+      },
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(entity.id)
   },
 
   render(entity, api) {

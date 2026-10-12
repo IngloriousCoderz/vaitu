@@ -6,7 +6,6 @@ import {
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
-import { registerRealtime, unregisterRealtime } from "../../realtime.js"
 
 export function open(entity, { application_id, returnTo }, api) {
   entity.application_id = application_id
@@ -14,12 +13,6 @@ export function open(entity, { application_id, returnTo }, api) {
   entity.application = null
   entity.motivation = ""
   entity.isConfirmingWithdraw = false
-  registerRealtime("application-detail", {
-    table: "applications",
-    filter: `id=eq.${application_id}`,
-    event: `#${entity.id}:applicationLoad`,
-    payload: application_id,
-  })
   api.notify(`#${entity.id}:applicationLoad`, application_id)
 }
 
@@ -30,7 +23,6 @@ export function back(entity, _, api) {
 }
 
 export function close(entity) {
-  unregisterRealtime("application-detail")
   entity.application_id = null
   entity.application = null
   entity.status = "idle"

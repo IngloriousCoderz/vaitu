@@ -1,3 +1,4 @@
+import { activateRealtime, deactivateRealtime } from "../../realtime.js"
 import * as handlers from "./handlers.js"
 import { MyEvents as renderers } from "./template.js"
 
@@ -14,6 +15,19 @@ export const MyEvents = {
     entity.confirming_delete ??= null
     entity.status ??= "idle"
     entity.error ??= null
+    activateRealtime(`${entity.id}:applications`, {
+      table: "applications",
+      event: `#${entity.id}:eventsLoad`,
+    })
+    activateRealtime(`${entity.id}:events`, {
+      table: "events",
+      event: `#${entity.id}:eventsLoad`,
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(`${entity.id}:applications`)
+    deactivateRealtime(`${entity.id}:events`)
   },
 
   render(entity, api) {

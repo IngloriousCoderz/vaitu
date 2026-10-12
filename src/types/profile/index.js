@@ -1,3 +1,8 @@
+import {
+  activateRealtime,
+  deactivateRealtime,
+  realtimeColumn,
+} from "../../realtime.js"
 import * as handlers from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
@@ -20,6 +25,21 @@ export const Profile = {
     entity.favoriteInput ??= ""
     entity.status ??= "idle"
     entity.error ??= null
+    activateRealtime(entity.id, {
+      table: "applications",
+      event: `#${entity.id}:profileLoad`,
+      match: (change, state) => {
+        const applicantId = state[entity.id]?.profile?.id
+        return (
+          applicantId != null &&
+          realtimeColumn(change, "applicant_id") === applicantId
+        )
+      },
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(entity.id)
   },
 
   render(entity, api) {

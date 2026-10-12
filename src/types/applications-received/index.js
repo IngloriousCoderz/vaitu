@@ -1,3 +1,8 @@
+import {
+  activateRealtime,
+  deactivateRealtime,
+  realtimeColumn,
+} from "../../realtime.js"
 import * as handlers from "./handlers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
 
@@ -26,6 +31,19 @@ export const ApplicationsReceived = {
     entity.items ??= []
     entity.status ??= "idle"
     entity.error ??= null
+    activateRealtime(entity.id, {
+      table: "applications",
+      event: `#${entity.id}:receivedLoad`,
+      payload: (state) => state[entity.id].event_id,
+      match: (change, state) => {
+        const eventId = state[entity.id]?.event_id
+        return eventId != null && realtimeColumn(change, "event_id") === eventId
+      },
+    })
+  },
+
+  destroy(entity) {
+    deactivateRealtime(entity.id)
   },
 
   render(entity, api) {
