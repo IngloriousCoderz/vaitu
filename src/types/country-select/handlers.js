@@ -35,9 +35,26 @@ function doOpen(entity) {
   entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
 }
 
+let outsideClickTimer = null
+
+function flushOutsideClick() {
+  // The combobox registers a one-shot document click when it opens. Choosing
+  // an option removes the menu before that click reaches the document, so the
+  // listener stays and closes the next open immediately.
+  if (outsideClickTimer) return
+  outsideClickTimer = setTimeout(() => {
+    const menuIsOpen = document.querySelector(".iw-combobox-dropdown")
+    if (!menuIsOpen) {
+      document.body?.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    }
+    outsideClickTimer = null
+  })
+}
+
 function doClose(entity) {
   entity.isOpen = false
   entity.focusedIndex = NO_FOCUSED_INDEX
+  flushOutsideClick()
 }
 
 /**
