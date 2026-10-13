@@ -132,19 +132,19 @@ export const EventCreate = {
             error: getFieldError(entity, "location"),
             onField,
           })}
-          <label class=${styles.field}>
+          <div class=${styles.field}>
             <span>Country</span>
             ${api.render("country-create")}
             ${fieldMessage(getFieldError(entity, "country"))}
-          </label>
+          </div>
           ${
             entity.country === ITALY
               ? html`
-                  <label class=${styles.field}>
+                  <div class=${styles.field}>
                     <span>Region</span>
                     ${api.render("region-create")}
                     ${fieldMessage(getFieldError(entity, "region"))}
-                  </label>
+                  </div>
                 `
               : this.renderTextField({
                   label: "Region",

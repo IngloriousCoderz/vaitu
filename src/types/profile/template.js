@@ -180,17 +180,17 @@ export const Profile = {
                               lowercase: true,
                               onField,
                             })}
-                            <label class=${styles.field}>
+                            <div class=${styles.field}>
                               <span>Country</span>
                               ${renderCountry()}
-                            </label>
+                            </div>
                             ${
                               shown.country === ITALY
                                 ? html`
-                                    <label class=${styles.field}>
+                                    <div class=${styles.field}>
                                       <span>Region</span>
                                       ${renderRegion()}
-                                    </label>
+                                    </div>
                                   `
                                 : this.renderEditField({
                                     label: "Region",

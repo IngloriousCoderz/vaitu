@@ -32,7 +32,7 @@ export const Onboarding = {
             Tell us where you are so organizers can find you.
           </p>
 
-          <label
+          <div
             class=${
               countryError
                 ? `${styles.field} ${styles.fieldError}`
@@ -41,14 +41,14 @@ export const Onboarding = {
           >
             <span>Country</span>
             ${renderCountry()} ${fieldMessage(countryError)}
-          </label>
+          </div>
           ${
             getFieldValue(entity, "country", "") === ITALY
               ? html`
-                  <label class=${styles.field}>
+                  <div class=${styles.field}>
                     <span>Region (optional)</span>
                     ${renderRegion()}
-                  </label>
+                  </div>
                 `
               : html`
                   <label class=${styles.field}>
