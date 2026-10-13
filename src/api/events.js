@@ -13,7 +13,7 @@ import {
   SINGULAR,
   ZERO,
 } from "../constants.js"
-import { uniqueRegions } from "../regions.js"
+import { canonicalRegion, uniqueRegions } from "../regions.js"
 import { randomId } from "../text.js"
 import { createEventSchema } from "../validation/events.js"
 import { supabase } from "./client.js"
@@ -56,16 +56,17 @@ const styleLabels = {
 // (snake_case, no conversion); only display derivations happen here.
 export function toViewModel(row) {
   const [year, month, day] = row.event_date.split("-").map(Number)
+  const region = canonicalRegion(row.region)
   const base = {
     id: row.id,
     category: row.category,
     status: row.status,
-    region: row.region,
+    region,
     event_date: row.event_date,
     eventInDays: Math.ceil(
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
-    subtitle: [row.location, row.region]
+    subtitle: [row.location, region]
       .filter(Boolean)
       .join(" • ")
       .concat(
@@ -94,7 +95,7 @@ export function toViewModel(row) {
       filterValue: row.details.genre,
       facts: [
         { label: "Headliner", value: row.details.headliner },
-        ...(row.region ? [{ label: "Region", value: row.region }] : []),
+        ...(region ? [{ label: "Region", value: region }] : []),
       ],
     }
   }
@@ -107,7 +108,7 @@ export function toViewModel(row) {
     filterValue: row.details.style,
     facts: [
       { label: "Spouses", value: couple },
-      ...(row.region ? [{ label: "Region", value: row.region }] : []),
+      ...(region ? [{ label: "Region", value: region }] : []),
     ],
   }
 }

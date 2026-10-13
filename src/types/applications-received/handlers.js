@@ -3,6 +3,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { supabase } from "../../api/client.js"
 import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
 import { firstError } from "../../forms.js"
+import { canonicalRegion } from "../../regions.js"
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id
@@ -132,7 +133,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
     entity.max_applicants = event.max_applicants
     entity.event_recap = {
       status: event.status,
-      location: [event.location, event.region, event.country]
+      location: [event.location, canonicalRegion(event.region), event.country]
         .filter(Boolean)
         .join(", "),
       event_date: event.event_date,

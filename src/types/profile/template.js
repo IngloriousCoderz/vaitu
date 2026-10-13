@@ -9,7 +9,7 @@ import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
 import { renderPage } from "../../page.js"
-import { ITALY, uniqueRegions } from "../../regions.js"
+import { canonicalRegion, ITALY, uniqueRegions } from "../../regions.js"
 import { capitalize } from "../../text.js"
 import { Icon } from "../icon/index.js"
 import {
@@ -250,7 +250,7 @@ export const Profile = {
                                 instagramUrl(profile.instagram_handle),
                               )}
                               ${this.renderRow("Country", profile.country)}
-                              ${this.renderRow("Region", profile.region)}
+                              ${this.renderRow("Region", canonicalRegion(profile.region))}
                               ${this.renderRow(
                                 "Favorite regions",
                                 uniqueRegions(profile.favorite_regions ?? []).join(
