@@ -51,11 +51,7 @@ export const ApplicationDetail = {
   },
 
   saveSubmit(entity, _, api) {
-    Form.validate(entity, {
-      validate: (values) => ({
-        motivation: values.motivation.trim() ? null : "Motivation is required",
-      }),
-    })
+    Form.validate(entity, { validate: validateMotivation })
     if (!entity.isValid) return
     entity.error = null
     api.notify(`#${entity.id}:save`, {
@@ -96,4 +92,12 @@ export const ApplicationDetail = {
       onBack: () => api.notify(`#${id}:back`),
     })
   },
+}
+
+function validateMotivation(values) {
+  const errors = {}
+  if (!(values.motivation ?? "").trim()) {
+    errors.motivation = "Motivation is required"
+  }
+  return errors
 }

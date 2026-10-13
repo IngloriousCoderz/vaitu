@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -78,7 +79,15 @@ export const LoginStep = {
             </div>
             ${ErrorLabel.render({ error: getFieldError(entity, "password") })}
           </label>
-          ${ErrorLabel.render({ error: entity.error })}
+          ${
+            entity.error
+              ? Alert.render({
+                  severity: "error",
+                  className: `vaitu-alert ${styles.error}`,
+                  children: entity.error,
+                })
+              : ""
+          }
           <div class=${styles.bottomBar}>
             ${SubmitButton.render({ isBusy, label: "Log in" })}
           </div>

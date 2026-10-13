@@ -14,6 +14,7 @@ import {
   SECONDS_PER_MINUTE,
 } from "../../constants.js"
 import { renderPage } from "../../page.js"
+import { ErrorLabel } from "../authentication/error-label.js"
 import {
   deadlineBadge,
   deadlineTone,
@@ -231,7 +232,9 @@ export const EventDetail = {
             @input=${(e) =>
               onField({ field: "motivation", value: e.target.value })}
           ></textarea>
-          ${fieldMessage(getFieldError(entity, "motivation"))}
+          ${ErrorLabel.render({
+            error: getFieldError(entity, "motivation"),
+          })}
         </label>
         ${Button.render({
           children: sending ? "Sending…" : "Apply",
@@ -261,10 +264,6 @@ export const EventDetail = {
 const toneClass = {
   closing: styles.badgeClosing,
   closed: styles.badgeClosed,
-}
-
-function fieldMessage(message) {
-  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }
 
 function detailToneClass(event) {

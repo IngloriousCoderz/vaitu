@@ -5,6 +5,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
 import { ITALY } from "../../regions.js"
+import { ErrorLabel } from "../authentication/error-label.js"
 import styles from "./style.module.css"
 
 export const Onboarding = {
@@ -40,7 +41,7 @@ export const Onboarding = {
             }
           >
             <span>Country</span>
-            ${renderCountry()} ${fieldMessage(countryError)}
+            ${renderCountry()} ${ErrorLabel.render({ error: countryError })}
           </div>
           ${
             getFieldValue(entity, "country", "") === ITALY
@@ -126,8 +127,4 @@ export const Onboarding = {
       ],
     })
   },
-}
-
-function fieldMessage(message) {
-  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }

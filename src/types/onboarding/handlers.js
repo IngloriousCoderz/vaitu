@@ -24,12 +24,6 @@ export function skip(entity, _, api) {
   api.notify("#authentication:onboardingFinish")
 }
 
-function validateOnboarding(values) {
-  return {
-    country: values.country.trim() ? null : "Pick a country",
-  }
-}
-
 export function saveSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateOnboarding })
   if (!entity.isValid) return
@@ -76,3 +70,9 @@ export const save = handleAsync("save", {
     entity.error = err.message ?? "Failed to save"
   },
 })
+
+function validateOnboarding(values) {
+  const errors = {}
+  if (!(values.country ?? "").trim()) errors.country = "Pick a country"
+  return errors
+}

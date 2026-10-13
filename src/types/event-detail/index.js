@@ -52,11 +52,7 @@ export const EventDetail = {
   },
 
   applySubmit(entity, _, api) {
-    Form.validate(entity, {
-      validate: (values) => ({
-        motivation: values.motivation.trim() ? null : "Motivation is required",
-      }),
-    })
+    Form.validate(entity, { validate: validateApply })
     if (!entity.isValid) return
     entity.applyError = null
     api.notify(`#${entity.id}:applicationSubmit`)
@@ -82,6 +78,14 @@ export const EventDetail = {
       },
     })
   },
+}
+
+function validateApply(values) {
+  const errors = {}
+  if (!(values.motivation ?? "").trim()) {
+    errors.motivation = "Motivation is required"
+  }
+  return errors
 }
 
 function needsClock(event) {

@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -35,7 +36,15 @@ export const EmailStep = {
             />
             ${ErrorLabel.render({ error: getFieldError(entity, "email") })}
           </label>
-          ${ErrorLabel.render({ error: entity.error })}
+          ${
+            entity.error
+              ? Alert.render({
+                  severity: "error",
+                  className: `vaitu-alert ${styles.error}`,
+                  children: entity.error,
+                })
+              : ""
+          }
           <div class=${styles.bottomBar}>
             ${SubmitButton.render({
               isBusy,

@@ -6,14 +6,11 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
+import { ErrorLabel } from "../authentication/error-label.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
-
-function fieldMessage(message) {
-  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
-}
 
 const statusColors = {
   pending: "default",
@@ -131,9 +128,9 @@ export const ApplicationDetail = {
                                     value: e.target.value,
                                   })}
                               ></textarea>
-                              ${fieldMessage(
-                                getFieldError(entity, "motivation"),
-                              )}
+                              ${ErrorLabel.render({
+                                error: getFieldError(entity, "motivation"),
+                              })}
                             </label>
                             ${Button.render({
                               children:

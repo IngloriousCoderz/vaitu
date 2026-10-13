@@ -8,6 +8,7 @@ import { getFieldError } from "@inglorious/web/form"
 import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants.js"
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
+import { ErrorLabel } from "../authentication/error-label.js"
 import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"
 
@@ -92,12 +93,12 @@ export const ApplicationsReceived = {
                                         @input=${(e) =>
                                           onReopenDeadline(e.target.value)}
                                       />
-                                      ${fieldMessage(
-                                        getFieldError(
+                                      ${ErrorLabel.render({
+                                        error: getFieldError(
                                           entity,
                                           "reopen_deadline",
                                         ),
-                                      )}
+                                      })}
                                     </label>
                                   `
                                 : ""
@@ -433,10 +434,6 @@ function formatDay(iso) {
     day: "numeric",
     year: "numeric",
   })
-}
-
-function fieldMessage(message) {
-  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }
 
 function formatDeadline(iso) {

@@ -37,12 +37,6 @@
   border-color: var(--verror);
 }
 
-.fieldMessage {
-  margin: var(--iw-space-1) 0 0;
-  font-size: var(--iw-font-size-sm);
-  color: var(--verror);
-}
-
 .error {
   /* Spacing only. Colour, surface, radius, padding and font-size come from
      the iw Alert calibrated as .vaitu-alert in public/style.css. */

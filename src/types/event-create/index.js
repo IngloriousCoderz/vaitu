@@ -2,46 +2,13 @@ import { Form } from "@inglorious/web/form"
 
 import {
   DATETIME_LOCAL_LENGTH,
-  MIN_TEXT_LENGTH,
+  DEFAULT_MAX_APPLICANTS,
   ZERO,
 } from "../../constants.js"
 import { isTicking, startTick } from "../../ticker.js"
 import { categoryById } from "../event-list/categories.js"
 import * as handlers from "./handlers.js"
 import { EventCreate as renderers } from "./template.js"
-
-function required(value) {
-  return (value ?? "").trim().length >= MIN_TEXT_LENGTH ? null : "Required"
-}
-
-function validateEvent(values) {
-  const details = values.details ?? {}
-  const deadline = values.application_deadline ?? ""
-  const deadlineOk =
-    deadline.length === DATETIME_LOCAL_LENGTH &&
-    !Number.isNaN(new Date(deadline).getTime())
-  const max = Number(values.max_applicants)
-  const errors = {
-    location: required(values.location),
-    country: required(values.country) ? "Pick a country" : null,
-    region: required(values.region),
-    event_date: /^\d{4}-\d{2}-\d{2}$/.test(values.event_date ?? "")
-      ? null
-      : "Pick a date",
-    application_deadline: deadlineOk ? null : "Pick a deadline",
-    max_applicants:
-      Number.isInteger(max) && max > ZERO ? null : "Enter a positive number",
-    details: {},
-  }
-  if (values.category === "festival") {
-    errors.title = required(values.title)
-    errors.details.headliner = required(details.headliner)
-  } else {
-    errors.details.spouse_first_name_1 = required(details.spouse_first_name_1)
-    errors.details.spouse_first_name_2 = required(details.spouse_first_name_2)
-  }
-  return errors
-}
 
 const {
   save,
@@ -65,22 +32,25 @@ export const EventCreate = {
   create(entity) {
     entity.isOpen ??= false
     entity.editing_event_id ??= null
-    entity.category ??= "wedding"
-    entity.title ??= ""
-    entity.location ??= ""
-    entity.country ??= ""
-    entity.region ??= ""
-    entity.event_date ??= ""
-    entity.application_deadline ??= ""
-    entity.max_applicants ??= 5
-    entity.details ??= {}
+    entity.initialValues = {
+      category: "wedding",
+      title: "",
+      location: "",
+      country: "",
+      region: "",
+      event_date: "",
+      application_deadline: "",
+      max_applicants: DEFAULT_MAX_APPLICANTS,
+      details: {},
+    }
+    Form.create(entity)
     entity.audio_url ??= null
     entity.audio_preview_url ??= null
     entity.is_recording ??= false
     entity.is_audio_open ??= false
     entity.is_transcribing ??= false
     entity.is_parsing ??= false
-    entity.audio_elapsed ??= 0
+    entity.audio_elapsed ??= ZERO
     entity.audio_transcript ??= null
     entity.audio_error ??= null
     entity.status ??= "idle"
@@ -88,31 +58,31 @@ export const EventCreate = {
   },
 
   saveSubmit(entity, _, api) {
-    const title_from = categoryById(entity.category).title_from
-    const title = title_from.input
-      ? entity.title
-      : title_from.fields
-          .map((field) => (entity.details[field] ?? "").trim())
-          .join(title_from.join)
-    const payload = {
-      editing_event_id: entity.editing_event_id,
-      category: entity.category,
-      title,
-      location: entity.location,
-      country: entity.country,
-      region: entity.region,
-      event_date: entity.event_date,
-      application_deadline: entity.application_deadline,
-      max_applicants: entity.max_applicants,
-      audio_url: entity.audio_url,
-      audio_transcript: entity.audio_transcript,
-      details: entity.details,
-    }
-    entity.values = payload
     Form.validate(entity, { validate: validateEvent })
     if (!entity.isValid) return
+    const values = entity.values
+    const details = values.details ?? {}
+    const title_from = categoryById(values.category).title_from
+    const title = title_from.input
+      ? values.title
+      : title_from.fields
+          .map((field) => (details[field] ?? "").trim())
+          .join(title_from.join)
     entity.error = null
-    api.notify(`#${entity.id}:save`, payload)
+    api.notify(`#${entity.id}:save`, {
+      editing_event_id: entity.editing_event_id,
+      category: values.category,
+      title,
+      location: values.location,
+      country: values.country,
+      region: values.region,
+      event_date: values.event_date,
+      application_deadline: values.application_deadline,
+      max_applicants: values.max_applicants,
+      audio_url: entity.audio_url,
+      audio_transcript: entity.audio_transcript,
+      details,
+    })
   },
 
   render(entity, api) {
@@ -145,4 +115,39 @@ export const EventCreate = {
       api,
     )
   },
+}
+
+function validateEvent(values) {
+  const errors = {}
+  const detailErrors = {}
+  const details = values.details ?? {}
+  const deadline = values.application_deadline ?? ""
+  const deadlineOk =
+    deadline.length === DATETIME_LOCAL_LENGTH &&
+    !Number.isNaN(new Date(deadline).getTime())
+  const max = Number(values.max_applicants)
+
+  if (!(values.location ?? "").trim()) errors.location = "Required"
+  if (!(values.country ?? "").trim()) errors.country = "Pick a country"
+  if (!(values.region ?? "").trim()) errors.region = "Required"
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(values.event_date ?? "")) {
+    errors.event_date = "Pick a date"
+  }
+  if (!deadlineOk) errors.application_deadline = "Pick a deadline"
+  if (!(Number.isInteger(max) && max > ZERO)) {
+    errors.max_applicants = "Enter a positive number"
+  }
+  if (values.category === "festival") {
+    if (!(values.title ?? "").trim()) errors.title = "Required"
+    if (!(details.headliner ?? "").trim()) detailErrors.headliner = "Required"
+  } else {
+    if (!(details.spouse_first_name_1 ?? "").trim()) {
+      detailErrors.spouse_first_name_1 = "Required"
+    }
+    if (!(details.spouse_first_name_2 ?? "").trim()) {
+      detailErrors.spouse_first_name_2 = "Required"
+    }
+  }
+  if (Object.keys(detailErrors).length) errors.details = detailErrors
+  return errors
 }

@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form, getFieldValue } from "@inglorious/web/form"
 import fixWebmDuration from "fix-webm-duration"
 
 import {
@@ -38,24 +39,6 @@ let pendingPath = null
 let pendingUrl = null
 let removedPath = null
 let recordStartedAt = null
-
-function clearFieldError(entity, path) {
-  if (!entity.errors) return
-  const [head, tail] = path.split(".")
-  if (tail) {
-    if (entity.errors[head]) entity.errors[head][tail] = null
-  } else {
-    entity.errors[head] = null
-  }
-  entity.isValid = !hasFieldError(entity.errors)
-}
-
-function hasFieldError(errors) {
-  if (errors == null || errors === "") return false
-  if (typeof errors === "string") return true
-  if (typeof errors !== "object") return false
-  return Object.values(errors).some(hasFieldError)
-}
 
 function audioPathFromUrl(url) {
   if (typeof url !== "string") return null
@@ -113,15 +96,7 @@ export function open(entity, { event_id } = {}, api) {
   entity.status = "idle"
   entity.error = null
   entity.editing_event_id = event_id ?? null
-  entity.category = "wedding"
-  entity.title = ""
-  entity.location = ""
-  entity.country = ""
-  entity.region = ""
-  entity.event_date = ""
-  entity.application_deadline = ""
-  entity.max_applicants = 5
-  entity.details = {}
+  Form.reset(entity)
   entity.audio_url = null
   entity.audio_preview_url = null
   entity.is_recording = false
@@ -131,8 +106,6 @@ export function open(entity, { event_id } = {}, api) {
   entity.audio_elapsed = ZERO
   entity.audio_transcript = null
   entity.audio_error = null
-  entity.errors = {}
-  entity.isValid = true
   releaseRecorder()
   clearPendingAudio()
   api.notify("#country-create:sync", "")
@@ -155,15 +128,17 @@ export function overlaysClose(entity) {
 
 export function fieldSet(entity, { field, value }, api) {
   if (field === "country") {
-    const previous = entity.country
-    entity.country = value
-    entity.region = regionAfterCountryChange(previous, value, entity.region)
-    clearFieldError(entity, "country")
-    clearFieldError(entity, "region")
-    api?.notify("#region-create:sync", entity.region)
+    const previous = getFieldValue(entity, "country", "")
+    const region = regionAfterCountryChange(
+      previous,
+      value,
+      getFieldValue(entity, "region", ""),
+    )
+    Form.fieldChange(entity, { path: "country", value })
+    Form.fieldChange(entity, { path: "region", value: region })
+    api?.notify("#region-create:sync", region)
   } else {
-    entity[field] = value
-    clearFieldError(entity, field)
+    Form.fieldChange(entity, { path: field, value })
   }
   entity.error = null
 }
@@ -190,38 +165,39 @@ function toLocalInput(iso) {
 // Wedding default: deadline ~45 days before the event, end of day.
 // Only fills when empty (never overwrites the sender) and never in the past.
 function autofillDeadline(entity) {
+  const eventDate = getFieldValue(entity, "event_date", "")
   if (
-    entity.application_deadline ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(entity.event_date ?? "")
+    getFieldValue(entity, "application_deadline", "") ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(eventDate)
   ) {
     return
   }
-  const candidate = `${shiftDate(entity.event_date, APPLICATION_DEADLINE_LEAD_DAYS)}T${DEADLINE_END_OF_DAY}`
+  const candidate = `${shiftDate(eventDate, APPLICATION_DEADLINE_LEAD_DAYS)}T${DEADLINE_END_OF_DAY}`
   if (new Date(candidate).getTime() > Date.now()) {
-    entity.application_deadline = candidate
+    Form.fieldChange(entity, {
+      path: "application_deadline",
+      value: candidate,
+    })
   }
 }
 
 export function eventDateSet(entity, { value }) {
-  entity.event_date = value
+  Form.fieldChange(entity, { path: "event_date", value })
   entity.error = null
-  clearFieldError(entity, "event_date")
   autofillDeadline(entity)
-  clearFieldError(entity, "application_deadline")
 }
 
 export function detailFieldSet(entity, { field, value }) {
-  entity.details = { ...entity.details, [field]: value }
+  Form.fieldChange(entity, { path: `details.${field}`, value })
   entity.error = null
-  clearFieldError(entity, `details.${field}`)
 }
 
 export function categorySelect(entity, category) {
-  entity.category = category
-  entity.details = {}
-  entity.error = null
+  Form.fieldChange(entity, { path: "category", value: category })
+  Form.fieldChange(entity, { path: "details", value: {} })
   entity.errors = {}
   entity.isValid = true
+  entity.error = null
 }
 
 export const audioRecord = handleAsync("audioRecord", {
@@ -381,7 +357,7 @@ export const audioParse = handleAsync("audioParse", {
   success(entity, fields, api) {
     entity.is_parsing = false
     if (!fields || typeof fields !== "object") return
-    const details = { ...entity.details }
+    const details = { ...getFieldValue(entity, "details", {}) }
     for (const field of FILLABLE_DETAILS) {
       const value = fields[field]
       if (typeof value !== "string" || !value.trim()) continue
@@ -390,29 +366,43 @@ export const audioParse = handleAsync("audioParse", {
       }
       details[field] = value.trim()
     }
-    entity.details = details
-    const previousCountry = entity.country
+    Form.fieldChange(entity, { path: "details", value: details })
+    const previousCountry = getFieldValue(entity, "country", "")
     if (typeof fields.location === "string" && fields.location.trim()) {
-      entity.location = fields.location.trim()
+      Form.fieldChange(entity, {
+        path: "location",
+        value: fields.location.trim(),
+      })
     }
     if (typeof fields.country === "string" && fields.country.trim()) {
-      entity.country = fields.country.trim()
+      Form.fieldChange(entity, {
+        path: "country",
+        value: fields.country.trim(),
+      })
     }
     if (typeof fields.region === "string" && fields.region.trim()) {
-      entity.region = fields.region.trim()
+      Form.fieldChange(entity, {
+        path: "region",
+        value: fields.region.trim(),
+      })
     }
-    entity.region = regionAfterCountryChange(
+    const country = getFieldValue(entity, "country", "")
+    const region = regionAfterCountryChange(
       previousCountry,
-      entity.country,
-      entity.region,
+      country,
+      getFieldValue(entity, "region", ""),
     )
-    api.notify("#country-create:sync", entity.country ?? "")
-    api.notify("#region-create:sync", entity.region ?? "")
+    Form.fieldChange(entity, { path: "region", value: region })
+    api.notify("#country-create:sync", country)
+    api.notify("#region-create:sync", region)
     if (
       typeof fields.event_date === "string" &&
       /^\d{4}-\d{2}-\d{2}$/.test(fields.event_date)
     ) {
-      entity.event_date = fields.event_date
+      Form.fieldChange(entity, {
+        path: "event_date",
+        value: fields.event_date,
+      })
       autofillDeadline(entity)
     }
   },
@@ -525,23 +515,29 @@ export const editLoad = handleAsync("editLoad", {
   },
   success(entity, row, api) {
     entity.status = "ready"
-    entity.category = row.category
-    entity.title = row.title
-    entity.location = row.location
-    entity.country = row.country
-    entity.region = regionForCountry(row.country, row.region)
-    entity.event_date = row.event_date
-    entity.application_deadline = toLocalInput(row.application_deadline)
-    entity.max_applicants = row.max_applicants
-    entity.details = row.details
+    const country = row.country ?? ""
+    const region = regionForCountry(row.country, row.region)
+    entity.values = {
+      category: row.category ?? "wedding",
+      title: row.title ?? "",
+      location: row.location ?? "",
+      country,
+      region,
+      event_date: row.event_date ?? "",
+      application_deadline: toLocalInput(row.application_deadline),
+      max_applicants: row.max_applicants ?? DEFAULT_MAX_APPLICANTS,
+      details: row.details ?? {},
+    }
+    entity.errors = {}
+    entity.isValid = true
     entity.audio_url = row.audio_url ?? null
     entity.audio_preview_url = null
     entity.is_recording = false
     entity.is_audio_open = false
     entity.audio_transcript = row.transcript ?? null
     entity.audio_error = null
-    api.notify("#country-create:sync", entity.country ?? "")
-    api.notify("#region-create:sync", entity.region ?? "")
+    api.notify("#country-create:sync", country)
+    api.notify("#region-create:sync", region)
   },
   error(entity, err) {
     entity.status = "error"

@@ -3,33 +3,8 @@ import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { MIN_PASSWORD_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
+
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-function validateEmail(values) {
-  return {
-    email: EMAIL.test(values.email.trim()) ? null : "Enter a valid email",
-  }
-}
-
-function validateLogin(values) {
-  return {
-    password: values.password ? null : "Password is required",
-  }
-}
-
-function validateSignup(values) {
-  return {
-    full_name: values.full_name.trim() ? null : "Name is required",
-    password:
-      values.password.length < MIN_PASSWORD_LENGTH
-        ? "Password must be at least 6 characters"
-        : null,
-    confirmPassword:
-      values.password === values.confirmPassword
-        ? null
-        : "Passwords do not match",
-  }
-}
 
 export function fieldChange(entity, payload) {
   Form.fieldChange(entity, payload)
@@ -225,3 +200,29 @@ export const signup = handleAsync("signup", {
     entity.error = err.message ?? "Sign up failed"
   },
 })
+
+function validateEmail(values) {
+  const errors = {}
+  if (!EMAIL.test((values.email ?? "").trim())) {
+    errors.email = "Enter a valid email"
+  }
+  return errors
+}
+
+function validateLogin(values) {
+  const errors = {}
+  if (!values.password) errors.password = "Password is required"
+  return errors
+}
+
+function validateSignup(values) {
+  const errors = {}
+  if (!(values.full_name ?? "").trim()) errors.full_name = "Name is required"
+  if ((values.password ?? "").length < MIN_PASSWORD_LENGTH) {
+    errors.password = "Password must be at least 6 characters"
+  }
+  if (values.password !== values.confirmPassword) {
+    errors.confirmPassword = "Passwords do not match"
+  }
+  return errors
+}

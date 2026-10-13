@@ -1,0 +1,5 @@
+.message {
+  margin: var(--iw-space-1) 0 0;
+  font-size: var(--iw-font-size-sm);
+  color: var(--verror);
+}

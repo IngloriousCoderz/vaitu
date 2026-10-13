@@ -5,25 +5,6 @@ import { supabase } from "../../api/client.js"
 import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
 import { canonicalRegion } from "../../regions.js"
 
-function validateReopen(values) {
-  const value = values.reopen_deadline
-  if (!value) return { reopen_deadline: null }
-  const iso =
-    value.length === DATETIME_LOCAL_LENGTH
-      ? new Date(value).toISOString()
-      : value
-  return {
-    reopen_deadline:
-      new Date(iso).getTime() <= Date.now() ? "Pick a future deadline" : null,
-  }
-}
-
-function clearReopenError(entity) {
-  if (!entity.errors) return
-  entity.errors.reopen_deadline = null
-  entity.isValid = true
-}
-
 export function open(entity, event_id, api) {
   entity.event_id = event_id
   entity.event_title = ""
@@ -236,3 +217,23 @@ export const eventReopen = handleAsync("eventReopen", {
     entity.error = err.message ?? "Failed to reopen event"
   },
 })
+
+function clearReopenError(entity) {
+  if (!entity.errors) return
+  entity.errors.reopen_deadline = null
+  entity.isValid = true
+}
+
+function validateReopen(values) {
+  const errors = {}
+  const value = values.reopen_deadline
+  if (!value) return errors
+  const iso =
+    value.length === DATETIME_LOCAL_LENGTH
+      ? new Date(value).toISOString()
+      : value
+  if (new Date(iso).getTime() <= Date.now()) {
+    errors.reopen_deadline = "Pick a future deadline"
+  }
+  return errors
+}
