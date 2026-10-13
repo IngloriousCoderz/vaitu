@@ -4,6 +4,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
+import { getFieldError } from "@inglorious/web/form"
 
 import {
   AUDIO_MAX_SECONDS,
@@ -107,6 +108,7 @@ export const EventCreate = {
             this.renderDetailField({
               spec,
               details: entity.details,
+              error: getFieldError(entity, `details.${spec.field}`),
               onDetailField,
             }),
           )}
@@ -118,6 +120,7 @@ export const EventCreate = {
                   field: "title",
                   value: entity.title,
                   placeholder: "E.g. Sundance Beats",
+                  error: getFieldError(entity, "title"),
                   onField,
                 })
           }
@@ -126,11 +129,13 @@ export const EventCreate = {
             field: "location",
             value: entity.location,
             placeholder: "Venue Name",
+            error: getFieldError(entity, "location"),
             onField,
           })}
           <label class=${styles.field}>
             <span>Country</span>
             ${api.render("country-create")}
+            ${fieldMessage(getFieldError(entity, "country"))}
           </label>
           ${
             entity.country === ITALY
@@ -138,6 +143,7 @@ export const EventCreate = {
                   <label class=${styles.field}>
                     <span>Region</span>
                     ${api.render("region-create")}
+                    ${fieldMessage(getFieldError(entity, "region"))}
                   </label>
                 `
               : this.renderTextField({
@@ -145,6 +151,7 @@ export const EventCreate = {
                   field: "region",
                   value: entity.region,
                   placeholder: "E.g. Tuscany",
+                  error: getFieldError(entity, "region"),
                   onField,
                 })
           }
@@ -152,6 +159,7 @@ export const EventCreate = {
             this.renderDetailField({
               spec,
               details: entity.details,
+              error: getFieldError(entity, `details.${spec.field}`),
               onDetailField,
             }),
           )}
@@ -160,6 +168,7 @@ export const EventCreate = {
             field: "event_date",
             value: entity.event_date,
             type: "date",
+            error: getFieldError(entity, "event_date"),
             onField,
           })}
           ${this.renderTextField({
@@ -167,6 +176,7 @@ export const EventCreate = {
             field: "application_deadline",
             value: entity.application_deadline,
             type: "datetime-local",
+            error: getFieldError(entity, "application_deadline"),
             onField,
           })}
           ${this.renderTextField({
@@ -174,6 +184,7 @@ export const EventCreate = {
             field: "max_applicants",
             value: entity.max_applicants,
             type: "number",
+            error: getFieldError(entity, "max_applicants"),
             onField,
           })}
           ${
@@ -328,7 +339,7 @@ export const EventCreate = {
     `
   },
 
-  renderDetailField({ spec, details, onDetailField }) {
+  renderDetailField({ spec, details, error, onDetailField }) {
     if (spec.type === "select") {
       return html`
         <label class=${styles.field}>
@@ -344,6 +355,7 @@ export const EventCreate = {
             ),
             onChange: (value) => onDetailField({ field: spec.field, value }),
           })}
+          ${fieldMessage(error)}
         </label>
       `
     }
@@ -352,6 +364,7 @@ export const EventCreate = {
       label: spec.label,
       field: spec.field,
       value: details[spec.field],
+      error,
       onField: ({ field, value }) => onDetailField({ field, value }),
     })
   },
@@ -362,6 +375,7 @@ export const EventCreate = {
     value = "",
     placeholder = "",
     type,
+    error,
     onField,
   }) {
     return html`
@@ -373,9 +387,14 @@ export const EventCreate = {
           .value=${value}
           @input=${(e) => onField({ field, value: e.target.value })}
         />
+        ${fieldMessage(error)}
       </label>
     `
   },
+}
+
+function fieldMessage(message) {
+  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }
 
 function formatElapsed(totalSeconds) {

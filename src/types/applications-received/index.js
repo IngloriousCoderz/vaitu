@@ -26,6 +26,8 @@ export const ApplicationsReceived = {
     entity.event_status ??= "open"
     entity.event_deadline ??= null
     entity.event_recap ??= null
+    entity.initialValues = { reopen_deadline: "" }
+    Form.create(entity)
     entity.reopen_deadline ??= ""
     entity.max_applicants ??= 5
     entity.expanded_application_id ??= null

@@ -1,6 +1,5 @@
 import { Form } from "@inglorious/web/form"
 
-import { initForm } from "../../forms.js"
 import {
   activateRealtime,
   deactivateRealtime,
@@ -25,14 +24,15 @@ export const Profile = {
     entity.stats ??= null
     entity.isEditing ??= false
     entity.isMenuOpen ??= false
-    initForm(entity, {
+    entity.initialValues = {
       full_name: "",
       website: "",
       instagram_handle: "",
       country: "",
       region: "",
       favorite_regions: [],
-    })
+    }
+    Form.create(entity)
     entity.favoriteInput ??= ""
     entity.status ??= "idle"
     entity.error ??= null

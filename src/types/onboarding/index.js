@@ -1,6 +1,5 @@
 import { Form } from "@inglorious/web/form"
 
-import { initForm } from "../../forms.js"
 import * as handlers from "./handlers.js"
 import { Onboarding as renderers } from "./template.js"
 
@@ -13,12 +12,13 @@ export const Onboarding = {
   ...renderers,
 
   create(entity) {
-    initForm(entity, {
+    entity.initialValues = {
       country: "",
       region: "",
       website: "",
       instagram: "",
-    })
+    }
+    Form.create(entity)
     entity.status ??= "idle"
     entity.error ??= null
   },

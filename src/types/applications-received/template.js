@@ -3,6 +3,7 @@ import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
+import { getFieldError } from "@inglorious/web/form"
 
 import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants.js"
 import { renderPage } from "../../page.js"
@@ -91,6 +92,12 @@ export const ApplicationsReceived = {
                                         @input=${(e) =>
                                           onReopenDeadline(e.target.value)}
                                       />
+                                      ${fieldMessage(
+                                        getFieldError(
+                                          entity,
+                                          "reopen_deadline",
+                                        ),
+                                      )}
                                     </label>
                                   `
                                 : ""
@@ -426,6 +433,10 @@ function formatDay(iso) {
     day: "numeric",
     year: "numeric",
   })
+}
+
+function fieldMessage(message) {
+  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }
 
 function formatDeadline(iso) {

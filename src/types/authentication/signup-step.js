@@ -1,6 +1,6 @@
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
-import { getFieldValue } from "@inglorious/web/form"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorLabel } from "./error-label"
 import styles from "./style.module.css"
@@ -69,6 +69,7 @@ export const SignupStep = {
               @input=${(e) =>
                 onField({ field: "full_name", value: e.target.value })}
             />
+            ${ErrorLabel.render({ error: getFieldError(entity, "full_name") })}
           </label>
           <label class=${styles.field}>
             <span>Password</span>
@@ -97,6 +98,7 @@ export const SignupStep = {
                 })}
               </button>
             </div>
+            ${ErrorLabel.render({ error: getFieldError(entity, "password") })}
           </label>
           <label class=${styles.field}>
             <span>Confirm password</span>
@@ -125,6 +127,9 @@ export const SignupStep = {
                 })}
               </button>
             </div>
+            ${ErrorLabel.render({
+              error: getFieldError(entity, "confirmPassword"),
+            })}
           </label>
           ${ErrorLabel.render({ error: entity.error })}
           <div class=${styles.bottomBar}>

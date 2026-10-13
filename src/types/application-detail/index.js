@@ -3,7 +3,6 @@ import { Share } from "@capacitor/share"
 import { Form } from "@inglorious/web/form"
 
 import { uploadIcsFile } from "../../api/applications.js"
-import { firstError, initForm } from "../../forms.js"
 import {
   activateRealtime,
   deactivateRealtime,
@@ -27,7 +26,8 @@ export const ApplicationDetail = {
     entity.application_id ??= null
     entity.returnTo ??= null
     entity.application ??= null
-    initForm(entity, { motivation: "" })
+    entity.initialValues = { motivation: "" }
+    Form.create(entity)
     entity.isConfirmingWithdraw ??= false
     entity.isConfirmingGiveUp ??= false
     entity.status ??= "idle"
@@ -51,20 +51,12 @@ export const ApplicationDetail = {
   },
 
   saveSubmit(entity, _, api) {
-    api.notify(`#${entity.id}:validate`, {
+    Form.validate(entity, {
       validate: (values) => ({
         motivation: values.motivation.trim() ? null : "Motivation is required",
       }),
     })
-    api.notify(`#${entity.id}:saveIfValid`)
-  },
-
-  saveIfValid(entity, _, api) {
-    const error = firstError(entity.errors)
-    if (error) {
-      entity.error = error
-      return
-    }
+    if (!entity.isValid) return
     entity.error = null
     api.notify(`#${entity.id}:save`, {
       application_id: entity.application_id,

@@ -1,6 +1,5 @@
 import { Form } from "@inglorious/web/form"
 
-import { initForm } from "../../forms.js"
 import * as handlers from "./handlers.js"
 import { Authentication as renderers } from "./template.js"
 
@@ -15,12 +14,13 @@ export const Authentication = {
   ...renderers,
 
   create(entity) {
-    initForm(entity, {
+    entity.initialValues = {
       email: "",
       password: "",
       confirmPassword: "",
       full_name: "",
-    })
+    }
+    Form.create(entity)
     entity.step ??= "email"
     entity.mode ??= "login"
     entity.isOpen ??= false

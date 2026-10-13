@@ -39,6 +39,24 @@ let pendingUrl = null
 let removedPath = null
 let recordStartedAt = null
 
+function clearFieldError(entity, path) {
+  if (!entity.errors) return
+  const [head, tail] = path.split(".")
+  if (tail) {
+    if (entity.errors[head]) entity.errors[head][tail] = null
+  } else {
+    entity.errors[head] = null
+  }
+  entity.isValid = !hasFieldError(entity.errors)
+}
+
+function hasFieldError(errors) {
+  if (errors == null || errors === "") return false
+  if (typeof errors === "string") return true
+  if (typeof errors !== "object") return false
+  return Object.values(errors).some(hasFieldError)
+}
+
 function audioPathFromUrl(url) {
   if (typeof url !== "string") return null
   const [, path] = url.split("/event-audio/")
@@ -113,6 +131,8 @@ export function open(entity, { event_id } = {}, api) {
   entity.audio_elapsed = ZERO
   entity.audio_transcript = null
   entity.audio_error = null
+  entity.errors = {}
+  entity.isValid = true
   releaseRecorder()
   clearPendingAudio()
   api.notify("#country-create:sync", "")
@@ -138,9 +158,12 @@ export function fieldSet(entity, { field, value }, api) {
     const previous = entity.country
     entity.country = value
     entity.region = regionAfterCountryChange(previous, value, entity.region)
+    clearFieldError(entity, "country")
+    clearFieldError(entity, "region")
     api?.notify("#region-create:sync", entity.region)
   } else {
     entity[field] = value
+    clearFieldError(entity, field)
   }
   entity.error = null
 }
@@ -182,18 +205,23 @@ function autofillDeadline(entity) {
 export function eventDateSet(entity, { value }) {
   entity.event_date = value
   entity.error = null
+  clearFieldError(entity, "event_date")
   autofillDeadline(entity)
+  clearFieldError(entity, "application_deadline")
 }
 
 export function detailFieldSet(entity, { field, value }) {
   entity.details = { ...entity.details, [field]: value }
   entity.error = null
+  clearFieldError(entity, `details.${field}`)
 }
 
 export function categorySelect(entity, category) {
   entity.category = category
   entity.details = {}
   entity.error = null
+  entity.errors = {}
+  entity.isValid = true
 }
 
 export const audioRecord = handleAsync("audioRecord", {

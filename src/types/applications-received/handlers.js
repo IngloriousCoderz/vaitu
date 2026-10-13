@@ -1,9 +1,28 @@
 import { handleAsync } from "@inglorious/store/async"
+import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
-import { firstError } from "../../forms.js"
 import { canonicalRegion } from "../../regions.js"
+
+function validateReopen(values) {
+  const value = values.reopen_deadline
+  if (!value) return { reopen_deadline: null }
+  const iso =
+    value.length === DATETIME_LOCAL_LENGTH
+      ? new Date(value).toISOString()
+      : value
+  return {
+    reopen_deadline:
+      new Date(iso).getTime() <= Date.now() ? "Pick a future deadline" : null,
+  }
+}
+
+function clearReopenError(entity) {
+  if (!entity.errors) return
+  entity.errors.reopen_deadline = null
+  entity.isValid = true
+}
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id
@@ -11,6 +30,8 @@ export function open(entity, event_id, api) {
   entity.event_deadline = null
   entity.event_recap = null
   entity.reopen_deadline = ""
+  entity.confirming_reopen = false
+  clearReopenError(entity)
   entity.max_applicants = 5
   entity.items = []
   entity.expanded_application_id = null
@@ -27,6 +48,8 @@ export function close(entity) {
   entity.expanded_application_id = null
   entity.confirming_assign = null
   entity.confirming_reopen = false
+  entity.reopen_deadline = ""
+  clearReopenError(entity)
   entity.status = "idle"
   entity.error = null
 }
@@ -54,45 +77,25 @@ export function reopenAsk(entity) {
   entity.confirming_reopen = true
   entity.reopen_deadline = ""
   entity.confirming_assign = null
+  clearReopenError(entity)
 }
 
 export function reopenCancel(entity) {
   entity.confirming_reopen = false
   entity.reopen_deadline = ""
+  clearReopenError(entity)
 }
 
 export function reopenDeadlineSet(entity, value) {
   entity.reopen_deadline = value ?? ""
   entity.error = null
+  clearReopenError(entity)
 }
 
 export function reopenSubmit(entity, _, api) {
   entity.values = { reopen_deadline: entity.reopen_deadline ?? "" }
-  api.notify(`#${entity.id}:validate`, {
-    validate(values) {
-      const value = values.reopen_deadline
-      if (!value) return { reopen_deadline: null }
-      const iso =
-        value.length === DATETIME_LOCAL_LENGTH
-          ? new Date(value).toISOString()
-          : value
-      return {
-        reopen_deadline:
-          new Date(iso).getTime() <= Date.now()
-            ? "Pick a future deadline"
-            : null,
-      }
-    },
-  })
-  api.notify(`#${entity.id}:reopenProceed`)
-}
-
-export function reopenProceed(entity, _, api) {
-  const error = firstError(entity.errors)
-  if (error) {
-    entity.error = error
-    return
-  }
+  Form.validate(entity, { validate: validateReopen })
+  if (!entity.isValid) return
   entity.error = null
   api.notify(`#${entity.id}:eventReopen`, {
     event_id: entity.event_id,

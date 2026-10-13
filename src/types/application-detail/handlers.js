@@ -12,8 +12,9 @@ export function open(entity, { application_id, returnTo }, api) {
   entity.application_id = application_id
   entity.returnTo = returnTo ?? "applications"
   entity.application = null
-  if (entity.values) entity.values.motivation = ""
   entity.isConfirmingWithdraw = false
+  entity.isConfirmingGiveUp = false
+  Form.reset(entity)
   api.notify(`#${entity.id}:applicationLoad`, application_id)
 }
 
@@ -28,6 +29,7 @@ export function close(entity) {
   entity.application = null
   entity.status = "idle"
   entity.error = null
+  Form.reset(entity)
 }
 
 export function overlaysClose(entity) {

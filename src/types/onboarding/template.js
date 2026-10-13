@@ -1,7 +1,7 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { html } from "@inglorious/web"
-import { getFieldValue } from "@inglorious/web/form"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
 import { ITALY } from "../../regions.js"
@@ -21,6 +21,7 @@ export const Onboarding = {
     renderRegion,
   }) {
     const saving = entity.status === "saving"
+    const countryError = getFieldError(entity, "country")
 
     return renderPage({
       variant: "centered",
@@ -33,13 +34,13 @@ export const Onboarding = {
 
           <label
             class=${
-              entity.error && !getFieldValue(entity, "country", "")
+              countryError
                 ? `${styles.field} ${styles.fieldError}`
                 : styles.field
             }
           >
             <span>Country</span>
-            ${renderCountry()}
+            ${renderCountry()} ${fieldMessage(countryError)}
           </label>
           ${
             getFieldValue(entity, "country", "") === ITALY
@@ -125,4 +126,8 @@ export const Onboarding = {
       ],
     })
   },
+}
+
+function fieldMessage(message) {
+  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }

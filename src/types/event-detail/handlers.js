@@ -16,8 +16,8 @@ export function open(entity, event_id, api) {
   entity.isSubmitted = false
   entity.applyStatus = "idle"
   entity.applyError = null
+  Form.reset(entity)
   const profile = api.getEntity("profile").profile
-  entity.values.motivation = ""
   entity.values.full_name = profile?.full_name ?? ""
   entity.values.website = profile?.website ?? ""
   entity.values.instagram = profile?.instagram_handle ?? ""
@@ -32,6 +32,8 @@ export function close(entity) {
   entity.status = "idle"
   entity.error = null
   entity.isSubmitted = false
+  entity.applyError = null
+  Form.reset(entity)
 }
 
 export function overlaysClose(entity) {

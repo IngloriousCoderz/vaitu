@@ -1,11 +1,47 @@
 import { Form } from "@inglorious/web/form"
 
-import { errorsFromZod, firstError } from "../../forms.js"
+import {
+  DATETIME_LOCAL_LENGTH,
+  MIN_TEXT_LENGTH,
+  ZERO,
+} from "../../constants.js"
 import { isTicking, startTick } from "../../ticker.js"
-import { createEventSchema } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
 import * as handlers from "./handlers.js"
 import { EventCreate as renderers } from "./template.js"
+
+function required(value) {
+  return (value ?? "").trim().length >= MIN_TEXT_LENGTH ? null : "Required"
+}
+
+function validateEvent(values) {
+  const details = values.details ?? {}
+  const deadline = values.application_deadline ?? ""
+  const deadlineOk =
+    deadline.length === DATETIME_LOCAL_LENGTH &&
+    !Number.isNaN(new Date(deadline).getTime())
+  const max = Number(values.max_applicants)
+  const errors = {
+    location: required(values.location),
+    country: required(values.country) ? "Pick a country" : null,
+    region: required(values.region),
+    event_date: /^\d{4}-\d{2}-\d{2}$/.test(values.event_date ?? "")
+      ? null
+      : "Pick a date",
+    application_deadline: deadlineOk ? null : "Pick a deadline",
+    max_applicants:
+      Number.isInteger(max) && max > ZERO ? null : "Enter a positive number",
+    details: {},
+  }
+  if (values.category === "festival") {
+    errors.title = required(values.title)
+    errors.details.headliner = required(details.headliner)
+  } else {
+    errors.details.spouse_first_name_1 = required(details.spouse_first_name_1)
+    errors.details.spouse_first_name_2 = required(details.spouse_first_name_2)
+  }
+  return errors
+}
 
 const {
   save,
@@ -73,18 +109,8 @@ export const EventCreate = {
       details: entity.details,
     }
     entity.values = payload
-    api.notify(`#${entity.id}:validate`, {
-      validate: (current) =>
-        errorsFromZod(createEventSchema.safeParse(current)),
-    })
-    api.notify(`#${entity.id}:saveIfValid`, payload)
-  },
-
-  saveIfValid(entity, payload, api) {
-    if (!entity.isValid) {
-      entity.error = firstError(entity.errors) ?? "Invalid event"
-      return
-    }
+    Form.validate(entity, { validate: validateEvent })
+    if (!entity.isValid) return
     entity.error = null
     api.notify(`#${entity.id}:save`, payload)
   },

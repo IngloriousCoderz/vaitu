@@ -1,7 +1,6 @@
 import { Form } from "@inglorious/web/form"
 
 import { DAY_MS } from "../../constants.js"
-import { firstError, initForm } from "../../forms.js"
 import {
   activateRealtime,
   deactivateRealtime,
@@ -27,12 +26,13 @@ export const EventDetail = {
     entity.senderName ??= null
     entity.status ??= "idle"
     entity.error ??= null
-    initForm(entity, {
+    entity.initialValues = {
       full_name: "",
       website: "",
       instagram: "",
       motivation: "",
-    })
+    }
+    Form.create(entity)
     entity.isSubmitted ??= false
     entity.applyStatus ??= "idle"
     entity.applyError ??= null
@@ -52,20 +52,12 @@ export const EventDetail = {
   },
 
   applySubmit(entity, _, api) {
-    api.notify(`#${entity.id}:validate`, {
+    Form.validate(entity, {
       validate: (values) => ({
         motivation: values.motivation.trim() ? null : "Motivation is required",
       }),
     })
-    api.notify(`#${entity.id}:applyIfValid`)
-  },
-
-  applyIfValid(entity, _, api) {
-    const error = firstError(entity.errors)
-    if (error) {
-      entity.applyError = error
-      return
-    }
+    if (!entity.isValid) return
     entity.applyError = null
     api.notify(`#${entity.id}:applicationSubmit`)
   },

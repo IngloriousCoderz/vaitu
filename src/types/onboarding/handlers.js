@@ -2,7 +2,6 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
-import { firstError } from "../../forms.js"
 import { regionAfterCountryChange } from "../../regions.js"
 
 export function fieldSet(entity, { field, value }, api) {
@@ -25,21 +24,15 @@ export function skip(entity, _, api) {
   api.notify("#authentication:onboardingFinish")
 }
 
-export function saveSubmit(entity, _, api) {
-  api.notify(`#${entity.id}:validate`, {
-    validate: (values) => ({
-      country: values.country.trim() ? null : "Pick a country",
-    }),
-  })
-  api.notify(`#${entity.id}:saveProceed`)
+function validateOnboarding(values) {
+  return {
+    country: values.country.trim() ? null : "Pick a country",
+  }
 }
 
-export function saveProceed(entity, _, api) {
-  const error = firstError(entity.errors)
-  if (error) {
-    entity.error = error
-    return
-  }
+export function saveSubmit(entity, _, api) {
+  Form.validate(entity, { validate: validateOnboarding })
+  if (!entity.isValid) return
   entity.error = null
   api.notify(`#${entity.id}:save`, { ...entity.values })
 }

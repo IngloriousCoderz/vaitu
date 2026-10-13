@@ -3,8 +3,6 @@ import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { MIN_PASSWORD_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
-import { firstError } from "../../forms.js"
-
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function validateEmail(values) {
@@ -33,13 +31,6 @@ function validateSignup(values) {
   }
 }
 
-function rejectInvalid(entity) {
-  const error = firstError(entity.errors)
-  if (!error) return false
-  entity.error = error
-  return true
-}
-
 export function fieldChange(entity, payload) {
   Form.fieldChange(entity, payload)
   entity.error = null
@@ -53,11 +44,21 @@ export function confirmPasswordToggle(entity) {
   entity.isConfirmPasswordVisible = !entity.isConfirmPasswordVisible
 }
 
+function clearAuthErrors(entity) {
+  if (!entity.errors) return
+  entity.errors.email = null
+  entity.errors.password = null
+  entity.errors.confirmPassword = null
+  entity.errors.full_name = null
+  entity.isValid = true
+}
+
 export function open(entity) {
   entity.isOpen = true
   entity.step = "email"
   entity.status = "idle"
   entity.error = null
+  clearAuthErrors(entity)
 }
 
 export function close(entity) {
@@ -67,6 +68,7 @@ export function close(entity) {
   entity.error = null
   entity.password = ""
   entity.confirmPassword = ""
+  clearAuthErrors(entity)
   if (entity.values) {
     entity.values.password = ""
     entity.values.confirmPassword = ""
@@ -84,11 +86,13 @@ export function onboardingFinish(entity) {
 export function emailBack(entity) {
   entity.step = "email"
   entity.error = null
+  clearAuthErrors(entity)
 }
 
 export function signupBack(entity) {
   entity.step = "signup"
   entity.error = null
+  clearAuthErrors(entity)
 }
 
 export function roleSelect(entity, role) {
@@ -100,15 +104,12 @@ export function roleSelect(entity, role) {
 export function rolesBack(entity) {
   entity.step = "role"
   entity.error = null
+  clearAuthErrors(entity)
 }
 
 export function emailSubmit(entity, _, api) {
-  api.notify(`#${entity.id}:validate`, { validate: validateEmail })
-  api.notify(`#${entity.id}:emailProceed`)
-}
-
-export function emailProceed(entity, _, api) {
-  if (rejectInvalid(entity)) return
+  Form.validate(entity, { validate: validateEmail })
+  if (!entity.isValid) return
   entity.error = null
   api.notify(`#${entity.id}:emailCheck`, {
     email: entity.values.email.trim().toLowerCase(),
@@ -116,12 +117,8 @@ export function emailProceed(entity, _, api) {
 }
 
 export function loginSubmit(entity, _, api) {
-  api.notify(`#${entity.id}:validate`, { validate: validateLogin })
-  api.notify(`#${entity.id}:loginProceed`)
-}
-
-export function loginProceed(entity, _, api) {
-  if (rejectInvalid(entity)) return
+  Form.validate(entity, { validate: validateLogin })
+  if (!entity.isValid) return
   entity.error = null
   api.notify(`#${entity.id}:login`, {
     email: entity.values.email.trim().toLowerCase(),
@@ -130,12 +127,8 @@ export function loginProceed(entity, _, api) {
 }
 
 export function signupSubmit(entity, _, api) {
-  api.notify(`#${entity.id}:validate`, { validate: validateSignup })
-  api.notify(`#${entity.id}:signupProceed`)
-}
-
-export function signupProceed(entity, _, api) {
-  if (rejectInvalid(entity)) return
+  Form.validate(entity, { validate: validateSignup })
+  if (!entity.isValid) return
   entity.error = null
   api.notify(`#${entity.id}:signup`, {
     full_name: entity.values.full_name,

@@ -1,5 +1,5 @@
 import { html } from "@inglorious/web"
-import { getFieldValue } from "@inglorious/web/form"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorLabel } from "./error-label"
 import styles from "./style.module.css"
@@ -33,6 +33,7 @@ export const EmailStep = {
               .value=${getFieldValue(entity, "email", "")}
               @input=${(e) => onField({ field: "email", value: e.target.value })}
             />
+            ${ErrorLabel.render({ error: getFieldError(entity, "email") })}
           </label>
           ${ErrorLabel.render({ error: entity.error })}
           <div class=${styles.bottomBar}>

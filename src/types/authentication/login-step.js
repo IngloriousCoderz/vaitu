@@ -1,6 +1,6 @@
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
-import { getFieldValue } from "@inglorious/web/form"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorLabel } from "./error-label"
 import styles from "./style.module.css"
@@ -76,6 +76,7 @@ export const LoginStep = {
                 })}
               </button>
             </div>
+            ${ErrorLabel.render({ error: getFieldError(entity, "password") })}
           </label>
           ${ErrorLabel.render({ error: entity.error })}
           <div class=${styles.bottomBar}>

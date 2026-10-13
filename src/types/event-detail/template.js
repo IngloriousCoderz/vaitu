@@ -3,7 +3,7 @@ import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
-import { getFieldValue } from "@inglorious/web/form"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
 import {
@@ -163,7 +163,7 @@ export const EventDetail = {
   }) {
     const sending = entity.applyStatus === "sending"
     const motivation = getFieldValue(entity, "motivation", "")
-    const canSubmit = profileComplete && motivation.trim() !== "" && !sending
+    const canSubmit = profileComplete && !sending
 
     if (!profileComplete) {
       return html`
@@ -231,6 +231,7 @@ export const EventDetail = {
             @input=${(e) =>
               onField({ field: "motivation", value: e.target.value })}
           ></textarea>
+          ${fieldMessage(getFieldError(entity, "motivation"))}
         </label>
         ${Button.render({
           children: sending ? "Sending…" : "Apply",
@@ -260,6 +261,10 @@ export const EventDetail = {
 const toneClass = {
   closing: styles.badgeClosing,
   closed: styles.badgeClosed,
+}
+
+function fieldMessage(message) {
+  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
 }
 
 function detailToneClass(event) {

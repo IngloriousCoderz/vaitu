@@ -2,7 +2,7 @@ import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
-import { getFieldValue } from "@inglorious/web/form"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
@@ -10,6 +10,10 @@ import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
+
+function fieldMessage(message) {
+  return message ? html`<p class=${styles.fieldMessage}>${message}</p>` : ""
+}
 
 const statusColors = {
   pending: "default",
@@ -40,7 +44,7 @@ export const ApplicationDetail = {
     const { application, status, error } = entity
     const isBusy = status === "saving" || status === "withdrawing"
     const motivation = getFieldValue(entity, "motivation", "")
-    const canSave = application && motivation.trim() !== "" && !isBusy
+    const canSave = application && !isBusy
     const links =
       application?.applicationStatus === "selected"
         ? calendarLinks({
@@ -127,6 +131,9 @@ export const ApplicationDetail = {
                                     value: e.target.value,
                                   })}
                               ></textarea>
+                              ${fieldMessage(
+                                getFieldError(entity, "motivation"),
+                              )}
                             </label>
                             ${Button.render({
                               children:
