@@ -16,15 +16,10 @@
 }
 
 /* Shared page frame. Every screen uses renderPage(); only the padding
-   variant differs.
-
-   The node is a Flex, whose default is display:flex and min-width:auto.
-   That stops vertical margins from collapsing and lets a chip row widen the
-   column past the screen, so the shell scrolls on both axes. Pages that used
-   to be a plain block stay a block. Login and onboarding stay a centred
-   column, which is what their old .page rule was. */
+   variant differs. The node stays a Flex column (login and onboarding use
+   justify: center). min-width: 0 stops the column from growing to the width
+   of a chip row. The flow child is the block where page margins collapse. */
 .iw-flex.vaitu-frame {
-  display: block;
   width: auto;
   min-width: 0;
   max-width: var(--vpage-max-width);
@@ -35,13 +30,7 @@
   box-sizing: border-box;
 }
 
-.iw-flex.vaitu-frame-centered {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.iw-flex.vaitu-frame-centered > * {
+.vaitu-frame-flow {
   min-width: 0;
 }
 

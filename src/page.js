@@ -1,13 +1,16 @@
 import { Flex } from "@inglorious/ui/flex"
+import { html } from "@inglorious/web"
 
-// One page frame for every screen. Variants only change padding and
-// alignment; the column, max width, and background live in one place.
+// One page frame for every screen. The frame stays a Flex column. The flow
+// inside it is a block, so vertical margins still collapse and a chip row
+// cannot widen the column. Variants only change padding and alignment.
 export function renderPage({
   variant = "document",
   category = "wedding",
   className = "",
   children,
 }) {
+  const flow = Array.isArray(children) ? children : [children]
   return Flex.render({
     element: "div",
     direction: "column",
@@ -16,6 +19,6 @@ export function renderPage({
       .filter(Boolean)
       .join(" "),
     "data-category": category,
-    children: Array.isArray(children) ? children : [children],
+    children: [html`<div class="vaitu-frame-flow">${flow}</div>`],
   })
 }
