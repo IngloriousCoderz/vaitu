@@ -27,11 +27,11 @@ body {
 }
 
 .vaitu-page-forward {
-  animation: none;
+  animation: vaitu-page-in-right 0.25s ease-out;
 }
 
 .vaitu-page-back {
-  animation: none;
+  animation: vaitu-page-in-left 0.25s ease-out;
 }
 
 @keyframes vaitu-page-in-right {
@@ -46,9 +46,31 @@ body {
   }
 }
 
+/* Tab pages have no slide, so the list itself eases in. Direct children of
+   .vaitu-list opt in with .vaitu-list-item. A pushed or popped screen already
+   moves as a whole, so those items stay still. */
+@keyframes vaitu-list-in {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+}
+
+/* --vaitu-list-index is the row, capped in the templates at LIST_STAGGER_CAP. */
+.vaitu-list > .vaitu-list-item {
+  animation: vaitu-list-in 0.7s ease backwards;
+  animation-delay: calc(var(--vaitu-list-index, 0) * 0.08s);
+}
+
+.vaitu-page-forward .vaitu-list-item,
+.vaitu-page-back .vaitu-list-item {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .vaitu-page-forward,
-  .vaitu-page-back {
+  .vaitu-page-back,
+  .vaitu-list > .vaitu-list-item {
     animation: none;
   }
 }

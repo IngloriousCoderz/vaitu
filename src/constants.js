@@ -15,6 +15,8 @@ export const CLOSING_MAX_DAYS = 1
 export const DATE_PAD_LENGTH = 2
 export const WEEK_DAYS = 7
 export const FIRST_INDEX = 0
+// List rows after this one share its enter delay (index 8 is the 9th row).
+export const LIST_STAGGER_CAP = 8
 export const LAST_INDEX_OFFSET = 1
 export const HASH_MULTIPLIER = 31
 export const HASH_SEED = 7

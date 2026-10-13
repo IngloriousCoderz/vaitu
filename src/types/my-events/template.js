@@ -3,7 +3,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 
-import { SINGULAR } from "../../constants.js"
+import { LIST_STAGGER_CAP, SINGULAR } from "../../constants.js"
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
 import { Card } from "../event-card/index.js"
@@ -39,7 +39,7 @@ export const MyEvents = {
             <span class=${styles.title}>My Events</span>
           </header>
 
-          <main class=${styles.list}>
+          <main class="${styles.list} vaitu-list">
             ${
               status === "loading"
                 ? html`<p class=${styles.empty}>Loading events…</p>`
@@ -50,8 +50,11 @@ export const MyEvents = {
                         You haven't posted any event yet.
                       </p>`
                     : events.map(
-                        (event) => html`
-                          <div class=${styles.event}>
+                        (event, index) => html`
+                          <div
+                            class="${styles.event} vaitu-list-item"
+                            style=${`--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`}
+                          >
                             ${Card.render({
                               event,
                               divider: false,

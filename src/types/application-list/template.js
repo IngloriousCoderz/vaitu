@@ -1,6 +1,7 @@
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
+import { LIST_STAGGER_CAP } from "../../constants.js"
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
 import { Card } from "../event-card/index.js"
@@ -62,7 +63,7 @@ export const ApplicationList = {
             </div>
           </div>
 
-          <main class=${styles.list}>
+          <main class="${styles.list} vaitu-list">
             ${
               status === "loading"
                 ? html`<p class=${styles.empty}>Loading applications…</p>`
@@ -76,10 +77,11 @@ export const ApplicationList = {
                             : "Nothing with this status."
                         }
                       </p>`
-                    : shown.map((application) =>
+                    : shown.map((application, index) =>
                         this.renderApplicationItem({
                           application,
                           onOpenEvent,
+                          index,
                         }),
                       )
             }
@@ -89,15 +91,19 @@ export const ApplicationList = {
     })
   },
 
-  renderApplicationItem({ application, onOpenEvent }) {
+  renderApplicationItem({ application, onOpenEvent, index }) {
     const isWinner = application.applicationStatus === "selected"
+    const itemClass = [
+      styles.application,
+      isWinner ? styles.winner : "",
+      "vaitu-list-item",
+    ]
+      .filter(Boolean)
+      .join(" ")
     return html`
       <div
-        class=${
-          isWinner
-            ? `${styles.application} ${styles.winner}`
-            : styles.application
-        }
+        class=${itemClass}
+        style=${`--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`}
       >
         ${Card.render({
           event: application,

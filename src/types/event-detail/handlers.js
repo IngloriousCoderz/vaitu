@@ -7,7 +7,6 @@ import { stopTick } from "../../ticker.js"
 
 export function open(entity, event_id, api) {
   stopTick("clock")
-  entity.motionVariant = null
   entity.event_id = event_id
   entity.event = null
   entity.senderName = null
@@ -133,7 +132,6 @@ export const detailLoad = handleAsync("detailLoad", {
     entity.status = "ready"
     entity.event = event
     entity.senderName = senderName
-    entity.motionVariant = "enter"
   },
   error(entity, err) {
     entity.status = "error"

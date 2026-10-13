@@ -5,6 +5,7 @@ import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 
+import { LIST_STAGGER_CAP } from "../../constants.js"
 import { renderPage } from "../../page.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
@@ -197,7 +198,7 @@ export const EventList = {
                 `
               : ""
           }
-          <main class=${styles.list}>
+          <main class="${styles.list} vaitu-list">
             ${
               status === "loading"
                 ? html`<p class=${styles.empty}>Loading events…</p>`
@@ -207,11 +208,13 @@ export const EventList = {
                     ? html`<p class=${styles.empty}>
                         No events match your search yet.
                       </p>`
-                    : shown.map((event) =>
+                    : shown.map((event, index) =>
                         Card.render({
                           event,
                           isApplied: Boolean(appliedMap[event.id]),
                           onOpen: onOpenEvent,
+                          className: "vaitu-list-item",
+                          style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
                         }),
                       )
             }

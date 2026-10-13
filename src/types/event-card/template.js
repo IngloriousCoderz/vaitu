@@ -17,11 +17,20 @@ const toneClass = {
 
 // Generic card: renders title/subtitle/tag slots, whatever the category mapped.
 export const Card = {
-  render({ event, isApplied, onOpen, divider = true }) {
+  render({ event, isApplied, onOpen, divider = true, className, style }) {
     const tone = deadlineTone(event)
+    const cardClass = [
+      styles.card,
+      divider ? "" : styles.cardFlat,
+      onOpen ? styles.cardPress : "",
+      className,
+    ]
+      .filter(Boolean)
+      .join(" ")
     return html`
       <article
-        class=${divider ? styles.card : `${styles.card} ${styles.cardFlat}`}
+        class=${cardClass}
+        style=${style}
         @click=${onOpen ? () => onOpen(event.id) : null}
       >
         <div
