@@ -9,6 +9,7 @@ import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
 import { renderPage } from "../../page.js"
+import { ITALY, uniqueRegions } from "../../regions.js"
 import { capitalize } from "../../text.js"
 import { Icon } from "../icon/index.js"
 import {
@@ -41,6 +42,8 @@ export const Profile = {
     onFavoriteAdd,
     onFavoriteRemove,
     renderCountry,
+    renderRegion,
+    renderFavoriteChoice,
   }) {
     const { profile, status, error } = entity
     const saving = status === "saving"
@@ -181,19 +184,29 @@ export const Profile = {
                               <span>Country</span>
                               ${renderCountry()}
                             </label>
-                            ${this.renderEditField({
-                              label: "Region",
-                              field: "region",
-                              value: shown.region,
-                              placeholder: "Region (optional)",
-                              onField,
-                            })}
+                            ${
+                              shown.country === ITALY
+                                ? html`
+                                    <label class=${styles.field}>
+                                      <span>Region</span>
+                                      ${renderRegion()}
+                                    </label>
+                                  `
+                                : this.renderEditField({
+                                    label: "Region",
+                                    field: "region",
+                                    value: shown.region,
+                                    placeholder: "Region (optional)",
+                                    onField,
+                                  })
+                            }
                             ${this.renderFavorites({
                               favorites: shown.favorite_regions ?? [],
                               input: entity.favoriteInput ?? "",
                               onFavoriteInput,
                               onFavoriteAdd,
                               onFavoriteRemove,
+                              renderFavoriteChoice,
                             })}
                             ${
                               status === "error" && error
@@ -238,6 +251,12 @@ export const Profile = {
                               )}
                               ${this.renderRow("Country", profile.country)}
                               ${this.renderRow("Region", profile.region)}
+                              ${this.renderRow(
+                                "Favorite regions",
+                                uniqueRegions(profile.favorite_regions ?? []).join(
+                                  ", ",
+                                ),
+                              )}
                               ${this.renderRow("Sub-role", profile.sub_role)}
                             </dl>
                           `
@@ -328,6 +347,7 @@ export const Profile = {
     onFavoriteInput,
     onFavoriteAdd,
     onFavoriteRemove,
+    renderFavoriteChoice,
   }) {
     return html`
       <div class=${styles.field}>
@@ -355,10 +375,11 @@ export const Profile = {
               `
             : ""
         }
+        ${renderFavoriteChoice()}
         <div class=${styles.urlWrap}>
           <input
             type="text"
-            placeholder="Add a region"
+            placeholder="Or type a region"
             autocapitalize="none"
             autocorrect="off"
             autocomplete="off"

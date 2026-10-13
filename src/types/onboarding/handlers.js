@@ -1,11 +1,23 @@
 import { handleAsync } from "@inglorious/store/async"
-import { Form } from "@inglorious/web/form"
+import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { firstError } from "../../forms.js"
+import { regionAfterCountryChange } from "../../regions.js"
 
-export function fieldSet(entity, { field, value }) {
-  Form.fieldChange(entity, { path: field, value })
+export function fieldSet(entity, { field, value }, api) {
+  if (field === "country") {
+    const previous = getFieldValue(entity, "country", "")
+    const region = getFieldValue(entity, "region", "")
+    Form.fieldChange(entity, { path: "country", value })
+    Form.fieldChange(entity, {
+      path: "region",
+      value: regionAfterCountryChange(previous, value, region),
+    })
+    api?.notify("#region-onboarding:sync", getFieldValue(entity, "region", ""))
+  } else {
+    Form.fieldChange(entity, { path: field, value })
+  }
   entity.error = null
 }
 

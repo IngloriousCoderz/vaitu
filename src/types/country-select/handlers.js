@@ -9,13 +9,30 @@ import { FIRST_INDEX } from "../../constants.js"
 const NO_FOCUSED_INDEX = -1
 const NOT_FOUND = -1
 const REMOVE_ONE = 1
+const NEXT_STEP = 1
+const PREV_STEP = -1
+
+function isHeading(option) {
+  return formatOption(option).isDisabled
+}
+
+function enabledIndex(options, start, step) {
+  for (
+    let index = start;
+    index >= FIRST_INDEX && index < options.length;
+    index += step
+  ) {
+    if (!isHeading(options[index])) return index
+  }
+  return NO_FOCUSED_INDEX
+}
 
 function doOpen(entity) {
   if (entity.isDisabled) return
   entity.isOpen = true
 
   const filtered = filterOptions(entity.options, entity.searchTerm)
-  entity.focusedIndex = filtered.length ? FIRST_INDEX : NO_FOCUSED_INDEX
+  entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
 }
 
 function doClose(entity) {
@@ -73,6 +90,7 @@ export function optionSelect(entity, option, api) {
   if (entity.isDisabled) return
 
   const normalizedOption = formatOption(option)
+  if (normalizedOption.isDisabled) return
   const optionValue = getOptionValue(normalizedOption)
 
   if (entity.isMulti) {
@@ -133,7 +151,44 @@ export function close(entity) {
 export function searchChange(entity, searchTerm) {
   entity.searchTerm = searchTerm
   const filtered = filterOptions(entity.options, entity.searchTerm)
-  entity.focusedIndex = filtered.length ? FIRST_INDEX : NO_FOCUSED_INDEX
+  entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
+}
+
+export function focusNext(entity) {
+  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const next = enabledIndex(
+    filtered,
+    entity.focusedIndex + NEXT_STEP,
+    NEXT_STEP,
+  )
+  if (next !== NO_FOCUSED_INDEX) entity.focusedIndex = next
+}
+
+export function focusPrev(entity) {
+  const filtered = filterOptions(entity.options, entity.searchTerm)
+  if (entity.focusedIndex <= FIRST_INDEX) {
+    entity.focusedIndex = NO_FOCUSED_INDEX
+    return
+  }
+  entity.focusedIndex = enabledIndex(
+    filtered,
+    entity.focusedIndex - NEXT_STEP,
+    PREV_STEP,
+  )
+}
+
+export function focusFirst(entity) {
+  const filtered = filterOptions(entity.options, entity.searchTerm)
+  entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
+}
+
+export function focusLast(entity) {
+  const filtered = filterOptions(entity.options, entity.searchTerm)
+  entity.focusedIndex = enabledIndex(
+    filtered,
+    filtered.length - NEXT_STEP,
+    PREV_STEP,
+  )
 }
 
 /**
@@ -151,6 +206,13 @@ export function focusSet(entity, index) {
  */
 export function sync(entity, value) {
   entity.selectedValue = value || null
+  entity.searchTerm = ""
+  entity.focusedIndex = NO_FOCUSED_INDEX
+}
+
+/** Replace the option list. Used when favorite regions follow the events. */
+export function optionsSet(entity, options) {
+  entity.options = (options ?? []).map(formatOption)
   entity.searchTerm = ""
   entity.focusedIndex = NO_FOCUSED_INDEX
 }

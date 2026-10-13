@@ -4,6 +4,7 @@ import { html } from "@inglorious/web"
 import { getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
+import { ITALY } from "../../regions.js"
 import styles from "./style.module.css"
 
 export const Onboarding = {
@@ -11,7 +12,14 @@ export const Onboarding = {
     return this.renderOnboarding(props, api)
   },
 
-  renderOnboarding({ entity, onField, onSave, onSkip, renderCountry }) {
+  renderOnboarding({
+    entity,
+    onField,
+    onSave,
+    onSkip,
+    renderCountry,
+    renderRegion,
+  }) {
     const saving = entity.status === "saving"
 
     return renderPage({
@@ -33,15 +41,27 @@ export const Onboarding = {
             <span>Country</span>
             ${renderCountry()}
           </label>
-          <label class=${styles.field}>
-            <span>Region (optional)</span>
-            <input
-              type="text"
-              placeholder="Tuscany"
-              .value=${getFieldValue(entity, "region", "")}
-              @input=${(e) => onField({ field: "region", value: e.target.value })}
-            />
-          </label>
+          ${
+            getFieldValue(entity, "country", "") === ITALY
+              ? html`
+                  <label class=${styles.field}>
+                    <span>Region (optional)</span>
+                    ${renderRegion()}
+                  </label>
+                `
+              : html`
+                  <label class=${styles.field}>
+                    <span>Region (optional)</span>
+                    <input
+                      type="text"
+                      placeholder="Tuscany"
+                      .value=${getFieldValue(entity, "region", "")}
+                      @input=${(e) =>
+                        onField({ field: "region", value: e.target.value })}
+                    />
+                  </label>
+                `
+          }
           <label class=${styles.field}>
             <span>Website (optional)</span>
             <input

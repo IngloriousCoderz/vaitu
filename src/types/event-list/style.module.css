@@ -132,6 +132,71 @@
   }
 }
 
+.sheetHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--iw-space-2);
+  margin: 0.875rem 0 0;
+}
+
+.sheetHeading .sheetTitle {
+  margin: 0;
+}
+
+button.sheetGear {
+  border: none;
+  background: none;
+  border-radius: var(--iw-radius-none);
+  box-shadow: none;
+  cursor: pointer;
+  padding: 0.375rem;
+  min-height: 0;
+  display: flex;
+  color: var(--vmuted);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.sheetGear:active {
+  background: none;
+}
+
+.favoriteEditor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+  margin-top: var(--iw-space-3);
+}
+
+.favoriteChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+}
+
+.favoriteChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-semibold);
+  color: var(--vink);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: var(--iw-radius-full);
+  padding: 0.375rem 0.375rem 0.375rem var(--iw-space-3);
+}
+
+.favoriteRemove {
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: inline-flex;
+  padding: 0.125rem;
+  color: var(--vmuted);
+}
+
 .sheetTitle {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);

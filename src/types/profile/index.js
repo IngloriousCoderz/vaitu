@@ -74,6 +74,8 @@ export const Profile = {
         api.notify("#applicationList:open", status_filter)
       },
       renderCountry: () => api.render("country-profile"),
+      renderRegion: () => api.render("region-profile"),
+      renderFavoriteChoice: () => api.render("favorite-region-profile"),
     })
   },
 }

@@ -12,6 +12,7 @@ import {
   ZERO,
 } from "../../constants.js"
 import { renderPage } from "../../page.js"
+import { ITALY } from "../../regions.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"
@@ -127,17 +128,26 @@ export const EventCreate = {
             placeholder: "Venue Name",
             onField,
           })}
-          ${this.renderTextField({
-            label: "Region",
-            field: "region",
-            value: entity.region,
-            placeholder: "E.g. Tuscany",
-            onField,
-          })}
           <label class=${styles.field}>
             <span>Country</span>
             ${api.render("country-create")}
           </label>
+          ${
+            entity.country === ITALY
+              ? html`
+                  <label class=${styles.field}>
+                    <span>Region</span>
+                    ${api.render("region-create")}
+                  </label>
+                `
+              : this.renderTextField({
+                  label: "Region",
+                  field: "region",
+                  value: entity.region,
+                  placeholder: "E.g. Tuscany",
+                  onField,
+                })
+          }
           ${styleFields.map((spec) =>
             this.renderDetailField({
               spec,

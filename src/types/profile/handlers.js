@@ -2,6 +2,14 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import {
+  canonicalRegion,
+  favoriteRegionOptions,
+  regionAfterCountryChange,
+  regionForCountry,
+  sameRegion,
+  uniqueRegions,
+} from "../../regions.js"
 import { defaultTiers } from "./helpers.js"
 
 export function open(entity, _, api) {
@@ -32,17 +40,33 @@ export function menuClose(entity) {
 export function editStart(entity, _, api) {
   entity.isEditing = true
   entity.isMenuOpen = false
+  const country = entity.profile?.country ?? ""
   entity.initialValues = {
     full_name: entity.profile?.full_name ?? "",
     website: entity.profile?.website ?? "",
     instagram_handle: entity.profile?.instagram_handle ?? "",
-    country: entity.profile?.country ?? "",
-    region: entity.profile?.region ?? "",
-    favorite_regions: [...(entity.profile?.favorite_regions ?? [])],
+    country,
+    region: regionForCountry(country, entity.profile?.region ?? ""),
+    favorite_regions: uniqueRegions(entity.profile?.favorite_regions ?? []),
   }
   Form.reset(entity)
   entity.error = null
   api.notify("#country-profile:sync", entity.values.country ?? "")
+  api.notify("#region-profile:sync", entity.values.region ?? "")
+  syncFavoriteCombobox(entity, api)
+}
+
+function syncFavoriteCombobox(entity, api) {
+  if (!api) return
+  const events = api.getEntity("eventList")?.events ?? []
+  api.notify("#favorite-region-profile:sync", "")
+  api.notify(
+    "#favorite-region-profile:optionsSet",
+    favoriteRegionOptions(
+      events.map((event) => event.region),
+      entity.values?.favorite_regions ?? [],
+    ),
+  )
 }
 
 export function editCancel(entity) {
@@ -50,41 +74,69 @@ export function editCancel(entity) {
   entity.error = null
 }
 
-export function profileFieldSet(entity, { field, value }) {
+export function profileFieldSet(entity, { field, value }, api) {
   if (!entity.isEditing) return
+  if (field === "country") {
+    const previous = entity.values.country ?? ""
+    const region = entity.values.region ?? ""
+    Form.fieldChange(entity, { path: "country", value })
+    Form.fieldChange(entity, {
+      path: "region",
+      value: regionAfterCountryChange(previous, value, region),
+    })
+    api?.notify("#region-profile:sync", entity.values.region ?? "")
+    return
+  }
   Form.fieldChange(entity, { path: field, value })
+}
+
+export function favoritesApply(entity, regions, api) {
+  if (!entity.profile) return
+  const favorite_regions = Array.isArray(regions) ? regions : []
+  entity.profile = { ...entity.profile, favorite_regions }
+  if (entity.isEditing) {
+    Form.fieldChange(entity, {
+      path: "favorite_regions",
+      value: [...favorite_regions],
+    })
+  }
+  syncFavoriteCombobox(entity, api)
 }
 
 export function favoriteInputSet(entity, value) {
   entity.favoriteInput = value ?? ""
 }
 
-export function favoriteAdd(entity, value) {
+export function favoriteAdd(entity, value, api) {
   if (!entity.isEditing) return
-  const clean = (value ?? "").trim()
+  const clean = canonicalRegion(value)
   if (!clean) return
   const current = entity.values.favorite_regions ?? []
-  if (current.includes(clean)) {
-    entity.favoriteInput = ""
-    return
+  if (!current.some((region) => sameRegion(region, clean))) {
+    Form.fieldChange(entity, {
+      path: "favorite_regions",
+      value: [...current, clean],
+    })
   }
-  Form.fieldChange(entity, {
-    path: "favorite_regions",
-    value: [...current, clean],
-  })
   entity.favoriteInput = ""
   entity.error = null
+  syncFavoriteCombobox(entity, api)
 }
 
-export function favoriteRemove(entity, value) {
+export function favoriteChoiceSelect(entity, { value }, api) {
+  favoriteAdd(entity, value, api)
+}
+
+export function favoriteRemove(entity, value, api) {
   if (!entity.isEditing) return
   Form.fieldChange(entity, {
     path: "favorite_regions",
     value: (entity.values.favorite_regions ?? []).filter(
-      (region) => region !== value,
+      (region) => !sameRegion(region, value),
     ),
   })
   entity.error = null
+  syncFavoriteCombobox(entity, api)
 }
 
 // Token valid but user row gone (db reset), or auth rejected the token.

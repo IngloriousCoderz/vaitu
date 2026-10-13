@@ -1,0 +1,23 @@
+// Italian name for the same key in en.js.
+export const regions = {
+  abruzzo: "Abruzzo",
+  aostaValley: "Valle d'Aosta",
+  basilicata: "Basilicata",
+  calabria: "Calabria",
+  campania: "Campania",
+  emiliaRomagna: "Emilia-Romagna",
+  friuliVeneziaGiulia: "Friuli-Venezia Giulia",
+  lazio: "Lazio",
+  liguria: "Liguria",
+  lombardy: "Lombardia",
+  marche: "Marche",
+  molise: "Molise",
+  piedmont: "Piemonte",
+  puglia: "Puglia",
+  sardinia: "Sardegna",
+  sicily: "Sicilia",
+  trentinoAltoAdige: "Trentino-Alto Adige",
+  tuscany: "Toscana",
+  umbria: "Umbria",
+  veneto: "Veneto",
+}

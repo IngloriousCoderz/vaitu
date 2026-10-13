@@ -13,6 +13,7 @@ import {
   SINGULAR,
   ZERO,
 } from "../constants.js"
+import { uniqueRegions } from "../regions.js"
 import { randomId } from "../text.js"
 import { createEventSchema } from "../validation/events.js"
 import { supabase } from "./client.js"
@@ -305,6 +306,20 @@ export async function transcribeAudio(path) {
 export async function deleteEventAudio(path) {
   const { error } = await supabase.storage.from(AUDIO_BUCKET).remove([path])
   if (error) throw error
+}
+
+export async function saveFavoriteRegions(regions) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Not logged in")
+  const favorite_regions = uniqueRegions(regions ?? [])
+  const { error } = await supabase
+    .from("profiles")
+    .update({ favorite_regions })
+    .eq("id", user.id)
+  if (error) throw error
+  return favorite_regions
 }
 
 export async function fetchMyFavoriteRegions() {

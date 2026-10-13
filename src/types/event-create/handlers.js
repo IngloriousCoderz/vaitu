@@ -24,6 +24,7 @@ import {
   SINGULAR,
   ZERO,
 } from "../../constants.js"
+import { regionAfterCountryChange, regionForCountry } from "../../regions.js"
 import { stopTick } from "../../ticker.js"
 import { weddingStyles } from "../../validation/events.js"
 
@@ -115,6 +116,7 @@ export function open(entity, { event_id } = {}, api) {
   releaseRecorder()
   clearPendingAudio()
   api.notify("#country-create:sync", "")
+  api.notify("#region-create:sync", "")
   if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
 }
 
@@ -131,8 +133,15 @@ export function overlaysClose(entity) {
   close(entity)
 }
 
-export function fieldSet(entity, { field, value }) {
-  entity[field] = value
+export function fieldSet(entity, { field, value }, api) {
+  if (field === "country") {
+    const previous = entity.country
+    entity.country = value
+    entity.region = regionAfterCountryChange(previous, value, entity.region)
+    api?.notify("#region-create:sync", entity.region)
+  } else {
+    entity[field] = value
+  }
   entity.error = null
 }
 
@@ -354,16 +363,23 @@ export const audioParse = handleAsync("audioParse", {
       details[field] = value.trim()
     }
     entity.details = details
+    const previousCountry = entity.country
     if (typeof fields.location === "string" && fields.location.trim()) {
       entity.location = fields.location.trim()
     }
     if (typeof fields.country === "string" && fields.country.trim()) {
       entity.country = fields.country.trim()
-      api.notify("#country-create:sync", entity.country)
     }
     if (typeof fields.region === "string" && fields.region.trim()) {
       entity.region = fields.region.trim()
     }
+    entity.region = regionAfterCountryChange(
+      previousCountry,
+      entity.country,
+      entity.region,
+    )
+    api.notify("#country-create:sync", entity.country ?? "")
+    api.notify("#region-create:sync", entity.region ?? "")
     if (
       typeof fields.event_date === "string" &&
       /^\d{4}-\d{2}-\d{2}$/.test(fields.event_date)
@@ -485,7 +501,7 @@ export const editLoad = handleAsync("editLoad", {
     entity.title = row.title
     entity.location = row.location
     entity.country = row.country
-    entity.region = row.region
+    entity.region = regionForCountry(row.country, row.region)
     entity.event_date = row.event_date
     entity.application_deadline = toLocalInput(row.application_deadline)
     entity.max_applicants = row.max_applicants
@@ -496,7 +512,8 @@ export const editLoad = handleAsync("editLoad", {
     entity.is_audio_open = false
     entity.audio_transcript = row.transcript ?? null
     entity.audio_error = null
-    api.notify("#country-create:sync", row.country ?? "")
+    api.notify("#country-create:sync", entity.country ?? "")
+    api.notify("#region-create:sync", entity.region ?? "")
   },
   error(entity, err) {
     entity.status = "error"

@@ -48,3 +48,23 @@
   .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-selected {
   background: var(--vbadge-bg);
 }
+
+.vaitu-country-select
+  .iw-combobox-dropdown-options
+  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-disabled {
+  opacity: 1;
+  cursor: default;
+  font-size: var(--iw-font-size-xs);
+  font-weight: var(--iw-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vmuted);
+  padding-top: var(--iw-space-3);
+  background: transparent;
+}
+
+.vaitu-country-select
+  .iw-combobox-dropdown-options
+  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-disabled.iw-combobox-dropdown-options-option-focused {
+  background: transparent;
+}

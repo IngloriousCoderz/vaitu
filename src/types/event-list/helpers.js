@@ -1,3 +1,6 @@
+import { FIRST_INDEX, ZERO } from "../../constants.js"
+import { sameRegion, uniqueRegions } from "../../regions.js"
+
 export const periods = [
   { id: "all", label: "All dates", days: null },
   { id: "week", label: "Next 7 days", days: 7 },
@@ -6,10 +9,10 @@ export const periods = [
 ]
 
 export function distinctRegions(allEvents) {
-  return [...new Set(allEvents.map((event) => event.region))].sort()
+  return uniqueRegions(allEvents.map((event) => event.region)).sort((a, b) =>
+    a.localeCompare(b),
+  )
 }
-
-import { FIRST_INDEX, ZERO } from "../../constants.js"
 
 export function visibleEvents(
   allEvents,
@@ -30,12 +33,10 @@ export function visibleEvents(
     const matchesRegion =
       activeRegion === "all" ||
       (activeRegion === "mine"
-        ? favoriteRegions.some(
-            (favorite) =>
-              favorite.trim().toLowerCase() ===
-              (event.region ?? "").trim().toLowerCase(),
+        ? favoriteRegions.some((favorite) =>
+            sameRegion(favorite, event.region),
           )
-        : event.region === activeRegion)
+        : sameRegion(event.region, activeRegion))
     const matchesPeriod =
       period.days === null ||
       (event.eventInDays >= ZERO && event.eventInDays <= period.days)

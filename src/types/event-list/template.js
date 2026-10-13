@@ -1,3 +1,4 @@
+import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -21,6 +22,11 @@ export const EventList = {
     entity.events ??= []
     entity.appliedMap ??= {}
     entity.favoriteRegions ??= []
+    entity.isEditingFavorites ??= false
+    entity.favoriteDraft ??= []
+    entity.favoriteInput ??= ""
+    entity.favoritesStatus ??= "idle"
+    entity.favoritesError ??= null
     entity.status ??= "loading"
     entity.error ??= null
   },
@@ -38,13 +44,17 @@ export const EventList = {
     activeCategory,
     filters,
     regions,
+    isEditingFavorites,
+    favoriteDraft,
+    favoriteInput,
+    favoritesStatus,
+    favoritesError,
     periods,
     query,
     activeFilter,
     activeRegion,
     activePeriod,
     favoriteRegions,
-    hasFavoriteRegions,
     isFiltersVisible,
     hasActiveFilters,
     onSearch,
@@ -52,6 +62,13 @@ export const EventList = {
     onSelectFilter,
     onToggleFilters,
     onSelectRegion,
+    onEditFavorites,
+    onCancelFavorites,
+    onFavoriteInput,
+    onFavoriteAdd,
+    onFavoriteRemove,
+    onSaveFavorites,
+    renderFavoriteChoice,
     onSelectPeriod,
     onClearFilters,
     onOpenEvent,
@@ -131,20 +148,33 @@ export const EventList = {
                       class=${styles.sheet}
                       @click=${(e) => e.stopPropagation()}
                     >
-                      <h3 class=${styles.sheetTitle}>Region</h3>
+                      <div class=${styles.sheetHeading}>
+                        <h3 class=${styles.sheetTitle}>Region</h3>
+                        ${IconButton.render({
+                          icon: Icon.render({ name: "settings", size: 18 }),
+                          ariaLabel: "Edit favorite regions",
+                          className: styles.sheetGear,
+                          onClick: onEditFavorites,
+                        })}
+                      </div>
+                      ${
+                        isEditingFavorites
+                          ? this.renderFavoriteEditor({
+                              renderFavoriteChoice,
+                              favoriteDraft,
+                              favoriteInput,
+                              favoritesStatus,
+                              favoritesError,
+                              onCancelFavorites,
+                              onFavoriteInput,
+                              onFavoriteAdd,
+                              onFavoriteRemove,
+                              onSaveFavorites,
+                            })
+                          : ""
+                      }
                       ${this.renderChipRow({
-                        items: [{ id: "all", label: "All regions" }]
-                          .concat(
-                            hasFavoriteRegions
-                              ? [{ id: "mine", label: "My regions" }]
-                              : [],
-                          )
-                          .concat(
-                            regions.map((region) => ({
-                              id: region,
-                              label: region,
-                            })),
-                          ),
+                        items: regions,
                         activeId: activeRegion,
                         onSelect: onSelectRegion,
                         getLabel: (item) => item.label,
@@ -189,6 +219,92 @@ export const EventList = {
         `,
       ],
     })
+  },
+
+  renderFavoriteEditor({
+    renderFavoriteChoice,
+    favoriteDraft,
+    favoriteInput,
+    favoritesStatus,
+    favoritesError,
+    onCancelFavorites,
+    onFavoriteInput,
+    onFavoriteAdd,
+    onFavoriteRemove,
+    onSaveFavorites,
+  }) {
+    const draft = favoriteDraft ?? []
+    const typed = favoriteInput ?? ""
+    const saving = favoritesStatus === "saving"
+    return html`
+      <div class=${styles.favoriteEditor}>
+        ${
+          draft.length
+            ? html`
+                <div class=${styles.favoriteChips}>
+                  ${draft.map(
+                    (region) => html`
+                      <span class=${styles.favoriteChip}>
+                        ${region}
+                        <button
+                          class=${styles.favoriteRemove}
+                          type="button"
+                          aria-label=${`Remove ${region}`}
+                          @click=${() => onFavoriteRemove(region)}
+                        >
+                          ${Icon.render({ name: "x", size: 13 })}
+                        </button>
+                      </span>
+                    `,
+                  )}
+                </div>
+              `
+            : ""
+        }
+        ${renderFavoriteChoice()}
+        ${Input.render({
+          inputType: "text",
+          isFullWidth: true,
+          placeholder: "Or type a region",
+          value: typed,
+          onChange: (value) => onFavoriteInput(value),
+        })}
+        ${Button.render({
+          children: "Add",
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          isDisabled: typed.trim() === "" || saving,
+          onClick: () => onFavoriteAdd(typed),
+        })}
+        ${
+          favoritesError
+            ? Alert.render({
+                severity: "error",
+                className: "vaitu-alert",
+                children: favoritesError,
+              })
+            : ""
+        }
+        ${Button.render({
+          children: saving ? "Saving…" : "Save regions",
+          color: "primary",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          isDisabled: saving,
+          onClick: onSaveFavorites,
+        })}
+        ${Button.render({
+          children: "Cancel",
+          variant: "ghost",
+          isFullWidth: true,
+          isDisabled: saving,
+          onClick: onCancelFavorites,
+        })}
+      </div>
+    `
   },
 
   renderChipRow({ items, activeId, onSelect, getLabel }) {

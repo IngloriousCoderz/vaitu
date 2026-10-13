@@ -33,6 +33,7 @@ export const Onboarding = {
       onSave: () => api.notify(`#${id}:saveSubmit`),
       onSkip: () => api.notify(`#${id}:skip`),
       renderCountry: () => api.render("country-onboarding"),
+      renderRegion: () => api.render("region-onboarding"),
     })
   },
 }
