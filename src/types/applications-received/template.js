@@ -8,7 +8,7 @@ import { getFieldError } from "@inglorious/web/form"
 import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants.js"
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
-import { ErrorLabel } from "../authentication/error-label.js"
+import { ErrorLabel } from "../error-label/index.js"
 import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"
 

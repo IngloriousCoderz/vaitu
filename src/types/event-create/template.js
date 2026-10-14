@@ -14,7 +14,7 @@ import {
 } from "../../constants.js"
 import { renderPage } from "../../page.js"
 import { ITALY } from "../../regions.js"
-import { ErrorLabel } from "../authentication/error-label.js"
+import { ErrorLabel } from "../error-label/index.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import { Icon } from "../icon/index.js"
 import styles from "./style.module.css"

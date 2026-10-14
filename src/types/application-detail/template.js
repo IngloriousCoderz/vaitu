@@ -6,7 +6,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
 import { capitalize } from "../../text.js"
-import { ErrorLabel } from "../authentication/error-label.js"
+import { ErrorLabel } from "../error-label/index.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
 import { calendarLinks } from "./helpers.js"

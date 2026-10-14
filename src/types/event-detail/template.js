@@ -14,7 +14,7 @@ import {
   SECONDS_PER_MINUTE,
 } from "../../constants.js"
 import { renderPage } from "../../page.js"
-import { ErrorLabel } from "../authentication/error-label.js"
+import { ErrorLabel } from "../error-label/index.js"
 import {
   deadlineBadge,
   deadlineTone,

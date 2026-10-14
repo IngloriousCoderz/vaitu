@@ -3,7 +3,7 @@ import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ErrorLabel } from "./error-label"
+import { ErrorLabel } from "../error-label/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 

@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import styles from "./error-label.module.css"
+import styles from "./style.module.css"
 
 export const ErrorLabel = {
   render({ error }) {

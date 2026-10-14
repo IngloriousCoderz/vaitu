@@ -5,7 +5,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { renderPage } from "../../page.js"
 import { ITALY } from "../../regions.js"
-import { ErrorLabel } from "../authentication/error-label.js"
+import { ErrorLabel } from "../error-label/index.js"
 import styles from "./style.module.css"
 
 export const Onboarding = {
