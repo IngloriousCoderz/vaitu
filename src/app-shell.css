@@ -1,4 +1,4 @@
-/* App shell. Structure lives in src/app.js (renderShell) using the Flex
+/* App shell. Structure lives in src/app.js (App.renderShell) using the Flex
    primitive from @inglorious/ui, following its ScrollableContent story:
    column container, a scrolling content row, and a footer row for the tab bar.
 
@@ -15,7 +15,7 @@
   padding-top: env(safe-area-inset-top);
 }
 
-/* Shared page frame. Every screen uses renderPage(); only the padding
+/* Shared page frame. Every screen uses Page.render(); only the padding
    variant differs. The node stays a Flex column (login and onboarding use
    justify: center). min-width: 0 stops the column from growing to the width
    of a chip row. The flow child is the block where page margins collapse. */
