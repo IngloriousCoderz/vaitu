@@ -12,8 +12,7 @@ import {
   MS_PER_SECOND,
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
-} from "../../constants.js"
-import { renderPage } from "../../page.js"
+} from "../../constants/index.js"
 import { ErrorLabel } from "../error-label/index.js"
 import {
   deadlineBadge,
@@ -22,6 +21,7 @@ import {
   thumbGradient,
 } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
 export const EventDetail = {
@@ -45,7 +45,7 @@ export const EventDetail = {
     const liveClosed = msLeft == null ? null : msLeft <= 0
     const showClock = msLeft != null && msLeft > 0 && msLeft < DAY_MS
 
-    return renderPage({
+    return Page.render({
       variant: "document",
       category: event?.category ?? "wedding",
       children: [

@@ -1,4 +1,4 @@
-import { italianRegions, regionSpellings } from "./data/regions/index.js"
+import { italianRegions, regionSpellings } from "./index.js"
 
 export { italianRegions }
 

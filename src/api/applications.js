@@ -1,4 +1,4 @@
-import { MIN_TEXT_LENGTH, REQUEST_TIMEOUT_MS } from "../constants.js"
+import { MIN_TEXT_LENGTH, REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import { supabase } from "./client.js"
 import { toViewModel } from "./events.js"
 

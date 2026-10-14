@@ -1,11 +1,11 @@
 import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 
-import { LIST_STAGGER_CAP } from "../../constants.js"
-import { renderPage } from "../../page.js"
-import { capitalize } from "../../text.js"
+import { LIST_STAGGER_CAP } from "../../constants/index.js"
+import { capitalize } from "../../text/index.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
 const StatusColors = {
@@ -35,7 +35,7 @@ export const ApplicationList = {
         ? applications
         : applications.filter((a) => a.applicationStatus === status_filter)
 
-    return renderPage({
+    return Page.render({
       variant: "sticky",
       children: [
         html`

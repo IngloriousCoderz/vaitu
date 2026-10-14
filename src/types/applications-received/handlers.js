@@ -2,8 +2,11 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
-import { DATETIME_LOCAL_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
-import { canonicalRegion } from "../../regions.js"
+import {
+  DATETIME_LOCAL_LENGTH,
+  REQUEST_TIMEOUT_MS,
+} from "../../constants/index.js"
+import { canonicalRegion } from "../../data/regions/resolve.js"
 
 export function open(entity, event_id, api) {
   entity.event_id = event_id

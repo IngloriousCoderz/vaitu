@@ -2,7 +2,10 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
-import { MIN_PASSWORD_LENGTH, REQUEST_TIMEOUT_MS } from "../../constants.js"
+import {
+  MIN_PASSWORD_LENGTH,
+  REQUEST_TIMEOUT_MS,
+} from "../../constants/index.js"
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 

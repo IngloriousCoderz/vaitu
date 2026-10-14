@@ -1,5 +1,5 @@
-import { FIRST_INDEX, PAD_LENGTH, SINGULAR } from "../../constants.js"
-import { randomId } from "../../text.js"
+import { FIRST_INDEX, PAD_LENGTH, SINGULAR } from "../../constants/index.js"
+import { randomId } from "../../text/index.js"
 
 export function calendarLinks({ title, eventDate, location }) {
   if (!eventDate) return null

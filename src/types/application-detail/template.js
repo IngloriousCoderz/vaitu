@@ -4,11 +4,11 @@ import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { renderPage } from "../../page.js"
-import { capitalize } from "../../text.js"
+import { capitalize } from "../../text/index.js"
 import { ErrorLabel } from "../error-label/index.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -51,7 +51,7 @@ export const ApplicationDetail = {
           })
         : null
 
-    return renderPage({
+    return Page.render({
       variant: "document",
       category: application?.category ?? "wedding",
       children: [

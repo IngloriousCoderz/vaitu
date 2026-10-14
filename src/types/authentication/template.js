@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { renderPage } from "../../page.js"
+import { Page } from "../page/index.js"
 import { EmailStep } from "./email-step.js"
 import { LoginStep } from "./login-step.js"
 import { RoleStep } from "./role-step.js"
@@ -14,7 +14,7 @@ export const Authentication = {
 
   renderAuthentication({ entity, callbacks }) {
     const isBusy = entity.status === "loading"
-    return renderPage({
+    return Page.render({
       variant: "centered",
       children: [
         html`

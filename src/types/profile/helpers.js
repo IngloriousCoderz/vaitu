@@ -10,8 +10,8 @@ import {
   TIER_GOLD_MIN_POINTS,
   TIER_SILVER_MIN_POINTS,
   ZERO,
-} from "../../constants.js"
-import { capitalize } from "../../text.js"
+} from "../../constants/index.js"
+import { capitalize } from "../../text/index.js"
 
 export function defaultTiers() {
   return {

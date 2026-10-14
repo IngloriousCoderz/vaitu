@@ -3,7 +3,7 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
-import { stopTick } from "../../ticker.js"
+import { stopTick } from "../../ticker/index.js"
 
 export function open(entity, event_id, api) {
   stopTick("clock")

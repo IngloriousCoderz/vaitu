@@ -30,7 +30,7 @@ const paths = {
   mic: svg`<path d="M12 19v3" ></path><path d="M19 10v2a7 7 0 0 1-14 0v-2" ></path><rect x="9" y="2" width="6" height="13" rx="3" ></rect>`,
 }
 
-import { DEFAULT_ICON_SIZE } from "../../constants.js"
+import { DEFAULT_ICON_SIZE } from "../../constants/index.js"
 
 export const Icon = {
   render({ name, size = DEFAULT_ICON_SIZE }) {

@@ -1,4 +1,4 @@
-import { MS_PER_SECOND } from "./constants.js"
+import { MS_PER_SECOND } from "../constants/index.js"
 
 // Deferred notifies. Owned by the render layer (index.js), which holds a
 // stable api — handler api proxies are revoked after dispatch, so handlers

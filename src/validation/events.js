@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-import { DEFAULT_MAX_APPLICANTS, MIN_TEXT_LENGTH } from "../constants.js"
+import { DEFAULT_MAX_APPLICANTS, MIN_TEXT_LENGTH } from "../constants/index.js"
 
 // Per-category details schemas. Each category owns its fields independently —
 // a future category adds its own entry here without reusing wedding's lists.

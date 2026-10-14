@@ -6,7 +6,7 @@ import {
   LAST_INDEX_OFFSET,
   WEEK_DAYS,
   ZERO,
-} from "../../constants.js"
+} from "../../constants/index.js"
 
 export function monogram(title) {
   const parts = title.split(" ").filter((word) => word && word !== "&")

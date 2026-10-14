@@ -4,8 +4,8 @@ import {
   DATETIME_LOCAL_LENGTH,
   DEFAULT_MAX_APPLICANTS,
   ZERO,
-} from "../../constants.js"
-import { isTicking, startTick } from "../../ticker.js"
+} from "../../constants/index.js"
+import { isTicking, startTick } from "../../ticker/index.js"
 import { categoryById } from "../event-list/categories.js"
 import * as handlers from "./handlers.js"
 import { EventCreate as renderers } from "./template.js"

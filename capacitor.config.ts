@@ -1,7 +1,7 @@
 import { networkInterfaces } from "node:os"
 
 import type { CapacitorConfig } from "@capacitor/cli"
-import { VITE_DEV_PORT } from "./src/constants.js"
+import { VITE_DEV_PORT } from "./src/constants/index.js"
 
 // First non-internal IPv4 (the LAN address phones reach).
 function lanIp() {

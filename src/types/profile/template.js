@@ -8,10 +8,14 @@ import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
-import { renderPage } from "../../page.js"
-import { canonicalRegion, ITALY, uniqueRegions } from "../../regions.js"
-import { capitalize } from "../../text.js"
+import {
+  canonicalRegion,
+  ITALY,
+  uniqueRegions,
+} from "../../data/regions/resolve.js"
+import { capitalize } from "../../text/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import {
   displayInstagram,
   displayWebsite,
@@ -49,7 +53,7 @@ export const Profile = {
     const saving = status === "saving"
     const shown = entity.isEditing ? entity.values : profile
 
-    return renderPage({
+    return Page.render({
       variant: "document",
       className: "vaitu-frame-centerText",
       children: [
@@ -253,9 +257,9 @@ export const Profile = {
                               ${this.renderRow("Region", canonicalRegion(profile.region))}
                               ${this.renderRow(
                                 "Favorite regions",
-                                uniqueRegions(profile.favorite_regions ?? []).join(
-                                  ", ",
-                                ),
+                                uniqueRegions(
+                                  profile.favorite_regions ?? [],
+                                ).join(", "),
                               )}
                               ${this.renderRow("Sub-role", profile.sub_role)}
                             </dl>

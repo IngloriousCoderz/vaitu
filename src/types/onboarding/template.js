@@ -3,9 +3,9 @@ import { Button } from "@inglorious/ui/button"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { renderPage } from "../../page.js"
-import { ITALY } from "../../regions.js"
+import { ITALY } from "../../data/regions/resolve.js"
 import { ErrorLabel } from "../error-label/index.js"
+import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
 export const Onboarding = {
@@ -24,7 +24,7 @@ export const Onboarding = {
     const saving = entity.status === "saving"
     const countryError = getFieldError(entity, "country")
 
-    return renderPage({
+    return Page.render({
       variant: "centered",
       children: [
         html`

@@ -2,7 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
-import { regionAfterCountryChange } from "../../regions.js"
+import { regionAfterCountryChange } from "../../data/regions/resolve.js"
 
 export function fieldSet(entity, { field, value }, api) {
   if (field === "country") {

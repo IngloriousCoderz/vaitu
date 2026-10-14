@@ -1,4 +1,4 @@
-import { FIRST_INDEX } from "../../constants.js"
+import { FIRST_INDEX } from "../../constants/index.js"
 import { regions as english } from "./en.js"
 import { regions as italian } from "./it.js"
 

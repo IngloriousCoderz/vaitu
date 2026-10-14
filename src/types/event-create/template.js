@@ -11,12 +11,12 @@ import {
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
   ZERO,
-} from "../../constants.js"
-import { renderPage } from "../../page.js"
-import { ITALY } from "../../regions.js"
+} from "../../constants/index.js"
+import { ITALY } from "../../data/regions/resolve.js"
 import { ErrorLabel } from "../error-label/index.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
 export const EventCreate = {
@@ -53,7 +53,7 @@ export const EventCreate = {
     )
     const title_is_derived = !category.title_from.input
 
-    return renderPage({
+    return Page.render({
       variant: "sticky",
       category: categoryId,
       children: [

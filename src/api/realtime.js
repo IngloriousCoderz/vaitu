@@ -1,5 +1,5 @@
-import { supabase } from "./api/client.js"
-import { store } from "./store/index.js"
+import { store } from "../store/index.js"
+import { supabase } from "./client.js"
 
 // create() calls activateRealtime(), destroy() calls deactivateRealtime().
 // The Supabase client already keeps the open channels, under `realtime:` plus

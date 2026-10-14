@@ -1,4 +1,4 @@
-import { activateRealtime, deactivateRealtime } from "../../realtime.js"
+import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import * as handlers from "./handlers.js"
 import { ApplicationList as renderers } from "./template.js"
 

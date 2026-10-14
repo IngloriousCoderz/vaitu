@@ -1,5 +1,5 @@
-import { activateRealtime, deactivateRealtime } from "../../realtime.js"
-import { regionFilterItems } from "../../regions.js"
+import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
+import { regionFilterItems } from "../../data/regions/resolve.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
   categorySelect,

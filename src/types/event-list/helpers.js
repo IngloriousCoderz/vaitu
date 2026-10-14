@@ -1,5 +1,5 @@
-import { FIRST_INDEX, ZERO } from "../../constants.js"
-import { sameRegion, uniqueRegions } from "../../regions.js"
+import { FIRST_INDEX, ZERO } from "../../constants/index.js"
+import { sameRegion, uniqueRegions } from "../../data/regions/resolve.js"
 
 export const periods = [
   { id: "all", label: "All dates", days: null },
@@ -33,9 +33,7 @@ export function visibleEvents(
     const matchesRegion =
       activeRegion === "all" ||
       (activeRegion === "mine"
-        ? favoriteRegions.some((favorite) =>
-            sameRegion(favorite, event.region),
-          )
+        ? favoriteRegions.some((favorite) => sameRegion(favorite, event.region))
         : sameRegion(event.region, activeRegion))
     const matchesPeriod =
       period.days === null ||

@@ -2,9 +2,9 @@ import { Button } from "@inglorious/ui/button"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
-import { renderPage } from "../../page.js"
-import { capitalize } from "../../text.js"
+import { capitalize } from "../../text/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import { progressLabel, tierProgress } from "../profile/helpers.js"
 import styles from "./style.module.css"
 
@@ -18,7 +18,7 @@ export const Ranks = {
     const progress =
       status === "ready" && tiers ? tierProgress(mine?.points, tiers) : null
 
-    return renderPage({
+    return Page.render({
       variant: "sticky",
       children: [
         html`

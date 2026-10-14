@@ -5,11 +5,11 @@ import { Chip } from "@inglorious/ui/chip"
 import { html } from "@inglorious/web"
 import { getFieldError } from "@inglorious/web/form"
 
-import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants.js"
-import { renderPage } from "../../page.js"
-import { capitalize } from "../../text.js"
+import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants/index.js"
+import { capitalize } from "../../text/index.js"
 import { ErrorLabel } from "../error-label/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
 const StatusColors = {
@@ -47,7 +47,7 @@ export const ApplicationsReceived = {
     const max_reached =
       entity.max_applicants != null && selected_count >= entity.max_applicants
 
-    return renderPage({
+    return Page.render({
       variant: "stickyFlat",
       children: [
         html`

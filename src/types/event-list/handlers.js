@@ -12,7 +12,7 @@ import {
   favoriteRegionOptions,
   regionFilterItems,
   sameRegion,
-} from "../../regions.js"
+} from "../../data/regions/resolve.js"
 import { distinctRegions } from "./helpers.js"
 
 export function search(entity, query) {

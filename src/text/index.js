@@ -11,7 +11,7 @@ import {
   UUID_VERSION_BITS,
   UUID_VERSION_INDEX,
   UUID_VERSION_MASK,
-} from "./constants.js"
+} from "../constants/index.js"
 
 export function capitalize(text) {
   return (

@@ -3,11 +3,11 @@ import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 
-import { LIST_STAGGER_CAP, SINGULAR } from "../../constants.js"
-import { renderPage } from "../../page.js"
-import { capitalize } from "../../text.js"
+import { LIST_STAGGER_CAP, SINGULAR } from "../../constants/index.js"
+import { capitalize } from "../../text/index.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
+import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
 const statusColors = {
@@ -31,7 +31,7 @@ export const MyEvents = {
   }) {
     const { events, status, error } = entity
 
-    return renderPage({
+    return Page.render({
       variant: "stickyFlat",
       children: [
         html`

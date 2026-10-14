@@ -1,12 +1,12 @@
 import { Form } from "@inglorious/web/form"
 
-import { DAY_MS } from "../../constants.js"
 import {
   activateRealtime,
   deactivateRealtime,
   realtimeColumn,
-} from "../../realtime.js"
-import { isTicking, startTick } from "../../ticker.js"
+} from "../../api/realtime.js"
+import { DAY_MS } from "../../constants/index.js"
+import { isTicking, startTick } from "../../ticker/index.js"
 import { isProfileComplete } from "../profile/helpers.js"
 import * as handlers from "./handlers.js"
 import { EventDetail as renderers } from "./template.js"

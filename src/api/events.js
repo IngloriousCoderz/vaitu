@@ -12,9 +12,9 @@ import {
   REQUEST_TIMEOUT_MS,
   SINGULAR,
   ZERO,
-} from "../constants.js"
-import { canonicalRegion, uniqueRegions } from "../regions.js"
-import { randomId } from "../text.js"
+} from "../constants/index.js"
+import { canonicalRegion, uniqueRegions } from "../data/regions/resolve.js"
+import { randomId } from "../text/index.js"
 import { createEventSchema } from "../validation/events.js"
 import { supabase } from "./client.js"
 

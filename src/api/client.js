@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js"
 
-import { SUPABASE_API_PORT } from "../constants.js"
+import { SUPABASE_API_PORT } from "../constants/index.js"
 
 // Dev over LAN needs no manual IP: when the page itself is served from a
 // LAN host (live reload, phone browser) and the baked URL is local,

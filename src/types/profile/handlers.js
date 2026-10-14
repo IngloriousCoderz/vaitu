@@ -9,7 +9,7 @@ import {
   regionForCountry,
   sameRegion,
   uniqueRegions,
-} from "../../regions.js"
+} from "../../data/regions/resolve.js"
 import { defaultTiers } from "./helpers.js"
 
 export function open(entity, _, api) {

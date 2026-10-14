@@ -1,4 +1,4 @@
-import { FIRST_INDEX } from "../../constants.js"
+import { FIRST_INDEX } from "../../constants/index.js"
 import { festivalGenres, weddingStyles } from "../../validation/events.js"
 
 // Per-category registry. Each category owns its label, filter dimensions and

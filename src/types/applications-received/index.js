@@ -4,7 +4,7 @@ import {
   activateRealtime,
   deactivateRealtime,
   realtimeColumn,
-} from "../../realtime.js"
+} from "../../api/realtime.js"
 import * as handlers from "./handlers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
 

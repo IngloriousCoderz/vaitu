@@ -24,9 +24,12 @@ import {
   PAD_LENGTH,
   SINGULAR,
   ZERO,
-} from "../../constants.js"
-import { regionAfterCountryChange, regionForCountry } from "../../regions.js"
-import { stopTick } from "../../ticker.js"
+} from "../../constants/index.js"
+import {
+  regionAfterCountryChange,
+  regionForCountry,
+} from "../../data/regions/resolve.js"
+import { stopTick } from "../../ticker/index.js"
 import { weddingStyles } from "../../validation/events.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
