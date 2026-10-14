@@ -1,14 +1,17 @@
 import { supabase } from "./api/client.js"
 import { store } from "./store/index.js"
 
-// One channel per key, owned by the entity: activateRealtime() from create(),
-// deactivateRealtime() from destroy(). The callback reads the store when a
-// change arrives — a filter captured at subscribe time goes stale, and the
-// handler `api` is revoked after dispatch.
-const channels = {}
-
+// create() calls activateRealtime(), destroy() calls deactivateRealtime().
+// The Supabase client already keeps the open channels, under `realtime:` plus
+// the name. A local map drops the handle when removeChannel fails, and the
+// channel keeps running with nothing left that can close it.
 function channelName(key) {
   return `vaitu-${key}`
+}
+
+function findChannel(key) {
+  const topic = `realtime:${channelName(key)}`
+  return supabase.getChannels().find((channel) => channel.topic === topic)
 }
 
 export function realtimeColumn(change, column) {
@@ -19,7 +22,6 @@ export function realtimeColumn(change, column) {
 export function activateRealtime(key, { table, event, payload, match }) {
   deactivateRealtime(key)
   const channel = supabase.channel(channelName(key))
-  channels[key] = channel
   channel
     .on(
       "postgres_changes",
@@ -42,8 +44,7 @@ export function activateRealtime(key, { table, event, payload, match }) {
 }
 
 export function deactivateRealtime(key) {
-  const channel = channels[key]
+  const channel = findChannel(key)
   if (!channel) return
-  delete channels[key]
   void supabase.removeChannel(channel)
 }
