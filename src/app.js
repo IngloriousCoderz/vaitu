@@ -2,74 +2,10 @@ import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 import { repeat } from "@inglorious/web/directives/repeat"
 
-import { Fab, senderTabs, TabBar } from "./types/tab-bar/template.js"
-
-// Pre-login routes (splash, auth, onboarding) have no page-transition
-// direction, but they still need the block <section> wrapper. main is a flex
-// column, and a .page handed to it directly becomes a flex item — where
-// `margin: 0 auto` suppresses stretch and it shrink-wraps (measured 239px
-// instead of the full 26.875rem column). The logged-in routes avoid this
-// because their content is already wrapped.
-function renderBareShell(content) {
-  return renderShell({
-    content: html`<section class="vaitu-page">${content}</section>`,
-  })
-}
-
-function renderSplash() {
-  return Flex.render({
-    align: "center",
-    justify: "center",
-    isFullWidth: true,
-    className: "vaitu-splash",
-    children: [
-      html`<img src="/logo.svg" alt="vaitu" class="vaitu-splashLogo" />`,
-    ],
-  })
-}
-
-// App shell: header / scrolling content / footer, per the ScrollableContent
-// story in @inglorious/ui's flex primitives.
-//
-// The tab bar used to be `position: fixed`, which made the bar a floating
-// overlay rather than layout. Everything downstream paid for that: pages had
-// to reserve bottom padding equal to the bar (and a different amount per page,
-// because the FAB moved), and the reserved strip had to be painted separately
-// or content showed through it. Giving the bar its own footer row removes the
-// whole class of problem — no page reserves space for it any more.
-//
-// `.iw-flex-overflow-auto` also sets min-height:0, without which the content
-// row expands the shell instead of scrolling inside it.
-function renderShell({ content, fab, tabbar, isTabbarHidden = true }) {
-  return Flex.render({
-    element: "div",
-    direction: "column",
-    overflow: "hidden",
-    className: "appShell",
-    children: [
-      Flex.render({
-        element: "main",
-        direction: "column",
-        overflow: "auto",
-        className: "appMain",
-        children: [content],
-      }),
-      // FAB floats over the shell, so it is a direct child of the positioned
-      // shell. The tab bar must NOT be here as well — it belongs in the
-      // footer row only, and listing it in both places renders it twice.
-      ...[fab].filter(Boolean),
-      Flex.render({
-        element: "footer",
-        overflow: "hidden",
-        className: isTabbarHidden ? "appFooter appFooterHidden" : "appFooter",
-        children: [tabbar].filter(Boolean),
-      }),
-    ],
-  })
-}
+import { Fab, TabBar } from "./types/tab-bar/template.js"
 
 // Tab destinations switch instantly (market standard); overlay pushes slide.
-const TAB_PAGES = new Set(["events", "my_events", "applications", "profile"])
+const TAB_PAGES = new Set(["events", "applications", "profile"])
 let pageStack = []
 let pageDirection = null
 
@@ -112,15 +48,15 @@ export const App = {
     // centred login form collapsed to its content height (~253px) instead of
     // filling the screen. No tab bar or FAB on these routes.
     if (session.status === "unknown") {
-      return renderBareShell(renderSplash())
+      return this.renderBareShell(this.renderSplash())
     }
     // Gated: logged out always lands on login.
     if (!session.user_id) {
-      return renderBareShell(api.render("authentication"))
+      return this.renderBareShell(api.render("authentication"))
     }
     const auth = api.getEntity("authentication")
     if (auth.justSignedUp) {
-      return renderBareShell(api.render("onboarding"))
+      return this.renderBareShell(api.render("onboarding"))
     }
 
     const onNavigate = (value) => {
@@ -160,11 +96,9 @@ export const App = {
     const applicationDetail = api.getEntity("applicationDetail")
     const ranks = api.getEntity("ranks")
     const profile = api.getEntity("profile")
-    const sender = profile.profile?.role === "sender"
-    const tabs = sender ? senderTabs : undefined
     const bar = (active, hidden) => {
       tabbarHidden = hidden
-      return TabBar.render({ active, tabs, hidden, onNavigate })
+      return TabBar.render({ active, hidden, onNavigate })
     }
 
     let pageKey = null
@@ -191,36 +125,30 @@ export const App = {
         pageKey = "profile"
         tabbar = bar("profile", false)
       } else if (!profile.profile && !profile.error) {
-        return renderSplash()
-      } else if (sender) {
+        return this.renderSplash()
+      } else {
         const eventCreate = api.getEntity("eventCreate")
+        const applicationsReceived = api.getEntity("applicationsReceived")
         if (eventCreate.isOpen) {
           page = api.render("eventCreate")
           pageKey = "event-create"
           tabbar = bar(null, true)
+        } else if (applicationsReceived.event_id) {
+          page = api.render("applicationsReceived")
+          pageKey = `applications-received:${applicationsReceived.event_id}`
+          tabbar = bar(null, true)
+          fab = hideFab()
         } else {
-          const applicationsReceived = api.getEntity("applicationsReceived")
-          if (applicationsReceived.event_id) {
-            page = api.render("applicationsReceived")
-            pageKey = `applications-received:${applicationsReceived.event_id}`
-            tabbar = bar(null, true)
-            fab = hideFab()
-          } else {
-            page = api.render("myEvents")
-            pageKey = "my_events"
-            tabbar = bar("events", false)
-            fab = showFab(false)
-          }
+          page = api.render("eventList")
+          pageKey = "events"
+          tabbar = bar("events", false)
+          fab = showFab(false)
         }
-      } else {
-        page = api.render("eventList")
-        pageKey = "events"
-        tabbar = bar("events", false)
       }
     }
 
     const direction = trackPage(pageKey)
-    return renderShell({
+    return this.renderShell({
       content: html`
         ${repeat(
           [pageKey],
@@ -234,6 +162,70 @@ export const App = {
       fab,
       tabbar,
       isTabbarHidden: tabbarHidden,
+    })
+  },
+
+  // Pre-login routes (splash, auth, onboarding) have no page-transition
+  // direction, but they still need the block <section> wrapper. main is a flex
+  // column, and a .page handed to it directly becomes a flex item — where
+  // `margin: 0 auto` suppresses stretch and it shrink-wraps (measured 239px
+  // instead of the full 26.875rem column). The logged-in routes avoid this
+  // because their content is already wrapped.
+  renderBareShell(content) {
+    return this.renderShell({
+      content: html`<section class="vaitu-page">${content}</section>`,
+    })
+  },
+
+  renderSplash() {
+    return Flex.render({
+      align: "center",
+      justify: "center",
+      isFullWidth: true,
+      className: "vaitu-splash",
+      children: [
+        html`<img src="/logo.svg" alt="vaitu" class="vaitu-splashLogo" />`,
+      ],
+    })
+  },
+
+  // App shell: header / scrolling content / footer, per the ScrollableContent
+  // story in @inglorious/ui's flex primitives.
+  //
+  // The tab bar used to be `position: fixed`, which made the bar a floating
+  // overlay rather than layout. Everything downstream paid for that: pages had
+  // to reserve bottom padding equal to the bar (and a different amount per page,
+  // because the FAB moved), and the reserved strip had to be painted separately
+  // or content showed through it. Giving the bar its own footer row removes the
+  // whole class of problem — no page reserves space for it any more.
+  //
+  // `.iw-flex-overflow-auto` also sets min-height:0, without which the content
+  // row expands the shell instead of scrolling inside it.
+  renderShell({ content, fab, tabbar, isTabbarHidden = true }) {
+    return Flex.render({
+      element: "div",
+      direction: "column",
+      overflow: "hidden",
+      className: "appShell",
+      children: [
+        Flex.render({
+          element: "main",
+          direction: "column",
+          overflow: "auto",
+          className: "appMain",
+          children: [content],
+        }),
+        // FAB floats over the shell, so it is a direct child of the positioned
+        // shell. The tab bar must NOT be here as well — it belongs in the
+        // footer row only, and listing it in both places renders it twice.
+        ...[fab].filter(Boolean),
+        Flex.render({
+          element: "footer",
+          overflow: "hidden",
+          className: isTabbarHidden ? "appFooter appFooterHidden" : "appFooter",
+          children: [tabbar].filter(Boolean),
+        }),
+      ],
     })
   },
 }

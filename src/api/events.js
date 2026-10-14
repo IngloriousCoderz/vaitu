@@ -177,7 +177,7 @@ export async function fetchMyEvents() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) return []
   const { data: events, error } = await supabase
     .from("events")
     .select(

@@ -1,16 +1,24 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
+import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 
-import { LIST_STAGGER_CAP } from "../../constants/index.js"
+import { LIST_STAGGER_CAP, SINGULAR } from "../../constants/index.js"
+import { capitalize } from "../../text/index.js"
 import { Card } from "../event-card/index.js"
 import { Icon } from "../icon/index.js"
 import { Page } from "../page/index.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
+
+const statusColors = {
+  open: "success",
+  closed: "default",
+  assigned: "info",
+}
 
 export const EventList = {
   create(entity) {
@@ -20,7 +28,10 @@ export const EventList = {
     entity.activeRegion ??= "all"
     entity.activePeriod ??= "all"
     entity.isFiltersVisible ??= false
+    entity.activeOwner ??= "explore"
     entity.events ??= []
+    entity.myEvents ??= []
+    entity.confirmingDelete ??= null
     entity.appliedMap ??= {}
     entity.favoriteRegions ??= []
     entity.isEditingFavorites ??= false
@@ -38,6 +49,10 @@ export const EventList = {
 
   renderEventList({
     events,
+    myEvents,
+    myEventIds,
+    activeOwner,
+    confirmingDelete,
     appliedMap,
     status,
     error,
@@ -50,6 +65,7 @@ export const EventList = {
     favoriteInput,
     favoritesStatus,
     favoritesError,
+    owners,
     periods,
     query,
     activeFilter,
@@ -58,6 +74,11 @@ export const EventList = {
     favoriteRegions,
     isFiltersVisible,
     hasActiveFilters,
+    onSelectOwner,
+    onEdit,
+    onAskDelete,
+    onDelete,
+    onCancelDelete,
     onSearch,
     onSelectCategory,
     onSelectFilter,
@@ -74,8 +95,9 @@ export const EventList = {
     onClearFilters,
     onOpenEvent,
   }) {
+    const isMine = activeOwner === "mine"
     const shown = visibleEvents(
-      events,
+      isMine ? myEvents : events.filter((event) => !myEventIds.has(event.id)),
       query,
       activeCategory,
       activeFilter,
@@ -104,6 +126,23 @@ export const EventList = {
                 onClick: onToggleFilters,
               })}
             </header>
+
+            <div class=${styles.ownerSwitch}>
+              ${ButtonGroup.render({
+                buttons: owners.map((owner) =>
+                  owner.id === activeOwner
+                    ? { value: owner.id, label: owner.label, color: "primary" }
+                    : {
+                        value: owner.id,
+                        label: owner.label,
+                        variant: "outline",
+                      },
+                ),
+                value: activeOwner,
+                size: "sm",
+                onChange: onSelectOwner,
+              })}
+            </div>
 
             <div class=${styles.categoryRow}>
               ${categories.map(
@@ -206,22 +245,109 @@ export const EventList = {
                   ? html`<p class=${styles.empty}>${error}</p>`
                   : !shown.length
                     ? html`<p class=${styles.empty}>
-                        No events match your search yet.
+                        ${
+                          isMine && !myEvents.length
+                            ? "You haven't posted any event yet."
+                            : "No events match your search yet."
+                        }
                       </p>`
-                    : shown.map((event, index) =>
-                        Card.render({
-                          event,
-                          isApplied: Boolean(appliedMap[event.id]),
-                          onOpen: onOpenEvent,
-                          className: "vaitu-list-item",
-                          style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
-                        }),
-                      )
+                    : shown.map((event, index) => {
+                        const style = `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`
+                        return isMine
+                          ? this.renderMyEvent({
+                              event,
+                              style,
+                              isConfirmingDelete: confirmingDelete === event.id,
+                              onOpenEvent,
+                              onEdit,
+                              onAskDelete,
+                              onDelete,
+                              onCancelDelete,
+                            })
+                          : Card.render({
+                              event,
+                              isApplied: Boolean(appliedMap[event.id]),
+                              onOpen: onOpenEvent,
+                              className: "vaitu-list-item",
+                              style,
+                            })
+                      })
             }
           </main>
         `,
       ],
     })
+  },
+
+  renderMyEvent({
+    event,
+    style,
+    isConfirmingDelete,
+    onOpenEvent,
+    onEdit,
+    onAskDelete,
+    onDelete,
+    onCancelDelete,
+  }) {
+    return html`
+      <div class="${styles.myEvent} vaitu-list-item" style=${style}>
+        ${Card.render({ event, divider: false, onOpen: onOpenEvent })}
+        <div class=${styles.myEventFooter}>
+          ${Chip.render({
+            children: capitalize(event.status),
+            color: statusColors[event.status] ?? "default",
+          })}
+          <span class=${styles.count}>
+            ${event.applications_count}
+            application${event.applications_count === SINGULAR ? "" : "s"}
+          </span>
+          <span class=${styles.rowActions}>
+            ${
+              event.status === "open"
+                ? IconButton.render({
+                    icon: Icon.render({ name: "pencil", size: 16 }),
+                    ariaLabel: "Edit event",
+                    className: `${styles.miniButton} ${styles.editTint}`,
+                    onClick: () => onEdit(event.id),
+                  })
+                : ""
+            }
+            ${IconButton.render({
+              icon: Icon.render({ name: "trash", size: 16 }),
+              ariaLabel: "Delete event",
+              className: `${styles.miniButton} ${styles.deleteTint}`,
+              onClick: () => onAskDelete(event.id),
+            })}
+          </span>
+        </div>
+        ${
+          isConfirmingDelete
+            ? html`
+                <p class=${styles.warn}>
+                  Delete this event and all its applications?
+                </p>
+                <div class=${styles.deleteRow}>
+                  ${Button.render({
+                    children: "Yes, delete",
+                    color: "error",
+                    variant: "outline",
+                    shape: "pill",
+                    size: "md",
+                    onClick: () => onDelete(event.id),
+                  })}
+                  ${Button.render({
+                    children: "Keep it",
+                    variant: "outline",
+                    shape: "pill",
+                    size: "md",
+                    onClick: onCancelDelete,
+                  })}
+                </div>
+              `
+            : ""
+        }
+      </div>
+    `
   },
 
   renderFavoriteEditor({

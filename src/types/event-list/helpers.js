@@ -1,6 +1,11 @@
 import { FIRST_INDEX, ZERO } from "../../constants/index.js"
 import { sameRegion, uniqueRegions } from "../../data/regions/resolve.js"
 
+export const owners = [
+  { id: "explore", label: "Explore" },
+  { id: "mine", label: "My events" },
+]
+
 export const periods = [
   { id: "all", label: "All dates", days: null },
   { id: "week", label: "Next 7 days", days: 7 },

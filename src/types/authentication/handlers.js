@@ -73,18 +73,6 @@ export function signupBack(entity) {
   clearAuthErrors(entity)
 }
 
-export function roleSelect(entity, role) {
-  entity.role = role
-  entity.error = null
-  entity.step = "signup"
-}
-
-export function rolesBack(entity) {
-  entity.step = "role"
-  entity.error = null
-  clearAuthErrors(entity)
-}
-
 export function emailSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateEmail })
   if (!entity.isValid) return
@@ -113,7 +101,6 @@ export function signupSubmit(entity, _, api) {
     email: entity.values.email,
     password: entity.values.password,
     confirmPassword: entity.values.confirmPassword,
-    role: entity.role,
   })
 }
 
@@ -141,7 +128,7 @@ export const emailCheck = handleAsync("emailCheck", {
     entity.status = "ready"
     entity.mode = mode
     entity.values.email = email
-    entity.step = mode === "login" ? "login" : "role"
+    entity.step = mode
   },
   error(entity, err) {
     entity.status = "error"
@@ -178,18 +165,13 @@ export const signup = handleAsync("signup", {
     entity.status = "loading"
     entity.error = null
   },
-  async run({ full_name, email, password, role }) {
-    const { data, error } = await supabase.auth.signUp({
+  async run({ full_name, email, password }) {
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: full_name.trim() } },
     })
     if (error) throw error
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({ full_name: full_name.trim(), role })
-      .eq("id", data.user.id)
-    if (profileError) throw profileError
     return true
   },
   success(entity, _, api) {

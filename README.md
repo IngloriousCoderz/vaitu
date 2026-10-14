@@ -125,8 +125,10 @@ frontend talks to.
 
 ### Test accounts (seed)
 
-- Sender: `sender@vaitu.local` / `test1234`
-- Seeker: `seeker@vaitu.local` / `test1234` (profile pre-filled, can apply right away)
+There is one kind of account: it can post events and apply to other people's.
+
+- `sender@vaitu.local` / `test1234` (owns the seeded events)
+- `seeker@vaitu.local` / `test1234` (profile pre-filled, can apply right away)
 
 ### Migrations
 

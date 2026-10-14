@@ -8,7 +8,7 @@ import styles from "./style.module.css"
 // Shared bottom tab bar. Stays mounted at App level so hide/show animates
 // via CSS instead of remounting per page.
 export const TabBar = {
-  render({ active, tabs, hidden, onNavigate }) {
+  render({ active, hidden, onNavigate }) {
     return html`
       <nav
         class=${hidden ? `${styles.tabbar} ${styles.tabbarHidden}` : styles.tabbar}
@@ -16,7 +16,7 @@ export const TabBar = {
         ${BottomNavigation.render({
           value: active,
           onChange: (value) => onNavigate(value),
-          actions: (tabs ?? seekerTabs).map((tab) => ({
+          actions: tabs.map((tab) => ({
             value: tab.value,
             label: tab.label,
             icon: Icon.render({ name: tab.icon }),
@@ -27,18 +27,13 @@ export const TabBar = {
   },
 }
 
-const seekerTabs = [
+const tabs = [
   { value: "events", label: "Events", icon: "compass" },
   { value: "applications", label: "Applications", icon: "clipboard-list" },
   { value: "profile", label: "Profile", icon: "user" },
 ]
 
-export const senderTabs = [
-  { value: "events", label: "My Events", icon: "compass" },
-  { value: "profile", label: "Profile", icon: "user" },
-]
-
-// Floating action button for event creation (sender only). Stays mounted
+// Floating action button for event creation, shown on the events tab. Stays mounted
 // while visible so position/appear animates instead of remounting.
 //
 // Everything except placement comes from the package: `size` sets the box,

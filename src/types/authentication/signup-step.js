@@ -14,7 +14,6 @@ export const SignupStep = {
     onField,
     onContinue,
     onBackToEmail,
-    onBackToRoles,
     onTogglePassword,
     onToggleConfirmPassword,
   }) {
@@ -32,22 +31,13 @@ export const SignupStep = {
           <h2 class=${styles.title}>Create your account</h2>
           <p class=${styles.subtitle}>
             Signing up as
-            <strong>${getFieldValue(entity, "email", "")}</strong> as a
-            <strong>${entity.role}</strong>.
+            <strong>${getFieldValue(entity, "email", "")}</strong>.
             <button
               class=${styles.linkButton}
               type="button"
               @click=${onBackToEmail}
             >
               Change email
-            </button>
-            ·
-            <button
-              class=${styles.linkButton}
-              type="button"
-              @click=${onBackToRoles}
-            >
-              Change role
             </button>
           </p>
           <input

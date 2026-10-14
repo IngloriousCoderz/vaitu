@@ -162,7 +162,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, role, sub_role, country, region, website, instagram_handle, favorite_regions",
+        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions",
       )
       .eq("id", user.id)
       .single()
@@ -207,7 +207,6 @@ export const profileLoad = handleAsync("profileLoad", {
     entity.tierConfig = tiers
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#eventDetail:prefill", profile)
-    if (profile.role === "sender") api.notify("#myEvents:eventsLoad")
   },
   error(entity, err, api) {
     entity.status = "error"

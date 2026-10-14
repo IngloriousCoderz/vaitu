@@ -34,7 +34,8 @@ export const Session = {
       api.notify("#profile:profileLoad")
     }
     // Market loads at boot before the session resolves (empty applied map);
-    // reload whenever the user changes so applied marks are correct.
+    // reload whenever the user changes so applied marks and own events are
+    // correct.
     if (changed) api.notify("#eventList:eventsLoad")
   },
   clearSession(entity, _, api) {

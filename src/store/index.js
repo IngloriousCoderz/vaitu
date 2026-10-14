@@ -8,7 +8,6 @@ import { CountrySelect } from "../types/country-select/index.js"
 import { EventCreate } from "../types/event-create/index.js"
 import { EventDetail } from "../types/event-detail/index.js"
 import { EventList } from "../types/event-list/index.js"
-import { MyEvents } from "../types/my-events/index.js"
 import { Onboarding } from "../types/onboarding/index.js"
 import { Profile } from "../types/profile/index.js"
 import { Ranks } from "../types/ranks/index.js"
@@ -19,7 +18,6 @@ import { middlewares } from "./middlewares"
 export const store = createStore({
   types: {
     Authentication,
-    MyEvents,
     EventList,
     EventDetail,
     EventCreate,

@@ -2,7 +2,6 @@ import { Alert } from "@inglorious/ui/alert"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
-import { Chip } from "@inglorious/ui/chip"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
@@ -110,11 +109,8 @@ export const Profile = {
                     </div>
                     <h2 class=${styles.name}>${profile.full_name}</h2>
                     <p class=${styles.email}>${profile.email}</p>
-                    ${Chip.render({ children: profile.role })}
                     ${
-                      profile.role === "seeker" &&
-                      entity.stats &&
-                      entity.tierConfig
+                      entity.stats && entity.tierConfig
                         ? this.renderTierBlock({
                             stats: entity.stats,
                             tiers: entity.tierConfig,
@@ -123,7 +119,7 @@ export const Profile = {
                         : ""
                     }
                     ${
-                      profile.role === "seeker" && entity.stats
+                      entity.stats
                         ? html`
                             <div class=${styles.stats}>
                               ${this.renderStat(

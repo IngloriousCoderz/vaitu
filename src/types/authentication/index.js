@@ -27,7 +27,6 @@ export const Authentication = {
     entity.justSignedUp ??= false
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
-    entity.role ??= "seeker"
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -43,9 +42,7 @@ export const Authentication = {
         onCheckEmail: () => api.notify(`#${id}:emailSubmit`),
         onLogin: () => api.notify(`#${id}:loginSubmit`),
         onContinue: () => api.notify(`#${id}:signupSubmit`),
-        onSelectRole: (role) => api.notify(`#${id}:roleSelect`, role),
         onBackToEmail: () => api.notify(`#${id}:emailBack`),
-        onBackToRoles: () => api.notify(`#${id}:rolesBack`),
         onTogglePassword: (inputId) => {
           api.notify(`#${id}:passwordToggle`)
           restoreCursor(inputId)

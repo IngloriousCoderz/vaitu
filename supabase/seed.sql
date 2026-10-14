@@ -47,8 +47,7 @@ begin
   on conflict (provider_id, provider) do nothing;
 
   update public.profiles
-  set role = 'sender',
-      full_name = 'Test Sender',
+  set full_name = 'Test Sender',
       country = 'Italy',
       region = 'Tuscany',
       website = 'https://example.com',
@@ -93,8 +92,7 @@ begin
   on conflict (provider_id, provider) do nothing;
 
   update public.profiles
-  set role = 'seeker',
-      full_name = 'Test Seeker',
+  set full_name = 'Test Seeker',
       country = 'Italy',
       region = 'Lombardy',
       website = 'https://seeker.example.com',

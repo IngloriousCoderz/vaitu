@@ -2,7 +2,11 @@ import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
+  appliedClear,
   categorySelect,
+  deleteAsk,
+  deleteCancel,
+  eventRemove,
   eventsLoad,
   favoriteChoiceSelect,
   favoriteDraftAdd,
@@ -14,21 +18,26 @@ import {
   filtersClear,
   filterSelect,
   filtersToggle,
+  ownerSelect,
   periodSelect,
   regionSelect,
   search,
 } from "./handlers.js"
-import { distinctRegions, periods } from "./helpers.js"
+import { distinctRegions, owners, periods } from "./helpers.js"
 import { EventList as renderers } from "./template.js"
 
 export const EventList = {
   search,
   categorySelect,
   filterSelect,
+  ownerSelect,
   periodSelect,
   regionSelect,
   filtersToggle,
   filtersClear,
+  appliedClear,
+  deleteAsk,
+  deleteCancel,
   favoritesEditStart,
   favoritesEditCancel,
   favoriteDraftInput,
@@ -37,24 +46,35 @@ export const EventList = {
   favoriteDraftRemove,
   ...favoritesSave,
   ...eventsLoad,
+  ...eventRemove,
   ...renderers,
 
   create(entity) {
     renderers.create(entity)
-    activateRealtime(entity.id, {
+    activateRealtime(`${entity.id}:events`, {
       table: "events",
+      event: `#${entity.id}:eventsLoad`,
+    })
+    activateRealtime(`${entity.id}:applications`, {
+      table: "applications",
       event: `#${entity.id}:eventsLoad`,
     })
   },
 
   destroy(entity) {
-    deactivateRealtime(entity.id)
+    deactivateRealtime(`${entity.id}:events`)
+    deactivateRealtime(`${entity.id}:applications`)
   },
 
   render(entity, api) {
     const id = entity.id
+    const myEventIds = new Set(entity.myEvents.map((event) => event.id))
     return this.renderEventList({
       events: entity.events,
+      myEvents: entity.myEvents,
+      myEventIds,
+      activeOwner: entity.activeOwner,
+      confirmingDelete: entity.confirmingDelete,
       appliedMap: entity.appliedMap,
       status: entity.status,
       error: entity.error,
@@ -70,6 +90,7 @@ export const EventList = {
       favoriteInput: entity.favoriteInput,
       favoritesStatus: entity.favoritesStatus,
       favoritesError: entity.favoritesError,
+      owners,
       periods,
       query: entity.query,
       activeFilter: entity.activeFilter,
@@ -79,6 +100,11 @@ export const EventList = {
       isFiltersVisible: entity.isFiltersVisible,
       hasActiveFilters:
         entity.activeRegion !== "all" || entity.activePeriod !== "all",
+      onSelectOwner: (owner) => api.notify(`#${id}:ownerSelect`, owner),
+      onEdit: (event_id) => api.notify("#eventCreate:open", { event_id }),
+      onAskDelete: (event_id) => api.notify(`#${id}:deleteAsk`, event_id),
+      onDelete: (event_id) => api.notify(`#${id}:eventRemove`, event_id),
+      onCancelDelete: () => api.notify(`#${id}:deleteCancel`),
       onSearch: (value) => api.notify(`#${id}:search`, value),
       onSelectCategory: (categoryId) =>
         api.notify(`#${id}:categorySelect`, categoryId),
@@ -98,6 +124,10 @@ export const EventList = {
       onSelectPeriod: (periodId) => api.notify(`#${id}:periodSelect`, periodId),
       onClearFilters: () => api.notify(`#${id}:filtersClear`),
       onOpenEvent: (event_id) => {
+        if (myEventIds.has(event_id)) {
+          api.notify("#applicationsReceived:open", event_id)
+          return
+        }
         const application_id = entity.appliedMap[event_id]
         if (application_id) {
           api.notify("#applicationDetail:open", {

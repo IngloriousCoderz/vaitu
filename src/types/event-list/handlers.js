@@ -2,6 +2,8 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { fetchMyApplicationMap } from "../../api/applications.js"
 import {
+  deleteEvent,
+  fetchMyEvents,
   fetchMyFavoriteRegions,
   fetchOpenEvents,
   saveFavoriteRegions,
@@ -40,9 +42,22 @@ export function periodSelect(entity, periodId) {
   entity.activePeriod = periodId
 }
 
+export function ownerSelect(entity, owner) {
+  entity.activeOwner = owner
+  entity.confirmingDelete = null
+}
+
 export function filtersClear(entity) {
   entity.activeRegion = "all"
   entity.activePeriod = "all"
+}
+
+export function deleteAsk(entity, event_id) {
+  entity.confirmingDelete = event_id
+}
+
+export function deleteCancel(entity) {
+  entity.confirmingDelete = null
 }
 
 function syncFavoriteCombobox(entity, api) {
@@ -100,6 +115,9 @@ export function favoriteDraftRemove(entity, value, api) {
 
 export function appliedClear(entity) {
   entity.appliedMap = {}
+  entity.myEvents = []
+  entity.activeOwner = "explore"
+  entity.confirmingDelete = null
 }
 
 export const eventsLoad = handleAsync("eventsLoad", {
@@ -108,16 +126,18 @@ export const eventsLoad = handleAsync("eventsLoad", {
     entity.error = null
   },
   async run() {
-    const [events, appliedMap, favoriteRegions] = await Promise.all([
+    const [events, myEvents, appliedMap, favoriteRegions] = await Promise.all([
       fetchOpenEvents(),
+      fetchMyEvents(),
       fetchMyApplicationMap(),
       fetchMyFavoriteRegions(),
     ])
-    return { events, appliedMap, favoriteRegions }
+    return { events, myEvents, appliedMap, favoriteRegions }
   },
-  success(entity, { events, appliedMap, favoriteRegions }, api) {
+  success(entity, { events, myEvents, appliedMap, favoriteRegions }, api) {
     entity.status = "ready"
     entity.events = events
+    entity.myEvents = myEvents
     entity.appliedMap = appliedMap
     if (!entity.isEditingFavorites) {
       entity.favoriteRegions = favoriteRegions
@@ -139,6 +159,25 @@ export const eventsLoad = handleAsync("eventsLoad", {
   error(entity, err) {
     entity.status = "error"
     entity.error = err.message ?? "Failed to load events"
+  },
+})
+
+export const eventRemove = handleAsync("eventRemove", {
+  start(entity) {
+    entity.status = "saving"
+    entity.error = null
+  },
+  run(event_id) {
+    return deleteEvent(event_id)
+  },
+  success(entity, _, api) {
+    entity.status = "ready"
+    entity.confirmingDelete = null
+    api.notify(`#${entity.id}:eventsLoad`)
+  },
+  error(entity, err) {
+    entity.status = "error"
+    entity.error = err.message ?? "Failed to delete event"
   },
 })
 

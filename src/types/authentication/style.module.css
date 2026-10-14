@@ -96,41 +96,6 @@
   }
 }
 
-.roleList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--iw-space-3);
-}
-
-.roleBig {
-  display: flex;
-  flex-direction: column;
-  gap: var(--iw-space-1);
-  align-items: center;
-  text-align: center;
-  cursor: pointer;
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-2xl);
-  padding: var(--iw-space-5);
-}
-
-.roleSwitch strong {
-  color: var(--vink);
-  text-transform: capitalize;
-}
-
-.roleLabel {
-  font-size: var(--iw-font-size-base);
-  font-weight: var(--iw-font-weight-bold);
-  color: var(--vink);
-}
-
-.roleHint {
-  font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
-}
-
 .error {
   /* Spacing only. Colour, surface, radius, padding and font-size come from
      the iw Alert calibrated as .vaitu-alert in public/style.css. */

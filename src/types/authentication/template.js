@@ -4,7 +4,6 @@ import { when } from "@inglorious/web/directives/when"
 import { Page } from "../page/index.js"
 import { EmailStep } from "./email-step.js"
 import { LoginStep } from "./login-step.js"
-import { RoleStep } from "./role-step.js"
 import { SignupStep } from "./signup-step.js"
 
 export const Authentication = {
@@ -26,9 +25,6 @@ export const Authentication = {
           )}
           ${when(entity.step === "signup", () =>
             SignupStep.render({ entity, isBusy, ...callbacks }),
-          )}
-          ${when(entity.step === "role", () =>
-            RoleStep.render({ isBusy, ...callbacks }),
           )}
         `,
       ],
