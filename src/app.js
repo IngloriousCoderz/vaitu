@@ -142,7 +142,9 @@ export const App = {
           page = api.render("eventList")
           pageKey = "events"
           tabbar = bar("events", false)
-          fab = showFab(false)
+          if (api.getEntity("eventList").activeOwner === "mine") {
+            fab = showFab(false)
+          }
         }
       }
     }

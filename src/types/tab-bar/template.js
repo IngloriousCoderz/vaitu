@@ -33,7 +33,7 @@ const tabs = [
   { value: "profile", label: "Profile", icon: "user" },
 ]
 
-// Floating action button for event creation, shown on the events tab. Stays mounted
+// Floating action button for event creation, shown on My events. Stays mounted
 // while visible so position/appear animates instead of remounting.
 //
 // Everything except placement comes from the package: `size` sets the box,
