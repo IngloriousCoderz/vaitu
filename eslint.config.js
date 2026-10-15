@@ -13,4 +13,9 @@ export default [
   },
   ...shared,
   ...nodeOnly.map((config) => ({ ...config, files: nodeFiles })),
+  {
+    // A script that reports results has to print them.
+    files: nodeFiles,
+    rules: { "no-console": "off" },
+  },
 ]

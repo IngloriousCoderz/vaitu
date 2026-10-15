@@ -1,193 +1,89 @@
 import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
-import { repeat } from "@inglorious/web/directives/repeat"
 
+import { paths } from "./routes"
 import { Fab, TabBar } from "./types/tab-bar/template.js"
 
-// Tab destinations switch instantly (market standard); overlay pushes slide.
-const TAB_PAGES = new Set(["events", "applications", "profile"])
-let pageStack = []
-let pageDirection = null
-
-function trackPage(key) {
-  const top = pageStack[pageStack.length - 1]
-  if (!top) {
-    pageStack = [key]
-    pageDirection = null
-    return pageDirection
-  }
-  if (key === top) return pageDirection
-  if (TAB_PAGES.has(key) && TAB_PAGES.has(top)) {
-    pageStack = [key]
-    pageDirection = null
-  } else if (TAB_PAGES.has(key)) {
-    pageStack = [key]
-    pageDirection = "back"
-  } else if (pageStack.length > 1 && key === pageStack[pageStack.length - 2]) {
-    pageStack.pop()
-    pageDirection = "back"
-  } else {
-    pageStack.push(key)
-    pageDirection = "forward"
-  }
-  return pageDirection
+// Which tab a given tab bar entry navigates to. The bar reports a value, the
+// router owns the path.
+const TAB_PATHS = {
+  events: paths.events,
+  applications: paths.applications,
+  profile: paths.profile,
 }
 
-function pageSectionClass(direction) {
-  if (direction === "forward") return "vaitu-page vaitu-page-forward"
-  if (direction === "back") return "vaitu-page vaitu-page-back"
-  return "vaitu-page"
+// Chrome per route. The old cascade worked these out while choosing a page; with
+// the route already resolved they are a lookup.
+//
+//   tab            — the active tab, null for a bar that stays mounted with
+//                    nothing selected (the pushed-over pages)
+//   isHidden       — bar stays mounted and translated away, so it can animate out
+//   isRendered     — false for the routes that never had a bar or a button
+const CHROME = {
+  eventList: { tab: "events" },
+  applicationList: { tab: "applications" },
+  applicationDetail: { tab: "applications" },
+  profile: { tab: "profile" },
+  // Detail sits on top of a tab, so the bar is replaced rather than hidden.
+  eventDetail: { isTabbarRendered: false },
+  eventCreate: { isHidden: true },
+  applicationsReceived: { isHidden: true },
+  ranks: { isHidden: true },
+  // Pre-login, plus the catch-all: nothing to navigate with.
+  authentication: { isTabbarRendered: false, isFabRendered: false },
+  onboarding: { isTabbarRendered: false, isFabRendered: false },
+  notFound: { isTabbarRendered: false, isFabRendered: false },
 }
+
+const DEFAULT_CHROME = { tab: "events" }
 
 export const App = {
   render(_, api) {
-    const session = api.getEntity("session")
-    // Splash, login and onboarding must go through the shell too. Returning
-    // them bare rendered them straight into #root, which has no definite
-    // height — so their `min-height: 100%` resolved against nothing and the
-    // centred login form collapsed to its content height (~253px) instead of
-    // filling the screen. No tab bar or FAB on these routes.
-    if (session.status === "unknown") {
-      return this.renderBareShell(this.renderSplash())
-    }
-    // Gated: logged out always lands on login.
-    if (!session.user_id) {
-      return this.renderBareShell(api.render("authentication"))
-    }
-    const auth = api.getEntity("authentication")
-    if (auth.justSignedUp) {
-      return this.renderBareShell(api.render("onboarding"))
-    }
+    const router = api.getEntity("router")
 
-    const onNavigate = (value) => {
-      if (value === "events") api.notify("overlaysClose")
-      if (value === "applications") {
-        api.notify("overlaysClose")
-        api.notify("#applicationList:open")
-      }
-      if (value === "profile") {
-        api.notify("overlaysClose")
-        api.notify("#profile:open")
-      }
-    }
+    // No boot gate: the guard reads the session from localStorage, so it can
+    // judge this route on the first render rather than after a request.
+    const chrome = CHROME[router.route] ?? DEFAULT_CHROME
 
-    // Single template shape so the tab bar node persists across navigations
-    // and hide/show animates via class toggle instead of remounting.
-    let page = null
-    let tabbar = null
-    const showFab = (low) =>
-      Fab.render({
-        low,
-        hidden: false,
-        onClick: () => api.notify("#eventCreate:open"),
-      })
-    const hideFab = () =>
-      Fab.render({
-        low: true,
-        hidden: true,
-        onClick: () => {},
-      })
-    let fab = hideFab()
-    // Pages that keep the bar mounted but slide it away still occupy a footer
-    // row, so the shell needs to know to collapse it.
-    let tabbarHidden = true
-
-    const eventDetail = api.getEntity("eventDetail")
-    const applicationDetail = api.getEntity("applicationDetail")
-    const ranks = api.getEntity("ranks")
-    const profile = api.getEntity("profile")
-    const bar = (active, hidden) => {
-      tabbarHidden = hidden
-      return TabBar.render({ active, hidden, onNavigate })
-    }
-
-    let pageKey = null
-    if (eventDetail.event_id) {
-      page = api.render("eventDetail")
-      pageKey = `event-detail:${eventDetail.event_id}`
-      fab = hideFab()
-    } else if (applicationDetail.application_id) {
-      page = api.render("applicationDetail")
-      pageKey = `application-detail:${applicationDetail.application_id}`
-      tabbar = bar("applications", false)
-    } else if (ranks.isOpen) {
-      page = api.render("ranks")
-      pageKey = "ranks"
-      tabbar = bar(null, true)
-    } else {
-      const applications = api.getEntity("applicationList")
-      if (applications.isOpen) {
-        page = api.render("applicationList")
-        pageKey = "applications"
-        tabbar = bar("applications", false)
-      } else if (profile.isOpen) {
-        page = api.render("profile")
-        pageKey = "profile"
-        tabbar = bar("profile", false)
-      } else if (!profile.profile && !profile.error) {
-        return this.renderSplash()
-      } else {
-        const eventCreate = api.getEntity("eventCreate")
-        const applicationsReceived = api.getEntity("applicationsReceived")
-        if (eventCreate.isOpen) {
-          page = api.render("eventCreate")
-          pageKey = "event-create"
-          tabbar = bar(null, true)
-        } else if (applicationsReceived.event_id) {
-          page = api.render("applicationsReceived")
-          pageKey = `applications-received:${applicationsReceived.event_id}`
-          tabbar = bar(null, true)
-          fab = hideFab()
-        } else {
-          page = api.render("eventList")
-          pageKey = "events"
-          tabbar = bar("events", false)
-          if (api.getEntity("eventList").activeOwner === "mine") {
-            fab = showFab(false)
-          }
-        }
-      }
-    }
-
-    const direction = trackPage(pageKey)
     return this.renderShell({
       content: html`
-        ${repeat(
-          [pageKey],
-          (key) => key,
-          () =>
-            html`<section class=${pageSectionClass(direction)}>
-              ${page}
-            </section>`,
-        )}
+        <!-- Wrapped so the page is not a direct flex child of main: a .page
+             using auto side margins, handed to a flex column, suppresses
+             stretch and shrink-wraps to its content width. -->
+        <section class="vaitu-page">${api.render(router.route)}</section>
       `,
-      fab,
-      tabbar,
-      isTabbarHidden: tabbarHidden,
+      fab: this.renderFab(api, chrome),
+      tabbar: this.renderTabbar(api, chrome),
+      isTabbarHidden: chrome.isHidden ?? false,
     })
   },
 
-  // Pre-login routes (splash, auth, onboarding) have no page-transition
-  // direction, but they still need the block <section> wrapper. main is a flex
-  // column, and a .page handed to it directly becomes a flex item — where
-  // `margin: 0 auto` suppresses stretch and it shrink-wraps (measured 239px
-  // instead of the full 26.875rem column). The logged-in routes avoid this
-  // because their content is already wrapped.
-  renderBareShell(content) {
-    return this.renderShell({
-      content: html`<section class="vaitu-page">${content}</section>`,
+  // The button only makes sense on My events, and stays mounted everywhere else
+  // so that showing and hiding it animates instead of remounting.
+  renderFab(api, chrome) {
+    if (chrome.isFabRendered === false) return null
+
+    const isVisible =
+      chrome.tab === "events" &&
+      api.getEntity("eventList").activeOwner === "mine"
+
+    return Fab.render({
+      low: false,
+      hidden: !isVisible,
+      onClick: () => api.notify("#router:navigate", paths.newEvent),
     })
   },
 
-  renderSplash() {
-    return Flex.render({
-      align: "center",
-      justify: "center",
-      isFullWidth: true,
-      className: "vaitu-splash",
-      children: [
-        html`<img src="/logo.svg" alt="vaitu" class="vaitu-splashLogo" />`,
-      ],
+  // Single shape so the bar node persists across navigations and hide/show
+  // animates via class toggle rather than remounting.
+  renderTabbar(api, chrome) {
+    if (chrome.isTabbarRendered === false) return null
+
+    return TabBar.render({
+      active: chrome.tab,
+      hidden: chrome.isHidden ?? false,
+      onNavigate: (value) =>
+        api.notify("#router:navigate", TAB_PATHS[value] ?? paths.events),
     })
   },
 
@@ -215,7 +111,7 @@ export const App = {
           direction: "column",
           overflow: "auto",
           className: "appMain",
-          children: [content],
+          children: [content].filter(Boolean),
         }),
         // FAB floats over the shell, so it is a direct child of the positioned
         // shell. The tab bar must NOT be here as well — it belongs in the

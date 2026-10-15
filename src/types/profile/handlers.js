@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { endSession } from "../../api/session.js"
 import {
   canonicalRegion,
   favoriteRegionOptions,
@@ -11,23 +12,6 @@ import {
   uniqueRegions,
 } from "../../data/regions/resolve.js"
 import { defaultTiers } from "./helpers.js"
-
-export function open(entity, _, api) {
-  entity.isOpen = true
-  api.notify(`#${entity.id}:profileLoad`)
-}
-
-export function close(entity) {
-  entity.isOpen = false
-  entity.status = "idle"
-  entity.error = null
-  entity.isEditing = false
-  entity.isMenuOpen = false
-}
-
-export function overlaysClose(entity) {
-  close(entity)
-}
 
 export function menuToggle(entity) {
   entity.isMenuOpen = !entity.isMenuOpen
@@ -208,10 +192,10 @@ export const profileLoad = handleAsync("profileLoad", {
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#eventDetail:prefill", profile)
   },
-  error(entity, err, api) {
+  error(entity, err) {
     entity.status = "error"
     entity.error = err.message ?? "Failed to load profile"
-    if (isSessionDead(err)) api.notify("#session:sessionExpire")
+    if (isSessionDead(err)) void endSession()
   },
 })
 
@@ -273,12 +257,10 @@ export const logout = handleAsync("logout", {
     if (error) throw error
     return true
   },
-  success(entity, _, api) {
-    entity.isOpen = false
+  success(entity) {
     entity.profile = null
     entity.status = "idle"
-    api.notify("#eventDetail:close")
-    api.notify("#authentication:open")
+    // Clearing the session is enough — the guard moves the visitor to /login.
   },
   error(entity, err) {
     entity.error = err.message ?? "Logout failed"

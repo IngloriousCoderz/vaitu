@@ -36,6 +36,7 @@ export const EventDetail = {
     onField,
     onSubmit,
     onCompleteProfile,
+    onOpenApplications,
   }) {
     const { event, status, error } = entity
     const msLeft = event?.application_deadline
@@ -62,10 +63,15 @@ export const EventDetail = {
             onClick: onBack,
           })}
           ${
-            status === "loading"
-              ? html`<p class=${styles.empty}>Loading event…</p>`
-              : status === "error"
-                ? html`<p class=${styles.empty}>${error}</p>`
+            /* Keyed on the data rather than on the status string. `open` sets
+               status to "idle" with a null event before its load handler starts,
+               and a render landing in that window used to fall through to the
+               detail branch and read event.hue off null. Anything without an
+               event yet is loading, whatever the status happens to say. */
+            status === "error"
+              ? html`<p class=${styles.empty}>${error}</p>`
+              : !event
+                ? html`<p class=${styles.empty}>Loading event…</p>`
                 : entity.isSubmitted
                   ? this.renderSubmitted({ onBack })
                   : html`
@@ -99,19 +105,31 @@ export const EventDetail = {
                         }
                       </p>
                       ${
-                        liveClosed || isApplicationClosed(event)
+                        onOpenApplications
                           ? html`
-                              <div class=${styles.closedBox}>
-                                Applications are closed for this event.
+                              <div class=${styles.actions}>
+                                ${Button.render({
+                                  variant: "outline",
+                                  shape: "pill",
+                                  children:
+                                    "Review the applications you received",
+                                  onClick: onOpenApplications,
+                                })}
                               </div>
                             `
-                          : this.renderForm({
-                              entity,
-                              profileComplete,
-                              onField,
-                              onSubmit,
-                              onCompleteProfile,
-                            })
+                          : liveClosed || isApplicationClosed(event)
+                            ? html`
+                                <div class=${styles.closedBox}>
+                                  Applications are closed for this event.
+                                </div>
+                              `
+                            : this.renderForm({
+                                entity,
+                                profileComplete,
+                                onField,
+                                onSubmit,
+                                onCompleteProfile,
+                              })
                       }
                     `
           }

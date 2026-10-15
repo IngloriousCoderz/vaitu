@@ -1,0 +1,22 @@
+/* Rows ease themselves in on a staggered delay. Direct children of .vaitu-list
+   opt in with .vaitu-list-item; the row number arrives as the --vaitu-list-index
+   custom property, set by the templates and capped at LIST_STAGGER_CAP so the
+   last rows do not wait behind a long list. */
+
+@keyframes vaitu-list-in {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+}
+
+.vaitu-list > .vaitu-list-item {
+  animation: vaitu-list-in 0.7s ease backwards;
+  animation-delay: calc(var(--vaitu-list-index, 0) * 0.08s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vaitu-list > .vaitu-list-item {
+    animation: none;
+  }
+}

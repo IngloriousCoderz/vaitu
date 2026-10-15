@@ -5,23 +5,6 @@ import { defaultTiers } from "../profile/helpers.js"
 
 const DEFAULT_TIERS = defaultTiers()
 
-export function open(entity, _, api) {
-  entity.isOpen = true
-  entity.status = "idle"
-  entity.error = null
-  api.notify(`#${entity.id}:tiersLoad`)
-}
-
-export function close(entity) {
-  entity.isOpen = false
-  entity.status = "idle"
-  entity.error = null
-}
-
-export function closeOverlays(entity) {
-  close(entity)
-}
-
 export const tiersLoad = handleAsync("tiersLoad", {
   start(entity) {
     entity.status = "loading"

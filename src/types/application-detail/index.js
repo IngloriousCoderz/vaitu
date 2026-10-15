@@ -8,6 +8,7 @@ import {
   deactivateRealtime,
   realtimeColumn,
 } from "../../api/realtime.js"
+import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
@@ -24,7 +25,6 @@ export const ApplicationDetail = {
 
   create(entity) {
     entity.application_id ??= null
-    entity.returnTo ??= null
     entity.application ??= null
     entity.initialValues = { motivation: "" }
     Form.create(entity)
@@ -60,6 +60,23 @@ export const ApplicationDetail = {
     })
   },
 
+  // The route is the source of truth for which page is live, so this is where a
+  // page opens and loads. Everything else reads the route rather than an
+  // `isOpen` flag, which is what used to make app.js a cascade.
+  routeChange(entity, payload, api) {
+    /* `payload.route`, never `api.getEntity("router").route`. This handler runs
+       from inside the router's own notify, and a notification dispatched from a
+       handler reads the state as it was before that handler's batch committed —
+       so the router entity still named the route we are leaving. That made a
+       back navigation look like the page we were on, and open() ran with the new
+       route's empty params. The payload is the resolved route and cannot lag. */
+    if (payload.route !== entity.id) {
+      close(entity)
+      return
+    }
+    open(entity, { application_id: payload.params.applicationId }, api)
+  },
+
   render(entity, api) {
     const id = entity.id
     return this.renderApplicationDetail({
@@ -89,7 +106,7 @@ export const ApplicationDetail = {
       },
       onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
       onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
-      onBack: () => api.notify(`#${id}:back`),
+      onBack: () => api.notify("#router:navigate", paths.applications),
     })
   },
 }
@@ -100,4 +117,21 @@ function validateMotivation(values) {
     errors.motivation = "Motivation is required"
   }
   return errors
+}
+
+function open(entity, { application_id }, api) {
+  entity.application_id = application_id
+  entity.application = null
+  entity.isConfirmingWithdraw = false
+  entity.isConfirmingGiveUp = false
+  Form.reset(entity)
+  api.notify(`#${entity.id}:applicationLoad`, application_id)
+}
+
+function close(entity) {
+  entity.application_id = null
+  entity.application = null
+  entity.status = "idle"
+  entity.error = null
+  Form.reset(entity)
 }

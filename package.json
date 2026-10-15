@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "format": "prettier --write .",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "dev": "vite",
     "edge": "supabase functions serve",
     "build": "vite build",

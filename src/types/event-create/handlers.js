@@ -11,6 +11,7 @@ import {
   updateEvent,
   uploadEventAudio,
 } from "../../api/events.js"
+import { stopTick } from "../../api/ticker.js"
 import {
   APPLICATION_DEADLINE_LEAD_DAYS,
   AUDIO_MAX_SECONDS,
@@ -25,12 +26,11 @@ import {
   SINGULAR,
   ZERO,
 } from "../../constants/index.js"
+import { weddingStyles } from "../../data/event-taxonomy.js"
 import {
   regionAfterCountryChange,
   regionForCountry,
 } from "../../data/regions/resolve.js"
-import { stopTick } from "../../ticker/index.js"
-import { weddingStyles } from "../../validation/events.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
 let mediaRecorder = null
@@ -49,7 +49,7 @@ function audioPathFromUrl(url) {
   return path ?? null
 }
 
-function releaseRecorder() {
+export function releaseRecorder() {
   stopTick("audio")
   if (mediaRecorder && mediaRecorder.state !== "inactive") {
     mediaRecorder.onstop = null
@@ -63,7 +63,7 @@ function releaseRecorder() {
   audioChunks = []
 }
 
-function clearPendingAudio() {
+export function clearPendingAudio() {
   pendingBlob = null
   pendingPath = null
   pendingUrl = null
@@ -92,41 +92,6 @@ async function dropPendingAudio(deleteFile, keepPreview = false) {
       // Orphan file stays in the bucket; harmless for the spike.
     }
   }
-}
-
-export function open(entity, { event_id } = {}, api) {
-  entity.isOpen = true
-  entity.status = "idle"
-  entity.error = null
-  entity.editing_event_id = event_id ?? null
-  Form.reset(entity)
-  entity.audio_url = null
-  entity.audio_preview_url = null
-  entity.is_recording = false
-  entity.is_audio_open = false
-  entity.is_transcribing = false
-  entity.is_parsing = false
-  entity.audio_elapsed = ZERO
-  entity.audio_transcript = null
-  entity.audio_error = null
-  releaseRecorder()
-  clearPendingAudio()
-  api.notify("#country-create:sync", "")
-  api.notify("#region-create:sync", "")
-  if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
-}
-
-export function close(entity) {
-  entity.isOpen = false
-  entity.status = "idle"
-  entity.error = null
-  entity.is_audio_open = false
-  releaseRecorder()
-  clearPendingAudio()
-}
-
-export function overlaysClose(entity) {
-  close(entity)
 }
 
 export function fieldSet(entity, { field, value }, api) {

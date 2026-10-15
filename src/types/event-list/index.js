@@ -1,5 +1,6 @@
 import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
+import { paths } from "../../routes.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
   appliedClear,
@@ -101,7 +102,8 @@ export const EventList = {
       hasActiveFilters:
         entity.activeRegion !== "all" || entity.activePeriod !== "all",
       onSelectOwner: (owner) => api.notify(`#${id}:ownerSelect`, owner),
-      onEdit: (event_id) => api.notify("#eventCreate:open", { event_id }),
+      onEdit: (event_id) =>
+        api.notify("#router:navigate", paths.editEvent(event_id)),
       onAskDelete: (event_id) => api.notify(`#${id}:deleteAsk`, event_id),
       onDelete: (event_id) => api.notify(`#${id}:eventRemove`, event_id),
       onCancelDelete: () => api.notify(`#${id}:deleteCancel`),
@@ -124,18 +126,18 @@ export const EventList = {
       onSelectPeriod: (periodId) => api.notify(`#${id}:periodSelect`, periodId),
       onClearFilters: () => api.notify(`#${id}:filtersClear`),
       onOpenEvent: (event_id) => {
+        // Two different destinations from two lists. Your own event leads to the
+        // applications you received; anything else leads to the event itself, or
+        // to your application on it when there is one.
         if (myEventIds.has(event_id)) {
-          api.notify("#applicationsReceived:open", event_id)
+          api.notify("#router:navigate", paths.receivedApplications(event_id))
           return
         }
-        const application_id = entity.appliedMap[event_id]
-        if (application_id) {
-          api.notify("#applicationDetail:open", {
-            application_id,
-            returnTo: "events",
-          })
+        const applicationId = entity.appliedMap[event_id]
+        if (applicationId) {
+          api.notify("#router:navigate", paths.application(applicationId))
         } else {
-          api.notify("#eventDetail:open", event_id)
+          api.notify("#router:navigate", paths.event(event_id))
         }
       },
     })

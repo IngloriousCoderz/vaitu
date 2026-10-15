@@ -195,3 +195,8 @@
   --iw-badge-accent: #f3d3c8;
   --iw-badge-on-accent: #8c4632;
 }
+
+/* Organiser action, sits where the apply form would be. */
+.actions {
+  margin-top: var(--iw-space-4);
+}

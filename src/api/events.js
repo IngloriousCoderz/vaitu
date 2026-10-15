@@ -152,6 +152,7 @@ export async function fetchEventDetail(id) {
   return {
     event: {
       ...view,
+      senderId: event.sender_id,
       max_applicants: event.max_applicants,
       application_deadline: event.application_deadline,
       hoursLeft: Math.max(

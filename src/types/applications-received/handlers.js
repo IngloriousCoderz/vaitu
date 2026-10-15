@@ -8,40 +8,6 @@ import {
 } from "../../constants/index.js"
 import { canonicalRegion } from "../../data/regions/resolve.js"
 
-export function open(entity, event_id, api) {
-  entity.event_id = event_id
-  entity.event_title = ""
-  entity.event_deadline = null
-  entity.event_recap = null
-  entity.reopen_deadline = ""
-  entity.confirming_reopen = false
-  clearReopenError(entity)
-  entity.max_applicants = 5
-  entity.items = []
-  entity.expanded_application_id = null
-  entity.confirming_assign = null
-  api.notify(`#${entity.id}:receivedLoad`, event_id)
-}
-
-export function close(entity) {
-  entity.event_id = null
-  entity.event_title = ""
-  entity.event_status = "open"
-  entity.event_recap = null
-  entity.items = []
-  entity.expanded_application_id = null
-  entity.confirming_assign = null
-  entity.confirming_reopen = false
-  entity.reopen_deadline = ""
-  clearReopenError(entity)
-  entity.status = "idle"
-  entity.error = null
-}
-
-export function overlaysClose(entity) {
-  close(entity)
-}
-
 export function expandToggle(entity, application_id) {
   entity.expanded_application_id =
     entity.expanded_application_id === application_id ? null : application_id
@@ -93,6 +59,11 @@ export const receivedLoad = handleAsync("receivedLoad", {
     entity.error = null
   },
   async run(event_id) {
+    /* Realtime can fire this after the page has been left, when there is no
+       event to load. `.eq("id", undefined)` is a malformed filter that comes
+       back as a 400, so bail rather than ask. */
+    if (!event_id) throw new Error("No event to load applications for")
+
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select(
@@ -221,7 +192,7 @@ export const eventReopen = handleAsync("eventReopen", {
   },
 })
 
-function clearReopenError(entity) {
+export function clearReopenError(entity) {
   if (!entity.errors) return
   entity.errors.reopen_deadline = null
   entity.isValid = true

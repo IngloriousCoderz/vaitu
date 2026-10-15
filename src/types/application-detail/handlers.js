@@ -7,34 +7,7 @@ import {
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
-
-export function open(entity, { application_id, returnTo }, api) {
-  entity.application_id = application_id
-  entity.returnTo = returnTo ?? "applications"
-  entity.application = null
-  entity.isConfirmingWithdraw = false
-  entity.isConfirmingGiveUp = false
-  Form.reset(entity)
-  api.notify(`#${entity.id}:applicationLoad`, application_id)
-}
-
-export function back(entity, _, api) {
-  const returnTo = entity.returnTo ?? "applications"
-  api.notify(`#${entity.id}:close`)
-  if (returnTo === "applications") api.notify("#applicationList:open")
-}
-
-export function close(entity) {
-  entity.application_id = null
-  entity.application = null
-  entity.status = "idle"
-  entity.error = null
-  Form.reset(entity)
-}
-
-export function overlaysClose(entity) {
-  close(entity)
-}
+import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
   Form.fieldChange(entity, { path: field, value })
@@ -86,8 +59,7 @@ export const save = handleAsync("save", {
   },
   success(entity, _, api) {
     entity.status = "ready"
-    api.notify(`#${entity.id}:close`)
-    api.notify("#applicationList:open")
+    api.notify("#router:navigate", paths.applications)
   },
   error(entity, err) {
     entity.status = "error"
@@ -106,9 +78,8 @@ export const withdraw = handleAsync("withdraw", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.isConfirmingWithdraw = false
-    api.notify(`#${entity.id}:close`)
     api.notify("#eventList:eventsLoad")
-    api.notify("#applicationList:open")
+    api.notify("#router:navigate", paths.applications)
   },
   error(entity, err) {
     entity.status = "error"
@@ -127,8 +98,7 @@ export const giveUp = handleAsync("giveUp", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.isConfirmingGiveUp = false
-    api.notify(`#${entity.id}:close`)
-    api.notify("#applicationList:open")
+    api.notify("#router:navigate", paths.applications)
   },
   error(entity, err) {
     entity.status = "error"

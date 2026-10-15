@@ -2,10 +2,15 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { writeUser } from "../../api/session.js"
 import {
   MIN_PASSWORD_LENGTH,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
+import { paths } from "../../routes.js"
+import { landingForSession } from "../../store/guards.js"
+
+const ROUTER = "router"
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -31,34 +36,23 @@ function clearAuthErrors(entity) {
   entity.isValid = true
 }
 
+// Entering the sign-in route starts the form over, every time. Without this the
+// step survives from whoever was here last: sign in, sign out, come back, and you
+// land on the password screen with the previous address still filled in.
 export function open(entity) {
-  entity.isOpen = true
   entity.step = "email"
-  entity.status = "idle"
-  entity.error = null
-  clearAuthErrors(entity)
-}
-
-export function close(entity) {
-  entity.isOpen = false
-  entity.step = "email"
+  entity.mode = "login"
   entity.status = "idle"
   entity.error = null
   entity.password = ""
   entity.confirmPassword = ""
   clearAuthErrors(entity)
-  if (entity.values) {
-    entity.values.password = ""
-    entity.values.confirmPassword = ""
-  }
+  Form.reset(entity)
 }
 
-export function overlaysClose(entity) {
-  close(entity)
-}
-
-export function onboardingFinish(entity) {
+export function onboardingFinish(entity, _, api) {
   entity.justSignedUp = false
+  api.notify("#router:navigate", paths.events)
 }
 
 export function emailBack(entity) {
@@ -142,17 +136,26 @@ export const login = handleAsync("login", {
     entity.error = null
   },
   async run({ email, password }) {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
     if (error) throw error
-    return true
+    return data.user
   },
-  success(entity, _, api) {
+  success(entity, user, api) {
     entity.status = "ready"
     entity.password = ""
-    api.notify(`#${entity.id}:close`)
+    // Written before the notification, so the guard that the navigation raises
+    // reads a signed-in visitor. Ordering is the whole trick here.
+    writeUser(user)
+    api.notify("#eventList:eventsLoad")
+    api.notify("#profile:profileLoad")
+    const router = api.getEntity(ROUTER)
+    api.notify("#router:navigate", {
+      to: landingForSession(router),
+      replace: true,
+    })
   },
   error(entity, err) {
     entity.status = "error"
@@ -178,7 +181,7 @@ export const signup = handleAsync("signup", {
     entity.status = "ready"
     entity.password = ""
     entity.justSignedUp = true
-    api.notify(`#${entity.id}:close`)
+    api.notify("#router:navigate", paths.onboarding)
   },
   error(entity, err) {
     entity.status = "error"

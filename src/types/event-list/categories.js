@@ -1,5 +1,5 @@
 import { FIRST_INDEX } from "../../constants/index.js"
-import { festivalGenres, weddingStyles } from "../../validation/events.js"
+import { festivalGenres, weddingStyles } from "../../data/event-taxonomy.js"
 
 // Per-category registry. Each category owns its label, filter dimensions and
 // creation fields — a future category adds an entry without touching others.

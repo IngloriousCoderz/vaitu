@@ -1,5 +1,6 @@
 import { Form } from "@inglorious/web/form"
 
+import { open } from "./handlers.js"
 import * as handlers from "./handlers.js"
 import { Authentication as renderers } from "./template.js"
 
@@ -23,12 +24,17 @@ export const Authentication = {
     Form.create(entity)
     entity.step ??= "email"
     entity.mode ??= "login"
-    entity.isOpen ??= false
     entity.justSignedUp ??= false
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
     entity.status ??= "idle"
     entity.error ??= null
+  },
+
+  // The route is what opens this page, exactly as it does for every other one.
+  routeChange(entity, payload) {
+    if (payload.route !== entity.id) return
+    open(entity)
   },
 
   render(entity, api) {

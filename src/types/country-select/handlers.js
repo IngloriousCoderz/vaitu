@@ -70,11 +70,6 @@ export function create(entity) {
 }
 
 /** @param {any} entity */
-export function open(entity) {
-  doOpen(entity)
-}
-
-/** @param {any} entity */
 export function toggle(entity) {
   if (entity.isOpen) doClose(entity)
   else doOpen(entity)
@@ -137,11 +132,6 @@ export function clear(entity, _payload, api) {
       value: "",
     })
   }
-}
-
-/** @param {any} entity */
-export function close(entity) {
-  doClose(entity)
 }
 
 /**
@@ -215,9 +205,4 @@ export function optionsSet(entity, options) {
   entity.options = (options ?? []).map(formatOption)
   entity.searchTerm = ""
   entity.focusedIndex = NO_FOCUSED_INDEX
-}
-
-/** @param {any} entity */
-export function overlaysClose(entity) {
-  doClose(entity)
 }

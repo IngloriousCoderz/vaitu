@@ -21,13 +21,15 @@ import "./pwa"
 import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./app-shell.css"
-import "./page-transitions.css"
+import "./styles/list-stagger.css"
 
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
+import { clearUser, endSession, writeUser } from "./api/session.js"
 import { App } from "./app"
 import { store } from "./store"
+import { isPreLoginPath, signInTarget } from "./store/guards.js"
 
 mount(store, (api) => App.render(null, api), document.getElementById("root"))
 
@@ -35,20 +37,39 @@ store.notify("#eventList:eventsLoad")
 
 function trackSession(session) {
   if (session) {
-    store.notify("#session:setSession", {
-      user_id: session.user.id,
-      email: session.user.email,
-    })
-  } else {
-    store.notify("#session:clearSession")
+    writeUser(session.user)
+    // Market and profile both depend on who is signed in: the list is filtered by
+    // own events and applied marks, and the profile fills in the tab bar. Both
+    // load once here rather than waiting for the page that needs them.
+    store.notify("#eventList:eventsLoad")
+    store.notify("#profile:profileLoad")
+    return
+  }
+  // Supabase owns the tokens; this drops our record of who they belonged to.
+  clearUser()
+
+  // The guard only answers route changes, and a session ending is not one, so
+  // without this the visitor is left sitting on a page they can no longer see —
+  // which, on the profile, renders as a null profile and a crash.
+  // window.location rather than the router entity: the store is wrapped by the
+  // devtools middleware and does not forward getEntity, and the browser's own
+  // view of where we are is never stale anyway.
+  const { pathname, search } = window.location
+  if (!isPreLoginPath(pathname)) {
+    store.notify("#router:navigate", signInTarget(pathname + search))
   }
 }
 
 // Server-validated boot: a restart/reset can leave a stale local token behind.
-// getSession() trusts localStorage; getUser() asks the server.
+// getUser() asks the server rather than trusting what is in storage, so a token
+// that no longer works ends the session instead of stranding the visitor on a
+// page that will start failing every request.
 supabase.auth
   .getUser()
-  .then(({ data }) => trackSession(data.user ? { user: data.user } : null))
-  .catch(() => trackSession(null))
+  .then(({ data, error }) => {
+    if (error) return endSession()
+    trackSession(data.user ? { user: data.user } : null)
+  })
+  .catch(() => endSession())
 
 supabase.auth.onAuthStateChange((_event, session) => trackSession(session))

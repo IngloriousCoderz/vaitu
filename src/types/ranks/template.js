@@ -97,17 +97,17 @@ export const Ranks = {
                 ? html`
                     <div class=${styles.howCard}>
                       <span class=${styles.howTitle}>How points work</span>
-                      ${this.howRow({
+                      ${this.renderHowRow({
                         icon: "clipboard-list",
                         points: tiers.perApplication,
                         label: "per application",
                       })}
-                      ${this.howRow({
+                      ${this.renderHowRow({
                         icon: "star",
                         points: tiers.perShortlist,
                         label: "per shortlist",
                       })}
-                      ${this.howRow({
+                      ${this.renderHowRow({
                         icon: "trophy",
                         points: tiers.perSelection,
                         label: "per win",

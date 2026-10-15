@@ -3,41 +3,8 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
-import { stopTick } from "../../ticker/index.js"
-
-export function open(entity, event_id, api) {
-  stopTick("clock")
-  entity.event_id = event_id
-  entity.event = null
-  entity.senderName = null
-  entity.status = "idle"
-  entity.error = null
-  entity.isSubmitted = false
-  entity.applyStatus = "idle"
-  entity.applyError = null
-  Form.reset(entity)
-  const profile = api.getEntity("profile").profile
-  entity.values.full_name = profile?.full_name ?? ""
-  entity.values.website = profile?.website ?? ""
-  entity.values.instagram = profile?.instagram_handle ?? ""
-  api.notify(`#${entity.id}:detailLoad`, event_id)
-}
-
-export function close(entity) {
-  stopTick("clock")
-  entity.event_id = null
-  entity.event = null
-  entity.senderName = null
-  entity.status = "idle"
-  entity.error = null
-  entity.isSubmitted = false
-  entity.applyError = null
-  Form.reset(entity)
-}
-
-export function overlaysClose(entity) {
-  close(entity)
-}
+import { readUserId } from "../../api/session.js"
+import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
   Form.fieldChange(entity, { path: field, value })
@@ -63,9 +30,8 @@ export function prefill(entity, profile) {
 
 // Requires a session, then runs the real insert via `apply`.
 export function applicationSubmit(entity, _, api) {
-  const session = api.getEntity("session")
-  if (!session?.user_id) {
-    api.notify("#authentication:open")
+  if (!readUserId()) {
+    api.notify("#router:navigate", paths.login)
     return
   }
   api.notify(`#${entity.id}:apply`, {

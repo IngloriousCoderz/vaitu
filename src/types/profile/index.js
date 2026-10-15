@@ -5,6 +5,7 @@ import {
   deactivateRealtime,
   realtimeColumn,
 } from "../../api/realtime.js"
+import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
@@ -19,7 +20,6 @@ export const Profile = {
   ...renderers,
 
   create(entity) {
-    entity.isOpen ??= false
     entity.profile ??= null
     entity.stats ??= null
     entity.isEditing ??= false
@@ -53,6 +53,23 @@ export const Profile = {
     deactivateRealtime(entity.id)
   },
 
+  // The route is the source of truth for which page is live, so this is where a
+  // page opens and loads. Everything else reads the route rather than an
+  // `isOpen` flag, which is what used to make app.js a cascade.
+  routeChange(entity, payload, api) {
+    /* `payload.route`, never `api.getEntity("router").route`. This handler runs
+       from inside the router's own notify, and a notification dispatched from a
+       handler reads the state as it was before that handler's batch committed —
+       so the router entity still named the route we are leaving. That made a
+       back navigation look like the page we were on, and open() ran with the new
+       route's empty params. The payload is the resolved route and cannot lag. */
+    if (payload.route !== entity.id) {
+      close(entity)
+      return
+    }
+    open(entity, undefined, api)
+  },
+
   render(entity, api) {
     const id = entity.id
     return this.renderProfile({
@@ -66,16 +83,25 @@ export const Profile = {
       onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
       onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
       onLogout: () => api.notify(`#${id}:logout`),
-      onOpenRanks: () => api.notify("#ranks:open"),
+      onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
       onToggleMenu: () => api.notify(`#${id}:menuToggle`),
       onCloseMenu: () => api.notify(`#${id}:menuClose`),
-      onOpenApplications: (status_filter) => {
-        api.notify(`#${id}:close`)
-        api.notify("#applicationList:open", status_filter)
-      },
+      onOpenApplications: (status) =>
+        api.notify("#router:navigate", paths.applicationsByStatus(status)),
       renderCountry: () => api.render("country-profile"),
       renderRegion: () => api.render("region-profile"),
       renderFavoriteChoice: () => api.render("favorite-region-profile"),
     })
   },
+}
+
+function open(entity, _, api) {
+  api.notify(`#${entity.id}:profileLoad`)
+}
+
+function close(entity) {
+  entity.status = "idle"
+  entity.error = null
+  entity.isEditing = false
+  entity.isMenuOpen = false
 }

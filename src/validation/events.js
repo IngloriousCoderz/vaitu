@@ -1,20 +1,11 @@
 import { z } from "zod"
 
 import { DEFAULT_MAX_APPLICANTS, MIN_TEXT_LENGTH } from "../constants/index.js"
+import { festivalGenres, weddingStyles } from "../data/event-taxonomy.js"
 
-// Per-category details schemas. Each category owns its fields independently —
-// a future category adds its own entry here without reusing wedding's lists.
-
-// Single source of truth for wedding styles: valid values + display labels.
-// Filters and cards derive from here, so adding a style touches one place.
-export const weddingStyles = [
-  { value: "editorial", label: "Editorial" },
-  { value: "documentary", label: "Documentary" },
-  { value: "reportage", label: "Reportage" },
-  { value: "classic", label: "Classic" },
-  { value: "film", label: "Film" },
-  { value: "fine_art", label: "Fine Art" },
-]
+// The values behind these enums live in src/data/event-taxonomy.js, so a new
+// style or genre is added in one place and both the schema and the filters
+// pick it up.
 
 const weddingStyle = z.enum(weddingStyles.map((s) => s.value))
 
@@ -25,15 +16,6 @@ const weddingDetailsSchema = z
     spouse_first_name_2: z.string().trim().min(MIN_TEXT_LENGTH),
   })
   .passthrough()
-
-// Single source of truth for festival genres: valid values + display labels.
-export const festivalGenres = [
-  { value: "house", label: "House" },
-  { value: "techno", label: "Techno" },
-  { value: "indie", label: "Indie" },
-  { value: "jazz", label: "Jazz" },
-  { value: "electronic", label: "Electronic" },
-]
 
 const festivalDetailsSchema = z
   .object({
@@ -49,36 +31,9 @@ const detailsSchemas = {
 
 const fallbackDetailsSchema = z.record(z.string(), z.unknown())
 
-export function detailsSchemaFor(category) {
+function detailsSchemaFor(category) {
   return detailsSchemas[category] ?? fallbackDetailsSchema
 }
-
-export const eventSchema = z
-  .object({
-    category: z.string().default("wedding"),
-    title: z.string().trim().min(MIN_TEXT_LENGTH),
-    location: z.string().optional(),
-    country: z.string().optional(),
-    region: z.string().optional(),
-    event_date: z.string().optional(), // ISO date, YYYY-MM-DD
-    application_deadline: z.string().datetime().optional(),
-    max_applicants: z.number().int().positive().default(DEFAULT_MAX_APPLICANTS),
-    status: z.enum(["open", "closed", "assigned"]).default("open"),
-    audio_url: z.string().url().nullish(),
-    transcript: z.string().optional(),
-    transcript_status: z
-      .enum(["none", "pending", "done", "error"])
-      .default("none"),
-    details: z.record(z.string(), z.unknown()).default({}),
-  })
-  .superRefine((event, ctx) => {
-    const parsed = detailsSchemaFor(event.category).safeParse(event.details)
-    if (!parsed.success) {
-      for (const issue of parsed.error.issues) {
-        ctx.addIssue({ ...issue, path: ["details", ...issue.path] })
-      }
-    }
-  })
 
 // Stricter shape for the creation form: everything the NOT NULL columns need.
 // Standalone (not .extend) because Zod v4 forbids extending refined schemas.

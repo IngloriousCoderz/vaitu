@@ -1,5 +1,6 @@
 import { store } from "../store/index.js"
 import { supabase } from "./client.js"
+import { readUserId } from "./session.js"
 
 // create() calls activateRealtime(), destroy() calls deactivateRealtime().
 // The Supabase client already keeps the open channels, under `realtime:` plus
@@ -32,7 +33,7 @@ export function activateRealtime(key, { table, event, payload, match }) {
       },
       (change) => {
         const state = store.getState()
-        if (!state.session?.user_id) return
+        if (!readUserId()) return
         if (match && !match(change, state)) return
         store.notify(
           event,

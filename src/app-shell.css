@@ -15,6 +15,19 @@
   padding-top: env(safe-area-inset-top);
 }
 
+/* The route renders straight into this, so a short page still paints the full
+   height of the content row (its own background). main is a flex item of a
+   fixed-height shell, so the percentage resolves.
+
+   Do NOT make this a flex container. Its single child (.vaitu-frame) carries
+   auto side margins, and auto margins on a flex cross-axis suppress
+   align-items: stretch — the page shrink-wraps to its content width and every
+   list gains horizontal inset. Verified in Chrome: block layout gives 683x430,
+   flex gives 683x133. */
+.vaitu-page {
+  min-height: 100%;
+}
+
 /* Shared page frame. Every screen uses Page.render(); only the padding
    variant differs. The node stays a Flex column (login and onboarding use
    justify: center). min-width: 0 stops the column from growing to the width
@@ -69,29 +82,19 @@
   height: 0;
 }
 
-/* The content row scrolls vertically, but the page-slide transition offsets the
-   page horizontally by a full viewport width. Without this the scroll container
-   would gain a horizontal scrollbar on every transition. `clip` (not `hidden`)
-   so it does not create a scroll container of its own or a containing block
-   for the FAB. */
-/* Beat .iw-flex.iw-flex-overflow-auto, whose overflow shorthand would
-   otherwise turn the horizontal axis back into auto and paint a scrollbar
-   whenever a page is a few pixels wider than the column. */
+/* Beats .iw-flex.iw-flex-overflow-auto, whose overflow shorthand would otherwise
+   turn the horizontal axis back into auto and paint a scrollbar whenever a page
+   is a few pixels wider than the column. `clip` rather than `hidden` so it does
+   not create a containing block for the absolutely positioned FAB. */
 .appMain.iw-flex.iw-flex-overflow-auto {
   flex: 1 1 0;
   overflow-x: clip;
   overflow-y: auto;
 }
 
-/* Splash screen, built in src/app.js outside any CSS module, so its styles live
-   here rather than in a page's style.module.css. */
-.vaitu-splash {
-  min-height: 100%;
-  background: var(--iw-color-bg);
-}
-
-.vaitu-splashLogo {
-  display: block;
-  width: var(--iw-space-24);
-  height: var(--iw-space-24);
+/* The catch-all route, built in src/types/not-found outside any CSS module, so
+   its styles live here rather than in a page's style.module.css. */
+.vaitu-notFound {
+  padding: var(--iw-space-8);
+  text-align: center;
 }
