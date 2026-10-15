@@ -1,0 +1,56 @@
+/* The app shell. Structure lives in src/app/index.js (renderShell) using the
+   Flex primitive from @inglorious/ui, following its ScrollableContent story:
+   column container, a scrolling content row, and a footer row for the tab bar.
+
+   Flex has no props for viewport height, safe area, or flex-grow, so those live
+   here as classes on the Flex nodes — not as inline style objects.
+
+   `iw-flex*` belongs to @inglorious/ui and has to stay global, or these rules
+   would stop matching the primitive they are adjusting. */
+
+/* padding-top has to beat .iw-flex.iw-flex-padding-none. That shorthand is
+   padding: 0, and it was cancelling the notch inset, so the logo, sticky
+   headers and the profile avatar sat under the status bar. */
+:global(.iw-flex.iw-flex-padding-none).shell {
+  height: 100dvh;
+  background: var(--vbg);
+  position: relative;
+  padding-top: env(safe-area-inset-top);
+}
+
+/* The route renders straight into this, so a short page still paints the full
+   height of the content row (its own background). main is a flex item of a
+   fixed-height shell, so the percentage resolves.
+
+   Do NOT make this a flex container. Its single child is the page frame, which
+   carries auto side margins, and auto margins on a flex cross-axis suppress
+   align-items: stretch — the page shrink-wraps to its content width and every
+   list gains horizontal inset. Verified in Chrome: block layout gives 683x430,
+   flex gives 683x133. */
+.page {
+  min-height: 100%;
+}
+
+/* The footer owns the bar's height while it is on screen. Pages that keep the
+   bar mounted but translated away (detail, ranks, eventCreate) must not
+   reserve an empty row, so the row collapses instead. Height is animated rather
+   than display:none so the bar's slide-out is not cut off mid-transition. */
+.footer {
+  flex: 0 0 auto;
+  overflow: hidden;
+  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-hidden {
+  height: 0;
+}
+
+/* Beats .iw-flex.iw-flex-overflow-auto, whose overflow shorthand would otherwise
+   turn the horizontal axis back into auto and paint a scrollbar whenever a page
+   is a few pixels wider than the column. `clip` rather than `hidden` so it does
+   not create a containing block for the absolutely positioned FAB. */
+:global(.iw-flex.iw-flex-overflow-auto).main {
+  flex: 1 1 0;
+  overflow-x: clip;
+  overflow-y: auto;
+}

@@ -140,7 +140,7 @@
   /* How far the tab bar keeps its buttons clear of the iOS home indicator.
      env(safe-area-inset-bottom) is ~2.125rem on a notched iPhone and 0 on
      Android. Set to 0 to seat the bar flush on both — see the note in
-     app-shell.css about the footer height. Flip back to
+     the app shell (src/app/style.module.css) about the footer height. Flip back to
      env(safe-area-inset-bottom) if the labels ever end up under the home
      indicator. */
   --vpage-bottom: 0;

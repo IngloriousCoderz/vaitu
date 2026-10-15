@@ -1,0 +1,43 @@
+/* The page frame. Every screen renders one of these; only the padding variant
+   differs. The node stays a Flex column (login and onboarding use justify:
+   center). min-width: 0 stops the column from growing to the width of a chip
+   row. The flow child is the block where page margins collapse.
+
+   `iw-flex*` belongs to @inglorious/ui and has to stay global, or these rules
+   would stop matching the primitive they are adjusting. */
+
+:global(.iw-flex).frame {
+  width: auto;
+  min-width: 0;
+  max-width: var(--vpage-max-width);
+  margin: 0 auto;
+  min-height: 100%;
+  background: var(--vbg);
+  color: var(--vink);
+  box-sizing: border-box;
+}
+
+.frame-flow {
+  min-width: 0;
+}
+
+/* Padding has to beat .iw-flex.iw-flex-padding-none, which the Flex primitive
+   applies by default and which was wiping the gutter (padding computed to 0).
+   The sticky headers cancel that gutter with a negative margin; with the gutter
+   gone they spill past the screen and the shell grows a scrollbar. */
+:global(.iw-flex.iw-flex-padding-none).frame-document,
+:global(.iw-flex.iw-flex-padding-none).frame-centered {
+  padding: var(--vpage-top) var(--vpage-gutter) var(--vpage-gap);
+}
+
+:global(.iw-flex.iw-flex-padding-none).frame-sticky {
+  padding: 0 var(--vpage-gutter) var(--vpage-gap);
+}
+
+:global(.iw-flex.iw-flex-padding-none).frame-stickyFlat {
+  padding: 0 var(--vpage-gutter);
+}
+
+.frame-center-text {
+  text-align: center;
+}

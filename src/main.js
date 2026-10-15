@@ -20,7 +20,6 @@ import "@inglorious/ui/select.css"
 import "./pwa"
 import "./styles/theme.css"
 import "./styles/tokens.css"
-import "./app-shell.css"
 import "./styles/list-stagger.css"
 
 import { mount } from "@inglorious/web"

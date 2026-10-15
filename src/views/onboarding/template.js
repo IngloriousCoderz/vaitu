@@ -1,0 +1,130 @@
+import { Alert } from "@inglorious/ui/alert"
+import { Button } from "@inglorious/ui/button"
+import { html } from "@inglorious/web"
+import { getFieldError, getFieldValue } from "@inglorious/web/form"
+
+import { ErrorLabel } from "../../common/error-label/index.js"
+import { Page } from "../../common/page/index.js"
+import { ITALY } from "../../data/regions/resolve.js"
+import styles from "./style.module.css"
+
+export const Onboarding = {
+  render(props, api) {
+    return this.renderOnboarding(props, api)
+  },
+
+  renderOnboarding({
+    entity,
+    onField,
+    onSave,
+    onSkip,
+    renderCountry,
+    renderRegion,
+  }) {
+    const saving = entity.status === "saving"
+    const countryError = getFieldError(entity, "country")
+
+    return Page.render({
+      variant: "centered",
+      children: [
+        html`
+          <h2 class=${styles.title}>Complete your profile</h2>
+          <p class=${styles.subtitle}>
+            Tell us where you are so organizers can find you.
+          </p>
+
+          <div
+            class=${
+              countryError
+                ? `${styles.field} ${styles.fieldError}`
+                : styles.field
+            }
+          >
+            <span>Country</span>
+            ${renderCountry()} ${ErrorLabel.render({ error: countryError })}
+          </div>
+          ${
+            getFieldValue(entity, "country", "") === ITALY
+              ? html`
+                  <div class=${styles.field}>
+                    <span>Region (optional)</span>
+                    ${renderRegion()}
+                  </div>
+                `
+              : html`
+                  <label class=${styles.field}>
+                    <span>Region (optional)</span>
+                    <input
+                      type="text"
+                      placeholder="Tuscany"
+                      .value=${getFieldValue(entity, "region", "")}
+                      @input=${(e) =>
+                        onField({ field: "region", value: e.target.value })}
+                    />
+                  </label>
+                `
+          }
+          <label class=${styles.field}>
+            <span>Website (optional)</span>
+            <input
+              type="url"
+              placeholder="your-site.com"
+              autocapitalize="none"
+              autocorrect="off"
+              autocomplete="off"
+              spellcheck="false"
+              inputmode="url"
+              .value=${getFieldValue(entity, "website", "")}
+              @input=${(e) =>
+                onField({
+                  field: "website",
+                  value: e.target.value.toLowerCase(),
+                })}
+            />
+          </label>
+          <label class=${styles.field}>
+            <span>Instagram (optional)</span>
+            <input
+              type="text"
+              placeholder="@handle"
+              autocapitalize="none"
+              autocorrect="off"
+              autocomplete="off"
+              spellcheck="false"
+              .value=${getFieldValue(entity, "instagram", "")}
+              @input=${(e) =>
+                onField({
+                  field: "instagram",
+                  value: e.target.value.toLowerCase(),
+                })}
+            />
+          </label>
+
+          ${
+            entity.error
+              ? Alert.render({
+                  severity: "error",
+                  className: `vaitu-alert ${styles.error}`,
+                  children: entity.error,
+                })
+              : ""
+          }
+          <div class=${styles.bottomBar}>
+            ${Button.render({
+              children: saving ? "Saving…" : "Continue",
+              color: "primary",
+              shape: "pill",
+              size: "md",
+              isFullWidth: true,
+              isDisabled: saving,
+              onClick: onSave,
+            })}
+            <button class=${styles.linkButton} type="button" @click=${onSkip}>
+              Skip for now
+            </button>
+          </div>
+        `,
+      ],
+    })
+  },
+}
