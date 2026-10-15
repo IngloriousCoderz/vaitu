@@ -9,6 +9,7 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --fix",
+    "test": "vitest run",
     "dev": "vite",
     "edge": "supabase functions serve",
     "build": "vite build",
