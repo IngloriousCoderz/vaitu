@@ -1,12 +1,9 @@
-import { Form } from "@inglorious/web/form"
+import { Form, getFieldError } from "@inglorious/web/form"
 
 import { isTicking, startTick } from "../../api/ticker.js"
-import {
-  DATETIME_LOCAL_LENGTH,
-  DEFAULT_MAX_APPLICANTS,
-  ZERO,
-} from "../../constants/index.js"
+import { DEFAULT_MAX_APPLICANTS, ZERO } from "../../constants/index.js"
 import { paths } from "../../routes.js"
+import { validateEvent } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
 import { clearPendingAudio, releaseRecorder } from "./handlers.js"
 import * as handlers from "./handlers.js"
@@ -60,9 +57,15 @@ export const EventCreate = {
 
   saveSubmit(entity, _, api) {
     Form.validate(entity, { validate: validateEvent })
+    syncComboboxErrors(entity, api)
     if (!entity.isValid) return
     const values = entity.values
-    const details = values.details ?? {}
+    // Copied here, while `values` is still the live draft. Everything below
+    // travels through a notify, and a payload outlives the batch that built it:
+    // by the time the save handler reads it, the store has committed and revoked
+    // the proxies this one was read from. Passing the reference on meant the
+    // insert died on "Cannot perform 'get' on a proxy that has been revoked".
+    const details = { ...(values.details ?? {}) }
     const title_from = categoryById(values.category).title_from
     const title = title_from.input
       ? values.title
@@ -135,39 +138,12 @@ export const EventCreate = {
   },
 }
 
-function validateEvent(values) {
-  const errors = {}
-  const detailErrors = {}
-  const details = values.details ?? {}
-  const deadline = values.application_deadline ?? ""
-  const deadlineOk =
-    deadline.length === DATETIME_LOCAL_LENGTH &&
-    !Number.isNaN(new Date(deadline).getTime())
-  const max = Number(values.max_applicants)
-
-  if (!(values.location ?? "").trim()) errors.location = "Required"
-  if (!(values.country ?? "").trim()) errors.country = "Pick a country"
-  if (!(values.region ?? "").trim()) errors.region = "Required"
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(values.event_date ?? "")) {
-    errors.event_date = "Pick a date"
-  }
-  if (!deadlineOk) errors.application_deadline = "Pick a deadline"
-  if (!(Number.isInteger(max) && max > ZERO)) {
-    errors.max_applicants = "Enter a positive number"
-  }
-  if (values.category === "festival") {
-    if (!(values.title ?? "").trim()) errors.title = "Required"
-    if (!(details.headliner ?? "").trim()) detailErrors.headliner = "Required"
-  } else {
-    if (!(details.spouse_first_name_1 ?? "").trim()) {
-      detailErrors.spouse_first_name_1 = "Required"
-    }
-    if (!(details.spouse_first_name_2 ?? "").trim()) {
-      detailErrors.spouse_first_name_2 = "Required"
-    }
-  }
-  if (Object.keys(detailErrors).length) errors.details = detailErrors
-  return errors
+// The country and region comboboxes are separate entities rendered by id, so
+// they cannot read the form's errors. Hand them over where validation runs, the
+// same way their values and options are already handed over.
+function syncComboboxErrors(entity, api) {
+  api.notify("#country-create:errorSet", getFieldError(entity, "country"))
+  api.notify("#region-create:errorSet", getFieldError(entity, "region"))
 }
 
 function open(entity, { event_id } = {}, api) {

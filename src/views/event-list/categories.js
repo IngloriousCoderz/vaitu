@@ -18,12 +18,18 @@ export const categories = [
         field: "spouse_first_name_1",
         label: "Spouse 1 first name",
         type: "text",
+        // The form marks this one so the asterisk matches what the validators
+        // actually demand. Selects below stay optional.
+        isRequired: true,
         section: "identity",
       },
       {
         field: "spouse_first_name_2",
         label: "Spouse 2 first name",
         type: "text",
+        // The form marks this one so the asterisk matches what the validators
+        // actually demand. Selects below stay optional.
+        isRequired: true,
         section: "identity",
       },
       {
@@ -45,6 +51,9 @@ export const categories = [
         field: "headliner",
         label: "Headliner",
         type: "text",
+        // The form marks this one so the asterisk matches what the validators
+        // actually demand. Selects below stay optional.
+        isRequired: true,
         section: "identity",
       },
       {
@@ -63,8 +72,8 @@ export function categoryById(id) {
 }
 
 // Chips for the active category: "show all" + one per valid option.
-// Option values come from the same source the Zod schema validates,
-// so filter and validation can never diverge.
+// Option values come from the same source the validators check, so a filter
+// chip can never offer a value the form would reject.
 export function filtersForCategory(categoryId) {
   const [dimension] = categoryById(categoryId).filters
   return [

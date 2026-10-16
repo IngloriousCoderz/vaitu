@@ -56,6 +56,7 @@ export function create(entity) {
   entity.isMulti ??= false
   entity.selectedValue ??= entity.isMulti ? [] : null
 
+  entity.error ??= null
   entity.options ??= []
   entity.options = entity.options.map(formatOption)
 
@@ -194,6 +195,17 @@ export function focusSet(entity, index) {
  * @param {any} entity
  * @param {string|null} value
  */
+/**
+ * Carry a validation message. The combobox is its own entity, rendered by id, so
+ * the form that owns it has to hand the message over — the same way `sync` and
+ * `optionsSet` already carry the value and the option list.
+ * @param {any} entity
+ * @param {string|null} error
+ */
+export function errorSet(entity, error) {
+  entity.error = error ?? null
+}
+
 export function sync(entity, value) {
   entity.selectedValue = value || null
   entity.searchTerm = ""

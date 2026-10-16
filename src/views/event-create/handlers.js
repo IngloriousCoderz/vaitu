@@ -31,6 +31,7 @@ import {
   regionAfterCountryChange,
   regionForCountry,
 } from "../../data/regions/resolve.js"
+import { paths } from "../../routes.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
 let mediaRecorder = null
@@ -160,12 +161,16 @@ export function detailFieldSet(entity, { field, value }) {
   entity.error = null
 }
 
-export function categorySelect(entity, category) {
+export function categorySelect(entity, category, api) {
   Form.fieldChange(entity, { path: "category", value: category })
   Form.fieldChange(entity, { path: "details", value: {} })
   entity.errors = {}
   entity.isValid = true
   entity.error = null
+  // Clearing the form's errors has to clear the comboboxes' too, or a message
+  // outlives the thing that caused it.
+  api.notify("#country-create:errorSet", null)
+  api.notify("#region-create:errorSet", null)
 }
 
 export const audioRecord = handleAsync("audioRecord", {
@@ -466,6 +471,17 @@ export const save = handleAsync("save", {
     entity.audio_preview_url = null
     api.notify(`#${entity.id}:close`)
     api.notify("#eventList:eventsLoad")
+    // Saving has to leave the page, because the route is what unmounts it now.
+    // `#close` only tidies the entity up; on its own it left the form sitting
+    // there, filled in, looking as though nothing had happened. An edit goes
+    // back to the event it came from. A new one goes to the list, because the
+    // insert hands back no id to navigate to.
+    api.notify(
+      "#router:navigate",
+      entity.editing_event_id
+        ? paths.event(entity.editing_event_id)
+        : paths.events,
+    )
   },
   error(entity, err) {
     entity.status = "error"

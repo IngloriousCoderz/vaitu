@@ -37,44 +37,6 @@
   color: var(--vmuted);
 }
 
-.field input {
-  flex: 1;
-  min-width: 0;
-  font: inherit;
-  font-size: var(--vinput-font-size);
-  color: var(--vink);
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-xl);
-  padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
-  margin-bottom: 0.625rem;
-  outline: none;
-}
-
-.passwordWrap {
-  position: relative;
-}
-
-.passwordWrap input {
-  padding-right: 2.625rem;
-  margin-bottom: 0.625rem;
-}
-
-.eyeButton {
-  position: absolute;
-  right: 0.375rem;
-  /* input carries margin-bottom:0.625rem, so true center is half that
-     above the middle */
-  top: calc(50% - 0.3125rem);
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--vmuted);
-  padding: 0.375rem;
-  display: flex;
-}
-
 .step {
   animation: step-in var(--iw-transition-normal);
 }

@@ -32,12 +32,16 @@ export const ApplicationDetail = {
     entity.isConfirmingGiveUp ??= false
     entity.status ??= "idle"
     entity.error ??= null
-    activateRealtime(entity.id, {
+    // The id is snapshotted because these closures outlive the batch that
+    // built them: they fire from a realtime message, by which point the
+    // draft this entity was is revoked and reading entity.id throws.
+    const id = entity.id
+    activateRealtime(id, {
       table: "applications",
-      event: `#${entity.id}:applicationLoad`,
-      payload: (state) => state[entity.id].application_id,
+      event: `#${id}:applicationLoad`,
+      payload: (state) => state[id]?.application_id,
       match: (change, state) => {
-        const applicationId = state[entity.id]?.application_id
+        const applicationId = state[id]?.application_id
         return (
           applicationId != null &&
           realtimeColumn(change, "id") === applicationId

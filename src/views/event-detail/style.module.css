@@ -102,26 +102,6 @@
   color: var(--vmuted);
 }
 
-.field input,
-.field textarea {
-  font: inherit;
-  font-size: var(--vinput-font-size);
-  color: var(--vink);
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-xl);
-  padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
-  outline: none;
-  resize: vertical;
-}
-
-.field input:disabled,
-.field textarea:disabled {
-  background: #e6e6e2;
-  color: var(--vmuted);
-  opacity: 1;
-}
-
 .disclaimer {
   font-size: var(--iw-font-size-xs);
   color: var(--vmuted);

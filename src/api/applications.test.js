@@ -243,13 +243,18 @@ describe("a passed deadline", () => {
 describe("withdrawing an application", () => {
   let eventId = null
 
+  // Created here rather than inside the first test, so the second one does not
+  // depend on its predecessor having run.
+  beforeAll(async () => {
+    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+  })
+
   afterAll(async () => {
     if (eventId) await deleteOwnedEvent(eventId)
     await signOut()
   })
 
   test("a pending application can be withdrawn", async () => {
-    eventId = await createEventAs(SEEKER, crypto.randomUUID())
     await signIn(SENDER)
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
     await withdrawApplication(await applicationId(eventId))
@@ -386,10 +391,19 @@ describe("the applicant's own status", () => {
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
       const id = await applicationId(eventId)
 
-      await supabase
+      // The applicant must not be able to move their own status, so the write
+      // has to be refused. Asserting that directly is the point of the test;
+      // reading the row back afterwards only inferred it, and hid the error
+      // that says who the write actually ran as.
+      const { error: shortlistError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
         .eq("id", id)
+      expect(shortlistError).not.toBeNull()
+      expect(shortlistError.message).toContain(
+        "cannot change this application status",
+      )
+
       const { data: afterShortlist, error: shortlistReadError } = await supabase
         .from("applications")
         .select("status")
@@ -398,10 +412,13 @@ describe("the applicant's own status", () => {
       expect(shortlistReadError).toBeNull()
       expect(afterShortlist.status).toBe("pending")
 
-      await supabase
+      const { error: selectError } = await supabase
         .from("applications")
         .update({ status: "selected" })
         .eq("id", id)
+      expect(selectError?.message).toContain(
+        "cannot change this application status",
+      )
       const { data: afterSelect, error: selectReadError } = await supabase
         .from("applications")
         .select("status")

@@ -11,10 +11,13 @@ const regionOptions = italianRegions.map((region) => ({
   label: region,
 }))
 
-function countrySelect(targetId, targetEvent) {
+// `label` and `isRequired` are rendered by the combobox itself now, so a form
+// does not have to wrap it in a hand-written label to show one.
+function countrySelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
-    label: "",
+    ...overrides,
+    label: overrides.label ?? "",
     selectedValue: null,
     isMulti: false,
     isOpen: false,
@@ -37,10 +40,11 @@ function countrySelect(targetId, targetEvent) {
 }
 
 // Same combobox as the country field. The form shows it only for Italy.
-function regionSelect(targetId, targetEvent) {
+function regionSelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
-    label: "",
+    ...overrides,
+    label: overrides.label ?? "",
     selectedValue: null,
     isMulti: false,
     isOpen: false,
@@ -63,9 +67,9 @@ function regionSelect(targetId, targetEvent) {
 }
 
 // Same combobox as the country field. Picking a region adds a favorite.
-function favoriteRegionSelect(targetId, targetEvent) {
+function favoriteRegionSelect(targetId, targetEvent, overrides = {}) {
   return {
-    ...regionSelect(targetId, targetEvent),
+    ...regionSelect(targetId, targetEvent, overrides),
     isClearable: false,
     placeholder: "Select…",
     targetField: "favorite",
@@ -74,11 +78,21 @@ function favoriteRegionSelect(targetId, targetEvent) {
 
 export const entities = {
   "country-onboarding": countrySelect("onboarding", "fieldSet"),
-  "country-profile": countrySelect("profile", "profileFieldSet"),
-  "country-create": countrySelect("eventCreate", "fieldSet"),
+  "country-profile": countrySelect("profile", "profileFieldSet", {
+    label: "Country",
+  }),
+  "country-create": countrySelect("eventCreate", "fieldSet", {
+    label: "Country",
+    isRequired: true,
+  }),
   "region-onboarding": regionSelect("onboarding", "fieldSet"),
-  "region-profile": regionSelect("profile", "profileFieldSet"),
-  "region-create": regionSelect("eventCreate", "fieldSet"),
+  "region-profile": regionSelect("profile", "profileFieldSet", {
+    label: "Region",
+  }),
+  "region-create": regionSelect("eventCreate", "fieldSet", {
+    label: "Region",
+    isRequired: true,
+  }),
   "favorite-region-list": favoriteRegionSelect(
     "eventList",
     "favoriteChoiceSelect",
@@ -86,5 +100,6 @@ export const entities = {
   "favorite-region-profile": favoriteRegionSelect(
     "profile",
     "favoriteChoiceSelect",
+    { label: "Favorite regions (optional)" },
   ),
 }

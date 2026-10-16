@@ -1,10 +1,11 @@
 import { Alert } from "@inglorious/ui/alert"
+import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
-import { Icon } from "@inglorious/ui/icon"
+import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ErrorLabel } from "../../common/error-label/index.js"
+import { RevealToggle } from "./reveal-toggle"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
@@ -32,62 +33,53 @@ export const LoginStep = {
           <p class=${styles.subtitle}>
             Logging in as
             <strong>${getFieldValue(entity, "email", "")}</strong>.
-            <button
-              class=${styles.linkButton}
-              type="button"
-              @click=${onBackToEmail}
-            >
-              Change
-            </button>
+            ${Button.render({
+              children: "Change",
+              variant: "ghost",
+              size: "sm",
+              className: styles.linkButton,
+              onClick: onBackToEmail,
+            })}
           </p>
-          <input
-            class=${styles.srOnly}
-            type="email"
-            name="username"
-            autocomplete="username"
-            tabindex="-1"
-            aria-hidden="true"
-            .value=${getFieldValue(entity, "email", "")}
-          />
-          ${Flex.render({
-            element: "label",
-            direction: "column",
-            className: styles.field,
-            children: html`
-              <span>Password</span>
-              ${Flex.render({
-                className: styles.passwordWrap,
-                children: html`
-              <input
-                id="login_password"
-                data-pw
-                name="password"
-                autocomplete="current-password"
-                type=${entity.isPasswordVisible ? "text" : "password"}
-                placeholder="••••••••"
-                .value=${getFieldValue(entity, "password", "")}
-                @input=${(e) =>
-                  onField({ field: "password", value: e.target.value })}
-              />
-              <button
-                class=${styles.eyeButton}
-                type="button"
-                aria-label=${
-                  entity.isPasswordVisible ? "Hide password" : "Show password"
-                }
-                @mousedown=${(e) => e.preventDefault()}
-                @click=${() => onTogglePassword("login_password")}
-              >
-                ${Icon.render({
-                  name: entity.isPasswordVisible ? "eye-off" : "eye",
-                  size: 18,
-                })}
-              </button>
-            `,
-              })}
-              ${ErrorLabel.render({ error: getFieldError(entity, "password") })}
-            `,
-          })}
+          <!-- Exists only so a password manager can fill the address it was
+               given earlier. Labelless on purpose: there is nothing to tell a
+               person about a field they never see. The wrapper clips the whole
+               control, so the primitive still renders. -->
+          <div class=${styles.srOnly}>
+            ${Input.render({
+              id: "login-username",
+              inputType: "email",
+              name: "username",
+              value: getFieldValue(entity, "email", ""),
+              isFullWidth: true,
+              autocomplete: "username",
+              tabindex: -1,
+              "aria-hidden": "true",
+            })}
+          </div>
+          <div class=${styles.field}>
+            ${Input.render({
+              id: "login_password",
+              label: "Password",
+              name: "password",
+              inputType: entity.isPasswordVisible ? "text" : "password",
+              value: getFieldValue(entity, "password", ""),
+              placeholder: "••••••••",
+              isFullWidth: true,
+              isRequired: true,
+              error: getFieldError(entity, "password"),
+              onChange: (value) => onField({ field: "password", value }),
+              // The reveal button lives in the field's own trailing slot rather
+              // than floating over it in a wrapper, which is what stopped the
+              // input from taking the full width of the row.
+              iconAfter: RevealToggle.render({
+                isPasswordVisible: entity.isPasswordVisible,
+                inputId: "login_password",
+                onTogglePassword,
+              }),
+              "data-pw": "",
+            })}
+          </div>
           ${
             entity.error
               ? Alert.render({

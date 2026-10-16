@@ -3,11 +3,11 @@ import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
+import { Input } from "@inglorious/ui/input"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ErrorLabel } from "../../common/error-label/index.js"
 import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import {
@@ -70,7 +70,6 @@ export const EventCreate = {
             ariaLabel: "Back",
             onClick: onBack,
           })}
-
           ${Flex.render({
             element: "header",
             align: "center",
@@ -88,7 +87,6 @@ export const EventCreate = {
               }),
             ],
           })}
-
           ${this.renderAudio({
             entity,
             onRecordStart,
@@ -96,7 +94,6 @@ export const EventCreate = {
             onCancelAudio,
             onRemoveAudio,
           })}
-
           ${Flex.render({
             className: styles.chips,
             children: categories.map(
@@ -114,7 +111,6 @@ export const EventCreate = {
               `,
             ),
           })}
-
           ${identityFields.map((spec) =>
             this.renderDetailField({
               spec,
@@ -132,6 +128,7 @@ export const EventCreate = {
                   value: getFieldValue(entity, "title", ""),
                   placeholder: "E.g. Sundance Beats",
                   error: getFieldError(entity, "title"),
+                  isRequired: true,
                   onField,
                 })
           }
@@ -141,36 +138,24 @@ export const EventCreate = {
             value: getFieldValue(entity, "location", ""),
             placeholder: "Venue Name",
             error: getFieldError(entity, "location"),
+            isRequired: true,
             onField,
           })}
-          ${Flex.render({
-            direction: "column",
-            className: styles.field,
-            children: html`
-              <span>Country</span>
-              ${api.render("country-create")}
-              ${ErrorLabel.render({ error: getFieldError(entity, "country") })}
-            `,
-          })}
+          <div class=${styles.field}>${api.render("country-create")}</div>
           ${
             country === ITALY
-              ? Flex.render({
-                  direction: "column",
-                  className: styles.field,
-                  children: html`
-                    <span>Region</span>
+              ? html`
+                  <div class=${styles.field}>
                     ${api.render("region-create")}
-                    ${ErrorLabel.render({
-                      error: getFieldError(entity, "region"),
-                    })}
-                  `,
-                })
+                  </div>
+                `
               : this.renderTextField({
                   label: "Region",
                   field: "region",
                   value: getFieldValue(entity, "region", ""),
                   placeholder: "E.g. Tuscany",
                   error: getFieldError(entity, "region"),
+                  isRequired: true,
                   onField,
                 })
           }
@@ -188,6 +173,7 @@ export const EventCreate = {
             value: getFieldValue(entity, "event_date", ""),
             type: "date",
             error: getFieldError(entity, "event_date"),
+            isRequired: true,
             onField,
           })}
           ${this.renderTextField({
@@ -196,6 +182,7 @@ export const EventCreate = {
             value: getFieldValue(entity, "application_deadline", ""),
             type: "datetime-local",
             error: getFieldError(entity, "application_deadline"),
+            isRequired: true,
             onField,
           })}
           ${this.renderTextField({
@@ -204,6 +191,7 @@ export const EventCreate = {
             value: getFieldValue(entity, "max_applicants", ""),
             type: "number",
             error: getFieldError(entity, "max_applicants"),
+            isRequired: true,
             onField,
           })}
           ${
@@ -282,13 +270,14 @@ export const EventCreate = {
                   isFullWidth: true,
                   onClick: onRecordStop,
                 })}
-                <button
-                  class=${styles.cancelButton}
-                  type="button"
-                  @click=${onCancelAudio}
-                >
-                  Cancel
-                </button>
+                ${Button.render({
+                  children: "Cancel",
+                  variant: "ghost",
+                  color: "default",
+                  size: "sm",
+                  className: styles.cancelButton,
+                  onClick: onCancelAudio,
+                })}
               `
             : src
               ? html`
@@ -343,13 +332,14 @@ export const EventCreate = {
                     isFullWidth: true,
                     onClick: onRecordStart,
                   })}
-                  <button
-                    class=${styles.cancelButton}
-                    type="button"
-                    @click=${onCancelAudio}
-                  >
-                    Cancel
-                  </button>
+                  ${Button.render({
+                    children: "Cancel",
+                    variant: "ghost",
+                    color: "default",
+                    size: "sm",
+                    className: styles.cancelButton,
+                    onClick: onCancelAudio,
+                  })}
                 `
         }
         ${
@@ -371,15 +361,15 @@ export const EventCreate = {
 
   renderDetailField({ spec, details, error, onDetailField }) {
     if (spec.type === "select") {
-      return Flex.render({
-        element: "label",
-        direction: "column",
-        className: styles.field,
-        children: html`
-          <span>${spec.label}</span>
+      return html`
+        <div class=${styles.field}>
           ${Select.render({
+            id: `create-detail-${spec.field}`,
+            label: spec.label,
+            isRequired: spec.isRequired,
             value: details[spec.field] ?? "",
             isFullWidth: true,
+            error,
             options: [{ value: "", label: "Select…" }].concat(
               spec.options.map((option) => ({
                 value: option.value,
@@ -388,9 +378,8 @@ export const EventCreate = {
             ),
             onChange: (value) => onDetailField({ field: spec.field, value }),
           })}
-          ${ErrorLabel.render({ error })}
-        `,
-      })
+        </div>
+      `
     }
 
     return this.renderTextField({
@@ -398,6 +387,7 @@ export const EventCreate = {
       field: spec.field,
       value: details[spec.field],
       error,
+      isRequired: spec.isRequired,
       onField: ({ field, value }) => onDetailField({ field, value }),
     })
   },
@@ -409,23 +399,26 @@ export const EventCreate = {
     placeholder = "",
     type,
     error,
+    isRequired = false,
     onField,
   }) {
-    return Flex.render({
-      element: "label",
-      direction: "column",
-      className: styles.field,
-      children: html`
-        <span>${label}</span>
-        <input
-          type=${type ?? "text"}
-          placeholder=${placeholder}
-          .value=${value}
-          @input=${(e) => onField({ field, value: e.target.value })}
-        />
-        ${ErrorLabel.render({ error })}
-      `,
-    })
+    return html`
+      <div class=${styles.field}>
+        ${Input.render({
+          // Stable so the label is bound to the input rather than just sitting
+          // next to it.
+          id: `create-${field}`,
+          label,
+          inputType: type ?? "text",
+          value,
+          placeholder,
+          isRequired,
+          isFullWidth: true,
+          error,
+          onChange: (next) => onField({ field, value: next }),
+        })}
+      </div>
+    `
   },
 }
 

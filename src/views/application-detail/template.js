@@ -1,10 +1,10 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ErrorLabel } from "../../common/error-label/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
@@ -118,20 +118,17 @@ export const ApplicationDetail = {
                             <h3 class=${styles.sectionTitle}>
                               Your motivation
                             </h3>
-                            <label class=${styles.field}>
-                              <textarea
-                                rows="5"
-                                .value=${motivation}
-                                @input=${(e) =>
-                                  onField({
-                                    field: "motivation",
-                                    value: e.target.value,
-                                  })}
-                              ></textarea>
-                              ${ErrorLabel.render({
+                            <div class=${styles.field}>
+                              ${Textarea.render({
+                                id: "application-motivation",
+                                value: motivation,
+                                rows: 5,
+                                isFullWidth: true,
                                 error: getFieldError(entity, "motivation"),
+                                onChange: (value) =>
+                                  onField({ field: "motivation", value }),
                               })}
-                            </label>
+                            </div>
                             ${Button.render({
                               children:
                                 status === "saving"

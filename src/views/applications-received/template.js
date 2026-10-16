@@ -2,10 +2,10 @@ import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
+import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError } from "@inglorious/web/form"
 
-import { ErrorLabel } from "../../common/error-label/index.js"
 import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants/index.js"
@@ -85,21 +85,20 @@ export const ApplicationsReceived = {
                             ${
                               deadlinePast(entity.event_deadline)
                                 ? html`
-                                    <label class=${styles.field}>
+                                    <div class=${styles.field}>
                                       <span>New application deadline</span>
-                                      <input
-                                        type="datetime-local"
-                                        .value=${entity.reopen_deadline ?? ""}
-                                        @input=${(e) =>
-                                          onReopenDeadline(e.target.value)}
-                                      />
-                                      ${ErrorLabel.render({
+                                      ${Input.render({
+                                        id: "received-reopen-deadline",
+                                        inputType: "datetime-local",
+                                        value: entity.reopen_deadline ?? "",
+                                        isFullWidth: true,
                                         error: getFieldError(
                                           entity,
                                           "reopen_deadline",
                                         ),
+                                        onChange: onReopenDeadline,
                                       })}
-                                    </label>
+                                    </div>
                                   `
                                 : ""
                             }

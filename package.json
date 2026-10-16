@@ -9,6 +9,7 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --fix",
+    "test:watch": "vitest",
     "test": "vitest run",
     "dev": "vite",
     "edge": "supabase functions serve",
@@ -30,11 +31,10 @@
     "@capacitor/share": "^8.0.3",
     "@inglorious/motion": "^9.0.2",
     "@inglorious/store": "^11.0.1",
-    "@inglorious/ui": "^7.1.6",
+    "@inglorious/ui": "^7.2.2",
     "@inglorious/web": "^6.4.1",
     "@supabase/supabase-js": "^2.117.2",
-    "fix-webm-duration": "^1.0.6",
-    "zod": "^4.6.5"
+    "fix-webm-duration": "^1.0.6"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.1",

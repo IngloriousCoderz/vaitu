@@ -92,7 +92,7 @@
   --iw-button-ghost-border: transparent;
 
   /* Input */
-  --iw-input-bg: var(--iw-color-white);
+  --iw-input-bg: var(--iw-color-bg);
   --iw-input-bg-hover: var(--iw-color-white);
   --iw-input-bg-focus: var(--iw-color-white);
   --iw-input-text: var(--iw-color-text);
@@ -100,7 +100,7 @@
   --iw-input-border: #ced4da;
   --iw-input-border-hover: #ced4da;
   --iw-input-border-focus: var(--iw-color-border-focus);
-  --iw-input-radius: var(--iw-radius-md);
+  --iw-input-radius: var(--iw-radius-xl);
   --iw-input-shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 
   /* Card */

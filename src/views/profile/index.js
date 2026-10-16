@@ -36,11 +36,15 @@ export const Profile = {
     entity.favoriteInput ??= ""
     entity.status ??= "idle"
     entity.error ??= null
-    activateRealtime(entity.id, {
+    // The id is snapshotted because this closure outlives the batch that built
+    // it: it fires from a realtime message, by which point the draft this
+    // entity was is revoked and reading entity.id throws.
+    const id = entity.id
+    activateRealtime(id, {
       table: "applications",
-      event: `#${entity.id}:profileLoad`,
+      event: `#${id}:profileLoad`,
       match: (change, state) => {
-        const applicantId = state[entity.id]?.profile?.id
+        const applicantId = state[id]?.profile?.id
         return (
           applicantId != null &&
           realtimeColumn(change, "applicant_id") === applicantId

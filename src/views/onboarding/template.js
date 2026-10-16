@@ -1,5 +1,6 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
+import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -52,52 +53,51 @@ export const Onboarding = {
                   </div>
                 `
               : html`
-                  <label class=${styles.field}>
-                    <span>Region (optional)</span>
-                    <input
-                      type="text"
-                      placeholder="Tuscany"
-                      .value=${getFieldValue(entity, "region", "")}
-                      @input=${(e) =>
-                        onField({ field: "region", value: e.target.value })}
-                    />
-                  </label>
+                  <div class=${styles.field}>
+                    ${Input.render({
+                      id: "onboarding-region",
+                      label: "Region (optional)",
+                      inputType: "text",
+                      value: getFieldValue(entity, "region", ""),
+                      placeholder: "Tuscany",
+                      isFullWidth: true,
+                      onChange: (value) => onField({ field: "region", value }),
+                    })}
+                  </div>
                 `
           }
-          <label class=${styles.field}>
-            <span>Website (optional)</span>
-            <input
-              type="url"
-              placeholder="your-site.com"
-              autocapitalize="none"
-              autocorrect="off"
-              autocomplete="off"
-              spellcheck="false"
-              inputmode="url"
-              .value=${getFieldValue(entity, "website", "")}
-              @input=${(e) =>
-                onField({
-                  field: "website",
-                  value: e.target.value.toLowerCase(),
-                })}
-            />
-          </label>
-          <label class=${styles.field}>
-            <span>Instagram (optional)</span>
-            <input
-              type="text"
-              placeholder="@handle"
-              autocapitalize="none"
-              autocorrect="off"
-              autocomplete="off"
-              spellcheck="false"
-              .value=${getFieldValue(entity, "instagram", "")}
-              @input=${(e) =>
-                onField({
-                  field: "instagram",
-                  value: e.target.value.toLowerCase(),
-                })}
-            />
+          <div class=${styles.field}>
+            ${Input.render({
+              id: "onboarding-website",
+              label: "Website (optional)",
+              inputType: "url",
+              value: getFieldValue(entity, "website", ""),
+              placeholder: "your-site.com",
+              isFullWidth: true,
+              onChange: (value) =>
+                onField({ field: "website", value: value.toLowerCase() }),
+              autocapitalize: "none",
+              autocorrect: "off",
+              autocomplete: "off",
+              spellcheck: "false",
+              inputmode: "url",
+            })}
+          </div>
+          <div class=${styles.field}>
+            ${Input.render({
+              id: "onboarding-instagram",
+              label: "Instagram (optional)",
+              inputType: "text",
+              value: getFieldValue(entity, "instagram", ""),
+              placeholder: "@handle",
+              isFullWidth: true,
+              onChange: (value) =>
+                onField({ field: "instagram", value: value.toLowerCase() }),
+              autocapitalize: "none",
+              autocorrect: "off",
+              autocomplete: "off",
+              spellcheck: "false",
+            })}
           </label>
 
           ${
@@ -119,9 +119,13 @@ export const Onboarding = {
               isDisabled: saving,
               onClick: onSave,
             })}
-            <button class=${styles.linkButton} type="button" @click=${onSkip}>
-              Skip for now
-            </button>
+${Button.render({
+  children: "Skip for now",
+  variant: "ghost",
+  size: "sm",
+  className: styles.linkButton,
+  onClick: onSkip,
+})}
           </div>
         `,
       ],

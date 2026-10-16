@@ -1,9 +1,9 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Flex } from "@inglorious/ui/flex"
+import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ErrorLabel } from "../../common/error-label/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
@@ -22,27 +22,24 @@ export const EmailStep = {
         >
           <h2 class=${styles.title}>Welcome to vaitu</h2>
           <p class=${styles.subtitle}>Enter your email to continue.</p>
-          ${Flex.render({
-            element: "label",
-            direction: "column",
-            className: styles.field,
-            children: html`
-              <span>Email</span>
-              <input
-                type="email"
-                name="email"
-                autocomplete="username"
-                autocapitalize="none"
-                autocorrect="off"
-                spellcheck="false"
-                placeholder="you@example.com"
-                .value=${getFieldValue(entity, "email", "")}
-                @input=${(e) =>
-                  onField({ field: "email", value: e.target.value })}
-              />
-              ${ErrorLabel.render({ error: getFieldError(entity, "email") })}
-            `,
-          })}
+          <div class=${styles.field}>
+            ${Input.render({
+              id: "email-step-email",
+              label: "Email",
+              inputType: "email",
+              name: "email",
+              value: getFieldValue(entity, "email", ""),
+              placeholder: "you@example.com",
+              isFullWidth: true,
+              isRequired: true,
+              error: getFieldError(entity, "email"),
+              onChange: (value) => onField({ field: "email", value }),
+              autocomplete: "username",
+              autocapitalize: "none",
+              autocorrect: "off",
+              spellcheck: "false",
+            })}
+          </div>
           ${
             entity.error
               ? Alert.render({

@@ -386,14 +386,14 @@ export const EventList = {
                     (region) => html`
                       <span class=${styles.favoriteChip}>
                         ${region}
-                        <button
-                          class=${styles.favoriteRemove}
-                          type="button"
-                          aria-label=${`Remove ${region}`}
-                          @click=${() => onFavoriteRemove(region)}
-                        >
-                          ${Icon.render({ name: "x", size: 13 })}
-                        </button>
+                        ${IconButton.render({
+                          icon: Icon.render({ name: "x", size: 13 }),
+                          ariaLabel: `Remove ${region}`,
+                          variant: "ghost",
+                          size: "sm",
+                          className: styles.favoriteRemove,
+                          onClick: () => onFavoriteRemove(region),
+                        })}
                       </span>
                     `,
                   )}

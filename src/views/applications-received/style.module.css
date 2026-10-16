@@ -25,17 +25,6 @@
   margin-top: var(--iw-space-3);
 }
 
-.field input {
-  font: inherit;
-  font-size: var(--vinput-font-size);
-  color: var(--vink);
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-xl);
-  padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
-  outline: none;
-}
-
 /* Surface, line and radius come from the iw Card; only the inner rhythm is
    ours. */
 .recap {

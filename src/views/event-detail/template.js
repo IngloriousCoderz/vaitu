@@ -2,11 +2,12 @@ import { Alert } from "@inglorious/ui/alert"
 import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { Input } from "@inglorious/ui/input"
+import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
-import { ErrorLabel } from "../../common/error-label/index.js"
 import {
   deadlineBadge,
   deadlineTone,
@@ -213,47 +214,53 @@ export const EventDetail = {
         }}
       >
         <h3 class=${styles.sectionTitle}>Apply for this event</h3>
-        <label class=${styles.field}>
-          <span>Full name</span>
-          <input
-            type="text"
-            .value=${getFieldValue(entity, "full_name", "")}
-            disabled
-          />
-        </label>
-        <label class=${styles.field}>
-          <span>Website</span>
-          <input
-            type="url"
-            .value=${getFieldValue(entity, "website", "")}
-            disabled
-          />
-        </label>
-        <label class=${styles.field}>
-          <span>Instagram</span>
-          <input
-            type="text"
-            .value=${getFieldValue(entity, "instagram", "")}
-            disabled
-          />
-        </label>
+        <div class=${styles.field}>
+          ${Input.render({
+            id: "apply-full-name",
+            label: "Full name",
+            inputType: "text",
+            value: getFieldValue(entity, "full_name", ""),
+            isFullWidth: true,
+            isReadOnly: true,
+          })}
+        </div>
+        <div class=${styles.field}>
+          ${Input.render({
+            id: "apply-website",
+            label: "Website",
+            inputType: "url",
+            value: getFieldValue(entity, "website", ""),
+            isFullWidth: true,
+            isReadOnly: true,
+          })}
+        </div>
+        <div class=${styles.field}>
+          ${Input.render({
+            id: "apply-instagram",
+            label: "Instagram",
+            inputType: "text",
+            value: getFieldValue(entity, "instagram", ""),
+            isFullWidth: true,
+            isReadOnly: true,
+          })}
+        </div>
         <p class=${styles.disclaimer}>
           Only ${entity.event.max_applicants} names will be forwarded to the
           organizer.
         </p>
-        <label class=${styles.field}>
-          <span>Why are you the ideal candidate for this event?</span>
-          <textarea
-            rows="4"
-            placeholder="Tell your story…"
-            .value=${motivation}
-            @input=${(e) =>
-              onField({ field: "motivation", value: e.target.value })}
-          ></textarea>
-          ${ErrorLabel.render({
+        <div class=${styles.field}>
+          ${Textarea.render({
+            id: "apply-motivation",
+            label: "Why are you the ideal candidate for this event?",
+            value: motivation,
+            rows: 4,
+            placeholder: "Tell your story…",
+            isFullWidth: true,
+            isRequired: true,
             error: getFieldError(entity, "motivation"),
+            onChange: (value) => onField({ field: "motivation", value }),
           })}
-        </label>
+        </div>
         ${Button.render({
           children: sending ? "Sending…" : "Apply",
           color: "primary",

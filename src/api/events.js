@@ -1,5 +1,6 @@
 import {
   DAY_MS,
+  DEFAULT_TRANSCRIPT_STATUS,
   FIRST_INDEX,
   HASH_MULTIPLIER,
   HASH_SEED,
@@ -15,7 +16,11 @@ import {
 } from "../constants/index.js"
 import { canonicalRegion, uniqueRegions } from "../data/regions/resolve.js"
 import { randomId } from "../text/index.js"
-import { createEventSchema } from "../validation/events.js"
+import {
+  firstError,
+  normalizeEvent,
+  validateEvent,
+} from "../validation/events.js"
 import { supabase } from "./client.js"
 
 const NEW_THRESHOLD_DAYS = 3
@@ -221,21 +226,27 @@ export async function fetchOpenEvents() {
   return data.map(toViewModel)
 }
 
+// The form only has room for one message, so the first error stands in for the
+// whole set. Validating and normalizing stay separate: one decides whether the
+// write is allowed, the other decides what the row looks like.
+function prepareEvent(payload) {
+  const errors = validateEvent(payload)
+  const message = firstError(errors)
+  if (message) throw new Error(message)
+  return normalizeEvent(payload)
+}
+
 export async function createEvent(payload) {
-  const parsed = createEventSchema.safeParse(payload)
-  if (!parsed.success) {
-    throw new Error(
-      parsed.error.issues[FIRST_INDEX]?.message ?? "Invalid event",
-    )
-  }
+  const row = prepareEvent(payload)
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error("Not logged in")
   const { error } = await supabase.from("events").insert({
-    ...parsed.data,
+    ...row,
     sender_id: user.id,
     status: "open",
+    transcript_status: row.transcript_status ?? DEFAULT_TRANSCRIPT_STATUS,
   })
   if (error) throw error
   return true
@@ -259,15 +270,10 @@ export async function fetchEventForEdit(event_id) {
 }
 
 export async function updateEvent(event_id, payload) {
-  const parsed = createEventSchema.safeParse(payload)
-  if (!parsed.success) {
-    throw new Error(
-      parsed.error.issues[FIRST_INDEX]?.message ?? "Invalid event",
-    )
-  }
+  const row = prepareEvent(payload)
   const { error } = await supabase
     .from("events")
-    .update({ ...parsed.data, updated_at: new Date().toISOString() })
+    .update({ ...row, updated_at: new Date().toISOString() })
     .eq("id", event_id)
   if (error) throw error
   return true

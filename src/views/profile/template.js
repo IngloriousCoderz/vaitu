@@ -4,6 +4,7 @@ import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
+import { Input } from "@inglorious/ui/input"
 import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
@@ -168,12 +169,12 @@ export const Profile = {
                               ${this.renderEditField({
                                 label: "Website",
                                 field: "website",
+                                icon: "https://",
                                 value: (shown.website ?? "").replace(
                                   /^https?:\/\//i,
                                   "",
                                 ),
                                 placeholder: "your-site.com",
-                                prefix: "https://",
                                 lowercase: true,
                                 inputmode: "url",
                                 onField,
@@ -181,24 +182,22 @@ export const Profile = {
                               ${this.renderEditField({
                                 label: "Instagram",
                                 field: "instagram_handle",
+                                icon: "@",
                                 value: (shown.instagram_handle ?? "").replace(
                                   /^@+/,
                                   "",
                                 ),
-                                placeholder: "handle",
-                                prefix: "@",
+                                placeholder: "@handle",
                                 lowercase: true,
                                 onField,
                               })}
                               <div class=${styles.field}>
-                                <span>Country</span>
                                 ${renderCountry()}
                               </div>
                               ${
                                 shown.country === ITALY
                                   ? html`
                                       <div class=${styles.field}>
-                                        <span>Region</span>
                                         ${renderRegion()}
                                       </div>
                                     `
@@ -323,46 +322,33 @@ export const Profile = {
   renderEditField({
     label,
     field,
+    icon,
     value,
     placeholder,
-    prefix,
     lowercase,
     inputmode,
     onField,
   }) {
-    const handleInput = (e) => {
-      const raw = e.target.value
-      onField({ field, value: lowercase ? raw.toLowerCase() : raw })
-    }
-    const input = html`
-      <input
-        type="text"
-        placeholder=${placeholder}
-        spellcheck="false"
-        autocapitalize="none"
-        autocorrect="off"
-        autocomplete="off"
-        inputmode=${inputmode ?? "text"}
-        .value=${value ?? ""}
-        @input=${handleInput}
-      />
+    return html`
+      <div class=${styles.field}>
+        ${Input.render({
+          id: `profile-${field}`,
+          label,
+          icon,
+          inputType: "text",
+          value: value ?? "",
+          placeholder,
+          isFullWidth: true,
+          onChange: (raw) =>
+            onField({ field, value: lowercase ? raw.toLowerCase() : raw }),
+          spellcheck: "false",
+          autocapitalize: "none",
+          autocorrect: "off",
+          autocomplete: "off",
+          inputmode: inputmode ?? "text",
+        })}
+      </div>
     `
-    return Flex.render({
-      element: "label",
-      direction: "column",
-      className: styles.field,
-      children: [
-        html`<span>${label}</span>`,
-        Flex.render({
-          align: "center",
-          className: styles.urlWrap,
-          children: [
-            prefix ? html`<span class=${styles.urlPrefix}>${prefix}</span>` : "",
-            input,
-          ],
-        }),
-      ],
-    })
   },
 
   renderFavorites({
@@ -373,70 +359,60 @@ export const Profile = {
     onFavoriteRemove,
     renderFavoriteChoice,
   }) {
-    return Flex.render({
-      direction: "column",
-      className: styles.field,
-      children: [
-        html`<span>Favorite regions (optional)</span>`,
+    return html` <div class=${styles.field}>
+      ${
         favorites.length
-          ? Flex.render({
-              wrap: "wrap",
-              gap: "sm",
-              className: styles.favoriteChips,
-              children: favorites.map((region) =>
-                Flex.render({
-                  element: "span",
-                  isInline: true,
-                  align: "center",
-                  className: styles.favoriteChip,
-                  children: html`
-                    ${region}
-                    <button
-                      class=${styles.favoriteRemove}
-                      type="button"
-                      aria-label=${`Remove ${region}`}
-                      @click=${() => onFavoriteRemove(region)}
-                    >
-                      ${Icon.render({ name: "x", size: 13 })}
-                    </button>
+          ? html`
+              <div class=${styles.favoriteChips}>
+                ${favorites.map(
+                  (region) => html`
+                    <span class=${styles.favoriteChip}>
+                      ${region}
+                      ${IconButton.render({
+                        icon: Icon.render({ name: "x", size: 13 }),
+                        ariaLabel: `Remove ${region}`,
+                        variant: "ghost",
+                        size: "sm",
+                        className: styles.favoriteRemove,
+                        onClick: () => onFavoriteRemove(region),
+                      })}
+                    </span>
                   `,
-                }),
-              ),
-            })
-          : "",
-        renderFavoriteChoice(),
-        Flex.render({
-          align: "center",
-          className: styles.urlWrap,
-          children: html`
-          <input
-            type="text"
-            placeholder="Or type a region"
-            autocapitalize="none"
-            autocorrect="off"
-            autocomplete="off"
-            spellcheck="false"
-            .value=${input}
-            @input=${(e) => onFavoriteInput(e.target.value)}
-            @keydown=${(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault()
-                onFavoriteAdd(e.target.value)
-              }
-            }}
-          />
-          ${Button.render({
-            children: "Add",
-            variant: "outline",
-            shape: "pill",
-            size: "md",
-            isDisabled: input.trim() === "",
-            onClick: () => onFavoriteAdd(input),
-          })}
-        `,
-        }),
-      ],
-    })
+                )}
+              </div>
+            `
+          : ""
+      }
+      ${renderFavoriteChoice()}
+      <div class=${styles.field}>
+        ${Input.render({
+          id: "profile-favorite-region",
+          inputType: "text",
+          value: input,
+          placeholder: "Or type a region",
+          isFullWidth: true,
+          onChange: onFavoriteInput,
+          onKeyDown: (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault()
+              onFavoriteAdd(e.target.value)
+            }
+          },
+          autocapitalize: "none",
+          autocorrect: "off",
+          autocomplete: "off",
+          spellcheck: "false",
+        })}
+        ${Button.render({
+          children: "Add",
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isDisabled: input.trim() === "",
+          onClick: () => onFavoriteAdd(input),
+        })}
+      </div>
+    </div>`
   },
 
   renderTierBlock({ stats, tiers, onOpenRanks }) {
@@ -459,7 +435,9 @@ export const Profile = {
           html`<span class=${styles.tierName}>
             ${progress.current ? capitalize(progress.current) : "No rank"}
           </span>`,
-          html`<span class=${styles.tierPoints}>${stats.points ?? 0} pts</span>`,
+          html`<span class=${styles.tierPoints}
+            >${stats.points ?? 0} pts</span
+          >`,
           Progress.render({
             color: "primary",
             value: progress.percent,
