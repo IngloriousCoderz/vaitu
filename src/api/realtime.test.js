@@ -4,12 +4,12 @@ import "../store/index.js"
 
 import { expect, test } from "vitest"
 
-import { ApplicationDetail } from "../types/application-detail/index.js"
-import { ApplicationList } from "../types/application-list/index.js"
-import { ApplicationsReceived } from "../types/applications-received/index.js"
-import { EventDetail } from "../types/event-detail/index.js"
-import { EventList } from "../types/event-list/index.js"
-import { Profile } from "../types/profile/index.js"
+import { ApplicationDetail } from "../views/application-detail/index.js"
+import { ApplicationList } from "../views/application-list/index.js"
+import { ApplicationsReceived } from "../views/applications-received/index.js"
+import { EventDetail } from "../views/event-detail/index.js"
+import { EventList } from "../views/event-list/index.js"
+import { Profile } from "../views/profile/index.js"
 import { supabase } from "./client.js"
 
 const CLOSE_TIMEOUT_MS = 10000
