@@ -2,6 +2,7 @@ import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Chip } from "@inglorious/ui/chip"
+import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
@@ -109,6 +110,7 @@ export const EventList = {
     return Page.render({
       variant: "sticky",
       category: activeCategory,
+      wide: true,
       children: [
         html`
           <div class=${styles.stickyTop}>
@@ -268,7 +270,8 @@ export const EventList = {
                               event,
                               isApplied: Boolean(appliedMap[event.id]),
                               onOpen: onOpenEvent,
-                              className: "vaitu-list-item",
+                              cover: true,
+                              className: `vaitu-list-item ${styles.tile}`,
                               style,
                             })
                       })
@@ -289,65 +292,73 @@ export const EventList = {
     onDelete,
     onCancelDelete,
   }) {
-    return html`
-      <div class="${styles.myEvent} vaitu-list-item" style=${style}>
-        ${Card.render({ event, divider: false, onOpen: onOpenEvent })}
-        <div class=${styles.myEventFooter}>
-          ${Chip.render({
-            children: capitalize(event.status),
-            color: statusColors[event.status] ?? "default",
-          })}
-          <span class=${styles.count}>
-            ${event.applications_count}
-            application${event.applications_count === SINGULAR ? "" : "s"}
-          </span>
-          <span class=${styles.rowActions}>
-            ${
-              event.status === "open"
-                ? IconButton.render({
-                    icon: Icon.render({ name: "pencil", size: 16 }),
-                    ariaLabel: "Edit event",
-                    className: `${styles.miniButton} ${styles.editTint}`,
-                    onClick: () => onEdit(event.id),
-                  })
-                : ""
-            }
-            ${IconButton.render({
-              icon: Icon.render({ name: "trash", size: 16 }),
-              ariaLabel: "Delete event",
-              className: `${styles.miniButton} ${styles.deleteTint}`,
-              onClick: () => onAskDelete(event.id),
+    return Flex.render({
+      direction: "column",
+      className: `${styles.myEvent} vaitu-list-item`,
+      style,
+      children: [
+        Card.render({
+          event,
+          divider: false,
+          cover: true,
+          onOpen: onOpenEvent,
+        }),
+        html`
+          <div class=${styles.myEventFooter}>
+            ${Chip.render({
+              children: capitalize(event.status),
+              color: statusColors[event.status] ?? "default",
             })}
-          </span>
-        </div>
-        ${
-          isConfirmingDelete
-            ? html`
-                <p class=${styles.warn}>
-                  Delete this event and all its applications?
-                </p>
-                <div class=${styles.deleteRow}>
-                  ${Button.render({
-                    children: "Yes, delete",
-                    color: "error",
-                    variant: "outline",
-                    shape: "pill",
-                    size: "md",
-                    onClick: () => onDelete(event.id),
-                  })}
-                  ${Button.render({
-                    children: "Keep it",
-                    variant: "outline",
-                    shape: "pill",
-                    size: "md",
-                    onClick: onCancelDelete,
-                  })}
-                </div>
-              `
-            : ""
-        }
-      </div>
-    `
+            <span class=${styles.count}>
+              ${event.applications_count}
+              application${event.applications_count === SINGULAR ? "" : "s"}
+            </span>
+            <span class=${styles.rowActions}>
+              ${
+                event.status === "open"
+                  ? IconButton.render({
+                      icon: Icon.render({ name: "pencil", size: 16 }),
+                      ariaLabel: "Edit event",
+                      className: `${styles.miniButton} ${styles.editTint}`,
+                      onClick: () => onEdit(event.id),
+                    })
+                  : ""
+              }
+              ${IconButton.render({
+                icon: Icon.render({ name: "trash", size: 16 }),
+                ariaLabel: "Delete event",
+                className: `${styles.miniButton} ${styles.deleteTint}`,
+                onClick: () => onAskDelete(event.id),
+              })}
+            </span>
+          </div>
+        `,
+        isConfirmingDelete
+          ? html`
+              <p class=${styles.warn}>
+                Delete this event and all its applications?
+              </p>
+              <div class=${styles.deleteRow}>
+                ${Button.render({
+                  children: "Yes, delete",
+                  color: "error",
+                  variant: "outline",
+                  shape: "pill",
+                  size: "md",
+                  onClick: () => onDelete(event.id),
+                })}
+                ${Button.render({
+                  children: "Keep it",
+                  variant: "outline",
+                  shape: "pill",
+                  size: "md",
+                  onClick: onCancelDelete,
+                })}
+              </div>
+            `
+          : "",
+      ],
+    })
   },
 
   renderFavoriteEditor({

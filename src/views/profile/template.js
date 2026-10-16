@@ -2,6 +2,7 @@ import { Alert } from "@inglorious/ui/alert"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
+import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
@@ -64,21 +65,23 @@ export const Profile = {
                 : !profile
                   ? html`<p class=${styles.empty}>Loading profile…</p>`
                   : html`
-                      <div class=${styles.header}>
-                        ${Avatar.render({
-                          initials: initials(profile.full_name),
-                          size: "lg",
-                          backgroundColor:
-                            "linear-gradient(135deg, #6b7a5e, #24402f)",
-                          textColor: "#fffdf7",
-                        })}
-                        ${IconButton.render({
-                          icon: Icon.render({ name: "settings", size: 22 }),
-                          ariaLabel: "Profile options",
-                          className: styles.gearButton,
-                          onClick: onToggleMenu,
-                        })}
-                        ${
+                      ${Flex.render({
+                        justify: "center",
+                        className: styles.header,
+                        children: [
+                          Avatar.render({
+                            initials: initials(profile.full_name),
+                            size: "lg",
+                            backgroundColor:
+                              "linear-gradient(135deg, #6b7a5e, #24402f)",
+                            textColor: "#fffdf7",
+                          }),
+                          IconButton.render({
+                            icon: Icon.render({ name: "settings", size: 22 }),
+                            ariaLabel: "Profile options",
+                            className: styles.gearButton,
+                            onClick: onToggleMenu,
+                          }),
                           entity.isMenuOpen
                             ? html`
                                 <div
@@ -108,9 +111,9 @@ export const Profile = {
                                   ],
                                 })}
                               `
-                            : ""
-                        }
-                      </div>
+                            : "",
+                        ],
+                      })}
                       <h2 class=${styles.name}>${profile.full_name}</h2>
                       <p class=${styles.email}>${profile.email}</p>
                       ${
@@ -124,28 +127,31 @@ export const Profile = {
                       }
                       ${
                         entity.stats
-                          ? html`
-                              <div class=${styles.stats}>
-                                ${this.renderStat(
+                          ? Flex.render({
+                              justify: "center",
+                              gap: "sm",
+                              className: styles.stats,
+                              children: [
+                                this.renderStat(
                                   entity.stats.applications_count,
                                   "Applications",
                                   "all",
                                   onOpenApplications,
-                                )}
-                                ${this.renderStat(
+                                ),
+                                this.renderStat(
                                   entity.stats.shortlists_count,
                                   "Shortlisted",
                                   "shortlisted",
                                   onOpenApplications,
-                                )}
-                                ${this.renderStat(
+                                ),
+                                this.renderStat(
                                   entity.stats.selections_count,
                                   "Wins",
                                   "selected",
                                   onOpenApplications,
-                                )}
-                              </div>
-                            `
+                                ),
+                              ],
+                            })
                           : ""
                       }
                       ${
@@ -273,8 +279,10 @@ export const Profile = {
   },
 
   renderRow(label, value, href) {
-    return html`
-      <div class=${styles.row}>
+    return Flex.render({
+      justify: "between",
+      className: styles.row,
+      children: html`
         <dt>${label}</dt>
         <dd>
           ${
@@ -292,16 +300,21 @@ export const Profile = {
               : value || "—"
           }
         </dd>
-      </div>
-    `
+      `,
+    })
   },
 
   renderStat(value, label, status_filter, onOpenApplications) {
     return Button.render({
-      children: html`
-        <span class=${styles.statValue}>${value}</span>
-        <span class=${styles.statLabel}>${label}</span>
-      `,
+      children: Flex.render({
+        direction: "column",
+        align: "stretch",
+        isFullWidth: true,
+        children: html`
+          <span class=${styles.statValue}>${value}</span>
+          <span class=${styles.statLabel}>${label}</span>
+        `,
+      }),
       className: styles.stat,
       onClick: () => onOpenApplications(status_filter),
     })
@@ -334,15 +347,22 @@ export const Profile = {
         @input=${handleInput}
       />
     `
-    return html`
-      <label class=${styles.field}>
-        <span>${label}</span>
-        <div class=${styles.urlWrap}>
-          ${prefix ? html`<span class=${styles.urlPrefix}>${prefix}</span>` : ""}
-          ${input}
-        </div>
-      </label>
-    `
+    return Flex.render({
+      element: "label",
+      direction: "column",
+      className: styles.field,
+      children: [
+        html`<span>${label}</span>`,
+        Flex.render({
+          align: "center",
+          className: styles.urlWrap,
+          children: [
+            prefix ? html`<span class=${styles.urlPrefix}>${prefix}</span>` : "",
+            input,
+          ],
+        }),
+      ],
+    })
   },
 
   renderFavorites({
@@ -353,34 +373,42 @@ export const Profile = {
     onFavoriteRemove,
     renderFavoriteChoice,
   }) {
-    return html`
-      <div class=${styles.field}>
-        <span>Favorite regions (optional)</span>
-        ${
-          favorites.length
-            ? html`
-                <div class=${styles.favoriteChips}>
-                  ${favorites.map(
-                    (region) => html`
-                      <span class=${styles.favoriteChip}>
-                        ${region}
-                        <button
-                          class=${styles.favoriteRemove}
-                          type="button"
-                          aria-label=${`Remove ${region}`}
-                          @click=${() => onFavoriteRemove(region)}
-                        >
-                          ${Icon.render({ name: "x", size: 13 })}
-                        </button>
-                      </span>
-                    `,
-                  )}
-                </div>
-              `
-            : ""
-        }
-        ${renderFavoriteChoice()}
-        <div class=${styles.urlWrap}>
+    return Flex.render({
+      direction: "column",
+      className: styles.field,
+      children: [
+        html`<span>Favorite regions (optional)</span>`,
+        favorites.length
+          ? Flex.render({
+              wrap: "wrap",
+              gap: "sm",
+              className: styles.favoriteChips,
+              children: favorites.map((region) =>
+                Flex.render({
+                  element: "span",
+                  isInline: true,
+                  align: "center",
+                  className: styles.favoriteChip,
+                  children: html`
+                    ${region}
+                    <button
+                      class=${styles.favoriteRemove}
+                      type="button"
+                      aria-label=${`Remove ${region}`}
+                      @click=${() => onFavoriteRemove(region)}
+                    >
+                      ${Icon.render({ name: "x", size: 13 })}
+                    </button>
+                  `,
+                }),
+              ),
+            })
+          : "",
+        renderFavoriteChoice(),
+        Flex.render({
+          align: "center",
+          className: styles.urlWrap,
+          children: html`
           <input
             type="text"
             placeholder="Or type a region"
@@ -405,9 +433,10 @@ export const Profile = {
             isDisabled: input.trim() === "",
             onClick: () => onFavoriteAdd(input),
           })}
-        </div>
-      </div>
-    `
+        `,
+        }),
+      ],
+    })
   },
 
   renderTierBlock({ stats, tiers, onOpenRanks }) {
@@ -415,29 +444,44 @@ export const Profile = {
     return Card.render({
       element: "div",
       className: styles.tierBlock,
-      body: html`
-        <span class=${styles.tierMedal} data-tier=${progress.current ?? "none"}>
-          ${Icon.render({ name: "medal", size: 28 })}
-        </span>
-        <span class=${styles.tierName}>
-          ${progress.current ? capitalize(progress.current) : "No rank"}
-        </span>
-        <span class=${styles.tierPoints}>${stats.points ?? 0} pts</span>
-        ${Progress.render({
-          color: "primary",
-          value: progress.percent,
-          className: styles.progressTrack,
-        })}
-        <span class=${styles.progressRow}>
-          <span>${progressLabel(stats.points, tiers)}</span>
-          ${IconButton.render({
-            icon: Icon.render({ name: "help-circle", size: 13 }),
-            ariaLabel: "How ranks work",
-            className: styles.ranksHelp,
-            onClick: onOpenRanks,
-          })}
-        </span>
-      `,
+      body: Flex.render({
+        direction: "column",
+        align: "center",
+        gap: "sm",
+        children: [
+          Flex.render({
+            element: "span",
+            isInline: true,
+            className: styles.tierMedal,
+            "data-tier": progress.current ?? "none",
+            children: Icon.render({ name: "medal", size: 28 }),
+          }),
+          html`<span class=${styles.tierName}>
+            ${progress.current ? capitalize(progress.current) : "No rank"}
+          </span>`,
+          html`<span class=${styles.tierPoints}>${stats.points ?? 0} pts</span>`,
+          Progress.render({
+            color: "primary",
+            value: progress.percent,
+            className: styles.progressTrack,
+          }),
+          Flex.render({
+            element: "span",
+            isInline: true,
+            align: "center",
+            className: styles.progressRow,
+            children: [
+              html`<span>${progressLabel(stats.points, tiers)}</span>`,
+              IconButton.render({
+                icon: Icon.render({ name: "help-circle", size: 13 }),
+                ariaLabel: "How ranks work",
+                className: styles.ranksHelp,
+                onClick: onOpenRanks,
+              }),
+            ],
+          }),
+        ],
+      }),
     })
   },
 }

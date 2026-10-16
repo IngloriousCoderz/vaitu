@@ -45,6 +45,70 @@
   height: 0;
 }
 
+/* Phone keeps the bottom bar. From tablet up the drawer is the navigation,
+   so the footer row must not keep a gap under the page.
+   Media queries cannot read custom properties, so the breakpoints are
+   written out. They match --vlayout-wide (48rem) and --vlayout-desktop (87.5rem). */
+@media (min-width: 48rem) {
+  .footer {
+    height: 0;
+  }
+}
+
+/* Hidden on the phone. From tablet up it is a real flex row again. The
+   display has to beat .iw-flex, which the primitive sets on the same node. */
+:global(.iw-flex).topbar {
+  display: none;
+  flex: 0 0 auto;
+  padding: var(--iw-space-2) var(--vpage-gutter);
+}
+
+@media (min-width: 48rem) {
+  :global(.iw-flex).topbar {
+    display: flex;
+  }
+}
+
+/* The package drawer pins itself open at 64rem. iPad Pro 13 landscape is
+   1376px, so through 87.5rem it stays an overlay the hamburger can open
+   and close, the way a marketplace app does on a tablet. */
+@media (min-width: 64rem) and (max-width: 87.49rem) {
+  :global(.iw-drawer.iw-drawer-left) {
+    transform: translateX(-100%);
+    box-shadow: var(--iw-shadow-lg);
+  }
+
+  :global(.iw-drawer.iw-drawer-left.iw-drawer-open) {
+    transform: translateX(0);
+  }
+
+  :global(.iw-drawer.iw-drawer-left) ~ :global(.iw-drawer-backdrop) {
+    display: flex;
+  }
+}
+
+/* Past every iPad the drawer is a fixed sidebar, so the menu button would
+   only open a panel that is already on screen. */
+@media (min-width: 87.5rem) {
+  .menuButton {
+    visibility: hidden;
+  }
+}
+
+.menuButton,
+.bellButton {
+  --iw-button-color: var(--vink);
+  padding: 0.375rem;
+}
+
+/* The package drawer is position:fixed and 16rem wide. Once it stays open
+   the shell has to clear that strip. */
+@media (min-width: 87.5rem) {
+  :global(.iw-flex.iw-flex-padding-none).shellWide {
+    padding-left: var(--vlayout-drawer);
+  }
+}
+
 /* Beats .iw-flex.iw-flex-overflow-auto, whose overflow shorthand would otherwise
    turn the horizontal axis back into auto and paint a scrollbar whenever a page
    is a few pixels wider than the column. `clip` rather than `hidden` so it does

@@ -1,4 +1,5 @@
 import { Alert } from "@inglorious/ui/alert"
+import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -48,9 +49,15 @@ export const LoginStep = {
             aria-hidden="true"
             .value=${getFieldValue(entity, "email", "")}
           />
-          <label class=${styles.field}>
-            <span>Password</span>
-            <div class=${styles.passwordWrap}>
+          ${Flex.render({
+            element: "label",
+            direction: "column",
+            className: styles.field,
+            children: html`
+              <span>Password</span>
+              ${Flex.render({
+                className: styles.passwordWrap,
+                children: html`
               <input
                 id="login_password"
                 data-pw
@@ -76,9 +83,11 @@ export const LoginStep = {
                   size: 18,
                 })}
               </button>
-            </div>
-            ${ErrorLabel.render({ error: getFieldError(entity, "password") })}
-          </label>
+            `,
+              })}
+              ${ErrorLabel.render({ error: getFieldError(entity, "password") })}
+            `,
+          })}
           ${
             entity.error
               ? Alert.render({
@@ -88,9 +97,12 @@ export const LoginStep = {
                 })
               : ""
           }
-          <div class=${styles.bottomBar}>
-            ${SubmitButton.render({ isBusy, label: "Log in" })}
-          </div>
+          ${Flex.render({
+            direction: "column",
+            align: "stretch",
+            className: styles.bottomBar,
+            children: SubmitButton.render({ isBusy, label: "Log in" }),
+          })}
         </form>
       </div>
     `

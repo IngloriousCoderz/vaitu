@@ -10,7 +10,10 @@ import "@inglorious/ui/button-group.css"
 import "@inglorious/ui/card.css"
 import "@inglorious/ui/chip.css"
 import "@inglorious/ui/combobox.css"
+import "@inglorious/ui/backdrop.css"
+import "@inglorious/ui/drawer.css"
 import "@inglorious/ui/fab.css"
+import "@inglorious/ui/list.css"
 import "@inglorious/ui/flex.css"
 import "@inglorious/ui/icon-button.css"
 import "@inglorious/ui/input.css"
@@ -46,6 +49,7 @@ function trackSession(session) {
   }
   // Supabase owns the tokens; this drops our record of who they belonged to.
   clearUser()
+  store.notify("#shell:closeDrawer")
 
   // The guard only answers route changes, and a session ending is not one, so
   // without this the visitor is left sitting on a page they can no longer see —

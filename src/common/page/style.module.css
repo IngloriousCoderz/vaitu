@@ -41,3 +41,25 @@
 .frame-center-text {
   text-align: center;
 }
+
+/* Lists opt in. From tablet up the frame stops being the phone column and
+   fills the space beside the drawer. --vpage-inline is the side inset those
+   pages use; the sticky bars cancel the same value so their background still
+   reaches the edges. */
+@media (min-width: 48rem) {
+  :global(.iw-flex).frameWide {
+    max-width: none;
+    --vpage-inline: var(--iw-space-8);
+  }
+
+  :global(.iw-flex.iw-flex-padding-none).frame-sticky.frameWide {
+    padding-left: var(--vpage-inline);
+    padding-right: var(--vpage-inline);
+  }
+}
+
+@media (min-width: 64rem) {
+  :global(.iw-flex).frameWide {
+    --vpage-inline: clamp(4.5rem, 7vw, 9rem);
+  }
+}

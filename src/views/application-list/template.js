@@ -1,4 +1,5 @@
 import { Chip } from "@inglorious/ui/chip"
+import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 
 import { Card } from "../../common/event-card/index.js"
@@ -37,6 +38,7 @@ export const ApplicationList = {
 
     return Page.render({
       variant: "sticky",
+      wide: true,
       children: [
         html`
           <div class=${styles.stickyTop}>
@@ -100,30 +102,33 @@ export const ApplicationList = {
     ]
       .filter(Boolean)
       .join(" ")
-    return html`
-      <div
-        class=${itemClass}
-        style=${`--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`}
-      >
-        ${Card.render({
+    return Flex.render({
+      direction: "column",
+      className: itemClass,
+      style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
+      children: [
+        Card.render({
           event: application,
           divider: false,
+          cover: true,
           onOpen: onOpenEvent,
-        })}
-        <div class=${styles.applicationFooter}>
-          ${
-            isWinner
-              ? html`<span class=${styles.winnerTrophy}>
-                  ${Icon.render({ name: "trophy", size: 20 })}
-                </span>`
-              : Chip.render({
-                  children: capitalize(application.applicationStatus),
-                  color:
-                    StatusColors[application.applicationStatus] ?? "default",
-                })
-          }
-        </div>
-      </div>
-    `
+        }),
+        html`
+          <div class=${styles.applicationFooter}>
+            ${
+              isWinner
+                ? html`<span class=${styles.winnerTrophy}>
+                    ${Icon.render({ name: "trophy", size: 20 })}
+                  </span>`
+                : Chip.render({
+                    children: capitalize(application.applicationStatus),
+                    color:
+                      StatusColors[application.applicationStatus] ?? "default",
+                  })
+            }
+          </div>
+        `,
+      ],
+    })
   },
 }

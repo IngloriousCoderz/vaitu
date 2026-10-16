@@ -11,6 +11,7 @@ export const Page = {
     variant = "document",
     category = "wedding",
     align = "left",
+    wide = false,
     className = "",
     children,
   }) {
@@ -22,6 +23,7 @@ export const Page = {
       className: [
         styles.frame,
         styles[`frame-${variant}`],
+        wide ? styles.frameWide : "",
         align === "center" ? styles["frame-center-text"] : "",
         className,
       ]

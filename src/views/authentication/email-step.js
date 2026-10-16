@@ -1,4 +1,5 @@
 import { Alert } from "@inglorious/ui/alert"
+import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -21,21 +22,27 @@ export const EmailStep = {
         >
           <h2 class=${styles.title}>Welcome to vaitu</h2>
           <p class=${styles.subtitle}>Enter your email to continue.</p>
-          <label class=${styles.field}>
-            <span>Email</span>
-            <input
-              type="email"
-              name="email"
-              autocomplete="username"
-              autocapitalize="none"
-              autocorrect="off"
-              spellcheck="false"
-              placeholder="you@example.com"
-              .value=${getFieldValue(entity, "email", "")}
-              @input=${(e) => onField({ field: "email", value: e.target.value })}
-            />
-            ${ErrorLabel.render({ error: getFieldError(entity, "email") })}
-          </label>
+          ${Flex.render({
+            element: "label",
+            direction: "column",
+            className: styles.field,
+            children: html`
+              <span>Email</span>
+              <input
+                type="email"
+                name="email"
+                autocomplete="username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                placeholder="you@example.com"
+                .value=${getFieldValue(entity, "email", "")}
+                @input=${(e) =>
+                  onField({ field: "email", value: e.target.value })}
+              />
+              ${ErrorLabel.render({ error: getFieldError(entity, "email") })}
+            `,
+          })}
           ${
             entity.error
               ? Alert.render({
@@ -45,13 +52,16 @@ export const EmailStep = {
                 })
               : ""
           }
-          <div class=${styles.bottomBar}>
-            ${SubmitButton.render({
+          ${Flex.render({
+            direction: "column",
+            align: "stretch",
+            className: styles.bottomBar,
+            children: SubmitButton.render({
               isBusy,
               label: "Continue",
               busyLabel: "Checking...",
-            })}
-          </div>
+            }),
+          })}
         </form>
       </div>
     `

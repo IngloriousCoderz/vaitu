@@ -1,4 +1,5 @@
 import { Button } from "@inglorious/ui/button"
+import { Flex } from "@inglorious/ui/flex"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
@@ -22,19 +23,25 @@ export const Ranks = {
       variant: "sticky",
       children: [
         html`
-          <header class=${styles.header}>
-            ${Button.render({
-              children: html`
-                ${Icon.render({ name: "arrow-left", size: 16 })}
-                <span>Back</span>
-              `,
-              variant: "ghost",
-              className: "vaitu-back",
-              ariaLabel: "Back",
-              onClick: onBack,
-            })}
-            <span class=${styles.title}>Ranks</span>
-          </header>
+          ${Flex.render({
+            element: "header",
+            direction: "column",
+            align: "start",
+            className: styles.header,
+            children: [
+              Button.render({
+                children: html`
+                  ${Icon.render({ name: "arrow-left", size: 16 })}
+                  <span>Back</span>
+                `,
+                variant: "ghost",
+                className: "vaitu-back",
+                ariaLabel: "Back",
+                onClick: onBack,
+              }),
+              html`<span class=${styles.title}>Ranks</span>`,
+            ],
+          })}
 
           <p class=${styles.subtitle}>
             Earn points with every application. Higher ranks show on your
@@ -44,31 +51,42 @@ export const Ranks = {
           ${
             progress
               ? html`
-                  <div class=${styles.hero}>
-                    <span
-                      class=${`${styles.heroMedal} ${progress.current ? styles[`${progress.current}Medal`] : ""}`}
-                    >
-                      ${Icon.render({ name: "medal", size: 36 })}
-                    </span>
-                    <span class=${styles.heroTier}>
-                      ${progress.current ? capitalize(progress.current) : "No rank"}
-                    </span>
-                    <span class=${styles.heroPoints}
-                      >${mine?.points ?? 0} pts</span
-                    >
-                    ${Progress.render({
-                      value: progress.percent,
-                      className: styles.progressTrack,
-                    })}
-                    <span class=${styles.heroLabel}>
-                      ${progressLabel(mine?.points, tiers)}
-                    </span>
-                  </div>
+                  ${Flex.render({
+                    direction: "column",
+                    align: "center",
+                    gap: "sm",
+                    className: styles.hero,
+                    children: [
+                      Flex.render({
+                        element: "span",
+                        isInline: true,
+                        className: `${styles.heroMedal} ${progress.current ? styles[`${progress.current}Medal`] : ""}`,
+                        children: Icon.render({ name: "medal", size: 36 }),
+                      }),
+                      html`<span class=${styles.heroTier}>
+                        ${progress.current ? capitalize(progress.current) : "No rank"}
+                      </span>`,
+                      html`<span class=${styles.heroPoints}
+                        >${mine?.points ?? 0} pts</span
+                      >`,
+                      Progress.render({
+                        value: progress.percent,
+                        className: styles.progressTrack,
+                      }),
+                      html`<span class=${styles.heroLabel}>
+                        ${progressLabel(mine?.points, tiers)}
+                      </span>`,
+                    ],
+                  })}
                 `
               : ""
           }
 
-          <main class=${styles.list}>
+          ${Flex.render({
+            element: "main",
+            direction: "column",
+            className: styles.list,
+            children: html`
             ${
               status === "loading"
                 ? html`<p class=${styles.empty}>Loading ranks…</p>`
@@ -77,17 +95,27 @@ export const Ranks = {
                   : tiers
                     ? RANK_ORDER.map(
                         (rank) => html`
-                          <div
-                            class=${`${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`}
-                          >
-                            <span class=${styles.rankName}>
-                              ${Icon.render({ name: "medal", size: 20 })}
-                              ${capitalize(rank)}
-                            </span>
-                            <span class=${styles.rankPoints}>
-                              ${rankMin(tiers, rank)}+ pts
-                            </span>
-                          </div>
+                          ${Flex.render({
+                            align: "center",
+                            justify: "between",
+                            className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
+                            children: [
+                              Flex.render({
+                                element: "span",
+                                isInline: true,
+                                align: "center",
+                                gap: "sm",
+                                className: styles.rankName,
+                                children: html`
+                                  ${Icon.render({ name: "medal", size: 20 })}
+                                  ${capitalize(rank)}
+                                `,
+                              }),
+                              html`<span class=${styles.rankPoints}>
+                                ${rankMin(tiers, rank)}+ pts
+                              </span>`,
+                            ],
+                          })}
                         `,
                       )
                     : ""
@@ -95,7 +123,10 @@ export const Ranks = {
             ${
               status === "ready" && tiers
                 ? html`
-                    <div class=${styles.howCard}>
+                    ${Flex.render({
+                      direction: "column",
+                      className: styles.howCard,
+                      children: html`
                       <span class=${styles.howTitle}>How points work</span>
                       ${this.renderHowRow({
                         icon: "clipboard-list",
@@ -112,27 +143,36 @@ export const Ranks = {
                         points: tiers.perSelection,
                         label: "per win",
                       })}
-                    </div>
+                    `,
+                    })}
                   `
                 : ""
             }
-          </main>
+          `,
+          })}
         `,
       ],
     })
   },
 
   renderHowRow({ icon, points, label }) {
-    return html`
-      <div class=${styles.howRow}>
-        <span class=${styles.howIcon}
-          >${Icon.render({ name: icon, size: 17 })}</span
-        >
-        <span class=${styles.howText}>
+    return Flex.render({
+      align: "center",
+      className: styles.howRow,
+      children: [
+        Flex.render({
+          element: "span",
+          isInline: true,
+          align: "center",
+          justify: "center",
+          className: styles.howIcon,
+          children: Icon.render({ name: icon, size: 17 }),
+        }),
+        html`<span class=${styles.howText}>
           <strong>${points} pts</strong> ${label}
-        </span>
-      </div>
-    `
+        </span>`,
+      ],
+    })
   },
 }
 

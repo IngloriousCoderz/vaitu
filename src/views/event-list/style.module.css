@@ -11,8 +11,8 @@
   top: 0;
   z-index: var(--iw-z-sticky);
   background: var(--vbg);
-  margin: 0 calc(-1 * var(--vpage-gutter));
-  padding: var(--vpage-top) var(--vpage-gutter) 0;
+  margin: 0 calc(-1 * var(--vpage-inline, var(--vpage-gutter)));
+  padding: var(--vpage-top) var(--vpage-inline, var(--vpage-gutter)) 0;
 }
 
 .header {
@@ -154,6 +154,37 @@
   }
 }
 
+/* On a wide screen the filters sit in the middle, the way a dialog does.
+   The phone keeps the sheet that rises from the bottom. */
+@media (min-width: 48rem) {
+  .backdrop {
+    align-items: center;
+    padding: var(--iw-space-8);
+  }
+
+  .sheet {
+    width: min(40rem, 100%);
+    max-height: min(36rem, 80dvh);
+    border-radius: var(--iw-radius-2xl);
+    padding: var(--iw-space-6);
+    box-shadow: var(--iw-shadow-xl);
+    animation: sheet-in 0.2s ease;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+@media (min-width: 48rem) and (prefers-reduced-motion: reduce) {
+  .sheet {
+    animation: none;
+  }
+}
+
 .sheetHeading {
   display: flex;
   align-items: center;
@@ -231,7 +262,7 @@ button.sheetGear:active {
   padding-bottom: var(--vfab-size);
 }
 
-.myEvent {
+:global(.iw-flex.iw-flex-padding-none).myEvent {
   padding-bottom: 0.875rem;
   border-bottom: 1px solid var(--vline);
 }
@@ -297,4 +328,171 @@ button.miniButton {
   color: var(--vmuted);
   font-size: var(--iw-font-size-sm);
   padding: var(--iw-space-10) 0;
+}
+
+/* Wide header follows the Airbnb / Booking bar. Categories sit in the top
+   middle, the search and its filter sit together in the center, and the
+   styles are their own row. Explore / My events is centered under that,
+   above the cards. The phone stack above is left as it is. The bell in the
+   shell already owns the top-right corner, so the filter does not. */
+@media (min-width: 48rem) {
+  .stickyTop {
+    display: grid;
+    grid-template-columns: 1fr auto auto 1fr;
+    grid-template-areas:
+      "logo categories categories ."
+      ". search filter ."
+      "chips chips chips chips"
+      "switch switch switch switch";
+    align-items: center;
+    column-gap: var(--iw-space-3);
+    row-gap: var(--iw-space-6);
+    padding-top: var(--iw-space-2);
+    padding-bottom: var(--iw-space-8);
+  }
+
+  .header {
+    display: contents;
+  }
+
+  .logo {
+    grid-area: logo;
+    justify-self: start;
+  }
+
+  .iconButton {
+    grid-area: filter;
+    justify-self: start;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--iw-radius-full);
+  }
+
+  .categoryRow {
+    grid-area: categories;
+    justify-content: center;
+    gap: var(--iw-space-8);
+    padding: 0;
+    overflow: visible;
+  }
+
+  .categoryButton {
+    padding: var(--iw-space-2) var(--iw-space-1) var(--iw-space-3);
+    font-size: var(--iw-font-size-lg);
+  }
+
+  .stickyTop :global(.vaitu-search) {
+    grid-area: search;
+    justify-self: end;
+    width: 32rem;
+  }
+
+  .stickyTop :global(.vaitu-search) :global(.iw-input-field) :global(.iw-input-frame) {
+    padding-block: var(--iw-space-4);
+    border-radius: var(--iw-radius-full);
+    box-shadow: var(--iw-shadow-md);
+  }
+
+  .stickyTop .chips {
+    grid-area: chips;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: var(--iw-space-3);
+    padding: 0;
+  }
+
+  .ownerSwitch {
+    grid-area: switch;
+    justify-self: center;
+    padding: var(--iw-space-2) 0 0;
+  }
+
+  .ownerSwitch :global(.iw-button-group) {
+    width: auto;
+  }
+
+  .ownerSwitch :global(.iw-button) {
+    flex: 0 0 auto;
+    min-width: 7.5rem;
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    gap: var(--iw-space-8);
+    align-items: stretch;
+    padding-top: var(--iw-space-8);
+    padding-bottom: var(--iw-space-10);
+  }
+
+  .empty {
+    grid-column: 1 / -1;
+  }
+
+  .list .tile,
+  :global(.iw-flex.iw-flex-padding-none).myEvent,
+  :global(.iw-flex.iw-flex-padding-none).myEvent:last-child {
+    border: 1px solid var(--vline);
+    border-radius: var(--iw-radius-2xl);
+    padding: 0;
+    overflow: hidden;
+    background: var(--vsurface);
+    box-shadow: var(--iw-shadow-sm);
+    transition:
+      box-shadow var(--iw-transition-fast),
+      transform var(--iw-transition-fast);
+  }
+
+  .list .tile:active,
+  .myEvent:active {
+    scale: none;
+  }
+
+
+  .myEvent :global(article) {
+    flex: 1;
+    padding: 0;
+  }
+
+  .myEventFooter {
+    margin-top: 0;
+    padding: 0 var(--iw-space-4) var(--iw-space-4);
+  }
+
+  .myEvent .warn,
+  .myEvent .deleteRow {
+    margin-left: var(--iw-space-4);
+    margin-right: var(--iw-space-4);
+  }
+
+  .myEvent .deleteRow {
+    margin-bottom: var(--iw-space-4);
+  }
+}
+
+/* iPad portrait through iPad Pro landscape. auto-fill drops to one column
+   once the side inset and the 22rem minimum no longer fit two cards. */
+@media (min-width: 48rem) and (max-width: 87.5rem) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) and (hover: hover) {
+  .list .tile:hover,
+  .myEvent:hover {
+    box-shadow: var(--iw-shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 48rem) and (prefers-reduced-motion: reduce) {
+  .list .tile,
+  .myEvent,
+  .list .tile:hover,
+  .myEvent:hover {
+    transition: none;
+    transform: none;
+  }
 }

@@ -49,3 +49,10 @@
 .fabHidden {
   display: none !important;
 }
+
+/* On tablet and desktop the create action lives in the drawer. */
+@media (min-width: 48rem) {
+  .fab {
+    display: none !important;
+  }
+}

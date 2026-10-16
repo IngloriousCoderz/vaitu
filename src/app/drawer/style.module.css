@@ -1,0 +1,58 @@
+/* The package header is a Flex with padding none, so the name sat on the
+   top edge. The title has to grow, or the row stays as wide as the text. */
+:global(.iw-flex.iw-flex-padding-none.iw-drawer-header) {
+  padding: var(--iw-space-5) var(--iw-space-4);
+}
+
+:global(.iw-drawer-title) {
+  flex: 1;
+  min-width: 0;
+}
+
+/* onClose still drives the backdrop. The package button renders the
+   Material ligature "close", and that font is not loaded, so the word
+   shows. Our own X sits in the title row. */
+:global(.iw-drawer.iw-drawer-left) :global(.iw-drawer-close) {
+  display: none;
+}
+
+.who {
+  min-width: 0;
+}
+
+.identity {
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: var(--iw-font-size-lg);
+  line-height: var(--iw-line-height-tight);
+  color: var(--vink);
+}
+
+.close {
+  --iw-button-color: var(--vink);
+  padding: 0.375rem;
+  flex: 0 0 auto;
+}
+
+/* On a fixed sidebar the X would close a panel the CSS keeps on screen. */
+@media (min-width: 87.5rem) {
+  :global(button.iw-button).close {
+    display: none;
+  }
+}
+
+.body {
+  min-height: 100%;
+}
+
+/* Pushes logout to the bottom of the drawer. Flex has no prop for that. */
+.logout {
+  margin-top: auto;
+}

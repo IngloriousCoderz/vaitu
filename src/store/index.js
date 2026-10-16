@@ -1,6 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { Router, setRoutes } from "@inglorious/web/router"
 
+import { Shell } from "../app/shell.js"
 import { CountrySelect } from "../common/country-select/index.js"
 import { routes } from "../routes"
 import { ApplicationDetail } from "../views/application-detail/index.js"
@@ -23,6 +24,7 @@ setRoutes(routes)
 export const store = createStore({
   types: {
     Router,
+    Shell,
     Authentication,
     EventList,
     EventDetail,

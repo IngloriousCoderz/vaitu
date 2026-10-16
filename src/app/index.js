@@ -1,7 +1,12 @@
 import { Flex } from "@inglorious/ui/flex"
+import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 
+import { readUser } from "../api/session.js"
+import { Icon } from "../common/icon/index.js"
 import { paths } from "../routes"
+import { initials } from "../views/profile/helpers.js"
+import { AppDrawer } from "./drawer/template.js"
 import styles from "./style.module.css"
 import { Fab, TabBar } from "./tab-bar/template.js"
 
@@ -38,6 +43,16 @@ const CHROME = {
 
 const DEFAULT_CHROME = { tab: "events" }
 
+// Login and onboarding have no app chrome. Everywhere else, tablet and desktop
+// keep the drawer even when the phone hides the bottom bar.
+const NO_WIDE_CHROME = new Set(["authentication", "onboarding"])
+
+const DRAWER_PATHS = {
+  events: paths.events,
+  applications: paths.applications,
+  profile: paths.profile,
+}
+
 export const App = {
   render(_, api) {
     const router = api.getEntity("router")
@@ -46,7 +61,11 @@ export const App = {
     // judge this route on the first render rather than after a request.
     const chrome = CHROME[router.route] ?? DEFAULT_CHROME
 
+    const showWide = !NO_WIDE_CHROME.has(router.route)
+
     return this.renderShell({
+      topbar: showWide ? this.renderTopbar(api) : null,
+      drawer: showWide ? this.renderDrawer(api, chrome) : null,
       content: html`
         <!-- Wrapped so the page is not a direct flex child of main: a .page
              using auto side margins, handed to a flex column, suppresses
@@ -56,6 +75,57 @@ export const App = {
       fab: this.renderFab(api, chrome),
       tabbar: this.renderTabbar(api, chrome),
       isTabbarHidden: chrome.isHidden ?? false,
+      isWide: showWide,
+    })
+  },
+
+  renderTopbar(api) {
+    return Flex.render({
+      element: "header",
+      align: "center",
+      justify: "between",
+      className: styles.topbar,
+      children: [
+        IconButton.render({
+          icon: Icon.render({ name: "menu" }),
+          variant: "ghost",
+          ariaLabel: "Open navigation",
+          className: `vaitu-compact ${styles.menuButton}`,
+          onClick: () => api.notify("#shell:toggleDrawer"),
+        }),
+        IconButton.render({
+          icon: Icon.render({ name: "bell" }),
+          variant: "ghost",
+          ariaLabel: "Notifications",
+          className: `vaitu-compact ${styles.bellButton}`,
+        }),
+      ],
+    })
+  },
+
+  renderDrawer(api, chrome) {
+    const profile = api.getEntity("profile").profile
+    const name = profile?.full_name || readUser()?.email || "Account"
+    const shell = api.getEntity("shell")
+
+    return AppDrawer.render({
+      isOpen: shell.isDrawerOpen,
+      name,
+      initials: initials(name),
+      active: chrome.tab,
+      onClose: () => api.notify("#shell:closeDrawer"),
+      onNavigate: (id) => {
+        api.notify("#shell:closeDrawer")
+        api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.events)
+      },
+      onCreate: () => {
+        api.notify("#shell:closeDrawer")
+        api.notify("#router:navigate", paths.newEvent)
+      },
+      onLogout: () => {
+        api.notify("#shell:closeDrawer")
+        api.notify("#profile:logout")
+      },
     })
   },
 
@@ -100,13 +170,22 @@ export const App = {
   //
   // `.iw-flex-overflow-auto` also sets min-height:0, without which the content
   // row expands the shell instead of scrolling inside it.
-  renderShell({ content, fab, tabbar, isTabbarHidden = true }) {
+  renderShell({
+    content,
+    fab,
+    tabbar,
+    topbar,
+    drawer,
+    isTabbarHidden = true,
+    isWide = false,
+  }) {
     return Flex.render({
       element: "div",
       direction: "column",
       overflow: "hidden",
-      className: styles.shell,
+      className: isWide ? `${styles.shell} ${styles.shellWide}` : styles.shell,
       children: [
+        ...[topbar, drawer].filter(Boolean),
         Flex.render({
           element: "main",
           direction: "column",

@@ -1,6 +1,7 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
@@ -70,17 +71,23 @@ export const EventCreate = {
             onClick: onBack,
           })}
 
-          <header class=${styles.header}>
-            <span class=${styles.title}>
-              ${entity.editing_event_id ? "Edit event" : "New event"}
-            </span>
-            ${IconButton.render({
-              icon: Icon.render({ name: "mic", size: 22 }),
-              ariaLabel: "Describe by voice",
-              className: styles.micButton,
-              onClick: entity.is_recording ? onRecordStop : onOpenAudio,
-            })}
-          </header>
+          ${Flex.render({
+            element: "header",
+            align: "center",
+            justify: "between",
+            className: styles.header,
+            children: [
+              html`<span class=${styles.title}>
+                ${entity.editing_event_id ? "Edit event" : "New event"}
+              </span>`,
+              IconButton.render({
+                icon: Icon.render({ name: "mic", size: 22 }),
+                ariaLabel: "Describe by voice",
+                className: styles.micButton,
+                onClick: entity.is_recording ? onRecordStop : onOpenAudio,
+              }),
+            ],
+          })}
 
           ${this.renderAudio({
             entity,
@@ -90,8 +97,9 @@ export const EventCreate = {
             onRemoveAudio,
           })}
 
-          <div class=${styles.chips}>
-            ${categories.map(
+          ${Flex.render({
+            className: styles.chips,
+            children: categories.map(
               (category) => html`
                 <button
                   type="button"
@@ -104,8 +112,8 @@ export const EventCreate = {
                   })}
                 </button>
               `,
-            )}
-          </div>
+            ),
+          })}
 
           ${identityFields.map((spec) =>
             this.renderDetailField({
@@ -135,22 +143,28 @@ export const EventCreate = {
             error: getFieldError(entity, "location"),
             onField,
           })}
-          <div class=${styles.field}>
-            <span>Country</span>
-            ${api.render("country-create")}
-            ${ErrorLabel.render({ error: getFieldError(entity, "country") })}
-          </div>
+          ${Flex.render({
+            direction: "column",
+            className: styles.field,
+            children: html`
+              <span>Country</span>
+              ${api.render("country-create")}
+              ${ErrorLabel.render({ error: getFieldError(entity, "country") })}
+            `,
+          })}
           ${
             country === ITALY
-              ? html`
-                  <div class=${styles.field}>
+              ? Flex.render({
+                  direction: "column",
+                  className: styles.field,
+                  children: html`
                     <span>Region</span>
                     ${api.render("region-create")}
                     ${ErrorLabel.render({
                       error: getFieldError(entity, "region"),
                     })}
-                  </div>
-                `
+                  `,
+                })
               : this.renderTextField({
                   label: "Region",
                   field: "region",
@@ -240,16 +254,22 @@ export const EventCreate = {
       !entity.audio_error
     )
       return ""
-    return html`
-      <div class=${styles.audioBox}>
+    return Flex.render({
+      direction: "column",
+      className: styles.audioBox,
+      children: html`
         <span class=${styles.audioLabel}>Describe by voice</span>
         ${
           entity.is_recording
             ? html`
-                <p class=${styles.recording}>
-                  <span class=${styles.recDot}></span> Listening… tell us about
-                  your event
-                </p>
+                ${Flex.render({
+                  element: "p",
+                  align: "center",
+                  gap: "sm",
+                  className: styles.recording,
+                  children: html`<span class=${styles.recDot}></span> Listening…
+                    tell us about your event`,
+                })}
                 <p class=${styles.timer}>
                   ${formatElapsed(entity.audio_elapsed ?? ZERO)} /
                   ${formatElapsed(AUDIO_MAX_SECONDS)}
@@ -290,24 +310,29 @@ export const EventCreate = {
                             `
                           : ""
                   }
-                  <div class=${styles.audioActions}>
-                    ${Button.render({
-                      children: "Record again",
-                      variant: "outline",
-                      shape: "pill",
-                      size: "md",
-                      isFullWidth: true,
-                      onClick: onRecordStart,
-                    })}
-                    ${Button.render({
-                      children: "Remove",
-                      variant: "outline",
-                      shape: "pill",
-                      size: "md",
-                      isFullWidth: true,
-                      onClick: onRemoveAudio,
-                    })}
-                  </div>
+                  ${Flex.render({
+                    direction: "column",
+                    gap: "sm",
+                    className: styles.audioActions,
+                    children: [
+                      Button.render({
+                        children: "Record again",
+                        variant: "outline",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        onClick: onRecordStart,
+                      }),
+                      Button.render({
+                        children: "Remove",
+                        variant: "outline",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        onClick: onRemoveAudio,
+                      }),
+                    ],
+                  })}
                 `
               : html`
                   ${Button.render({
@@ -340,14 +365,17 @@ export const EventCreate = {
           Talk through your event instead of typing — it will be transcribed
           into the fields below.
         </p>
-      </div>
-    `
+      `,
+    })
   },
 
   renderDetailField({ spec, details, error, onDetailField }) {
     if (spec.type === "select") {
-      return html`
-        <label class=${styles.field}>
+      return Flex.render({
+        element: "label",
+        direction: "column",
+        className: styles.field,
+        children: html`
           <span>${spec.label}</span>
           ${Select.render({
             value: details[spec.field] ?? "",
@@ -361,8 +389,8 @@ export const EventCreate = {
             onChange: (value) => onDetailField({ field: spec.field, value }),
           })}
           ${ErrorLabel.render({ error })}
-        </label>
-      `
+        `,
+      })
     }
 
     return this.renderTextField({
@@ -383,8 +411,11 @@ export const EventCreate = {
     error,
     onField,
   }) {
-    return html`
-      <label class=${styles.field}>
+    return Flex.render({
+      element: "label",
+      direction: "column",
+      className: styles.field,
+      children: html`
         <span>${label}</span>
         <input
           type=${type ?? "text"}
@@ -393,8 +424,8 @@ export const EventCreate = {
           @input=${(e) => onField({ field, value: e.target.value })}
         />
         ${ErrorLabel.render({ error })}
-      </label>
-    `
+      `,
+    })
   },
 }
 
