@@ -56,6 +56,7 @@ export const Profile = {
     return Page.render({
       variant: "document",
       align: "center",
+      read: true,
       children: [
         html`
           ${
@@ -191,16 +192,18 @@ export const Profile = {
                                 lowercase: true,
                                 onField,
                               })}
-                              <div class=${styles.field}>
-                                ${renderCountry()}
-                              </div>
+                              ${Flex.render({
+                                direction: "column",
+                                className: styles.field,
+                                children: renderCountry(),
+                              })}
                               ${
                                 shown.country === ITALY
-                                  ? html`
-                                      <div class=${styles.field}>
-                                        ${renderRegion()}
-                                      </div>
-                                    `
+                                  ? Flex.render({
+                                      direction: "column",
+                                      className: styles.field,
+                                      children: renderRegion(),
+                                    })
                                   : this.renderEditField({
                                       label: "Region",
                                       field: "region",

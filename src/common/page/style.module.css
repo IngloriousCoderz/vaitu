@@ -52,9 +52,18 @@
     --vpage-inline: var(--iw-space-8);
   }
 
-  :global(.iw-flex.iw-flex-padding-none).frame-sticky.frameWide {
+  :global(.iw-flex.iw-flex-padding-none).frame-sticky.frameWide,
+  :global(.iw-flex.iw-flex-padding-none).frame-stickyFlat.frameWide,
+  :global(.iw-flex.iw-flex-padding-none).frame-document.frameWide {
     padding-left: var(--vpage-inline);
     padding-right: var(--vpage-inline);
+  }
+
+  /* Long forms stay a reading column. The frame still fills the screen, so
+     the page is the app and the fields stay a comfortable width. */
+  .frameRead .frame-flow {
+    width: min(42rem, 100%);
+    margin-inline: auto;
   }
 }
 

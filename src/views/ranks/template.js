@@ -21,6 +21,7 @@ export const Ranks = {
 
     return Page.render({
       variant: "sticky",
+      read: true,
       children: [
         html`
           ${Flex.render({

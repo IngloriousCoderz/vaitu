@@ -173,3 +173,16 @@
 .howText strong {
   color: var(--vink);
 }
+
+@media (min-width: 48rem) {
+  :global(.iw-flex.iw-flex-gap-none).list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+
+  :global(.iw-flex).howCard,
+  .empty {
+    grid-column: 1 / -1;
+  }
+}

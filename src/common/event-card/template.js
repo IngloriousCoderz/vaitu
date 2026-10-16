@@ -24,6 +24,7 @@ export const Card = {
     onOpen,
     divider = true,
     cover = false,
+    hero = false,
     className,
     style,
   }) {
@@ -32,6 +33,7 @@ export const Card = {
       styles.card,
       divider ? "" : styles.cardFlat,
       cover ? styles.cover : "",
+      hero ? styles.hero : "",
       onOpen ? styles.cardPress : "",
       className,
     ]

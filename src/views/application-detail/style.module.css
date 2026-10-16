@@ -59,3 +59,37 @@
   font-size: var(--iw-font-size-sm);
   padding: var(--iw-space-10) 0;
 }
+
+/* From tablet up the event sits beside the application, the same split as
+   opening an event: the story on the left, the action in a card on the right. */
+@media (min-width: 48rem) {
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 22rem);
+    column-gap: var(--iw-space-8);
+    align-items: stretch;
+  }
+
+  .story {
+    min-width: 0;
+    display: flex;
+  }
+
+  .panel {
+    position: sticky;
+    top: var(--iw-space-4);
+    background: var(--vsurface);
+    border: 1px solid var(--vline);
+    border-radius: var(--iw-radius-2xl);
+    padding: var(--iw-space-5);
+    box-shadow: var(--iw-shadow-sm);
+  }
+
+  .panel .statusRow {
+    margin-top: 0;
+  }
+
+  .panel .sectionTitle {
+    margin-top: var(--iw-space-5);
+  }
+}

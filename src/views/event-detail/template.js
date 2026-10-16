@@ -2,6 +2,7 @@ import { Alert } from "@inglorious/ui/alert"
 import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
@@ -49,6 +50,7 @@ export const EventDetail = {
 
     return Page.render({
       variant: "document",
+      wide: true,
       category: event?.category ?? "wedding",
       children: [
         html`
@@ -76,62 +78,76 @@ export const EventDetail = {
                 : entity.isSubmitted
                   ? this.renderSubmitted({ onBack })
                   : html`
-                      <div
-                        class=${styles.banner}
-                        style="background:${thumbGradient(event.hue)}"
-                      >
-                        <span class=${styles.bannerMonogram}>
-                          ${monogram(event.title)}
-                        </span>
-                      </div>
-                      <div class=${styles.topRow}>
-                        <h2 class=${styles.title}>${event.title}</h2>
-                        ${Badge.render({
-                          children: deadlineBadge(event),
-                          shape: "pill",
-                          className: detailToneClass(event),
+                      <div class=${styles.stage}>
+                        ${Flex.render({
+                          align: "center",
+                          justify: "center",
+                          className: styles.banner,
+                          style: `background:${thumbGradient(event.hue)}`,
+                          children: html`<span class=${styles.bannerMonogram}>
+                            ${monogram(event.title)}
+                          </span>`,
                         })}
+                        <div class=${styles.story}>
+                          ${Flex.render({
+                            align: "center",
+                            justify: "between",
+                            gap: "sm",
+                            className: styles.topRow,
+                            children: [
+                              html`<h2 class=${styles.title}>${event.title}</h2>`,
+                              Badge.render({
+                                children: deadlineBadge(event),
+                                shape: "pill",
+                                className: detailToneClass(event),
+                              }),
+                            ],
+                          })}
+                          <p class=${styles.meta}>${event.subtitle}</p>
+                          ${Chip.render({ children: event.tag })}
+                          ${this.renderFacts(event)}
+                          <p class=${styles.sender}>
+                            Organized by ${entity.senderName}
+                          </p>
+                          <p class=${styles.countdown}>
+                            ${
+                              showClock
+                                ? `Applications close in ${formatClock(Math.floor(msLeft / MS_PER_SECOND))}`
+                                : countdownLabel(event)
+                            }
+                          </p>
+                        </div>
+                        <div class=${styles.panel}>
+                          ${
+                            onOpenApplications
+                              ? html`
+                                  <div class=${styles.actions}>
+                                    ${Button.render({
+                                      variant: "outline",
+                                      shape: "pill",
+                                      isFullWidth: true,
+                                      children:
+                                        "Review the applications you received",
+                                      onClick: onOpenApplications,
+                                    })}
+                                  </div>
+                                `
+                              : liveClosed || isApplicationClosed(event)
+                                ? html`
+                                    <div class=${styles.closedBox}>
+                                      Applications are closed for this event.
+                                    </div>
+                                  `
+                                : this.renderForm({
+                                    entity,
+                                    profileComplete,
+                                    onField,
+                                    onSubmit,
+                                    onCompleteProfile,
+                                  })
+                          }
+                        </div>
                       </div>
-                      <p class=${styles.meta}>${event.subtitle}</p>
-                      ${Chip.render({ children: event.tag })}
-                      ${this.renderFacts(event)}
-                      <p class=${styles.sender}>
-                        Organized by ${entity.senderName}
-                      </p>
-                      <p class=${styles.countdown}>
-                        ${
-                          showClock
-                            ? `Applications close in ${formatClock(Math.floor(msLeft / MS_PER_SECOND))}`
-                            : countdownLabel(event)
-                        }
-                      </p>
-                      ${
-                        onOpenApplications
-                          ? html`
-                              <div class=${styles.actions}>
-                                ${Button.render({
-                                  variant: "outline",
-                                  shape: "pill",
-                                  children:
-                                    "Review the applications you received",
-                                  onClick: onOpenApplications,
-                                })}
-                              </div>
-                            `
-                          : liveClosed || isApplicationClosed(event)
-                            ? html`
-                                <div class=${styles.closedBox}>
-                                  Applications are closed for this event.
-                                </div>
-                              `
-                            : this.renderForm({
-                                entity,
-                                profileComplete,
-                                onField,
-                                onSubmit,
-                                onCompleteProfile,
-                              })
-                      }
                     `
           }
         `,
@@ -143,12 +159,15 @@ export const EventDetail = {
     return html`
       <dl class=${styles.facts}>
         ${event.facts.map(
-          (fact) => html`
-            <div class=${styles.fact}>
-              <dt>${fact.label}</dt>
-              <dd>${fact.value}</dd>
-            </div>
-          `,
+          (fact) =>
+            Flex.render({
+              justify: "between",
+              className: styles.fact,
+              children: html`
+                <dt>${fact.label}</dt>
+                <dd>${fact.value}</dd>
+              `,
+            }),
         )}
       </dl>
     `
@@ -157,7 +176,12 @@ export const EventDetail = {
   renderSubmitted({ onBack }) {
     return html`
       <div class=${styles.submitted}>
-        <div class=${styles.check}>✓</div>
+        ${Flex.render({
+          align: "center",
+          justify: "center",
+          className: styles.check,
+          children: "✓",
+        })}
         <h3 class=${styles.sectionTitle}>Application sent!</h3>
         <p class=${styles.feedback}>
           You will receive feedback within a few days.
@@ -204,15 +228,16 @@ export const EventDetail = {
       `
     }
 
-    return html`
-      <form
-        class=${styles.form}
-        novalidate
-        @submit=${(e) => {
-          e.preventDefault()
-          if (canSubmit) onSubmit()
-        }}
-      >
+    return Flex.render({
+      element: "form",
+      direction: "column",
+      className: styles.form,
+      novalidate: true,
+      onSubmit: (e) => {
+        e.preventDefault()
+        if (canSubmit) onSubmit()
+      },
+      children: html`
         <h3 class=${styles.sectionTitle}>Apply for this event</h3>
         <div class=${styles.field}>
           ${Input.render({
@@ -281,8 +306,8 @@ export const EventDetail = {
               })
             : ""
         }
-      </form>
-    `
+      `,
+    })
   },
 }
 

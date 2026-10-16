@@ -56,6 +56,7 @@ export const EventCreate = {
 
     return Page.render({
       variant: "sticky",
+      read: true,
       category: categoryId,
       children: [
         html`

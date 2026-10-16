@@ -53,6 +53,7 @@ export const ApplicationDetail = {
 
     return Page.render({
       variant: "document",
+      wide: true,
       category: application?.category ?? "wedding",
       children: [
         html`
@@ -73,8 +74,16 @@ export const ApplicationDetail = {
               : !application
                 ? html`<p class=${styles.empty}>${error}</p>`
                 : html`
-                    ${Card.render({ event: application })}
-                    <div class=${styles.statusRow}>
+                    <div class=${styles.stage}>
+                      <div class=${styles.story}>
+                        ${Card.render({
+                          event: application,
+                          cover: true,
+                          hero: true,
+                        })}
+                      </div>
+                      <div class=${styles.panel}>
+                        <div class=${styles.statusRow}>
                       ${Chip.render({
                         children: capitalize(application.applicationStatus),
                         color:
@@ -248,6 +257,8 @@ export const ApplicationDetail = {
                               })}
                             `
                     }
+                      </div>
+                    </div>
                   `
           }
         `,

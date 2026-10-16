@@ -49,6 +49,7 @@ export const ApplicationsReceived = {
 
     return Page.render({
       variant: "stickyFlat",
+      wide: true,
       children: [
         html`
           ${Button.render({

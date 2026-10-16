@@ -114,6 +114,21 @@
     padding: var(--iw-space-5);
   }
 
+  .hero.cover {
+    flex: 1;
+    height: auto;
+    border: 1px solid var(--vline);
+    border-radius: var(--iw-radius-2xl);
+    overflow: hidden;
+    background: var(--vsurface);
+  }
+
+  .hero.cover .thumb {
+    flex: 1 1 auto;
+    min-height: 16rem;
+    height: auto;
+  }
+
   .cover .couple {
     flex: 1;
     min-width: 0;
