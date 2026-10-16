@@ -402,6 +402,11 @@ button.miniButton {
     padding: 0;
   }
 
+  .stickyTop .chips :global(span.iw-chip.iw-chip) {
+    padding: var(--iw-space-2) var(--iw-space-4);
+    font-size: var(--iw-font-size-base);
+  }
+
   .ownerSwitch {
     grid-area: switch;
     justify-self: center;

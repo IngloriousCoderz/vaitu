@@ -1,4 +1,5 @@
 import { countries } from "../data/countries.js"
+import { festivalGenres, weddingStyles } from "../data/event-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 
 const countryOptions = countries.map((country) => ({
@@ -66,6 +67,33 @@ function regionSelect(targetId, targetEvent, overrides = {}) {
   }
 }
 
+// Same combobox as the country field. Style and genre are short lists, so the
+// panel has no search box; the dropdown still sits on the control.
+function detailSelect(targetField, options, label) {
+  return {
+    type: "CountrySelect",
+    label,
+    selectedValue: null,
+    isMulti: false,
+    isOpen: false,
+    isSearchable: false,
+    isClearable: false,
+    isDisabled: false,
+    isLoading: false,
+    searchTerm: "",
+    focusedIndex: -1,
+    placeholder: "Select…",
+    noOptionsMessage: "No options",
+    loadingMessage: "Loading…",
+    isFullWidth: true,
+    size: "md",
+    options,
+    targetId: "eventCreate",
+    targetEvent: "detailFieldSet",
+    targetField,
+  }
+}
+
 // Same combobox as the country field. Picking a region adds a favorite.
 function favoriteRegionSelect(targetId, targetEvent, overrides = {}) {
   return {
@@ -93,6 +121,8 @@ export const entities = {
     label: "Region",
     isRequired: true,
   }),
+  "style-create": detailSelect("style", weddingStyles, "Style"),
+  "genre-create": detailSelect("genre", festivalGenres, "Genre"),
   "favorite-region-list": favoriteRegionSelect(
     "eventList",
     "favoriteChoiceSelect",

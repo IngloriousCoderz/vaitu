@@ -29,7 +29,6 @@ export const AppDrawer = {
     active,
     onClose,
     onNavigate,
-    onCreate,
     onLogout,
   }) {
     return Drawer.render({
@@ -80,12 +79,6 @@ export const AppDrawer = {
                 isSelected: active === item.tab,
                 onClick: () => onNavigate(item.id),
               })),
-              {
-                id: "new",
-                primary: "New event",
-                icon: Icon.render({ name: "plus", size: DEFAULT_ICON_SIZE }),
-                onClick: onCreate,
-              },
             ],
           }),
           Flex.render({

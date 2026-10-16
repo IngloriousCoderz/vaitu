@@ -144,6 +144,14 @@ export const EventCreate = {
 function syncComboboxErrors(entity, api) {
   api.notify("#country-create:errorSet", getFieldError(entity, "country"))
   api.notify("#region-create:errorSet", getFieldError(entity, "region"))
+  api.notify(
+    "#style-create:errorSet",
+    getFieldError(entity, "details.style"),
+  )
+  api.notify(
+    "#genre-create:errorSet",
+    getFieldError(entity, "details.genre"),
+  )
 }
 
 function open(entity, { event_id } = {}, api) {
@@ -164,6 +172,8 @@ function open(entity, { event_id } = {}, api) {
   clearPendingAudio()
   api.notify("#country-create:sync", "")
   api.notify("#region-create:sync", "")
+  api.notify("#style-create:sync", "")
+  api.notify("#genre-create:sync", "")
   if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
 }
 

@@ -95,10 +95,24 @@
   }
 }
 
-.menuButton,
-.bellButton {
+.menuButton {
   --iw-button-color: var(--vink);
   padding: 0.375rem;
+}
+
+.createButton {
+  flex: 0 0 auto;
+}
+
+/* Matches the New event pill height so the bell is not a tiny icon beside it. */
+button:global(.iw-button):global(.iw-button-outline).bellButton {
+  --iw-button-color: var(--vink);
+  --iw-button-border: var(--vline);
+  width: 2.625rem;
+  height: 2.625rem;
+  padding: 0;
+  color: var(--vink);
+  border-color: var(--vline);
 }
 
 /* The package drawer is position:fixed and 16rem wide. Once it stays open

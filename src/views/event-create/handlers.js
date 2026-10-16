@@ -171,6 +171,8 @@ export function categorySelect(entity, category, api) {
   // outlives the thing that caused it.
   api.notify("#country-create:errorSet", null)
   api.notify("#region-create:errorSet", null)
+  api.notify("#style-create:sync", "")
+  api.notify("#genre-create:sync", "")
 }
 
 export const audioRecord = handleAsync("audioRecord", {
@@ -368,6 +370,8 @@ export const audioParse = handleAsync("audioParse", {
     Form.fieldChange(entity, { path: "region", value: region })
     api.notify("#country-create:sync", country)
     api.notify("#region-create:sync", region)
+    api.notify("#style-create:sync", details.style ?? "")
+    api.notify("#genre-create:sync", details.genre ?? "")
     if (
       typeof fields.event_date === "string" &&
       /^\d{4}-\d{2}-\d{2}$/.test(fields.event_date)
@@ -522,6 +526,8 @@ export const editLoad = handleAsync("editLoad", {
     entity.audio_error = null
     api.notify("#country-create:sync", country)
     api.notify("#region-create:sync", region)
+    api.notify("#style-create:sync", row.details?.style ?? "")
+    api.notify("#genre-create:sync", row.details?.genre ?? "")
   },
   error(entity, err) {
     entity.status = "error"

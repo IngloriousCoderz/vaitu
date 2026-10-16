@@ -4,7 +4,6 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
-import { Select } from "@inglorious/ui/select"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -48,9 +47,6 @@ export const EventCreate = {
     const category = categoryById(categoryId)
     const identityFields = category.createFields.filter(
       (spec) => spec.section === "identity",
-    )
-    const styleFields = category.createFields.filter(
-      (spec) => spec.section === "style",
     )
     const title_is_derived = !category.title_from.input
 
@@ -160,14 +156,11 @@ export const EventCreate = {
                   onField,
                 })
           }
-          ${styleFields.map((spec) =>
-            this.renderDetailField({
-              spec,
-              details,
-              error: getFieldError(entity, `details.${spec.field}`),
-              onDetailField,
-            }),
-          )}
+          <div class=${styles.field}>
+            ${api.render(
+              categoryId === "festival" ? "genre-create" : "style-create",
+            )}
+          </div>
           ${this.renderTextField({
             label: "Event date",
             field: "event_date",
@@ -361,28 +354,6 @@ export const EventCreate = {
   },
 
   renderDetailField({ spec, details, error, onDetailField }) {
-    if (spec.type === "select") {
-      return html`
-        <div class=${styles.field}>
-          ${Select.render({
-            id: `create-detail-${spec.field}`,
-            label: spec.label,
-            isRequired: spec.isRequired,
-            value: details[spec.field] ?? "",
-            isFullWidth: true,
-            error,
-            options: [{ value: "", label: "Select…" }].concat(
-              spec.options.map((option) => ({
-                value: option.value,
-                label: option.label,
-              })),
-            ),
-            onChange: (value) => onDetailField({ field: spec.field, value }),
-          })}
-        </div>
-      `
-    }
-
     return this.renderTextField({
       label: spec.label,
       field: spec.field,

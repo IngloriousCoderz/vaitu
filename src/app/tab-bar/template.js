@@ -30,6 +30,7 @@ export const TabBar = {
 const tabs = [
   { value: "events", label: "Events", icon: "compass" },
   { value: "applications", label: "Applications", icon: "clipboard-list" },
+  { value: "new", label: "New", icon: "plus" },
   { value: "profile", label: "Profile", icon: "user" },
 ]
 

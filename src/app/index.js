@@ -1,3 +1,4 @@
+import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
@@ -15,6 +16,7 @@ import { Fab, TabBar } from "./tab-bar/template.js"
 const TAB_PATHS = {
   events: paths.events,
   applications: paths.applications,
+  new: paths.newEvent,
   profile: paths.profile,
 }
 
@@ -93,11 +95,30 @@ export const App = {
           className: `vaitu-compact ${styles.menuButton}`,
           onClick: () => api.notify("#shell:toggleDrawer"),
         }),
-        IconButton.render({
-          icon: Icon.render({ name: "bell" }),
-          variant: "ghost",
-          ariaLabel: "Notifications",
-          className: `vaitu-compact ${styles.bellButton}`,
+        Flex.render({
+          align: "center",
+          gap: "sm",
+          children: [
+            Button.render({
+              children: html`
+                ${Icon.render({ name: "plus", size: 16 })}
+                <span>New event</span>
+              `,
+              color: "primary",
+              shape: "pill",
+              size: "md",
+              className: styles.createButton,
+              onClick: () => api.notify("#router:navigate", paths.newEvent),
+            }),
+            IconButton.render({
+              icon: Icon.render({ name: "bell", size: 20 }),
+              variant: "outline",
+              shape: "round",
+              size: "md",
+              ariaLabel: "Notifications",
+              className: styles.bellButton,
+            }),
+          ],
         }),
       ],
     })
@@ -118,10 +139,6 @@ export const App = {
         api.notify("#shell:closeDrawer")
         api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.events)
       },
-      onCreate: () => {
-        api.notify("#shell:closeDrawer")
-        api.notify("#router:navigate", paths.newEvent)
-      },
       onLogout: () => {
         api.notify("#shell:closeDrawer")
         api.notify("#profile:logout")
@@ -134,13 +151,9 @@ export const App = {
   renderFab(api, chrome) {
     if (chrome.isFabRendered === false) return null
 
-    const isVisible =
-      chrome.tab === "events" &&
-      api.getEntity("eventList").activeOwner === "mine"
-
     return Fab.render({
       low: false,
-      hidden: !isVisible,
+      hidden: true,
       onClick: () => api.notify("#router:navigate", paths.newEvent),
     })
   },
