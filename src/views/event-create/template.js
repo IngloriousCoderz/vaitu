@@ -4,10 +4,10 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
@@ -56,14 +56,10 @@ export const EventCreate = {
       category: categoryId,
       children: [
         html`
-          ${Button.render({
-            children: html`
-              ${Icon.render({ name: "arrow-left", size: 16 })}
-              <span>Back</span>
-            `,
+          ${IconButton.render({
+            icon: MaterialIcon.render({ name: "arrow_back", size: "lg" }),
+            label: "Back",
             variant: "ghost",
-            shape: "pill",
-            className: "vaitu-back",
             ariaLabel: "Back",
             onClick: onBack,
           })}
@@ -77,7 +73,7 @@ export const EventCreate = {
                 ${entity.editing_event_id ? "Edit event" : "New event"}
               </span>`,
               IconButton.render({
-                icon: Icon.render({ name: "mic", size: 22 }),
+                icon: MaterialIcon.render({ name: "mic", size: "lg" }),
                 ariaLabel: "Describe by voice",
                 className: styles.micButton,
                 onClick: entity.is_recording ? onRecordStop : onOpenAudio,

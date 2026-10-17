@@ -1,12 +1,13 @@
 import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { IconButton } from "@inglorious/ui/icon-button"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { Card } from "../../common/event-card/index.js"
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { capitalize } from "../../text/index.js"
 import { calendarLinks } from "./helpers.js"
@@ -57,14 +58,10 @@ export const ApplicationDetail = {
       category: application?.category ?? "wedding",
       children: [
         html`
-          ${Button.render({
-            children: html`
-              ${Icon.render({ name: "arrow-left", size: 16 })}
-              <span>Back</span>
-            `,
+          ${IconButton.render({
+            icon: MaterialIcon.render({ name: "arrow_back", size: "lg" }),
+            label: "Back",
             variant: "ghost",
-            shape: "pill",
-            className: "vaitu-back",
             ariaLabel: "Back",
             onClick: onBack,
           })}

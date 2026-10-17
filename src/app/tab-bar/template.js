@@ -1,9 +1,16 @@
 import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
 import { Fab as IwFab } from "@inglorious/ui/fab"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
-import { Icon } from "../../common/icon/index.js"
 import styles from "./style.module.css"
+
+const tabs = [
+  { value: "events", label: "Events", icon: "event" },
+  { value: "applications", label: "Applications", icon: "assignment" },
+  { value: "new", label: "New", icon: "add" },
+  { value: "profile", label: "Profile", icon: "person" },
+]
 
 // Shared bottom tab bar. Stays mounted at App level so hide/show animates
 // via CSS instead of remounting per page.
@@ -19,20 +26,13 @@ export const TabBar = {
           actions: tabs.map((tab) => ({
             value: tab.value,
             label: tab.label,
-            icon: Icon.render({ name: tab.icon }),
+            icon: MaterialIcon.render({ name: tab.icon, size: "lg" }),
           })),
         })}
       </nav>
     `
   },
 }
-
-const tabs = [
-  { value: "events", label: "Events", icon: "compass" },
-  { value: "applications", label: "Applications", icon: "clipboard-list" },
-  { value: "new", label: "New", icon: "plus" },
-  { value: "profile", label: "Profile", icon: "user" },
-]
 
 // Floating action button for event creation, shown on My events. Stays mounted
 // while visible so position/appear animates instead of remounting.
@@ -44,7 +44,7 @@ const tabs = [
 export const Fab = {
   render({ onClick, low, hidden }) {
     return IwFab.render({
-      children: Icon.render({ name: "plus", size: 32 }),
+      children: MaterialIcon.render({ name: "add", size: "lg" }),
       size: "lg",
       color: "primary",
       shape: "round",

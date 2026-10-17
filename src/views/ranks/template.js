@@ -1,9 +1,9 @@
 import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { capitalize } from "../../text/index.js"
@@ -32,7 +32,7 @@ export const Ranks = {
             children: [
               Button.render({
                 children: html`
-                  ${Icon.render({ name: "arrow-left", size: 16 })}
+                  ${MaterialIcon.render({ name: "arrow_back", size: "lg" })}
                   <span>Back</span>
                 `,
                 variant: "ghost",
@@ -62,7 +62,10 @@ export const Ranks = {
                         element: "span",
                         isInline: true,
                         className: `${styles.heroMedal} ${progress.current ? styles[`${progress.current}Medal`] : ""}`,
-                        children: Icon.render({ name: "medal", size: 36 }),
+                        children: MaterialIcon.render({
+                          name: "social_leaderboard",
+                          size: "lg",
+                        }),
                       }),
                       html`<span class=${styles.heroTier}>
                         ${progress.current ? capitalize(progress.current) : "No rank"}
@@ -82,74 +85,73 @@ export const Ranks = {
                 `
               : ""
           }
-
           ${Flex.render({
             element: "main",
             direction: "column",
             className: styles.list,
             children: html`
-            ${
-              status === "loading"
-                ? html`<p class=${styles.empty}>Loading ranks…</p>`
-                : status === "error"
-                  ? html`<p class=${styles.empty}>${error}</p>`
-                  : tiers
-                    ? RANK_ORDER.map(
-                        (rank) => html`
-                          ${Flex.render({
-                            align: "center",
-                            justify: "between",
-                            className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
-                            children: [
-                              Flex.render({
-                                element: "span",
-                                isInline: true,
-                                align: "center",
-                                gap: "sm",
-                                className: styles.rankName,
-                                children: html`
-                                  ${Icon.render({ name: "medal", size: 20 })}
-                                  ${capitalize(rank)}
-                                `,
-                              }),
-                              html`<span class=${styles.rankPoints}>
-                                ${rankMin(tiers, rank)}+ pts
-                              </span>`,
-                            ],
+              ${
+                status === "loading"
+                  ? html`<p class=${styles.empty}>Loading ranks…</p>`
+                  : status === "error"
+                    ? html`<p class=${styles.empty}>${error}</p>`
+                    : tiers
+                      ? RANK_ORDER.map(
+                          (rank) => html`
+                            ${Flex.render({
+                              align: "center",
+                              justify: "between",
+                              className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
+                              children: [
+                                Flex.render({
+                                  element: "span",
+                                  isInline: true,
+                                  align: "center",
+                                  gap: "sm",
+                                  className: styles.rankName,
+                                  children: html`
+                                    ${MaterialIcon.render({ name: "social_leaderboard", size: "lg" })}
+                                    ${capitalize(rank)}
+                                  `,
+                                }),
+                                html`<span class=${styles.rankPoints}>
+                                  ${rankMin(tiers, rank)}+ pts
+                                </span>`,
+                              ],
+                            })}
+                          `,
+                        )
+                      : ""
+              }
+              ${
+                status === "ready" && tiers
+                  ? html`
+                      ${Flex.render({
+                        direction: "column",
+                        className: styles.howCard,
+                        children: html`
+                          <span class=${styles.howTitle}>How points work</span>
+                          ${this.renderHowRow({
+                            icon: "assignment",
+                            points: tiers.perApplication,
+                            label: "per application",
+                          })}
+                          ${this.renderHowRow({
+                            icon: "star",
+                            points: tiers.perShortlist,
+                            label: "per shortlist",
+                          })}
+                          ${this.renderHowRow({
+                            icon: "trophy",
+                            points: tiers.perSelection,
+                            label: "per win",
                           })}
                         `,
-                      )
-                    : ""
-            }
-            ${
-              status === "ready" && tiers
-                ? html`
-                    ${Flex.render({
-                      direction: "column",
-                      className: styles.howCard,
-                      children: html`
-                      <span class=${styles.howTitle}>How points work</span>
-                      ${this.renderHowRow({
-                        icon: "clipboard-list",
-                        points: tiers.perApplication,
-                        label: "per application",
                       })}
-                      ${this.renderHowRow({
-                        icon: "star",
-                        points: tiers.perShortlist,
-                        label: "per shortlist",
-                      })}
-                      ${this.renderHowRow({
-                        icon: "trophy",
-                        points: tiers.perSelection,
-                        label: "per win",
-                      })}
-                    `,
-                    })}
-                  `
-                : ""
-            }
-          `,
+                    `
+                  : ""
+              }
+            `,
           })}
         `,
       ],
@@ -167,7 +169,7 @@ export const Ranks = {
           align: "center",
           justify: "center",
           className: styles.howIcon,
-          children: Icon.render({ name: icon, size: 17 }),
+          children: MaterialIcon.render({ name: icon, size: "lg" }),
         }),
         html`<span class=${styles.howText}>
           <strong>${points} pts</strong> ${label}

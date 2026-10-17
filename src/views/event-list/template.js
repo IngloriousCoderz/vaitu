@@ -5,10 +5,10 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
 import { Card } from "../../common/event-card/index.js"
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { LIST_STAGGER_CAP, SINGULAR } from "../../constants/index.js"
 import { capitalize } from "../../text/index.js"
@@ -119,7 +119,7 @@ export const EventList = {
                 >vaitu<span class=${styles.logoDot}>•</span></span
               >
               ${IconButton.render({
-                icon: Icon.render({ name: "sliders" }),
+                icon: MaterialIcon.render({ name: "instant_mix", size: "lg" }),
                 variant: "ghost",
                 ariaLabel: "Filters",
                 className: hasActiveFilters
@@ -170,7 +170,7 @@ export const EventList = {
                 isFullWidth: true,
                 placeholder: "Find events by city, style or genre...",
                 value: query,
-                icon: Icon.render({ name: "search", size: 15 }),
+                icon: MaterialIcon.render({ name: "search", size: "lg" }),
                 onChange: (value) => onSearch(value),
               })}
             </div>
@@ -193,7 +193,10 @@ export const EventList = {
                       <div class=${styles.sheetHeading}>
                         <h3 class=${styles.sheetTitle}>Region</h3>
                         ${IconButton.render({
-                          icon: Icon.render({ name: "settings", size: 18 }),
+                          icon: MaterialIcon.render({
+                            name: "settings",
+                            size: "lg",
+                          }),
                           ariaLabel: "Edit favorite regions",
                           className: styles.sheetGear,
                           onClick: onEditFavorites,
@@ -317,7 +320,7 @@ export const EventList = {
               ${
                 event.status === "open"
                   ? IconButton.render({
-                      icon: Icon.render({ name: "pencil", size: 16 }),
+                      icon: MaterialIcon.render({ name: "edit", size: "lg" }),
                       ariaLabel: "Edit event",
                       className: `${styles.miniButton} ${styles.editTint}`,
                       onClick: () => onEdit(event.id),
@@ -325,7 +328,7 @@ export const EventList = {
                   : ""
               }
               ${IconButton.render({
-                icon: Icon.render({ name: "trash", size: 16 }),
+                icon: MaterialIcon.render({ name: "delete", size: "lg" }),
                 ariaLabel: "Delete event",
                 className: `${styles.miniButton} ${styles.deleteTint}`,
                 onClick: () => onAskDelete(event.id),
@@ -382,20 +385,12 @@ export const EventList = {
           draft.length
             ? html`
                 <div class=${styles.favoriteChips}>
-                  ${draft.map(
-                    (region) => html`
-                      <span class=${styles.favoriteChip}>
-                        ${region}
-                        ${IconButton.render({
-                          icon: Icon.render({ name: "x", size: 13 }),
-                          ariaLabel: `Remove ${region}`,
-                          variant: "ghost",
-                          size: "sm",
-                          className: styles.favoriteRemove,
-                          onClick: () => onFavoriteRemove(region),
-                        })}
-                      </span>
-                    `,
+                  ${draft.map((region) =>
+                    Chip.render({
+                      children: region,
+                      isRemovable: true,
+                      onClick: () => onFavoriteRemove(region),
+                    }),
                   )}
                 </div>
               `

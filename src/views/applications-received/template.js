@@ -2,11 +2,12 @@ import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { Chip } from "@inglorious/ui/chip"
+import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError } from "@inglorious/web/form"
 
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants/index.js"
 import { capitalize } from "../../text/index.js"
@@ -52,14 +53,9 @@ export const ApplicationsReceived = {
       wide: true,
       children: [
         html`
-          ${Button.render({
-            children: html`
-              ${Icon.render({ name: "arrow-left", size: 16 })}
-              <span>Back</span>
-            `,
+          ${IconButton.render({
+            icon: MaterialIcon.render({ name: "arrow_back", size: "lg" }),
             variant: "ghost",
-            shape: "pill",
-            className: "vaitu-back",
             ariaLabel: "Back",
             onClick: onBack,
           })}
@@ -269,7 +265,7 @@ export const ApplicationsReceived = {
           <span
             class=${expanded ? `${styles.chevron} ${styles.chevronOpen}` : styles.chevron}
           >
-            ${Icon.render({ name: "chevron-down", size: 18 })}
+            ${MaterialIcon.render({ name: "keyboard_arrow_down", size: "lg" })}
           </span>
         </button>
         ${
@@ -286,7 +282,7 @@ export const ApplicationsReceived = {
                               target="_blank"
                               rel="noopener"
                             >
-                              ${Icon.render({ name: "globe", size: 14 })}
+                              ${MaterialIcon.render({ name: "globe", size: "lg" })}
                               <span>${applicant.website}</span>
                             </a>
                           `
@@ -301,7 +297,7 @@ export const ApplicationsReceived = {
                               target="_blank"
                               rel="noopener"
                             >
-                              ${Icon.render({ name: "instagram", size: 14 })}
+                              ${MaterialIcon.render({ name: "photo_camera", size: "lg" })}
                               <span>@${instagram}</span>
                             </a>
                           `
@@ -311,7 +307,7 @@ export const ApplicationsReceived = {
                       applicant.country
                         ? html`
                             <span class=${styles.metaRow}>
-                              ${Icon.render({ name: "map-pin", size: 14 })}
+                              ${MaterialIcon.render({ name: "location_pin", size: "lg" })}
                               <span>${applicant.country}</span>
                             </span>
                           `

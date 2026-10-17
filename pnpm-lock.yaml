@@ -14,6 +14,9 @@ importers:
       '@capacitor/share':
         specifier: ^8.0.3
         version: 8.0.3(@capacitor/core@8.5.3)
+      '@fontsource/material-symbols-outlined':
+        specifier: ^5.3.9
+        version: 5.3.9
       '@inglorious/motion':
         specifier: ^9.0.2
         version: 9.0.2(@inglorious/web@6.4.2(@inglorious/store@11.0.2(@inglorious/utils@4.0.0)))
@@ -675,6 +678,9 @@ packages:
   '@eslint/plugin-kit@0.7.3':
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@fontsource/material-symbols-outlined@5.3.9':
+    resolution: {integrity: sha512-rPyajEu+UBQvAN78nnlvIReUtHAdaTMlNsrY5uFqf0eu+B9CYScof7AGy1hjF5jq3xARBGbdG9WVpuOi+nJhuQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -4657,6 +4663,8 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
       levn: 0.4.1
+
+  '@fontsource/material-symbols-outlined@5.3.9': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

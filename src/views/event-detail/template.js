@@ -3,7 +3,9 @@ import { Badge } from "@inglorious/ui/badge"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
+import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -15,7 +17,6 @@ import {
   monogram,
   thumbGradient,
 } from "../../common/event-card/index.js"
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   DAY_MS,
@@ -54,14 +55,9 @@ export const EventDetail = {
       category: event?.category ?? "wedding",
       children: [
         html`
-          ${Button.render({
-            children: html`
-              ${Icon.render({ name: "arrow-left", size: 16 })}
-              <span>Back</span>
-            `,
+          ${IconButton.render({
+            icon: MaterialIcon.render({ name: "arrow_back", size: "lg" }),
             variant: "ghost",
-            shape: "pill",
-            className: "vaitu-back",
             ariaLabel: "Back",
             onClick: onBack,
           })}
@@ -95,7 +91,9 @@ export const EventDetail = {
                             gap: "sm",
                             className: styles.topRow,
                             children: [
-                              html`<h2 class=${styles.title}>${event.title}</h2>`,
+                              html`<h2 class=${styles.title}>
+                                ${event.title}
+                              </h2>`,
                               Badge.render({
                                 children: deadlineBadge(event),
                                 shape: "pill",
@@ -158,16 +156,15 @@ export const EventDetail = {
   renderFacts(event) {
     return html`
       <dl class=${styles.facts}>
-        ${event.facts.map(
-          (fact) =>
-            Flex.render({
-              justify: "between",
-              className: styles.fact,
-              children: html`
-                <dt>${fact.label}</dt>
-                <dd>${fact.value}</dd>
-              `,
-            }),
+        ${event.facts.map((fact) =>
+          Flex.render({
+            justify: "between",
+            className: styles.fact,
+            children: html`
+              <dt>${fact.label}</dt>
+              <dd>${fact.value}</dd>
+            `,
+          }),
         )}
       </dl>
     `

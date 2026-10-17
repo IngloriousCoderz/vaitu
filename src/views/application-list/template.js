@@ -1,9 +1,9 @@
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
 import { Card } from "../../common/event-card/index.js"
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { capitalize } from "../../text/index.js"
@@ -118,7 +118,7 @@ export const ApplicationList = {
             ${
               isWinner
                 ? html`<span class=${styles.winnerTrophy}>
-                    ${Icon.render({ name: "trophy", size: 20 })}
+                    ${MaterialIcon.render({ name: "trophy", size: "lg" })}
                   </span>`
                 : Chip.render({
                     children: capitalize(application.applicationStatus),

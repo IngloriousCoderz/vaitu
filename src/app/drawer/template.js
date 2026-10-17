@@ -4,33 +4,24 @@ import { Drawer } from "@inglorious/ui/drawer"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { List } from "@inglorious/ui/list"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
-import { Icon } from "../../common/icon/index.js"
-import { DEFAULT_ICON_SIZE } from "../../constants/index.js"
 import styles from "./style.module.css"
 
 const NAV = [
-  { id: "events", label: "Events", icon: "compass", tab: "events" },
+  { id: "events", label: "Events", icon: "event", tab: "events" },
   {
     id: "applications",
     label: "Applications",
-    icon: "clipboard-list",
+    icon: "assignment",
     tab: "applications",
   },
-  { id: "profile", label: "Profile", icon: "user", tab: "profile" },
+  { id: "profile", label: "Profile", icon: "person", tab: "profile" },
 ]
 
 export const AppDrawer = {
-  render({
-    isOpen,
-    name,
-    initials,
-    active,
-    onClose,
-    onNavigate,
-    onLogout,
-  }) {
+  render({ isOpen, name, initials, active, onClose, onNavigate, onLogout }) {
     return Drawer.render({
       isOpen,
       anchor: "left",
@@ -55,7 +46,7 @@ export const AppDrawer = {
             ],
           }),
           IconButton.render({
-            icon: Icon.render({ name: "x", size: DEFAULT_ICON_SIZE }),
+            icon: MaterialIcon.render({ name: "close", size: "lg" }),
             variant: "ghost",
             ariaLabel: "Close",
             className: `vaitu-compact ${styles.close}`,
@@ -75,7 +66,10 @@ export const AppDrawer = {
               ...NAV.map((item) => ({
                 id: item.id,
                 primary: item.label,
-                icon: Icon.render({ name: item.icon, size: DEFAULT_ICON_SIZE }),
+                icon: MaterialIcon.render({
+                  name: item.icon,
+                  size: "lg",
+                }),
                 isSelected: active === item.tab,
                 onClick: () => onNavigate(item.id),
               })),

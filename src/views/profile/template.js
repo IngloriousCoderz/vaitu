@@ -2,14 +2,15 @@ import { Alert } from "@inglorious/ui/alert"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
+import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
-import { Icon } from "../../common/icon/index.js"
 import { Page } from "../../common/page/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import {
@@ -79,7 +80,10 @@ export const Profile = {
                             textColor: "#fffdf7",
                           }),
                           IconButton.render({
-                            icon: Icon.render({ name: "settings", size: 22 }),
+                            icon: MaterialIcon.render({
+                              name: "settings",
+                              size: "lg",
+                            }),
                             ariaLabel: "Profile options",
                             className: styles.gearButton,
                             onClick: onToggleMenu,
@@ -95,17 +99,17 @@ export const Profile = {
                                   className: styles.menu,
                                   items: [
                                     {
-                                      icon: Icon.render({
-                                        name: "pencil",
-                                        size: 15,
+                                      icon: MaterialIcon.render({
+                                        name: "edit",
+                                        size: "lg",
                                       }),
                                       label: "Edit profile",
                                       onClick: onEdit,
                                     },
                                     {
-                                      icon: Icon.render({
-                                        name: "x",
-                                        size: 15,
+                                      icon: MaterialIcon.render({
+                                        name: "close",
+                                        size: "lg",
                                       }),
                                       label: "Log out",
                                       onClick: onLogout,
@@ -367,20 +371,12 @@ export const Profile = {
         favorites.length
           ? html`
               <div class=${styles.favoriteChips}>
-                ${favorites.map(
-                  (region) => html`
-                    <span class=${styles.favoriteChip}>
-                      ${region}
-                      ${IconButton.render({
-                        icon: Icon.render({ name: "x", size: 13 }),
-                        ariaLabel: `Remove ${region}`,
-                        variant: "ghost",
-                        size: "sm",
-                        className: styles.favoriteRemove,
-                        onClick: () => onFavoriteRemove(region),
-                      })}
-                    </span>
-                  `,
+                ${favorites.map((region) =>
+                  Chip.render({
+                    children: region,
+                    isRemovable: true,
+                    onClick: () => onFavoriteRemove(region),
+                  }),
                 )}
               </div>
             `
@@ -433,7 +429,10 @@ export const Profile = {
             isInline: true,
             className: styles.tierMedal,
             "data-tier": progress.current ?? "none",
-            children: Icon.render({ name: "medal", size: 28 }),
+            children: MaterialIcon.render({
+              name: "social_leaderboard",
+              size: "lg",
+            }),
           }),
           html`<span class=${styles.tierName}>
             ${progress.current ? capitalize(progress.current) : "No rank"}
@@ -454,7 +453,7 @@ export const Profile = {
             children: [
               html`<span>${progressLabel(stats.points, tiers)}</span>`,
               IconButton.render({
-                icon: Icon.render({ name: "help-circle", size: 13 }),
+                icon: MaterialIcon.render({ name: "help", size: "lg" }),
                 ariaLabel: "How ranks work",
                 className: styles.ranksHelp,
                 onClick: onOpenRanks,

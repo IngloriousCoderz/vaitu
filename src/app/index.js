@@ -1,10 +1,10 @@
 import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
+import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
 import { readUser } from "../api/session.js"
-import { Icon } from "../common/icon/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
 import { AppDrawer } from "./drawer/template.js"
@@ -89,7 +89,7 @@ export const App = {
       className: styles.topbar,
       children: [
         IconButton.render({
-          icon: Icon.render({ name: "menu" }),
+          icon: MaterialIcon.render({ name: "menu", size: "lg" }),
           variant: "ghost",
           ariaLabel: "Open navigation",
           className: `vaitu-compact ${styles.menuButton}`,
@@ -101,7 +101,7 @@ export const App = {
           children: [
             Button.render({
               children: html`
-                ${Icon.render({ name: "plus", size: 16 })}
+                ${MaterialIcon.render({ name: "add", size: "lg" })}
                 <span>New event</span>
               `,
               color: "primary",
@@ -111,10 +111,11 @@ export const App = {
               onClick: () => api.notify("#router:navigate", paths.newEvent),
             }),
             IconButton.render({
-              icon: Icon.render({ name: "bell", size: 20 }),
-              variant: "outline",
-              shape: "round",
-              size: "md",
+              icon: MaterialIcon.render({
+                name: "notifications_none",
+                size: "lg",
+              }),
+              variant: "ghost",
               ariaLabel: "Notifications",
               className: styles.bellButton,
             }),

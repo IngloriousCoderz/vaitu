@@ -12,7 +12,6 @@ export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5
 export const DEFAULT_EVENT_CATEGORY = "wedding"
 export const DEFAULT_TRANSCRIPT_STATUS = "none"
-export const DEFAULT_ICON_SIZE = 20
 export const CLOSING_MAX_DAYS = 1
 export const DATE_PAD_LENGTH = 2
 export const WEEK_DAYS = 7

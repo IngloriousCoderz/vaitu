@@ -1,5 +1,7 @@
 // Order matters: tokens define the primitives, the theme layer maps them onto
 // semantic names, and only then do the components consume those names.
+import "@fontsource/material-symbols-outlined"
+import "@inglorious/ui/material-icon.css"
 import "@inglorious/ui/tokens.css"
 import "@inglorious/ui/alert.css"
 import "@inglorious/ui/avatar.css"

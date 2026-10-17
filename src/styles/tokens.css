@@ -155,7 +155,7 @@
 
   /* Height of the tab bar itself, excluding any safe-area inset.
      Measured from the bar's own box: nav padding 8+8, border-top 1, action
-     padding 8+8, icon 20 (DEFAULT_ICON_SIZE), gap 4, label 14px (~17).
+     padding 8+8, icon 24 (MaterialIcon lg), gap 4, label 14px (~17).
      Re-measure if the bar's internals change. */
   --vtabbar-height: 4.75rem;
 
