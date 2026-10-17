@@ -1,17 +1,8 @@
 import {
   FIRST_INDEX,
   LAST_INDEX_OFFSET,
-  PERCENT_MAX,
-  POINTS_PER_APPLICATION,
-  POINTS_PER_SELECTION,
-  POINTS_PER_SHORTLIST,
   SINGULAR,
-  TIER_BRONZE_MIN_POINTS,
-  TIER_GOLD_MIN_POINTS,
-  TIER_SILVER_MIN_POINTS,
-  ZERO,
 } from "../../constants/index.js"
-import { capitalize } from "../../text/index.js"
 
 export function initials(name) {
   const words = (name ?? "").split(" ").filter(Boolean)

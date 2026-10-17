@@ -85,6 +85,12 @@
   :global(.iw-drawer.iw-drawer-left) ~ :global(.iw-drawer-backdrop) {
     display: flex;
   }
+
+  /* The package hides its close button from 64rem, where it expects a fixed
+     sidebar. Here the drawer still slides over the page, so it needs one. */
+  :global(.iw-drawer.iw-drawer-left .iw-drawer-close) {
+    display: inline-flex;
+  }
 }
 
 /* Past every iPad the drawer is a fixed sidebar, so the menu button would
@@ -96,7 +102,6 @@
 }
 
 .menuButton {
-  --iw-button-color: var(--vink);
   padding: 0.375rem;
 }
 

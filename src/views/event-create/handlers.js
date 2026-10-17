@@ -473,13 +473,11 @@ export const save = handleAsync("save", {
     entity.status = "ready"
     clearPendingAudio()
     entity.audio_preview_url = null
-    api.notify(`#${entity.id}:close`)
     api.notify("#eventList:eventsLoad")
-    // Saving has to leave the page, because the route is what unmounts it now.
-    // `#close` only tidies the entity up; on its own it left the form sitting
-    // there, filled in, looking as though nothing had happened. An edit goes
-    // back to the event it came from. A new one goes to the list, because the
-    // insert hands back no id to navigate to.
+    // Saving has to leave the page, because the route is what unmounts it now,
+    // and leaving is also what tidies the entity up: the route change runs
+    // close(). An edit goes back to the event it came from. A new one goes to
+    // the list, because the insert hands back no id to navigate to.
     api.notify(
       "#router:navigate",
       entity.editing_event_id

@@ -4,7 +4,6 @@ import {
   PAD_LENGTH,
   UUID_HEX_RADIX,
   UUID_RANDOM_BYTES,
-  UUID_SECTION_SIZES,
   UUID_VARIANT_BITS,
   UUID_VARIANT_INDEX,
   UUID_VARIANT_MASK,
@@ -32,11 +31,6 @@ export function randomId() {
   const hex = [...bytes]
     .map((byte) => byte.toString(UUID_HEX_RADIX).padStart(PAD_LENGTH, "0"))
     .join("")
-  let at = FIRST_INDEX
-  const sections = UUID_SECTION_SIZES.map((size) => {
-    const part = hex.slice(at, at + size)
-    at += size
-    return part
-  })
-  return sections.join("-")
+  // The 8-4-4-4-12 grouping every UUID is written in.
+  return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
 }

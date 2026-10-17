@@ -40,8 +40,6 @@
    .vaitu-compact, since a bare single class here would lose to
    button.iw-button in public/style.css. */
 .iconButton {
-  --iw-button-bg: var(--vaccent);
-  --iw-button-color: var(--vaccent);
   border-radius: var(--iw-radius-md);
   padding: 0.375rem;
 }
@@ -108,7 +106,10 @@
   cursor: pointer;
 }
 
-.iconButtonActive {
+/* Muted like every icon button until a filter is on, which is worth
+   showing. The secondary colour is set at (0,2,1) in public/style.css, so
+   this has to outrank it. */
+button:global(.iw-button.iw-button-secondary).iconButtonActive {
   --iw-button-bg: var(--vchip-active-bg);
   --iw-button-color: var(--vchip-active-bg);
 }
@@ -198,21 +199,11 @@
 }
 
 button.sheetGear {
-  border: none;
-  background: none;
-  border-radius: var(--iw-radius-none);
-  box-shadow: none;
-  cursor: pointer;
   padding: 0.375rem;
   min-height: 0;
   display: flex;
-  color: var(--vmuted);
   outline: none;
   -webkit-tap-highlight-color: transparent;
-}
-
-button.sheetGear:active {
-  background: none;
 }
 
 .favoriteEditor {
@@ -220,34 +211,6 @@ button.sheetGear:active {
   flex-direction: column;
   gap: var(--iw-space-2);
   margin-top: var(--iw-space-3);
-}
-
-.favoriteChips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--iw-space-2);
-}
-
-.favoriteChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: var(--iw-font-size-sm);
-  font-weight: var(--iw-font-weight-semibold);
-  color: var(--vink);
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-full);
-  padding: 0.375rem 0.375rem 0.375rem var(--iw-space-3);
-}
-
-.favoriteRemove {
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: inline-flex;
-  padding: 0.125rem;
-  color: var(--vmuted);
 }
 
 .sheetTitle {
@@ -308,26 +271,8 @@ button.miniButton {
   color: var(--verror);
 }
 
-.warn {
-  font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
-  background: var(--vbadge-bg);
-  border-radius: var(--iw-radius-xl);
-  padding: 0.625rem var(--vcontrol-padding-inline);
-  margin: 0.625rem 0 0;
-}
-
-.deleteRow {
-  display: flex;
-  gap: 0.625rem;
+.confirm {
   margin-top: 0.625rem;
-}
-
-.empty {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
 }
 
 /* Wide header follows the Airbnb / Booking bar. Categories sit in the top
@@ -387,7 +332,10 @@ button.miniButton {
     width: 32rem;
   }
 
-  .stickyTop :global(.vaitu-search) :global(.iw-input-field) :global(.iw-input-frame) {
+  .stickyTop
+    :global(.vaitu-search)
+    :global(.iw-input-field)
+    :global(.iw-input-frame) {
     padding-block: var(--iw-space-4);
     border-radius: var(--iw-radius-full);
     box-shadow: var(--iw-shadow-md);
@@ -431,10 +379,6 @@ button.miniButton {
     padding-bottom: var(--iw-space-10);
   }
 
-  .empty {
-    grid-column: 1 / -1;
-  }
-
   .list .tile,
   :global(.iw-flex.iw-flex-padding-none).myEvent,
   :global(.iw-flex.iw-flex-padding-none).myEvent:last-child {
@@ -454,7 +398,6 @@ button.miniButton {
     scale: none;
   }
 
-
   .myEvent :global(article) {
     flex: 1;
     padding: 0;
@@ -465,14 +408,8 @@ button.miniButton {
     padding: 0 var(--iw-space-4) var(--iw-space-4);
   }
 
-  .myEvent .warn,
-  .myEvent .deleteRow {
-    margin-left: var(--iw-space-4);
-    margin-right: var(--iw-space-4);
-  }
-
-  .myEvent .deleteRow {
-    margin-bottom: var(--iw-space-4);
+  .myEvent .confirm {
+    margin: 0.625rem var(--iw-space-4) var(--iw-space-4);
   }
 }
 

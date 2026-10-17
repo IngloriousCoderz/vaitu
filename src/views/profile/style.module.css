@@ -6,20 +6,10 @@ button.gearButton {
   position: absolute;
   top: 0;
   right: 0;
-  border: none;
-  background: none;
-  border-radius: var(--iw-radius-none);
-  box-shadow: none;
-  cursor: pointer;
   padding: 0.375rem;
   min-height: 0;
-  color: var(--vmuted);
   outline: none;
   -webkit-tap-highlight-color: transparent;
-}
-
-button.gearButton:active {
-  background: none;
 }
 
 /* Anchoring only. Surface, items and hover state come from the package
@@ -117,20 +107,10 @@ button.gearButton:active {
 }
 
 button.ranksHelp {
-  border: none;
-  background: none;
-  border-radius: var(--iw-radius-none);
-  box-shadow: none;
-  cursor: pointer;
   padding: 0.375rem;
   min-height: 0;
-  color: var(--vmuted);
   outline: none;
   -webkit-tap-highlight-color: transparent;
-}
-
-button.ranksHelp:active {
-  background: none;
 }
 
 .rows {
@@ -153,34 +133,6 @@ button.ranksHelp:active {
   color: var(--vmuted);
   text-align: left;
   margin-top: var(--iw-space-3);
-}
-
-.favoriteChips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--iw-space-2);
-}
-
-.favoriteChip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: var(--iw-font-size-sm);
-  font-weight: var(--iw-font-weight-semibold);
-  color: var(--vink);
-  background: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-full);
-  padding: 0.375rem 0.375rem 0.375rem var(--iw-space-3);
-}
-
-.favoriteRemove {
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: inline-flex;
-  padding: 0.125rem;
-  color: var(--vmuted);
 }
 
 .error {
@@ -216,13 +168,6 @@ button.ranksHelp:active {
 
 .cancelButton {
   margin-top: 0.625rem;
-}
-
-.empty {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
 }
 
 .stats {

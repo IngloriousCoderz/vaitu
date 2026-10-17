@@ -66,13 +66,6 @@
   color: #8c4632;
 }
 
-.empty {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
-}
-
 @media (min-width: 48rem) {
   .chips {
     flex-wrap: wrap;
@@ -85,10 +78,6 @@
     gap: var(--iw-space-8);
     align-items: stretch;
     padding-top: var(--iw-space-5);
-  }
-
-  .empty {
-    grid-column: 1 / -1;
   }
 
   :global(.iw-flex.iw-flex-padding-none).application {

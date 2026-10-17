@@ -1,0 +1,9 @@
+.status {
+  text-align: center;
+  color: var(--vmuted);
+  font-size: var(--iw-font-size-sm);
+  padding: var(--iw-space-10) 0;
+  /* Spans every column when a page lays its list out as a grid on wider
+     screens. It does nothing anywhere else. */
+  grid-column: 1 / -1;
+}

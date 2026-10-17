@@ -5,16 +5,10 @@ import { html } from "@inglorious/web"
 
 import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
+import { PageStatus } from "../../common/page-status/index.js"
+import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
-import { capitalize } from "../../text/index.js"
 import styles from "./style.module.css"
-
-const StatusColors = {
-  pending: "default",
-  shortlisted: "info",
-  selected: "success",
-  rejected: "error",
-}
 
 const FilterOptions = [
   { id: "all", label: "All" },
@@ -67,25 +61,23 @@ export const ApplicationList = {
 
           <main class="${styles.list} vaitu-list">
             ${
-              status === "loading"
-                ? html`<p class=${styles.empty}>Loading applications…</p>`
-                : status === "error"
-                  ? html`<p class=${styles.empty}>${error}</p>`
-                  : !shown.length
-                    ? html`<p class=${styles.empty}>
-                        ${
-                          !applications.length
-                            ? "You haven't applied for any event yet."
-                            : "Nothing with this status."
-                        }
-                      </p>`
-                    : shown.map((application, index) =>
-                        this.renderApplicationItem({
-                          application,
-                          onOpenEvent,
-                          index,
-                        }),
-                      )
+              PageStatus.render({
+                isError: status === "error",
+                error,
+                isLoading: status === "loading",
+                loadingText: "Loading applications…",
+                isEmpty: !shown.length,
+                emptyText: !applications.length
+                  ? "You haven't applied for any event yet."
+                  : "Nothing with this status.",
+              }) ??
+              shown.map((application, index) =>
+                this.renderApplicationItem({
+                  application,
+                  onOpenEvent,
+                  index,
+                }),
+              )
             }
           </main>
         `,
@@ -120,11 +112,7 @@ export const ApplicationList = {
                 ? html`<span class=${styles.winnerTrophy}>
                     ${MaterialIcon.render({ name: "trophy", size: "lg" })}
                   </span>`
-                : Chip.render({
-                    children: capitalize(application.applicationStatus),
-                    color:
-                      StatusColors[application.applicationStatus] ?? "default",
-                  })
+                : StatusChip.render({ status: application.applicationStatus })
             }
           </div>
         `,

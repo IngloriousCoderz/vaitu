@@ -1,4 +1,4 @@
-import { FIRST_INDEX, PAD_LENGTH, SINGULAR } from "../../constants/index.js"
+import { DATE_ISO_LENGTH, PAD_LENGTH, SINGULAR } from "../../constants/index.js"
 import { randomId } from "../../text/index.js"
 
 export function calendarLinks({ title, eventDate, location }) {
@@ -18,7 +18,7 @@ export function calendarLinks({ title, eventDate, location }) {
     "PRODID:-//vaitu//event//EN",
     "BEGIN:VEVENT",
     `UID:${randomId()}@vaitu`,
-    `DTSTAMP:${toStamp(new Date().toISOString().slice(0, 10))}T000000Z`,
+    `DTSTAMP:${toStamp(new Date().toISOString())}T000000Z`,
     `DTSTART;VALUE=DATE:${start}`,
     `DTEND;VALUE=DATE:${end}`,
     `SUMMARY:${escapeIcs(title)}`,
@@ -33,10 +33,9 @@ export function calendarLinks({ title, eventDate, location }) {
   }
 }
 
+// YYYY-MM-DD, or the start of an ISO timestamp, as the YYYYMMDD iCalendar uses.
 function toStamp(dateStr) {
-  return (
-    dateStr.slice(FIRST_INDEX, 4) + dateStr.slice(5, 7) + dateStr.slice(8, 10)
-  )
+  return dateStr.slice(0, DATE_ISO_LENGTH).replaceAll("-", "")
 }
 
 function endExclusive(dateStr) {

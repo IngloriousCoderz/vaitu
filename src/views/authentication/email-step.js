@@ -1,9 +1,9 @@
-import { Alert } from "@inglorious/ui/alert"
 import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
+import { ErrorAlert } from "../../common/error-alert/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
@@ -40,15 +40,7 @@ export const EmailStep = {
               spellcheck: "false",
             })}
           </div>
-          ${
-            entity.error
-              ? Alert.render({
-                  severity: "error",
-                  className: `vaitu-alert ${styles.error}`,
-                  children: entity.error,
-                })
-              : ""
-          }
+          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
           ${Flex.render({
             direction: "column",
             align: "stretch",

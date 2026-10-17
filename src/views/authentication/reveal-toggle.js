@@ -12,6 +12,7 @@ export const RevealToggle = {
       }),
       ariaLabel: isPasswordVisible ? "Hide password" : "Show password",
       variant: "ghost",
+      color: "secondary",
       onClick: () => onTogglePassword(inputId),
     })
   },

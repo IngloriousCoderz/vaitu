@@ -1,4 +1,3 @@
-import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
@@ -8,6 +7,8 @@ import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
+import { BackButton } from "../../common/back-button/index.js"
+import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
@@ -16,6 +17,7 @@ import {
   ZERO,
 } from "../../constants/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
+import { paths } from "../../routes.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import styles from "./style.module.css"
 
@@ -31,7 +33,6 @@ export const EventCreate = {
       onDetailField,
       onCategory,
       onSave,
-      onBack,
       onRecordStart,
       onRecordStop,
       onOpenAudio,
@@ -56,13 +57,7 @@ export const EventCreate = {
       category: categoryId,
       children: [
         html`
-          ${IconButton.render({
-            icon: MaterialIcon.render({ name: "arrow_back", size: "lg" }),
-            label: "Back",
-            variant: "ghost",
-            ariaLabel: "Back",
-            onClick: onBack,
-          })}
+          ${BackButton.render({ fallback: paths.events }, api)}
           ${Flex.render({
             element: "header",
             align: "center",
@@ -184,15 +179,7 @@ export const EventCreate = {
             isRequired: true,
             onField,
           })}
-          ${
-            entity.error
-              ? Alert.render({
-                  severity: "error",
-                  className: `vaitu-alert ${styles.error}`,
-                  children: entity.error,
-                })
-              : ""
-          }
+          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
           <div class=${styles.bottomBar}>
             ${Button.render({
               children: busy
@@ -332,15 +319,10 @@ export const EventCreate = {
                   })}
                 `
         }
-        ${
-          entity.audio_error
-            ? Alert.render({
-                severity: "error",
-                className: `vaitu-alert ${styles.error}`,
-                children: entity.audio_error,
-              })
-            : ""
-        }
+        ${ErrorAlert.render({
+          error: entity.audio_error,
+          className: styles.error,
+        })}
         <p class=${styles.hint}>
           Talk through your event instead of typing — it will be transcribed
           into the fields below.

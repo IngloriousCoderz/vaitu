@@ -2,7 +2,6 @@ import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Drawer } from "@inglorious/ui/drawer"
 import { Flex } from "@inglorious/ui/flex"
-import { IconButton } from "@inglorious/ui/icon-button"
 import { List } from "@inglorious/ui/list"
 import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
@@ -27,31 +26,15 @@ export const AppDrawer = {
       anchor: "left",
       title: Flex.render({
         align: "center",
-        justify: "between",
-        gap: "sm",
-        isFullWidth: true,
-        className: styles.who,
+        gap: "md",
+        className: styles.identity,
         children: [
-          Flex.render({
-            align: "center",
-            gap: "md",
-            className: styles.identity,
-            children: [
-              Avatar.render({
-                initials,
-                backgroundColor: "linear-gradient(135deg, #6b7a5e, #24402f)",
-                textColor: "#fffdf7",
-              }),
-              html`<span class=${styles.name}>${name}</span>`,
-            ],
+          Avatar.render({
+            initials,
+            backgroundColor: "linear-gradient(135deg, #6b7a5e, #24402f)",
+            textColor: "#fffdf7",
           }),
-          IconButton.render({
-            icon: MaterialIcon.render({ name: "close", size: "lg" }),
-            variant: "ghost",
-            ariaLabel: "Close",
-            className: `vaitu-compact ${styles.close}`,
-            onClick: onClose,
-          }),
+          html`<span class=${styles.name}>${name}</span>`,
         ],
       }),
       onClose,

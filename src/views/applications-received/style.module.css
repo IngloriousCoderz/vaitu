@@ -233,13 +233,6 @@
   margin: 0;
 }
 
-.empty {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
-}
-
 @media (min-width: 48rem) {
   .recapList {
     display: grid;
@@ -268,10 +261,6 @@
     grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
     gap: var(--iw-space-4);
     align-items: start;
-  }
-
-  .empty {
-    grid-column: 1 / -1;
   }
 
   .header :global(button.iw-button.iw-button-full-width) {

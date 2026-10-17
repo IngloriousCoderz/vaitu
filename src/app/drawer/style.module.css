@@ -9,15 +9,18 @@
   min-width: 0;
 }
 
-/* onClose still drives the backdrop. The package button renders the
-   Material ligature "close", and that font is not loaded, so the word
-   shows. Our own X sits in the title row. */
-:global(.iw-drawer.iw-drawer-left) :global(.iw-drawer-close) {
-  display: none;
-}
-
-.who {
-  min-width: 0;
+/* The package's own close button, as compact as the app's other header
+   icons. It is secondary already, so it is muted like every icon button.
+   app/style.module.css decides where it shows. */
+:global(.iw-drawer.iw-drawer-left) :global(button.iw-drawer-close) {
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  /* The package puts the 24px icon straight in the button, without the 1em
+     box an IconButton wraps it in, so this is less padding for the same
+     30px target the old X had. */
+  padding: 0.125rem;
 }
 
 .identity {
@@ -33,19 +36,6 @@
   font-size: var(--iw-font-size-lg);
   line-height: var(--iw-line-height-tight);
   color: var(--vink);
-}
-
-.close {
-  --iw-button-color: var(--vink);
-  padding: 0.375rem;
-  flex: 0 0 auto;
-}
-
-/* On a fixed sidebar the X would close a panel the CSS keeps on screen. */
-@media (min-width: 87.5rem) {
-  :global(button.iw-button).close {
-    display: none;
-  }
 }
 
 .body {

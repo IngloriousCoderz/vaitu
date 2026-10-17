@@ -34,20 +34,16 @@ textarea {
    .iw-x.iw-y (0,2,0) and inject after this file, so bare classes lose. */
 /* UI package calibration (buttons, chips) */
 
-/* The page-level "back" affordance, shared by every screen that can be
-   drilled into. Identical in all five templates, so it lives here rather than
-   being copy-pasted into five CSS modules.
-
-   Tripled selector on purpose: it has to outrank `.iw-button-ghost` (0,1,0)
-   for the colour and `button.iw-button` (0,1,1) for the height floor, and the
-   package loads after this file. A back link should hug its label, not carry
-   a 48px touch-target box — see the note on .vaitu-compact below. */
-button.iw-button.vaitu-back {
-  --iw-button-bg: var(--vmuted);
+/* Secondary is the quiet colour, and icons are quiet by default: an icon
+   button is `variant: "ghost", color: "secondary"` unless its colour means
+   something (primary action, delete, an active filter). Icons inside inputs,
+   lists and the tab bar are muted by the package already, through
+   --iw-color-text-muted. The package paints secondary a fixed cool grey;
+   ours is the category's muted ink. */
+button.iw-button.iw-button-secondary {
   --iw-button-color: var(--vmuted);
-  min-height: 0;
-  padding: 0.375rem 0 0.875rem;
-  font-size: var(--iw-font-size-sm);
+  --iw-button-bg: var(--vmuted);
+  --iw-button-border: var(--vmuted);
 }
 
 /* Compact controls opt out of the touch-target floor above — a back link or

@@ -1,46 +1,47 @@
-import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
-import { Chip } from "@inglorious/ui/chip"
-import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError } from "@inglorious/web/form"
 
+import { BackButton } from "../../common/back-button/index.js"
+import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
-import { DATETIME_LOCAL_LENGTH, SINGULAR } from "../../constants/index.js"
-import { capitalize } from "../../text/index.js"
+import { PageStatus } from "../../common/page-status/index.js"
+import { StatusChip } from "../../common/status-chip/index.js"
+import {
+  DATE_ISO_LENGTH,
+  DATETIME_LOCAL_LENGTH,
+  SINGULAR,
+} from "../../constants/index.js"
+import { paths } from "../../routes.js"
 import styles from "./style.module.css"
-
-const StatusColors = {
-  pending: "default",
-  shortlisted: "info",
-  selected: "success",
-  rejected: "error",
-}
 
 export const ApplicationsReceived = {
   render(props, api) {
     return this.renderApplicationsReceived(props, api)
   },
 
-  renderApplicationsReceived({
-    entity,
-    onToggle,
-    onSelect,
-    onReject,
-    onUnshortlist,
-    onUnreject,
-    onAskAssign,
-    onAssign,
-    onCancelAssign,
-    onAskReopen,
-    onReopenDeadline,
-    onReopen,
-    onCancelReopen,
-    onBack,
-  }) {
+  renderApplicationsReceived(
+    {
+      entity,
+      onToggle,
+      onSelect,
+      onReject,
+      onUnshortlist,
+      onUnreject,
+      onAskAssign,
+      onAssign,
+      onCancelAssign,
+      onAskReopen,
+      onReopenDeadline,
+      onReopen,
+      onCancelReopen,
+    },
+    api,
+  ) {
     const { items, status, error } = entity
     const selected_count = items.filter(
       (i) => i.status === "shortlisted",
@@ -53,12 +54,7 @@ export const ApplicationsReceived = {
       wide: true,
       children: [
         html`
-          ${IconButton.render({
-            icon: MaterialIcon.render({ name: "arrow_back", size: "lg" }),
-            variant: "ghost",
-            ariaLabel: "Back",
-            onClick: onBack,
-          })}
+          ${BackButton.render({ fallback: paths.events }, api)}
 
           <header class=${styles.header}>
             <span class=${styles.title}>${entity.event_title}</span>
@@ -71,62 +67,44 @@ export const ApplicationsReceived = {
                 ? html`
                     ${
                       entity.confirming_reopen
-                        ? html`
-                            <p class=${styles.warn}>
-                              ${
-                                entity.event_status === "assigned"
-                                  ? "Reopen this event? Applications keep their status and you can adjust the shortlist again."
-                                  : "Reopen this event? New applications will be accepted again."
-                              }
-                            </p>
-                            ${
-                              deadlinePast(entity.event_deadline)
-                                ? html`
-                                    <div class=${styles.field}>
-                                      <span>New application deadline</span>
-                                      ${Input.render({
-                                        id: "received-reopen-deadline",
-                                        inputType: "datetime-local",
-                                        value: entity.reopen_deadline ?? "",
-                                        isFullWidth: true,
-                                        error: getFieldError(
-                                          entity,
-                                          "reopen_deadline",
-                                        ),
-                                        onChange: onReopenDeadline,
-                                      })}
-                                    </div>
-                                  `
-                                : ""
-                            }
-                            <div class=${styles.actions}>
-                              ${Button.render({
-                                children:
-                                  status === "saving"
-                                    ? "Reopening…"
-                                    : "Yes, reopen",
-                                color: "primary",
-                                shape: "pill",
-                                size: "md",
-                                isDisabled:
-                                  status === "saving" ||
-                                  (deadlinePast(entity.event_deadline) &&
-                                    (entity.reopen_deadline ?? "").length !==
-                                      DATETIME_LOCAL_LENGTH),
-                                onClick: onReopen,
-                              })}
-                              ${Button.render({
-                                children:
-                                  entity.event_status === "assigned"
-                                    ? "Keep assigned"
-                                    : "Keep closed",
-                                variant: "outline",
-                                shape: "pill",
-                                size: "md",
-                                onClick: onCancelReopen,
-                              })}
-                            </div>
-                          `
+                        ? ConfirmPrompt.render({
+                            message:
+                              entity.event_status === "assigned"
+                                ? "Reopen this event? Applications keep their status and you can adjust the shortlist again."
+                                : "Reopen this event? New applications will be accepted again.",
+                            children: deadlinePast(entity.event_deadline)
+                              ? html`
+                                  <div class=${styles.field}>
+                                    <span>New application deadline</span>
+                                    ${Input.render({
+                                      id: "received-reopen-deadline",
+                                      inputType: "datetime-local",
+                                      value: entity.reopen_deadline ?? "",
+                                      isFullWidth: true,
+                                      error: getFieldError(
+                                        entity,
+                                        "reopen_deadline",
+                                      ),
+                                      onChange: onReopenDeadline,
+                                    })}
+                                  </div>
+                                `
+                              : "",
+                            confirmLabel: "Yes, reopen",
+                            busyLabel: "Reopening…",
+                            cancelLabel:
+                              entity.event_status === "assigned"
+                                ? "Keep assigned"
+                                : "Keep closed",
+                            tone: "primary",
+                            isBusy: status === "saving",
+                            isDisabled:
+                              deadlinePast(entity.event_deadline) &&
+                              (entity.reopen_deadline ?? "").length !==
+                                DATETIME_LOCAL_LENGTH,
+                            onConfirm: onReopen,
+                            onCancel: onCancelReopen,
+                          })
                         : html`
                             ${Button.render({
                               children: "Reopen event",
@@ -155,46 +133,40 @@ export const ApplicationsReceived = {
 
           <main class=${styles.list}>
             ${
-              status === "loading"
-                ? html`<p class=${styles.empty}>Loading applications…</p>`
-                : status === "error" && !items.length
-                  ? html`<p class=${styles.empty}>${error}</p>`
-                  : !items.length
-                    ? html`<p class=${styles.empty}>
-                        ${
-                          entity.event_status === "open"
-                            ? "No applications yet."
-                            : "No applications received."
-                        }
-                      </p>`
-                    : items.map((item) =>
-                        this.renderApplicant({
-                          item,
-                          expanded: entity.expanded_application_id === item.id,
-                          max_reached,
-                          confirming_assign:
-                            entity.confirming_assign === item.id,
-                          event_assigned: entity.event_status === "assigned",
-                          onToggle,
-                          onSelect,
-                          onReject,
-                          onUnshortlist,
-                          onUnreject,
-                          onAskAssign,
-                          onAssign,
-                          onCancelAssign,
-                        }),
-                      )
+              PageStatus.render({
+                isError: status === "error" && !items.length,
+                error,
+                isLoading: status === "loading",
+                loadingText: "Loading applications…",
+                isEmpty: !items.length,
+                emptyText:
+                  entity.event_status === "open"
+                    ? "No applications yet."
+                    : "No applications received.",
+              }) ??
+              items.map((item) =>
+                this.renderApplicant({
+                  item,
+                  expanded: entity.expanded_application_id === item.id,
+                  max_reached,
+                  confirming_assign: entity.confirming_assign === item.id,
+                  event_assigned: entity.event_status === "assigned",
+                  onToggle,
+                  onSelect,
+                  onReject,
+                  onUnshortlist,
+                  onUnreject,
+                  onAskAssign,
+                  onAssign,
+                  onCancelAssign,
+                }),
+              )
             }
-            ${
-              status === "error" && items.length >= SINGULAR
-                ? Alert.render({
-                    severity: "error",
-                    className: `vaitu-alert ${styles.error}`,
-                    children: error,
-                  })
-                : ""
-            }
+            ${ErrorAlert.render({
+              error:
+                status === "error" && items.length >= SINGULAR ? error : null,
+              className: styles.error,
+            })}
           </main>
         `,
       ],
@@ -210,7 +182,10 @@ export const ApplicationsReceived = {
       ["Event date", formatDay(recap.event_date)],
       ["Application deadline", formatDeadline(recap.application_deadline)],
       ["Shortlist", `${shortlisted}/${maxApplicants ?? "—"}`],
-      ["Created", formatDay((recap.created_at ?? "").slice(0, 10))],
+      [
+        "Created",
+        formatDay((recap.created_at ?? "").slice(0, DATE_ISO_LENGTH)),
+      ],
     ]
     return Card.render({
       element: "div",
@@ -258,10 +233,7 @@ export const ApplicationsReceived = {
           aria-expanded=${expanded}
         >
           <span class=${styles.name}>${applicant.full_name ?? "—"}</span>
-          ${Chip.render({
-            children: capitalize(item.status),
-            color: StatusColors[item.status] ?? "default",
-          })}
+          ${StatusChip.render({ status: item.status })}
           <span
             class=${expanded ? `${styles.chevron} ${styles.chevronOpen}` : styles.chevron}
           >
@@ -360,33 +332,18 @@ export const ApplicationsReceived = {
                       ? html`
                           ${
                             confirming_assign
-                              ? html`
-                                  <p id="assign-confirm" class=${styles.warn}>
-                                    Assign this applicant as the winner? The
-                                    event will close and the others will be
-                                    rejected.
-                                  </p>
-                                  <div class=${styles.actions}>
-                                    ${Button.render({
-                                      children:
-                                        status === "saving"
-                                          ? "Assigning…"
-                                          : "Yes, assign",
-                                      color: "primary",
-                                      shape: "pill",
-                                      size: "md",
-                                      isDisabled: status === "saving",
-                                      onClick: () => onAssign(item.id),
-                                    })}
-                                    ${Button.render({
-                                      children: "Keep shortlist",
-                                      variant: "outline",
-                                      shape: "pill",
-                                      size: "md",
-                                      onClick: onCancelAssign,
-                                    })}
-                                  </div>
-                                `
+                              ? ConfirmPrompt.render({
+                                  id: "assign-confirm",
+                                  message:
+                                    "Assign this applicant as the winner? The event will close and the others will be rejected.",
+                                  confirmLabel: "Yes, assign",
+                                  busyLabel: "Assigning…",
+                                  cancelLabel: "Keep shortlist",
+                                  tone: "primary",
+                                  isBusy: status === "saving",
+                                  onConfirm: () => onAssign(item.id),
+                                  onCancel: onCancelAssign,
+                                })
                               : html`
                                   <div class=${styles.actions}>
                                     ${Button.render({

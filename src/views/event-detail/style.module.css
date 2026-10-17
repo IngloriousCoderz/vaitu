@@ -143,13 +143,6 @@
   margin: var(--iw-space-2) 0 1.375rem;
 }
 
-.empty {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
-}
-
 .badgeClosing {
   --iw-badge-accent: #f0e3bd;
   --iw-badge-on-accent: #7a5f22;

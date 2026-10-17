@@ -30,20 +30,8 @@
   margin: var(--iw-space-3) 0 0;
 }
 
-.warn {
-  font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
-  background: var(--vbadge-bg);
-  border-radius: var(--iw-radius-xl);
-  padding: 0.625rem var(--vcontrol-padding-inline);
-  margin: var(--iw-space-5) 0 0;
-}
-
-.withdrawRow {
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  margin-top: var(--iw-space-3);
+.confirm {
+  margin-top: var(--iw-space-5);
 }
 
 .calendarRow {
@@ -51,13 +39,6 @@
   flex-direction: column;
   gap: 0.625rem;
   margin-top: var(--iw-space-3);
-}
-
-.empty {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
 }
 
 /* From tablet up the event sits beside the application, the same split as

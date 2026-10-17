@@ -1,9 +1,9 @@
-import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
+import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
 import { Page } from "../../common/page/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
@@ -87,9 +87,9 @@ export const Onboarding = {
             ${Input.render({
               id: "onboarding-instagram",
               label: "Instagram (optional)",
-              inputType: "text",
+              icon: "@",
               value: getFieldValue(entity, "instagram", ""),
-              placeholder: "@handle",
+              placeholder: "handle",
               isFullWidth: true,
               onChange: (value) =>
                 onField({ field: "instagram", value: value.toLowerCase() }),
@@ -98,17 +98,9 @@ export const Onboarding = {
               autocomplete: "off",
               spellcheck: "false",
             })}
-          </label>
+          </div>
 
-          ${
-            entity.error
-              ? Alert.render({
-                  severity: "error",
-                  className: `vaitu-alert ${styles.error}`,
-                  children: entity.error,
-                })
-              : ""
-          }
+          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
           <div class=${styles.bottomBar}>
             ${Button.render({
               children: saving ? "Saving…" : "Continue",
@@ -119,13 +111,13 @@ export const Onboarding = {
               isDisabled: saving,
               onClick: onSave,
             })}
-${Button.render({
-  children: "Skip for now",
-  variant: "ghost",
-  size: "sm",
-  className: styles.linkButton,
-  onClick: onSkip,
-})}
+            ${Button.render({
+              children: "Skip for now",
+              variant: "ghost",
+              size: "sm",
+              className: styles.linkButton,
+              onClick: onSkip,
+            })}
           </div>
         `,
       ],

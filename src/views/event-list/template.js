@@ -1,4 +1,3 @@
-import { Alert } from "@inglorious/ui/alert"
 import { Button } from "@inglorious/ui/button"
 import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Chip } from "@inglorious/ui/chip"
@@ -8,18 +7,16 @@ import { Input } from "@inglorious/ui/input"
 import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
+import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
+import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
+import { PageStatus } from "../../common/page-status/index.js"
+import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP, SINGULAR } from "../../constants/index.js"
-import { capitalize } from "../../text/index.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
-
-const statusColors = {
-  open: "success",
-  closed: "default",
-  assigned: "info",
-}
 
 export const EventList = {
   create(entity) {
@@ -121,6 +118,7 @@ export const EventList = {
               ${IconButton.render({
                 icon: MaterialIcon.render({ name: "instant_mix", size: "lg" }),
                 variant: "ghost",
+                color: "secondary",
                 ariaLabel: "Filters",
                 className: hasActiveFilters
                   ? `vaitu-compact ${styles.iconButton} ${styles.iconButtonActive}`
@@ -198,6 +196,8 @@ export const EventList = {
                             size: "lg",
                           }),
                           ariaLabel: "Edit favorite regions",
+                          variant: "ghost",
+                          color: "secondary",
                           className: styles.sheetGear,
                           onClick: onEditFavorites,
                         })}
@@ -244,40 +244,39 @@ export const EventList = {
           }
           <main class="${styles.list} vaitu-list">
             ${
-              status === "loading"
-                ? html`<p class=${styles.empty}>Loading events…</p>`
-                : status === "error"
-                  ? html`<p class=${styles.empty}>${error}</p>`
-                  : !shown.length
-                    ? html`<p class=${styles.empty}>
-                        ${
-                          isMine && !myEvents.length
-                            ? "You haven't posted any event yet."
-                            : "No events match your search yet."
-                        }
-                      </p>`
-                    : shown.map((event, index) => {
-                        const style = `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`
-                        return isMine
-                          ? this.renderMyEvent({
-                              event,
-                              style,
-                              isConfirmingDelete: confirmingDelete === event.id,
-                              onOpenEvent,
-                              onEdit,
-                              onAskDelete,
-                              onDelete,
-                              onCancelDelete,
-                            })
-                          : Card.render({
-                              event,
-                              isApplied: Boolean(appliedMap[event.id]),
-                              onOpen: onOpenEvent,
-                              cover: true,
-                              className: `vaitu-list-item ${styles.tile}`,
-                              style,
-                            })
-                      })
+              PageStatus.render({
+                isError: status === "error",
+                error,
+                isLoading: status === "loading",
+                loadingText: "Loading events…",
+                isEmpty: !shown.length,
+                emptyText:
+                  isMine && !myEvents.length
+                    ? "You haven't posted any event yet."
+                    : "No events match your search yet.",
+              }) ??
+              shown.map((event, index) => {
+                const style = `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`
+                return isMine
+                  ? this.renderMyEvent({
+                      event,
+                      style,
+                      isConfirmingDelete: confirmingDelete === event.id,
+                      onOpenEvent,
+                      onEdit,
+                      onAskDelete,
+                      onDelete,
+                      onCancelDelete,
+                    })
+                  : Card.render({
+                      event,
+                      isApplied: Boolean(appliedMap[event.id]),
+                      onOpen: onOpenEvent,
+                      cover: true,
+                      className: `vaitu-list-item ${styles.tile}`,
+                      style,
+                    })
+              })
             }
           </main>
         `,
@@ -308,10 +307,7 @@ export const EventList = {
         }),
         html`
           <div class=${styles.myEventFooter}>
-            ${Chip.render({
-              children: capitalize(event.status),
-              color: statusColors[event.status] ?? "default",
-            })}
+            ${StatusChip.render({ status: event.status })}
             <span class=${styles.count}>
               ${event.applications_count}
               application${event.applications_count === SINGULAR ? "" : "s"}
@@ -337,28 +333,13 @@ export const EventList = {
           </div>
         `,
         isConfirmingDelete
-          ? html`
-              <p class=${styles.warn}>
-                Delete this event and all its applications?
-              </p>
-              <div class=${styles.deleteRow}>
-                ${Button.render({
-                  children: "Yes, delete",
-                  color: "error",
-                  variant: "outline",
-                  shape: "pill",
-                  size: "md",
-                  onClick: () => onDelete(event.id),
-                })}
-                ${Button.render({
-                  children: "Keep it",
-                  variant: "outline",
-                  shape: "pill",
-                  size: "md",
-                  onClick: onCancelDelete,
-                })}
-              </div>
-            `
+          ? ConfirmPrompt.render({
+              message: "Delete this event and all its applications?",
+              confirmLabel: "Yes, delete",
+              className: styles.confirm,
+              onConfirm: () => onDelete(event.id),
+              onCancel: onCancelDelete,
+            })
           : "",
       ],
     })
@@ -376,52 +357,20 @@ export const EventList = {
     onFavoriteRemove,
     onSaveFavorites,
   }) {
-    const draft = favoriteDraft ?? []
-    const typed = favoriteInput ?? ""
     const saving = favoritesStatus === "saving"
     return html`
       <div class=${styles.favoriteEditor}>
-        ${
-          draft.length
-            ? html`
-                <div class=${styles.favoriteChips}>
-                  ${draft.map((region) =>
-                    Chip.render({
-                      children: region,
-                      isRemovable: true,
-                      onClick: () => onFavoriteRemove(region),
-                    }),
-                  )}
-                </div>
-              `
-            : ""
-        }
-        ${renderFavoriteChoice()}
-        ${Input.render({
-          inputType: "text",
-          isFullWidth: true,
-          placeholder: "Or type a region",
-          value: typed,
-          onChange: (value) => onFavoriteInput(value),
+        ${FavoriteRegions.render({
+          regions: favoriteDraft ?? [],
+          input: favoriteInput ?? "",
+          inputId: "list-favorite-region",
+          isDisabled: saving,
+          onInput: onFavoriteInput,
+          onAdd: onFavoriteAdd,
+          onRemove: onFavoriteRemove,
+          renderChoice: renderFavoriteChoice,
         })}
-        ${Button.render({
-          children: "Add",
-          variant: "outline",
-          shape: "pill",
-          size: "md",
-          isFullWidth: true,
-          isDisabled: typed.trim() === "" || saving,
-          onClick: () => onFavoriteAdd(typed),
-        })}
-        ${
-          favoritesError
-            ? Alert.render({
-                severity: "error",
-                className: "vaitu-alert",
-                children: favoritesError,
-              })
-            : ""
-        }
+        ${ErrorAlert.render({ error: favoritesError })}
         ${Button.render({
           children: saving ? "Saving…" : "Save regions",
           color: "primary",

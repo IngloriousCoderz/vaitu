@@ -5,7 +5,7 @@ import {
   deactivateRealtime,
   realtimeColumn,
 } from "../../api/realtime.js"
-import { paths } from "../../routes.js"
+import { pageRouteChange } from "../../common/page-route.js"
 import { clearReopenError } from "./handlers.js"
 import * as handlers from "./handlers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
@@ -57,76 +57,65 @@ export const ApplicationsReceived = {
     deactivateRealtime(entity.id)
   },
 
-  // The route is the source of truth for which page is live, so this is where a
-  // page opens and loads. Everything else reads the route rather than an
-  // `isOpen` flag, which is what used to make app.js a cascade.
-  routeChange(entity, payload, api) {
-    /* `payload.route`, never `api.getEntity("router").route`. This handler runs
-       from inside the router's own notify, and a notification dispatched from a
-       handler reads the state as it was before that handler's batch committed —
-       so the router entity still named the route we are leaving. That made a
-       back navigation look like the page we were on, and open() ran with the new
-       route's empty params. The payload is the resolved route and cannot lag. */
-    if (payload.route !== entity.id) {
-      close(entity)
-      return
-    }
-    open(entity, payload.params.eventId, api)
-  },
+  routeChange: pageRouteChange(
+    open,
+    close,
+    (payload) => payload.params.eventId,
+  ),
 
   render(entity, api) {
     const id = entity.id
-    return this.renderApplicationsReceived({
-      entity,
-      onToggle: (application_id) =>
-        api.notify(`#${id}:expandToggle`, application_id),
-      onSelect: (application_id) =>
-        api.notify(`#${id}:statusSet`, {
-          application_id,
-          status: "shortlisted",
-          event_id: entity.event_id,
-        }),
-      onReject: (application_id) =>
-        api.notify(`#${id}:statusSet`, {
-          application_id,
-          status: "rejected",
-          event_id: entity.event_id,
-        }),
-      onUnshortlist: (application_id) =>
-        api.notify(`#${id}:statusSet`, {
-          application_id,
-          status: "pending",
-          event_id: entity.event_id,
-        }),
-      onUnreject: (application_id) =>
-        api.notify(`#${id}:statusSet`, {
-          application_id,
-          status: "pending",
-          event_id: entity.event_id,
-        }),
-      onBack: () => {
-        api.notify("#router:navigate", paths.events)
+    return this.renderApplicationsReceived(
+      {
+        entity,
+        onToggle: (application_id) =>
+          api.notify(`#${id}:expandToggle`, application_id),
+        onSelect: (application_id) =>
+          api.notify(`#${id}:statusSet`, {
+            application_id,
+            status: "shortlisted",
+            event_id: entity.event_id,
+          }),
+        onReject: (application_id) =>
+          api.notify(`#${id}:statusSet`, {
+            application_id,
+            status: "rejected",
+            event_id: entity.event_id,
+          }),
+        onUnshortlist: (application_id) =>
+          api.notify(`#${id}:statusSet`, {
+            application_id,
+            status: "pending",
+            event_id: entity.event_id,
+          }),
+        onUnreject: (application_id) =>
+          api.notify(`#${id}:statusSet`, {
+            application_id,
+            status: "pending",
+            event_id: entity.event_id,
+          }),
+        onAskAssign: (application_id) => {
+          api.notify(`#${id}:assignAsk`, application_id)
+          requestAnimationFrame(() => {
+            document
+              .getElementById("assign-confirm")
+              ?.scrollIntoView({ behavior: "smooth", block: "center" })
+          })
+        },
+        onAssign: (application_id) =>
+          api.notify(`#${id}:winnerAssign`, {
+            event_id: entity.event_id,
+            application_id,
+          }),
+        onCancelAssign: () => api.notify(`#${id}:assignCancel`),
+        onAskReopen: () => api.notify(`#${id}:reopenAsk`),
+        onReopenDeadline: (value) =>
+          api.notify(`#${id}:reopenDeadlineSet`, value),
+        onReopen: () => api.notify(`#${id}:reopenSubmit`),
+        onCancelReopen: () => api.notify(`#${id}:reopenCancel`),
       },
-      onAskAssign: (application_id) => {
-        api.notify(`#${id}:assignAsk`, application_id)
-        requestAnimationFrame(() => {
-          document
-            .getElementById("assign-confirm")
-            ?.scrollIntoView({ behavior: "smooth", block: "center" })
-        })
-      },
-      onAssign: (application_id) =>
-        api.notify(`#${id}:winnerAssign`, {
-          event_id: entity.event_id,
-          application_id,
-        }),
-      onCancelAssign: () => api.notify(`#${id}:assignCancel`),
-      onAskReopen: () => api.notify(`#${id}:reopenAsk`),
-      onReopenDeadline: (value) =>
-        api.notify(`#${id}:reopenDeadlineSet`, value),
-      onReopen: () => api.notify(`#${id}:reopenSubmit`),
-      onCancelReopen: () => api.notify(`#${id}:reopenCancel`),
-    })
+      api,
+    )
   },
 }
 

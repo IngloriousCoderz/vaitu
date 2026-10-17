@@ -1,11 +1,13 @@
-import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
+import { BackButton } from "../../common/back-button/index.js"
 import { Page } from "../../common/page/index.js"
+import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
+import { paths } from "../../routes.js"
 import { capitalize } from "../../text/index.js"
 import styles from "./style.module.css"
 
@@ -14,7 +16,7 @@ export const Ranks = {
     return this.renderRanks(props, api)
   },
 
-  renderRanks({ entity, onBack }) {
+  renderRanks({ entity }, api) {
     const { status, error, tiers, mine } = entity
     const progress =
       status === "ready" && tiers ? tierProgress(mine?.points, tiers) : null
@@ -30,16 +32,7 @@ export const Ranks = {
             align: "start",
             className: styles.header,
             children: [
-              Button.render({
-                children: html`
-                  ${MaterialIcon.render({ name: "arrow_back", size: "lg" })}
-                  <span>Back</span>
-                `,
-                variant: "ghost",
-                className: "vaitu-back",
-                ariaLabel: "Back",
-                onClick: onBack,
-              }),
+              BackButton.render({ fallback: paths.profile }, api),
               html`<span class=${styles.title}>Ranks</span>`,
             ],
           })}
@@ -91,37 +84,39 @@ export const Ranks = {
             className: styles.list,
             children: html`
               ${
-                status === "loading"
-                  ? html`<p class=${styles.empty}>Loading ranks…</p>`
-                  : status === "error"
-                    ? html`<p class=${styles.empty}>${error}</p>`
-                    : tiers
-                      ? RANK_ORDER.map(
-                          (rank) => html`
-                            ${Flex.render({
+                PageStatus.render({
+                  isError: status === "error",
+                  error,
+                  isLoading: status === "loading",
+                  loadingText: "Loading ranks…",
+                }) ??
+                (tiers
+                  ? RANK_ORDER.map(
+                      (rank) => html`
+                        ${Flex.render({
+                          align: "center",
+                          justify: "between",
+                          className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
+                          children: [
+                            Flex.render({
+                              element: "span",
+                              isInline: true,
                               align: "center",
-                              justify: "between",
-                              className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
-                              children: [
-                                Flex.render({
-                                  element: "span",
-                                  isInline: true,
-                                  align: "center",
-                                  gap: "sm",
-                                  className: styles.rankName,
-                                  children: html`
-                                    ${MaterialIcon.render({ name: "social_leaderboard", size: "lg" })}
-                                    ${capitalize(rank)}
-                                  `,
-                                }),
-                                html`<span class=${styles.rankPoints}>
-                                  ${rankMin(tiers, rank)}+ pts
-                                </span>`,
-                              ],
-                            })}
-                          `,
-                        )
-                      : ""
+                              gap: "sm",
+                              className: styles.rankName,
+                              children: html`
+                                ${MaterialIcon.render({ name: "social_leaderboard", size: "lg" })}
+                                ${capitalize(rank)}
+                              `,
+                            }),
+                            html`<span class=${styles.rankPoints}>
+                              ${rankMin(tiers, rank)}+ pts
+                            </span>`,
+                          ],
+                        })}
+                      `,
+                    )
+                  : "")
               }
               ${
                 status === "ready" && tiers

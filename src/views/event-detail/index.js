@@ -7,6 +7,7 @@ import {
 } from "../../api/realtime.js"
 import { readUserId } from "../../api/session.js"
 import { isTicking, startTick, stopTick } from "../../api/ticker.js"
+import { pageRouteChange } from "../../common/page-route.js"
 import { isProfileComplete } from "../../common/profile.js"
 import { DAY_MS } from "../../constants/index.js"
 import { paths } from "../../routes.js"
@@ -64,22 +65,11 @@ export const EventDetail = {
     api.notify(`#${entity.id}:applicationSubmit`)
   },
 
-  // The route is the source of truth for which page is live, so this is where a
-  // page opens and loads. Everything else reads the route rather than an
-  // `isOpen` flag, which is what used to make app.js a cascade.
-  routeChange(entity, payload, api) {
-    /* `payload.route`, never `api.getEntity("router").route`. This handler runs
-       from inside the router's own notify, and a notification dispatched from a
-       handler reads the state as it was before that handler's batch committed —
-       so the router entity still named the route we are leaving. That made a
-       back navigation look like the page we were on, and open() ran with the new
-       route's empty params. The payload is the resolved route and cannot lag. */
-    if (payload.route !== entity.id) {
-      close(entity)
-      return
-    }
-    open(entity, payload.params.eventId, api)
-  },
+  routeChange: pageRouteChange(
+    open,
+    close,
+    (payload) => payload.params.eventId,
+  ),
 
   render(entity, api) {
     const id = entity.id
@@ -88,25 +78,28 @@ export const EventDetail = {
         startTick("clock", () => api.notify(`#${id}:clockTick`))
       }
     }
-    return this.renderEventDetail({
-      entity,
-      profileComplete: isProfileComplete(api.getEntity("profile").profile),
-      onBack: () => api.notify("#router:navigate", paths.events),
-      onField: ({ field, value }) =>
-        api.notify(`#${id}:fieldSet`, { field, value }),
-      onSubmit: () => api.notify(`#${id}:applySubmit`),
-      onCompleteProfile: () => api.notify("#router:navigate", paths.profile),
-      // Only the organiser has applications to review. The card that used to go
-      // straight here now opens the event, so this is how the page is reached.
-      onOpenApplications:
-        entity.event?.senderId === readUserId()
-          ? () =>
-              api.notify(
-                "#router:navigate",
-                paths.receivedApplications(entity.event.id),
-              )
-          : undefined,
-    })
+    return this.renderEventDetail(
+      {
+        entity,
+        profileComplete: isProfileComplete(api.getEntity("profile").profile),
+        onOpenEvents: () => api.notify("#router:navigate", paths.events),
+        onField: ({ field, value }) =>
+          api.notify(`#${id}:fieldSet`, { field, value }),
+        onSubmit: () => api.notify(`#${id}:applySubmit`),
+        onCompleteProfile: () => api.notify("#router:navigate", paths.profile),
+        // Only the organiser has applications to review. The card that used to go
+        // straight here now opens the event, so this is how the page is reached.
+        onOpenApplications:
+          entity.event?.senderId === readUserId()
+            ? () =>
+                api.notify(
+                  "#router:navigate",
+                  paths.receivedApplications(entity.event.id),
+                )
+            : undefined,
+      },
+      api,
+    )
   },
 }
 

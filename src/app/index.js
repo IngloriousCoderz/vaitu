@@ -91,6 +91,7 @@ export const App = {
         IconButton.render({
           icon: MaterialIcon.render({ name: "menu", size: "lg" }),
           variant: "ghost",
+          color: "secondary",
           ariaLabel: "Open navigation",
           className: `vaitu-compact ${styles.menuButton}`,
           onClick: () => api.notify("#shell:toggleDrawer"),
@@ -116,6 +117,7 @@ export const App = {
                 size: "lg",
               }),
               variant: "ghost",
+              color: "secondary",
               ariaLabel: "Notifications",
               className: styles.bellButton,
             }),
