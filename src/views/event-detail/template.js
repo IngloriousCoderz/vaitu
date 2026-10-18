@@ -8,7 +8,6 @@ import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
-import { BackButton } from "../../common/back-button/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import {
   deadlineBadge,
@@ -25,7 +24,6 @@ import {
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
 } from "../../constants/index.js"
-import { paths } from "../../routes.js"
 import styles from "./style.module.css"
 
 export const EventDetail = {
@@ -33,18 +31,15 @@ export const EventDetail = {
     return this.renderEventDetail(props, api)
   },
 
-  renderEventDetail(
-    {
-      entity,
-      profileComplete,
-      onOpenEvents,
-      onField,
-      onSubmit,
-      onCompleteProfile,
-      onOpenApplications,
-    },
-    api,
-  ) {
+  renderEventDetail({
+    entity,
+    profileComplete,
+    onOpenEvents,
+    onField,
+    onSubmit,
+    onCompleteProfile,
+    onOpenApplications,
+  }) {
     const { event, status, error } = entity
     const msLeft = event?.application_deadline
       ? new Date(event.application_deadline).getTime() -
@@ -59,7 +54,6 @@ export const EventDetail = {
       category: event?.category ?? "wedding",
       children: [
         html`
-          ${BackButton.render({ fallback: paths.events }, api)}
           ${
             /* Keyed on the data rather than on the status string. `open` sets
                status to "idle" with a null event before its load handler starts,

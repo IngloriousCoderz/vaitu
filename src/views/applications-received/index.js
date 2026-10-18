@@ -6,6 +6,7 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
+import { paths } from "../../routes.js"
 import { clearReopenError } from "./handlers.js"
 import * as handlers from "./handlers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
@@ -62,6 +63,18 @@ export const ApplicationsReceived = {
     close,
     (payload) => payload.params.eventId,
   ),
+
+  renderHeader(entity) {
+    const items = entity.items ?? []
+    const shortlisted = items.filter(
+      (item) => item.status === "shortlisted",
+    ).length
+    return {
+      title: entity.event_title ?? "",
+      subtitle: `${shortlisted} shortlisted · ${items.length} received`,
+      back: paths.events,
+    }
+  },
 
   render(entity, api) {
     const id = entity.id

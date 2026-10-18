@@ -1,3 +1,5 @@
+import { AppBar } from "@inglorious/ui/app-bar"
+import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -5,11 +7,16 @@ import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
 import { readUser } from "../api/session.js"
+import { BackButton } from "../common/back-button/index.js"
+import { Logo } from "../common/logo/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
 import { AppDrawer } from "./drawer/template.js"
 import styles from "./style.module.css"
 import { Fab, TabBar } from "./tab-bar/template.js"
+
+// Where the package drawer turns from an overlay into a sidebar.
+const SIDEBAR_QUERY = "(min-width: 64rem)"
 
 // Which tab a given tab bar entry navigates to. The bar reports a value, the
 // router owns the path.
@@ -65,9 +72,13 @@ export const App = {
 
     const showWide = !NO_WIDE_CHROME.has(router.route)
 
+    const shell = api.getEntity("shell")
+
     return this.renderShell({
-      topbar: showWide ? this.renderTopbar(api) : null,
+      appBar: showWide ? this.renderAppBar(api, router.route) : null,
       drawer: showWide ? this.renderDrawer(api, chrome) : null,
+      isDrawerHidden: shell.isDrawerHidden,
+      isDrawerCollapsed: shell.isDrawerCollapsed,
       content: html`
         <!-- Wrapped so the page is not a direct flex child of main: a .page
              using auto side margins, handed to a flex column, suppresses
@@ -81,26 +92,57 @@ export const App = {
     })
   },
 
-  renderTopbar(api) {
+  // One app bar for every page. The page fills it through an optional
+  // renderHeader(entity, api) on its type, returning { title, subtitle, back,
+  // actions, isBrand }: `back` is the fallback path for the back button, which
+  // then replaces the menu button; `actions` go before the app's own.
+  renderAppBar(api, route) {
+    const entity = api.getEntity(route)
+    const type = entity && api.getType(entity.type)
+    const { title, subtitle, back, actions, isBrand } =
+      type?.renderHeader?.(entity, api) ?? {}
+
+    return AppBar.render({
+      isElevated: false,
+      className: styles.appBar,
+      leading: back
+        ? BackButton.render({ fallback: back }, api)
+        : IconButton.render({
+            icon: MaterialIcon.render({ name: "menu", size: "lg" }),
+            variant: "ghost",
+            color: "secondary",
+            ariaLabel: "Toggle navigation",
+            className: styles.menuButton,
+            onClick: () =>
+              api.notify("#shell:toggleDrawer", {
+                isWide: window.matchMedia(SIDEBAR_QUERY).matches,
+              }),
+          }),
+      // The brand stands in for the title where no sidebar shows it already.
+      title: isBrand
+        ? html`<span class=${styles.brandTitle}>${Logo.render()}</span
+            ><span class=${styles.brandAlt}>${title}</span>`
+        : title,
+      subtitle,
+      trailing: html`${actions ?? ""}${this.renderGlobalActions(api, route)}`,
+    })
+  },
+
+  // New event, notifications and who is signed in. The tab bar carries the
+  // first and the last on a phone, so these start at tablet width. The form
+  // itself does not offer to start another one.
+  renderGlobalActions(api, route) {
+    const profile = api.getEntity("profile").profile
+    const name = profile?.full_name || readUser()?.email || "Account"
+
     return Flex.render({
-      element: "header",
       align: "center",
-      justify: "between",
-      className: styles.topbar,
+      gap: "sm",
+      className: styles.globalActions,
       children: [
-        IconButton.render({
-          icon: MaterialIcon.render({ name: "menu", size: "lg" }),
-          variant: "ghost",
-          color: "secondary",
-          ariaLabel: "Open navigation",
-          className: `vaitu-compact ${styles.menuButton}`,
-          onClick: () => api.notify("#shell:toggleDrawer"),
-        }),
-        Flex.render({
-          align: "center",
-          gap: "sm",
-          children: [
-            Button.render({
+        route === "eventCreate"
+          ? ""
+          : Button.render({
               children: html`
                 ${MaterialIcon.render({ name: "add", size: "lg" })}
                 <span>New event</span>
@@ -108,43 +150,45 @@ export const App = {
               color: "primary",
               shape: "pill",
               size: "md",
-              className: styles.createButton,
               onClick: () => api.notify("#router:navigate", paths.newEvent),
             }),
-            IconButton.render({
-              icon: MaterialIcon.render({
-                name: "notifications_none",
-                size: "lg",
-              }),
-              variant: "ghost",
-              color: "secondary",
-              ariaLabel: "Notifications",
-              className: styles.bellButton,
-            }),
-          ],
+        IconButton.render({
+          icon: MaterialIcon.render({ name: "notifications_none", size: "lg" }),
+          variant: "ghost",
+          color: "secondary",
+          ariaLabel: "Notifications",
+        }),
+        Button.render({
+          variant: "ghost",
+          color: "secondary",
+          shape: "round",
+          ariaLabel: `Profile: ${name}`,
+          className: styles.avatarButton,
+          onClick: () => api.notify("#router:navigate", paths.profile),
+          children: Avatar.render({
+            initials: initials(name),
+            size: "sm",
+            backgroundColor: "linear-gradient(135deg, #6b7a5e, #24402f)",
+            textColor: "#fffdf7",
+          }),
         }),
       ],
     })
   },
 
   renderDrawer(api, chrome) {
-    const profile = api.getEntity("profile").profile
-    const name = profile?.full_name || readUser()?.email || "Account"
     const shell = api.getEntity("shell")
 
     return AppDrawer.render({
       isOpen: shell.isDrawerOpen,
-      name,
-      initials: initials(name),
+      isHidden: shell.isDrawerHidden,
+      isCollapsed: shell.isDrawerCollapsed,
       active: chrome.tab,
       onClose: () => api.notify("#shell:closeDrawer"),
+      onCollapseToggle: () => api.notify("#shell:toggleDrawerCollapse"),
       onNavigate: (id) => {
         api.notify("#shell:closeDrawer")
         api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.events)
-      },
-      onLogout: () => {
-        api.notify("#shell:closeDrawer")
-        api.notify("#profile:logout")
       },
     })
   },
@@ -190,8 +234,10 @@ export const App = {
     content,
     fab,
     tabbar,
-    topbar,
+    appBar,
     drawer,
+    isDrawerHidden = false,
+    isDrawerCollapsed = false,
     isTabbarHidden = true,
     isWide = false,
   }) {
@@ -199,9 +245,16 @@ export const App = {
       element: "div",
       direction: "column",
       overflow: "hidden",
-      className: isWide ? `${styles.shell} ${styles.shellWide}` : styles.shell,
+      className: [
+        styles.shell,
+        isWide && styles.shellWide,
+        isDrawerHidden && styles.shellDrawerHidden,
+        isDrawerCollapsed && styles.shellDrawerCollapsed,
+      ]
+        .filter(Boolean)
+        .join(" "),
       children: [
-        ...[topbar, drawer].filter(Boolean),
+        ...[drawer, appBar].filter(Boolean),
         Flex.render({
           element: "main",
           direction: "column",

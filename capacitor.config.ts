@@ -23,7 +23,7 @@ const devServerUrl =
 
 const config: CapacitorConfig = {
   appId: "it.ingloriouscoderz.vaitu",
-  appName: "vaitu",
+  appName: "Vaitu",
   webDir: "dist",
   server: {
     // http://localhost stays a secure context (mic works) and same-scheme

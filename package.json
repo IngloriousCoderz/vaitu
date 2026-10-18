@@ -32,7 +32,7 @@
     "@fontsource/material-symbols-outlined": "^5.3.9",
     "@inglorious/motion": "^9.0.5",
     "@inglorious/store": "^11.0.3",
-    "@inglorious/ui": "^7.2.4",
+    "@inglorious/ui": "^7.3.1",
     "@inglorious/web": "^6.5.2",
     "@supabase/supabase-js": "^2.118.0",
     "fix-webm-duration": "^1.0.6"

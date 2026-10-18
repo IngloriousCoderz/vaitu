@@ -19,8 +19,8 @@ export default defineConfig({
         config: true,
       },
       manifest: {
-        name: "vaitu",
-        short_name: "vaitu",
+        name: "Vaitu",
+        short_name: "Vaitu",
         description: "Vaitu — find wedding work.",
         theme_color: "#f6f3ea",
         background_color: "#f6f3ea",

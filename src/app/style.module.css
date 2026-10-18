@@ -47,84 +47,76 @@
 
 /* Phone keeps the bottom bar. From tablet up the drawer is the navigation,
    so the footer row must not keep a gap under the page.
-   Media queries cannot read custom properties, so the breakpoints are
-   written out. They match --vlayout-wide (48rem) and --vlayout-desktop (87.5rem). */
+   Media queries cannot read custom properties, so the breakpoint is written
+   out. It matches --vlayout-wide (48rem). */
 @media (min-width: 48rem) {
   .footer {
     height: 0;
   }
 }
 
-/* Hidden on the phone. From tablet up it is a real flex row again. The
-   display has to beat .iw-flex, which the primitive sets on the same node. */
-:global(.iw-flex).topbar {
-  display: none;
+/* The app bar spans the content column, beside the drawer rather than across
+   it, as in the Inglorious UI dashboard. The package gives it no side padding,
+   so it takes the page gutter. */
+header:global(.iw-app-bar).appBar {
   flex: 0 0 auto;
-  padding: var(--iw-space-2) var(--vpage-gutter);
+  gap: var(--iw-space-2);
+  padding-inline: var(--vpage-gutter);
+}
+
+/* A phone navigates with the tab bar, which also carries New and Profile, so
+   the menu button and the app's own actions start at tablet width. The
+   display has to beat the package's own on the same nodes. */
+button:global(.iw-button).menuButton,
+:global(.iw-flex).globalActions {
+  display: none;
 }
 
 @media (min-width: 48rem) {
-  :global(.iw-flex).topbar {
-    display: flex;
-  }
-}
-
-/* The package drawer pins itself open at 64rem. iPad Pro 13 landscape is
-   1376px, so through 87.5rem it stays an overlay the hamburger can open
-   and close, the way a marketplace app does on a tablet. */
-@media (min-width: 64rem) and (max-width: 87.49rem) {
-  :global(.iw-drawer.iw-drawer-left) {
-    transform: translateX(-100%);
-    box-shadow: var(--iw-shadow-lg);
-  }
-
-  :global(.iw-drawer.iw-drawer-left.iw-drawer-open) {
-    transform: translateX(0);
-  }
-
-  :global(.iw-drawer.iw-drawer-left) ~ :global(.iw-drawer-backdrop) {
-    display: flex;
-  }
-
-  /* The package hides its close button from 64rem, where it expects a fixed
-     sidebar. Here the drawer still slides over the page, so it needs one. */
-  :global(.iw-drawer.iw-drawer-left .iw-drawer-close) {
+  button:global(.iw-button).menuButton {
     display: inline-flex;
   }
-}
 
-/* Past every iPad the drawer is a fixed sidebar, so the menu button would
-   only open a panel that is already on screen. */
-@media (min-width: 87.5rem) {
-  .menuButton {
-    visibility: hidden;
+  :global(.iw-flex).globalActions {
+    display: flex;
   }
 }
 
-.menuButton {
-  padding: 0.375rem;
-}
-
-.createButton {
-  flex: 0 0 auto;
-}
-
-/* Matches the New event pill height so the bell is not a tiny icon beside it. */
-button:global(.iw-button):global(.iw-button-outline).bellButton {
-  --iw-button-color: var(--vink);
-  --iw-button-border: var(--vline);
-  width: 2.625rem;
-  height: 2.625rem;
+/* The avatar is the whole button, so the ghost button keeps no padding. */
+button:global(.iw-button).avatarButton {
   padding: 0;
-  color: var(--vink);
-  border-color: var(--vline);
+  min-height: 0;
 }
 
-/* The package drawer is position:fixed and 16rem wide. Once it stays open
-   the shell has to clear that strip. */
-@media (min-width: 87.5rem) {
+/* The Events title is the logo wherever no sidebar shows the logo already,
+   and plain "Events" beside one. */
+.brandAlt {
+  display: none;
+}
+
+/* From 64rem the package drawer is a fixed sidebar, 16rem wide or 4rem when
+   collapsed, and the shell clears it. Hidden, it takes no room and the logo
+   comes back to the app bar. */
+@media (min-width: 64rem) {
   :global(.iw-flex.iw-flex-padding-none).shellWide {
-    padding-left: var(--vlayout-drawer);
+    padding-left: 16rem;
+    transition: padding-left var(--iw-transition-fast);
+  }
+
+  :global(.iw-flex.iw-flex-padding-none).shellWide.shellDrawerCollapsed {
+    padding-left: 4rem;
+  }
+
+  :global(.iw-flex.iw-flex-padding-none).shellWide.shellDrawerHidden {
+    padding-left: 0;
+  }
+
+  .shellWide:not(.shellDrawerHidden) .brandTitle {
+    display: none;
+  }
+
+  .shellWide:not(.shellDrawerHidden) .brandAlt {
+    display: inline;
   }
 }
 

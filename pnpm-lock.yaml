@@ -24,8 +24,8 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3(@inglorious/utils@5.0.0)
       '@inglorious/ui':
-        specifier: ^7.2.4
-        version: 7.2.4(@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
+        specifier: ^7.3.1
+        version: 7.3.1(@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/web':
         specifier: ^6.5.2
         version: 6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
@@ -877,8 +877,8 @@ packages:
     peerDependencies:
       '@inglorious/utils': 5.0.0
 
-  '@inglorious/ui@7.2.4':
-    resolution: {integrity: sha512-/TfLM66I9iD9D0wyr92AtYWXcjg5MZ2bV64rxdkrx0q0vcuQiDdFXxNxnZrxPL5T8jj2/zH9rMCIVuZ6zOFlbA==}
+  '@inglorious/ui@7.3.1':
+    resolution: {integrity: sha512-dRjojsdap+7oLdtB5KyQrwW9fA18Nh6JXrpgm6R/Sgou3ZJpWJRKA3jz2z8kX9oDt5bSP2rNFOsi5HiPbafeOA==}
     engines: {node: '>= 22'}
     peerDependencies:
       '@inglorious/charts': 10.0.5
@@ -4816,7 +4816,7 @@ snapshots:
       '@inglorious/utils': 5.0.0
       mutative: 1.3.0
 
-  '@inglorious/ui@7.2.4(@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
+  '@inglorious/ui@7.3.1(@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
     dependencies:
       '@inglorious/charts': 10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/store': 11.0.3(@inglorious/utils@5.0.0)

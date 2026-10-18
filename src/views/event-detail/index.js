@@ -71,6 +71,10 @@ export const EventDetail = {
     (payload) => payload.params.eventId,
   ),
 
+  renderHeader(entity) {
+    return { title: entity.event?.title ?? "", back: paths.events }
+  },
+
   render(entity, api) {
     const id = entity.id
     if (entity.event_id) {

@@ -20,7 +20,7 @@ export const EmailStep = {
             onCheckEmail()
           }}
         >
-          <h2 class=${styles.title}>Welcome to vaitu</h2>
+          <h2 class=${styles.title}>Welcome to Vaitu</h2>
           <p class=${styles.subtitle}>Enter your email to continue.</p>
           <div class=${styles.field}>
             ${Input.render({

@@ -1,9 +1,0 @@
-/* A ghost button keeps its padding and its transparent border, so the arrow
-   would sit that far inside the page's own padding. Pull the button out by
-   exactly that much: the arrow lines up with the content edge, and the hit
-   area and hover background stay where they were. These are the md button's
-   values from @inglorious/ui's button styles; re-check them if the size
-   changes. */
-.back {
-  margin-inline-start: calc(-1 * (var(--iw-space-4) + 1px));
-}

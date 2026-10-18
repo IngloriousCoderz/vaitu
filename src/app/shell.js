@@ -1,14 +1,26 @@
-// Drawer open/closed. A module flag would not re-render the shell.
+// The drawer's three states, as the package drawer names them. Below 64rem it
+// is an overlay that opens and closes; from 64rem it is a sidebar that can be
+// hidden, or collapsed to its icons.
 export const Shell = {
   create(entity) {
     entity.isDrawerOpen = false
+    entity.isDrawerHidden = false
+    entity.isDrawerCollapsed = false
   },
 
-  toggleDrawer(entity) {
-    entity.isDrawerOpen = !entity.isDrawerOpen
+  // `isWide` comes from the caller, which can read the viewport: the same
+  // button opens the overlay on a small screen and hides the sidebar on a
+  // wide one.
+  toggleDrawer(entity, { isWide } = {}) {
+    if (isWide) entity.isDrawerHidden = !entity.isDrawerHidden
+    else entity.isDrawerOpen = !entity.isDrawerOpen
   },
 
   closeDrawer(entity) {
     entity.isDrawerOpen = false
+  },
+
+  toggleDrawerCollapse(entity) {
+    entity.isDrawerCollapsed = !entity.isDrawerCollapsed
   },
 }

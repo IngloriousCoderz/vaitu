@@ -36,10 +36,6 @@ export const ApplicationList = {
       children: [
         html`
           <div class=${styles.stickyTop}>
-            <header class=${styles.header}>
-              <span class=${styles.title}>My Applications</span>
-            </header>
-
             <div class=${styles.chips}>
               ${FilterOptions.map(
                 (option) => html`

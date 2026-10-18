@@ -7,7 +7,6 @@ import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { BackButton } from "../../common/back-button/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
 import {
@@ -17,7 +16,6 @@ import {
   ZERO,
 } from "../../constants/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
-import { paths } from "../../routes.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import styles from "./style.module.css"
 
@@ -35,7 +33,6 @@ export const EventCreate = {
       onSave,
       onRecordStart,
       onRecordStop,
-      onOpenAudio,
       onCancelAudio,
       onRemoveAudio,
     },
@@ -52,29 +49,11 @@ export const EventCreate = {
     const title_is_derived = !category.title_from.input
 
     return Page.render({
-      variant: "sticky",
+      variant: "document",
       read: true,
       category: categoryId,
       children: [
         html`
-          ${BackButton.render({ fallback: paths.events }, api)}
-          ${Flex.render({
-            element: "header",
-            align: "center",
-            justify: "between",
-            className: styles.header,
-            children: [
-              html`<span class=${styles.title}>
-                ${entity.editing_event_id ? "Edit event" : "New event"}
-              </span>`,
-              IconButton.render({
-                icon: MaterialIcon.render({ name: "mic", size: "lg" }),
-                ariaLabel: "Describe by voice",
-                className: styles.micButton,
-                onClick: entity.is_recording ? onRecordStop : onOpenAudio,
-              }),
-            ],
-          })}
           ${this.renderAudio({
             entity,
             onRecordStart,
@@ -197,6 +176,16 @@ export const EventCreate = {
           </div>
         `,
       ],
+    })
+  },
+
+  renderHeaderActions({ entity, onRecordStop, onOpenAudio }) {
+    return IconButton.render({
+      icon: MaterialIcon.render({ name: "mic", size: "lg" }),
+      ariaLabel: "Describe by voice",
+      color: "primary",
+      shape: "round",
+      onClick: entity.is_recording ? onRecordStop : onOpenAudio,
     })
   },
 

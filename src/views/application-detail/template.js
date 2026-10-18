@@ -3,14 +3,12 @@ import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { BackButton } from "../../common/back-button/index.js"
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
-import { paths } from "../../routes.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -19,22 +17,19 @@ export const ApplicationDetail = {
     return this.renderApplicationDetail(props, api)
   },
 
-  renderApplicationDetail(
-    {
-      entity,
-      onField,
-      onSave,
-      onAskWithdraw,
-      onWithdraw,
-      onAskGiveUp,
-      onGiveUp,
-      onCancelGiveUp,
-      onCancelWithdraw,
-      onGoogleCalendar,
-      onDownloadIcs,
-    },
-    api,
-  ) {
+  renderApplicationDetail({
+    entity,
+    onField,
+    onSave,
+    onAskWithdraw,
+    onWithdraw,
+    onAskGiveUp,
+    onGiveUp,
+    onCancelGiveUp,
+    onCancelWithdraw,
+    onGoogleCalendar,
+    onDownloadIcs,
+  }) {
     const { application, status, error } = entity
     const isBusy = status === "saving" || status === "withdrawing"
     const motivation = getFieldValue(entity, "motivation", "")
@@ -54,7 +49,6 @@ export const ApplicationDetail = {
       category: application?.category ?? "wedding",
       children: [
         html`
-          ${BackButton.render({ fallback: paths.applications }, api)}
           ${
             PageStatus.render({
               isError: status !== "loading" && !application,

@@ -67,6 +67,18 @@ export const EventList = {
     deactivateRealtime(`${entity.id}:applications`)
   },
 
+  renderHeader(entity, api) {
+    return {
+      title: "Events",
+      isBrand: true,
+      actions: this.renderHeaderActions({
+        hasActiveFilters:
+          entity.activeRegion !== "all" || entity.activePeriod !== "all",
+        onToggleFilters: () => api.notify(`#${entity.id}:filtersToggle`),
+      }),
+    }
+  },
+
   render(entity, api) {
     const id = entity.id
     const myEventIds = new Set(entity.myEvents.map((event) => event.id))
@@ -99,8 +111,6 @@ export const EventList = {
       activePeriod: entity.activePeriod,
       favoriteRegions: entity.favoriteRegions,
       isFiltersVisible: entity.isFiltersVisible,
-      hasActiveFilters:
-        entity.activeRegion !== "all" || entity.activePeriod !== "all",
       onSelectOwner: (owner) => api.notify(`#${id}:ownerSelect`, owner),
       onEdit: (event_id) =>
         api.notify("#router:navigate", paths.editEvent(event_id)),

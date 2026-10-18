@@ -5,7 +5,6 @@ import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { MaterialIcon } from "@inglorious/ui/material-icon"
-import { Menu } from "@inglorious/ui/menu"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
@@ -30,20 +29,18 @@ import styles from "./style.module.css"
 
 export const Profile = {
   render(props, api) {
-    this.renderProfile(props, api)
+    return this.renderProfile(props, api)
   },
 
   renderProfile({
     entity,
-    onEdit,
     onCancel,
     onField,
     onSave,
+    onEdit,
     onLogout,
     onOpenApplications,
     onOpenRanks,
-    onToggleMenu,
-    onCloseMenu,
     onFavoriteInput,
     onFavoriteAdd,
     onFavoriteRemove,
@@ -71,7 +68,6 @@ export const Profile = {
             html`
               ${Flex.render({
                 justify: "center",
-                className: styles.header,
                 children: [
                   Avatar.render({
                     initials: initials(profile.full_name),
@@ -80,47 +76,6 @@ export const Profile = {
                       "linear-gradient(135deg, #6b7a5e, #24402f)",
                     textColor: "#fffdf7",
                   }),
-                  IconButton.render({
-                    icon: MaterialIcon.render({
-                      name: "settings",
-                      size: "lg",
-                    }),
-                    ariaLabel: "Profile options",
-                    variant: "ghost",
-                    color: "secondary",
-                    className: styles.gearButton,
-                    onClick: onToggleMenu,
-                  }),
-                  entity.isMenuOpen
-                    ? html`
-                        <div
-                          class=${styles.menuBackdrop}
-                          @click=${onCloseMenu}
-                        ></div>
-                        ${Menu.render({
-                          isOpen: true,
-                          className: styles.menu,
-                          items: [
-                            {
-                              icon: MaterialIcon.render({
-                                name: "edit",
-                                size: "lg",
-                              }),
-                              label: "Edit profile",
-                              onClick: onEdit,
-                            },
-                            {
-                              icon: MaterialIcon.render({
-                                name: "close",
-                                size: "lg",
-                              }),
-                              label: "Log out",
-                              onClick: onLogout,
-                            },
-                          ],
-                        })}
-                      `
-                    : "",
                 ],
               })}
               <h2 class=${styles.name}>${profile.full_name}</h2>
@@ -167,91 +122,93 @@ export const Profile = {
                 entity.isEditing
                   ? html`
                       <h3 class=${styles.sectionTitle}>Edit profile</h3>
-                      ${this.renderEditField({
-                        label: "Full name",
-                        field: "full_name",
-                        value: shown.full_name,
-                        placeholder: "Your name",
-                        onField,
-                      })}
-                      ${this.renderEditField({
-                        label: "Website",
-                        field: "website",
-                        icon: "https://",
-                        value: (shown.website ?? "").replace(
-                          /^https?:\/\//i,
-                          "",
-                        ),
-                        placeholder: "your-site.com",
-                        lowercase: true,
-                        inputmode: "url",
-                        onField,
-                      })}
-                      ${this.renderEditField({
-                        label: "Instagram",
-                        field: "instagram_handle",
-                        icon: "@",
-                        value: (shown.instagram_handle ?? "").replace(
-                          /^@+/,
-                          "",
-                        ),
-                        placeholder: "handle",
-                        lowercase: true,
-                        onField,
-                      })}
                       ${Flex.render({
                         direction: "column",
-                        className: styles.field,
-                        children: renderCountry(),
-                      })}
-                      ${
-                        shown.country === ITALY
-                          ? Flex.render({
-                              direction: "column",
-                              className: styles.field,
-                              children: renderRegion(),
-                            })
-                          : this.renderEditField({
-                              label: "Region",
-                              field: "region",
-                              value: shown.region,
-                              placeholder: "Region (optional)",
-                              onField,
-                            })
-                      }
-                      <div class=${styles.field}>
-                        ${FavoriteRegions.render({
-                          regions: shown.favorite_regions ?? [],
-                          input: entity.favoriteInput ?? "",
-                          inputId: "profile-favorite-region",
-                          onInput: onFavoriteInput,
-                          onAdd: onFavoriteAdd,
-                          onRemove: onFavoriteRemove,
-                          renderChoice: renderFavoriteChoice,
-                        })}
-                      </div>
-                      ${ErrorAlert.render({
-                        error: status === "error" && error ? error : null,
-                        className: styles.error,
-                      })}
-                      ${Button.render({
-                        children: saving ? "Saving…" : "Save profile",
-                        color: "primary",
-                        shape: "pill",
-                        size: "md",
-                        isFullWidth: true,
-                        isDisabled: saving,
-                        className: styles.editButton,
-                        onClick: onSave,
-                      })}
-                      ${Button.render({
-                        children: "Cancel",
-                        variant: "outline",
-                        shape: "pill",
-                        size: "md",
-                        isFullWidth: true,
-                        className: styles.cancelButton,
-                        onClick: onCancel,
+                        gap: "md",
+                        className: styles.editForm,
+                        children: html`
+                          ${this.renderEditField({
+                            label: "Full name",
+                            field: "full_name",
+                            value: shown.full_name,
+                            placeholder: "Your name",
+                            onField,
+                          })}
+                          ${this.renderEditField({
+                            label: "Website",
+                            field: "website",
+                            icon: "https://",
+                            value: (shown.website ?? "").replace(
+                              /^https?:\/\//i,
+                              "",
+                            ),
+                            placeholder: "your-site.com",
+                            lowercase: true,
+                            inputmode: "url",
+                            onField,
+                          })}
+                          ${this.renderEditField({
+                            label: "Instagram",
+                            field: "instagram_handle",
+                            icon: "@",
+                            value: (shown.instagram_handle ?? "").replace(
+                              /^@+/,
+                              "",
+                            ),
+                            placeholder: "handle",
+                            lowercase: true,
+                            onField,
+                          })}
+                          ${Flex.render({
+                            direction: "column",
+                            className: styles.field,
+                            children: renderCountry(),
+                          })}
+                          ${
+                            shown.country === ITALY
+                              ? Flex.render({
+                                  direction: "column",
+                                  className: styles.field,
+                                  children: renderRegion(),
+                                })
+                              : this.renderEditField({
+                                  label: "Region",
+                                  field: "region",
+                                  value: shown.region,
+                                  placeholder: "Region (optional)",
+                                  onField,
+                                })
+                          }
+                          ${FavoriteRegions.render({
+                            regions: shown.favorite_regions ?? [],
+                            input: entity.favoriteInput ?? "",
+                            inputId: "profile-favorite-region",
+                            onInput: onFavoriteInput,
+                            onAdd: onFavoriteAdd,
+                            onRemove: onFavoriteRemove,
+                            renderChoice: renderFavoriteChoice,
+                          })}
+                          ${ErrorAlert.render({
+                            error: status === "error" && error ? error : null,
+                          })}
+                          ${Button.render({
+                            children: saving ? "Saving…" : "Save profile",
+                            color: "primary",
+                            shape: "pill",
+                            size: "md",
+                            isFullWidth: true,
+                            isDisabled: saving,
+                            onClick: onSave,
+                          })}
+                          ${Button.render({
+                            children: "Cancel",
+                            variant: "outline",
+                            shape: "pill",
+                            size: "md",
+                            isFullWidth: true,
+                            onClick: onCancel,
+                          })}
+                        `,
                       })}
                     `
                   : html`
@@ -276,6 +233,7 @@ export const Profile = {
                         )}
                         ${this.renderRow("Sub-role", profile.sub_role)}
                       </dl>
+                      ${this.renderAccountActions({ onEdit, onLogout })}
                     `
               }
             `
@@ -337,26 +295,51 @@ export const Profile = {
     inputmode,
     onField,
   }) {
-    return html`
-      <div class=${styles.field}>
-        ${Input.render({
-          id: `profile-${field}`,
-          label,
-          icon,
-          inputType: "text",
-          value: value ?? "",
-          placeholder,
+    return Input.render({
+      id: `profile-${field}`,
+      label,
+      icon,
+      inputType: "text",
+      value: value ?? "",
+      placeholder,
+      isFullWidth: true,
+      onChange: (raw) =>
+        onField({ field, value: lowercase ? raw.toLowerCase() : raw }),
+      spellcheck: "false",
+      autocapitalize: "none",
+      autocorrect: "off",
+      autocomplete: "off",
+      inputmode: inputmode ?? "text",
+    })
+  },
+
+  // Editing is the profile's main action; logging out is there when you need
+  // it, quieter, and never in the way.
+  renderAccountActions({ onEdit, onLogout }) {
+    return Flex.render({
+      direction: "column",
+      gap: "sm",
+      className: styles.accountActions,
+      children: [
+        Button.render({
+          children: "Edit profile",
+          variant: "outline",
+          shape: "pill",
+          size: "md",
           isFullWidth: true,
-          onChange: (raw) =>
-            onField({ field, value: lowercase ? raw.toLowerCase() : raw }),
-          spellcheck: "false",
-          autocapitalize: "none",
-          autocorrect: "off",
-          autocomplete: "off",
-          inputmode: inputmode ?? "text",
-        })}
-      </div>
-    `
+          onClick: onEdit,
+        }),
+        Button.render({
+          children: "Log out",
+          variant: "ghost",
+          color: "secondary",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          onClick: onLogout,
+        }),
+      ],
+    })
   },
 
   renderTierBlock({ stats, tiers, onOpenRanks }) {

@@ -5,7 +5,6 @@ import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError } from "@inglorious/web/form"
 
-import { BackButton } from "../../common/back-button/index.js"
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
@@ -16,7 +15,6 @@ import {
   DATETIME_LOCAL_LENGTH,
   SINGULAR,
 } from "../../constants/index.js"
-import { paths } from "../../routes.js"
 import styles from "./style.module.css"
 
 export const ApplicationsReceived = {
@@ -24,24 +22,21 @@ export const ApplicationsReceived = {
     return this.renderApplicationsReceived(props, api)
   },
 
-  renderApplicationsReceived(
-    {
-      entity,
-      onToggle,
-      onSelect,
-      onReject,
-      onUnshortlist,
-      onUnreject,
-      onAskAssign,
-      onAssign,
-      onCancelAssign,
-      onAskReopen,
-      onReopenDeadline,
-      onReopen,
-      onCancelReopen,
-    },
-    api,
-  ) {
+  renderApplicationsReceived({
+    entity,
+    onToggle,
+    onSelect,
+    onReject,
+    onUnshortlist,
+    onUnreject,
+    onAskAssign,
+    onAssign,
+    onCancelAssign,
+    onAskReopen,
+    onReopenDeadline,
+    onReopen,
+    onCancelReopen,
+  }) {
     const { items, status, error } = entity
     const selected_count = items.filter(
       (i) => i.status === "shortlisted",
@@ -54,13 +49,7 @@ export const ApplicationsReceived = {
       wide: true,
       children: [
         html`
-          ${BackButton.render({ fallback: paths.events }, api)}
-
           <header class=${styles.header}>
-            <span class=${styles.title}>${entity.event_title}</span>
-            <p class=${styles.subtitle}>
-              ${selected_count} shortlisted · ${items.length} received
-            </p>
             ${
               entity.event_status === "assigned" ||
               entity.event_status === "closed"

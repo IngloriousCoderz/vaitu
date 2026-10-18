@@ -115,17 +115,14 @@
      one is referenced from @inglorious/ui at the point of use instead.
      ======================================== */
 
-  /* Width of the centred phone column. Every .page, the tab bar and the
-     filter sheet cap here. */
+  /* Width of the narrow centred column that login, onboarding and not found
+     keep from tablet up. A phone always fills its width. */
   --vpage-max-width: 26.875rem;
 
-  /* Tablet and up: the bottom bar leaves, and a drawer takes navigation.
-     The package pins that drawer open at 64rem, which already includes
-     iPad Pro 13 (1032px portrait, 1376px landscape). The fixed sidebar
-     waits until 87.5rem, past that landscape. 16rem is the drawer width. */
+  /* Tablet and up: the bottom bar leaves, and the package drawer takes
+     navigation. It slides over the page below 64rem and is a sidebar from
+     there, as the package has it. */
   --vlayout-wide: 48rem;
-  --vlayout-desktop: 87.5rem;
-  --vlayout-drawer: 16rem;
 
   /* Horizontal gutter either side of the column's content. */
   --vpage-gutter: 1.125rem;

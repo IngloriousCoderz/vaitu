@@ -9,7 +9,7 @@ export function calendarLinks({ title, eventDate, location }) {
     action: "TEMPLATE",
     text: title,
     dates: `${start}/${end}`,
-    details: "Booked via vaitu",
+    details: "Booked via Vaitu",
     location,
   })
   const ics = [
@@ -23,7 +23,7 @@ export function calendarLinks({ title, eventDate, location }) {
     `DTEND;VALUE=DATE:${end}`,
     `SUMMARY:${escapeIcs(title)}`,
     `LOCATION:${escapeIcs(location)}`,
-    "DESCRIPTION:Booked via vaitu",
+    "DESCRIPTION:Booked via Vaitu",
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n")

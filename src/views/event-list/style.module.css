@@ -15,35 +15,6 @@
   padding: var(--vpage-top) var(--vpage-inline, var(--vpage-gutter)) 0;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 0.125rem 0.875rem;
-}
-
-.logo {
-  font-family: var(--vtitle-font);
-  font-size: var(--iw-font-size-3xl);
-  letter-spacing: 0.05em;
-  color: var(--vaccent);
-  font-weight: var(--vtitle-weight);
-}
-
-.logoDot {
-  color: var(--vlogo-dot);
-  margin-left: 0.1875rem;
-}
-
-/* Ghost variant: colour and tap target only. The package owns the reset,
-   focus ring and press state. The height-floor opt-out is the global
-   .vaitu-compact, since a bare single class here would lose to
-   button.iw-button in public/style.css. */
-.iconButton {
-  border-radius: var(--iw-radius-md);
-  padding: 0.375rem;
-}
-
 .ownerSwitch {
   padding: 0 0.125rem 0.875rem;
 }
@@ -109,15 +80,18 @@
 /* Muted like every icon button until a filter is on, which is worth
    showing. The secondary colour is set at (0,2,1) in public/style.css, so
    this has to outrank it. */
-button:global(.iw-button.iw-button-secondary).iconButtonActive {
+button:global(.iw-button.iw-button-secondary).filterActive {
   --iw-button-bg: var(--vchip-active-bg);
   --iw-button-color: var(--vchip-active-bg);
 }
 
+/* A modal covers the whole app, the sidebar included, so it takes the layer
+   the package uses for its own Dialog. On the backdrop layer below it, the
+   drawer painted over the left of the sheet. */
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: var(--iw-z-modal-backdrop);
+  z-index: var(--iw-z-modal);
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -132,7 +106,7 @@ button:global(.iw-button.iw-button-secondary).iconButtonActive {
 }
 
 .sheet {
-  width: min(var(--vpage-max-width), 100%);
+  width: 100%;
   max-height: 70dvh;
   overflow-y: auto;
   background: var(--vbg);
@@ -276,41 +250,24 @@ button.miniButton {
 }
 
 /* Wide header follows the Airbnb / Booking bar. Categories sit in the top
-   middle, the search and its filter sit together in the center, and the
-   styles are their own row. Explore / My events is centered under that,
-   above the cards. The phone stack above is left as it is. The bell in the
-   shell already owns the top-right corner, so the filter does not. */
+   middle, the search in the center, and the styles are their own row.
+   Explore / My events is centered under that, above the cards. The phone
+   stack above is left as it is. The logo and the filter live in the app
+   bar. */
 @media (min-width: 48rem) {
   .stickyTop {
     display: grid;
-    grid-template-columns: 1fr auto auto 1fr;
+    grid-template-columns: 1fr auto 1fr;
     grid-template-areas:
-      "logo categories categories ."
-      ". search filter ."
-      "chips chips chips chips"
-      "switch switch switch switch";
+      ". categories ."
+      ". search ."
+      "chips chips chips"
+      "switch switch switch";
     align-items: center;
     column-gap: var(--iw-space-3);
     row-gap: var(--iw-space-6);
     padding-top: var(--iw-space-2);
     padding-bottom: var(--iw-space-8);
-  }
-
-  .header {
-    display: contents;
-  }
-
-  .logo {
-    grid-area: logo;
-    justify-self: start;
-  }
-
-  .iconButton {
-    grid-area: filter;
-    justify-self: start;
-    width: 3rem;
-    height: 3rem;
-    border-radius: var(--iw-radius-full);
   }
 
   .categoryRow {
@@ -328,7 +285,7 @@ button.miniButton {
 
   .stickyTop :global(.vaitu-search) {
     grid-area: search;
-    justify-self: end;
+    justify-self: center;
     width: 32rem;
   }
 

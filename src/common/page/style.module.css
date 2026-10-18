@@ -9,7 +9,6 @@
 :global(.iw-flex).frame {
   width: auto;
   min-width: 0;
-  max-width: var(--vpage-max-width);
   margin: 0 auto;
   min-height: 100%;
   background: var(--vbg);
@@ -42,8 +41,17 @@
   text-align: center;
 }
 
-/* Lists opt in. From tablet up the frame stops being the phone column and
-   fills the space beside the drawer. --vpage-inline is the side inset those
+/* A phone fills its whole width. From tablet up, a page that is neither a
+   list nor a reading column (login, onboarding, not found) stays a narrow
+   centred column, so its form does not stretch across the screen. */
+@media (min-width: 48rem) {
+  :global(.iw-flex).frame {
+    max-width: var(--vpage-max-width);
+  }
+}
+
+/* Lists opt in. From tablet up the frame stops being the narrow column and
+   fills the space beside the drawer, up to the container's 80rem. --vpage-inline is the side inset those
    pages use; the sticky bars cancel the same value so their background still
    reaches the edges. */
 @media (min-width: 48rem) {

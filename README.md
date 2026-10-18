@@ -1,6 +1,6 @@
-# vaitu
+# Vaitu
 
-**vaitu** is an app for handing off jobs you can't take. Say you're a wedding photographer and you can't attend a wedding you've been booked for: you publish the event on vaitu, other photographers apply, and you pick the best candidate and pass the job on to them.
+**Vaitu** is an app for handing off jobs you can't take. Say you're a wedding photographer and you can't attend a wedding you've been booked for: you publish the event on Vaitu, other photographers apply, and you pick the best candidate and pass the job on to them.
 
 The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pronounce and sounds good in other languages too.
 
@@ -12,7 +12,7 @@ The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pro
 - **Voice-to-form**: instead of filling in the whole event form by hand, record a voice message and the fields are filled in automatically (speech-to-text with Deepgram, field extraction with OpenRouter). See [Voice AI](#voice-ai-transcription--field-parsing).
 - **PWA and native apps**: runs in the browser as a PWA and as a hybrid Android/iOS app via Capacitor.
 
-vaitu started with wedding photographers in mind, and is expanding to other kinds of professionals and events, such as sound technicians at a festival.
+Vaitu started with wedding photographers in mind, and is expanding to other kinds of professionals and events, such as sound technicians at a festival.
 
 ## Tech stack
 

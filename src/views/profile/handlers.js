@@ -13,17 +13,8 @@ import {
   uniqueRegions,
 } from "../../data/regions/resolve.js"
 
-export function menuToggle(entity) {
-  entity.isMenuOpen = !entity.isMenuOpen
-}
-
-export function menuClose(entity) {
-  entity.isMenuOpen = false
-}
-
 export function editStart(entity, _, api) {
   entity.isEditing = true
-  entity.isMenuOpen = false
   const country = entity.profile?.country ?? ""
   entity.initialValues = {
     full_name: entity.profile?.full_name ?? "",

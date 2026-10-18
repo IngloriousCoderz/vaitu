@@ -71,7 +71,6 @@ export const EventList = {
     activePeriod,
     favoriteRegions,
     isFiltersVisible,
-    hasActiveFilters,
     onSelectOwner,
     onEdit,
     onAskDelete,
@@ -111,22 +110,6 @@ export const EventList = {
       children: [
         html`
           <div class=${styles.stickyTop}>
-            <header class=${styles.header}>
-              <span class=${styles.logo}
-                >vaitu<span class=${styles.logoDot}>•</span></span
-              >
-              ${IconButton.render({
-                icon: MaterialIcon.render({ name: "instant_mix", size: "lg" }),
-                variant: "ghost",
-                color: "secondary",
-                ariaLabel: "Filters",
-                className: hasActiveFilters
-                  ? `vaitu-compact ${styles.iconButton} ${styles.iconButtonActive}`
-                  : `vaitu-compact ${styles.iconButton}`,
-                onClick: onToggleFilters,
-              })}
-            </header>
-
             <div class=${styles.ownerSwitch}>
               ${ButtonGroup.render({
                 buttons: owners.map((owner) =>
@@ -342,6 +325,17 @@ export const EventList = {
             })
           : "",
       ],
+    })
+  },
+
+  renderHeaderActions({ hasActiveFilters, onToggleFilters }) {
+    return IconButton.render({
+      icon: MaterialIcon.render({ name: "instant_mix", size: "lg" }),
+      variant: "ghost",
+      color: "secondary",
+      ariaLabel: "Filters",
+      className: hasActiveFilters ? styles.filterActive : "",
+      onClick: onToggleFilters,
     })
   },
 

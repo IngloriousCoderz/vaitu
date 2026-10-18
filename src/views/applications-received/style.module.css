@@ -10,13 +10,6 @@
   padding: var(--vpage-top) var(--vpage-inline, var(--vpage-gutter)) 0.625rem;
 }
 
-.title {
-  font-family: var(--vtitle-font);
-  font-weight: var(--vtitle-weight);
-  font-size: var(--iw-font-size-2xl);
-  margin: 0;
-}
-
 .field {
   display: flex;
   flex-direction: column;
@@ -60,12 +53,6 @@
   margin: 0;
   font-weight: var(--iw-font-weight-semibold);
   text-align: right;
-}
-
-.subtitle {
-  margin: var(--iw-space-1) 0 var(--iw-space-3);
-  font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
 }
 
 .list {

@@ -1,48 +1,7 @@
-/* The package header is a Flex with padding none, so the name sat on the
-   top edge. The title has to grow, or the row stays as wide as the text. */
+/* The package header is a Flex with padding none, so the brand sat on the
+   edge. It takes the app bar's height, so the two bottom borders meet, and
+   leaves the collapsed rail room for the 36px mark. */
 :global(.iw-flex.iw-flex-padding-none.iw-drawer-header) {
-  padding: var(--iw-space-5) var(--iw-space-4);
-}
-
-:global(.iw-drawer-title) {
-  flex: 1;
-  min-width: 0;
-}
-
-/* The package's own close button, as compact as the app's other header
-   icons. It is secondary already, so it is muted like every icon button.
-   app/style.module.css decides where it shows. */
-:global(.iw-drawer.iw-drawer-left) :global(button.iw-drawer-close) {
-  flex: 0 0 auto;
-  width: auto;
-  height: auto;
-  min-height: 0;
-  /* The package puts the 24px icon straight in the button, without the 1em
-     box an IconButton wraps it in, so this is less padding for the same
-     30px target the old X had. */
-  padding: 0.125rem;
-}
-
-.identity {
-  min-width: 0;
-}
-
-.name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--vtitle-font);
-  font-weight: var(--vtitle-weight);
-  font-size: var(--iw-font-size-lg);
-  line-height: var(--iw-line-height-tight);
-  color: var(--vink);
-}
-
-.body {
-  min-height: 100%;
-}
-
-/* Pushes logout to the bottom of the drawer. Flex has no prop for that. */
-.logout {
-  margin-top: auto;
+  min-height: var(--iw-space-16);
+  padding: 0 var(--iw-space-3);
 }

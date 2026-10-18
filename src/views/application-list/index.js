@@ -28,6 +28,10 @@ export const ApplicationList = {
 
   routeChange: pageRouteChange(open, close, (payload) => payload.query.status),
 
+  renderHeader() {
+    return { title: "My Applications" }
+  },
+
   render(entity, api) {
     const id = entity.id
     return this.renderApplicationList({

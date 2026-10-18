@@ -1,34 +1,5 @@
-.header {
-  position: relative;
-}
-
-button.gearButton {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0.375rem;
-  min-height: 0;
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Anchoring only. Surface, items and hover state come from the package
-   (.iw-menu / .iw-menu-item), which already match our sizing. */
-.menu {
-  position: absolute;
-  top: 2.125rem;
-  right: 0;
-  z-index: var(--iw-z-popover);
-  min-width: 10rem;
-  border-radius: var(--iw-radius-2xl);
-  padding: 0.375rem;
-}
-
-.menuBackdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--iw-z-modal-backdrop);
-  cursor: default;
+.accountActions {
+  margin-top: var(--iw-space-6);
 }
 
 .name {
@@ -132,15 +103,15 @@ button.ranksHelp {
   font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
   text-align: left;
-  margin-top: var(--iw-space-3);
 }
 
-.error {
-  /* Spacing only. Colour, surface, radius, padding and font-size come from
-     the iw Alert calibrated as .vaitu-alert in public/style.css. */
-  margin: var(--iw-space-3) 0 0;
+/* One column, one gap: fields, the error and the buttons are spaced by the
+   Flex, not by margins of their own. The page centres its text; a form
+   reads from the left. */
+.editForm {
   text-align: left;
 }
+
 :global(.iw-flex.iw-flex-gap-none.iw-flex-padding-none).row {
   gap: var(--iw-space-3);
   padding: 0.6875rem 0;
@@ -160,14 +131,6 @@ button.ranksHelp {
 .rowLink {
   color: var(--vaccent);
   text-decoration: none;
-}
-
-.editButton {
-  margin-top: var(--iw-space-3);
-}
-
-.cancelButton {
-  margin-top: 0.625rem;
 }
 
 .stats {

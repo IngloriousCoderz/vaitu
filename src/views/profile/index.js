@@ -24,7 +24,6 @@ export const Profile = {
     entity.profile ??= null
     entity.stats ??= null
     entity.isEditing ??= false
-    entity.isMenuOpen ??= false
     entity.initialValues = {
       full_name: "",
       website: "",
@@ -60,11 +59,14 @@ export const Profile = {
 
   routeChange: pageRouteChange(open, close),
 
+  renderHeader() {
+    return { title: "Profile" }
+  },
+
   render(entity, api) {
     const id = entity.id
     return this.renderProfile({
       entity,
-      onEdit: () => api.notify(`#${id}:editStart`),
       onCancel: () => api.notify(`#${id}:editCancel`),
       onField: ({ field, value }) =>
         api.notify(`#${id}:profileFieldSet`, { field, value }),
@@ -72,10 +74,9 @@ export const Profile = {
       onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
       onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
       onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
+      onEdit: () => api.notify(`#${id}:editStart`),
       onLogout: () => api.notify(`#${id}:logout`),
       onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
-      onToggleMenu: () => api.notify(`#${id}:menuToggle`),
-      onCloseMenu: () => api.notify(`#${id}:menuClose`),
       onOpenApplications: (status) =>
         api.notify("#router:navigate", paths.applicationsByStatus(status)),
       renderCountry: () => api.render("country-profile"),
@@ -93,5 +94,4 @@ function close(entity) {
   entity.status = "idle"
   entity.error = null
   entity.isEditing = false
-  entity.isMenuOpen = false
 }

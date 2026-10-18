@@ -9,6 +9,7 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
+import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
@@ -67,6 +68,10 @@ export const ApplicationDetail = {
   routeChange: pageRouteChange(open, close, (payload) => ({
     application_id: payload.params.applicationId,
   })),
+
+  renderHeader(entity) {
+    return { title: entity.application?.title ?? "", back: paths.applications }
+  },
 
   render(entity, api) {
     const id = entity.id

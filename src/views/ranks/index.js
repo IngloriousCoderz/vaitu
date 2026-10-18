@@ -1,4 +1,5 @@
 import { pageRouteChange } from "../../common/page-route.js"
+import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { Ranks as renderers } from "./template.js"
 
@@ -16,6 +17,10 @@ export const Ranks = {
   },
 
   routeChange: pageRouteChange(open, close),
+
+  renderHeader() {
+    return { title: "Ranks", back: paths.profile }
+  },
 
   render(entity, api) {
     return this.renderRanks(

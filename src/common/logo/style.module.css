@@ -1,0 +1,26 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-2);
+}
+
+/* 24px high; the mark is half again as wide. */
+.mark {
+  display: block;
+  height: 1.5rem;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.name {
+  font-family: var(--vtitle-font);
+  font-size: var(--iw-font-size-2xl);
+  letter-spacing: 0.05em;
+  color: var(--vaccent);
+  font-weight: var(--vtitle-weight);
+  line-height: 1;
+}
+
+:global(.iw-drawer-collapsed) .name {
+  display: none;
+}

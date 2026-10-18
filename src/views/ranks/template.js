@@ -3,11 +3,9 @@ import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
-import { BackButton } from "../../common/back-button/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
-import { paths } from "../../routes.js"
 import { capitalize } from "../../text/index.js"
 import styles from "./style.module.css"
 
@@ -16,27 +14,16 @@ export const Ranks = {
     return this.renderRanks(props, api)
   },
 
-  renderRanks({ entity }, api) {
+  renderRanks({ entity }) {
     const { status, error, tiers, mine } = entity
     const progress =
       status === "ready" && tiers ? tierProgress(mine?.points, tiers) : null
 
     return Page.render({
-      variant: "sticky",
+      variant: "document",
       read: true,
       children: [
         html`
-          ${Flex.render({
-            element: "header",
-            direction: "column",
-            align: "start",
-            className: styles.header,
-            children: [
-              BackButton.render({ fallback: paths.profile }, api),
-              html`<span class=${styles.title}>Ranks</span>`,
-            ],
-          })}
-
           <p class=${styles.subtitle}>
             Earn points with every application. Higher ranks show on your
             profile.

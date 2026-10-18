@@ -3,6 +3,7 @@ import { Form, getFieldError } from "@inglorious/web/form"
 import { isTicking, startTick } from "../../api/ticker.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { DEFAULT_MAX_APPLICANTS, ZERO } from "../../constants/index.js"
+import { paths } from "../../routes.js"
 import { validateEvent } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
 import { clearPendingAudio, releaseRecorder } from "./handlers.js"
@@ -93,6 +94,19 @@ export const EventCreate = {
   routeChange: pageRouteChange(open, close, (payload) => ({
     event_id: payload.params.eventId,
   })),
+
+  renderHeader(entity, api) {
+    const id = entity.id
+    return {
+      title: entity.editing_event_id ? "Edit event" : "New event",
+      back: paths.events,
+      actions: this.renderHeaderActions({
+        entity,
+        onRecordStop: () => api.notify(`#${id}:audioRecordStop`),
+        onOpenAudio: () => api.notify(`#${id}:audioOpen`),
+      }),
+    }
+  },
 
   render(entity, api) {
     const id = entity.id

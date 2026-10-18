@@ -9,32 +9,6 @@
   padding: var(--vpage-top) 0.125rem 0.625rem;
 }
 
-button.micButton {
-  width: 2.75rem;
-  height: 2.75rem;
-  border: none;
-  border-radius: var(--iw-radius-full);
-  background: var(--vchip-active-bg);
-  box-shadow: var(--iw-shadow-xl);
-  cursor: pointer;
-  padding: 0;
-  min-height: 0;
-  color: var(--vchip-active-text);
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-button.micButton:active {
-  background: var(--vchip-active-bg);
-  filter: brightness(0.92);
-}
-
-.title {
-  font-family: var(--vtitle-font);
-  font-weight: var(--vtitle-weight);
-  font-size: var(--iw-font-size-2xl);
-}
-
 :global(.iw-flex.iw-flex-gap-none.iw-flex-padding-none).chips {
   gap: 0.5625rem;
   overflow-x: auto;
