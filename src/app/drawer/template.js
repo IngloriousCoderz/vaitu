@@ -1,5 +1,3 @@
-import "./style.module.css"
-
 import { Drawer } from "@inglorious/ui/drawer"
 import { List } from "@inglorious/ui/list"
 import { MaterialIcon } from "@inglorious/ui/material-icon"

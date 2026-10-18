@@ -7,6 +7,15 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <!-- The icon font, fetched with the HTML rather than after the first
+         render. Same file as src/styles/icon-font.css; Vite hashes both. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="./node_modules/@fontsource/material-symbols-outlined/files/material-symbols-outlined-latin-400-normal.woff2"
+    />
     <link rel="stylesheet" href="/style.css" />
     <title>Vaitu — Find wedding work</title>
   </head>

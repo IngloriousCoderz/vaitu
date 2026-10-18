@@ -1,7 +1,0 @@
-/* The package header is a Flex with padding none, so the brand sat on the
-   edge. It takes the app bar's height, so the two bottom borders meet, and
-   leaves the collapsed rail room for the 36px mark. */
-:global(.iw-flex.iw-flex-padding-none.iw-drawer-header) {
-  min-height: var(--iw-space-16);
-  padding: 0 var(--iw-space-3);
-}
