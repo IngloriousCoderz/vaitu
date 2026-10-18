@@ -1,16 +1,23 @@
+import addOutline from "@iconify-icons/material-symbols/add-outline"
+import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
+import eventOutline from "@iconify-icons/material-symbols/event-outline"
+import personOutline from "@iconify-icons/material-symbols/person-outline"
 import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
 import { Fab as IwFab } from "@inglorious/ui/fab"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
+import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 
 import { labelled, t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const tabs = [
-  labelled("nav.events", { value: "events", icon: "event" }),
-  labelled("nav.applications", { value: "applications", icon: "assignment" }),
-  labelled("nav.new", { value: "new", icon: "add" }),
-  labelled("nav.profile", { value: "profile", icon: "person" }),
+  labelled("nav.events", { value: "events", icon: eventOutline }),
+  labelled("nav.applications", {
+    value: "applications",
+    icon: assignmentOutline,
+  }),
+  labelled("nav.new", { value: "new", icon: addOutline }),
+  labelled("nav.profile", { value: "profile", icon: personOutline }),
 ]
 
 // Shared bottom tab bar. Stays mounted at App level so hide/show animates
@@ -27,7 +34,7 @@ export const TabBar = {
           actions: tabs.map((tab) => ({
             value: tab.value,
             label: tab.label,
-            icon: MaterialIcon.render({ name: tab.icon, size: "lg" }),
+            icon: Icon.render({ icon: tab.icon, size: "lg" }),
           })),
         })}
       </nav>
@@ -45,7 +52,7 @@ export const TabBar = {
 export const Fab = {
   render({ onClick, low, hidden }) {
     return IwFab.render({
-      children: MaterialIcon.render({ name: "add", size: "lg" }),
+      children: Icon.render({ icon: addOutline, size: "lg" }),
       size: "lg",
       color: "primary",
       shape: "round",

@@ -1,6 +1,7 @@
+import trophyOutline from "@iconify-icons/material-symbols/trophy-outline"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
+import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 
 import { Card } from "../../common/event-card/index.js"
@@ -108,7 +109,7 @@ export const ApplicationList = {
             ${
               isWinner
                 ? html`<span class=${styles.winnerTrophy}>
-                    ${MaterialIcon.render({ name: "trophy", size: "lg" })}
+                    ${Icon.render({ icon: trophyOutline, size: "lg" })}
                   </span>`
                 : StatusChip.render({ status: application.applicationStatus })
             }

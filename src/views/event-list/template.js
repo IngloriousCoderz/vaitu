@@ -1,10 +1,15 @@
+import deleteOutline from "@iconify-icons/material-symbols/delete-outline"
+import editOutline from "@iconify-icons/material-symbols/edit-outline"
+import instantMixOutline from "@iconify-icons/material-symbols/instant-mix-outline"
+import searchOutline from "@iconify-icons/material-symbols/search-outline"
+import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 import { Button } from "@inglorious/ui/button"
 import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
+import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
@@ -154,7 +159,7 @@ export const EventList = {
                 isFullWidth: true,
                 placeholder: t("events.search"),
                 value: query,
-                icon: MaterialIcon.render({ name: "search", size: "lg" }),
+                icon: Icon.render({ icon: searchOutline, size: "lg" }),
                 onChange: (value) => onSearch(value),
               })}
             </div>
@@ -179,8 +184,8 @@ export const EventList = {
                           ${t("events.region")}
                         </h3>
                         ${IconButton.render({
-                          icon: MaterialIcon.render({
-                            name: "settings",
+                          icon: Icon.render({
+                            icon: settingsOutline,
                             size: "lg",
                           }),
                           ariaLabel: t("events.editFavorites"),
@@ -305,7 +310,7 @@ export const EventList = {
               ${
                 event.status === "open"
                   ? IconButton.render({
-                      icon: MaterialIcon.render({ name: "edit", size: "lg" }),
+                      icon: Icon.render({ icon: editOutline, size: "lg" }),
                       ariaLabel: t("events.edit"),
                       className: `${styles.miniButton} ${styles.editTint}`,
                       onClick: () => onEdit(event.id),
@@ -313,7 +318,7 @@ export const EventList = {
                   : ""
               }
               ${IconButton.render({
-                icon: MaterialIcon.render({ name: "delete", size: "lg" }),
+                icon: Icon.render({ icon: deleteOutline, size: "lg" }),
                 ariaLabel: t("events.delete"),
                 className: `${styles.miniButton} ${styles.deleteTint}`,
                 onClick: () => onAskDelete(event.id),
@@ -336,7 +341,7 @@ export const EventList = {
 
   renderHeaderActions({ hasActiveFilters, onToggleFilters }) {
     return IconButton.render({
-      icon: MaterialIcon.render({ name: "instant_mix", size: "lg" }),
+      icon: Icon.render({ icon: instantMixOutline, size: "lg" }),
       variant: "ghost",
       color: "secondary",
       ariaLabel: t("events.filters"),

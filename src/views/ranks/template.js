@@ -1,5 +1,9 @@
+import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
+import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-leaderboard-outline"
+import starOutline from "@iconify-icons/material-symbols/star-outline"
+import trophyOutline from "@iconify-icons/material-symbols/trophy-outline"
 import { Flex } from "@inglorious/ui/flex"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
+import { Icon } from "@inglorious/ui/icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
@@ -39,8 +43,8 @@ export const Ranks = {
                         element: "span",
                         isInline: true,
                         className: `${styles.heroMedal} ${progress.current ? styles[`${progress.current}Medal`] : ""}`,
-                        children: MaterialIcon.render({
-                          name: "social_leaderboard",
+                        children: Icon.render({
+                          icon: socialLeaderboardOutline,
                           size: "lg",
                         }),
                       }),
@@ -89,7 +93,7 @@ export const Ranks = {
                               gap: "sm",
                               className: styles.rankName,
                               children: html`
-                                ${MaterialIcon.render({ name: "social_leaderboard", size: "lg" })}
+                                ${Icon.render({ icon: socialLeaderboardOutline, size: "lg" })}
                                 ${t(`ranks.tier.${rank}`)}
                               `,
                             }),
@@ -113,17 +117,17 @@ export const Ranks = {
                             >${t("ranks.howTitle")}</span
                           >
                           ${this.renderHowRow({
-                            icon: "assignment",
+                            icon: assignmentOutline,
                             points: tiers.perApplication,
                             label: t("ranks.perApplication"),
                           })}
                           ${this.renderHowRow({
-                            icon: "star",
+                            icon: starOutline,
                             points: tiers.perShortlist,
                             label: t("ranks.perShortlist"),
                           })}
                           ${this.renderHowRow({
-                            icon: "trophy",
+                            icon: trophyOutline,
                             points: tiers.perSelection,
                             label: t("ranks.perWin"),
                           })}
@@ -150,7 +154,7 @@ export const Ranks = {
           align: "center",
           justify: "center",
           className: styles.howIcon,
-          children: MaterialIcon.render({ name: icon, size: "lg" }),
+          children: Icon.render({ icon, size: "lg" }),
         }),
         html`<span class=${styles.howText}>
           <strong>${t("ranks.points", { count: points })}</strong> ${label}

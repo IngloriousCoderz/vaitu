@@ -1,10 +1,12 @@
+import helpOutline from "@iconify-icons/material-symbols/help-outline"
+import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-leaderboard-outline"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
+import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
@@ -416,8 +418,8 @@ export const Profile = {
             isInline: true,
             className: styles.tierMedal,
             "data-tier": progress.current ?? "none",
-            children: MaterialIcon.render({
-              name: "social_leaderboard",
+            children: Icon.render({
+              icon: socialLeaderboardOutline,
               size: "lg",
             }),
           }),
@@ -440,7 +442,7 @@ export const Profile = {
             children: [
               html`<span>${progressLabel(stats.points, tiers)}</span>`,
               IconButton.render({
-                icon: MaterialIcon.render({ name: "help", size: "lg" }),
+                icon: Icon.render({ icon: helpOutline, size: "lg" }),
                 variant: "ghost",
                 color: "secondary",
                 ariaLabel: t("profile.howRanksWork"),

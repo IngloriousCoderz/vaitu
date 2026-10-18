@@ -1,5 +1,6 @@
+import arrowBackOutline from "@iconify-icons/material-symbols/arrow-back-outline"
+import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 
 import { t } from "../../i18n/index.js"
 
@@ -11,8 +12,8 @@ import { t } from "../../i18n/index.js"
 export const BackButton = {
   render({ fallback }, api) {
     return IconButton.render({
-      icon: MaterialIcon.render({
-        name: "arrow_back",
+      icon: Icon.render({
+        icon: arrowBackOutline,
         size: "lg",
         direction: api.getEntity("i18n").dir,
       }),

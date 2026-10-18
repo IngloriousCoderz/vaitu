@@ -1,9 +1,12 @@
+import addOutline from "@iconify-icons/material-symbols/add-outline"
+import menuOutline from "@iconify-icons/material-symbols/menu-outline"
+import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
 import { AppBar } from "@inglorious/ui/app-bar"
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
+import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
 import { readUser } from "../api/session.js"
@@ -109,7 +112,7 @@ export const App = {
       leading: back
         ? BackButton.render({ fallback: back }, api)
         : IconButton.render({
-            icon: MaterialIcon.render({ name: "menu", size: "lg" }),
+            icon: Icon.render({ icon: menuOutline, size: "lg" }),
             variant: "ghost",
             color: "secondary",
             ariaLabel: t("nav.toggle"),
@@ -145,7 +148,7 @@ export const App = {
           ? ""
           : Button.render({
               children: html`
-                ${MaterialIcon.render({ name: "add", size: "lg" })}
+                ${Icon.render({ icon: addOutline, size: "lg" })}
                 <span>${t("nav.newEvent")}</span>
               `,
               color: "primary",
@@ -154,7 +157,7 @@ export const App = {
               onClick: () => api.notify("#router:navigate", paths.newEvent),
             }),
         IconButton.render({
-          icon: MaterialIcon.render({ name: "notifications_none", size: "lg" }),
+          icon: Icon.render({ icon: notificationsOutline, size: "lg" }),
           variant: "ghost",
           color: "secondary",
           ariaLabel: t("nav.notifications"),

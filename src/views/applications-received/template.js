@@ -1,7 +1,11 @@
+import globeOutline from "@iconify-icons/material-symbols/globe-outline"
+import keyboardArrowDownOutline from "@iconify-icons/material-symbols/keyboard-arrow-down-outline"
+import locationOnOutline from "@iconify-icons/material-symbols/location-on-outline"
+import photoCameraOutline from "@iconify-icons/material-symbols/photo-camera-outline"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
+import { Icon } from "@inglorious/ui/icon"
 import { Input } from "@inglorious/ui/input"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError } from "@inglorious/web/form"
 
@@ -230,7 +234,7 @@ export const ApplicationsReceived = {
           <span
             class=${expanded ? `${styles.chevron} ${styles.chevronOpen}` : styles.chevron}
           >
-            ${MaterialIcon.render({ name: "keyboard_arrow_down", size: "lg" })}
+            ${Icon.render({ icon: keyboardArrowDownOutline, size: "lg" })}
           </span>
         </button>
         ${
@@ -247,7 +251,7 @@ export const ApplicationsReceived = {
                               target="_blank"
                               rel="noopener"
                             >
-                              ${MaterialIcon.render({ name: "globe", size: "lg" })}
+                              ${Icon.render({ icon: globeOutline, size: "lg" })}
                               <span>${applicant.website}</span>
                             </a>
                           `
@@ -262,7 +266,7 @@ export const ApplicationsReceived = {
                               target="_blank"
                               rel="noopener"
                             >
-                              ${MaterialIcon.render({ name: "photo_camera", size: "lg" })}
+                              ${Icon.render({ icon: photoCameraOutline, size: "lg" })}
                               <span>@${instagram}</span>
                             </a>
                           `
@@ -272,7 +276,7 @@ export const ApplicationsReceived = {
                       applicant.country
                         ? html`
                             <span class=${styles.metaRow}>
-                              ${MaterialIcon.render({ name: "location_pin", size: "lg" })}
+                              ${Icon.render({ icon: locationOnOutline, size: "lg" })}
                               <span>${applicant.country}</span>
                             </span>
                           `

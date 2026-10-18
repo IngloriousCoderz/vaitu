@@ -1,9 +1,10 @@
+import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
+import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -183,7 +184,7 @@ export const EventCreate = {
 
   renderHeaderActions({ entity, onRecordStop, onOpenAudio }) {
     return IconButton.render({
-      icon: MaterialIcon.render({ name: "mic", size: "lg" }),
+      icon: Icon.render({ icon: micOutline, size: "lg" }),
       ariaLabel: t("create.voice"),
       color: "primary",
       shape: "round",

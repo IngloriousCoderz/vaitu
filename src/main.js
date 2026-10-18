@@ -1,7 +1,5 @@
 // Order matters: tokens define the primitives, the theme layer maps them onto
 // semantic names, and only then do the components consume those names.
-import "./styles/icon-font.css"
-import "@inglorious/ui/material-icon.css"
 import "@inglorious/ui/tokens.css"
 import "@inglorious/ui/safe-area.css"
 import "@inglorious/ui/alert.css"
@@ -20,6 +18,7 @@ import "@inglorious/ui/drawer.css"
 import "@inglorious/ui/fab.css"
 import "@inglorious/ui/list.css"
 import "@inglorious/ui/flex.css"
+import "@inglorious/ui/icon.css"
 import "@inglorious/ui/icon-button.css"
 import "@inglorious/ui/input.css"
 import "@inglorious/ui/progress.css"

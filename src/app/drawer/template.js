@@ -1,18 +1,25 @@
+import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
+import eventOutline from "@iconify-icons/material-symbols/event-outline"
+import personOutline from "@iconify-icons/material-symbols/person-outline"
 import { Drawer } from "@inglorious/ui/drawer"
+import { Icon } from "@inglorious/ui/icon"
 import { List } from "@inglorious/ui/list"
-import { MaterialIcon } from "@inglorious/ui/material-icon"
 
 import { Logo } from "../../common/logo/index.js"
 import { labelled } from "../../i18n/index.js"
 
 const NAV = [
-  labelled("nav.events", { id: "events", icon: "event", tab: "events" }),
+  labelled("nav.events", { id: "events", icon: eventOutline, tab: "events" }),
   labelled("nav.applications", {
     id: "applications",
-    icon: "assignment",
+    icon: assignmentOutline,
     tab: "applications",
   }),
-  labelled("nav.profile", { id: "profile", icon: "person", tab: "profile" }),
+  labelled("nav.profile", {
+    id: "profile",
+    icon: personOutline,
+    tab: "profile",
+  }),
 ]
 
 // The package drawer with the brand in its header, as in the Inglorious UI
@@ -41,7 +48,7 @@ export const AppDrawer = {
         items: NAV.map((item) => ({
           id: item.id,
           primary: item.label,
-          icon: MaterialIcon.render({ name: item.icon, size: "lg" }),
+          icon: Icon.render({ icon: item.icon, size: "lg" }),
           isSelected: active === item.tab,
           onClick: () => onNavigate(item.id),
         })),

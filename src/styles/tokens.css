@@ -151,10 +151,10 @@
   --vpage-bottom: 0;
 
   /* Height of the tab bar itself, excluding any safe-area inset.
-     Measured from the bar's own box: nav padding 8+8, border-top 1, action
-     padding 8+8, icon 24 (MaterialIcon lg), gap 4, label 14px (~17).
+     Measured in the browser from the bar's own box (78px): nav padding 8+8,
+     border-top 1, action padding 8+8, icon 24 (Icon lg), gap 4, label 12px.
      Re-measure if the bar's internals change. */
-  --vtabbar-height: 4.75rem;
+  --vtabbar-height: 4.875rem;
 
   /* Clearance for a page with no bottom overlay (detail, ranks, create).
      Since the bar became a footer row these pages no longer reserve space for
