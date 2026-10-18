@@ -102,16 +102,16 @@ button:global(.iw-button).avatarButton {
    comes back to the app bar. */
 @media (min-width: 64rem) {
   :global(.iw-flex.iw-flex-padding-none).shellWide {
-    padding-left: 16rem;
-    transition: padding-left var(--iw-transition-fast);
+    padding-inline-start: 16rem;
+    transition: padding-inline-start var(--iw-transition-fast);
   }
 
   :global(.iw-flex.iw-flex-padding-none).shellWide.shellDrawerCollapsed {
-    padding-left: 4rem;
+    padding-inline-start: 4rem;
   }
 
   :global(.iw-flex.iw-flex-padding-none).shellWide.shellDrawerHidden {
-    padding-left: 0;
+    padding-inline-start: 0;
   }
 
   .shellWide:not(.shellDrawerHidden) .brandTitle {

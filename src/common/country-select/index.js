@@ -19,6 +19,7 @@ export const CountrySelect = {
           ...entity,
           label: entity.label ? t(entity.label) : "",
           placeholder: t(entity.placeholder),
+          searchPlaceholder: t(entity.searchPlaceholder),
           noOptionsMessage: t(entity.noOptionsMessage),
           loadingMessage: t(entity.loadingMessage),
           options: entity.options.map((option) => ({

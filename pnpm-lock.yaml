@@ -18,8 +18,8 @@ importers:
         specifier: ^5.3.9
         version: 5.3.9
       '@inglorious/i18n':
-        specifier: ^1.0.0
-        version: 1.0.0(typescript@7.0.2)
+        specifier: ^1.2.0
+        version: 1.2.0(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.6
         version: 9.0.6(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
@@ -27,8 +27,8 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3(@inglorious/utils@5.0.0)
       '@inglorious/ui':
-        specifier: ^7.6.1
-        version: 7.6.1(@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
+        specifier: ^7.8.0
+        version: 7.8.0(@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/web':
         specifier: ^6.6.0
         version: 6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
@@ -868,8 +868,8 @@ packages:
       eslint-plugin-tailwindcss: 4.0.0-beta.0
       eslint-plugin-turbo: ^2.5.0
 
-  '@inglorious/i18n@1.0.0':
-    resolution: {integrity: sha512-ehdn5wXTCg1HQFlozgSQm+9C4jm4lmUErAYbc0EGa85MduCopJQnYwgqKrlqwR8cu7MX+q2mS9xIzeXGVNg8cA==}
+  '@inglorious/i18n@1.2.0':
+    resolution: {integrity: sha512-1cx7hFoFsoJ58onpoAMk3Fi9qSC5GQuVCdiNy6JPuwt6tjTn+E9qh1mEWgpRd60yCEkCQhevrQjfwajgNBJOSg==}
     engines: {node: '>= 22'}
 
   '@inglorious/motion@9.0.6':
@@ -884,8 +884,8 @@ packages:
     peerDependencies:
       '@inglorious/utils': 5.0.0
 
-  '@inglorious/ui@7.6.1':
-    resolution: {integrity: sha512-DqF64Skz6D+lwbU8Dcos7DXLgbHfoqW2DqEG7PJhOA0JRNGbDj9DZ7BOacHtYCRAn0D9Grih5cVLPTbiZU1lyA==}
+  '@inglorious/ui@7.8.0':
+    resolution: {integrity: sha512-srQz8o+dYNh3ppM4g+WIXAJ2SBuIFAe5jjXx0OXQcY2JTGwbuZxG2Y2boILBmq/UQWYwStpFRn3q0cFkirkEEQ==}
     engines: {node: '>= 22'}
     peerDependencies:
       '@inglorious/charts': 10.0.6
@@ -4822,7 +4822,7 @@ snapshots:
       eslint-plugin-turbo: 2.11.7(eslint@10.13.0(jiti@2.7.0))(turbo@2.11.7)
       globals: 16.5.0
 
-  '@inglorious/i18n@1.0.0(typescript@7.0.2)':
+  '@inglorious/i18n@1.2.0(typescript@7.0.2)':
     dependencies:
       i18next: 26.5.2(typescript@7.0.2)
     transitivePeerDependencies:
@@ -4837,7 +4837,7 @@ snapshots:
       '@inglorious/utils': 5.0.0
       mutative: 1.3.0
 
-  '@inglorious/ui@7.6.1(@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
+  '@inglorious/ui@7.8.0(@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
     dependencies:
       '@inglorious/charts': 10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/store': 11.0.3(@inglorious/utils@5.0.0)

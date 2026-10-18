@@ -67,6 +67,7 @@ export function create(entity) {
 
   // Translation keys, translated when the select renders.
   entity.placeholder ??= "combobox.select"
+  entity.searchPlaceholder ??= "combobox.search"
   entity.noOptionsMessage ??= "combobox.noOptions"
   entity.loadingMessage ??= "combobox.loading"
 }

@@ -221,7 +221,7 @@ button.sheetGear {
 }
 
 .rowActions {
-  margin-left: auto;
+  margin-inline-start: auto;
   display: flex;
   gap: var(--iw-space-2);
 }

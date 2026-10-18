@@ -19,8 +19,8 @@
 
 /* Joins the control to the panel below it, the way a native <select> does. */
 .vaitu-country-select .iw-combobox-control.iw-combobox-control-open {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
 }
 
 .vaitu-country-select .iw-combobox-dropdown {

@@ -34,7 +34,7 @@
      Placement only. The box is the package's, via `size` on the component. */
   position: absolute;
   bottom: var(--vtabbar-height);
-  right: var(--vpage-gutter);
+  inset-inline-end: var(--vpage-gutter);
   z-index: var(--iw-z-fixed);
   cursor: pointer;
   transition: bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);

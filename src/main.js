@@ -37,23 +37,27 @@ import { mount } from "@inglorious/web"
 import { supabase } from "./api/client.js"
 import { clearUser, endSession, writeUser } from "./api/session.js"
 import { App } from "./app"
+import { ready } from "./i18n/index.js"
 import { store } from "./store"
 import { isPreLoginPath, signInTarget } from "./store/guards.js"
 
+// After the starting language has loaded, so the first render is in it.
 // Navigations into and out of the pages with a back button slide in the
 // direction travelled; switching between top-level pages stays instant.
-mount(
-  withTransitions(store, {
-    routes: [
-      "eventDetail",
-      "eventCreate",
-      "applicationsReceived",
-      "applicationDetail",
-      "ranks",
-    ],
-  }),
-  (api) => App.render(null, api),
-  document.getElementById("root"),
+ready.then(() =>
+  mount(
+    withTransitions(store, {
+      routes: [
+        "eventDetail",
+        "eventCreate",
+        "applicationsReceived",
+        "applicationDetail",
+        "ranks",
+      ],
+    }),
+    (api) => App.render(null, api),
+    document.getElementById("root"),
+  ),
 )
 
 store.notify("#eventList:eventsLoad")
@@ -70,6 +74,7 @@ function trackSession(session) {
   }
   // Supabase owns the tokens; this drops our record of who they belonged to.
   clearUser()
+  store.notify("#i18n:userLocaleClear")
   store.notify("#shell:closeDrawer")
 
   // The guard only answers route changes, and a session ending is not one, so

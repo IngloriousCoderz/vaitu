@@ -126,7 +126,7 @@
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
   font-size: var(--iw-font-size-lg);
-  padding-left: 0.375rem;
+  padding-inline-start: 0.375rem;
   margin-bottom: var(--iw-space-2);
 }
 

@@ -183,7 +183,7 @@ export const profileLoad = handleAsync("profileLoad", {
     entity.tierConfig = tiers
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#eventDetail:prefill", profile)
-    api.notify("#i18n:localeSync", {
+    api.notify("#i18n:userLocaleLoad", {
       userId: profile.id,
       locale: profile.locale,
     })

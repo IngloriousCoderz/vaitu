@@ -110,6 +110,7 @@
   },
   "combobox": {
     "select": "Seleziona…",
+    "search": "Cerca…",
     "loading": "Caricamento…",
     "noOptions": "Nessuna opzione",
     "noCountries": "Nessun paese trovato",

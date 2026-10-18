@@ -52,7 +52,7 @@
 
 .winnerTrophy {
   display: inline-flex;
-  margin-left: auto;
+  margin-inline-start: auto;
   color: #8c4632;
 }
 

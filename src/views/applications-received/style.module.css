@@ -52,7 +52,7 @@
 .recapRow dd {
   margin: 0;
   font-weight: var(--iw-font-weight-semibold);
-  text-align: right;
+  text-align: end;
 }
 
 .list {
@@ -85,7 +85,7 @@
   background: none;
   cursor: pointer;
   padding: 0;
-  text-align: left;
+  text-align: start;
 }
 
 .rowButton .name {
@@ -193,7 +193,7 @@
   font-style: italic;
   color: var(--vink);
   background: var(--vsurface);
-  border-left: 3px solid var(--vaccent);
+  border-inline-start: 3px solid var(--vaccent);
   border-radius: 0 var(--iw-radius-xl) var(--iw-radius-xl) 0;
   padding: var(--iw-space-3) 0.875rem;
 }
@@ -240,7 +240,7 @@
   }
 
   .recapRow dd {
-    text-align: left;
+    text-align: start;
   }
 
   .list {

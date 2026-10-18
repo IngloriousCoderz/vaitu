@@ -30,10 +30,10 @@
     "@capacitor/core": "^8.5.3",
     "@capacitor/share": "^8.0.3",
     "@fontsource/material-symbols-outlined": "^5.3.9",
-    "@inglorious/i18n": "^1.0.0",
+    "@inglorious/i18n": "^1.2.0",
     "@inglorious/motion": "^9.0.6",
     "@inglorious/store": "^11.0.3",
-    "@inglorious/ui": "^7.6.1",
+    "@inglorious/ui": "^7.8.0",
     "@inglorious/web": "^6.6.0",
     "@supabase/supabase-js": "^2.118.0",
     "fix-webm-duration": "^1.0.6"
