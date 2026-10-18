@@ -1,0 +1,4 @@
+/* Wide enough for the longest language name, not the whole row. */
+.languageSelect {
+  width: 12rem;
+}

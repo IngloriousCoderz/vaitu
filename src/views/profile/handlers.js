@@ -138,7 +138,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions",
+        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale",
       )
       .eq("id", user.id)
       .single()
@@ -183,6 +183,10 @@ export const profileLoad = handleAsync("profileLoad", {
     entity.tierConfig = tiers
     // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#eventDetail:prefill", profile)
+    api.notify("#i18n:localeSync", {
+      userId: profile.id,
+      locale: profile.locale,
+    })
   },
   error(entity, err) {
     entity.status = "error"
@@ -240,6 +244,64 @@ export const profileSave = handleAsync("profileSave", {
   error(entity, err) {
     entity.status = "error"
     entity.error = err.message ?? t("errors.saveProfile")
+  },
+})
+
+// Quietly: the language has already changed on screen, and a failed save only
+// means another device keeps the old one until the next change.
+export const localeSave = handleAsync("localeSave", {
+  async run(locale) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) return null
+    const { error } = await supabase
+      .from("profiles")
+      .update({ locale })
+      .eq("id", user.id)
+    if (error) throw error
+    return locale
+  },
+  success(entity, locale) {
+    if (locale && entity.profile) entity.profile = { ...entity.profile, locale }
+  },
+  error(_, err) {
+    console.warn("[profile] language not saved:", err)
+  },
+})
+
+export function accountDeleteAsk(entity) {
+  entity.isConfirmingDelete = true
+  entity.deleteError = null
+}
+
+export function accountDeleteCancel(entity) {
+  entity.isConfirmingDelete = false
+  entity.deleteError = null
+}
+
+// The server deletes the account, the files and everything the database
+// cascades from it. Ending the session afterwards is what moves the visitor to
+// the sign-in screen: main.js answers it like any other sign-out.
+export const accountDelete = handleAsync("accountDelete", {
+  start(entity) {
+    entity.deleteStatus = "deleting"
+    entity.deleteError = null
+  },
+  async run() {
+    const { error } = await supabase.functions.invoke("delete-account")
+    if (error) throw error
+    await endSession()
+    return true
+  },
+  success(entity) {
+    entity.deleteStatus = "idle"
+    entity.isConfirmingDelete = false
+    entity.profile = null
+  },
+  error(entity) {
+    entity.deleteStatus = "idle"
+    entity.deleteError = t("errors.deleteAccount")
   },
 })
 

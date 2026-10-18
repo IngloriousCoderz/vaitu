@@ -11,16 +11,19 @@ import styles from "./style.module.css"
 // field for names the combobox does not know. Saving stays with the caller,
 // because the profile saves through its form and the event list on its own.
 export const FavoriteRegions = {
-  render({
-    regions = [],
-    input = "",
-    inputId,
-    isDisabled = false,
-    onInput,
-    onAdd,
-    onRemove,
-    renderChoice,
-  }) {
+  render(
+    {
+      regions = [],
+      input = "",
+      inputId,
+      isDisabled = false,
+      onInput,
+      onAdd,
+      onRemove,
+      choiceId,
+    },
+    api,
+  ) {
     return html`<div class=${styles.editor}>
       ${
         regions.length
@@ -35,7 +38,7 @@ export const FavoriteRegions = {
             </div>`
           : ""
       }
-      ${renderChoice()}
+      ${api.render(choiceId)}
       ${Input.render({
         id: inputId,
         inputType: "text",

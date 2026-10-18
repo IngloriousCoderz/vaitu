@@ -3,6 +3,7 @@ import { Router, setRoutes } from "@inglorious/web/router"
 
 import { Shell } from "../app/shell.js"
 import { CountrySelect } from "../common/country-select/index.js"
+import { LanguageSelect } from "../common/language-select/index.js"
 import { I18n } from "../i18n/index.js"
 import { routes } from "../routes"
 import { ApplicationDetail } from "../views/application-detail/index.js"
@@ -34,6 +35,7 @@ export const store = createStore({
     ApplicationList,
     ApplicationDetail,
     CountrySelect,
+    LanguageSelect,
     ApplicationsReceived,
     NotFound,
     Onboarding,

@@ -168,7 +168,8 @@
     "loadProfile": "Impossibile caricare il profilo",
     "saveProfile": "Impossibile salvare il profilo",
     "logout": "Uscita non riuscita",
-    "loadRanks": "Impossibile caricare i livelli"
+    "loadRanks": "Impossibile caricare i livelli",
+    "deleteAccount": "Non è stato possibile eliminare l'account. Riprova."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -302,7 +303,10 @@
     "subRole": "Ruolo",
     "logOut": "Esci",
     "howRanksWork": "Come funzionano i livelli",
-    "language": "Lingua"
+    "language": "Lingua",
+    "deleteAccount": "Elimina account",
+    "deleteConfirm": "Eliminare l'account? Con lui se ne vanno il profilo, i tuoi eventi con le candidature ricevute e le tue candidature. Non si può annullare.",
+    "deleting": "Eliminazione…"
   },
   "facts": {
     "spouses": "Sposi"

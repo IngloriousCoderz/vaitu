@@ -46,53 +46,55 @@ export const EventList = {
     return this.renderEventList(props, api)
   },
 
-  renderEventList({
-    events,
-    myEvents,
-    myEventIds,
-    activeOwner,
-    confirmingDelete,
-    appliedMap,
-    status,
-    error,
-    categories,
-    activeCategory,
-    filters,
-    regions,
-    isEditingFavorites,
-    favoriteDraft,
-    favoriteInput,
-    favoritesStatus,
-    favoritesError,
-    owners,
-    periods,
-    query,
-    activeFilter,
-    activeRegion,
-    activePeriod,
-    favoriteRegions,
-    isFiltersVisible,
-    onSelectOwner,
-    onEdit,
-    onAskDelete,
-    onDelete,
-    onCancelDelete,
-    onSearch,
-    onSelectCategory,
-    onSelectFilter,
-    onToggleFilters,
-    onSelectRegion,
-    onEditFavorites,
-    onCancelFavorites,
-    onFavoriteInput,
-    onFavoriteAdd,
-    onFavoriteRemove,
-    onSaveFavorites,
-    renderFavoriteChoice,
-    onSelectPeriod,
-    onClearFilters,
-    onOpenEvent,
-  }) {
+  renderEventList(
+    {
+      events,
+      myEvents,
+      myEventIds,
+      activeOwner,
+      confirmingDelete,
+      appliedMap,
+      status,
+      error,
+      categories,
+      activeCategory,
+      filters,
+      regions,
+      isEditingFavorites,
+      favoriteDraft,
+      favoriteInput,
+      favoritesStatus,
+      favoritesError,
+      owners,
+      periods,
+      query,
+      activeFilter,
+      activeRegion,
+      activePeriod,
+      favoriteRegions,
+      isFiltersVisible,
+      onSelectOwner,
+      onEdit,
+      onAskDelete,
+      onDelete,
+      onCancelDelete,
+      onSearch,
+      onSelectCategory,
+      onSelectFilter,
+      onToggleFilters,
+      onSelectRegion,
+      onEditFavorites,
+      onCancelFavorites,
+      onFavoriteInput,
+      onFavoriteAdd,
+      onFavoriteRemove,
+      onSaveFavorites,
+      onSelectPeriod,
+      onClearFilters,
+      onOpenEvent,
+    },
+    api,
+  ) {
     const isMine = activeOwner === "mine"
     const shown = visibleEvents(
       isMine ? myEvents : events.filter((event) => !myEventIds.has(event.id)),
@@ -190,18 +192,20 @@ export const EventList = {
                       </div>
                       ${
                         isEditingFavorites
-                          ? this.renderFavoriteEditor({
-                              renderFavoriteChoice,
-                              favoriteDraft,
-                              favoriteInput,
-                              favoritesStatus,
-                              favoritesError,
-                              onCancelFavorites,
-                              onFavoriteInput,
-                              onFavoriteAdd,
-                              onFavoriteRemove,
-                              onSaveFavorites,
-                            })
+                          ? this.renderFavoriteEditor(
+                              {
+                                favoriteDraft,
+                                favoriteInput,
+                                favoritesStatus,
+                                favoritesError,
+                                onCancelFavorites,
+                                onFavoriteInput,
+                                onFavoriteAdd,
+                                onFavoriteRemove,
+                                onSaveFavorites,
+                              },
+                              api,
+                            )
                           : ""
                       }
                       ${this.renderChipRow({
@@ -341,31 +345,36 @@ export const EventList = {
     })
   },
 
-  renderFavoriteEditor({
-    renderFavoriteChoice,
-    favoriteDraft,
-    favoriteInput,
-    favoritesStatus,
-    favoritesError,
-    onCancelFavorites,
-    onFavoriteInput,
-    onFavoriteAdd,
-    onFavoriteRemove,
-    onSaveFavorites,
-  }) {
+  renderFavoriteEditor(
+    {
+      favoriteDraft,
+      favoriteInput,
+      favoritesStatus,
+      favoritesError,
+      onCancelFavorites,
+      onFavoriteInput,
+      onFavoriteAdd,
+      onFavoriteRemove,
+      onSaveFavorites,
+    },
+    api,
+  ) {
     const saving = favoritesStatus === "saving"
     return html`
       <div class=${styles.favoriteEditor}>
-        ${FavoriteRegions.render({
-          regions: favoriteDraft ?? [],
-          input: favoriteInput ?? "",
-          inputId: "list-favorite-region",
-          isDisabled: saving,
-          onInput: onFavoriteInput,
-          onAdd: onFavoriteAdd,
-          onRemove: onFavoriteRemove,
-          renderChoice: renderFavoriteChoice,
-        })}
+        ${FavoriteRegions.render(
+          {
+            regions: favoriteDraft ?? [],
+            input: favoriteInput ?? "",
+            inputId: "list-favorite-region",
+            isDisabled: saving,
+            onInput: onFavoriteInput,
+            onAdd: onFavoriteAdd,
+            onRemove: onFavoriteRemove,
+            choiceId: "favorite-region-list",
+          },
+          api,
+        )}
         ${ErrorAlert.render({ error: favoritesError })}
         ${Button.render({
           children: saving ? t("common.saving") : t("events.saveRegions"),

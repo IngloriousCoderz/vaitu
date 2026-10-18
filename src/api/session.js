@@ -69,3 +69,30 @@ export async function endSession() {
   clearUser()
   await supabase.auth.signOut()
 }
+
+// Whether onboarding is still owed: from a signup until it is finished or
+// skipped. Outside the store for the reason above — signup sets it and
+// navigates in one batch, and the route guard reading an entity there would
+// still see it unset. sessionStorage, so it ends with the tab and onboarding is
+// offered once.
+
+const ONBOARDING_KEY = "vaitu-onboarding"
+
+/** @returns {boolean} */
+export function isOnboardingDue() {
+  try {
+    return window.sessionStorage.getItem(ONBOARDING_KEY) === "due"
+  } catch {
+    return false
+  }
+}
+
+/** @param {boolean} isDue */
+export function setOnboardingDue(isDue) {
+  try {
+    if (isDue) window.sessionStorage.setItem(ONBOARDING_KEY, "due")
+    else window.sessionStorage.removeItem(ONBOARDING_KEY)
+  } catch {
+    // Storage unavailable: onboarding is skipped, which only costs the offer.
+  }
+}

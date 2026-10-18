@@ -168,7 +168,8 @@
     "loadProfile": "Impossible de charger le profil",
     "saveProfile": "Impossible d'enregistrer le profil",
     "logout": "La déconnexion a échoué",
-    "loadRanks": "Impossible de charger les niveaux"
+    "loadRanks": "Impossible de charger les niveaux",
+    "deleteAccount": "Le compte n'a pas pu être supprimé. Réessayez."
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -302,7 +303,10 @@
     "subRole": "Rôle",
     "logOut": "Se déconnecter",
     "howRanksWork": "Comment fonctionnent les niveaux",
-    "language": "Langue"
+    "language": "Langue",
+    "deleteAccount": "Supprimer le compte",
+    "deleteConfirm": "Supprimer votre compte ? Votre profil, vos événements avec les candidatures reçues et vos candidatures disparaîtront avec lui. C'est irréversible.",
+    "deleting": "Suppression…"
   },
   "facts": {
     "spouses": "Mariés"

@@ -13,6 +13,10 @@
   margin-top: var(--iw-space-6);
 }
 
+.deleteConfirm {
+  margin-top: var(--iw-space-4);
+}
+
 .name {
   margin: var(--iw-space-2) 0 0;
   font-family: var(--vtitle-font);

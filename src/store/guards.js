@@ -1,6 +1,6 @@
 import { Router } from "@inglorious/web/router"
 
-import { readUser } from "../api/session.js"
+import { isOnboardingDue, readUser } from "../api/session.js"
 import { paths } from "../routes"
 
 // The access policy, in one place: a route resolved -> may this visitor be here?
@@ -99,10 +99,10 @@ export function routeGuard(entity, payload, api) {
 
   // Onboarding is offered once, straight after a signup.
   if (payload.route === "onboarding") {
-    if (!api.getEntity("authentication").justSignedUp) {
+    if (!isOnboardingDue()) {
       api.notify("#router:navigate", { to: paths.events, replace: true })
-      return
     }
+    return
   }
 
   api.notify("#router:navigate", landingForSession(api.getEntity("router")))

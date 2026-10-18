@@ -1,6 +1,5 @@
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
-import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -9,6 +8,7 @@ import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
+import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
@@ -19,7 +19,7 @@ import {
   ITALY,
   uniqueRegions,
 } from "../../data/regions/resolve.js"
-import { LANGUAGE_NAMES, t } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import {
   displayInstagram,
   displayWebsite,
@@ -33,24 +33,25 @@ export const Profile = {
     return this.renderProfile(props, api)
   },
 
-  renderProfile({
-    entity,
-    onCancel,
-    onField,
-    onSave,
-    onEdit,
-    onLogout,
-    i18n,
-    onLocaleChange,
-    onOpenApplications,
-    onOpenRanks,
-    onFavoriteInput,
-    onFavoriteAdd,
-    onFavoriteRemove,
-    renderCountry,
-    renderRegion,
-    renderFavoriteChoice,
-  }) {
+  renderProfile(
+    {
+      entity,
+      onCancel,
+      onField,
+      onSave,
+      onEdit,
+      onLogout,
+      onDeleteAsk,
+      onDeleteCancel,
+      onDelete,
+      onOpenApplications,
+      onOpenRanks,
+      onFavoriteInput,
+      onFavoriteAdd,
+      onFavoriteRemove,
+    },
+    api,
+  ) {
     const { profile, status, error } = entity
     const saving = status === "saving"
     const shown = entity.isEditing ? entity.values : profile
@@ -165,14 +166,14 @@ export const Profile = {
                           ${Flex.render({
                             direction: "column",
                             className: styles.field,
-                            children: renderCountry(),
+                            children: api.render("country-profile"),
                           })}
                           ${
                             shown.country === ITALY
                               ? Flex.render({
                                   direction: "column",
                                   className: styles.field,
-                                  children: renderRegion(),
+                                  children: api.render("region-profile"),
                                 })
                               : this.renderEditField({
                                   label: t("fields.region"),
@@ -182,15 +183,18 @@ export const Profile = {
                                   onField,
                                 })
                           }
-                          ${FavoriteRegions.render({
-                            regions: shown.favorite_regions ?? [],
-                            input: entity.favoriteInput ?? "",
-                            inputId: "profile-favorite-region",
-                            onInput: onFavoriteInput,
-                            onAdd: onFavoriteAdd,
-                            onRemove: onFavoriteRemove,
-                            renderChoice: renderFavoriteChoice,
-                          })}
+                          ${FavoriteRegions.render(
+                            {
+                              regions: shown.favorite_regions ?? [],
+                              input: entity.favoriteInput ?? "",
+                              inputId: "profile-favorite-region",
+                              onInput: onFavoriteInput,
+                              onAdd: onFavoriteAdd,
+                              onRemove: onFavoriteRemove,
+                              choiceId: "favorite-region-profile",
+                            },
+                            api,
+                          )}
                           ${ErrorAlert.render({
                             error: status === "error" && error ? error : null,
                           })}
@@ -238,8 +242,13 @@ export const Profile = {
                         )}
                         ${this.renderRow(t("profile.subRole"), profile.sub_role)}
                       </dl>
-                      ${this.renderLanguage({ i18n, onLocaleChange })}
-                      ${this.renderAccountActions({ onEdit, onLogout })}
+                      ${this.renderLanguage(api)}
+                      ${this.renderAccountActions({ onEdit, onLogout, onDeleteAsk })}
+                      ${this.renderDeleteAccount({
+                        entity,
+                        onDeleteCancel,
+                        onDelete,
+                      })}
                     `
               }
             `
@@ -322,7 +331,7 @@ export const Profile = {
   // Editing is the profile's main action; logging out is there when you need
   // it, quieter, and never in the way.
   // The app's language, each named in itself.
-  renderLanguage({ i18n, onLocaleChange }) {
+  renderLanguage(api) {
     return Flex.render({
       justify: "between",
       align: "center",
@@ -332,29 +341,12 @@ export const Profile = {
         html`<span class=${styles.languageLabel}
           >${t("profile.language")}</span
         >`,
-        ButtonGroup.render({
-          buttons: (i18n?.locales ?? []).map((locale) =>
-            locale === i18n.locale
-              ? {
-                  value: locale,
-                  label: LANGUAGE_NAMES[locale],
-                  color: "primary",
-                }
-              : {
-                  value: locale,
-                  label: LANGUAGE_NAMES[locale],
-                  variant: "outline",
-                },
-          ),
-          value: i18n?.locale,
-          size: "sm",
-          onChange: onLocaleChange,
-        }),
+        api.render("language"),
       ],
     })
   },
 
-  renderAccountActions({ onEdit, onLogout }) {
+  renderAccountActions({ onEdit, onLogout, onDeleteAsk }) {
     return Flex.render({
       direction: "column",
       gap: "sm",
@@ -377,8 +369,36 @@ export const Profile = {
           isFullWidth: true,
           onClick: onLogout,
         }),
+        Button.render({
+          children: t("profile.deleteAccount"),
+          variant: "ghost",
+          color: "error",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          onClick: onDeleteAsk,
+        }),
       ],
     })
+  },
+
+  // The last word before the account goes: what goes with it, and a way back.
+  renderDeleteAccount({ entity, onDeleteCancel, onDelete }) {
+    if (!entity.isConfirmingDelete) return ""
+    return html`
+      ${ConfirmPrompt.render({
+        id: "delete-account-confirm",
+        message: t("profile.deleteConfirm"),
+        confirmLabel: t("profile.deleteAccount"),
+        busyLabel: t("profile.deleting"),
+        isBusy: entity.deleteStatus === "deleting",
+        isStacked: true,
+        className: styles.deleteConfirm,
+        onConfirm: onDelete,
+        onCancel: onDeleteCancel,
+      })}
+      ${ErrorAlert.render({ error: entity.deleteError })}
+    `
   },
 
   renderTierBlock({ stats, tiers, onOpenRanks }) {

@@ -11,14 +11,14 @@ export const Authentication = {
     return this.renderAuthentication(props, api)
   },
 
-  renderAuthentication({ entity, callbacks }) {
+  renderAuthentication({ entity, callbacks }, api) {
     const isBusy = entity.status === "loading"
     return Page.render({
       variant: "centered",
       children: [
         html`
           ${when(entity.step === "email", () =>
-            EmailStep.render({ entity, isBusy, ...callbacks }),
+            EmailStep.render({ entity, isBusy, ...callbacks }, api),
           )}
           ${when(entity.step === "login", () =>
             LoginStep.render({ entity, isBusy, ...callbacks }),

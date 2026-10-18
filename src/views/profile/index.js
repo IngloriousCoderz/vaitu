@@ -11,13 +11,22 @@ import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
-const { profileLoad, profileSave, logout, ...syncHandlers } = handlers
+const {
+  profileLoad,
+  profileSave,
+  localeSave,
+  accountDelete,
+  logout,
+  ...syncHandlers
+} = handlers
 
 export const Profile = {
   ...Form,
   ...syncHandlers,
   ...profileLoad,
   ...profileSave,
+  ...localeSave,
+  ...accountDelete,
   ...logout,
   ...renderers,
 
@@ -35,6 +44,9 @@ export const Profile = {
     }
     Form.create(entity)
     entity.favoriteInput ??= ""
+    entity.isConfirmingDelete ??= false
+    entity.deleteStatus ??= "idle"
+    entity.deleteError ??= null
     entity.status ??= "idle"
     entity.error ??= null
     // The id is snapshotted because this closure outlives the batch that built
@@ -66,26 +78,28 @@ export const Profile = {
 
   render(entity, api) {
     const id = entity.id
-    return this.renderProfile({
-      entity,
-      onCancel: () => api.notify(`#${id}:editCancel`),
-      onField: ({ field, value }) =>
-        api.notify(`#${id}:profileFieldSet`, { field, value }),
-      onFavoriteInput: (value) => api.notify(`#${id}:favoriteInputSet`, value),
-      onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
-      onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
-      onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
-      onEdit: () => api.notify(`#${id}:editStart`),
-      onLogout: () => api.notify(`#${id}:logout`),
-      i18n: api.getEntity("i18n"),
-      onLocaleChange: (locale) => api.notify("#i18n:localeChange", locale),
-      onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
-      onOpenApplications: (status) =>
-        api.notify("#router:navigate", paths.applicationsByStatus(status)),
-      renderCountry: () => api.render("country-profile"),
-      renderRegion: () => api.render("region-profile"),
-      renderFavoriteChoice: () => api.render("favorite-region-profile"),
-    })
+    return this.renderProfile(
+      {
+        entity,
+        onCancel: () => api.notify(`#${id}:editCancel`),
+        onField: ({ field, value }) =>
+          api.notify(`#${id}:profileFieldSet`, { field, value }),
+        onFavoriteInput: (value) =>
+          api.notify(`#${id}:favoriteInputSet`, value),
+        onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
+        onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
+        onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
+        onEdit: () => api.notify(`#${id}:editStart`),
+        onLogout: () => api.notify(`#${id}:logout`),
+        onDeleteAsk: () => api.notify(`#${id}:accountDeleteAsk`),
+        onDeleteCancel: () => api.notify(`#${id}:accountDeleteCancel`),
+        onDelete: () => api.notify(`#${id}:accountDelete`),
+        onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
+        onOpenApplications: (status) =>
+          api.notify("#router:navigate", paths.applicationsByStatus(status)),
+      },
+      api,
+    )
   },
 }
 

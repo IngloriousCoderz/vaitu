@@ -2,7 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
-import { writeUser } from "../../api/session.js"
+import { setOnboardingDue, writeUser } from "../../api/session.js"
 import {
   MIN_PASSWORD_LENGTH,
   REQUEST_TIMEOUT_MS,
@@ -38,7 +38,7 @@ export function clearAuthErrors(entity) {
 }
 
 export function onboardingFinish(entity, _, api) {
-  entity.justSignedUp = false
+  setOnboardingDue(false)
   api.notify("#router:navigate", paths.events)
 }
 
@@ -167,7 +167,7 @@ export const signup = handleAsync("signup", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.password = ""
-    entity.justSignedUp = true
+    setOnboardingDue(true)
     api.notify("#router:navigate", paths.onboarding)
   },
   error(entity, err) {

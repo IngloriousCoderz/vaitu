@@ -9,7 +9,7 @@ import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
 export const EmailStep = {
-  render({ entity, isBusy, onField, onCheckEmail }) {
+  render({ entity, isBusy, onField, onCheckEmail }, api) {
     return html`
       <div class=${styles.step} key="email">
         <form
@@ -50,6 +50,7 @@ export const EmailStep = {
             }),
           })}
         </form>
+        <div class=${styles.language}>${api.render("language")}</div>
       </div>
     `
   },

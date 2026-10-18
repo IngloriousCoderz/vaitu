@@ -26,14 +26,15 @@ export const Onboarding = {
   render(entity, api) {
     const id = entity.id
 
-    return this.renderOnboarding({
-      entity,
-      onField: ({ field, value }) =>
-        api.notify(`#${id}:fieldSet`, { field, value }),
-      onSave: () => api.notify(`#${id}:saveSubmit`),
-      onSkip: () => api.notify(`#${id}:skip`),
-      renderCountry: () => api.render("country-onboarding"),
-      renderRegion: () => api.render("region-onboarding"),
-    })
+    return this.renderOnboarding(
+      {
+        entity,
+        onField: ({ field, value }) =>
+          api.notify(`#${id}:fieldSet`, { field, value }),
+        onSave: () => api.notify(`#${id}:saveSubmit`),
+        onSkip: () => api.notify(`#${id}:skip`),
+      },
+      api,
+    )
   },
 }

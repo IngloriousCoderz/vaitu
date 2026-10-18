@@ -64,3 +64,10 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* Below the email form, for whoever cannot read the language it is in. */
+.language {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--iw-space-8);
+}

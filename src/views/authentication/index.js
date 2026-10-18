@@ -24,7 +24,6 @@ export const Authentication = {
     Form.create(entity)
     entity.step ??= "email"
     entity.mode ??= "login"
-    entity.justSignedUp ??= false
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
     entity.status ??= "idle"
@@ -40,25 +39,28 @@ export const Authentication = {
   render(entity, api) {
     const id = entity.id
 
-    return this.renderAuthentication({
-      entity,
-      callbacks: {
-        onField: ({ field, value }) =>
-          api.notify(`#${id}:fieldChange`, { path: field, value }),
-        onCheckEmail: () => api.notify(`#${id}:emailSubmit`),
-        onLogin: () => api.notify(`#${id}:loginSubmit`),
-        onContinue: () => api.notify(`#${id}:signupSubmit`),
-        onBackToEmail: () => api.notify(`#${id}:emailBack`),
-        onTogglePassword: (inputId) => {
-          api.notify(`#${id}:passwordToggle`)
-          restoreCursor(inputId)
-        },
-        onToggleConfirmPassword: (inputId) => {
-          api.notify(`#${id}:confirmPasswordToggle`)
-          restoreCursor(inputId)
+    return this.renderAuthentication(
+      {
+        entity,
+        callbacks: {
+          onField: ({ field, value }) =>
+            api.notify(`#${id}:fieldChange`, { path: field, value }),
+          onCheckEmail: () => api.notify(`#${id}:emailSubmit`),
+          onLogin: () => api.notify(`#${id}:loginSubmit`),
+          onContinue: () => api.notify(`#${id}:signupSubmit`),
+          onBackToEmail: () => api.notify(`#${id}:emailBack`),
+          onTogglePassword: (inputId) => {
+            api.notify(`#${id}:passwordToggle`)
+            restoreCursor(inputId)
+          },
+          onToggleConfirmPassword: (inputId) => {
+            api.notify(`#${id}:confirmPasswordToggle`)
+            restoreCursor(inputId)
+          },
         },
       },
-    })
+      api,
+    )
   },
 }
 

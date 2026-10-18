@@ -165,7 +165,8 @@
     "loadProfile": "Failed to load profile",
     "saveProfile": "Failed to save profile",
     "logout": "Logout failed",
-    "loadRanks": "Failed to load ranks"
+    "loadRanks": "Failed to load ranks",
+    "deleteAccount": "The account could not be deleted. Try again."
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -297,7 +298,10 @@
     "subRole": "Sub-role",
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
-    "language": "Language"
+    "language": "Language",
+    "deleteAccount": "Delete account",
+    "deleteConfirm": "Delete your account? Your profile, your events with the applications they received, and your applications go with it. This cannot be undone.",
+    "deleting": "Deleting…"
   },
   "facts": {
     "spouses": "Spouses"

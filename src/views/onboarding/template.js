@@ -16,14 +16,7 @@ export const Onboarding = {
     return this.renderOnboarding(props, api)
   },
 
-  renderOnboarding({
-    entity,
-    onField,
-    onSave,
-    onSkip,
-    renderCountry,
-    renderRegion,
-  }) {
+  renderOnboarding({ entity, onField, onSave, onSkip }, api) {
     const saving = entity.status === "saving"
     const countryError = getFieldError(entity, "country")
 
@@ -42,14 +35,15 @@ export const Onboarding = {
             }
           >
             <span>${t("fields.country")}</span>
-            ${renderCountry()} ${ErrorLabel.render({ error: countryError })}
+            ${api.render("country-onboarding")}
+            ${ErrorLabel.render({ error: countryError })}
           </div>
           ${
             getFieldValue(entity, "country", "") === ITALY
               ? html`
                   <div class=${styles.field}>
                     <span>${t("fields.regionOptional")}</span>
-                    ${renderRegion()}
+                    ${api.render("region-onboarding")}
                   </div>
                 `
               : html`
