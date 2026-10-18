@@ -59,6 +59,9 @@
    it, as in the Inglorious UI dashboard. The package gives it no side padding,
    so it takes the page gutter. */
 header:global(.iw-app-bar).appBar {
+  /* Named, so a page transition leaves the bar in place instead of sliding
+     it with the page; only its title cross-fades. Same for the drawer. */
+  view-transition-name: app-bar;
   flex: 0 0 auto;
   gap: var(--iw-space-2);
   padding-inline: var(--vpage-gutter);
@@ -128,4 +131,8 @@ button:global(.iw-button).avatarButton {
   flex: 1 1 0;
   overflow-x: clip;
   overflow-y: auto;
+}
+
+:global(.iw-drawer) {
+  view-transition-name: drawer;
 }

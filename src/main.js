@@ -24,11 +24,13 @@ import "@inglorious/ui/input.css"
 import "@inglorious/ui/progress.css"
 import "@inglorious/ui/select.css"
 import "@inglorious/ui/textarea.css"
+import "@inglorious/ui/view-transitions.css"
 import "./pwa"
 import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./styles/list-stagger.css"
 
+import { withTransitions } from "@inglorious/ui/view-transitions"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
@@ -37,7 +39,21 @@ import { App } from "./app"
 import { store } from "./store"
 import { isPreLoginPath, signInTarget } from "./store/guards.js"
 
-mount(store, (api) => App.render(null, api), document.getElementById("root"))
+// Navigations into and out of the pages with a back button slide in the
+// direction travelled; switching between top-level pages stays instant.
+mount(
+  withTransitions(store, {
+    routes: [
+      "eventDetail",
+      "eventCreate",
+      "applicationsReceived",
+      "applicationDetail",
+      "ranks",
+    ],
+  }),
+  (api) => App.render(null, api),
+  document.getElementById("root"),
+)
 
 store.notify("#eventList:eventsLoad")
 
