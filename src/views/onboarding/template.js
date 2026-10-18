@@ -7,6 +7,7 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
 import { Page } from "../../common/page/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 export const Onboarding = {
@@ -29,10 +30,8 @@ export const Onboarding = {
       variant: "centered",
       children: [
         html`
-          <h2 class=${styles.title}>Complete your profile</h2>
-          <p class=${styles.subtitle}>
-            Tell us where you are so organizers can find you.
-          </p>
+          <h2 class=${styles.title}>${t("onboarding.title")}</h2>
+          <p class=${styles.subtitle}>${t("onboarding.subtitle")}</p>
 
           <div
             class=${
@@ -41,14 +40,14 @@ export const Onboarding = {
                 : styles.field
             }
           >
-            <span>Country</span>
+            <span>${t("fields.country")}</span>
             ${renderCountry()} ${ErrorLabel.render({ error: countryError })}
           </div>
           ${
             getFieldValue(entity, "country", "") === ITALY
               ? html`
                   <div class=${styles.field}>
-                    <span>Region (optional)</span>
+                    <span>${t("fields.regionOptional")}</span>
                     ${renderRegion()}
                   </div>
                 `
@@ -56,10 +55,10 @@ export const Onboarding = {
                   <div class=${styles.field}>
                     ${Input.render({
                       id: "onboarding-region",
-                      label: "Region (optional)",
+                      label: t("fields.regionOptional"),
                       inputType: "text",
                       value: getFieldValue(entity, "region", ""),
-                      placeholder: "Tuscany",
+                      placeholder: t("fields.regionExample"),
                       isFullWidth: true,
                       onChange: (value) => onField({ field: "region", value }),
                     })}
@@ -69,10 +68,10 @@ export const Onboarding = {
           <div class=${styles.field}>
             ${Input.render({
               id: "onboarding-website",
-              label: "Website (optional)",
+              label: t("fields.websiteOptional"),
               inputType: "url",
               value: getFieldValue(entity, "website", ""),
-              placeholder: "your-site.com",
+              placeholder: t("fields.websiteExample"),
               isFullWidth: true,
               onChange: (value) =>
                 onField({ field: "website", value: value.toLowerCase() }),
@@ -86,10 +85,10 @@ export const Onboarding = {
           <div class=${styles.field}>
             ${Input.render({
               id: "onboarding-instagram",
-              label: "Instagram (optional)",
+              label: t("fields.instagramOptional"),
               icon: "@",
               value: getFieldValue(entity, "instagram", ""),
-              placeholder: "handle",
+              placeholder: t("fields.instagramExample"),
               isFullWidth: true,
               onChange: (value) =>
                 onField({ field: "instagram", value: value.toLowerCase() }),
@@ -103,7 +102,7 @@ export const Onboarding = {
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
           <div class=${styles.bottomBar}>
             ${Button.render({
-              children: saving ? "Saving…" : "Continue",
+              children: saving ? t("common.saving") : t("auth.continue"),
               color: "primary",
               shape: "pill",
               size: "md",
@@ -112,7 +111,7 @@ export const Onboarding = {
               onClick: onSave,
             })}
             ${Button.render({
-              children: "Skip for now",
+              children: t("onboarding.skip"),
               variant: "ghost",
               size: "sm",
               className: styles.linkButton,

@@ -4,6 +4,7 @@ import { html } from "@inglorious/web"
 import { getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { t, trans } from "../../i18n/index.js"
 import { PasswordField } from "./password-field.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
@@ -29,12 +30,16 @@ export const LoginStep = {
             onLogin()
           }}
         >
-          <h2 class=${styles.title}>Welcome back</h2>
+          <h2 class=${styles.title}>${t("auth.welcomeBack")}</h2>
           <p class=${styles.subtitle}>
-            Logging in as
-            <strong>${getFieldValue(entity, "email", "")}</strong>.
+            ${trans("auth.loggingInAs", {
+              values: { email: getFieldValue(entity, "email", "") },
+              components: {
+                strong: (children) => html`<strong>${children}</strong>`,
+              },
+            })}
             ${Button.render({
-              children: "Change",
+              children: t("auth.change"),
               variant: "ghost",
               size: "sm",
               className: styles.linkButton,
@@ -48,7 +53,7 @@ export const LoginStep = {
           <div class=${styles.field}>
             ${PasswordField.render({
               id: "login_password",
-              label: "Password",
+              label: t("auth.password"),
               name: "password",
               field: "password",
               autocomplete: "current-password",
@@ -63,7 +68,7 @@ export const LoginStep = {
             direction: "column",
             align: "stretch",
             className: styles.bottomBar,
-            children: SubmitButton.render({ isBusy, label: "Log in" }),
+            children: SubmitButton.render({ isBusy, label: t("auth.logIn") }),
           })}
         </form>
       </div>

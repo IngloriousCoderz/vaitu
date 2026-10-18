@@ -1,5 +1,6 @@
 import { Chip } from "@inglorious/ui/chip"
 
+import { t } from "../../i18n/index.js"
 import { capitalize } from "../../text/index.js"
 
 // One colour per status, for applications and for events alike. The two sets
@@ -19,7 +20,7 @@ const colors = {
 export const StatusChip = {
   render({ status }) {
     return Chip.render({
-      children: capitalize(status),
+      children: t(`status.${status}`, { defaultValue: capitalize(status) }),
       color: colors[status] ?? "default",
     })
   },

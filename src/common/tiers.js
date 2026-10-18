@@ -10,7 +10,7 @@ import {
   TIER_SILVER_MIN_POINTS,
   ZERO,
 } from "../constants/index.js"
-import { capitalize } from "../text/index.js"
+import { t } from "../i18n/index.js"
 
 export function defaultTiers() {
   return {
@@ -57,8 +57,11 @@ export function tierProgress(points, tiers) {
 
 export function progressLabel(points, tiers) {
   const progress = tierProgress(points, tiers)
-  if (!progress.nextMin) return "Max rank reached"
+  if (!progress.nextMin) return t("ranks.maxReached")
   const earned = points ?? ZERO
   const missing = progress.nextMin - earned
-  return `${missing} pts to ${capitalize(progress.next)}`
+  return t("ranks.toNext", {
+    points: t("ranks.points", { count: missing }),
+    tier: t(`ranks.tier.${progress.next}`),
+  })
 }

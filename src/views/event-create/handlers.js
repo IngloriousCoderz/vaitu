@@ -31,6 +31,7 @@ import {
   regionAfterCountryChange,
   regionForCountry,
 } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
@@ -208,7 +209,7 @@ export const audioRecord = handleAsync("audioRecord", {
   error(entity, err) {
     releaseRecorder()
     entity.is_recording = false
-    entity.audio_error = err?.message ?? "Microphone unavailable"
+    entity.audio_error = err?.message ?? t("errors.micUnavailable")
   },
 })
 
@@ -261,7 +262,7 @@ export function audioRecordStop(entity, _, api) {
 export function audioEmpty(entity) {
   entity.audio_preview_url = null
   entity.audio_transcript = null
-  entity.audio_error = "Recording came out empty — try again"
+  entity.audio_error = t("errors.emptyRecording")
 }
 
 export function audioOpen(entity) {
@@ -291,7 +292,7 @@ export const audioProcess = handleAsync("audioProcess", {
     entity.audio_error = null
   },
   async run() {
-    if (!pendingBlob) throw new Error("No audio to process")
+    if (!pendingBlob) throw new Error(t("errors.noAudio"))
     const blob = pendingBlob
     await dropPendingAudio(true, true)
     pendingBlob = blob
@@ -314,8 +315,7 @@ export const audioProcess = handleAsync("audioProcess", {
   error(entity, err) {
     entity.is_transcribing = false
     entity.audio_transcript = null
-    entity.audio_error =
-      err?.message ?? "Transcription failed — will retry on save"
+    entity.audio_error = err?.message ?? t("errors.transcriptionFailed")
   },
 })
 
@@ -487,7 +487,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to save event"
+    entity.error = err.message ?? t("errors.saveEvent")
   },
 })
 
@@ -529,6 +529,6 @@ export const editLoad = handleAsync("editLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load event"
+    entity.error = err.message ?? t("errors.loadEvent")
   },
 })

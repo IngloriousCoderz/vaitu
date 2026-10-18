@@ -1,3 +1,14 @@
+/* The language picker sits between the details and the account buttons. */
+:global(.iw-flex).language {
+  margin-top: var(--iw-space-6);
+  text-align: left;
+}
+
+.languageLabel {
+  font-size: var(--iw-font-size-sm);
+  color: var(--vmuted);
+}
+
 .accountActions {
   margin-top: var(--iw-space-6);
 }

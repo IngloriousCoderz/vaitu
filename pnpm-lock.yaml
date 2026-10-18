@@ -17,6 +17,9 @@ importers:
       '@fontsource/material-symbols-outlined':
         specifier: ^5.3.9
         version: 5.3.9
+      '@inglorious/i18n':
+        specifier: ^1.0.0
+        version: 1.0.0(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.5
         version: 9.0.5(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
@@ -864,6 +867,10 @@ packages:
       eslint-plugin-simple-import-sort: ^12.1.1
       eslint-plugin-tailwindcss: 4.0.0-beta.0
       eslint-plugin-turbo: ^2.5.0
+
+  '@inglorious/i18n@1.0.0':
+    resolution: {integrity: sha512-ehdn5wXTCg1HQFlozgSQm+9C4jm4lmUErAYbc0EGa85MduCopJQnYwgqKrlqwR8cu7MX+q2mS9xIzeXGVNg8cA==}
+    engines: {node: '>= 22'}
 
   '@inglorious/motion@9.0.5':
     resolution: {integrity: sha512-eulLGH9xuZ3dXppAYuDOPK4Ci9M0IdWd1KCPoi7Mwjl76X3+dHj1eeFGts6s2qFmMR7IqI7K5ju26GtMZYJokw==}
@@ -2443,6 +2450,14 @@ packages:
       '@swc/core': ^1.15.7
     peerDependenciesMeta:
       '@swc/core':
+        optional: true
+
+  i18next@26.5.2:
+    resolution: {integrity: sha512-6fIXt//2MZNok3tULyjnypxe3vbsy3pV1bVg8p2x3yKrzZvp7z3T+wXx/88LQsATRdhyJeAUAvUxEtxsHdJ29w==}
+    peerDependencies:
+      typescript: ^5 || ^6 || ^7
+    peerDependenciesMeta:
+      typescript:
         optional: true
 
   iceberg-js@0.8.1:
@@ -4807,6 +4822,12 @@ snapshots:
       eslint-plugin-turbo: 2.11.7(eslint@10.13.0(jiti@2.7.0))(turbo@2.11.7)
       globals: 16.5.0
 
+  '@inglorious/i18n@1.0.0(typescript@7.0.2)':
+    dependencies:
+      i18next: 26.5.2(typescript@7.0.2)
+    transitivePeerDependencies:
+      - typescript
+
   '@inglorious/motion@9.0.5(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
     dependencies:
       '@inglorious/web': 6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
@@ -6408,6 +6429,10 @@ snapshots:
       lightningcss: 1.33.0
       svgo: 4.1.0
       terser: 5.51.2
+
+  i18next@26.5.2(typescript@7.0.2):
+    optionalDependencies:
+      typescript: 7.0.2
 
   iceberg-js@0.8.1: {}
 

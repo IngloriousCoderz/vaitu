@@ -13,7 +13,9 @@ const regionOptions = italianRegions.map((region) => ({
 }))
 
 // `label` and `isRequired` are rendered by the combobox itself now, so a form
-// does not have to wrap it in a hand-written label to show one.
+// does not have to wrap it in a hand-written label to show one. Labels,
+// placeholders and messages are translation keys: state keeps the key and
+// CountrySelect translates it when it renders, so they follow the language.
 function countrySelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
@@ -28,9 +30,9 @@ function countrySelect(targetId, targetEvent, overrides = {}) {
     isLoading: false,
     searchTerm: "",
     focusedIndex: -1,
-    placeholder: "Select…",
-    noOptionsMessage: "No countries found",
-    loadingMessage: "Loading…",
+    placeholder: "combobox.select",
+    noOptionsMessage: "combobox.noCountries",
+    loadingMessage: "combobox.loading",
     isFullWidth: true,
     size: "md",
     options: countryOptions,
@@ -55,9 +57,9 @@ function regionSelect(targetId, targetEvent, overrides = {}) {
     isLoading: false,
     searchTerm: "",
     focusedIndex: -1,
-    placeholder: "Select…",
-    noOptionsMessage: "No regions found",
-    loadingMessage: "Loading…",
+    placeholder: "combobox.select",
+    noOptionsMessage: "combobox.noRegions",
+    loadingMessage: "combobox.loading",
     isFullWidth: true,
     size: "md",
     options: regionOptions,
@@ -82,9 +84,9 @@ function detailSelect(targetField, options, label) {
     isLoading: false,
     searchTerm: "",
     focusedIndex: -1,
-    placeholder: "Select…",
-    noOptionsMessage: "No options",
-    loadingMessage: "Loading…",
+    placeholder: "combobox.select",
+    noOptionsMessage: "combobox.noOptions",
+    loadingMessage: "combobox.loading",
     isFullWidth: true,
     size: "md",
     options,
@@ -99,30 +101,32 @@ function favoriteRegionSelect(targetId, targetEvent, overrides = {}) {
   return {
     ...regionSelect(targetId, targetEvent, overrides),
     isClearable: false,
-    placeholder: "Select…",
+    placeholder: "combobox.select",
     targetField: "favorite",
   }
 }
 
 export const entities = {
+  // The active language. `#i18n:localeChange` switches it.
+  i18n: { type: "I18n" },
   "country-onboarding": countrySelect("onboarding", "fieldSet"),
   "country-profile": countrySelect("profile", "profileFieldSet", {
-    label: "Country",
+    label: "fields.country",
   }),
   "country-create": countrySelect("eventCreate", "fieldSet", {
-    label: "Country",
+    label: "fields.country",
     isRequired: true,
   }),
   "region-onboarding": regionSelect("onboarding", "fieldSet"),
   "region-profile": regionSelect("profile", "profileFieldSet", {
-    label: "Region",
+    label: "fields.region",
   }),
   "region-create": regionSelect("eventCreate", "fieldSet", {
-    label: "Region",
+    label: "fields.region",
     isRequired: true,
   }),
-  "style-create": detailSelect("style", weddingStyles, "Style"),
-  "genre-create": detailSelect("genre", festivalGenres, "Genre"),
+  "style-create": detailSelect("style", weddingStyles, "fields.style"),
+  "genre-create": detailSelect("genre", festivalGenres, "fields.genre"),
   "favorite-region-list": favoriteRegionSelect(
     "eventList",
     "favoriteChoiceSelect",
@@ -130,6 +134,6 @@ export const entities = {
   "favorite-region-profile": favoriteRegionSelect(
     "profile",
     "favoriteChoiceSelect",
-    { label: "Favorite regions (optional)" },
+    { label: "fields.favoriteRegions" },
   ),
 }

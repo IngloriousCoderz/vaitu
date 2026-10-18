@@ -7,6 +7,7 @@ import {
   WEEK_DAYS,
   ZERO,
 } from "../../constants/index.js"
+import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
   const parts = title.split(" ").filter((word) => word && word !== "&")
@@ -19,11 +20,12 @@ export function monogram(title) {
 }
 
 export function deadlineBadge(event) {
-  if (event.status === "assigned") return "ASSIGNED"
-  if (event.daysLeft <= ZERO) return "CLOSED"
-  if (event.daysLeft <= CLOSING_MAX_DAYS) return "CLOSING"
-  if (event.daysLeft < WEEK_DAYS) return `${event.daysLeft}D LEFT`
-  return `${Math.round(event.daysLeft / WEEK_DAYS)}W LEFT`
+  if (event.status === "assigned") return t("badge.assigned")
+  if (event.daysLeft <= ZERO) return t("badge.closed")
+  if (event.daysLeft <= CLOSING_MAX_DAYS) return t("badge.closing")
+  if (event.daysLeft < WEEK_DAYS)
+    return t("badge.daysLeft", { count: event.daysLeft })
+  return t("badge.weeksLeft", { count: Math.round(event.daysLeft / WEEK_DAYS) })
 }
 
 export function deadlineTone(event) {
@@ -34,4 +36,23 @@ export function deadlineTone(event) {
 
 export function thumbGradient(hue) {
   return `linear-gradient(135deg, hsl(${hue} 25% 38%), hsl(${(hue + HUE_SHIFT) % HUE_DEGREES} 30% 22%))`
+}
+
+// "Florence • Tuscany • 24 Oct", with the date in the active locale.
+export function eventSubtitle(event) {
+  const date = new Intl.DateTimeFormat(currentLocale(), {
+    month: "short",
+    day: "2-digit",
+  }).format(new Date(`${event.event_date}T00:00`))
+  return [event.place, date].filter(Boolean).join(" • ")
+}
+
+// The style or genre, by name in the active language; the raw value when
+// there is no translation for it.
+export function eventTag(event) {
+  if (!event.filterValue) return ""
+  const kind = event.category === "festival" ? "genre" : "style"
+  return t(`taxonomy.${kind}.${event.filterValue}`, {
+    defaultValue: event.filterValue,
+  })
 }

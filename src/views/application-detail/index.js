@@ -9,6 +9,7 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
@@ -112,7 +113,7 @@ export const ApplicationDetail = {
 function validateMotivation(values) {
   const errors = {}
   if (!(values.motivation ?? "").trim()) {
-    errors.motivation = "Motivation is required"
+    errors.motivation = t("validation.motivationRequired")
   }
   return errors
 }

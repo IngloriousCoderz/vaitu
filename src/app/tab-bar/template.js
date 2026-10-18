@@ -3,13 +3,14 @@ import { Fab as IwFab } from "@inglorious/ui/fab"
 import { MaterialIcon } from "@inglorious/ui/material-icon"
 import { html } from "@inglorious/web"
 
+import { labelled, t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const tabs = [
-  { value: "events", label: "Events", icon: "event" },
-  { value: "applications", label: "Applications", icon: "assignment" },
-  { value: "new", label: "New", icon: "add" },
-  { value: "profile", label: "Profile", icon: "person" },
+  labelled("nav.events", { value: "events", icon: "event" }),
+  labelled("nav.applications", { value: "applications", icon: "assignment" }),
+  labelled("nav.new", { value: "new", icon: "add" }),
+  labelled("nav.profile", { value: "profile", icon: "person" }),
 ]
 
 // Shared bottom tab bar. Stays mounted at App level so hide/show animates
@@ -48,7 +49,7 @@ export const Fab = {
       size: "lg",
       color: "primary",
       shape: "round",
-      ariaLabel: "New event",
+      ariaLabel: t("nav.newEvent"),
       className: [
         styles.fab,
         low ? styles.fabLow : "",

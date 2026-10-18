@@ -7,6 +7,7 @@ import {
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
 import { canonicalRegion } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 
 export function expandToggle(entity, application_id) {
   entity.expanded_application_id =
@@ -62,7 +63,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
     /* Realtime can fire this after the page has been left, when there is no
        event to load. `.eq("id", undefined)` is a malformed filter that comes
        back as a 400, so bail rather than ask. */
-    if (!event_id) throw new Error("No event to load applications for")
+    if (!event_id) throw new Error(t("errors.noEventForApplications"))
 
     const { data: event, error: eventError } = await supabase
       .from("events")
@@ -107,7 +108,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load applications"
+    entity.error = err.message ?? t("errors.loadApplications")
   },
 })
 
@@ -130,7 +131,7 @@ export const statusSet = handleAsync("statusSet", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to update"
+    entity.error = err.message ?? t("errors.update")
   },
 })
 
@@ -153,7 +154,7 @@ export const winnerAssign = handleAsync("winnerAssign", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to assign winner"
+    entity.error = err.message ?? t("errors.assignWinner")
   },
 })
 
@@ -170,7 +171,7 @@ export const eventReopen = handleAsync("eventReopen", {
           ? new Date(application_deadline).toISOString()
           : application_deadline
       if (new Date(iso).getTime() <= Date.now()) {
-        throw new Error("Pick a future deadline")
+        throw new Error(t("validation.futureDeadline"))
       }
       patch.application_deadline = iso
     }
@@ -188,7 +189,7 @@ export const eventReopen = handleAsync("eventReopen", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to reopen event"
+    entity.error = err.message ?? t("errors.reopenEvent")
   },
 })
 
@@ -207,7 +208,7 @@ function validateReopen(values) {
       ? new Date(value).toISOString()
       : value
   if (new Date(iso).getTime() <= Date.now()) {
-    errors.reopen_deadline = "Pick a future deadline"
+    errors.reopen_deadline = t("validation.futureDeadline")
   }
   return errors
 }

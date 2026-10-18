@@ -1,5 +1,6 @@
 import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { categories, filtersForCategory } from "./categories.js"
 import {
@@ -69,7 +70,7 @@ export const EventList = {
 
   renderHeader(entity, api) {
     return {
-      title: "Events",
+      title: t("events.title"),
       isBrand: true,
       actions: this.renderHeaderActions({
         hasActiveFilters:

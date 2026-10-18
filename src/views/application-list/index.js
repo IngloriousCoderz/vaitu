@@ -1,5 +1,6 @@
 import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationList as renderers } from "./template.js"
@@ -29,7 +30,7 @@ export const ApplicationList = {
   routeChange: pageRouteChange(open, close, (payload) => payload.query.status),
 
   renderHeader() {
-    return { title: "My Applications" }
+    return { title: t("applications.title") }
   },
 
   render(entity, api) {

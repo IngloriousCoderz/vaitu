@@ -1,4 +1,5 @@
 import { pageRouteChange } from "../../common/page-route.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { Ranks as renderers } from "./template.js"
@@ -19,7 +20,7 @@ export const Ranks = {
   routeChange: pageRouteChange(open, close),
 
   renderHeader() {
-    return { title: "Ranks", back: paths.profile }
+    return { title: t("ranks.title"), back: paths.profile }
   },
 
   render(entity, api) {

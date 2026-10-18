@@ -4,6 +4,7 @@ import {
   MIN_TEXT_LENGTH,
 } from "../constants/index.js"
 import { festivalGenres, weddingStyles } from "../data/event-taxonomy.js"
+import { t } from "../i18n/index.js"
 
 // Turns a submitted payload into the row the `events` table expects.
 //
@@ -86,24 +87,28 @@ function validateWeddingDetails(details) {
   fail(
     errors,
     "spouse_first_name_1",
-    requiredText(details.spouse_first_name_1, "Add a name"),
+    requiredText(details.spouse_first_name_1, t("validation.addName")),
   )
   fail(
     errors,
     "spouse_first_name_2",
-    requiredText(details.spouse_first_name_2, "Add a name"),
+    requiredText(details.spouse_first_name_2, t("validation.addName")),
   )
   if (details.style && !oneOf(weddingStyles, details.style)) {
-    fail(errors, "style", "Pick a style")
+    fail(errors, "style", t("validation.pickStyle"))
   }
   return errors
 }
 
 function validateFestivalDetails(details) {
   const errors = {}
-  fail(errors, "headliner", requiredText(details.headliner, "Add a headliner"))
+  fail(
+    errors,
+    "headliner",
+    requiredText(details.headliner, t("validation.addHeadliner")),
+  )
   if (details.genre && !oneOf(festivalGenres, details.genre)) {
-    fail(errors, "genre", "Pick a genre")
+    fail(errors, "genre", t("validation.pickGenre"))
   }
   return errors
 }
@@ -124,38 +129,48 @@ export function validateEvent(values = {}) {
   fail(
     errors,
     "category",
-    DETAIL_VALIDATORS[category] ? undefined : "Pick a category",
+    DETAIL_VALIDATORS[category] ? undefined : t("validation.pickCategory"),
   )
-  fail(errors, "title", requiredText(values.title, "Add a title"))
-  fail(errors, "location", requiredText(values.location, "Add a location"))
-  fail(errors, "country", requiredText(values.country, "Add a country"))
-  fail(errors, "region", requiredText(values.region, "Add a region"))
+  fail(errors, "title", requiredText(values.title, t("validation.addTitle")))
+  fail(
+    errors,
+    "location",
+    requiredText(values.location, t("validation.addLocation")),
+  )
+  fail(
+    errors,
+    "country",
+    requiredText(values.country, t("validation.addCountry")),
+  )
+  fail(errors, "region", requiredText(values.region, t("validation.addRegion")))
   fail(
     errors,
     "event_date",
-    ISO_DATE.test(values.event_date ?? "") ? undefined : "Pick a date",
+    ISO_DATE.test(values.event_date ?? "")
+      ? undefined
+      : t("validation.pickDate"),
   )
   fail(
     errors,
     "application_deadline",
     INSTANT.test(values.application_deadline ?? "")
       ? undefined
-      : "Pick a deadline",
+      : t("validation.pickDeadline"),
   )
   if (
     values.max_applicants !== undefined &&
     !(Number.isInteger(values.max_applicants) && values.max_applicants > 0)
   ) {
-    fail(errors, "max_applicants", "Pick how many places")
+    fail(errors, "max_applicants", t("validation.pickPlaces"))
   }
   if (values.audio_url && !isWebUrl(values.audio_url)) {
-    fail(errors, "audio_url", "Check the audio link")
+    fail(errors, "audio_url", t("validation.checkAudioLink"))
   }
   if (
     values.transcript_status !== undefined &&
     !TRANSCRIPT_STATUSES.includes(values.transcript_status)
   ) {
-    fail(errors, "transcript_status", "Unrecognised transcript status")
+    fail(errors, "transcript_status", t("validation.unknownTranscript"))
   }
 
   const validateDetails = DETAIL_VALIDATORS[category]

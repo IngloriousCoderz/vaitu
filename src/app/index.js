@@ -9,6 +9,7 @@ import { html } from "@inglorious/web"
 import { readUser } from "../api/session.js"
 import { BackButton } from "../common/back-button/index.js"
 import { Logo } from "../common/logo/index.js"
+import { t } from "../i18n/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
 import { AppDrawer } from "./drawer/template.js"
@@ -111,7 +112,7 @@ export const App = {
             icon: MaterialIcon.render({ name: "menu", size: "lg" }),
             variant: "ghost",
             color: "secondary",
-            ariaLabel: "Toggle navigation",
+            ariaLabel: t("nav.toggle"),
             className: styles.menuButton,
             onClick: () =>
               api.notify("#shell:toggleDrawer", {
@@ -133,7 +134,7 @@ export const App = {
   // itself does not offer to start another one.
   renderGlobalActions(api, route) {
     const profile = api.getEntity("profile").profile
-    const name = profile?.full_name || readUser()?.email || "Account"
+    const name = profile?.full_name || readUser()?.email || t("nav.account")
 
     return Flex.render({
       align: "center",
@@ -145,7 +146,7 @@ export const App = {
           : Button.render({
               children: html`
                 ${MaterialIcon.render({ name: "add", size: "lg" })}
-                <span>New event</span>
+                <span>${t("nav.newEvent")}</span>
               `,
               color: "primary",
               shape: "pill",
@@ -156,13 +157,13 @@ export const App = {
           icon: MaterialIcon.render({ name: "notifications_none", size: "lg" }),
           variant: "ghost",
           color: "secondary",
-          ariaLabel: "Notifications",
+          ariaLabel: t("nav.notifications"),
         }),
         Button.render({
           variant: "ghost",
           color: "secondary",
           shape: "round",
-          ariaLabel: `Profile: ${name}`,
+          ariaLabel: t("nav.profileOf", { name }),
           className: styles.avatarButton,
           onClick: () => api.notify("#router:navigate", paths.profile),
           children: Avatar.render({

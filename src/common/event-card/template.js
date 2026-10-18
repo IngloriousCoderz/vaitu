@@ -3,9 +3,12 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 
+import { t } from "../../i18n/index.js"
 import {
   deadlineBadge,
   deadlineTone,
+  eventSubtitle,
+  eventTag,
   monogram,
   thumbGradient,
 } from "./helpers.js"
@@ -49,12 +52,12 @@ export const Card = {
             className: tone ? toneClass[tone] : "",
           })}
         </div>
-        <p class=${styles.meta}>${event.subtitle}</p>
+        <p class=${styles.meta}>${eventSubtitle(event)}</p>
         <div class=${styles.tagRow}>
-          ${Chip.render({ children: event.tag })}
+          ${Chip.render({ children: eventTag(event) })}
           ${
             isApplied
-              ? Chip.render({ children: "✓ Applied", color: "success" })
+              ? Chip.render({ children: t("card.applied"), color: "success" })
               : ""
           }
         </div>

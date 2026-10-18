@@ -8,13 +8,12 @@ import {
   HUE_DEGREES,
   JUST_OPENED_MIN_DAYS,
   MINUTES_PER_HOUR,
-  MONTH_INDEX_OFFSET,
-  PAD_LENGTH,
   REQUEST_TIMEOUT_MS,
   SINGULAR,
   ZERO,
 } from "../constants/index.js"
 import { canonicalRegion, uniqueRegions } from "../data/regions/resolve.js"
+import { t } from "../i18n/index.js"
 import { randomId } from "../text/index.js"
 import {
   firstError,
@@ -25,42 +24,10 @@ import { supabase } from "./client.js"
 
 const NEW_THRESHOLD_DAYS = 3
 const NEW_THRESHOLD_MS = NEW_THRESHOLD_DAYS * DAY_MS
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-]
-
-const genreLabels = {
-  house: "House",
-  techno: "Techno",
-  indie: "Indie",
-  jazz: "Jazz",
-  electronic: "Electronic",
-}
-
-const styleLabels = {
-  editorial: "Editorial",
-  documentary: "Documentary",
-  reportage: "Reportage",
-  classic: "Classic",
-  film: "Film",
-  fine_art: "Fine Art",
-}
-
 // Boundary layer: rows → generic view models. Field names mirror the DB
 // (snake_case, no conversion); only display derivations happen here.
 export function toViewModel(row) {
-  const [year, month, day] = row.event_date.split("-").map(Number)
+  const [year] = row.event_date.split("-").map(Number)
   const region = canonicalRegion(row.region)
   const base = {
     id: row.id,
@@ -71,12 +38,9 @@ export function toViewModel(row) {
     eventInDays: Math.ceil(
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
-    subtitle: [row.location, region]
-      .filter(Boolean)
-      .join(" • ")
-      .concat(
-        ` • ${MONTHS[month - MONTH_INDEX_OFFSET]} ${String(day).padStart(PAD_LENGTH, "0")}`,
-      ),
+    // Display text is derived at render (see common/event-card), so it
+    // follows the active language: the date is formatted then, in its locale.
+    place: [row.location, region].filter(Boolean).join(" • "),
     audio_url: row.audio_url ?? null,
     transcript: row.transcript ?? null,
     transcript_status: row.transcript_status ?? "none",
@@ -96,11 +60,10 @@ export function toViewModel(row) {
     return {
       ...base,
       title: row.title,
-      tag: genreLabels[row.details.genre] ?? row.details.genre,
       filterValue: row.details.genre,
       facts: [
-        { label: "Headliner", value: row.details.headliner },
-        ...(region ? [{ label: "Region", value: region }] : []),
+        { labelKey: "fields.headliner", value: row.details.headliner },
+        ...(region ? [{ labelKey: "fields.region", value: region }] : []),
       ],
     }
   }
@@ -109,27 +72,28 @@ export function toViewModel(row) {
   return {
     ...base,
     title: couple,
-    tag: styleLabels[row.details.style] ?? row.details.style,
     filterValue: row.details.style,
     facts: [
-      { label: "Spouses", value: couple },
-      ...(region ? [{ label: "Region", value: region }] : []),
+      { labelKey: "facts.spouses", value: couple },
+      ...(region ? [{ labelKey: "fields.region", value: region }] : []),
     ],
   }
 }
 
 export function countdownLabel(event) {
   if (event.isNew && event.daysLeft > JUST_OPENED_MIN_DAYS)
-    return "Just opened — apply early"
+    return t("countdown.justOpened")
   if (event.daysLeft > SINGULAR)
-    return `Applications close in ${event.daysLeft} days`
+    return t("countdown.days", { count: event.daysLeft })
   if (event.hoursLeft > SINGULAR)
-    return `Applications close in ${event.hoursLeft} hours`
+    return t("countdown.hours", { count: event.hoursLeft })
   if (event.minutesLeft > SINGULAR)
-    return `Applications close in ${event.minutesLeft} minutes`
-  if (event.minutesLeft === SINGULAR) return "Applications close in 1 minute"
-  if (event.hoursLeft === SINGULAR) return "Applications close in 1 hour"
-  return "Applications are closed"
+    return t("countdown.minutes", { count: event.minutesLeft })
+  if (event.minutesLeft === SINGULAR)
+    return t("countdown.minutes", { count: event.minutesLeft })
+  if (event.hoursLeft === SINGULAR)
+    return t("countdown.hours", { count: event.hoursLeft })
+  return t("countdown.closed")
 }
 
 export function isApplicationClosed(event) {

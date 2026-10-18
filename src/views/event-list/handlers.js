@@ -15,6 +15,7 @@ import {
   regionFilterItems,
   sameRegion,
 } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 import { distinctRegions } from "./helpers.js"
 
 export function search(entity, query) {
@@ -158,7 +159,7 @@ export const eventsLoad = handleAsync("eventsLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load events"
+    entity.error = err.message ?? t("errors.loadEvents")
   },
 })
 
@@ -177,7 +178,7 @@ export const eventRemove = handleAsync("eventRemove", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to delete event"
+    entity.error = err.message ?? t("errors.deleteEvent")
   },
 })
 
@@ -203,6 +204,6 @@ export const favoritesSave = handleAsync("favoritesSave", {
   },
   error(entity, err) {
     entity.favoritesStatus = "error"
-    entity.favoritesError = err.message ?? "Failed to save favorite regions"
+    entity.favoritesError = err.message ?? t("errors.saveFavorites")
   },
 })

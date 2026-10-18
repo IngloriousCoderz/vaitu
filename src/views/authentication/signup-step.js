@@ -5,6 +5,7 @@ import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { t, trans } from "../../i18n/index.js"
 import { PasswordField } from "./password-field.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
@@ -31,12 +32,16 @@ export const SignupStep = {
             onContinue()
           }}
         >
-          <h2 class=${styles.title}>Create your account</h2>
+          <h2 class=${styles.title}>${t("auth.createAccount")}</h2>
           <p class=${styles.subtitle}>
-            Signing up as
-            <strong>${getFieldValue(entity, "email", "")}</strong>.
+            ${trans("auth.signingUpAs", {
+              values: { email: getFieldValue(entity, "email", "") },
+              components: {
+                strong: (children) => html`<strong>${children}</strong>`,
+              },
+            })}
             ${Button.render({
-              children: "Change email",
+              children: t("auth.changeEmail"),
               variant: "ghost",
               size: "sm",
               className: styles.linkButton,
@@ -50,11 +55,11 @@ export const SignupStep = {
           <div class=${styles.field}>
             ${Input.render({
               id: "signup-name",
-              label: "Full name",
+              label: t("auth.fullName"),
               inputType: "text",
               name: "name",
               value: getFieldValue(entity, "full_name", ""),
-              placeholder: "Your name",
+              placeholder: t("auth.yourName"),
               isFullWidth: true,
               isRequired: true,
               error: getFieldError(entity, "full_name"),
@@ -65,7 +70,7 @@ export const SignupStep = {
           <div class=${styles.field}>
             ${PasswordField.render({
               id: "signup_password",
-              label: "Password",
+              label: t("auth.password"),
               name: "new-password",
               field: "password",
               autocomplete: "new-password",
@@ -78,7 +83,7 @@ export const SignupStep = {
           <div class=${styles.field}>
             ${PasswordField.render({
               id: "signup_confirm",
-              label: "Confirm password",
+              label: t("auth.confirmPassword"),
               name: "confirm-password",
               field: "confirmPassword",
               autocomplete: "new-password",
@@ -93,7 +98,10 @@ export const SignupStep = {
             direction: "column",
             align: "stretch",
             className: styles.bottomBar,
-            children: SubmitButton.render({ isBusy, label: "Continue" }),
+            children: SubmitButton.render({
+              isBusy,
+              label: t("auth.continue"),
+            }),
           })}
         </form>
       </div>

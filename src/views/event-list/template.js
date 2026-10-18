@@ -14,7 +14,8 @@ import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
-import { LIST_STAGGER_CAP, SINGULAR } from "../../constants/index.js"
+import { LIST_STAGGER_CAP } from "../../constants/index.js"
+import { t, translatedLabel } from "../../i18n/index.js"
 import { visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -149,7 +150,7 @@ export const EventList = {
               ${Input.render({
                 inputType: "search",
                 isFullWidth: true,
-                placeholder: "Find events by city, style or genre...",
+                placeholder: t("events.search"),
                 value: query,
                 icon: MaterialIcon.render({ name: "search", size: "lg" }),
                 onChange: (value) => onSearch(value),
@@ -172,13 +173,15 @@ export const EventList = {
                       @click=${(e) => e.stopPropagation()}
                     >
                       <div class=${styles.sheetHeading}>
-                        <h3 class=${styles.sheetTitle}>Region</h3>
+                        <h3 class=${styles.sheetTitle}>
+                          ${t("events.region")}
+                        </h3>
                         ${IconButton.render({
                           icon: MaterialIcon.render({
                             name: "settings",
                             size: "lg",
                           }),
-                          ariaLabel: "Edit favorite regions",
+                          ariaLabel: t("events.editFavorites"),
                           variant: "ghost",
                           color: "secondary",
                           className: styles.sheetGear,
@@ -205,9 +208,9 @@ export const EventList = {
                         items: regions,
                         activeId: activeRegion,
                         onSelect: onSelectRegion,
-                        getLabel: (item) => item.label,
+                        getLabel: translatedLabel,
                       })}
-                      <h3 class=${styles.sheetTitle}>Period</h3>
+                      <h3 class=${styles.sheetTitle}>${t("events.period")}</h3>
                       ${this.renderChipRow({
                         items: periods,
                         activeId: activePeriod,
@@ -215,7 +218,7 @@ export const EventList = {
                         getLabel: (period) => period.label,
                       })}
                       ${Button.render({
-                        children: "Clear all",
+                        children: t("events.clearAll"),
                         variant: "ghost",
                         isFullWidth: true,
                         onClick: onClearFilters,
@@ -231,12 +234,12 @@ export const EventList = {
                 isError: status === "error",
                 error,
                 isLoading: status === "loading",
-                loadingText: "Loading events…",
+                loadingText: t("events.loading"),
                 isEmpty: !shown.length,
                 emptyText:
                   isMine && !myEvents.length
-                    ? "You haven't posted any event yet."
-                    : "No events match your search yet.",
+                    ? t("events.noneMine")
+                    : t("events.noneMatch"),
               }) ??
               shown.map((event, index) => {
                 const style = `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`
@@ -292,15 +295,14 @@ export const EventList = {
           <div class=${styles.myEventFooter}>
             ${StatusChip.render({ status: event.status })}
             <span class=${styles.count}>
-              ${event.applications_count}
-              application${event.applications_count === SINGULAR ? "" : "s"}
+              ${t("events.applications", { count: event.applications_count })}
             </span>
             <span class=${styles.rowActions}>
               ${
                 event.status === "open"
                   ? IconButton.render({
                       icon: MaterialIcon.render({ name: "edit", size: "lg" }),
-                      ariaLabel: "Edit event",
+                      ariaLabel: t("events.edit"),
                       className: `${styles.miniButton} ${styles.editTint}`,
                       onClick: () => onEdit(event.id),
                     })
@@ -308,7 +310,7 @@ export const EventList = {
               }
               ${IconButton.render({
                 icon: MaterialIcon.render({ name: "delete", size: "lg" }),
-                ariaLabel: "Delete event",
+                ariaLabel: t("events.delete"),
                 className: `${styles.miniButton} ${styles.deleteTint}`,
                 onClick: () => onAskDelete(event.id),
               })}
@@ -317,8 +319,8 @@ export const EventList = {
         `,
         isConfirmingDelete
           ? ConfirmPrompt.render({
-              message: "Delete this event and all its applications?",
-              confirmLabel: "Yes, delete",
+              message: t("events.deleteConfirm"),
+              confirmLabel: t("events.yesDelete"),
               className: styles.confirm,
               onConfirm: () => onDelete(event.id),
               onCancel: onCancelDelete,
@@ -333,7 +335,7 @@ export const EventList = {
       icon: MaterialIcon.render({ name: "instant_mix", size: "lg" }),
       variant: "ghost",
       color: "secondary",
-      ariaLabel: "Filters",
+      ariaLabel: t("events.filters"),
       className: hasActiveFilters ? styles.filterActive : "",
       onClick: onToggleFilters,
     })
@@ -366,7 +368,7 @@ export const EventList = {
         })}
         ${ErrorAlert.render({ error: favoritesError })}
         ${Button.render({
-          children: saving ? "Saving…" : "Save regions",
+          children: saving ? t("common.saving") : t("events.saveRegions"),
           color: "primary",
           shape: "pill",
           size: "md",
@@ -375,7 +377,7 @@ export const EventList = {
           onClick: onSaveFavorites,
         })}
         ${Button.render({
-          children: "Cancel",
+          children: t("common.cancel"),
           variant: "ghost",
           isFullWidth: true,
           isDisabled: saving,

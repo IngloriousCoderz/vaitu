@@ -8,14 +8,16 @@ import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
+import { t } from "../../i18n/index.js"
+import { labelled } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const FilterOptions = [
-  { id: "all", label: "All" },
-  { id: "pending", label: "Pending" },
-  { id: "shortlisted", label: "Shortlisted" },
-  { id: "selected", label: "Selected" },
-  { id: "rejected", label: "Rejected" },
+  labelled("status.all", { id: "all" }),
+  labelled("status.pending", { id: "pending" }),
+  labelled("status.shortlisted", { id: "shortlisted" }),
+  labelled("status.selected", { id: "selected" }),
+  labelled("status.rejected", { id: "rejected" }),
 ]
 
 export const ApplicationList = {
@@ -61,11 +63,11 @@ export const ApplicationList = {
                 isError: status === "error",
                 error,
                 isLoading: status === "loading",
-                loadingText: "Loading applications…",
+                loadingText: t("applications.loading"),
                 isEmpty: !shown.length,
                 emptyText: !applications.length
-                  ? "You haven't applied for any event yet."
-                  : "Nothing with this status.",
+                  ? t("applications.none")
+                  : t("applications.noneWithStatus"),
               }) ??
               shown.map((application, index) =>
                 this.renderApplicationItem({

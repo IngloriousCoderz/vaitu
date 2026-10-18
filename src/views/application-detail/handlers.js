@@ -7,6 +7,7 @@ import {
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
@@ -45,7 +46,7 @@ export const applicationLoad = handleAsync("applicationLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load application"
+    entity.error = err.message ?? t("errors.loadApplication")
   },
 })
 
@@ -63,7 +64,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to save"
+    entity.error = err.message ?? t("errors.save")
   },
 })
 
@@ -83,7 +84,7 @@ export const withdraw = handleAsync("withdraw", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to withdraw"
+    entity.error = err.message ?? t("errors.withdraw")
   },
 })
 
@@ -102,6 +103,6 @@ export const giveUp = handleAsync("giveUp", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to give up"
+    entity.error = err.message ?? t("errors.giveUp")
   },
 })

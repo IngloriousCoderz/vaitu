@@ -10,6 +10,7 @@ import { isTicking, startTick, stopTick } from "../../api/ticker.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { isProfileComplete } from "../../common/profile.js"
 import { DAY_MS } from "../../constants/index.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { EventDetail as renderers } from "./template.js"
@@ -110,7 +111,7 @@ export const EventDetail = {
 function validateApply(values) {
   const errors = {}
   if (!(values.motivation ?? "").trim()) {
-    errors.motivation = "Motivation is required"
+    errors.motivation = t("validation.motivationRequired")
   }
   return errors
 }

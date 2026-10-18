@@ -3,6 +3,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 // The favorite regions editor shared by the event list and the profile: the
@@ -39,7 +40,7 @@ export const FavoriteRegions = {
         id: inputId,
         inputType: "text",
         value: input,
-        placeholder: "Or type a region",
+        placeholder: t("favorites.typeRegion"),
         isFullWidth: true,
         onChange: onInput,
         onKeyDown: (e) => {
@@ -54,7 +55,7 @@ export const FavoriteRegions = {
         spellcheck: "false",
       })}
       ${Button.render({
-        children: "Add",
+        children: t("common.add"),
         variant: "outline",
         shape: "pill",
         size: "md",

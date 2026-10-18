@@ -6,7 +6,7 @@ import { html } from "@inglorious/web"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
-import { capitalize } from "../../text/index.js"
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 export const Ranks = {
@@ -24,10 +24,7 @@ export const Ranks = {
       read: true,
       children: [
         html`
-          <p class=${styles.subtitle}>
-            Earn points with every application. Higher ranks show on your
-            profile.
-          </p>
+          <p class=${styles.subtitle}>${t("ranks.subtitle")}</p>
 
           ${
             progress
@@ -48,10 +45,10 @@ export const Ranks = {
                         }),
                       }),
                       html`<span class=${styles.heroTier}>
-                        ${progress.current ? capitalize(progress.current) : "No rank"}
+                        ${progress.current ? t(`ranks.tier.${progress.current}`) : t("ranks.noRank")}
                       </span>`,
                       html`<span class=${styles.heroPoints}
-                        >${mine?.points ?? 0} pts</span
+                        >${t("ranks.points", { count: mine?.points ?? 0 })}</span
                       >`,
                       Progress.render({
                         value: progress.percent,
@@ -75,7 +72,7 @@ export const Ranks = {
                   isError: status === "error",
                   error,
                   isLoading: status === "loading",
-                  loadingText: "Loading ranks…",
+                  loadingText: t("ranks.loading"),
                 }) ??
                 (tiers
                   ? RANK_ORDER.map(
@@ -93,11 +90,11 @@ export const Ranks = {
                               className: styles.rankName,
                               children: html`
                                 ${MaterialIcon.render({ name: "social_leaderboard", size: "lg" })}
-                                ${capitalize(rank)}
+                                ${t(`ranks.tier.${rank}`)}
                               `,
                             }),
                             html`<span class=${styles.rankPoints}>
-                              ${rankMin(tiers, rank)}+ pts
+                              ${t("ranks.minPoints", { count: rankMin(tiers, rank) })}
                             </span>`,
                           ],
                         })}
@@ -112,21 +109,23 @@ export const Ranks = {
                         direction: "column",
                         className: styles.howCard,
                         children: html`
-                          <span class=${styles.howTitle}>How points work</span>
+                          <span class=${styles.howTitle}
+                            >${t("ranks.howTitle")}</span
+                          >
                           ${this.renderHowRow({
                             icon: "assignment",
                             points: tiers.perApplication,
-                            label: "per application",
+                            label: t("ranks.perApplication"),
                           })}
                           ${this.renderHowRow({
                             icon: "star",
                             points: tiers.perShortlist,
-                            label: "per shortlist",
+                            label: t("ranks.perShortlist"),
                           })}
                           ${this.renderHowRow({
                             icon: "trophy",
                             points: tiers.perSelection,
-                            label: "per win",
+                            label: t("ranks.perWin"),
                           })}
                         `,
                       })}
@@ -154,7 +153,7 @@ export const Ranks = {
           children: MaterialIcon.render({ name: icon, size: "lg" }),
         }),
         html`<span class=${styles.howText}>
-          <strong>${points} pts</strong> ${label}
+          <strong>${t("ranks.points", { count: points })}</strong> ${label}
         </span>`,
       ],
     })

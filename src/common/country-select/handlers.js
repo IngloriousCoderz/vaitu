@@ -65,9 +65,10 @@ export function create(entity) {
   entity.isSearchable ??= false
   entity.isClearable ??= false
 
-  entity.placeholder ??= "Select…"
-  entity.noOptionsMessage ??= "No options"
-  entity.loadingMessage ??= "Loading..."
+  // Translation keys, translated when the select renders.
+  entity.placeholder ??= "combobox.select"
+  entity.noOptionsMessage ??= "combobox.noOptions"
+  entity.loadingMessage ??= "combobox.loading"
 }
 
 /** @param {any} entity */

@@ -7,6 +7,7 @@ import {
   MIN_PASSWORD_LENGTH,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { landingForSession } from "../../store/guards.js"
 
@@ -112,7 +113,7 @@ export const emailCheck = handleAsync("emailCheck", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Could not check email"
+    entity.error = err.message ?? t("errors.checkEmail")
   },
 })
 
@@ -145,7 +146,7 @@ export const login = handleAsync("login", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Login failed"
+    entity.error = err.message ?? t("errors.login")
   },
 })
 
@@ -171,32 +172,35 @@ export const signup = handleAsync("signup", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Sign up failed"
+    entity.error = err.message ?? t("errors.signup")
   },
 })
 
 function validateEmail(values) {
   const errors = {}
   if (!EMAIL.test((values.email ?? "").trim())) {
-    errors.email = "Enter a valid email"
+    errors.email = t("validation.validEmail")
   }
   return errors
 }
 
 function validateLogin(values) {
   const errors = {}
-  if (!values.password) errors.password = "Password is required"
+  if (!values.password) errors.password = t("validation.passwordRequired")
   return errors
 }
 
 function validateSignup(values) {
   const errors = {}
-  if (!(values.full_name ?? "").trim()) errors.full_name = "Name is required"
+  if (!(values.full_name ?? "").trim())
+    errors.full_name = t("validation.nameRequired")
   if ((values.password ?? "").length < MIN_PASSWORD_LENGTH) {
-    errors.password = "Password must be at least 6 characters"
+    errors.password = t("validation.passwordLength", {
+      count: MIN_PASSWORD_LENGTH,
+    })
   }
   if (values.password !== values.confirmPassword) {
-    errors.confirmPassword = "Passwords do not match"
+    errors.confirmPassword = t("validation.passwordsMismatch")
   }
   return errors
 }

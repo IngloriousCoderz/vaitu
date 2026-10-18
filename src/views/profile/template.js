@@ -1,5 +1,6 @@
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
+import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -18,7 +19,7 @@ import {
   ITALY,
   uniqueRegions,
 } from "../../data/regions/resolve.js"
-import { capitalize } from "../../text/index.js"
+import { LANGUAGE_NAMES, t } from "../../i18n/index.js"
 import {
   displayInstagram,
   displayWebsite,
@@ -39,6 +40,8 @@ export const Profile = {
     onSave,
     onEdit,
     onLogout,
+    i18n,
+    onLocaleChange,
     onOpenApplications,
     onOpenRanks,
     onFavoriteInput,
@@ -63,7 +66,7 @@ export const Profile = {
               isError: status === "error" && !profile,
               error,
               isLoading: status === "loading" || !profile,
-              loadingText: "Loading profile…",
+              loadingText: t("profile.loading"),
             }) ??
             html`
               ${Flex.render({
@@ -98,19 +101,19 @@ export const Profile = {
                       children: [
                         this.renderStat(
                           entity.stats.applications_count,
-                          "Applications",
+                          t("profile.applications"),
                           "all",
                           onOpenApplications,
                         ),
                         this.renderStat(
                           entity.stats.shortlists_count,
-                          "Shortlisted",
+                          t("profile.shortlisted"),
                           "shortlisted",
                           onOpenApplications,
                         ),
                         this.renderStat(
                           entity.stats.selections_count,
-                          "Wins",
+                          t("profile.wins"),
                           "selected",
                           onOpenApplications,
                         ),
@@ -121,41 +124,41 @@ export const Profile = {
               ${
                 entity.isEditing
                   ? html`
-                      <h3 class=${styles.sectionTitle}>Edit profile</h3>
+                      <h3 class=${styles.sectionTitle}>${t("profile.edit")}</h3>
                       ${Flex.render({
                         direction: "column",
                         gap: "md",
                         className: styles.editForm,
                         children: html`
                           ${this.renderEditField({
-                            label: "Full name",
+                            label: t("auth.fullName"),
                             field: "full_name",
                             value: shown.full_name,
-                            placeholder: "Your name",
+                            placeholder: t("auth.yourName"),
                             onField,
                           })}
                           ${this.renderEditField({
-                            label: "Website",
+                            label: t("fields.website"),
                             field: "website",
                             icon: "https://",
                             value: (shown.website ?? "").replace(
                               /^https?:\/\//i,
                               "",
                             ),
-                            placeholder: "your-site.com",
+                            placeholder: t("fields.websiteExample"),
                             lowercase: true,
                             inputmode: "url",
                             onField,
                           })}
                           ${this.renderEditField({
-                            label: "Instagram",
+                            label: t("fields.instagram"),
                             field: "instagram_handle",
                             icon: "@",
                             value: (shown.instagram_handle ?? "").replace(
                               /^@+/,
                               "",
                             ),
-                            placeholder: "handle",
+                            placeholder: t("fields.instagramExample"),
                             lowercase: true,
                             onField,
                           })}
@@ -172,10 +175,10 @@ export const Profile = {
                                   children: renderRegion(),
                                 })
                               : this.renderEditField({
-                                  label: "Region",
+                                  label: t("fields.region"),
                                   field: "region",
                                   value: shown.region,
-                                  placeholder: "Region (optional)",
+                                  placeholder: t("fields.regionOptional"),
                                   onField,
                                 })
                           }
@@ -192,7 +195,9 @@ export const Profile = {
                             error: status === "error" && error ? error : null,
                           })}
                           ${Button.render({
-                            children: saving ? "Saving…" : "Save profile",
+                            children: saving
+                              ? t("common.saving")
+                              : t("profile.save"),
                             color: "primary",
                             shape: "pill",
                             size: "md",
@@ -201,7 +206,7 @@ export const Profile = {
                             onClick: onSave,
                           })}
                           ${Button.render({
-                            children: "Cancel",
+                            children: t("common.cancel"),
                             variant: "outline",
                             shape: "pill",
                             size: "md",
@@ -214,25 +219,26 @@ export const Profile = {
                   : html`
                       <dl class=${styles.rows}>
                         ${this.renderRow(
-                          "Website",
+                          t("fields.website"),
                           displayWebsite(profile.website),
                           displayWebsite(profile.website) || null,
                         )}
                         ${this.renderRow(
-                          "Instagram",
+                          t("fields.instagram"),
                           displayInstagram(profile.instagram_handle),
                           instagramUrl(profile.instagram_handle),
                         )}
-                        ${this.renderRow("Country", profile.country)}
-                        ${this.renderRow("Region", canonicalRegion(profile.region))}
+                        ${this.renderRow(t("fields.country"), profile.country)}
+                        ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
                         ${this.renderRow(
-                          "Favorite regions",
+                          t("profile.favoriteRegions"),
                           uniqueRegions(profile.favorite_regions ?? []).join(
                             ", ",
                           ),
                         )}
-                        ${this.renderRow("Sub-role", profile.sub_role)}
+                        ${this.renderRow(t("profile.subRole"), profile.sub_role)}
                       </dl>
+                      ${this.renderLanguage({ i18n, onLocaleChange })}
                       ${this.renderAccountActions({ onEdit, onLogout })}
                     `
               }
@@ -315,6 +321,39 @@ export const Profile = {
 
   // Editing is the profile's main action; logging out is there when you need
   // it, quieter, and never in the way.
+  // The app's language, each named in itself.
+  renderLanguage({ i18n, onLocaleChange }) {
+    return Flex.render({
+      justify: "between",
+      align: "center",
+      gap: "md",
+      className: styles.language,
+      children: [
+        html`<span class=${styles.languageLabel}
+          >${t("profile.language")}</span
+        >`,
+        ButtonGroup.render({
+          buttons: (i18n?.locales ?? []).map((locale) =>
+            locale === i18n.locale
+              ? {
+                  value: locale,
+                  label: LANGUAGE_NAMES[locale],
+                  color: "primary",
+                }
+              : {
+                  value: locale,
+                  label: LANGUAGE_NAMES[locale],
+                  variant: "outline",
+                },
+          ),
+          value: i18n?.locale,
+          size: "sm",
+          onChange: onLocaleChange,
+        }),
+      ],
+    })
+  },
+
   renderAccountActions({ onEdit, onLogout }) {
     return Flex.render({
       direction: "column",
@@ -322,7 +361,7 @@ export const Profile = {
       className: styles.accountActions,
       children: [
         Button.render({
-          children: "Edit profile",
+          children: t("profile.edit"),
           variant: "outline",
           shape: "pill",
           size: "md",
@@ -330,7 +369,7 @@ export const Profile = {
           onClick: onEdit,
         }),
         Button.render({
-          children: "Log out",
+          children: t("profile.logOut"),
           variant: "ghost",
           color: "secondary",
           shape: "pill",
@@ -363,10 +402,10 @@ export const Profile = {
             }),
           }),
           html`<span class=${styles.tierName}>
-            ${progress.current ? capitalize(progress.current) : "No rank"}
+            ${progress.current ? t(`ranks.tier.${progress.current}`) : t("ranks.noRank")}
           </span>`,
           html`<span class=${styles.tierPoints}
-            >${stats.points ?? 0} pts</span
+            >${t("ranks.points", { count: stats.points ?? 0 })}</span
           >`,
           Progress.render({
             color: "primary",
@@ -384,7 +423,7 @@ export const Profile = {
                 icon: MaterialIcon.render({ name: "help", size: "lg" }),
                 variant: "ghost",
                 color: "secondary",
-                ariaLabel: "How ranks work",
+                ariaLabel: t("profile.howRanksWork"),
                 className: styles.ranksHelp,
                 onClick: onOpenRanks,
               }),

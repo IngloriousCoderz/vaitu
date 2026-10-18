@@ -6,6 +6,7 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { Profile as renderers } from "./template.js"
@@ -60,7 +61,7 @@ export const Profile = {
   routeChange: pageRouteChange(open, close),
 
   renderHeader() {
-    return { title: "Profile" }
+    return { title: t("profile.title") }
   },
 
   render(entity, api) {
@@ -76,6 +77,8 @@ export const Profile = {
       onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
       onEdit: () => api.notify(`#${id}:editStart`),
       onLogout: () => api.notify(`#${id}:logout`),
+      i18n: api.getEntity("i18n"),
+      onLocaleChange: (locale) => api.notify("#i18n:localeChange", locale),
       onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
       onOpenApplications: (status) =>
         api.notify("#router:navigate", paths.applicationsByStatus(status)),

@@ -3,6 +3,7 @@ import { Flex } from "@inglorious/ui/flex"
 import { Typography } from "@inglorious/ui/typography"
 import { html } from "@inglorious/web"
 
+import { t, trans } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import styles from "./style.module.css"
 
@@ -26,17 +27,22 @@ export const NotFound = {
           ${Typography.render({
             variant: "h3",
             hasGutterBottom: true,
-            children: "Nothing here",
+            children: t("notFound.title"),
           })}
           ${Typography.render({
             variant: "body",
             hasGutterBottom: true,
-            children: html`No page matches <code>${router.path}</code>.`,
+            children: trans("notFound.noMatch", {
+              values: { path: router.path },
+              components: {
+                code: (children) => html`<code>${children}</code>`,
+              },
+            }),
           })}
           ${Button.render({
             color: "primary",
             onClick: goToEvents(api),
-            children: "Go to events",
+            children: t("notFound.goToEvents"),
           })}
         </div>
       `,

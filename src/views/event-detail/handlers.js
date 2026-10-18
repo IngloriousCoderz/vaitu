@@ -4,6 +4,7 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
 import { readUserId } from "../../api/session.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
@@ -52,7 +53,7 @@ export const apply = handleAsync("apply", {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error("Not logged in")
+    if (!user) throw new Error(t("errors.notLoggedIn"))
     const { error: profileError } = await supabase
       .from("profiles")
       .update({
@@ -69,7 +70,7 @@ export const apply = handleAsync("apply", {
     })
     if (error) {
       if (error.code === "23505") {
-        throw new Error("You already applied for this event")
+        throw new Error(t("errors.alreadyApplied"))
       }
       throw error
     }
@@ -82,7 +83,7 @@ export const apply = handleAsync("apply", {
   },
   error(entity, err) {
     entity.applyStatus = "error"
-    entity.applyError = err.message ?? "Application failed"
+    entity.applyError = err.message ?? t("errors.applicationFailed")
   },
 })
 
@@ -101,6 +102,6 @@ export const detailLoad = handleAsync("detailLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load event"
+    entity.error = err.message ?? t("errors.loadEvent")
   },
 })

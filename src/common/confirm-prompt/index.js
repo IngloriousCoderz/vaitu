@@ -1,6 +1,7 @@
 import { Button } from "@inglorious/ui/button"
 import { html } from "@inglorious/web"
 
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 // The inline "are you sure?" step before an action that is hard to take back:
@@ -16,7 +17,7 @@ export const ConfirmPrompt = {
     children = "",
     confirmLabel,
     busyLabel = confirmLabel,
-    cancelLabel = "Keep it",
+    cancelLabel = t("common.keepIt"),
     tone = "danger",
     isBusy = false,
     isDisabled = false,

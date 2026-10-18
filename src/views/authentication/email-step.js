@@ -4,6 +4,7 @@ import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
@@ -20,16 +21,16 @@ export const EmailStep = {
             onCheckEmail()
           }}
         >
-          <h2 class=${styles.title}>Welcome to Vaitu</h2>
-          <p class=${styles.subtitle}>Enter your email to continue.</p>
+          <h2 class=${styles.title}>${t("auth.welcome")}</h2>
+          <p class=${styles.subtitle}>${t("auth.enterEmail")}</p>
           <div class=${styles.field}>
             ${Input.render({
               id: "email-step-email",
-              label: "Email",
+              label: t("auth.email"),
               inputType: "email",
               name: "email",
               value: getFieldValue(entity, "email", ""),
-              placeholder: "you@example.com",
+              placeholder: t("auth.emailExample"),
               isFullWidth: true,
               isRequired: true,
               error: getFieldError(entity, "email"),
@@ -47,8 +48,8 @@ export const EmailStep = {
             className: styles.bottomBar,
             children: SubmitButton.render({
               isBusy,
-              label: "Continue",
-              busyLabel: "Checking...",
+              label: t("auth.continue"),
+              busyLabel: t("auth.checking"),
             }),
           })}
         </form>

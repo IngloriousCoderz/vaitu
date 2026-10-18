@@ -16,6 +16,7 @@ import {
   ZERO,
 } from "../../constants/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import styles from "./style.module.css"
 
@@ -90,20 +91,20 @@ export const EventCreate = {
             title_is_derived
               ? ""
               : this.renderTextField({
-                  label: "Title",
+                  label: t("fields.title"),
                   field: "title",
                   value: getFieldValue(entity, "title", ""),
-                  placeholder: "E.g. Sundance Beats",
+                  placeholder: t("create.titleExample"),
                   error: getFieldError(entity, "title"),
                   isRequired: true,
                   onField,
                 })
           }
           ${this.renderTextField({
-            label: "Location",
+            label: t("fields.location"),
             field: "location",
             value: getFieldValue(entity, "location", ""),
-            placeholder: "Venue Name",
+            placeholder: t("create.locationExample"),
             error: getFieldError(entity, "location"),
             isRequired: true,
             onField,
@@ -117,10 +118,10 @@ export const EventCreate = {
                   </div>
                 `
               : this.renderTextField({
-                  label: "Region",
+                  label: t("fields.region"),
                   field: "region",
                   value: getFieldValue(entity, "region", ""),
-                  placeholder: "E.g. Tuscany",
+                  placeholder: t("create.regionExample"),
                   error: getFieldError(entity, "region"),
                   isRequired: true,
                   onField,
@@ -132,7 +133,7 @@ export const EventCreate = {
             )}
           </div>
           ${this.renderTextField({
-            label: "Event date",
+            label: t("fields.eventDate"),
             field: "event_date",
             value: getFieldValue(entity, "event_date", ""),
             type: "date",
@@ -141,7 +142,7 @@ export const EventCreate = {
             onField,
           })}
           ${this.renderTextField({
-            label: "Application deadline",
+            label: t("fields.deadline"),
             field: "application_deadline",
             value: getFieldValue(entity, "application_deadline", ""),
             type: "datetime-local",
@@ -150,7 +151,7 @@ export const EventCreate = {
             onField,
           })}
           ${this.renderTextField({
-            label: "Max shortlist",
+            label: t("fields.maxShortlist"),
             field: "max_applicants",
             value: getFieldValue(entity, "max_applicants", ""),
             type: "number",
@@ -162,10 +163,10 @@ export const EventCreate = {
           <div class=${styles.bottomBar}>
             ${Button.render({
               children: busy
-                ? "Saving…"
+                ? t("common.saving")
                 : entity.editing_event_id
-                  ? "Save changes"
-                  : "Save event",
+                  ? t("create.saveChanges")
+                  : t("create.saveEvent"),
               color: "primary",
               shape: "pill",
               size: "md",
@@ -182,7 +183,7 @@ export const EventCreate = {
   renderHeaderActions({ entity, onRecordStop, onOpenAudio }) {
     return IconButton.render({
       icon: MaterialIcon.render({ name: "mic", size: "lg" }),
-      ariaLabel: "Describe by voice",
+      ariaLabel: t("create.voice"),
       color: "primary",
       shape: "round",
       onClick: entity.is_recording ? onRecordStop : onOpenAudio,
@@ -212,7 +213,7 @@ export const EventCreate = {
       direction: "column",
       className: styles.audioBox,
       children: html`
-        <span class=${styles.audioLabel}>Describe by voice</span>
+        <span class=${styles.audioLabel}>${t("create.voice")}</span>
         ${
           entity.is_recording
             ? html`
@@ -221,15 +222,15 @@ export const EventCreate = {
                   align: "center",
                   gap: "sm",
                   className: styles.recording,
-                  children: html`<span class=${styles.recDot}></span> Listening…
-                    tell us about your event`,
+                  children: html`<span class=${styles.recDot}></span>
+                    ${t("create.listening")}`,
                 })}
                 <p class=${styles.timer}>
                   ${formatElapsed(entity.audio_elapsed ?? ZERO)} /
                   ${formatElapsed(AUDIO_MAX_SECONDS)}
                 </p>
                 ${Button.render({
-                  children: "Stop",
+                  children: t("create.stop"),
                   variant: "outline",
                   shape: "pill",
                   size: "md",
@@ -237,7 +238,7 @@ export const EventCreate = {
                   onClick: onRecordStop,
                 })}
                 ${Button.render({
-                  children: "Cancel",
+                  children: t("common.cancel"),
                   variant: "ghost",
                   color: "default",
                   size: "sm",
@@ -251,11 +252,15 @@ export const EventCreate = {
                   ${
                     entity.is_transcribing
                       ? html`
-                          <p class=${styles.transcribing}>Transcribing…</p>
+                          <p class=${styles.transcribing}>
+                            ${t("create.transcribing")}
+                          </p>
                         `
                       : entity.is_parsing
                         ? html`
-                            <p class=${styles.transcribing}>Filling fields…</p>
+                            <p class=${styles.transcribing}>
+                              ${t("create.filling")}
+                            </p>
                           `
                         : entity.audio_transcript
                           ? html`
@@ -271,7 +276,7 @@ export const EventCreate = {
                     className: styles.audioActions,
                     children: [
                       Button.render({
-                        children: "Record again",
+                        children: t("create.recordAgain"),
                         variant: "outline",
                         shape: "pill",
                         size: "md",
@@ -279,7 +284,7 @@ export const EventCreate = {
                         onClick: onRecordStart,
                       }),
                       Button.render({
-                        children: "Remove",
+                        children: t("create.remove"),
                         variant: "outline",
                         shape: "pill",
                         size: "md",
@@ -291,7 +296,7 @@ export const EventCreate = {
                 `
               : html`
                   ${Button.render({
-                    children: "Start",
+                    children: t("create.start"),
                     color: "primary",
                     shape: "pill",
                     size: "md",
@@ -299,7 +304,7 @@ export const EventCreate = {
                     onClick: onRecordStart,
                   })}
                   ${Button.render({
-                    children: "Cancel",
+                    children: t("common.cancel"),
                     variant: "ghost",
                     color: "default",
                     size: "sm",
@@ -312,10 +317,7 @@ export const EventCreate = {
           error: entity.audio_error,
           className: styles.error,
         })}
-        <p class=${styles.hint}>
-          Talk through your event instead of typing — it will be transcribed
-          into the fields below.
-        </p>
+        <p class=${styles.hint}>${t("create.voiceHint")}</p>
       `,
     })
   },

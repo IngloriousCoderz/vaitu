@@ -12,6 +12,7 @@ import {
   sameRegion,
   uniqueRegions,
 } from "../../data/regions/resolve.js"
+import { t } from "../../i18n/index.js"
 
 export function editStart(entity, _, api) {
   entity.isEditing = true
@@ -133,7 +134,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error("Not logged in")
+    if (!user) throw new Error(t("errors.notLoggedIn"))
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
@@ -185,7 +186,7 @@ export const profileLoad = handleAsync("profileLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load profile"
+    entity.error = err.message ?? t("errors.loadProfile")
     if (isSessionDead(err)) void endSession()
   },
 })
@@ -199,7 +200,7 @@ export const profileSave = handleAsync("profileSave", {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error("Not logged in")
+    if (!user) throw new Error(t("errors.notLoggedIn"))
     const website = (profile.website ?? "").trim().toLowerCase()
     const instagram = (profile.instagram_handle ?? "")
       .trim()
@@ -238,7 +239,7 @@ export const profileSave = handleAsync("profileSave", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to save profile"
+    entity.error = err.message ?? t("errors.saveProfile")
   },
 })
 
@@ -254,6 +255,6 @@ export const logout = handleAsync("logout", {
     // Clearing the session is enough — the guard moves the visitor to /login.
   },
   error(entity, err) {
-    entity.error = err.message ?? "Logout failed"
+    entity.error = err.message ?? t("errors.logout")
   },
 })

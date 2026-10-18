@@ -1,6 +1,8 @@
 export {
   deadlineBadge,
   deadlineTone,
+  eventSubtitle,
+  eventTag,
   monogram,
   thumbGradient,
 } from "./helpers.js"

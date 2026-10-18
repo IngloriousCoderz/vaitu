@@ -15,6 +15,7 @@ import {
   DATETIME_LOCAL_LENGTH,
   SINGULAR,
 } from "../../constants/index.js"
+import { currentLocale, t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 export const ApplicationsReceived = {
@@ -59,12 +60,12 @@ export const ApplicationsReceived = {
                         ? ConfirmPrompt.render({
                             message:
                               entity.event_status === "assigned"
-                                ? "Reopen this event? Applications keep their status and you can adjust the shortlist again."
-                                : "Reopen this event? New applications will be accepted again.",
+                                ? t("received.reopenAssigned")
+                                : t("received.reopenClosed"),
                             children: deadlinePast(entity.event_deadline)
                               ? html`
                                   <div class=${styles.field}>
-                                    <span>New application deadline</span>
+                                    <span>${t("received.newDeadline")}</span>
                                     ${Input.render({
                                       id: "received-reopen-deadline",
                                       inputType: "datetime-local",
@@ -79,12 +80,12 @@ export const ApplicationsReceived = {
                                   </div>
                                 `
                               : "",
-                            confirmLabel: "Yes, reopen",
-                            busyLabel: "Reopening…",
+                            confirmLabel: t("received.yesReopen"),
+                            busyLabel: t("received.reopening"),
                             cancelLabel:
                               entity.event_status === "assigned"
-                                ? "Keep assigned"
-                                : "Keep closed",
+                                ? t("received.keepAssigned")
+                                : t("received.keepClosed"),
                             tone: "primary",
                             isBusy: status === "saving",
                             isDisabled:
@@ -96,7 +97,7 @@ export const ApplicationsReceived = {
                           })
                         : html`
                             ${Button.render({
-                              children: "Reopen event",
+                              children: t("received.reopen"),
                               color: "primary",
                               shape: "pill",
                               size: "md",
@@ -126,12 +127,12 @@ export const ApplicationsReceived = {
                 isError: status === "error" && !items.length,
                 error,
                 isLoading: status === "loading",
-                loadingText: "Loading applications…",
+                loadingText: t("applications.loading"),
                 isEmpty: !items.length,
                 emptyText:
                   entity.event_status === "open"
-                    ? "No applications yet."
-                    : "No applications received.",
+                    ? t("received.none")
+                    : t("received.noneReceived"),
               }) ??
               items.map((item) =>
                 this.renderApplicant({
@@ -164,15 +165,18 @@ export const ApplicationsReceived = {
 
   renderRecap(recap, shortlisted, maxApplicants) {
     const rows = [
-      ["Status", prettyValue(recap.status)],
-      ["Names", recap.names || "—"],
-      ["Style", prettyValue(recap.style)],
-      ["Location", recap.location || "—"],
-      ["Event date", formatDay(recap.event_date)],
-      ["Application deadline", formatDeadline(recap.application_deadline)],
-      ["Shortlist", `${shortlisted}/${maxApplicants ?? "—"}`],
+      [t("received.status"), translatedValue("status.", recap.status)],
+      [t("received.names"), recap.names || "—"],
       [
-        "Created",
+        t("received.style"),
+        translatedValue(["taxonomy.style.", "taxonomy.genre."], recap.style),
+      ],
+      [t("received.location"), recap.location || "—"],
+      [t("received.eventDate"), formatDay(recap.event_date)],
+      [t("received.deadline"), formatDeadline(recap.application_deadline)],
+      [t("received.shortlist"), `${shortlisted}/${maxApplicants ?? "—"}`],
+      [
+        t("received.created"),
         formatDay((recap.created_at ?? "").slice(0, DATE_ISO_LENGTH)),
       ],
     ]
@@ -282,7 +286,7 @@ export const ApplicationsReceived = {
                       ? html`
                           <div class=${styles.actions}>
                             ${Button.render({
-                              children: "Shortlist",
+                              children: t("received.shortlistAction"),
                               variant: "outline",
                               shape: "pill",
                               size: "md",
@@ -294,7 +298,7 @@ export const ApplicationsReceived = {
                               item.status === "pending"
                                 ? html`
                                     ${Button.render({
-                                      children: "Reject",
+                                      children: t("received.reject"),
                                       color: "error",
                                       variant: "outline",
                                       shape: "pill",
@@ -304,7 +308,7 @@ export const ApplicationsReceived = {
                                   `
                                 : html`
                                     ${Button.render({
-                                      children: "Back to pending",
+                                      children: t("received.backToPending"),
                                       variant: "outline",
                                       shape: "pill",
                                       size: "md",
@@ -323,11 +327,10 @@ export const ApplicationsReceived = {
                             confirming_assign
                               ? ConfirmPrompt.render({
                                   id: "assign-confirm",
-                                  message:
-                                    "Assign this applicant as the winner? The event will close and the others will be rejected.",
-                                  confirmLabel: "Yes, assign",
-                                  busyLabel: "Assigning…",
-                                  cancelLabel: "Keep shortlist",
+                                  message: t("received.assignConfirm"),
+                                  confirmLabel: t("received.yesAssign"),
+                                  busyLabel: t("received.assigning"),
+                                  cancelLabel: t("received.keepShortlist"),
                                   tone: "primary",
                                   isBusy: status === "saving",
                                   onConfirm: () => onAssign(item.id),
@@ -336,14 +339,16 @@ export const ApplicationsReceived = {
                               : html`
                                   <div class=${styles.actions}>
                                     ${Button.render({
-                                      children: "Assign winner",
+                                      children: t("received.assign"),
                                       color: "primary",
                                       shape: "pill",
                                       size: "md",
                                       onClick: () => onAskAssign(item.id),
                                     })}
                                     ${Button.render({
-                                      children: "Remove from shortlist",
+                                      children: t(
+                                        "received.removeFromShortlist",
+                                      ),
                                       variant: "outline",
                                       shape: "pill",
                                       size: "md",
@@ -371,7 +376,7 @@ function deadlinePast(iso) {
 
 function formatDay(iso) {
   if (!iso) return "—"
-  return new Date(`${iso}T00:00`).toLocaleDateString(undefined, {
+  return new Date(`${iso}T00:00`).toLocaleDateString(currentLocale(), {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -380,7 +385,7 @@ function formatDay(iso) {
 
 function formatDeadline(iso) {
   if (!iso) return "—"
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(currentLocale(), {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -391,4 +396,12 @@ function formatDeadline(iso) {
 function prettyValue(value) {
   if (!value) return "—"
   return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+// A stored value (status, style, genre) by name in the active language,
+// trying each key prefix in turn; the prettified value when none has it.
+function translatedValue(prefixes, value) {
+  if (!value) return "—"
+  const keys = [prefixes].flat().map((prefix) => `${prefix}${value}`)
+  return t(keys, { defaultValue: prettyValue(value) })
 }

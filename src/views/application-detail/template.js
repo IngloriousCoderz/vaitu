@@ -9,6 +9,7 @@ import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
+import { t } from "../../i18n/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -54,7 +55,7 @@ export const ApplicationDetail = {
               isError: status !== "loading" && !application,
               error,
               isLoading: status === "loading",
-              loadingText: "Loading application…",
+              loadingText: t("application.loading"),
             }) ??
             html`
               <div class=${styles.stage}>
@@ -72,10 +73,12 @@ export const ApplicationDetail = {
                   ${
                     links
                       ? html`
-                          <h3 class=${styles.sectionTitle}>Add to calendar</h3>
+                          <h3 class=${styles.sectionTitle}>
+                            ${t("application.addToCalendar")}
+                          </h3>
                           <div class=${styles.calendarRow}>
                             ${Button.render({
-                              children: "Google Calendar",
+                              children: t("application.googleCalendar"),
                               color: "primary",
                               shape: "pill",
                               size: "md",
@@ -83,7 +86,7 @@ export const ApplicationDetail = {
                               onClick: () => onGoogleCalendar(links.googleUrl),
                             })}
                             ${Button.render({
-                              children: "Download .ics",
+                              children: t("application.downloadIcs"),
                               variant: "outline",
                               shape: "pill",
                               size: "md",
@@ -99,7 +102,9 @@ export const ApplicationDetail = {
                     application.applicationStatus === "pending" ||
                     application.applicationStatus === "shortlisted"
                       ? html`
-                          <h3 class=${styles.sectionTitle}>Your motivation</h3>
+                          <h3 class=${styles.sectionTitle}>
+                            ${t("application.yourMotivation")}
+                          </h3>
                           <div class=${styles.field}>
                             ${Textarea.render({
                               id: "application-motivation",
@@ -113,7 +118,9 @@ export const ApplicationDetail = {
                           </div>
                           ${Button.render({
                             children:
-                              status === "saving" ? "Saving…" : "Save changes",
+                              status === "saving"
+                                ? t("common.saving")
+                                : t("create.saveChanges"),
                             color: "primary",
                             shape: "pill",
                             size: "md",
@@ -135,10 +142,9 @@ export const ApplicationDetail = {
                     application.applicationStatus === "selected"
                       ? entity.isConfirmingGiveUp
                         ? ConfirmPrompt.render({
-                            message:
-                              "Give up this event? The organizer will need to pick another winner.",
-                            confirmLabel: "Yes, give up",
-                            busyLabel: "Giving up…",
+                            message: t("application.giveUpConfirm"),
+                            confirmLabel: t("application.yesGiveUp"),
+                            busyLabel: t("application.givingUp"),
                             isBusy: status === "saving",
                             isDisabled: isBusy,
                             isStacked: true,
@@ -148,7 +154,7 @@ export const ApplicationDetail = {
                           })
                         : html`
                             ${Button.render({
-                              children: "Give up this event",
+                              children: t("application.giveUp"),
                               color: "error",
                               variant: "outline",
                               shape: "pill",
@@ -160,10 +166,9 @@ export const ApplicationDetail = {
                           `
                       : entity.isConfirmingWithdraw
                         ? ConfirmPrompt.render({
-                            message:
-                              "Are you sure you want to withdraw your application? The organizer will no longer see it.",
-                            confirmLabel: "Yes, withdraw",
-                            busyLabel: "Withdrawing…",
+                            message: t("application.withdrawConfirm"),
+                            confirmLabel: t("application.yesWithdraw"),
+                            busyLabel: t("application.withdrawing"),
                             isBusy: status === "withdrawing",
                             isDisabled: isBusy,
                             isStacked: true,
@@ -173,7 +178,7 @@ export const ApplicationDetail = {
                           })
                         : html`
                             ${Button.render({
-                              children: "Withdraw application",
+                              children: t("application.withdraw"),
                               color: "error",
                               variant: "outline",
                               shape: "pill",

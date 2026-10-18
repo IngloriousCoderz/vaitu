@@ -1,16 +1,17 @@
 import { FIRST_INDEX, ZERO } from "../../constants/index.js"
 import { sameRegion, uniqueRegions } from "../../data/regions/resolve.js"
+import { labelled } from "../../i18n/index.js"
 
 export const owners = [
-  { id: "explore", label: "Explore" },
-  { id: "mine", label: "My events" },
+  labelled("owners.explore", { id: "explore" }),
+  labelled("owners.mine", { id: "mine" }),
 ]
 
 export const periods = [
-  { id: "all", label: "All dates", days: null },
-  { id: "week", label: "Next 7 days", days: 7 },
-  { id: "month", label: "Next 30 days", days: 30 },
-  { id: "quarter", label: "Next 90 days", days: 90 },
+  labelled("periods.all", { id: "all", days: null }),
+  labelled("periods.week", { id: "week", days: 7 }),
+  labelled("periods.month", { id: "month", days: 30 }),
+  labelled("periods.quarter", { id: "quarter", days: 90 }),
 ]
 
 export function distinctRegions(allEvents) {

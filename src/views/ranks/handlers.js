@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { defaultTiers } from "../../common/tiers.js"
+import { t } from "../../i18n/index.js"
 
 const DEFAULT_TIERS = defaultTiers()
 
@@ -48,6 +49,6 @@ export const tiersLoad = handleAsync("tiersLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to load ranks"
+    entity.error = err.message ?? t("errors.loadRanks")
   },
 })

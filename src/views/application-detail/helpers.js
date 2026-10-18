@@ -1,4 +1,5 @@
 import { DATE_ISO_LENGTH, PAD_LENGTH, SINGULAR } from "../../constants/index.js"
+import { t } from "../../i18n/index.js"
 import { randomId } from "../../text/index.js"
 
 export function calendarLinks({ title, eventDate, location }) {
@@ -9,7 +10,7 @@ export function calendarLinks({ title, eventDate, location }) {
     action: "TEMPLATE",
     text: title,
     dates: `${start}/${end}`,
-    details: "Booked via Vaitu",
+    details: t("application.bookedVia"),
     location,
   })
   const ics = [
@@ -23,7 +24,7 @@ export function calendarLinks({ title, eventDate, location }) {
     `DTEND;VALUE=DATE:${end}`,
     `SUMMARY:${escapeIcs(title)}`,
     `LOCATION:${escapeIcs(location)}`,
-    "DESCRIPTION:Booked via Vaitu",
+    `DESCRIPTION:${t("application.bookedVia")}`,
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n")

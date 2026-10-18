@@ -6,6 +6,7 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { clearReopenError } from "./handlers.js"
 import * as handlers from "./handlers.js"
@@ -71,7 +72,10 @@ export const ApplicationsReceived = {
     ).length
     return {
       title: entity.event_title ?? "",
-      subtitle: `${shortlisted} shortlisted · ${items.length} received`,
+      subtitle: t("received.summary", {
+        shortlisted,
+        received: items.length,
+      }),
       back: paths.events,
     }
   },

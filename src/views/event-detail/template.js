@@ -12,6 +12,8 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import {
   deadlineBadge,
   deadlineTone,
+  eventSubtitle,
+  eventTag,
   monogram,
   thumbGradient,
 } from "../../common/event-card/index.js"
@@ -24,6 +26,7 @@ import {
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
 } from "../../constants/index.js"
+import { t, translatedLabel } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 export const EventDetail = {
@@ -64,7 +67,7 @@ export const EventDetail = {
               isError: status === "error",
               error,
               isLoading: !event,
-              loadingText: "Loading event…",
+              loadingText: t("detail.loading"),
             }) ??
             (entity.isSubmitted
               ? this.renderSubmitted({ onOpenEvents })
@@ -94,16 +97,20 @@ export const EventDetail = {
                           }),
                         ],
                       })}
-                      <p class=${styles.meta}>${event.subtitle}</p>
-                      ${Chip.render({ children: event.tag })}
+                      <p class=${styles.meta}>${eventSubtitle(event)}</p>
+                      ${Chip.render({ children: eventTag(event) })}
                       ${this.renderFacts(event)}
                       <p class=${styles.sender}>
-                        Organized by ${entity.senderName}
+                        ${t("detail.organizedBy", { name: entity.senderName })}
                       </p>
                       <p class=${styles.countdown}>
                         ${
                           showClock
-                            ? `Applications close in ${formatClock(Math.floor(msLeft / MS_PER_SECOND))}`
+                            ? t("countdown.clock", {
+                                time: formatClock(
+                                  Math.floor(msLeft / MS_PER_SECOND),
+                                ),
+                              })
                             : countdownLabel(event)
                         }
                       </p>
@@ -117,8 +124,7 @@ export const EventDetail = {
                                   variant: "outline",
                                   shape: "pill",
                                   isFullWidth: true,
-                                  children:
-                                    "Review the applications you received",
+                                  children: t("detail.reviewApplications"),
                                   onClick: onOpenApplications,
                                 })}
                               </div>
@@ -126,7 +132,7 @@ export const EventDetail = {
                           : liveClosed || isApplicationClosed(event)
                             ? html`
                                 <div class=${styles.closedBox}>
-                                  Applications are closed for this event.
+                                  ${t("detail.closed")}
                                 </div>
                               `
                             : this.renderForm({
@@ -154,7 +160,7 @@ export const EventDetail = {
             justify: "between",
             className: styles.fact,
             children: html`
-              <dt>${fact.label}</dt>
+              <dt>${translatedLabel(fact)}</dt>
               <dd>${fact.value}</dd>
             `,
           }),
@@ -172,12 +178,10 @@ export const EventDetail = {
           className: styles.check,
           children: "✓",
         })}
-        <h3 class=${styles.sectionTitle}>Application sent!</h3>
-        <p class=${styles.feedback}>
-          You will receive feedback within a few days.
-        </p>
+        <h3 class=${styles.sectionTitle}>${t("detail.sent")}</h3>
+        <p class=${styles.feedback}>${t("detail.feedback")}</p>
         ${Button.render({
-          children: "Back to events",
+          children: t("detail.backToEvents"),
           color: "primary",
           shape: "pill",
           size: "md",
@@ -201,13 +205,11 @@ export const EventDetail = {
 
     if (!profileComplete) {
       return html`
-        <h3 class=${styles.sectionTitle}>Apply for this event</h3>
-        <p class=${styles.warn}>
-          Complete your profile (name, website and Instagram) before applying.
-        </p>
+        <h3 class=${styles.sectionTitle}>${t("detail.applyTitle")}</h3>
+        <p class=${styles.warn}>${t("detail.completeFirst")}</p>
         <div class=${styles.bottomBar}>
           ${Button.render({
-            children: "Complete profile",
+            children: t("detail.completeProfile"),
             color: "primary",
             shape: "pill",
             size: "md",
@@ -228,11 +230,11 @@ export const EventDetail = {
         if (canSubmit) onSubmit()
       },
       children: html`
-        <h3 class=${styles.sectionTitle}>Apply for this event</h3>
+        <h3 class=${styles.sectionTitle}>${t("detail.applyTitle")}</h3>
         <div class=${styles.field}>
           ${Input.render({
             id: "apply-full-name",
-            label: "Full name",
+            label: t("auth.fullName"),
             inputType: "text",
             value: getFieldValue(entity, "full_name", ""),
             isFullWidth: true,
@@ -242,7 +244,7 @@ export const EventDetail = {
         <div class=${styles.field}>
           ${Input.render({
             id: "apply-website",
-            label: "Website",
+            label: t("fields.website"),
             inputType: "url",
             value: getFieldValue(entity, "website", ""),
             isFullWidth: true,
@@ -252,7 +254,7 @@ export const EventDetail = {
         <div class=${styles.field}>
           ${Input.render({
             id: "apply-instagram",
-            label: "Instagram",
+            label: t("fields.instagram"),
             inputType: "text",
             value: getFieldValue(entity, "instagram", ""),
             isFullWidth: true,
@@ -260,16 +262,15 @@ export const EventDetail = {
           })}
         </div>
         <p class=${styles.disclaimer}>
-          Only ${entity.event.max_applicants} names will be forwarded to the
-          organizer.
+          ${t("detail.forwarded", { count: entity.event.max_applicants })}
         </p>
         <div class=${styles.field}>
           ${Textarea.render({
             id: "apply-motivation",
-            label: "Why are you the ideal candidate for this event?",
+            label: t("detail.motivation"),
             value: motivation,
             rows: 4,
-            placeholder: "Tell your story…",
+            placeholder: t("detail.motivationPlaceholder"),
             isFullWidth: true,
             isRequired: true,
             error: getFieldError(entity, "motivation"),
@@ -277,7 +278,7 @@ export const EventDetail = {
           })}
         </div>
         ${Button.render({
-          children: sending ? "Sending…" : "Apply",
+          children: sending ? t("detail.sending") : t("detail.apply"),
           color: "primary",
           shape: "pill",
           size: "md",

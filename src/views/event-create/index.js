@@ -3,6 +3,7 @@ import { Form, getFieldError } from "@inglorious/web/form"
 import { isTicking, startTick } from "../../api/ticker.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { DEFAULT_MAX_APPLICANTS, ZERO } from "../../constants/index.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { validateEvent } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
@@ -98,7 +99,9 @@ export const EventCreate = {
   renderHeader(entity, api) {
     const id = entity.id
     return {
-      title: entity.editing_event_id ? "Edit event" : "New event",
+      title: entity.editing_event_id
+        ? t("create.editTitle")
+        : t("create.newTitle"),
       back: paths.events,
       actions: this.renderHeaderActions({
         entity,
