@@ -15,7 +15,7 @@
   height: 100dvh;
   background: var(--vbg);
   position: relative;
-  padding-top: var(--vsafe-top);
+  padding-top: var(--safe-area-top);
 }
 
 /* The route renders straight into this, so a short page still paints the full

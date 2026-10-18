@@ -5,6 +5,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
+import { FormActions } from "../../common/form-actions/index.js"
 import { Page } from "../../common/page/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
@@ -100,24 +101,26 @@ export const Onboarding = {
           </div>
 
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
-          <div class=${styles.bottomBar}>
-            ${Button.render({
-              children: saving ? t("common.saving") : t("auth.continue"),
-              color: "primary",
-              shape: "pill",
-              size: "md",
-              isFullWidth: true,
-              isDisabled: saving,
-              onClick: onSave,
-            })}
-            ${Button.render({
-              children: t("onboarding.skip"),
-              variant: "ghost",
-              size: "sm",
-              className: styles.linkButton,
-              onClick: onSkip,
-            })}
-          </div>
+          ${FormActions.render({
+            children: [
+              Button.render({
+                children: saving ? t("common.saving") : t("auth.continue"),
+                color: "primary",
+                shape: "pill",
+                size: "md",
+                isFullWidth: true,
+                isDisabled: saving,
+                onClick: onSave,
+              }),
+              Button.render({
+                children: t("onboarding.skip"),
+                variant: "ghost",
+                color: "primary",
+                size: "sm",
+                onClick: onSkip,
+              }),
+            ],
+          })}
         `,
       ],
     })

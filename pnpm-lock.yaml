@@ -21,17 +21,17 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(typescript@7.0.2)
       '@inglorious/motion':
-        specifier: ^9.0.5
-        version: 9.0.5(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
+        specifier: ^9.0.6
+        version: 9.0.6(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/store':
         specifier: ^11.0.3
         version: 11.0.3(@inglorious/utils@5.0.0)
       '@inglorious/ui':
-        specifier: ^7.5.0
-        version: 7.5.0(@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
+        specifier: ^7.6.1
+        version: 7.6.1(@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/web':
-        specifier: ^6.5.2
-        version: 6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
+        specifier: ^6.6.0
+        version: 6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
       '@supabase/supabase-js':
         specifier: ^2.118.0
         version: 2.118.0
@@ -872,11 +872,11 @@ packages:
     resolution: {integrity: sha512-ehdn5wXTCg1HQFlozgSQm+9C4jm4lmUErAYbc0EGa85MduCopJQnYwgqKrlqwR8cu7MX+q2mS9xIzeXGVNg8cA==}
     engines: {node: '>= 22'}
 
-  '@inglorious/motion@9.0.5':
-    resolution: {integrity: sha512-eulLGH9xuZ3dXppAYuDOPK4Ci9M0IdWd1KCPoi7Mwjl76X3+dHj1eeFGts6s2qFmMR7IqI7K5ju26GtMZYJokw==}
+  '@inglorious/motion@9.0.6':
+    resolution: {integrity: sha512-p1kMzZS8piIVY7wJ+Wejpen/u06vPbebedsOxM/xpvTov1QrtKh56PmtJT++YtdZ4RDAwu33ckK7MzAkhtUG3Q==}
     engines: {node: '>= 22'}
     peerDependencies:
-      '@inglorious/web': 6.5.2
+      '@inglorious/web': 6.6.0
 
   '@inglorious/store@11.0.3':
     resolution: {integrity: sha512-jAjWxS28QS7DjdvxGXBH/rjAhqoakdwhUjj0NGbr43OlDw6fLC/inrTXsKH8ZTXgv6BKq9yP7Nqmr+5PdK1GWg==}
@@ -884,14 +884,14 @@ packages:
     peerDependencies:
       '@inglorious/utils': 5.0.0
 
-  '@inglorious/ui@7.5.0':
-    resolution: {integrity: sha512-3CPFMUiuoBJhtLTv46HO0xaq5GUvley/EAr/cTgAh7ihmSBXObpm7aZ/ckXHneYc3lBwtVI1REZkkR8lr2H8LQ==}
+  '@inglorious/ui@7.6.1':
+    resolution: {integrity: sha512-DqF64Skz6D+lwbU8Dcos7DXLgbHfoqW2DqEG7PJhOA0JRNGbDj9DZ7BOacHtYCRAn0D9Grih5cVLPTbiZU1lyA==}
     engines: {node: '>= 22'}
     peerDependencies:
-      '@inglorious/charts': 10.0.5
+      '@inglorious/charts': 10.0.6
       '@inglorious/store': 11.0.3
       '@inglorious/utils': 5.0.0
-      '@inglorious/web': 6.5.2
+      '@inglorious/web': 6.6.0
 
   '@inglorious/utils@5.0.0':
     resolution: {integrity: sha512-DRGq988WvKeXH9eddIJTIVV+ahxJ1KlZGozU9xB9+6VLcIZ4y9xdeVTsZIRHcOORx8ZfcTLno8+rNE33E+BACg==}
@@ -903,8 +903,8 @@ packages:
     peerDependencies:
       vite: ^7.1.3
 
-  '@inglorious/web@6.5.2':
-    resolution: {integrity: sha512-uyCF6E7lMp8zDWjBcW6j6+piwcTcn3Y255r1pDW5pdjAFct4nX4XGskUANxFljNPsH7mncX7gQMfYX5PFw5eow==}
+  '@inglorious/web@6.6.0':
+    resolution: {integrity: sha512-fKm8RsxzjB9RLXn/ohYngcRHX38Q4NfBFuPANb2supjPgBxn6nIaCG3YOMt7VGVy/ELPQYZptxSypSQLLHAGlQ==}
     engines: {node: '>= 22'}
     peerDependencies:
       '@inglorious/store': 11.0.3
@@ -4800,9 +4800,9 @@ snapshots:
   '@img/sharp-win32-x64@0.35.5':
     optional: true
 
-  '@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
+  '@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
     dependencies:
-      '@inglorious/web': 6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
+      '@inglorious/web': 6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
       d3-array: 3.2.4
       d3-format: 3.1.2
       d3-scale: 4.0.2
@@ -4828,21 +4828,21 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@inglorious/motion@9.0.5(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
+  '@inglorious/motion@9.0.6(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
     dependencies:
-      '@inglorious/web': 6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
+      '@inglorious/web': 6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
 
   '@inglorious/store@11.0.3(@inglorious/utils@5.0.0)':
     dependencies:
       '@inglorious/utils': 5.0.0
       mutative: 1.3.0
 
-  '@inglorious/ui@7.5.0(@inglorious/charts@10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
+  '@inglorious/ui@7.6.1(@inglorious/charts@10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))))(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))(@inglorious/utils@5.0.0)(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))':
     dependencies:
-      '@inglorious/charts': 10.0.2(@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
+      '@inglorious/charts': 10.0.2(@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0)))
       '@inglorious/store': 11.0.3(@inglorious/utils@5.0.0)
       '@inglorious/utils': 5.0.0
-      '@inglorious/web': 6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
+      '@inglorious/web': 6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))
 
   '@inglorious/utils@5.0.0': {}
 
@@ -4851,7 +4851,7 @@ snapshots:
       magic-string: 1.4.3
       vite: 8.3.4(@types/node@26.6.5)(jiti@2.7.0)(terser@5.51.2)
 
-  '@inglorious/web@6.5.2(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))':
+  '@inglorious/web@6.6.0(@inglorious/store@11.0.3(@inglorious/utils@5.0.0))':
     dependencies:
       '@inglorious/store': 11.0.3(@inglorious/utils@5.0.0)
       '@inglorious/utils': 5.0.0

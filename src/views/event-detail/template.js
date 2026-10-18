@@ -207,7 +207,7 @@ export const EventDetail = {
       return html`
         <h3 class=${styles.sectionTitle}>${t("detail.applyTitle")}</h3>
         <p class=${styles.warn}>${t("detail.completeFirst")}</p>
-        <div class=${styles.bottomBar}>
+        <div class=${styles.completeProfile}>
           ${Button.render({
             children: t("detail.completeProfile"),
             color: "primary",

@@ -3,6 +3,7 @@
 import "./styles/icon-font.css"
 import "@inglorious/ui/material-icon.css"
 import "@inglorious/ui/tokens.css"
+import "@inglorious/ui/safe-area.css"
 import "@inglorious/ui/alert.css"
 import "@inglorious/ui/app-bar.css"
 import "@inglorious/ui/avatar.css"

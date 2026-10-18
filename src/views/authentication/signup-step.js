@@ -1,10 +1,10 @@
 import { Button } from "@inglorious/ui/button"
-import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { FormActions } from "../../common/form-actions/index.js"
 import { t, trans } from "../../i18n/index.js"
 import { PasswordField } from "./password-field.js"
 import styles from "./style.module.css"
@@ -43,8 +43,8 @@ export const SignupStep = {
             ${Button.render({
               children: t("auth.changeEmail"),
               variant: "ghost",
+              color: "primary",
               size: "sm",
-              className: styles.linkButton,
               onClick: onBackToEmail,
             })}
           </p>
@@ -94,10 +94,7 @@ export const SignupStep = {
             })}
           </div>
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
-          ${Flex.render({
-            direction: "column",
-            align: "stretch",
-            className: styles.bottomBar,
+          ${FormActions.render({
             children: SubmitButton.render({
               isBusy,
               label: t("auth.continue"),

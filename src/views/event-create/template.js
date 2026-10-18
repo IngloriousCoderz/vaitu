@@ -8,6 +8,7 @@ import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { FormActions } from "../../common/form-actions/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
@@ -160,8 +161,8 @@ export const EventCreate = {
             onField,
           })}
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
-          <div class=${styles.bottomBar}>
-            ${Button.render({
+          ${FormActions.render({
+            children: Button.render({
               children: busy
                 ? t("common.saving")
                 : entity.editing_event_id
@@ -173,8 +174,8 @@ export const EventCreate = {
               isFullWidth: true,
               isDisabled: busy,
               onClick: onSave,
-            })}
-          </div>
+            }),
+          })}
         `,
       ],
     })

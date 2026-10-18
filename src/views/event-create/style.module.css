@@ -84,11 +84,6 @@
   margin: var(--iw-space-3) 0 0;
 }
 
-.bottomBar {
-  margin-top: var(--iw-space-5);
-  padding-bottom: var(--vsafe-bottom);
-}
-
 :global(.iw-flex.iw-flex-padding-none).audioBox {
   margin: var(--iw-space-1) 0 0.375rem;
   background: var(--vsurface);

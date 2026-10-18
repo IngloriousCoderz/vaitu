@@ -112,7 +112,7 @@ button:global(.iw-button.iw-button-secondary).filterActive {
   background: var(--vbg);
   border-radius: var(--iw-radius-2xl) var(--iw-radius-2xl) 0 0;
   padding: var(--iw-space-2) var(--vpage-gutter)
-    calc(var(--vpage-gutter) + var(--vsafe-bottom));
+    calc(var(--vpage-gutter) + var(--safe-area-bottom));
   animation: sheet-up 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 

@@ -1,9 +1,9 @@
-import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { FormActions } from "../../common/form-actions/index.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
@@ -42,10 +42,7 @@ export const EmailStep = {
             })}
           </div>
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
-          ${Flex.render({
-            direction: "column",
-            align: "stretch",
-            className: styles.bottomBar,
+          ${FormActions.render({
             children: SubmitButton.render({
               isBusy,
               label: t("auth.continue"),
