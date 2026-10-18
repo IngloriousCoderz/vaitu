@@ -1,0 +1,9 @@
+# Native projects. They hold generated files and signed vendor binaries
+# (ios/DerivedData caches Capacitor's xcframeworks): formatting a YAML file
+# inside one broke its code signature and the device build with it.
+android/
+ios/
+
+# Build output and the lockfile.
+dist/
+pnpm-lock.yaml

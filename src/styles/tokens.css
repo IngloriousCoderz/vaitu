@@ -142,6 +142,18 @@
      no gap above it for content to show through. */
   --vpage-top: var(--iw-space-4);
 
+  /* The system bars' insets. On Android, Capacitor's SystemBars plugin injects
+     --safe-area-inset-* with the right value in every case: 0 where it pads
+     the WebView natively (WebView < 140), the real inset where the app is
+     edge-to-edge. env() is only right on the newer WebViews, and adding it on
+     top of that native padding doubles the status bar. iOS and the web have
+     no injected variable, so they fall back to env(). */
+  --vsafe-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --vsafe-bottom: var(
+    --safe-area-inset-bottom,
+    env(safe-area-inset-bottom, 0px)
+  );
+
   /* How far the tab bar keeps its buttons clear of the iOS home indicator.
      env(safe-area-inset-bottom) is ~2.125rem on a notched iPhone and 0 on
      Android. Set to 0 to seat the bar flush on both — see the note in

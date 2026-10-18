@@ -86,7 +86,7 @@
 
 .bottomBar {
   margin-top: var(--iw-space-5);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: var(--vsafe-bottom);
 }
 
 :global(.iw-flex.iw-flex-padding-none).audioBox {

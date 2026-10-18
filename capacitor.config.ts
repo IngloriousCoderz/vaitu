@@ -31,6 +31,13 @@ const config: CapacitorConfig = {
     androidScheme: "http",
     ...(devServerUrl ? { url: devServerUrl, cleartext: true } : {}),
   },
+  plugins: {
+    SystemBars: {
+      // index.html asks for viewport-fit=cover. Saying so up front spares
+      // Android a first frame laid out for padding, and the jump after it.
+      initialViewportFitValueHint: "cover",
+    },
+  },
 }
 
 export default config

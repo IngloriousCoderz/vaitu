@@ -112,7 +112,7 @@ button:global(.iw-button.iw-button-secondary).filterActive {
   background: var(--vbg);
   border-radius: var(--iw-radius-2xl) var(--iw-radius-2xl) 0 0;
   padding: var(--iw-space-2) var(--vpage-gutter)
-    calc(var(--vpage-gutter) + env(safe-area-inset-bottom));
+    calc(var(--vpage-gutter) + var(--vsafe-bottom));
   animation: sheet-up 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -249,29 +249,21 @@ button.miniButton {
   margin-top: 0.625rem;
 }
 
-/* Wide header follows the Airbnb / Booking bar. Categories sit in the top
-   middle, the search in the center, and the styles are their own row.
-   Explore / My events is centered under that, above the cards. The phone
-   stack above is left as it is. The logo and the filter live in the app
-   bar. */
+/* The same order everywhere: Explore / My events picks whose events you see,
+   then categories, search and styles narrow them down. A wide screen only
+   centres the rows and gives them room, the way the Airbnb / Booking bar
+   does. The logo and the filter live in the app bar. */
 @media (min-width: 48rem) {
   .stickyTop {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-areas:
-      ". categories ."
-      ". search ."
-      "chips chips chips"
-      "switch switch switch";
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    column-gap: var(--iw-space-3);
-    row-gap: var(--iw-space-6);
+    gap: var(--iw-space-6);
     padding-top: var(--iw-space-2);
     padding-bottom: var(--iw-space-8);
   }
 
   .categoryRow {
-    grid-area: categories;
     justify-content: center;
     gap: var(--iw-space-8);
     padding: 0;
@@ -284,9 +276,7 @@ button.miniButton {
   }
 
   .stickyTop :global(.vaitu-search) {
-    grid-area: search;
-    justify-self: center;
-    width: 32rem;
+    width: min(32rem, 100%);
   }
 
   .stickyTop
@@ -299,7 +289,6 @@ button.miniButton {
   }
 
   .stickyTop .chips {
-    grid-area: chips;
     justify-content: center;
     flex-wrap: wrap;
     overflow: visible;
@@ -313,9 +302,7 @@ button.miniButton {
   }
 
   .ownerSwitch {
-    grid-area: switch;
-    justify-self: center;
-    padding: var(--iw-space-2) 0 0;
+    padding: 0;
   }
 
   .ownerSwitch :global(.iw-button-group) {
