@@ -11,7 +11,11 @@ import {
   signIn,
   signOut,
 } from "../testing/index.js"
-import { giveUpApplication, withdrawApplication } from "./applications.js"
+import {
+  fetchReceivedDetail,
+  giveUpApplication,
+  withdrawApplication,
+} from "./applications.js"
 import { supabase } from "./client.js"
 
 const MOTIVATION = "Available the whole day"
@@ -426,6 +430,62 @@ describe("the applicant's own status", () => {
         .single()
       expect(selectReadError).toBeNull()
       expect(afterSelect.status).toBe("pending")
+    },
+    TEST_TIMEOUT_MS,
+  )
+})
+
+describe("someone else's application", () => {
+  let eventId = null
+  let userId = null
+
+  afterAll(async () => {
+    try {
+      if (eventId) await deleteOwnedEvent(eventId)
+    } finally {
+      try {
+        if (userId) await deleteSignedUpUser(userId)
+      } finally {
+        await signOut()
+      }
+    }
+  }, TEST_TIMEOUT_MS)
+
+  test(
+    "another account cannot read it",
+    async () => {
+      eventId = await createEventAs(SEEKER, crypto.randomUUID())
+      await signIn(SENDER)
+      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+      const id = await applicationId(eventId)
+
+      const accountId = crypto.randomUUID()
+      const email = `vitest-${accountId}@vaitu.local`
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password: SEEKER.password,
+        options: { data: { full_name: `Vitest ${accountId}` } },
+      })
+      expect(signUpError).toBeNull()
+      userId = data.user.id
+      await signIn({ email, password: SEEKER.password })
+
+      const { data: rows, error } = await supabase
+        .from("applications")
+        .select("motivation")
+        .eq("id", id)
+      expect(error).toBeNull()
+      expect(rows).toEqual([])
+      await expect(fetchReceivedDetail(id)).rejects.toThrow()
+
+      await signIn(SEEKER)
+      const { data: owned, error: ownedError } = await supabase
+        .from("applications")
+        .select("motivation")
+        .eq("id", id)
+        .single()
+      expect(ownedError).toBeNull()
+      expect(owned.motivation).toBe(MOTIVATION)
     },
     TEST_TIMEOUT_MS,
   )

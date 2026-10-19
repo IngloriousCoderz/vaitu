@@ -107,6 +107,13 @@ export async function deleteCheckEmailLimit(ipHash) {
   if (error) throw error
 }
 
+export async function removeStoredFile(bucket, path) {
+  const { error } = await serviceRoleClient()
+    .storage.from(bucket)
+    .remove([path])
+  if (error) throw error
+}
+
 function serviceRoleClient() {
   return createClient(
     import.meta.env.VITE_SUPABASE_URL,

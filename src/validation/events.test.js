@@ -202,8 +202,8 @@ describe("validateEvent", () => {
 
   it("rejects a category it knows nothing about", () => {
     // The old schema accepted this without looking at it at all.
-    const funeral = { ...validWedding, category: "funeral", details: {} }
-    expect(validateEvent(funeral)).toEqual({ category: "Pick a category" })
+    const reunion = { ...validWedding, category: "reunion", details: {} }
+    expect(validateEvent(reunion)).toEqual({ category: "Pick a category" })
   })
 })
 

@@ -20,5 +20,6 @@ export default defineConfig({
     // Everything under src/ is plain logic and runs fine without a DOM.
     environment: "node",
     include: ["src/**/*.test.js"],
+    setupFiles: ["src/test/setup.js"],
   },
 })
