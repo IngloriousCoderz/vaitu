@@ -2,6 +2,7 @@ import { countries } from "../data/countries.js"
 import { festivalGenres, weddingStyles } from "../data/event-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 import { languages } from "../i18n/index.js"
+import { DEFAULT_SORT, sorts } from "../views/event-list/helpers.js"
 
 const countryOptions = countries.map((country) => ({
   value: country,
@@ -160,4 +161,27 @@ export const entities = {
     "favoriteChoiceSelect",
     { label: "fields.favoriteRegions" },
   ),
+  // Same combobox as Country / style: short list, no search.
+  "events-order-by": {
+    type: "CountrySelect",
+    label: "events.orderBy",
+    selectedValue: DEFAULT_SORT,
+    isMulti: false,
+    isOpen: false,
+    isSearchable: false,
+    isClearable: false,
+    isDisabled: false,
+    isLoading: false,
+    searchTerm: "",
+    focusedIndex: -1,
+    placeholder: "combobox.select",
+    noOptionsMessage: "combobox.noOptions",
+    loadingMessage: "combobox.loading",
+    isFullWidth: false,
+    size: "sm",
+    options: sorts,
+    targetId: "eventList",
+    targetEvent: "sortSelect",
+    targetField: "sort",
+  },
 }

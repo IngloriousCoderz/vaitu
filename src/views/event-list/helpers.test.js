@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { distinctRegions, visibleEvents } from "./helpers.js"
+import { distinctRegions, sortEvents, visibleEvents } from "./helpers.js"
 
 function event(fields) {
   return {
@@ -91,5 +91,50 @@ describe("distinctRegions", () => {
         { region: "Lombardia" },
       ]),
     ).toEqual(["Lombardy", "Tuscany"])
+  })
+})
+
+describe("sortEvents", () => {
+  const early = {
+    id: "a",
+    title: "Early",
+    event_date: "2026-01-10",
+    application_deadline: "2026-01-01T12:00:00Z",
+    created_at: "2025-12-01T12:00:00Z",
+  }
+  const late = {
+    id: "b",
+    title: "Late",
+    event_date: "2026-06-10",
+    application_deadline: "2026-05-01T12:00:00Z",
+    created_at: "2026-01-15T12:00:00Z",
+  }
+
+  it("orders by event date, deadline, or created_at", () => {
+    const events = [late, early]
+    expect(sortEvents(events, "event_date_asc").map((e) => e.title)).toEqual([
+      "Early",
+      "Late",
+    ])
+    expect(sortEvents(events, "event_date_desc").map((e) => e.title)).toEqual([
+      "Late",
+      "Early",
+    ])
+    expect(sortEvents(events, "deadline_asc").map((e) => e.title)).toEqual([
+      "Early",
+      "Late",
+    ])
+    expect(sortEvents(events, "deadline_desc").map((e) => e.title)).toEqual([
+      "Late",
+      "Early",
+    ])
+    expect(sortEvents(events, "created_asc").map((e) => e.title)).toEqual([
+      "Early",
+      "Late",
+    ])
+    expect(sortEvents(events, "created_desc").map((e) => e.title)).toEqual([
+      "Late",
+      "Early",
+    ])
   })
 })

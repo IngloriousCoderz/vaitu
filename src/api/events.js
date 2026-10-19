@@ -35,6 +35,8 @@ export function toViewModel(row) {
     status: row.status,
     region,
     event_date: row.event_date,
+    application_deadline: row.application_deadline,
+    created_at: row.created_at,
     eventInDays: Math.ceil(
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),

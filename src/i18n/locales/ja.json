@@ -108,6 +108,14 @@
     "month": "30日以内",
     "quarter": "90日以内"
   },
+  "sorts": {
+    "eventDateNewest": "開催日：新しい順",
+    "eventDateOldest": "開催日：古い順",
+    "deadlineSoonest": "応募締切：近い順",
+    "deadlineFarthest": "応募締切：遠い順",
+    "createdNewest": "作成日：新しい順",
+    "createdOldest": "作成日：古い順"
+  },
   "combobox": {
     "select": "選択…",
     "search": "検索…",
@@ -215,7 +223,9 @@
     "yesDelete": "削除する",
     "filters": "絞り込み",
     "saveRegions": "地域を保存",
-    "applications_other": "応募{{count}}件"
+    "applications_other": "応募{{count}}件",
+    "orderBy": "並べ替え",
+    "results_other": "イベント{{count}}件"
   },
   "applications": {
     "title": "自分の応募",

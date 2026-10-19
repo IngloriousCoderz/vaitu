@@ -112,6 +112,14 @@
     "month": "30 prochains jours",
     "quarter": "90 prochains jours"
   },
+  "sorts": {
+    "eventDateNewest": "Date de l'événement : plus récents",
+    "eventDateOldest": "Date de l'événement : plus anciens",
+    "deadlineSoonest": "Date limite de candidature : plus proches",
+    "deadlineFarthest": "Date limite de candidature : plus lointaines",
+    "createdNewest": "Création : plus récents",
+    "createdOldest": "Création : plus anciens"
+  },
   "combobox": {
     "select": "Sélectionner…",
     "search": "Rechercher…",
@@ -224,7 +232,11 @@
     "saveRegions": "Enregistrer les régions",
     "applications_one": "{{count}} candidature",
     "applications_other": "{{count}} candidatures",
-    "applications_many": "{{count}} candidatures"
+    "applications_many": "{{count}} candidatures",
+    "orderBy": "Trier par",
+    "results_one": "{{count}} événement",
+    "results_other": "{{count}} événements",
+    "results_many": "{{count}} événements"
   },
   "applications": {
     "title": "Mes candidatures",

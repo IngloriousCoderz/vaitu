@@ -14,6 +14,18 @@ export const periods = [
   labelled("periods.quarter", { id: "quarter", days: 90 }),
 ]
 
+// Matches the explore fetch default (soonest deadline first).
+export const DEFAULT_SORT = "deadline_asc"
+
+export const sorts = [
+  labelled("sorts.eventDateNewest", { value: "event_date_desc" }),
+  labelled("sorts.eventDateOldest", { value: "event_date_asc" }),
+  labelled("sorts.deadlineSoonest", { value: "deadline_asc" }),
+  labelled("sorts.deadlineFarthest", { value: "deadline_desc" }),
+  labelled("sorts.createdNewest", { value: "created_desc" }),
+  labelled("sorts.createdOldest", { value: "created_asc" }),
+]
+
 export function distinctRegions(allEvents) {
   return uniqueRegions(allEvents.map((event) => event.region)).sort((a, b) =>
     a.localeCompare(b),
@@ -56,4 +68,35 @@ export function visibleEvents(
       matchesQuery
     )
   })
+}
+
+function compareField(a, b, field, ascending) {
+  const left = a[field] ?? ""
+  const right = b[field] ?? ""
+  const order = String(left).localeCompare(String(right))
+  if (order !== ZERO) return ascending ? order : -order
+  return String(a.id).localeCompare(String(b.id))
+}
+
+export function sortEvents(events, sortId = DEFAULT_SORT) {
+  const list = [...events]
+  switch (sortId) {
+    case "event_date_desc":
+      return list.sort((a, b) => compareField(a, b, "event_date", false))
+    case "event_date_asc":
+      return list.sort((a, b) => compareField(a, b, "event_date", true))
+    case "deadline_desc":
+      return list.sort((a, b) =>
+        compareField(a, b, "application_deadline", false),
+      )
+    case "created_desc":
+      return list.sort((a, b) => compareField(a, b, "created_at", false))
+    case "created_asc":
+      return list.sort((a, b) => compareField(a, b, "created_at", true))
+    case "deadline_asc":
+    default:
+      return list.sort((a, b) =>
+        compareField(a, b, "application_deadline", true),
+      )
+  }
 }

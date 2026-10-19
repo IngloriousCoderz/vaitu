@@ -21,7 +21,7 @@ import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t, translatedLabel } from "../../i18n/index.js"
-import { visibleEvents } from "./helpers.js"
+import { DEFAULT_SORT, sortEvents, visibleEvents } from "./helpers.js"
 import styles from "./style.module.css"
 
 export const EventList = {
@@ -31,6 +31,7 @@ export const EventList = {
     entity.activeFilter ??= "all"
     entity.activeRegion ??= "all"
     entity.activePeriod ??= "all"
+    entity.activeSort ??= DEFAULT_SORT
     entity.isFiltersVisible ??= false
     entity.activeOwner ??= "explore"
     entity.events ??= []
@@ -76,6 +77,7 @@ export const EventList = {
       activeFilter,
       activeRegion,
       activePeriod,
+      activeSort,
       favoriteRegions,
       isFiltersVisible,
       onSelectOwner,
@@ -101,15 +103,19 @@ export const EventList = {
     api,
   ) {
     const isMine = activeOwner === "mine"
-    const shown = visibleEvents(
-      isMine ? myEvents : events.filter((event) => !myEventIds.has(event.id)),
-      query,
-      activeCategory,
-      activeFilter,
-      activeRegion,
-      activePeriod,
-      favoriteRegions,
+    const shown = sortEvents(
+      visibleEvents(
+        isMine ? myEvents : events.filter((event) => !myEventIds.has(event.id)),
+        query,
+        activeCategory,
+        activeFilter,
+        activeRegion,
+        activePeriod,
+        favoriteRegions,
+      ),
+      activeSort,
     )
+    const showResultsBar = status === "ready" || status === "saving"
 
     return Page.render({
       variant: "sticky",
@@ -235,6 +241,25 @@ export const EventList = {
                     </div>
                   </div>
                 `
+              : ""
+          }
+          ${
+            showResultsBar
+              ? Flex.render({
+                  align: "center",
+                  justify: "between",
+                  gap: "sm",
+                  wrap: "wrap",
+                  className: styles.resultsBar,
+                  children: [
+                    html`<p class=${styles.resultsCount}>
+                      ${t("events.results", { count: shown.length })}
+                    </p>`,
+                    html`<div class=${styles.orderBy}>
+                      ${api.render("events-order-by")}
+                    </div>`,
+                  ],
+                })
               : ""
           }
           <main class="${styles.list} vaitu-list">

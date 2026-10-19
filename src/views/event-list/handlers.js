@@ -17,7 +17,7 @@ import {
 } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { withFilterTransition } from "./filter-transition.js"
-import { distinctRegions } from "./helpers.js"
+import { DEFAULT_SORT, distinctRegions } from "./helpers.js"
 
 export function search(entity, query) {
   entity.query = query
@@ -42,6 +42,11 @@ export function regionSelect(entity, region) {
 
 export function periodSelect(entity, periodId) {
   entity.activePeriod = periodId
+}
+
+export function sortSelect(entity, payload) {
+  entity.activeSort =
+    typeof payload === "string" ? payload : (payload?.value ?? DEFAULT_SORT)
 }
 
 export function ownerSelect(entity, owner) {

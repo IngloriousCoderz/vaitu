@@ -118,6 +118,14 @@
     "month": "الأيام الثلاثون القادمة",
     "quarter": "الأيام التسعون القادمة"
   },
+  "sorts": {
+    "eventDateNewest": "تاريخ الحدث: الأحدث أولاً",
+    "eventDateOldest": "تاريخ الحدث: الأقدم أولاً",
+    "deadlineSoonest": "موعد التقديم: الأقرب أولاً",
+    "deadlineFarthest": "موعد التقديم: الأبعد أولاً",
+    "createdNewest": "تاريخ الإنشاء: الأحدث أولاً",
+    "createdOldest": "تاريخ الإنشاء: الأقدم أولاً"
+  },
   "combobox": {
     "select": "اختر…",
     "search": "بحث…",
@@ -235,7 +243,13 @@
     "applications_two": "طلبان",
     "applications_few": "{{count}} طلبات",
     "applications_many": "{{count}} طلبًا",
-    "applications_other": "{{count}} طلب"
+    "applications_other": "{{count}} طلب",
+    "orderBy": "ترتيب حسب",
+    "results_one": "حدث واحد",
+    "results_two": "حدثان",
+    "results_few": "{{count}} أحداث",
+    "results_many": "{{count}} حدثًا",
+    "results_other": "{{count}} حدث"
   },
   "applications": {
     "title": "طلباتي",

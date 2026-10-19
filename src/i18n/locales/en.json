@@ -110,6 +110,14 @@
     "month": "Next 30 days",
     "quarter": "Next 90 days"
   },
+  "sorts": {
+    "eventDateNewest": "Event date: newest first",
+    "eventDateOldest": "Event date: oldest first",
+    "deadlineSoonest": "Application deadline: soonest first",
+    "deadlineFarthest": "Application deadline: farthest first",
+    "createdNewest": "Created: newest first",
+    "createdOldest": "Created: oldest first"
+  },
   "combobox": {
     "select": "Select…",
     "search": "Search…",
@@ -219,7 +227,10 @@
     "filters": "Filters",
     "saveRegions": "Save regions",
     "applications_one": "{{count}} application",
-    "applications_other": "{{count}} applications"
+    "applications_other": "{{count}} applications",
+    "orderBy": "Order by",
+    "results_one": "{{count}} event",
+    "results_other": "{{count}} events"
   },
   "applications": {
     "title": "My Applications",

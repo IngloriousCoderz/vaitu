@@ -112,6 +112,14 @@
     "month": "Prossimi 30 giorni",
     "quarter": "Prossimi 90 giorni"
   },
+  "sorts": {
+    "eventDateNewest": "Data evento: più recenti",
+    "eventDateOldest": "Data evento: più vecchi",
+    "deadlineSoonest": "Scadenza candidatura: più vicine",
+    "deadlineFarthest": "Scadenza candidatura: più lontane",
+    "createdNewest": "Creazione: più recenti",
+    "createdOldest": "Creazione: più vecchi"
+  },
   "combobox": {
     "select": "Seleziona…",
     "search": "Cerca…",
@@ -224,7 +232,11 @@
     "saveRegions": "Salva regioni",
     "applications_one": "{{count}} candidatura",
     "applications_other": "{{count}} candidature",
-    "applications_many": "{{count}} candidature"
+    "applications_many": "{{count}} candidature",
+    "orderBy": "Ordina per",
+    "results_one": "{{count}} evento",
+    "results_other": "{{count}} eventi",
+    "results_many": "{{count}} eventi"
   },
   "applications": {
     "title": "Le mie candidature",

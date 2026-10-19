@@ -26,6 +26,7 @@ import {
   periodSelect,
   regionSelect,
   search,
+  sortSelect,
 } from "./handlers.js"
 import { distinctRegions, owners, periods } from "./helpers.js"
 import { EventList as renderers } from "./template.js"
@@ -37,6 +38,7 @@ export const EventList = {
   ownerSelect,
   periodSelect,
   regionSelect,
+  sortSelect,
   filtersToggle,
   filtersClear,
   appliedClear,
@@ -114,6 +116,7 @@ export const EventList = {
         activeFilter: entity.activeFilter,
         activeRegion: entity.activeRegion,
         activePeriod: entity.activePeriod,
+        activeSort: entity.activeSort,
         favoriteRegions: entity.favoriteRegions,
         isFiltersVisible: entity.isFiltersVisible,
         onSelectOwner: (owner) => api.notify(`#${id}:ownerSelect`, owner),
@@ -131,14 +134,10 @@ export const EventList = {
         onSelectRegion: (region) => api.notify(`#${id}:regionSelect`, region),
         onEditFavorites: () => {
           if (entity.isEditingFavorites) return
-          withFilterTransition(() =>
-            api.notify(`#${id}:favoritesEditStart`),
-          )
+          withFilterTransition(() => api.notify(`#${id}:favoritesEditStart`))
         },
         onCancelFavorites: () =>
-          withFilterTransition(() =>
-            api.notify(`#${id}:favoritesEditCancel`),
-          ),
+          withFilterTransition(() => api.notify(`#${id}:favoritesEditCancel`)),
         onFavoriteInput: (value) =>
           api.notify(`#${id}:favoriteDraftInput`, value),
         onFavoriteAdd: (value) => api.notify(`#${id}:favoriteDraftAdd`, value),
