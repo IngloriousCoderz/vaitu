@@ -176,7 +176,7 @@ export const EventList = {
               ? html`
                   <div class=${styles.backdrop} @click=${onToggleFilters}>
                     <div
-                      class=${styles.sheet}
+                      class="${styles.sheet} vaitu-filter-sheet"
                       @click=${(e) => e.stopPropagation()}
                     >
                       <div class=${styles.sheetHeading}>

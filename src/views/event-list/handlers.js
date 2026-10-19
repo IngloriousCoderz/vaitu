@@ -16,6 +16,7 @@ import {
   sameRegion,
 } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
+import { withFilterTransition } from "./filter-transition.js"
 import { distinctRegions } from "./helpers.js"
 
 export function search(entity, query) {
@@ -86,6 +87,11 @@ export function favoritesEditCancel(entity) {
   entity.isEditingFavorites = false
   entity.favoriteInput = ""
   entity.favoritesError = null
+}
+
+export function favoritesEditClose(entity) {
+  entity.favoritesStatus = "idle"
+  favoritesEditCancel(entity)
 }
 
 export function favoriteDraftInput(entity, value) {
@@ -191,9 +197,6 @@ export const favoritesSave = handleAsync("favoritesSave", {
     return saveFavoriteRegions(regions)
   },
   success(entity, regions, api) {
-    entity.favoritesStatus = "idle"
-    entity.isEditingFavorites = false
-    entity.favoriteInput = ""
     entity.favoriteRegions = regions
     entity.activeRegion = activeRegionAfterChange(
       entity.activeRegion,
@@ -201,6 +204,12 @@ export const favoritesSave = handleAsync("favoritesSave", {
     )
     api.notify("#profile:favoritesApply", regions)
     syncFavoriteCombobox(entity, api)
+    // The close has to be its own update. This one is already rendering, and a
+    // view transition needs to snapshot the open editor before it leaves.
+    const id = entity.id
+    queueMicrotask(() => {
+      withFilterTransition(() => api.notify(`#${id}:favoritesEditClose`))
+    })
   },
   error(entity, err) {
     entity.favoritesStatus = "error"

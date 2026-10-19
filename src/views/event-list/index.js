@@ -3,6 +3,7 @@ import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { categories, filtersForCategory } from "./categories.js"
+import { withFilterTransition } from "./filter-transition.js"
 import {
   appliedClear,
   categorySelect,
@@ -15,6 +16,7 @@ import {
   favoriteDraftInput,
   favoriteDraftRemove,
   favoritesEditCancel,
+  favoritesEditClose,
   favoritesEditStart,
   favoritesSave,
   filtersClear,
@@ -42,6 +44,7 @@ export const EventList = {
   deleteCancel,
   favoritesEditStart,
   favoritesEditCancel,
+  favoritesEditClose,
   favoriteDraftInput,
   favoriteChoiceSelect,
   favoriteDraftAdd,
@@ -126,8 +129,16 @@ export const EventList = {
           api.notify(`#${id}:filterSelect`, filterId),
         onToggleFilters: () => api.notify(`#${id}:filtersToggle`),
         onSelectRegion: (region) => api.notify(`#${id}:regionSelect`, region),
-        onEditFavorites: () => api.notify(`#${id}:favoritesEditStart`),
-        onCancelFavorites: () => api.notify(`#${id}:favoritesEditCancel`),
+        onEditFavorites: () => {
+          if (entity.isEditingFavorites) return
+          withFilterTransition(() =>
+            api.notify(`#${id}:favoritesEditStart`),
+          )
+        },
+        onCancelFavorites: () =>
+          withFilterTransition(() =>
+            api.notify(`#${id}:favoritesEditCancel`),
+          ),
         onFavoriteInput: (value) =>
           api.notify(`#${id}:favoriteDraftInput`, value),
         onFavoriteAdd: (value) => api.notify(`#${id}:favoriteDraftAdd`, value),
