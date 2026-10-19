@@ -1,3 +1,4 @@
+import closeIcon from "@iconify-icons/material-symbols/close"
 import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
@@ -13,8 +14,10 @@ import { FormActions } from "../../common/form-actions/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
+  MAX_EVENT_IMAGES,
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
+  SINGULAR,
   ZERO,
 } from "../../constants/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
@@ -38,6 +41,8 @@ export const EventCreate = {
       onRecordStop,
       onCancelAudio,
       onRemoveAudio,
+      onImagesAdd,
+      onImageRemove,
     },
     api,
   ) {
@@ -160,6 +165,11 @@ export const EventCreate = {
             error: getFieldError(entity, "max_applicants"),
             isRequired: true,
             onField,
+          })}
+          ${this.renderImages({ entity, busy, onImagesAdd, onImageRemove })}
+          ${ErrorAlert.render({
+            error: entity.image_error,
+            className: styles.error,
           })}
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
           ${FormActions.render({
@@ -322,6 +332,120 @@ export const EventCreate = {
         <p class=${styles.hint}>${t("create.voiceHint")}</p>
       `,
     })
+  },
+
+  renderImages({ entity, busy, onImagesAdd, onImageRemove }) {
+    const coverSrc = entity.pending_cover?.previewUrl ?? entity.cover_url
+    const galleryMax = MAX_EVENT_IMAGES - SINGULAR
+    const gallerySaved = entity.gallery_urls ?? []
+    const galleryPending = entity.pending_gallery ?? []
+    const galleryCount = gallerySaved.length + galleryPending.length
+    return html`<div class=${styles.photos}>
+      <span class=${styles.audioLabel}>${t("create.coverPhoto")}</span>
+      <p class=${styles.photoHint}>${t("create.coverHint")}</p>
+      ${
+        coverSrc
+          ? this.renderPhoto({
+              src: coverSrc,
+              className: styles.coverPhoto,
+              onRemove: () =>
+                onImageRemove(
+                  entity.pending_cover
+                    ? { id: entity.pending_cover.id, slot: "cover" }
+                    : { url: entity.cover_url, slot: "cover" },
+                ),
+              isDisabled: busy,
+            })
+          : ""
+      }
+      <div class=${styles.photoPick}>
+        ${Button.render({
+          children: coverSrc ? t("create.changeCover") : t("create.addCover"),
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          isDisabled: busy,
+        })}
+        <input
+          class=${styles.fileInput}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          ?disabled=${busy}
+          @change=${(e) => {
+            onImagesAdd({ files: [...e.target.files], slot: "cover" })
+            e.target.value = ""
+          }}
+        />
+      </div>
+      <span class="${styles.audioLabel} ${styles.galleryLabel}"
+        >${t("create.gallery")}</span
+      >
+      <p class=${styles.photoHint}>
+        ${t("create.galleryHint", { count: galleryMax })}
+      </p>
+      ${
+        galleryCount
+          ? Flex.render({
+              gap: "sm",
+              wrap: "wrap",
+              children: [
+                ...gallerySaved.map((url) =>
+                  this.renderPhoto({
+                    src: url,
+                    onRemove: () => onImageRemove({ url, slot: "gallery" }),
+                    isDisabled: busy,
+                  }),
+                ),
+                ...galleryPending.map((photo) =>
+                  this.renderPhoto({
+                    src: photo.previewUrl,
+                    onRemove: () =>
+                      onImageRemove({ id: photo.id, slot: "gallery" }),
+                    isDisabled: busy,
+                  }),
+                ),
+              ],
+            })
+          : ""
+      }
+      <div class=${styles.photoPick}>
+        ${Button.render({
+          children: t("create.addGalleryPhotos"),
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          isDisabled: busy || galleryCount >= galleryMax,
+        })}
+        <input
+          class=${styles.fileInput}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          multiple
+          ?disabled=${busy || galleryCount >= galleryMax}
+          @change=${(e) => {
+            onImagesAdd({ files: [...e.target.files], slot: "gallery" })
+            e.target.value = ""
+          }}
+        />
+      </div>
+    </div>`
+  },
+
+  renderPhoto({ src, onRemove, isDisabled, className = styles.photo }) {
+    return html`<div class=${className}>
+      <img class=${styles.photoImage} src=${src} alt="" />
+      ${IconButton.render({
+        icon: Icon.render({ icon: closeIcon, size: "sm" }),
+        variant: "ghost",
+        color: "secondary",
+        ariaLabel: t("create.remove"),
+        isDisabled,
+        className: styles.photoRemove,
+        onClick: onRemove,
+      })}
+    </div>`
   },
 
   renderDetailField({ spec, details, error, onDetailField }) {

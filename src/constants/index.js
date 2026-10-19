@@ -40,6 +40,9 @@ export const POINTS_PER_SELECTION = 10
 export const PERCENT_MAX = 100
 // Voice dictation cap (auto-stops, shows elapsed).
 export const AUDIO_MAX_SECONDS = 120
+// Event photos: a handful of JPEG, PNG, or WebP files, each under 5 MiB.
+export const MAX_EVENT_IMAGES = 6
+export const IMAGE_MAX_BYTES = 5242880
 // UUID v4 fallback (insecure contexts lack crypto.randomUUID).
 export const UUID_RANDOM_BYTES = 16
 export const UUID_VERSION_INDEX = 6

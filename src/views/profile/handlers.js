@@ -2,8 +2,15 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import {
+  deleteUserImage,
+  imageExtension,
+  imagePathFromUrl,
+  uploadUserImage,
+} from "../../api/images.js"
 import { endSession } from "../../api/session.js"
 import { defaultTiers } from "../../common/tiers.js"
+import { IMAGE_MAX_BYTES } from "../../constants/index.js"
 import {
   canonicalRegion,
   favoriteRegionOptions,
@@ -138,7 +145,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale",
+        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale, avatar_url",
       )
       .eq("id", user.id)
       .single()
@@ -249,6 +256,43 @@ export const profileSave = handleAsync("profileSave", {
 
 // Quietly: the language has already changed on screen, and a failed save only
 // means another device keeps the old one until the next change.
+export const avatarSave = handleAsync("avatarSave", {
+  start(entity) {
+    entity.avatarStatus = "saving"
+    entity.avatarError = null
+  },
+  async run(file) {
+    if (!imageExtension(file?.type)) throw new Error(t("errors.imageType"))
+    if (file.size > IMAGE_MAX_BYTES) throw new Error(t("errors.imageSize"))
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error(t("errors.notLoggedIn"))
+    const uploaded = await uploadUserImage(file)
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_url: uploaded.url })
+      .eq("id", user.id)
+    if (error) {
+      await deleteUserImage(uploaded.path)
+      throw error
+    }
+    return uploaded
+  },
+  success(entity, uploaded) {
+    entity.avatarStatus = "idle"
+    const previous = imagePathFromUrl(entity.profile?.avatar_url)
+    entity.profile = { ...entity.profile, avatar_url: uploaded.url }
+    if (previous && previous !== uploaded.path) {
+      void deleteUserImage(previous)
+    }
+  },
+  error(entity, err) {
+    entity.avatarStatus = "idle"
+    entity.avatarError = err.message ?? t("errors.saveProfile")
+  },
+})
+
 export const localeSave = handleAsync("localeSave", {
   async run(locale) {
     const {

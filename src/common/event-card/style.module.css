@@ -37,6 +37,13 @@
   justify-content: center;
 }
 
+.thumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
 .monogram {
   font-family: var(--vtitle-font);
   font-size: var(--iw-font-size-base);

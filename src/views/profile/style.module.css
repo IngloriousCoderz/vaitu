@@ -17,6 +17,21 @@
   margin-top: var(--iw-space-4);
 }
 
+.photoPick {
+  position: relative;
+}
+
+.fileInput {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.fileInput:disabled {
+  cursor: default;
+}
+
 .name {
   margin: var(--iw-space-2) 0 0;
   font-family: var(--vtitle-font);

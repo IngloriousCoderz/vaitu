@@ -17,6 +17,7 @@ const {
   localeSave,
   accountDelete,
   logout,
+  avatarSave,
   ...syncHandlers
 } = handlers
 
@@ -28,6 +29,7 @@ export const Profile = {
   ...localeSave,
   ...accountDelete,
   ...logout,
+  ...avatarSave,
   ...renderers,
 
   create(entity) {
@@ -47,6 +49,8 @@ export const Profile = {
     entity.isConfirmingDelete ??= false
     entity.deleteStatus ??= "idle"
     entity.deleteError ??= null
+    entity.avatarStatus ??= "idle"
+    entity.avatarError ??= null
     entity.status ??= "idle"
     entity.error ??= null
     // The id is snapshotted because this closure outlives the batch that built
@@ -90,6 +94,7 @@ export const Profile = {
         onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
         onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
         onEdit: () => api.notify(`#${id}:editStart`),
+        onPhoto: (file) => api.notify(`#${id}:avatarSave`, file),
         onLogout: () => api.notify(`#${id}:logout`),
         onDeleteAsk: () => api.notify(`#${id}:accountDeleteAsk`),
         onDeleteCancel: () => api.notify(`#${id}:accountDeleteCancel`),

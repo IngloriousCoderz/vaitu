@@ -66,6 +66,14 @@ describe("normalizeEvent", () => {
     expect(row.details.sponsor).toBe("Kept")
   })
 
+  it("copies the photo list so a later edit does not change the row", () => {
+    const image_urls = ["https://example.com/a.jpg"]
+    const row = normalizeEvent({ ...validWedding, image_urls })
+    image_urls.push("https://example.com/b.jpg")
+    expect(row.image_urls).toEqual(["https://example.com/a.jpg"])
+    expect(normalizeEvent(validWedding).image_urls).toBeUndefined()
+  })
+
   it("returns a details object of its own", () => {
     // The form hands us `details` as a live draft proxy, which the store
     // revokes as soon as anything is awaited. A row that still points at it

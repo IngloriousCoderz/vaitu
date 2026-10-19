@@ -42,6 +42,11 @@ export function normalizeEvent(payload = {}) {
     ...("transcript_status" in payload && {
       transcript_status: payload.transcript_status,
     }),
+    // Same rule as audio_url: an absent list leaves the column alone, and a
+    // present one (including empty) is what gets written.
+    ...("image_urls" in payload && {
+      image_urls: [...(payload.image_urls ?? [])],
+    }),
   }
 }
 // ---------------------------------------------------------------------------

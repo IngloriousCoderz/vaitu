@@ -170,6 +170,8 @@ export const App = {
           className: styles.avatarButton,
           onClick: () => api.notify("#router:navigate", paths.profile),
           children: Avatar.render({
+            src: profile?.avatar_url || "",
+            alt: name,
             initials: initials(name),
             size: "sm",
             backgroundColor: "linear-gradient(135deg, #6b7a5e, #24402f)",

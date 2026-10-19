@@ -15,7 +15,11 @@
     "keepIt": "Annulla",
     "add": "Aggiungi",
     "saving": "Salvataggio…",
-    "cancel": "Annulla"
+    "cancel": "Annulla",
+    "photoPreview": "Foto",
+    "photoPrevious": "Foto precedente",
+    "photoNext": "Foto successiva",
+    "photoClose": "Chiudi foto"
   },
   "favorites": {
     "typeRegion": "Oppure scrivi una regione"
@@ -151,6 +155,11 @@
     "noAudio": "Nessun audio da elaborare",
     "transcriptionFailed": "Trascrizione non riuscita: riproverò al salvataggio",
     "saveEvent": "Impossibile salvare l'evento",
+    "imageType": "Usa un'immagine JPEG, PNG o WebP",
+    "imageSize": "Ogni immagine deve pesare meno di 5 MB",
+    "imageLimit_one": "Puoi aggiungere {{count}} foto",
+    "imageLimit_other": "Puoi aggiungere fino a {{count}} foto",
+    "imageLimit_many": "Puoi aggiungere fino a {{count}} foto",
     "noEventForApplications": "Nessun evento di cui caricare le candidature",
     "loadApplications": "Impossibile caricare le candidature",
     "update": "Aggiornamento non riuscito",
@@ -269,7 +278,14 @@
     "recordAgain": "Registra di nuovo",
     "remove": "Elimina",
     "start": "Inizia",
-    "voiceHint": "Racconta il tuo evento invece di scriverlo: verrà trascritto nei campi qui sotto."
+    "voiceHint": "Racconta il tuo evento invece di scriverlo: verrà trascritto nei campi qui sotto.",
+    "coverPhoto": "Foto di copertina",
+    "coverHint": "Compare nella scheda dell'evento al posto delle iniziali.",
+    "addCover": "Aggiungi copertina",
+    "changeCover": "Cambia copertina",
+    "gallery": "Altre foto",
+    "galleryHint": "Mini galleria dentro l'evento. Fino a {{count}}.",
+    "addGalleryPhotos": "Aggiungi foto"
   },
   "ranks": {
     "title": "Livelli",
@@ -299,6 +315,7 @@
     "shortlisted": "In shortlist",
     "wins": "Vinti",
     "edit": "Modifica profilo",
+    "changePhoto": "Cambia foto",
     "save": "Salva profilo",
     "favoriteRegions": "Regioni preferite",
     "subRole": "Ruolo",

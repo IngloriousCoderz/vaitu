@@ -15,7 +15,11 @@
     "keepIt": "やめる",
     "add": "追加",
     "saving": "保存中…",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "photoPreview": "写真",
+    "photoPrevious": "前の写真",
+    "photoNext": "次の写真",
+    "photoClose": "写真を閉じる"
   },
   "favorites": {
     "typeRegion": "または地域を入力"
@@ -145,6 +149,10 @@
     "noAudio": "処理する音声がありません",
     "transcriptionFailed": "文字起こしに失敗しました。保存時に再試行します",
     "saveEvent": "イベントを保存できませんでした",
+    "imageType": "JPEG、PNG、WebP の画像を使ってください",
+    "imageSize": "画像は 1 枚 5 MB までです",
+    "imageLimit_one": "写真は {{count}} 枚までです",
+    "imageLimit_other": "写真は {{count}} 枚までです",
     "noEventForApplications": "応募を読み込むイベントがありません",
     "loadApplications": "応募を読み込めませんでした",
     "update": "更新できませんでした",
@@ -261,7 +269,14 @@
     "recordAgain": "録り直す",
     "remove": "削除",
     "start": "開始",
-    "voiceHint": "入力する代わりにイベントについて話してください。下の項目に文字起こしされます。"
+    "voiceHint": "入力する代わりにイベントについて話してください。下の項目に文字起こしされます。",
+    "coverPhoto": "カバー写真",
+    "coverHint": "頭文字の代わりにイベントカードに表示されます。",
+    "addCover": "カバーを追加",
+    "changeCover": "カバーを変更",
+    "gallery": "その他の写真",
+    "galleryHint": "イベント内のミニギャラリー。最大 {{count}} 枚。",
+    "addGalleryPhotos": "写真を追加"
   },
   "ranks": {
     "title": "ランク",
@@ -289,6 +304,7 @@
     "shortlisted": "候補",
     "wins": "当選",
     "edit": "プロフィールを編集",
+    "changePhoto": "写真を変更",
     "save": "プロフィールを保存",
     "favoriteRegions": "お気に入りの地域",
     "subRole": "サブロール",

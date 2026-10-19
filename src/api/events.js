@@ -42,6 +42,7 @@ export function toViewModel(row) {
     // follows the active language: the date is formatted then, in its locale.
     place: [row.location, region].filter(Boolean).join(" • "),
     audio_url: row.audio_url ?? null,
+    imageUrls: row.image_urls ?? [],
     transcript: row.transcript ?? null,
     transcript_status: row.transcript_status ?? "none",
     daysLeft: Math.ceil(
@@ -104,7 +105,7 @@ export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, category, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, transcript, transcript_status, details",
+      "id, category, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, image_urls, transcript, transcript_status, details",
     )
     .eq("id", id)
     .single()
@@ -151,7 +152,7 @@ export async function fetchMyEvents() {
   const { data: events, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, region, event_date, application_deadline, status, created_at, details",
+      "id, category, title, location, region, event_date, application_deadline, status, created_at, image_urls, details",
     )
     .eq("sender_id", user.id)
     .order("event_date", { ascending: true })
@@ -181,7 +182,7 @@ export async function fetchOpenEvents() {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, region, event_date, application_deadline, created_at, details",
+      "id, category, title, location, region, event_date, application_deadline, created_at, image_urls, details",
     )
     .eq("status", "open")
     .order("application_deadline", { ascending: true })
@@ -224,7 +225,7 @@ export async function fetchEventForEdit(event_id) {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, transcript, details",
+      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, image_urls, transcript, details",
     )
     .eq("id", event_id)
     .eq("sender_id", user.id)

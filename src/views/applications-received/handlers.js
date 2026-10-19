@@ -15,6 +15,23 @@ export function expandToggle(entity, application_id) {
   entity.confirming_assign = null
 }
 
+export function photoOpen(entity, index) {
+  entity.photoIndex = index ?? 0
+  entity.photoPreview = true
+}
+
+export function photoClose(entity) {
+  entity.photoPreview = false
+}
+
+export function photoStep(entity, delta) {
+  if (!entity.photoPreview) return
+  const urls = entity.event_recap?.image_urls ?? []
+  const n = urls.length
+  if (n < 2) return
+  entity.photoIndex = ((entity.photoIndex ?? 0) + delta + n) % n
+}
+
 export function assignAsk(entity, application_id) {
   entity.confirming_assign = application_id
   entity.confirming_reopen = false
@@ -68,7 +85,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select(
-        "id, title, status, max_applicants, application_deadline, location, country, region, event_date, created_at, details",
+        "id, title, status, max_applicants, application_deadline, location, country, region, event_date, created_at, image_urls, details",
       )
       .eq("id", event_id)
       .single()
@@ -98,6 +115,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
       event_date: event.event_date,
       application_deadline: event.application_deadline,
       created_at: event.created_at,
+      image_urls: [...(event.image_urls ?? [])],
       names:
         event.details?.spouse_first_name_1 && event.details?.spouse_first_name_2
           ? `${event.details.spouse_first_name_1} & ${event.details.spouse_first_name_2}`

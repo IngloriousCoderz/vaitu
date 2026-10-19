@@ -15,7 +15,11 @@
     "keepIt": "Keep it",
     "add": "Add",
     "saving": "Saving…",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "photoPreview": "Photos",
+    "photoPrevious": "Previous photo",
+    "photoNext": "Next photo",
+    "photoClose": "Close photos"
   },
   "favorites": {
     "typeRegion": "Or type a region"
@@ -148,6 +152,10 @@
     "noAudio": "No audio to process",
     "transcriptionFailed": "Transcription failed — will retry on save",
     "saveEvent": "Failed to save event",
+    "imageType": "Use a JPEG, PNG, or WebP image",
+    "imageSize": "Each image must be under 5 MB",
+    "imageLimit_one": "You can add {{count}} photo",
+    "imageLimit_other": "You can add up to {{count}} photos",
     "noEventForApplications": "No event to load applications for",
     "loadApplications": "Failed to load applications",
     "update": "Failed to update",
@@ -265,7 +273,14 @@
     "recordAgain": "Record again",
     "remove": "Remove",
     "start": "Start",
-    "voiceHint": "Talk through your event instead of typing — it will be transcribed into the fields below."
+    "voiceHint": "Talk through your event instead of typing — it will be transcribed into the fields below.",
+    "coverPhoto": "Cover photo",
+    "coverHint": "Shows on the event card instead of the initials.",
+    "addCover": "Add cover",
+    "changeCover": "Change cover",
+    "gallery": "More photos",
+    "galleryHint": "Mini gallery inside the event. Up to {{count}}.",
+    "addGalleryPhotos": "Add photos"
   },
   "ranks": {
     "title": "Ranks",
@@ -294,6 +309,7 @@
     "shortlisted": "Shortlisted",
     "wins": "Wins",
     "edit": "Edit profile",
+    "changePhoto": "Change photo",
     "save": "Save profile",
     "favoriteRegions": "Favorite regions",
     "subRole": "Sub-role",

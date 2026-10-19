@@ -19,12 +19,14 @@ import {
 } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import {
   DAY_MS,
   MINUTES_PER_HOUR,
   MS_PER_SECOND,
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
+  SINGULAR,
 } from "../../constants/index.js"
 import { t, translatedLabel } from "../../i18n/index.js"
 import styles from "./style.module.css"
@@ -42,6 +44,9 @@ export const EventDetail = {
     onSubmit,
     onCompleteProfile,
     onOpenApplications,
+    onPhotoOpen,
+    onPhotoClose,
+    onPhotoStep,
   }) {
     const { event, status, error } = entity
     const msLeft = event?.application_deadline
@@ -50,12 +55,20 @@ export const EventDetail = {
       : null
     const liveClosed = msLeft == null ? null : msLeft <= 0
     const showClock = msLeft != null && msLeft > 0 && msLeft < DAY_MS
+    const photos = event?.imageUrls ?? []
 
     return Page.render({
       variant: "document",
       wide: true,
       category: event?.category ?? "wedding",
       children: [
+        PhotoCarousel.render({
+          urls: photos,
+          index: entity.photoIndex,
+          open: entity.photoPreview,
+          onStep: onPhotoStep,
+          onClose: onPhotoClose,
+        }),
         html`
           ${
             /* Keyed on the data rather than on the status string. `open` sets
@@ -73,15 +86,7 @@ export const EventDetail = {
               ? this.renderSubmitted({ onOpenEvents })
               : html`
                   <div class=${styles.stage}>
-                    ${Flex.render({
-                      align: "center",
-                      justify: "center",
-                      className: styles.banner,
-                      style: `background:${thumbGradient(event.hue)}`,
-                      children: html`<span class=${styles.bannerMonogram}>
-                        ${monogram(event.title)}
-                      </span>`,
-                    })}
+                    ${this.renderBanner(event, onPhotoOpen)}
                     <div class=${styles.story}>
                       ${Flex.render({
                         align: "center",
@@ -99,6 +104,7 @@ export const EventDetail = {
                       })}
                       <p class=${styles.meta}>${eventSubtitle(event)}</p>
                       ${Chip.render({ children: eventTag(event) })}
+                      ${this.renderGallery(event, onPhotoOpen)}
                       ${this.renderFacts(event)}
                       <p class=${styles.sender}>
                         ${t("detail.organizedBy", { name: entity.senderName })}
@@ -149,6 +155,47 @@ export const EventDetail = {
           }
         `,
       ],
+    })
+  },
+
+  renderBanner(event, onPhotoOpen) {
+    const photo = event.imageUrls?.[0]
+    return Flex.render({
+      align: "center",
+      justify: "center",
+      className: styles.banner,
+      style: `background:${thumbGradient(event.hue)}`,
+      children: photo
+        ? html`<button
+            type="button"
+            class=${styles.bannerPhoto}
+            @click=${() => onPhotoOpen(0)}
+          >
+            <img class=${styles.bannerImage} src=${photo} alt="" />
+          </button>`
+        : html`<span class=${styles.bannerMonogram}
+            >${monogram(event.title)}</span
+          >`,
+    })
+  },
+
+  renderGallery(event, onPhotoOpen) {
+    const photos = (event.imageUrls ?? []).slice(SINGULAR)
+    if (!photos.length) return ""
+    return Flex.render({
+      gap: "sm",
+      wrap: "wrap",
+      className: styles.gallery,
+      children: photos.map(
+        (url, i) =>
+          html`<button
+            type="button"
+            class=${styles.galleryThumb}
+            @click=${() => onPhotoOpen(i + SINGULAR)}
+          >
+            <img class=${styles.galleryImage} src=${url} alt="" />
+          </button>`,
+      ),
     })
   },
 

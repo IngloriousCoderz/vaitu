@@ -15,6 +15,23 @@ export function clockTick(entity) {
   entity.nowTs = Date.now()
 }
 
+export function photoOpen(entity, index) {
+  entity.photoIndex = index ?? 0
+  entity.photoPreview = true
+}
+
+export function photoClose(entity) {
+  entity.photoPreview = false
+}
+
+export function photoStep(entity, delta) {
+  if (!entity.photoPreview) return
+  const urls = entity.event?.imageUrls ?? []
+  const n = urls.length
+  if (n < 2) return
+  entity.photoIndex = ((entity.photoIndex ?? 0) + delta + n) % n
+}
+
 // Fill blanks from the profile without clobbering what the user typed.
 export function prefill(entity, profile) {
   if (!profile || !entity.values) return

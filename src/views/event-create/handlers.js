@@ -11,6 +11,12 @@ import {
   updateEvent,
   uploadEventAudio,
 } from "../../api/events.js"
+import {
+  deleteUserImage,
+  imageExtension,
+  imagePathFromUrl,
+  uploadUserImage,
+} from "../../api/images.js"
 import { stopTick } from "../../api/ticker.js"
 import {
   APPLICATION_DEADLINE_LEAD_DAYS,
@@ -20,6 +26,8 @@ import {
   DEADLINE_END_OF_DAY,
   DEFAULT_MAX_APPLICANTS,
   FIRST_INDEX,
+  IMAGE_MAX_BYTES,
+  MAX_EVENT_IMAGES,
   MIN_AUDIO_BYTES,
   MONTH_INDEX_OFFSET,
   PAD_LENGTH,
@@ -33,6 +41,7 @@ import {
 } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
+import { randomId } from "../../text/index.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
 let mediaRecorder = null
@@ -387,6 +396,153 @@ export const audioParse = handleAsync("audioParse", {
     entity.is_parsing = false
   },
 })
+function revokePreview(item) {
+  if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl)
+}
+
+function rememberRemoved(entity, url) {
+  const path = imagePathFromUrl(url)
+  if (!path) return
+  entity.removed_image_paths = [...(entity.removed_image_paths ?? []), path]
+}
+
+function readImageFile(entity, file) {
+  if (!imageExtension(file?.type)) {
+    entity.image_error = t("errors.imageType")
+    return null
+  }
+  if (file.size > IMAGE_MAX_BYTES) {
+    entity.image_error = t("errors.imageSize")
+    return null
+  }
+  return {
+    id: randomId(),
+    file,
+    previewUrl: URL.createObjectURL(file),
+  }
+}
+
+export function clearEventImages(entity) {
+  revokePreview(entity.pending_cover)
+  for (const item of entity.pending_gallery ?? []) revokePreview(item)
+  entity.cover_url = null
+  entity.gallery_urls = []
+  entity.pending_cover = null
+  entity.pending_gallery = []
+  entity.removed_image_paths = []
+  entity.image_error = null
+}
+
+// Cover replaces the monogram on the card. Gallery photos only show inside
+// the event. Both still save as image_urls: cover first, then the rest.
+export function imagesAdd(entity, { files, slot } = {}) {
+  const incoming = [...(files ?? [])]
+  entity.image_error = null
+  if (slot === "cover") {
+    const [file] = incoming
+    if (!file) return
+    const next = readImageFile(entity, file)
+    if (!next) return
+    revokePreview(entity.pending_cover)
+    if (entity.cover_url) rememberRemoved(entity, entity.cover_url)
+    entity.cover_url = null
+    entity.pending_cover = next
+    return
+  }
+
+  const galleryMax = MAX_EVENT_IMAGES - SINGULAR
+  const pending = [...(entity.pending_gallery ?? [])]
+  const saved = entity.gallery_urls ?? []
+  let room = galleryMax - saved.length - pending.length
+  if (room <= ZERO) {
+    entity.image_error = t("errors.imageLimit", { count: galleryMax })
+    return
+  }
+  for (const file of incoming) {
+    if (room <= ZERO) {
+      entity.image_error = t("errors.imageLimit", { count: galleryMax })
+      break
+    }
+    const next = readImageFile(entity, file)
+    if (!next) continue
+    pending.push(next)
+    room -= SINGULAR
+  }
+  entity.pending_gallery = pending
+}
+
+export function imagesRemove(entity, { id, url, slot } = {}) {
+  entity.image_error = null
+  if (slot === "cover" || (id && entity.pending_cover?.id === id)) {
+    if (id && entity.pending_cover?.id === id) {
+      revokePreview(entity.pending_cover)
+      entity.pending_cover = null
+      return
+    }
+    if (url && url === entity.cover_url) {
+      rememberRemoved(entity, url)
+      entity.cover_url = null
+    }
+    return
+  }
+  if (id) {
+    const item = (entity.pending_gallery ?? []).find((photo) => photo.id === id)
+    revokePreview(item)
+    entity.pending_gallery = (entity.pending_gallery ?? []).filter(
+      (photo) => photo.id !== id,
+    )
+    return
+  }
+  if (!url) return
+  entity.gallery_urls = (entity.gallery_urls ?? []).filter(
+    (item) => item !== url,
+  )
+  rememberRemoved(entity, url)
+}
+
+async function forgetImages(paths) {
+  for (const path of paths) {
+    try {
+      await deleteUserImage(path)
+    } catch {
+      // An orphaned file stays in the bucket. The row is what the page shows.
+    }
+  }
+}
+
+async function uploadImageList(items) {
+  const uploaded = []
+  try {
+    for (const item of items) {
+      uploaded.push(await uploadUserImage(item.file))
+    }
+  } catch (err) {
+    await forgetImages(uploaded.map((file) => file.path))
+    throw err
+  }
+  return uploaded
+}
+
+async function savedImageUrls(event) {
+  const galleryUploads = await uploadImageList(event.pending_gallery ?? [])
+  const coverUpload = event.pending_cover
+    ? (await uploadImageList([event.pending_cover]))[FIRST_INDEX]
+    : null
+  const cover = coverUpload?.url ?? event.cover_url ?? null
+  const gallery = [
+    ...(event.gallery_urls ?? []),
+    ...galleryUploads.map((file) => file.url),
+  ]
+  const paths = [
+    ...(coverUpload ? [coverUpload.path] : []),
+    ...galleryUploads.map((file) => file.path),
+  ]
+  return {
+    image_urls: cover ? [cover, ...gallery] : gallery,
+    uploadedPaths: paths,
+  }
+}
+
 export function audioRemove(entity) {
   releaseRecorder()
   if (entity.audio_url) removedPath = audioPathFromUrl(entity.audio_url)
@@ -399,6 +555,30 @@ export function audioRemove(entity) {
   entity.audio_transcript = null
   entity.audio_error = null
   void dropPendingAudio(true)
+}
+
+async function writeEvent(event, payload, audio_url) {
+  if (!event.editing_event_id) return createEvent(payload)
+  const previous = typeof event.audio_url === "string" ? event.audio_url : null
+  const result = await updateEvent(event.editing_event_id, payload)
+  const replaced = pendingBlob && previous && previous !== audio_url
+  if (replaced) {
+    const oldPath = audioPathFromUrl(previous)
+    if (oldPath) {
+      try {
+        await deleteEventAudio(oldPath)
+      } catch {
+        // Orphan file stays in the bucket; harmless for the spike.
+      }
+    }
+  } else if (!pendingBlob && !previous && removedPath) {
+    try {
+      await deleteEventAudio(removedPath)
+    } catch {
+      // Orphan file stays in the bucket; harmless for the spike.
+    }
+  }
+  return result
 }
 
 export const save = handleAsync("save", {
@@ -427,6 +607,7 @@ export const save = handleAsync("save", {
     } else if ("audio_url" in event) {
       audio_url = event.audio_url ?? null
     }
+    const photos = await savedImageUrls(event)
     const deadlineIso =
       event.application_deadline.length === DATETIME_LOCAL_LENGTH
         ? new Date(event.application_deadline).toISOString()
@@ -441,37 +622,23 @@ export const save = handleAsync("save", {
       application_deadline: deadlineIso,
       max_applicants: Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
       audio_url,
+      image_urls: photos.image_urls,
       ...(pendingBlob ? { transcript, transcript_status } : {}),
       details: event.details,
     }
-    if (event.editing_event_id) {
-      const previous =
-        typeof event.audio_url === "string" ? event.audio_url : null
-      const result = await updateEvent(event.editing_event_id, payload)
-      const replaced = pendingBlob && previous && previous !== audio_url
-      if (replaced) {
-        const oldPath = audioPathFromUrl(previous)
-        if (oldPath) {
-          try {
-            await deleteEventAudio(oldPath)
-          } catch {
-            // Orphan file stays in the bucket; harmless for the spike.
-          }
-        }
-      } else if (!pendingBlob && !previous && removedPath) {
-        try {
-          await deleteEventAudio(removedPath)
-        } catch {
-          // Orphan file stays in the bucket; harmless for the spike.
-        }
-      }
-      return result
+    try {
+      const saved = await writeEvent(event, payload, audio_url)
+      await forgetImages(event.removed_image_paths ?? [])
+      return saved
+    } catch (err) {
+      await forgetImages(photos.uploadedPaths)
+      throw err
     }
-    return createEvent(payload)
   },
   success(entity, _, api) {
     entity.status = "ready"
     clearPendingAudio()
+    clearEventImages(entity)
     entity.audio_preview_url = null
     api.notify("#eventList:eventsLoad")
     // Saving has to leave the page, because the route is what unmounts it now,
@@ -517,6 +684,13 @@ export const editLoad = handleAsync("editLoad", {
     entity.errors = {}
     entity.isValid = true
     entity.audio_url = row.audio_url ?? null
+    const photos = [...(row.image_urls ?? [])]
+    entity.cover_url = photos[FIRST_INDEX] ?? null
+    entity.gallery_urls = photos.slice(SINGULAR)
+    entity.pending_cover = null
+    entity.pending_gallery = []
+    entity.removed_image_paths = []
+    entity.image_error = null
     entity.audio_preview_url = null
     entity.is_recording = false
     entity.is_audio_open = false

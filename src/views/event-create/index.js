@@ -7,7 +7,11 @@ import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { validateEvent } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
-import { clearPendingAudio, releaseRecorder } from "./handlers.js"
+import {
+  clearEventImages,
+  clearPendingAudio,
+  releaseRecorder,
+} from "./handlers.js"
 import * as handlers from "./handlers.js"
 import { EventCreate as renderers } from "./template.js"
 
@@ -45,6 +49,12 @@ export const EventCreate = {
     }
     Form.create(entity)
     entity.audio_url ??= null
+    entity.cover_url ??= null
+    entity.gallery_urls ??= []
+    entity.pending_cover ??= null
+    entity.pending_gallery ??= []
+    entity.removed_image_paths ??= []
+    entity.image_error ??= null
     entity.audio_preview_url ??= null
     entity.is_recording ??= false
     entity.is_audio_open ??= false
@@ -88,6 +98,15 @@ export const EventCreate = {
       max_applicants: values.max_applicants,
       audio_url: entity.audio_url,
       audio_transcript: entity.audio_transcript,
+      cover_url: entity.cover_url,
+      gallery_urls: [...(entity.gallery_urls ?? [])],
+      pending_cover: entity.pending_cover
+        ? { file: entity.pending_cover.file }
+        : null,
+      pending_gallery: (entity.pending_gallery ?? []).map((item) => ({
+        file: item.file,
+      })),
+      removed_image_paths: [...(entity.removed_image_paths ?? [])],
       details,
     })
   },
@@ -135,6 +154,8 @@ export const EventCreate = {
         onOpenAudio: () => api.notify(`#${id}:audioOpen`),
         onCancelAudio: () => api.notify(`#${id}:audioCancel`),
         onRemoveAudio: () => api.notify(`#${id}:audioRemove`),
+        onImagesAdd: (payload) => api.notify(`#${id}:imagesAdd`, payload),
+        onImageRemove: (photo) => api.notify(`#${id}:imagesRemove`, photo),
         onSave: () => api.notify(`#${id}:saveSubmit`),
       },
       api,
@@ -177,6 +198,7 @@ function open(entity, { event_id } = {}, api) {
   entity.audio_elapsed = ZERO
   entity.audio_transcript = null
   entity.audio_error = null
+  clearEventImages(entity)
   releaseRecorder()
   clearPendingAudio()
   api.notify("#country-create:sync", "")
@@ -190,6 +212,7 @@ function close(entity) {
   entity.status = "idle"
   entity.error = null
   entity.is_audio_open = false
+  clearEventImages(entity)
   releaseRecorder()
   clearPendingAudio()
 }

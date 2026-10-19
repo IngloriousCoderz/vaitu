@@ -15,7 +15,11 @@
     "keepIt": "Annuler",
     "add": "Ajouter",
     "saving": "Enregistrement…",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "photoPreview": "Photos",
+    "photoPrevious": "Photo précédente",
+    "photoNext": "Photo suivante",
+    "photoClose": "Fermer les photos"
   },
   "favorites": {
     "typeRegion": "Ou saisissez une région"
@@ -151,6 +155,11 @@
     "noAudio": "Aucun audio à traiter",
     "transcriptionFailed": "La transcription a échoué : nouvel essai à l'enregistrement",
     "saveEvent": "Impossible d'enregistrer l'événement",
+    "imageType": "Utilisez une image JPEG, PNG ou WebP",
+    "imageSize": "Chaque image doit faire moins de 5 Mo",
+    "imageLimit_one": "Vous pouvez ajouter {{count}} photo",
+    "imageLimit_other": "Vous pouvez ajouter jusqu'à {{count}} photos",
+    "imageLimit_many": "Vous pouvez ajouter jusqu'à {{count}} photos",
     "noEventForApplications": "Aucun événement dont charger les candidatures",
     "loadApplications": "Impossible de charger les candidatures",
     "update": "La mise à jour a échoué",
@@ -269,7 +278,14 @@
     "recordAgain": "Réenregistrer",
     "remove": "Supprimer",
     "start": "Commencer",
-    "voiceHint": "Décrivez votre événement au lieu de le saisir : il sera transcrit dans les champs ci-dessous."
+    "voiceHint": "Décrivez votre événement au lieu de le saisir : il sera transcrit dans les champs ci-dessous.",
+    "coverPhoto": "Photo de couverture",
+    "coverHint": "Apparait sur la carte de l'événement à la place des initiales.",
+    "addCover": "Ajouter une couverture",
+    "changeCover": "Changer la couverture",
+    "gallery": "Autres photos",
+    "galleryHint": "Mini galerie dans l'événement. Jusqu'à {{count}}.",
+    "addGalleryPhotos": "Ajouter des photos"
   },
   "ranks": {
     "title": "Niveaux",
@@ -299,6 +315,7 @@
     "shortlisted": "Présélections",
     "wins": "Remportés",
     "edit": "Modifier le profil",
+    "changePhoto": "Changer la photo",
     "save": "Enregistrer le profil",
     "favoriteRegions": "Régions favorites",
     "subRole": "Rôle",

@@ -4,6 +4,7 @@ import locationOnOutline from "@iconify-icons/material-symbols/location-on-outli
 import photoCameraOutline from "@iconify-icons/material-symbols/photo-camera-outline"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
+import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
@@ -13,6 +14,7 @@ import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import {
   DATE_ISO_LENGTH,
@@ -41,6 +43,9 @@ export const ApplicationsReceived = {
     onReopenDeadline,
     onReopen,
     onCancelReopen,
+    onPhotoOpen,
+    onPhotoClose,
+    onPhotoStep,
   }) {
     const { items, status, error } = entity
     const selected_count = items.filter(
@@ -48,11 +53,19 @@ export const ApplicationsReceived = {
     ).length
     const max_reached =
       entity.max_applicants != null && selected_count >= entity.max_applicants
+    const photos = entity.event_recap?.image_urls ?? []
 
     return Page.render({
       variant: "stickyFlat",
       wide: true,
       children: [
+        PhotoCarousel.render({
+          urls: photos,
+          index: entity.photoIndex,
+          open: entity.photoPreview,
+          onStep: onPhotoStep,
+          onClose: onPhotoClose,
+        }),
         html`
           <header class=${styles.header}>
             ${
@@ -121,6 +134,7 @@ export const ApplicationsReceived = {
                   entity.event_recap,
                   selected_count,
                   entity.max_applicants,
+                  onPhotoOpen,
                 )
               : ""
           }
@@ -167,7 +181,8 @@ export const ApplicationsReceived = {
     })
   },
 
-  renderRecap(recap, shortlisted, maxApplicants) {
+  renderRecap(recap, shortlisted, maxApplicants, onPhotoOpen) {
+    const photos = recap.image_urls ?? []
     const rows = [
       [t("received.status"), translatedValue("status.", recap.status)],
       [t("received.names"), recap.names || "—"],
@@ -188,6 +203,38 @@ export const ApplicationsReceived = {
       element: "div",
       className: styles.recap,
       body: html`
+        ${
+          photos.length
+            ? html`<div class=${styles.recapPhotos}>
+                <button
+                  type="button"
+                  class=${styles.recapCover}
+                  @click=${() => onPhotoOpen(0)}
+                >
+                  <img src=${photos[0]} alt="" />
+                </button>
+                ${
+                  photos.length > SINGULAR
+                    ? Flex.render({
+                        gap: "sm",
+                        wrap: "wrap",
+                        className: styles.recapGallery,
+                        children: photos.slice(SINGULAR).map(
+                          (url, i) =>
+                            html`<button
+                              type="button"
+                              class=${styles.recapThumb}
+                              @click=${() => onPhotoOpen(i + SINGULAR)}
+                            >
+                              <img src=${url} alt="" />
+                            </button>`,
+                        ),
+                      })
+                    : ""
+                }
+              </div>`
+            : ""
+        }
         <dl class=${styles.recapList}>
           ${rows.map(
             ([label, value]) => html`

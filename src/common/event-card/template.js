@@ -32,6 +32,7 @@ export const Card = {
     style,
   }) {
     const tone = deadlineTone(event)
+    const photo = event.imageUrls?.[0]
     const cardClass = [
       styles.card,
       divider ? "" : styles.cardFlat,
@@ -74,7 +75,13 @@ export const Card = {
           class=${styles.thumb}
           style="background:${thumbGradient(event.hue)}"
         >
-          <span class=${styles.monogram}>${monogram(event.title)}</span>
+          ${
+            photo
+              ? html`<img class=${styles.thumbImage} src=${photo} alt="" />`
+              : html`<span class=${styles.monogram}
+                  >${monogram(event.title)}</span
+                >`
+          }
         </div>
         ${
           cover

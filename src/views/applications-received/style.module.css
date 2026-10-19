@@ -29,6 +29,44 @@
   padding: 0.375rem 0.875rem;
 }
 
+.recapPhotos {
+  margin: 0.5rem 0 0.375rem;
+}
+
+.recapCover,
+.recapThumb {
+  display: block;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  background: none;
+  overflow: hidden;
+}
+
+.recapCover img,
+.recapThumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recapCover {
+  width: 100%;
+  height: 11rem;
+  border-radius: var(--iw-radius-xl);
+}
+
+.recapGallery {
+  margin-top: var(--iw-space-2);
+}
+
+.recapThumb {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: var(--iw-radius-lg);
+}
+
 .recapList {
   margin: 0;
 }
@@ -221,26 +259,22 @@
 }
 
 @media (min-width: 48rem) {
-  .recapList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    gap: var(--iw-space-3);
+  /* Same stack as the phone: carousel on top, label/value rows below. */
+  .recap :global(.iw-card-body) {
+    padding: var(--iw-space-4) var(--iw-space-5);
   }
 
-  .recapRow {
-    flex-direction: column;
-    align-items: flex-start;
-    border: 1px solid var(--vline);
-    border-radius: var(--iw-radius-xl);
-    padding: var(--iw-space-3) var(--iw-space-4);
+  .recapPhotos {
+    margin: 0 0 var(--iw-space-3);
   }
 
-  .recapRow + .recapRow {
-    border-top: 1px solid var(--vline);
+  .recapCover {
+    height: 14rem;
   }
 
-  .recapRow dd {
-    text-align: start;
+  .recapThumb {
+    width: 5rem;
+    height: 5rem;
   }
 
   .list {

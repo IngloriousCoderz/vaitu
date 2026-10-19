@@ -40,6 +40,8 @@ export const EventDetail = {
     entity.isSubmitted ??= false
     entity.applyStatus ??= "idle"
     entity.applyError ??= null
+    entity.photoIndex ??= 0
+    entity.photoPreview ??= false
     // The id is snapshotted because these closures outlive the batch that
     // built them: they fire from a realtime message, by which point the
     // draft this entity was is revoked and reading entity.id throws.
@@ -92,6 +94,9 @@ export const EventDetail = {
           api.notify(`#${id}:fieldSet`, { field, value }),
         onSubmit: () => api.notify(`#${id}:applySubmit`),
         onCompleteProfile: () => api.notify("#router:navigate", paths.profile),
+        onPhotoOpen: (index) => api.notify(`#${id}:photoOpen`, index),
+        onPhotoClose: () => api.notify(`#${id}:photoClose`),
+        onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
         // Only the organiser has applications to review. The card that used to go
         // straight here now opens the event, so this is how the page is reached.
         onOpenApplications:
@@ -132,6 +137,8 @@ function open(entity, event_id, api) {
   entity.isSubmitted = false
   entity.applyStatus = "idle"
   entity.applyError = null
+  entity.photoIndex = 0
+  entity.photoPreview = false
   Form.reset(entity)
   const profile = api.getEntity("profile").profile
   entity.values.full_name = profile?.full_name ?? ""
@@ -149,5 +156,7 @@ function close(entity) {
   entity.error = null
   entity.isSubmitted = false
   entity.applyError = null
+  entity.photoIndex = 0
+  entity.photoPreview = false
   Form.reset(entity)
 }

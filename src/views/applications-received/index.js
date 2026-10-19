@@ -37,6 +37,8 @@ export const ApplicationsReceived = {
     entity.expanded_application_id ??= null
     entity.confirming_assign ??= null
     entity.confirming_reopen ??= false
+    entity.photoIndex ??= 0
+    entity.photoPreview ??= false
     entity.items ??= []
     entity.status ??= "idle"
     entity.error ??= null
@@ -130,6 +132,9 @@ export const ApplicationsReceived = {
           api.notify(`#${id}:reopenDeadlineSet`, value),
         onReopen: () => api.notify(`#${id}:reopenSubmit`),
         onCancelReopen: () => api.notify(`#${id}:reopenCancel`),
+        onPhotoOpen: (index) => api.notify(`#${id}:photoOpen`, index),
+        onPhotoClose: () => api.notify(`#${id}:photoClose`),
+        onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
       },
       api,
     )
@@ -148,6 +153,8 @@ function open(entity, event_id, api) {
   entity.items = []
   entity.expanded_application_id = null
   entity.confirming_assign = null
+  entity.photoIndex = 0
+  entity.photoPreview = false
   api.notify(`#${entity.id}:receivedLoad`, event_id)
 }
 
@@ -161,6 +168,8 @@ function close(entity) {
   entity.confirming_assign = null
   entity.confirming_reopen = false
   entity.reopen_deadline = ""
+  entity.photoIndex = 0
+  entity.photoPreview = false
   clearReopenError(entity)
   entity.status = "idle"
   entity.error = null

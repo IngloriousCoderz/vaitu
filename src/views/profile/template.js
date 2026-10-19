@@ -42,6 +42,7 @@ export const Profile = {
       onField,
       onSave,
       onEdit,
+      onPhoto,
       onLogout,
       onDeleteAsk,
       onDeleteCancel,
@@ -73,15 +74,43 @@ export const Profile = {
             }) ??
             html`
               ${Flex.render({
-                justify: "center",
+                direction: "column",
+                align: "center",
+                gap: "sm",
                 children: [
                   Avatar.render({
+                    src: profile.avatar_url || "",
+                    alt: profile.full_name ?? "",
                     initials: initials(profile.full_name),
                     size: "lg",
                     backgroundColor:
                       "linear-gradient(135deg, #6b7a5e, #24402f)",
                     textColor: "#fffdf7",
                   }),
+                  html`<div class=${styles.photoPick}>
+                    ${Button.render({
+                      children:
+                        entity.avatarStatus === "saving"
+                          ? t("common.saving")
+                          : t("profile.changePhoto"),
+                      variant: "outline",
+                      shape: "pill",
+                      size: "sm",
+                      isDisabled: entity.avatarStatus === "saving",
+                    })}
+                    <input
+                      class=${styles.fileInput}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      ?disabled=${entity.avatarStatus === "saving"}
+                      @change=${(e) => {
+                        const [file] = e.target.files ?? []
+                        if (file) onPhoto(file)
+                        e.target.value = ""
+                      }}
+                    />
+                  </div>`,
+                  ErrorAlert.render({ error: entity.avatarError }),
                 ],
               })}
               <h2 class=${styles.name}>${profile.full_name}</h2>
