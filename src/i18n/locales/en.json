@@ -111,12 +111,12 @@
     "quarter": "Next 90 days"
   },
   "sorts": {
-    "eventDateNewest": "Event date: newest first",
-    "eventDateOldest": "Event date: oldest first",
-    "deadlineSoonest": "Application deadline: soonest first",
-    "deadlineFarthest": "Application deadline: farthest first",
-    "createdNewest": "Created: newest first",
-    "createdOldest": "Created: oldest first"
+    "createdNewest": "Created: newest",
+    "createdOldest": "Created: oldest",
+    "eventDateNewest": "Event: newest",
+    "eventDateOldest": "Event: oldest",
+    "deadlineSoonest": "Deadline: soonest",
+    "deadlineFarthest": "Deadline: farthest"
   },
   "combobox": {
     "select": "Select…",
@@ -162,6 +162,8 @@
     "saveEvent": "Failed to save event",
     "imageType": "Use a JPEG, PNG, or WebP image",
     "imageSize": "Each image must be under 5 MB",
+    "imageCrop": "Could not process the image",
+    "avatarSize": "Profile photos must be under 2 MB",
     "imageLimit_one": "You can add {{count}} photo",
     "imageLimit_other": "You can add up to {{count}} photos",
     "noEventForApplications": "No event to load applications for",
@@ -289,6 +291,12 @@
     "coverHint": "Shows on the event card instead of the initials.",
     "addCover": "Add cover",
     "changeCover": "Change cover",
+    "editCover": "Edit cover",
+    "cropTitle": "Crop cover",
+    "cropHint": "Drag the frame to move it. Pull the corners or edges to set width and height freely. Pinch to scale both.",
+    "cropZoom": "Zoom",
+    "cropApply": "Crop and use",
+    "cropUseOriginal": "Use full photo",
     "gallery": "More photos",
     "galleryHint": "Mini gallery inside the event. Up to {{count}}.",
     "addGalleryPhotos": "Add photos"

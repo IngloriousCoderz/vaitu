@@ -10,7 +10,7 @@ const cors = {
 
 // Every bucket where a user's uploads live, each under a folder named after
 // their id (the storage policies only let them write there).
-const BUCKETS = ["event-images", "event-audio", "event-ics"]
+const BUCKETS = ["event-images", "event-audio", "event-ics", "avatars"]
 
 // Deletes the caller's own account. Who the caller is comes from their access
 // token, never from the request body, so nobody can delete anyone else.

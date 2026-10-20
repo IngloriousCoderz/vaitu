@@ -21,6 +21,8 @@ const {
   audioRecord,
   audioProcess,
   audioParse,
+  coverCropConfirm,
+  coverCropEdit,
   ...syncHandlers
 } = handlers
 
@@ -32,6 +34,8 @@ export const EventCreate = {
   ...audioRecord,
   ...audioProcess,
   ...audioParse,
+  ...coverCropConfirm,
+  ...coverCropEdit,
   ...renderers,
 
   create(entity) {
@@ -53,8 +57,21 @@ export const EventCreate = {
     entity.gallery_urls ??= []
     entity.pending_cover ??= null
     entity.pending_gallery ??= []
-    entity.removed_image_paths ??= []
     entity.image_error ??= null
+    entity.isCropOpen ??= false
+    entity.hasCropFile ??= false
+    entity.cropPreviewUrl ??= null
+    entity.cropImageWidth ??= ZERO
+    entity.cropImageHeight ??= ZERO
+    entity.cropX ??= ZERO
+    entity.cropY ??= ZERO
+    entity.cropW ??= 1
+    entity.cropH ??= 1
+    entity.cropRestoreRect ??= null
+    entity.cropAllowFullPhoto ??= false
+    entity.isCropSaving ??= false
+    entity.isCropDragging ??= false
+    entity.cropError ??= null
     entity.audio_preview_url ??= null
     entity.is_recording ??= false
     entity.is_audio_open ??= false
@@ -101,12 +118,11 @@ export const EventCreate = {
       cover_url: entity.cover_url,
       gallery_urls: [...(entity.gallery_urls ?? [])],
       pending_cover: entity.pending_cover
-        ? { file: entity.pending_cover.file }
+        ? { id: entity.pending_cover.id }
         : null,
       pending_gallery: (entity.pending_gallery ?? []).map((item) => ({
-        file: item.file,
+        id: item.id,
       })),
-      removed_image_paths: [...(entity.removed_image_paths ?? [])],
       details,
     })
   },
@@ -156,6 +172,36 @@ export const EventCreate = {
         onRemoveAudio: () => api.notify(`#${id}:audioRemove`),
         onImagesAdd: (payload) => api.notify(`#${id}:imagesAdd`, payload),
         onImageRemove: (photo) => api.notify(`#${id}:imagesRemove`, photo),
+        onCoverSelect: (file) => api.notify(`#${id}:coverCropOpen`, file),
+        onCoverEdit: () =>
+          api.notify(`#${id}:coverCropEdit`, {
+            id: entity.pending_cover?.id ?? null,
+            url: entity.cover_url ?? null,
+            cropX: entity.pending_cover?.cropX,
+            cropY: entity.pending_cover?.cropY,
+            cropW: entity.pending_cover?.cropW,
+            cropH: entity.pending_cover?.cropH,
+          }),
+        onCropImageLoad: (size) =>
+          api.notify(`#${id}:coverCropImageLoad`, size),
+        onCropWheel: (deltaY) =>
+          api.notify(`#${id}:coverCropWheel`, deltaY),
+        onCropKey: (key) => api.notify(`#${id}:coverCropKeyDown`, key),
+        onCropPointerDown: (pointer) =>
+          api.notify(`#${id}:coverCropPointerDown`, pointer),
+        onCropPointerMove: (pointer) =>
+          api.notify(`#${id}:coverCropPointerMove`, pointer),
+        onCropPointerEnd: (pointer) =>
+          api.notify(`#${id}:coverCropPointerEnd`, pointer),
+        onCropCancel: () => api.notify(`#${id}:coverCropCancel`),
+        onCropUseOriginal: () => api.notify(`#${id}:coverCropUseOriginal`),
+        onCropConfirm: () =>
+          api.notify(`#${id}:coverCropConfirm`, {
+            cropX: entity.cropX,
+            cropY: entity.cropY,
+            cropW: entity.cropW,
+            cropH: entity.cropH,
+          }),
         onSave: () => api.notify(`#${id}:saveSubmit`),
       },
       api,

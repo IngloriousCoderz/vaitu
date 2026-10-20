@@ -30,17 +30,22 @@
 
 .resultsBar {
   margin: var(--iw-space-3) 0 var(--iw-space-1);
+  min-width: 0;
 }
 
 .resultsCount {
   margin: 0;
+  flex: 0 0 auto;
   font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
+  white-space: nowrap;
 }
 
 .orderBy {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 12.5rem;
   margin-inline-start: auto;
-  min-width: min(100%, 18rem);
 }
 
 /* Same CountrySelect combobox, label beside the control. */
@@ -48,18 +53,31 @@
   flex-direction: row;
   align-items: center;
   gap: var(--iw-space-2);
-  width: auto;
+  width: 100%;
+  min-width: 0;
 }
 
 .orderBy :global(.iw-combobox-label) {
   margin: 0;
+  flex: 0 0 auto;
   color: var(--vmuted);
   font-size: var(--iw-font-size-sm);
   white-space: nowrap;
 }
 
-.orderBy :global(.iw-combobox-control) {
-  min-width: 12rem;
+.orderBy :global(.iw-combobox-frame) {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.orderBy :global(.iw-combobox-control),
+.orderBy :global(.iw-combobox-value) {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chips {
@@ -352,8 +370,8 @@ button.miniButton {
     margin: 0 0 var(--iw-space-2);
   }
 
-  .orderBy :global(.iw-combobox-control) {
-    min-width: 14rem;
+  .orderBy {
+    max-width: 16rem;
   }
 
   .list {

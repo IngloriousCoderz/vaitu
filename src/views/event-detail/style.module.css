@@ -1,28 +1,28 @@
+/* Cover keeps the free-crop aspect; letterbox on the brand ink if needed. */
 .banner {
   position: relative;
-  height: 9.375rem;
+  width: 100%;
   border-radius: var(--iw-radius-2xl);
   overflow: hidden;
+  background: var(--vink);
 }
 
 .bannerPhoto {
-  position: absolute;
-  inset: 0;
   display: block;
   width: 100%;
-  height: 100%;
   padding: 0;
   border: none;
   background: none;
   cursor: pointer;
+  line-height: 0;
 }
 
 .bannerImage {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  max-height: 40vh;
+  object-fit: contain;
 }
 
 .gallery {
@@ -219,7 +219,11 @@
 
   .banner {
     grid-area: cover;
-    height: 18rem;
+    min-height: 12rem;
+  }
+
+  .bannerImage {
+    max-height: 28rem;
   }
 
   .story {

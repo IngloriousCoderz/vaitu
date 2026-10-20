@@ -21,6 +21,7 @@ import {
   validateEvent,
 } from "../validation/events.js"
 import { supabase } from "./client.js"
+import { deleteImage, imageRefFromUrl } from "./images.js"
 
 const NEW_THRESHOLD_DAYS = 3
 const NEW_THRESHOLD_MS = NEW_THRESHOLD_DAYS * DAY_MS
@@ -247,12 +248,49 @@ export async function updateEvent(event_id, payload) {
 }
 
 export async function deleteEvent(event_id) {
-  const { error } = await supabase.from("events").delete().eq("id", event_id)
+  // Read the assets before the row goes away: once it is deleted there is no
+  // record of which files belonged to it. The cleanup itself is best effort and
+  // runs after the delete, so a stuck bucket never blocks the event removal.
+  const { data, error } = await supabase
+    .from("events")
+    .select("image_urls, audio_url")
+    .eq("id", event_id)
+    .maybeSingle()
   if (error) throw error
+
+  const { error: deleteError } = await supabase
+    .from("events")
+    .delete()
+    .eq("id", event_id)
+  if (deleteError) throw deleteError
+
+  void removeEventAssets(data).catch((err) => {
+    console.warn("[events] could not remove event assets:", err)
+  })
   return true
 }
 
+async function removeEventAssets(event) {
+  const jobs = (event?.image_urls ?? []).map((url) => {
+    const ref = imageRefFromUrl(url)
+    return ref ? deleteImage(ref.path, ref.bucket) : Promise.resolve()
+  })
+  const audioPath = audioPathFromUrl(event?.audio_url)
+  if (audioPath) jobs.push(deleteEventAudio(audioPath))
+  await Promise.all(jobs)
+}
+
 const AUDIO_BUCKET = "event-audio"
+
+function audioPathFromUrl(url) {
+  if (typeof url !== "string") return null
+  const marker = `/${AUDIO_BUCKET}/`
+  const index = url.indexOf(marker)
+  if (index < 0) return null
+  const path = url.slice(index + marker.length).split(/[?#]/)[0]
+  return path ? decodeURIComponent(path) : null
+}
+
 export async function uploadEventAudio(blob) {
   const {
     data: { user },

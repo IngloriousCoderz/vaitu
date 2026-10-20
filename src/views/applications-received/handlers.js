@@ -4,6 +4,7 @@ import { Form } from "@inglorious/web/form"
 import { supabase } from "../../api/client.js"
 import {
   DATETIME_LOCAL_LENGTH,
+  MIN_PHOTOS_TO_NAVIGATE,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
 import { canonicalRegion } from "../../data/regions/resolve.js"
@@ -28,7 +29,7 @@ export function photoStep(entity, delta) {
   if (!entity.photoPreview) return
   const urls = entity.event_recap?.image_urls ?? []
   const n = urls.length
-  if (n < 2) return
+  if (n < MIN_PHOTOS_TO_NAVIGATE) return
   entity.photoIndex = ((entity.photoIndex ?? 0) + delta + n) % n
 }
 

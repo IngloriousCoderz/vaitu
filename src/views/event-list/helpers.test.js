@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { distinctRegions, sortEvents, visibleEvents } from "./helpers.js"
+import {
+  DEFAULT_SORT,
+  distinctRegions,
+  sortEvents,
+  visibleEvents,
+} from "./helpers.js"
 
 function event(fields) {
   return {
@@ -109,6 +114,14 @@ describe("sortEvents", () => {
     application_deadline: "2026-05-01T12:00:00Z",
     created_at: "2026-01-15T12:00:00Z",
   }
+
+  it("defaults to created newest first", () => {
+    expect(DEFAULT_SORT).toBe("created_desc")
+    expect(sortEvents([early, late]).map((e) => e.title)).toEqual([
+      "Late",
+      "Early",
+    ])
+  })
 
   it("orders by event date, deadline, or created_at", () => {
     const events = [late, early]

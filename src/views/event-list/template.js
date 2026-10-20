@@ -249,7 +249,7 @@ export const EventList = {
                   align: "center",
                   justify: "between",
                   gap: "sm",
-                  wrap: "wrap",
+                  wrap: "nowrap",
                   className: styles.resultsBar,
                   children: [
                     html`<p class=${styles.resultsCount}>

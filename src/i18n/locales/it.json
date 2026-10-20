@@ -113,12 +113,12 @@
     "quarter": "Prossimi 90 giorni"
   },
   "sorts": {
-    "eventDateNewest": "Data evento: più recenti",
-    "eventDateOldest": "Data evento: più vecchi",
-    "deadlineSoonest": "Scadenza candidatura: più vicine",
-    "deadlineFarthest": "Scadenza candidatura: più lontane",
-    "createdNewest": "Creazione: più recenti",
-    "createdOldest": "Creazione: più vecchi"
+    "createdNewest": "Creazione: recenti",
+    "createdOldest": "Creazione: vecchi",
+    "eventDateNewest": "Evento: recenti",
+    "eventDateOldest": "Evento: vecchi",
+    "deadlineSoonest": "Scadenza: vicine",
+    "deadlineFarthest": "Scadenza: lontane"
   },
   "combobox": {
     "select": "Seleziona…",
@@ -165,6 +165,8 @@
     "saveEvent": "Impossibile salvare l'evento",
     "imageType": "Usa un'immagine JPEG, PNG o WebP",
     "imageSize": "Ogni immagine deve pesare meno di 5 MB",
+    "imageCrop": "Impossibile elaborare l'immagine",
+    "avatarSize": "La foto del profilo deve pesare meno di 2 MB",
     "imageLimit_one": "Puoi aggiungere {{count}} foto",
     "imageLimit_other": "Puoi aggiungere fino a {{count}} foto",
     "imageLimit_many": "Puoi aggiungere fino a {{count}} foto",
@@ -295,6 +297,12 @@
     "coverHint": "Compare nella scheda dell'evento al posto delle iniziali.",
     "addCover": "Aggiungi copertina",
     "changeCover": "Cambia copertina",
+    "editCover": "Modifica copertina",
+    "cropTitle": "Ritaglia la copertina",
+    "cropHint": "Trascina la cornice per spostarla. Tira angoli o bordi per impostare larghezza e altezza. Pizzica per scalare entrambe.",
+    "cropZoom": "Zoom",
+    "cropApply": "Ritaglia e usa",
+    "cropUseOriginal": "Usa foto intera",
     "gallery": "Altre foto",
     "galleryHint": "Mini galleria dentro l'evento. Fino a {{count}}.",
     "addGalleryPhotos": "Aggiungi foto"

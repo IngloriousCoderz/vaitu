@@ -167,14 +167,48 @@
   height: 5.5rem;
 }
 
+/* Free crop output keeps its own aspect — do not force 21:9 here or the
+   preview re-crops what the user just framed. */
 .coverPhoto {
   position: relative;
   width: 100%;
-  height: 11rem;
   margin-bottom: var(--iw-space-3);
 }
 
 .coverPhoto .photoImage {
+  width: 100%;
+  height: auto;
+  max-height: 40vh;
+  object-fit: contain;
+  border-radius: var(--iw-radius-2xl);
+  background: var(--vink);
+}
+
+.photoEdit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.coverPhoto .photoEdit {
+  height: auto;
+}
+
+.photo .photoEdit {
+  height: 100%;
+}
+
+.photoEdit:disabled {
+  cursor: default;
+}
+
+.photoEdit:focus-visible {
+  outline: 2px solid var(--vaccent);
+  outline-offset: 2px;
   border-radius: var(--iw-radius-2xl);
 }
 
@@ -185,11 +219,41 @@
   border-radius: var(--iw-radius-xl);
 }
 
-.photoRemove {
+/* The X stays visible on every photo and keeps a 44px touch target even on a
+   small gallery thumbnail. The button is deliberately larger than its icon. */
+button:global(.iw-button).photoRemove {
   position: absolute;
-  top: 0.125rem;
-  inset-inline-end: 0.125rem;
+  top: 0.25rem;
+  inset-inline-end: 0.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--iw-radius-full);
+  background: transparent;
+  color: var(--vink);
+  box-shadow: none;
+  z-index: 1;
+}
+
+/* The hit area is 44px but the visible circle stays small, so it does not hide
+   half of an 88px gallery thumbnail. */
+button:global(.iw-button).photoRemove::before {
+  content: "";
+  position: absolute;
+  inset: 0.5rem;
+  z-index: 0;
+  border: 1px solid var(--vline);
+  border-radius: var(--iw-radius-full);
   background: var(--vbg);
+  box-shadow: var(--iw-shadow-sm);
+}
+
+button:global(.iw-button).photoRemove :global(.iw-icon-button-content) {
+  position: relative;
+  z-index: 1;
 }
 
 .photoPick {
@@ -217,4 +281,149 @@
   border: 1px solid var(--vline);
   border-radius: var(--iw-radius-full);
   padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
+}
+
+/* The package dialog has a 32rem minimum width, which is wider than a phone.
+   This variant is fluid; the dialog scrolls as a whole on short viewports so
+   we do not need a custom flex column on the shell (Dialog owns that tree). */
+:global(.iw-dialog).cropDialog {
+  width: min(48rem, calc(100vw - 2 * var(--iw-space-4)));
+  min-width: 0;
+  max-width: none;
+  max-height: calc(
+    100dvh - 2 * var(--iw-space-4) - var(--safe-area-top) -
+      var(--safe-area-bottom)
+  );
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Let our Flex.render own the action row (package actions is already a flex). */
+.cropDialog :global(.iw-dialog-actions) {
+  display: block;
+}
+
+.cropActions :global(.iw-button) {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-inline: var(--iw-space-3);
+  font-size: var(--iw-font-size-sm);
+  white-space: nowrap;
+}
+
+.cropViewport {
+  width: 100%;
+}
+
+/* The stage is the whole photo, not the crop: it takes the photo's aspect
+   ratio and stops growing at 55dvh so the slider and actions stay on screen. */
+.cropStage {
+  position: relative;
+  width: 100%;
+  max-width: calc(55dvh * var(--crop-aspect, 2.3333));
+  aspect-ratio: var(--crop-aspect, 2.3333);
+  overflow: hidden;
+  border-radius: var(--iw-radius-xl);
+  background: var(--vink);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  line-height: 0;
+}
+
+/* A landscape phone has very little height for the dialog; shrink the photo so
+   the slider stays visible without scrolling. */
+@media (max-height: 32rem) {
+  .cropStage {
+    max-width: calc(35dvh * var(--crop-aspect, 2.3333));
+  }
+}
+
+.cropStage:active {
+  cursor: grabbing;
+}
+
+.cropStage:focus-visible {
+  outline: 2px solid var(--iw-color-primary);
+  outline-offset: 2px;
+}
+
+.cropImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Free crop rect: top-left anchored. Handles resize width/height independently.
+   The huge shadow dims everything outside; stage overflow clips it. */
+.cropWindow {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid rgba(255, 253, 247, 0.95);
+  box-shadow: 0 0 0 9999px rgba(12, 14, 12, 0.55);
+  pointer-events: none;
+}
+
+.cropHandle {
+  position: absolute;
+  width: 0.875rem;
+  height: 0.875rem;
+  box-sizing: border-box;
+  background: rgba(255, 253, 247, 0.98);
+  border: 1px solid rgba(12, 14, 12, 0.35);
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cropHandle_nw {
+  left: 0;
+  top: 0;
+  cursor: nwse-resize;
+}
+
+.cropHandle_n {
+  left: 50%;
+  top: 0;
+  cursor: ns-resize;
+}
+
+.cropHandle_ne {
+  left: 100%;
+  top: 0;
+  cursor: nesw-resize;
+}
+
+.cropHandle_e {
+  left: 100%;
+  top: 50%;
+  cursor: ew-resize;
+}
+
+.cropHandle_se {
+  left: 100%;
+  top: 100%;
+  cursor: nwse-resize;
+}
+
+.cropHandle_s {
+  left: 50%;
+  top: 100%;
+  cursor: ns-resize;
+}
+
+.cropHandle_sw {
+  left: 0;
+  top: 100%;
+  cursor: nesw-resize;
+}
+
+.cropHandle_w {
+  left: 0;
+  top: 50%;
+  cursor: ew-resize;
 }

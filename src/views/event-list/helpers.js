@@ -14,16 +14,16 @@ export const periods = [
   labelled("periods.quarter", { id: "quarter", days: 90 }),
 ]
 
-// Matches the explore fetch default (soonest deadline first).
-export const DEFAULT_SORT = "deadline_asc"
+// Newest created first — the usual feed default.
+export const DEFAULT_SORT = "created_desc"
 
 export const sorts = [
+  labelled("sorts.createdNewest", { value: "created_desc" }),
+  labelled("sorts.createdOldest", { value: "created_asc" }),
   labelled("sorts.eventDateNewest", { value: "event_date_desc" }),
   labelled("sorts.eventDateOldest", { value: "event_date_asc" }),
   labelled("sorts.deadlineSoonest", { value: "deadline_asc" }),
   labelled("sorts.deadlineFarthest", { value: "deadline_desc" }),
-  labelled("sorts.createdNewest", { value: "created_desc" }),
-  labelled("sorts.createdOldest", { value: "created_asc" }),
 ]
 
 export function distinctRegions(allEvents) {
@@ -89,14 +89,14 @@ export function sortEvents(events, sortId = DEFAULT_SORT) {
       return list.sort((a, b) =>
         compareField(a, b, "application_deadline", false),
       )
-    case "created_desc":
-      return list.sort((a, b) => compareField(a, b, "created_at", false))
     case "created_asc":
       return list.sort((a, b) => compareField(a, b, "created_at", true))
     case "deadline_asc":
-    default:
       return list.sort((a, b) =>
         compareField(a, b, "application_deadline", true),
       )
+    case "created_desc":
+    default:
+      return list.sort((a, b) => compareField(a, b, "created_at", false))
   }
 }

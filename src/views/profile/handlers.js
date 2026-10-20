@@ -3,14 +3,20 @@ import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import {
-  deleteUserImage,
+  deleteAvatar,
+  deleteImage,
   imageExtension,
-  imagePathFromUrl,
-  uploadUserImage,
+  imageRefFromUrl,
+  uploadAvatar,
 } from "../../api/images.js"
 import { endSession } from "../../api/session.js"
+import {
+  createImageFile,
+  decodeImage,
+  resizeSquareToBlob,
+} from "../../common/image.js"
 import { defaultTiers } from "../../common/tiers.js"
-import { IMAGE_MAX_BYTES } from "../../constants/index.js"
+import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
 import {
   canonicalRegion,
   favoriteRegionOptions,
@@ -254,8 +260,6 @@ export const profileSave = handleAsync("profileSave", {
   },
 })
 
-// Quietly: the language has already changed on screen, and a failed save only
-// means another device keeps the old one until the next change.
 export const avatarSave = handleAsync("avatarSave", {
   start(entity) {
     entity.avatarStatus = "saving"
@@ -263,28 +267,54 @@ export const avatarSave = handleAsync("avatarSave", {
   },
   async run(file) {
     if (!imageExtension(file?.type)) throw new Error(t("errors.imageType"))
-    if (file.size > IMAGE_MAX_BYTES) throw new Error(t("errors.imageSize"))
+    if (file.size > AVATAR_MAX_BYTES) throw new Error(t("errors.avatarSize"))
     const {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) throw new Error(t("errors.notLoggedIn"))
-    const uploaded = await uploadUserImage(file)
+
+    // The avatar is always a square: centre-crop and downscale on the client
+    // before it reaches the bucket, which also strips camera metadata.
+    let source
+    try {
+      source = await decodeImage(file)
+    } catch {
+      throw new Error(t("errors.imageCrop"))
+    }
+    let blob
+    try {
+      blob = await resizeSquareToBlob(source, AVATAR_SIZE)
+    } catch {
+      throw new Error(t("errors.imageCrop"))
+    } finally {
+      source.close?.()
+    }
+
+    const uploaded = await uploadAvatar(createImageFile(blob, "avatar.jpg"))
     const { error } = await supabase
       .from("profiles")
       .update({ avatar_url: uploaded.url })
       .eq("id", user.id)
     if (error) {
-      await deleteUserImage(uploaded.path)
+      await deleteAvatar(uploaded.path).catch(() => {})
       throw error
     }
     return uploaded
   },
   success(entity, uploaded) {
     entity.avatarStatus = "idle"
-    const previous = imagePathFromUrl(entity.profile?.avatar_url)
+    const previous = imageRefFromUrl(entity.profile?.avatar_url)
     entity.profile = { ...entity.profile, avatar_url: uploaded.url }
-    if (previous && previous !== uploaded.path) {
-      void deleteUserImage(previous)
+    if (
+      previous &&
+      !(
+        previous.bucket === uploaded.bucket &&
+        previous.path === uploaded.path
+      )
+    ) {
+      // Best effort: the profile row already points at the new file, and a
+      // failed cleanup should not turn a successful save into an error.
+      void deleteImage(previous.path, previous.bucket).catch(() => {})
     }
   },
   error(entity, err) {

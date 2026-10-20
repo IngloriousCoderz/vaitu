@@ -113,12 +113,12 @@
     "quarter": "90 prochains jours"
   },
   "sorts": {
-    "eventDateNewest": "Date de l'événement : plus récents",
-    "eventDateOldest": "Date de l'événement : plus anciens",
-    "deadlineSoonest": "Date limite de candidature : plus proches",
-    "deadlineFarthest": "Date limite de candidature : plus lointaines",
-    "createdNewest": "Création : plus récents",
-    "createdOldest": "Création : plus anciens"
+    "createdNewest": "Création : récents",
+    "createdOldest": "Création : anciens",
+    "eventDateNewest": "Événement : récents",
+    "eventDateOldest": "Événement : anciens",
+    "deadlineSoonest": "Échéance : proches",
+    "deadlineFarthest": "Échéance : lointaines"
   },
   "combobox": {
     "select": "Sélectionner…",
@@ -165,6 +165,8 @@
     "saveEvent": "Impossible d'enregistrer l'événement",
     "imageType": "Utilisez une image JPEG, PNG ou WebP",
     "imageSize": "Chaque image doit faire moins de 5 Mo",
+    "imageCrop": "Impossible de traiter l'image",
+    "avatarSize": "La photo de profil doit faire moins de 2 Mo",
     "imageLimit_one": "Vous pouvez ajouter {{count}} photo",
     "imageLimit_other": "Vous pouvez ajouter jusqu'à {{count}} photos",
     "imageLimit_many": "Vous pouvez ajouter jusqu'à {{count}} photos",
@@ -295,6 +297,12 @@
     "coverHint": "Apparait sur la carte de l'événement à la place des initiales.",
     "addCover": "Ajouter une couverture",
     "changeCover": "Changer la couverture",
+    "editCover": "Modifier la couverture",
+    "cropTitle": "Recadrer la couverture",
+    "cropHint": "Faites glisser le cadre pour le déplacer. Tirez les coins ou bords pour régler largeur et hauteur. Pincez pour les deux.",
+    "cropZoom": "Zoom",
+    "cropApply": "Recadrer et utiliser",
+    "cropUseOriginal": "Utiliser la photo entière",
     "gallery": "Autres photos",
     "galleryHint": "Mini galerie dans l'événement. Jusqu'à {{count}}.",
     "addGalleryPhotos": "Ajouter des photos"

@@ -4,6 +4,7 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
 import { readUserId } from "../../api/session.js"
+import { MIN_PHOTOS_TO_NAVIGATE } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 
@@ -28,7 +29,7 @@ export function photoStep(entity, delta) {
   if (!entity.photoPreview) return
   const urls = entity.event?.imageUrls ?? []
   const n = urls.length
-  if (n < 2) return
+  if (n < MIN_PHOTOS_TO_NAVIGATE) return
   entity.photoIndex = ((entity.photoIndex ?? 0) + delta + n) % n
 }
 

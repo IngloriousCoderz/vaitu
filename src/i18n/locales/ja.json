@@ -109,12 +109,12 @@
     "quarter": "90日以内"
   },
   "sorts": {
-    "eventDateNewest": "開催日：新しい順",
-    "eventDateOldest": "開催日：古い順",
-    "deadlineSoonest": "応募締切：近い順",
-    "deadlineFarthest": "応募締切：遠い順",
-    "createdNewest": "作成日：新しい順",
-    "createdOldest": "作成日：古い順"
+    "createdNewest": "作成：新しい順",
+    "createdOldest": "作成：古い順",
+    "eventDateNewest": "開催：新しい順",
+    "eventDateOldest": "開催：古い順",
+    "deadlineSoonest": "締切：近い順",
+    "deadlineFarthest": "締切：遠い順"
   },
   "combobox": {
     "select": "選択…",
@@ -159,6 +159,8 @@
     "saveEvent": "イベントを保存できませんでした",
     "imageType": "JPEG、PNG、WebP の画像を使ってください",
     "imageSize": "画像は 1 枚 5 MB までです",
+    "imageCrop": "画像を処理できませんでした",
+    "avatarSize": "プロフィール写真は 2 MB 未満にしてください",
     "imageLimit_one": "写真は {{count}} 枚までです",
     "imageLimit_other": "写真は {{count}} 枚までです",
     "noEventForApplications": "応募を読み込むイベントがありません",
@@ -284,6 +286,12 @@
     "coverHint": "頭文字の代わりにイベントカードに表示されます。",
     "addCover": "カバーを追加",
     "changeCover": "カバーを変更",
+    "editCover": "カバーを編集",
+    "cropTitle": "カバーをトリミング",
+    "cropHint": "枠をドラッグで移動。角や辺を引っ張って幅と高さを自由に。ピンチで両方を拡大縮小。",
+    "cropZoom": "ズーム",
+    "cropApply": "切り抜いて使う",
+    "cropUseOriginal": "写真全体を使う",
     "gallery": "その他の写真",
     "galleryHint": "イベント内のミニギャラリー。最大 {{count}} 枚。",
     "addGalleryPhotos": "写真を追加"
