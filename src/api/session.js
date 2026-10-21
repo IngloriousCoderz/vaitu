@@ -70,6 +70,14 @@ export async function endSession() {
   await supabase.auth.signOut()
 }
 
+/**
+ * Records last_login_at and clears a prior soft-deactivation. Fire-and-forget:
+ * a failed RPC must not block a session auth already accepted.
+ */
+export function stampLogin() {
+  void Promise.resolve(supabase.rpc("touch_login")).catch(() => {})
+}
+
 // Whether onboarding is still owed: from a signup until it is finished or
 // skipped. Outside the store for the reason above — signup sets it and
 // navigates in one batch, and the route guard reading an entity there would

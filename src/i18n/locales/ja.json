@@ -182,7 +182,7 @@
     "saveProfile": "プロフィールを保存できませんでした",
     "logout": "ログアウトできませんでした",
     "loadRanks": "ランクを読み込めませんでした",
-    "deleteAccount": "アカウントを削除できませんでした。もう一度お試しください。"
+    "deactivateAccount": "アカウントを無効にできませんでした。もう一度お試しください。"
   },
   "auth": {
     "welcome": "Vaituへようこそ",
@@ -329,9 +329,10 @@
     "logOut": "ログアウト",
     "howRanksWork": "ランクのしくみ",
     "language": "言語",
-    "deleteAccount": "アカウントを削除",
-    "deleteConfirm": "アカウントを削除しますか？プロフィール、受け取った応募を含むあなたのイベント、あなたの応募もすべて削除されます。この操作は取り消せません。",
-    "deleting": "削除中…"
+    "deactivateAccount": "アカウントを無効化",
+    "deactivateConfirm": "アカウントを無効化しますか？開催中のイベントと、送った・受け取ったすべての応募は完全に削除されます。優勝者の決まった過去のイベントと統計は残ります。戻るには再度サインインしてください。",
+    "yesDeactivate": "はい、無効化する",
+    "deactivating": "無効化中…"
   },
   "facts": {
     "spouses": "新郎新婦"

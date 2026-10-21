@@ -185,7 +185,7 @@
     "saveProfile": "Failed to save profile",
     "logout": "Logout failed",
     "loadRanks": "Failed to load ranks",
-    "deleteAccount": "The account could not be deleted. Try again."
+    "deactivateAccount": "The account could not be deactivated. Try again."
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -335,9 +335,10 @@
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
     "language": "Language",
-    "deleteAccount": "Delete account",
-    "deleteConfirm": "Delete your account? Your profile, your events with the applications they received, and your applications go with it. This cannot be undone.",
-    "deleting": "Deleting…"
+    "deactivateAccount": "Deactivate account",
+    "deactivateConfirm": "Deactivate your account? Your open events and all your applications — sent and received — are permanently deleted. Past events with winners and your stats stay. To come back, sign in again.",
+    "yesDeactivate": "Yes, deactivate",
+    "deactivating": "Deactivating…"
   },
   "facts": {
     "spouses": "Spouses"

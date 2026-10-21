@@ -37,7 +37,7 @@ import { withTransitions } from "@inglorious/ui/view-transitions"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
-import { clearUser, endSession, writeUser } from "./api/session.js"
+import { clearUser, endSession, stampLogin, writeUser } from "./api/session.js"
 import { App } from "./app"
 import { ready } from "./i18n/index.js"
 import { store } from "./store"
@@ -67,6 +67,7 @@ store.notify("#eventList:eventsLoad")
 function trackSession(session) {
   if (session) {
     writeUser(session.user)
+    stampLogin()
     // Market and profile both depend on who is signed in: the list is filtered by
     // own events and applied marks, and the profile fills in the tab bar. Both
     // load once here rather than waiting for the page that needs them.

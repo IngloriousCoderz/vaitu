@@ -189,7 +189,7 @@
     "saveProfile": "Impossibile salvare il profilo",
     "logout": "Uscita non riuscita",
     "loadRanks": "Impossibile caricare i livelli",
-    "deleteAccount": "Non è stato possibile eliminare l'account. Riprova."
+    "deactivateAccount": "Non è stato possibile disattivare l'account. Riprova."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -342,9 +342,10 @@
     "logOut": "Esci",
     "howRanksWork": "Come funzionano i livelli",
     "language": "Lingua",
-    "deleteAccount": "Elimina account",
-    "deleteConfirm": "Eliminare l'account? Con lui se ne vanno il profilo, i tuoi eventi con le candidature ricevute e le tue candidature. Non si può annullare.",
-    "deleting": "Eliminazione…"
+    "deactivateAccount": "Disattiva account",
+    "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti e tutte le tue candidature — inviate e ricevute — verranno eliminati definitivamente. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo.",
+    "yesDeactivate": "Sì, disattiva",
+    "deactivating": "Disattivazione…"
   },
   "facts": {
     "spouses": "Sposi"

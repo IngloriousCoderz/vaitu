@@ -15,7 +15,7 @@ const {
   profileLoad,
   profileSave,
   localeSave,
-  accountDelete,
+  accountDeactivate,
   logout,
   avatarSave,
   ...syncHandlers
@@ -27,7 +27,7 @@ export const Profile = {
   ...profileLoad,
   ...profileSave,
   ...localeSave,
-  ...accountDelete,
+  ...accountDeactivate,
   ...logout,
   ...avatarSave,
   ...renderers,
@@ -46,9 +46,9 @@ export const Profile = {
     }
     Form.create(entity)
     entity.favoriteInput ??= ""
-    entity.isConfirmingDelete ??= false
-    entity.deleteStatus ??= "idle"
-    entity.deleteError ??= null
+    entity.isConfirmingDeactivate ??= false
+    entity.deactivateStatus ??= "idle"
+    entity.deactivateError ??= null
     entity.avatarStatus ??= "idle"
     entity.avatarError ??= null
     entity.status ??= "idle"
@@ -96,9 +96,10 @@ export const Profile = {
         onEdit: () => api.notify(`#${id}:editStart`),
         onPhoto: (file) => api.notify(`#${id}:avatarSave`, file),
         onLogout: () => api.notify(`#${id}:logout`),
-        onDeleteAsk: () => api.notify(`#${id}:accountDeleteAsk`),
-        onDeleteCancel: () => api.notify(`#${id}:accountDeleteCancel`),
-        onDelete: () => api.notify(`#${id}:accountDelete`),
+        onDeactivateAsk: () => api.notify(`#${id}:accountDeactivateAsk`),
+        onDeactivateCancel: () =>
+          api.notify(`#${id}:accountDeactivateCancel`),
+        onDeactivate: () => api.notify(`#${id}:accountDeactivate`),
         onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
         onOpenApplications: (status) =>
           api.notify("#router:navigate", paths.applicationsByStatus(status)),

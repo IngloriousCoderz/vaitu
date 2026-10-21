@@ -344,38 +344,39 @@ export const localeSave = handleAsync("localeSave", {
   },
 })
 
-export function accountDeleteAsk(entity) {
-  entity.isConfirmingDelete = true
-  entity.deleteError = null
+export function accountDeactivateAsk(entity) {
+  entity.isConfirmingDeactivate = true
+  entity.deactivateError = null
 }
 
-export function accountDeleteCancel(entity) {
-  entity.isConfirmingDelete = false
-  entity.deleteError = null
+export function accountDeactivateCancel(entity) {
+  entity.isConfirmingDeactivate = false
+  entity.deactivateError = null
 }
 
-// The server deletes the account, the files and everything the database
-// cascades from it. Ending the session afterwards is what moves the visitor to
-// the sign-in screen: main.js answers it like any other sign-out.
-export const accountDelete = handleAsync("accountDelete", {
+// Soft-deactivates on the server (profile stays; events stay, but leave Explore).
+// Ending the session afterwards is what moves the visitor to the sign-in screen:
+// main.js answers it like any other sign-out. Signing in again runs touch_login
+// and reactivates.
+export const accountDeactivate = handleAsync("accountDeactivate", {
   start(entity) {
-    entity.deleteStatus = "deleting"
-    entity.deleteError = null
+    entity.deactivateStatus = "deactivating"
+    entity.deactivateError = null
   },
   async run() {
-    const { error } = await supabase.functions.invoke("delete-account")
+    const { error } = await supabase.functions.invoke("deactivate-account")
     if (error) throw error
     await endSession()
     return true
   },
   success(entity) {
-    entity.deleteStatus = "idle"
-    entity.isConfirmingDelete = false
+    entity.deactivateStatus = "idle"
+    entity.isConfirmingDeactivate = false
     entity.profile = null
   },
   error(entity) {
-    entity.deleteStatus = "idle"
-    entity.deleteError = t("errors.deleteAccount")
+    entity.deactivateStatus = "idle"
+    entity.deactivateError = t("errors.deactivateAccount")
   },
 })
 

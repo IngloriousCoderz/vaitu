@@ -44,9 +44,9 @@ export const Profile = {
       onEdit,
       onPhoto,
       onLogout,
-      onDeleteAsk,
-      onDeleteCancel,
-      onDelete,
+      onDeactivateAsk,
+      onDeactivateCancel,
+      onDeactivate,
       onOpenApplications,
       onOpenRanks,
       onFavoriteInput,
@@ -274,11 +274,15 @@ export const Profile = {
                         ${this.renderRow(t("profile.subRole"), profile.sub_role)}
                       </dl>
                       ${this.renderLanguage(api)}
-                      ${this.renderAccountActions({ onEdit, onLogout, onDeleteAsk })}
-                      ${this.renderDeleteAccount({
+                      ${this.renderAccountActions({
+                        onEdit,
+                        onLogout,
+                        onDeactivateAsk,
+                      })}
+                      ${this.renderDeactivateAccount({
                         entity,
-                        onDeleteCancel,
-                        onDelete,
+                        onDeactivateCancel,
+                        onDeactivate,
                       })}
                     `
               }
@@ -377,7 +381,7 @@ export const Profile = {
     })
   },
 
-  renderAccountActions({ onEdit, onLogout, onDeleteAsk }) {
+  renderAccountActions({ onEdit, onLogout, onDeactivateAsk }) {
     return Flex.render({
       direction: "column",
       gap: "sm",
@@ -401,34 +405,34 @@ export const Profile = {
           onClick: onLogout,
         }),
         Button.render({
-          children: t("profile.deleteAccount"),
+          children: t("profile.deactivateAccount"),
           variant: "ghost",
           color: "error",
           shape: "pill",
           size: "md",
           isFullWidth: true,
-          onClick: onDeleteAsk,
+          onClick: onDeactivateAsk,
         }),
       ],
     })
   },
 
-  // The last word before the account goes: what goes with it, and a way back.
-  renderDeleteAccount({ entity, onDeleteCancel, onDelete }) {
-    if (!entity.isConfirmingDelete) return ""
+  // Soft-deactivate: data stays for re-engagement; signing in again restores.
+  renderDeactivateAccount({ entity, onDeactivateCancel, onDeactivate }) {
+    if (!entity.isConfirmingDeactivate) return ""
     return html`
       ${ConfirmPrompt.render({
-        id: "delete-account-confirm",
-        message: t("profile.deleteConfirm"),
-        confirmLabel: t("profile.deleteAccount"),
-        busyLabel: t("profile.deleting"),
-        isBusy: entity.deleteStatus === "deleting",
+        id: "deactivate-account-confirm",
+        message: t("profile.deactivateConfirm"),
+        confirmLabel: t("profile.yesDeactivate"),
+        busyLabel: t("profile.deactivating"),
+        isBusy: entity.deactivateStatus === "deactivating",
         isStacked: true,
-        className: styles.deleteConfirm,
-        onConfirm: onDelete,
-        onCancel: onDeleteCancel,
+        className: styles.deactivateConfirm,
+        onConfirm: onDeactivate,
+        onCancel: onDeactivateCancel,
       })}
-      ${ErrorAlert.render({ error: entity.deleteError })}
+      ${ErrorAlert.render({ error: entity.deactivateError })}
     `
   },
 
