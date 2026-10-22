@@ -126,6 +126,13 @@
     "noCountries": "No countries found",
     "noRegions": "No regions found"
   },
+  "pwa": {
+    "updateReady": "New version available",
+    "refresh": "Update now",
+    "dismiss": "Update options",
+    "deferQuestion": "The update can happen now, or the next time you open the app.",
+    "defer": "Next time"
+  },
   "validation": {
     "addName": "Add a name",
     "pickStyle": "Pick a style",

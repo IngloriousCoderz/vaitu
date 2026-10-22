@@ -124,6 +124,13 @@
     "noCountries": "国が見つかりません",
     "noRegions": "地域が見つかりません"
   },
+  "pwa": {
+    "updateReady": "新しいバージョンがあります",
+    "refresh": "今すぐ更新",
+    "dismiss": "更新のタイミング",
+    "deferQuestion": "更新は今すぐ、または次回アプリを開いたときに行われます。",
+    "defer": "次回"
+  },
   "validation": {
     "addName": "名前を入力してください",
     "pickStyle": "スタイルを選んでください",

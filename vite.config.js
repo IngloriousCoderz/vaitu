@@ -14,7 +14,12 @@ export default defineConfig({
   plugins: [
     VitePWA({
       injectRegister: false,
-      registerType: "autoUpdate",
+      // The worker waits for the SKIP_WAITING message regardless: the plugin
+      // only auto-installs skipWaiting for the register script it injects,
+      // which this app does not use, and `src/pwa.js` runs the update flow
+      // itself instead. Naming that truthfully also keeps the register
+      // module from adding a second, competing reload on activation.
+      registerType: "prompt",
       pwaAssets: {
         config: true,
       },

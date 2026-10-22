@@ -1,0 +1,50 @@
+/* The bar floats at the tail of the shell: above the tab bar on the phone,
+   a compact pill floating over the content on tablet and desktop, where the
+   footer row collapses to zero so anything inside it could never paint (the
+   drawer is the navigation there).
+
+   Absolute inside the positioned shell, matching the FAB convention — so it
+   tracks the shell rather than the viewport, and the tab bar inset keeps it
+   from covering the phone's navigation while it is on screen. */
+
+.bar {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--vtabbar-height);
+  z-index: var(--iw-z-fixed);
+  border-top: 1px solid var(--iw-color-border);
+  background: var(--iw-color-surface);
+}
+
+@media (min-width: 48rem) {
+  .bar {
+    /* The pill only wraps its content and floats centered: it reads as a
+       message that happens to sit at the bottom, not as a band across it. */
+    inset-inline: var(--iw-space-4);
+    bottom: var(--iw-space-4);
+    width: fit-content;
+    margin-inline: auto;
+    border: 1px solid var(--iw-color-border);
+    border-radius: var(--iw-radius-xl);
+    box-shadow: var(--iw-shadow-md);
+  }
+}
+
+/* Has to beat .iw-flex.iw-flex-padding-none — the Flex primitive's padding: 0
+   shorthand cancels the padding of lower-specificity classes over the Flex
+   node (the same fight the shell's notch padding wins by composing its
+   selector the same way). */
+:global(.iw-flex.iw-flex-padding-none).row {
+  padding: var(--iw-space-3) var(--iw-space-5);
+}
+
+.message {
+  flex: 1;
+  /* With .row gated tight, the message buys a full breath of its own on the
+     right — the actions read as a clustered pair at the far end, with the
+     gap living between the message and them, not inside the pair. */
+  margin-inline-end: var(--iw-space-8);
+  font-size: var(--iw-font-size-sm);
+  color: var(--iw-color-text-secondary);
+  white-space: nowrap;
+}

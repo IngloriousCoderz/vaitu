@@ -7,6 +7,11 @@ export const DAY_MS =
   MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
 export const HOUR_MS = MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR
 export const REQUEST_TIMEOUT_MS = 15000
+export const TAKEOVER_TIMEOUT_MS = 3000
+// The localStorage flag behind the X on the update pill: it only "arms" the
+// deferred install (the pill template sets it; the boot check in src/pwa.js
+// spends it), so the name is the feature, not the message.
+export const UPDATE_DEFER_KEY = "vaitu-update-deferral"
 export const MIN_PASSWORD_LENGTH = 6
 export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5

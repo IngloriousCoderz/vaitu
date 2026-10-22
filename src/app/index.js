@@ -12,6 +12,7 @@ import { html } from "@inglorious/web"
 import { readUser } from "../api/session.js"
 import { BackButton } from "../common/back-button/index.js"
 import { Logo } from "../common/logo/index.js"
+import { UpdateBar, UpdateDialog } from "../common/update-bar/template.js"
 import { t } from "../i18n/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
@@ -77,6 +78,7 @@ export const App = {
     const showWide = !NO_WIDE_CHROME.has(router.route)
 
     const shell = api.getEntity("shell")
+    const pwaUpdate = api.getEntity("pwaUpdate")
 
     return this.renderShell({
       appBar: showWide ? this.renderAppBar(api, router.route) : null,
@@ -91,9 +93,30 @@ export const App = {
       `,
       fab: this.renderFab(api, chrome),
       tabbar: this.renderTabbar(api, chrome),
+      updatebar: this.renderUpdateBar(api, pwaUpdate),
       isTabbarHidden: chrome.isHidden ?? false,
       isWide: showWide,
     })
+  },
+
+  // A new version claimed the running page: one pill to move over with a tap,
+  // and behind its X a dialog to pick when — now, or the next time the app
+  // opens (which happens on its own, so nothing is being refused).
+  renderUpdateBar(api, pwaUpdate) {
+    if (!pwaUpdate.isUpdateReady) return ""
+    return [
+      UpdateBar.render({
+        isDismissed: pwaUpdate.isDismissed,
+        onRefresh: () => api.notify("#pwaUpdate:updateRefresh"),
+        onDismiss: () => api.notify("#pwaUpdate:updateAsk"),
+      }),
+      UpdateDialog.render({
+        isOpen: pwaUpdate.isDialogOpen,
+        onRefresh: () => api.notify("#pwaUpdate:updateRefresh"),
+        onDefer: () => api.notify("#pwaUpdate:updateDefer"),
+        onClose: () => api.notify("#pwaUpdate:updateDecline"),
+      }),
+    ]
   },
 
   // One app bar for every page. The page fills it through an optional
@@ -240,6 +263,7 @@ export const App = {
     content,
     fab,
     tabbar,
+    updatebar,
     appBar,
     drawer,
     isDrawerHidden = false,
@@ -269,11 +293,15 @@ export const App = {
           children: [content].filter(Boolean),
         }),
         // FAB floats over the shell, so it is a direct child of the positioned
-        // shell. The tab bar must NOT be here as well — it belongs in the
-        // footer row only, and listing it in both places renders it twice.
-        ...[fab].filter(Boolean),
+        // shell. So does the update strip: from 48rem the footer row collapses
+        // to zero (the drawer is the navigation), and anything inside it never
+        // paints — a phone-only strip would defeat the update offer on the
+        // desktops. As an overlay it floats above the tab bar where it exists
+        // and tail-docks the content where it does not.
+        ...[fab, updatebar].filter(Boolean),
         Flex.render({
           element: "footer",
+          direction: undefined,
           overflow: "hidden",
           className: isTabbarHidden
             ? `${styles.footer} ${styles["footer-hidden"]}`

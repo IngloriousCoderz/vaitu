@@ -128,6 +128,13 @@
     "noCountries": "Aucun pays trouvé",
     "noRegions": "Aucune région trouvée"
   },
+  "pwa": {
+    "updateReady": "Nouvelle version disponible",
+    "refresh": "Mettre à jour",
+    "dismiss": "Options de mise à jour",
+    "deferQuestion": "La mise à jour peut se faire maintenant, ou la prochaine fois que vous ouvrez l'app.",
+    "defer": "La prochaine fois"
+  },
   "validation": {
     "addName": "Saisissez un prénom",
     "pickStyle": "Choisissez un style",
