@@ -13,6 +13,7 @@ import {
 import { readUserId } from "../../api/session.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
+import { store } from "../../store"
 import { pageRouteChange } from "../page-route.js"
 import { Notifications as renderers } from "./template.js"
 
@@ -89,10 +90,43 @@ export const Notifications = {
     entity.error ??= null
     // The tablet+ drawer the shell opens over the page; closed at rest.
     entity.isPanelOpen ??= false
+
+    // Viewport watcher: on tablet/desktop the canonical UI is the drawer,
+    // not the full page. If the user resizes across the 48rem boundary we
+    // switch modes automatically.
+    if (typeof window !== "undefined") {
+      const mq = window.matchMedia("(min-width: 48rem)")
+      const handler = (e) => {
+        if (e.matches) {
+          // Mobile -> tablet: if we're on the notifications page, fold it
+          // and open the drawer instead.
+          if (window.location.pathname === "/notifications") {
+            store.notify("#notifications:panelOpen")
+            store.notify("#router:navigate", "/events", { replace: true })
+          }
+        } else {
+          // Tablet -> mobile: if the drawer is open, close it and show the
+          // full page so the tab bar entry works.
+          const notifications = store.getEntity("notifications")
+          if (notifications?.isPanelOpen) {
+            store.notify("#notifications:panelClose")
+            store.notify("#router:navigate", "/notifications", { replace: true })
+          }
+        }
+      }
+      mq.addEventListener("change", handler)
+      entity._mqHandler = handler
+      entity._mq = mq
+    }
   },
 
   destroy(entity) {
     deactivateRealtime(entity.id)
+    if (entity._mq && entity._mqHandler) {
+      entity._mq.removeEventListener("change", entity._mqHandler)
+      entity._mq = null
+      entity._mqHandler = null
+    }
   },
 
   routeChange: pageRouteChange(routeOpen, routeClose),
@@ -180,6 +214,16 @@ export const Notifications = {
 }
 
 function routeOpen(entity, _payload, api) {
+  // Tablet/desktop: the /notifications route is only a deep-link / restored
+  // session. The canonical UI is the right-side drawer — open it and return
+  // to where the user was (or home), keeping the feed loaded in the panel.
+  if (typeof window !== "undefined" && window.matchMedia("(min-width: 48rem)").matches) {
+    api.notify(`#${entity.id}:panelOpen`)
+    // Return to the last valid place (or /events) without a full page reload.
+    api.notify("#router:navigate", "/events", { replace: true })
+    return
+  }
+  // Mobile: full page as before.
   api.notify(`#${entity.id}:listLoad`)
 }
 
