@@ -7,6 +7,7 @@
     "newEvent": "فعالية جديدة",
     "toggle": "تبديل القائمة",
     "notifications": "الإشعارات",
+    "notificationsShort": "إشعارات",
     "account": "الحساب",
     "profileOf": "الملف الشخصي: {{name}}"
   },
@@ -437,5 +438,20 @@
     "withdrawing": "جارٍ سحب الطلب…",
     "withdraw": "سحب الطلب",
     "bookedVia": "تم الحجز عبر Vaitu"
+  },
+  "notifications": {
+    "error": "تعذّر تحميل الإشعارات",
+    "title": "الإشعارات",
+    "loading": "جارٍ تحميل الإشعارات",
+    "empty": "لا جديد بعد. عند وصول ترشّح لفعالياتك أو صدور قرار بشأن أحد ترشيحاتك، يظهر هنا.",
+    "markAll": "وضع الكل كمقروء",
+    "unreadAria": "{{count}} إشعارات غير مقروءة",
+    "types": {
+      "applicationReceived": "قدّم {{name}} ترشّحه إلى {{title}}",
+      "applicationSelected": "لقد اخترتك لـ {{title}}",
+      "applicationRejected": "لم يتم اختيارك لـ {{title}}",
+      "eventUpdated": "طرأ تحديثات على {{title}}",
+      "eventClosed": "أُغلق {{title}}"
+    }
   }
 }

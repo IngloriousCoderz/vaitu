@@ -1,0 +1,155 @@
+/* The bell with its unread bubble, and the feed list. The bell wraps in a
+   relative row so the badge can anchor to its top-right; the feed rows follow
+   the application-list stagger (the `vaitu-list-item` utility does the rest). */
+
+.bell {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 1rem;
+  height: 1rem;
+  padding-inline: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--iw-radius-full);
+  background: var(--iw-color-primary);
+  color: #fff;
+  pointer-events: none;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+}
+
+.item {
+  border-top: 1px solid var(--iw-color-border);
+}
+
+/* The house flex zeroes the row's padding through `.iw-flex` composed with
+   `iw-flex-padding-none` — a two-class rule this file's plain `.item` can
+   never outweigh, however late it loads. Matching that weight is what buys
+   the rows' own breathing room back. */
+:global(.iw-flex).item {
+  padding-block: var(--iw-space-3);
+}
+
+/* The stack's own top rule draws a line above nothing: the header's border
+   (the page's title) is already there, so the first row starts clean. */
+.item:first-child {
+  border-top: none;
+}
+
+.unread .title {
+  font-weight: 600;
+  color: var(--iw-color-text);
+}
+
+.read .title {
+  color: var(--iw-color-text-secondary);
+}
+
+.glyph {
+  position: relative;
+  display: inline-flex;
+  color: var(--iw-color-text-secondary);
+}
+
+.unread .glyph {
+  color: var(--iw-color-primary);
+}
+
+.dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: var(--iw-radius-full);
+  background: var(--iw-color-primary);
+}
+
+.copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--iw-font-size-base);
+  overflow-wrap: anywhere;
+}
+
+.stamp {
+  font-size: var(--iw-font-size-xs);
+  color: var(--iw-color-text-secondary);
+}
+
+.markAll {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--iw-space-1);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: var(--iw-font-size-sm);
+  color: var(--iw-color-text-secondary);
+}
+
+.markAll:hover {
+  color: var(--iw-color-text);
+}
+
+/* The right-side drawer the shell opens for the bell: same rows as the tab,
+   hairline header inside the house drawer's title slot, and a body that owns
+   the scroll (the drawer's own `iw-drawer-body` already flexes the height). */
+.panelTitle {
+  font-size: var(--iw-font-size-lg);
+  font-weight: 600;
+  color: var(--iw-color-text);
+}
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-block: var(--iw-space-2);
+  padding-inline: var(--iw-space-4);
+}
+
+/* The package drawer is a 16rem rail; a feed the user reads by hand gets
+   one more notch. Same notch for the header, so the title, "Mark all read"
+   and the X line up with the rows beneath instead of hugging the edge. */
+:global(.iw-drawer).panel {
+  width: 20rem;
+}
+
+:global(.iw-drawer).panel :global(.iw-drawer-header) {
+  padding-inline: var(--iw-space-4);
+}
+
+/* The package drawer doubles as the shell's sidebar at ≥64rem: docked, with
+   no drop shadow, no close button and its backdrop disabled. The
+   notifications panel is an overlay drawer at every width — it covers the
+   page wholesale — so those three come back for it alone. */
+@media (min-width: 64rem) {
+  :global(.iw-drawer).panel {
+    box-shadow: var(--iw-shadow-lg);
+  }
+
+  :global(.iw-drawer).panel :global(.iw-drawer-close) {
+    display: inline-flex;
+  }
+
+  :global(.iw-drawer-open).panel ~ :global(.iw-drawer-backdrop) {
+    display: flex;
+  }
+}

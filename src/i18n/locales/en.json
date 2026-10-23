@@ -7,6 +7,7 @@
     "newEvent": "New event",
     "toggle": "Toggle navigation",
     "notifications": "Notifications",
+    "notificationsShort": "Inbox",
     "account": "Account",
     "profileOf": "Profile: {{name}}"
   },
@@ -398,5 +399,20 @@
     "withdrawing": "Withdrawing…",
     "withdraw": "Withdraw application",
     "bookedVia": "Booked via Vaitu"
+  },
+  "notifications": {
+    "error": "Could not load notifications",
+    "title": "Notifications",
+    "loading": "Loading notifications",
+    "empty": "Nothing new yet. When someone applies to your events, or one of yours is decided, it lands here.",
+    "markAll": "Mark all read",
+    "unreadAria": "{{count}} unread notifications",
+    "types": {
+      "applicationReceived": "{{name}} applied to {{title}}",
+      "applicationSelected": "You were selected for {{title}}",
+      "applicationRejected": "You were not selected for {{title}}",
+      "eventUpdated": "{{title}} has updates",
+      "eventClosed": "{{title}} was closed"
+    }
   }
 }

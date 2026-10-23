@@ -1,6 +1,7 @@
 import addOutline from "@iconify-icons/material-symbols/add-outline"
 import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
 import eventOutline from "@iconify-icons/material-symbols/event-outline"
+import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
 import personOutline from "@iconify-icons/material-symbols/person-outline"
 import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
 import { Fab as IwFab } from "@inglorious/ui/fab"
@@ -17,6 +18,13 @@ const tabs = [
     icon: assignmentOutline,
   }),
   labelled("nav.new", { value: "new", icon: addOutline }),
+  // The tab label is the short form: five labels share one bar's width, and
+  // the full word truncates on a phone. The bell's aria-label keeps the long
+  // one, where there is room for it.
+  labelled("nav.notificationsShort", {
+    value: "notifications",
+    icon: notificationsOutline,
+  }),
   labelled("nav.profile", { value: "profile", icon: personOutline }),
 ]
 

@@ -79,3 +79,7 @@ export const MIN_AUDIO_BYTES = 1024
 // Local Supabase ports (dev over LAN: same host as the page serves these).
 export const SUPABASE_API_PORT = 54321
 export const VITE_DEV_PORT = 5173
+// The bell shows a number up to 9, then "9+".
+export const NOTIFICATION_BADGE_MAX = 9
+// The feed is a bell, not an archive: newest 50 rows.
+export const FEED_LIMIT = 50

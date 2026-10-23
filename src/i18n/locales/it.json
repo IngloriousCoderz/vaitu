@@ -7,6 +7,7 @@
     "newEvent": "Nuovo evento",
     "toggle": "Apri o chiudi la navigazione",
     "notifications": "Notifiche",
+    "notificationsShort": "Avvisi",
     "account": "Account",
     "profileOf": "Profilo: {{name}}"
   },
@@ -409,5 +410,20 @@
     "withdrawing": "Ritiro in corso…",
     "withdraw": "Ritira la candidatura",
     "bookedVia": "Prenotato tramite Vaitu"
+  },
+  "notifications": {
+    "error": "Impossibile caricare le notifiche",
+    "title": "Notifiche",
+    "loading": "Caricamento delle notifiche",
+    "empty": "Ancora niente di nuovo. Una candidatura ai tuoi eventi, una decisione su una tua richiesta: compare qui.",
+    "markAll": "Segna tutto come letto",
+    "unreadAria": "{{count}} notifiche non lette",
+    "types": {
+      "applicationReceived": "{{name}} ha fatto candidatura per {{title}}",
+      "applicationSelected": "Sei stato selezionato per {{title}}",
+      "applicationRejected": "Non sei stato selezionato per {{title}}",
+      "eventUpdated": "{{title}} è stato aggiornato",
+      "eventClosed": "{{title}} è stato chiuso"
+    }
   }
 }

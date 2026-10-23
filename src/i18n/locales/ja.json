@@ -7,6 +7,7 @@
     "newEvent": "新しいイベント",
     "toggle": "ナビゲーションを切り替え",
     "notifications": "お知らせ",
+    "notificationsShort": "通知",
     "account": "アカウント",
     "profileOf": "プロフィール：{{name}}"
   },
@@ -388,5 +389,20 @@
     "withdrawing": "取り下げ中…",
     "withdraw": "応募を取り下げる",
     "bookedVia": "Vaitu で予約"
+  },
+  "notifications": {
+    "error": "通知を読み込めませんでした",
+    "title": "通知",
+    "loading": "通知を読み込み中",
+    "empty": "まだ新着はありません。イベントへの応募や、応募先からの審査結果はここに届きます。",
+    "markAll": "すべて既読にする",
+    "unreadAria": "未読の通知が{{count}}件あります",
+    "types": {
+      "applicationReceived": "{{name}}さんが「{{title}}」に応募しました",
+      "applicationSelected": "「{{title}}」に選ばれました",
+      "applicationRejected": "「{{title}}」は選外でした",
+      "eventUpdated": "「{{title}}」に更新があります",
+      "eventClosed": "「{{title}}」は締め切られました"
+    }
   }
 }

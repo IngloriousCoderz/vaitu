@@ -4,6 +4,7 @@ import { Router, setRoutes } from "@inglorious/web/router"
 import { Shell } from "../app/shell.js"
 import { CountrySelect } from "../common/country-select/index.js"
 import { LanguageSelect } from "../common/language-select/index.js"
+import { Notifications } from "../common/notifications/index.js"
 import { PwaUpdate } from "../common/update-bar/index.js"
 import { I18n } from "../i18n/index.js"
 import { routes } from "../routes"
@@ -41,6 +42,7 @@ export const store = createStore({
     CountrySelect,
     LanguageSelect,
     PwaUpdate,
+    Notifications,
     ApplicationsReceived,
     NotFound,
     Onboarding,

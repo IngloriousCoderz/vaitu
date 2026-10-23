@@ -7,6 +7,7 @@
     "newEvent": "Nouvel événement",
     "toggle": "Ouvrir ou fermer la navigation",
     "notifications": "Notifications",
+    "notificationsShort": "Alertes",
     "account": "Compte",
     "profileOf": "Profil : {{name}}"
   },
@@ -409,5 +410,20 @@
     "withdrawing": "Retrait…",
     "withdraw": "Retirer la candidature",
     "bookedVia": "Réservé via Vaitu"
+  },
+  "notifications": {
+    "error": "Impossible de charger les notifications",
+    "title": "Notifications",
+    "loading": "Chargement des notifications",
+    "empty": "Rien de neuf pour l'instant. Une candidature à vos événements, une décision sur l'une des vôtres, et c'est ici.",
+    "markAll": "Tout marquer comme lu",
+    "unreadAria": "{{count}} notifications non lues",
+    "types": {
+      "applicationReceived": "{{name}} a postulé à {{title}}",
+      "applicationSelected": "Vous avez été retenu pour {{title}}",
+      "applicationRejected": "Vous n'avez pas été retenu pour {{title}}",
+      "eventUpdated": "{{title}} a été mis à jour",
+      "eventClosed": "{{title}} a été clôturé"
+    }
   }
 }

@@ -1,8 +1,13 @@
-// Same entry as the app: the store first. Importing a screen first makes
-// realtime.js pull the store in before its Supabase client is ready.
-import "../store/index.js"
-
+import { vi } from "vitest"
 import { expect, test } from "vitest"
+
+// The drawer package import only resolves through Vite, not node ESM: the
+// shell renders it live, no suite needs its markup.
+vi.mock("@inglorious/ui/drawer", () => ({
+  Drawer: { render: () => "" },
+}))
+
+import "../store/index.js"
 
 import { ApplicationDetail } from "../views/application-detail/index.js"
 import { ApplicationList } from "../views/application-list/index.js"

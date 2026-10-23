@@ -26,6 +26,7 @@ export const routes = {
   "/events/:eventId": "eventDetail",
   "/events/:eventId/applications": "applicationsReceived",
   "/applications/:applicationId": "applicationDetail",
+  "/notifications": "notifications",
   "/ranks": "ranks",
 
   "*": "notFound",
@@ -42,6 +43,7 @@ export const paths = {
   applications: "/applications",
   applicationsByStatus: (status) => `/applications?status=${status}`,
   application: (applicationId) => `/applications/${applicationId}`,
+  notifications: "/notifications",
   profile: "/profile",
   ranks: "/ranks",
   login: "/login",

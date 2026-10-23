@@ -12,7 +12,11 @@ import { html } from "@inglorious/web"
 import { readUser } from "../api/session.js"
 import { BackButton } from "../common/back-button/index.js"
 import { Logo } from "../common/logo/index.js"
+import { pathFor } from "../common/notifications/index.js"
+import notificationStyles from "../common/notifications/style.module.css"
+import { NotificationsPanel } from "../common/notifications/template.js"
 import { UpdateBar, UpdateDialog } from "../common/update-bar/template.js"
+import { NOTIFICATION_BADGE_MAX } from "../constants/index.js"
 import { t } from "../i18n/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
@@ -29,6 +33,7 @@ const TAB_PATHS = {
   events: paths.events,
   applications: paths.applications,
   new: paths.newEvent,
+  notifications: paths.notifications,
   profile: paths.profile,
 }
 
@@ -43,6 +48,7 @@ const CHROME = {
   eventList: { tab: "events" },
   applicationList: { tab: "applications" },
   applicationDetail: { tab: "applications" },
+  notifications: { tab: "notifications" },
   profile: { tab: "profile" },
   // Detail sits on top of a tab, so the bar is replaced rather than hidden.
   eventDetail: { isTabbarRendered: false },
@@ -94,6 +100,7 @@ export const App = {
       fab: this.renderFab(api, chrome),
       tabbar: this.renderTabbar(api, chrome),
       updatebar: this.renderUpdateBar(api, pwaUpdate),
+      notificationsPanel: this.renderNotificationsPanel(api),
       isTabbarHidden: chrome.isHidden ?? false,
       isWide: showWide,
     })
@@ -117,6 +124,28 @@ export const App = {
         onClose: () => api.notify("#pwaUpdate:updateDecline"),
       }),
     ]
+  },
+
+  // What the bell opens: the feed's rows in a right-anchored drawer over
+  // whatever page is under it. The rows' paths resolve here (the drawer is
+  // the shell's, not the notifications entity's), and a tap marks the row
+  // read, folds the drawer, and walks — all in the one batch.
+  renderNotificationsPanel(api) {
+    const notifications = api.getEntity("notifications")
+    if (!notifications) return ""
+    return NotificationsPanel.render({
+      isOpen: notifications.isPanelOpen ?? false,
+      entity: notifications,
+      onClose: () => api.notify("#notifications:panelClose"),
+      onOpenRow: (item) => {
+        const rowId = item.id
+        const path = pathFor(item)
+        api.notify("#notifications:readSet", rowId)
+        api.notify("#notifications:panelClose")
+        api.notify("#router:navigate", path)
+      },
+      onMarkAll: () => api.notify("#notifications:readAll"),
+    })
   },
 
   // One app bar for every page. The page fills it through an optional
@@ -159,6 +188,7 @@ export const App = {
   // first and the last on a phone, so these start at tablet width. The form
   // itself does not offer to start another one.
   renderGlobalActions(api, route) {
+    const notifications = api.getEntity("notifications")
     const profile = api.getEntity("profile").profile
     const name = profile?.full_name || readUser()?.email || t("nav.account")
 
@@ -179,11 +209,32 @@ export const App = {
               size: "md",
               onClick: () => api.notify("#router:navigate", paths.newEvent),
             }),
-        IconButton.render({
-          icon: Icon.render({ icon: notificationsOutline, size: "lg" }),
-          variant: "ghost",
-          color: "secondary",
-          ariaLabel: t("nav.notifications"),
+        Flex.render({
+          direction: "row",
+          className: notificationStyles.bell,
+          children: [
+            IconButton.render({
+              icon: Icon.render({ icon: notificationsOutline, size: "lg" }),
+              variant: "ghost",
+              color: "secondary",
+              ariaLabel: t("nav.notifications"),
+              // Tablet+ opens the right-side drawer over the page; on a
+              // phone this button is hidden and the tab bar's Notifications
+              // tab carries the full page, so no viewport branch is needed.
+              onClick: () => api.notify("#notifications:panelOpen"),
+            }),
+            notifications.unread > 0
+              ? html`<span
+                  class=${notificationStyles.badge}
+                  aria-label=${t("notifications.unreadAria", {
+                    count: notifications.unread,
+                  })}
+                  >${notifications.unread > NOTIFICATION_BADGE_MAX
+                    ? "9+"
+                    : notifications.unread}</span
+                >`
+              : "",
+          ],
         }),
         Button.render({
           variant: "ghost",
@@ -264,6 +315,7 @@ export const App = {
     fab,
     tabbar,
     updatebar,
+    notificationsPanel,
     appBar,
     drawer,
     isDrawerHidden = false,
@@ -297,8 +349,10 @@ export const App = {
         // to zero (the drawer is the navigation), and anything inside it never
         // paints — a phone-only strip would defeat the update offer on the
         // desktops. As an overlay it floats above the tab bar where it exists
-        // and tail-docks the content where it does not.
-        ...[fab, updatebar].filter(Boolean),
+        // and tail-docks the content where it does not. The notifications
+        // drawer paints last of the three: it is the only one meant to cover
+        // the page wholesale.
+        ...[fab, updatebar, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",
           direction: undefined,

@@ -70,15 +70,20 @@ function trackSession(session) {
     stampLogin()
     // Market and profile both depend on who is signed in: the list is filtered by
     // own events and applied marks, and the profile fills in the tab bar. Both
-    // load once here rather than waiting for the page that needs them.
+    // load once here rather than waiting for the page that needs them. The
+    // bell reads its unread count from the same moment, so the badge is live
+    // from the first screen, not the first visit to the tab.
     store.notify("#eventList:eventsLoad")
     store.notify("#profile:profileLoad")
+    store.notify("#notifications:listLoad")
     return
   }
   // Supabase owns the tokens; this drops our record of who they belonged to.
   clearUser()
   store.notify("#i18n:userLocaleClear")
   store.notify("#shell:closeDrawer")
+  // The feed is next user's: nobody else's rows may survive the sign out.
+  store.notify("#notifications:resetForSignOut")
 
   // The guard only answers route changes, and a session ending is not one, so
   // without this the visitor is left sitting on a page they can no longer see —
