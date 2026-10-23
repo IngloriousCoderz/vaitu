@@ -61,6 +61,7 @@ import {
   cropOutputSize,
   cropSourceRect,
   defaultCropRect,
+  droppedImageUrls,
   readCropRect,
   scaleCropRect,
   writeCropRect,
@@ -424,13 +425,14 @@ function revokePreview(item) {
   if (item?.id) forgetPendingFiles(item.id)
 }
 
-// Drop a saved event photo from the bucket as soon as it leaves the form.
-// Waiting until save left orphans whenever the user removed a photo and then
-// navigated away without saving.
-function forgetImageUrl(url) {
-  const ref = imageRefFromUrl(url)
-  if (!ref || ref.bucket !== EVENT_IMAGES_BUCKET) return
-  void deleteEventImage(ref.path).catch(() => {})
+// Saved photos the user took out of the form are only deleted after the row
+// stops pointing at them. Deleting on removal broke the event whenever the user
+// left without saving: an orphan in the bucket is harmless, a dead link is not.
+function droppedImagePaths(event, image_urls) {
+  return droppedImageUrls(event.loaded_image_urls, image_urls)
+    .map(imageRefFromUrl)
+    .filter((ref) => ref?.bucket === EVENT_IMAGES_BUCKET)
+    .map((ref) => ref.path)
 }
 
 // File blobs stay outside the entity (not serialisable store data). The entity
@@ -529,6 +531,7 @@ export function clearEventImages(entity) {
   entity.gallery_urls = []
   entity.pending_cover = null
   entity.pending_gallery = []
+  entity.loaded_image_urls = []
   entity.image_error = null
 }
 
@@ -566,10 +569,7 @@ export function imagesRemove(entity, { id, url, slot } = {}) {
       entity.pending_cover = null
       return
     }
-    if (url && url === entity.cover_url) {
-      forgetImageUrl(url)
-      entity.cover_url = null
-    }
+    if (url && url === entity.cover_url) entity.cover_url = null
     return
   }
   if (id) {
@@ -584,7 +584,6 @@ export function imagesRemove(entity, { id, url, slot } = {}) {
   entity.gallery_urls = (entity.gallery_urls ?? []).filter(
     (item) => item !== url,
   )
-  forgetImageUrl(url)
 }
 
 export function coverCropOpen(
@@ -808,7 +807,6 @@ export function coverCropUseOriginal(entity) {
   if (!file) return
   entity.image_error = null
   revokePreview(entity.pending_cover)
-  if (entity.cover_url) forgetImageUrl(entity.cover_url)
   entity.cover_url = null
   const id = randomId()
   rememberPendingFiles(id, { file, sourceFile: file })
@@ -859,7 +857,6 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
   success(entity, { blob, sourceFile, cropX, cropY, cropW, cropH }) {
     const file = createImageFile(blob, "cover.jpg")
     revokePreview(entity.pending_cover)
-    if (entity.cover_url) forgetImageUrl(entity.cover_url)
     entity.cover_url = null
     const id = randomId()
     rememberPendingFiles(id, {
@@ -1013,12 +1010,15 @@ export const save = handleAsync("save", {
       ...(pendingBlob ? { transcript, transcript_status } : {}),
       details: event.details,
     }
+    let saved
     try {
-      return await writeEvent(event, payload, audio_url)
+      saved = await writeEvent(event, payload, audio_url)
     } catch (err) {
       await forgetImages(photos.uploadedPaths)
       throw err
     }
+    await forgetImages(droppedImagePaths(event, photos.image_urls))
+    return saved
   },
   success(entity, _, api) {
     entity.status = "ready"
@@ -1072,6 +1072,7 @@ export const editLoad = handleAsync("editLoad", {
     const photos = [...(row.image_urls ?? [])]
     entity.cover_url = photos[FIRST_INDEX] ?? null
     entity.gallery_urls = photos.slice(SINGULAR)
+    entity.loaded_image_urls = photos
     entity.pending_cover = null
     entity.pending_gallery = []
     entity.image_error = null

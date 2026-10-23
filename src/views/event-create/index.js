@@ -55,6 +55,7 @@ export const EventCreate = {
     entity.audio_url ??= null
     entity.cover_url ??= null
     entity.gallery_urls ??= []
+    entity.loaded_image_urls ??= []
     entity.pending_cover ??= null
     entity.pending_gallery ??= []
     entity.image_error ??= null
@@ -117,6 +118,7 @@ export const EventCreate = {
       audio_transcript: entity.audio_transcript,
       cover_url: entity.cover_url,
       gallery_urls: [...(entity.gallery_urls ?? [])],
+      loaded_image_urls: [...(entity.loaded_image_urls ?? [])],
       pending_cover: entity.pending_cover
         ? { id: entity.pending_cover.id }
         : null,

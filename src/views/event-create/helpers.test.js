@@ -9,6 +9,7 @@ import {
   cropSourceRect,
   cropWindowStyle,
   defaultCropRect,
+  droppedImageUrls,
   scaleCropRect,
 } from "./helpers.js"
 
@@ -134,5 +135,16 @@ describe("cropWindowStyle", () => {
     expect(style).toContain("top:20%")
     expect(style).toContain("width:50%")
     expect(style).toContain("height:25%")
+  })
+})
+
+describe("droppedImageUrls", () => {
+  it("lists only the saved photos the edit took out", () => {
+    expect(droppedImageUrls(["a", "b", "c"], ["c", "new", "a"])).toEqual(["b"])
+  })
+
+  it("drops nothing for a new event or a missing list", () => {
+    expect(droppedImageUrls([], ["new"])).toEqual([])
+    expect(droppedImageUrls(undefined, undefined)).toEqual([])
   })
 })
