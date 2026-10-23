@@ -2,7 +2,6 @@ import closeIcon from "@iconify-icons/material-symbols/close"
 import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
-import { Dialog } from "@inglorious/ui/dialog"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -10,12 +9,12 @@ import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
+import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
-  COVER_ASPECT_RATIO,
   MAX_EVENT_IMAGES,
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
@@ -25,11 +24,7 @@ import {
 import { ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { categories, categoryById } from "../event-list/categories.js"
-import {
-  CROP_HANDLES,
-  cropWindowStyle,
-  readCropRect,
-} from "./helpers.js"
+import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
 export const EventCreate = {
@@ -52,14 +47,7 @@ export const EventCreate = {
       onImageRemove,
       onCoverSelect,
       onCoverEdit,
-      onCropImageLoad,
-      onCropWheel,
-      onCropKey,
-      onCropPointerDown,
-      onCropPointerMove,
-      onCropPointerEnd,
       onCropCancel,
-      onCropUseOriginal,
       onCropConfirm,
     },
     api,
@@ -214,14 +202,8 @@ export const EventCreate = {
           })}
           ${this.renderCoverCrop({
             entity,
-            onCropImageLoad,
-            onCropWheel,
-            onCropKey,
-            onCropPointerDown,
-            onCropPointerMove,
-            onCropPointerEnd,
+            api,
             onCropCancel,
-            onCropUseOriginal,
             onCropConfirm,
           })}
         `,
@@ -507,172 +489,21 @@ export const EventCreate = {
     </div>`
   },
 
-  renderCoverCrop({
-    entity,
-    onCropImageLoad,
-    onCropWheel,
-    onCropKey,
-    onCropPointerDown,
-    onCropPointerMove,
-    onCropPointerEnd,
-    onCropCancel,
-    onCropUseOriginal,
-    onCropConfirm,
-  }) {
+  renderCoverCrop({ entity, api, onCropCancel, onCropConfirm }) {
     if (!entity.isCropOpen) return ""
-    const isLoaded = Boolean(entity.cropImageWidth && entity.cropImageHeight)
-    const imageRatio = isLoaded
-      ? entity.cropImageWidth / entity.cropImageHeight
-      : COVER_ASPECT_RATIO
-    const cropRect = readCropRect(entity)
-
-    const stagePointer = (event) => {
-      const rect = event.currentTarget.getBoundingClientRect()
-      return {
-        pointerId: event.pointerId,
-        clientX: event.clientX,
-        clientY: event.clientY,
-        width: rect.width,
-        height: rect.height,
-        localX: event.clientX - rect.left,
-        localY: event.clientY - rect.top,
-      }
-    }
-
-    return Dialog.render({
-      isOpen: true,
-      title: t("create.cropTitle"),
-      description: t("create.cropHint"),
-      className: styles.cropDialog,
-      onClose: onCropCancel,
-      children: html`
-        ${Flex.render({
-          justify: "center",
-          className: styles.cropViewport,
-          children: [
-            html`<div
-              class=${styles.cropStage}
-              style=${`--crop-aspect:${imageRatio};`}
-              tabindex="0"
-              role="application"
-              aria-label=${t("create.cropTitle")}
-              @pointerdown=${(event) => {
-                // Accept every finger: isPrimary would block pinch (2nd touch).
-                if (event.pointerType === "mouse" && event.button !== 0) return
-                event.preventDefault()
-                event.currentTarget.setPointerCapture?.(event.pointerId)
-                onCropPointerDown(stagePointer(event))
-              }}
-              @pointermove=${(event) => {
-                if (!entity.isCropDragging) return
-                onCropPointerMove(stagePointer(event))
-              }}
-              @pointerup=${(event) => {
-                if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-                  event.currentTarget.releasePointerCapture(event.pointerId)
-                }
-                onCropPointerEnd({ pointerId: event.pointerId })
-              }}
-              @pointercancel=${(event) =>
-                onCropPointerEnd({ pointerId: event.pointerId })}
-              @keydown=${(event) => {
-                if (event.key === "Escape") {
-                  event.preventDefault()
-                  onCropCancel()
-                  return
-                }
-                const handled = [
-                  "ArrowUp",
-                  "ArrowDown",
-                  "ArrowLeft",
-                  "ArrowRight",
-                  "+",
-                  "=",
-                  "-",
-                  "_",
-                ].includes(event.key)
-                if (!handled) return
-                event.preventDefault()
-                onCropKey({ key: event.key })
-              }}
-              @wheel=${(event) => {
-                event.preventDefault()
-                onCropWheel(event.deltaY)
-              }}
-            >
-              <img
-                class=${styles.cropImage}
-                src=${entity.cropPreviewUrl}
-                alt=""
-                draggable="false"
-                @load=${(event) =>
-                  onCropImageLoad({
-                    width: event.currentTarget.naturalWidth,
-                    height: event.currentTarget.naturalHeight,
-                  })}
-                @error=${() => onCropImageLoad({})}
-                @dragstart=${(event) => event.preventDefault()}
-              />
-              <div
-                class=${styles.cropWindow}
-                style=${cropWindowStyle(cropRect)}
-              >
-                ${CROP_HANDLES.map(
-                  (handle) => html`
-                    <span
-                      class="${styles.cropHandle} ${styles[`cropHandle_${handle}`]}"
-                      data-handle=${handle}
-                      aria-hidden="true"
-                    ></span>
-                  `,
-                )}
-              </div>
-            </div>`,
-          ],
-        })}
-        ${ErrorAlert.render({
-          error: entity.cropError,
-          className: styles.error,
-        })}
-      `,
-      actions: Flex.render({
-        justify: "end",
-        align: "center",
-        wrap: "nowrap",
-        gap: "sm",
-        className: styles.cropActions,
-        children: [
-          Button.render({
-            children: t("common.cancel"),
-            variant: "ghost",
-            shape: "pill",
-            size: "sm",
-            isDisabled: entity.isCropSaving,
-            onClick: onCropCancel,
-          }),
-          entity.cropAllowFullPhoto
-            ? Button.render({
-                children: t("create.cropUseOriginal"),
-                variant: "outline",
-                shape: "pill",
-                size: "sm",
-                isDisabled: entity.isCropSaving || !entity.hasCropFile,
-                onClick: onCropUseOriginal,
-              })
-            : "",
-          Button.render({
-            children: entity.isCropSaving
-              ? t("common.saving")
-              : t("create.cropApply"),
-            color: "primary",
-            shape: "pill",
-            size: "sm",
-            isDisabled: entity.isCropSaving || !isLoaded,
-            onClick: onCropConfirm,
-          }),
-        ].filter(Boolean),
-      }),
-    })
+    return CropDialog.render(
+      {
+        cropperId: COVER_CROPPER,
+        title: t("create.cropTitle"),
+        description: t("create.cropHint"),
+        applyLabel: t("create.cropApply"),
+        error: entity.cropError,
+        isSaving: entity.isCropSaving,
+        onCancel: onCropCancel,
+        onApply: onCropConfirm,
+      },
+      api,
+    )
   },
 
   renderDetailField({ spec, details, error, onDetailField }) {

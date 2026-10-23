@@ -60,18 +60,8 @@ export const EventCreate = {
     entity.pending_gallery ??= []
     entity.image_error ??= null
     entity.isCropOpen ??= false
-    entity.hasCropFile ??= false
     entity.cropPreviewUrl ??= null
-    entity.cropImageWidth ??= ZERO
-    entity.cropImageHeight ??= ZERO
-    entity.cropX ??= ZERO
-    entity.cropY ??= ZERO
-    entity.cropW ??= 1
-    entity.cropH ??= 1
-    entity.cropRestoreRect ??= null
-    entity.cropAllowFullPhoto ??= false
     entity.isCropSaving ??= false
-    entity.isCropDragging ??= false
     entity.cropError ??= null
     entity.audio_preview_url ??= null
     entity.is_recording ??= false
@@ -174,36 +164,16 @@ export const EventCreate = {
         onRemoveAudio: () => api.notify(`#${id}:audioRemove`),
         onImagesAdd: (payload) => api.notify(`#${id}:imagesAdd`, payload),
         onImageRemove: (photo) => api.notify(`#${id}:imagesRemove`, photo),
-        onCoverSelect: (file) => api.notify(`#${id}:coverCropOpen`, file),
+        onCoverSelect: (file) => api.notify(`#${id}:coverCropOpen`, { file }),
         onCoverEdit: () =>
           api.notify(`#${id}:coverCropEdit`, {
             id: entity.pending_cover?.id ?? null,
             url: entity.cover_url ?? null,
-            cropX: entity.pending_cover?.cropX,
-            cropY: entity.pending_cover?.cropY,
-            cropW: entity.pending_cover?.cropW,
-            cropH: entity.pending_cover?.cropH,
+            rect: entity.pending_cover?.rect ?? null,
           }),
-        onCropImageLoad: (size) =>
-          api.notify(`#${id}:coverCropImageLoad`, size),
-        onCropWheel: (deltaY) =>
-          api.notify(`#${id}:coverCropWheel`, deltaY),
-        onCropKey: (key) => api.notify(`#${id}:coverCropKeyDown`, key),
-        onCropPointerDown: (pointer) =>
-          api.notify(`#${id}:coverCropPointerDown`, pointer),
-        onCropPointerMove: (pointer) =>
-          api.notify(`#${id}:coverCropPointerMove`, pointer),
-        onCropPointerEnd: (pointer) =>
-          api.notify(`#${id}:coverCropPointerEnd`, pointer),
         onCropCancel: () => api.notify(`#${id}:coverCropCancel`),
-        onCropUseOriginal: () => api.notify(`#${id}:coverCropUseOriginal`),
-        onCropConfirm: () =>
-          api.notify(`#${id}:coverCropConfirm`, {
-            cropX: entity.cropX,
-            cropY: entity.cropY,
-            cropW: entity.cropW,
-            cropH: entity.cropH,
-          }),
+        onCropConfirm: (rect) =>
+          api.notify(`#${id}:coverCropConfirm`, { rect }),
         onSave: () => api.notify(`#${id}:saveSubmit`),
       },
       api,

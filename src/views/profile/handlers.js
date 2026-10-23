@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { cropImage } from "@inglorious/ui/image-cropper"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
@@ -10,11 +11,7 @@ import {
   uploadAvatar,
 } from "../../api/images.js"
 import { endSession } from "../../api/session.js"
-import {
-  createImageFile,
-  decodeImage,
-  resizeSquareToBlob,
-} from "../../common/image.js"
+import { createImageFile } from "../../common/image.js"
 import { defaultTiers } from "../../common/tiers.js"
 import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
 import {
@@ -26,6 +23,7 @@ import {
   uniqueRegions,
 } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
+import { AVATAR_CROPPER } from "./avatar-cropper.js"
 
 export function editStart(entity, _, api) {
   entity.isEditing = true
@@ -260,34 +258,69 @@ export const profileSave = handleAsync("profileSave", {
   },
 })
 
+// The picked file stays outside the entity (not serialisable store data) while
+// the user frames it.
+/** @type {File | null} */
+let avatarFile = null
+
+export function avatarCropOpen(entity, file, api) {
+  entity.avatarError = null
+  if (!imageExtension(file?.type)) {
+    entity.avatarError = t("errors.imageType")
+    return
+  }
+  if (file.size > AVATAR_MAX_BYTES) {
+    entity.avatarError = t("errors.avatarSize")
+    return
+  }
+  revokeAvatarPreview(entity)
+  avatarFile = file
+  entity.avatarPreviewUrl = URL.createObjectURL(file)
+  entity.isAvatarCropOpen = true
+  api.notify(`#${AVATAR_CROPPER}:srcChange`, entity.avatarPreviewUrl)
+}
+
+export function avatarCropCancel(entity) {
+  if (entity.avatarStatus === "saving") return
+  closeAvatarCrop(entity)
+  entity.avatarError = null
+}
+
+export function closeAvatarCrop(entity) {
+  revokeAvatarPreview(entity)
+  avatarFile = null
+  entity.avatarPreviewUrl = null
+  entity.isAvatarCropOpen = false
+}
+
+function revokeAvatarPreview(entity) {
+  if (entity.avatarPreviewUrl) URL.revokeObjectURL(entity.avatarPreviewUrl)
+}
+
 export const avatarSave = handleAsync("avatarSave", {
   start(entity) {
     entity.avatarStatus = "saving"
     entity.avatarError = null
   },
-  async run(file) {
-    if (!imageExtension(file?.type)) throw new Error(t("errors.imageType"))
-    if (file.size > AVATAR_MAX_BYTES) throw new Error(t("errors.avatarSize"))
+  async run({ rect } = {}) {
+    const file = avatarFile
+    if (!file || !rect) throw new Error(t("errors.imageCrop"))
     const {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) throw new Error(t("errors.notLoggedIn"))
 
-    // The avatar is always a square: centre-crop and downscale on the client
-    // before it reaches the bucket, which also strips camera metadata.
-    let source
-    try {
-      source = await decodeImage(file)
-    } catch {
-      throw new Error(t("errors.imageCrop"))
-    }
+    // Crop the framed square and downscale it on the client before it reaches
+    // the bucket, which also strips camera metadata.
     let blob
     try {
-      blob = await resizeSquareToBlob(source, AVATAR_SIZE)
+      blob = await cropImage(file, rect, {
+        aspectRatio: 1,
+        maxWidth: AVATAR_SIZE,
+        maxHeight: AVATAR_SIZE,
+      })
     } catch {
       throw new Error(t("errors.imageCrop"))
-    } finally {
-      source.close?.()
     }
 
     const uploaded = await uploadAvatar(createImageFile(blob, "avatar.jpg"))
@@ -303,14 +336,12 @@ export const avatarSave = handleAsync("avatarSave", {
   },
   success(entity, uploaded) {
     entity.avatarStatus = "idle"
+    closeAvatarCrop(entity)
     const previous = imageRefFromUrl(entity.profile?.avatar_url)
     entity.profile = { ...entity.profile, avatar_url: uploaded.url }
     if (
       previous &&
-      !(
-        previous.bucket === uploaded.bucket &&
-        previous.path === uploaded.path
-      )
+      !(previous.bucket === uploaded.bucket && previous.path === uploaded.path)
     ) {
       // Best effort: the profile row already points at the new file, and a
       // failed cleanup should not turn a successful save into an error.

@@ -11,6 +11,7 @@ import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
@@ -22,6 +23,7 @@ import {
   uniqueRegions,
 } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
+import { AVATAR_CROPPER } from "./avatar-cropper.js"
 import {
   displayInstagram,
   displayWebsite,
@@ -43,6 +45,8 @@ export const Profile = {
       onSave,
       onEdit,
       onPhoto,
+      onPhotoCropCancel,
+      onPhotoCropApply,
       onLogout,
       onDeactivateAsk,
       onDeactivateCancel,
@@ -110,7 +114,15 @@ export const Profile = {
                       }}
                     />
                   </div>`,
-                  ErrorAlert.render({ error: entity.avatarError }),
+                  entity.isAvatarCropOpen
+                    ? ""
+                    : ErrorAlert.render({ error: entity.avatarError }),
+                  this.renderAvatarCrop({
+                    entity,
+                    api,
+                    onPhotoCropCancel,
+                    onPhotoCropApply,
+                  }),
                 ],
               })}
               <h2 class=${styles.name}>${profile.full_name}</h2>
@@ -291,6 +303,23 @@ export const Profile = {
         `,
       ],
     })
+  },
+
+  renderAvatarCrop({ entity, api, onPhotoCropCancel, onPhotoCropApply }) {
+    if (!entity.isAvatarCropOpen) return ""
+    return CropDialog.render(
+      {
+        cropperId: AVATAR_CROPPER,
+        title: t("profile.cropTitle"),
+        description: t("profile.cropHint"),
+        applyLabel: t("profile.cropApply"),
+        error: entity.avatarError,
+        isSaving: entity.avatarStatus === "saving",
+        onCancel: onPhotoCropCancel,
+        onApply: onPhotoCropApply,
+      },
+      api,
+    )
   },
 
   renderRow(label, value, href) {

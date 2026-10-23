@@ -8,6 +8,7 @@ import {
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
+import { closeAvatarCrop } from "./handlers.js"
 import * as handlers from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
@@ -51,6 +52,8 @@ export const Profile = {
     entity.deactivateError ??= null
     entity.avatarStatus ??= "idle"
     entity.avatarError ??= null
+    entity.avatarPreviewUrl ??= null
+    entity.isAvatarCropOpen ??= false
     entity.status ??= "idle"
     entity.error ??= null
     // The id is snapshotted because this closure outlives the batch that built
@@ -94,7 +97,9 @@ export const Profile = {
         onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
         onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
         onEdit: () => api.notify(`#${id}:editStart`),
-        onPhoto: (file) => api.notify(`#${id}:avatarSave`, file),
+        onPhoto: (file) => api.notify(`#${id}:avatarCropOpen`, file),
+        onPhotoCropCancel: () => api.notify(`#${id}:avatarCropCancel`),
+        onPhotoCropApply: (rect) => api.notify(`#${id}:avatarSave`, { rect }),
         onLogout: () => api.notify(`#${id}:logout`),
         onDeactivateAsk: () => api.notify(`#${id}:accountDeactivateAsk`),
         onDeactivateCancel: () =>
@@ -117,4 +122,5 @@ function close(entity) {
   entity.status = "idle"
   entity.error = null
   entity.isEditing = false
+  closeAvatarCrop(entity)
 }

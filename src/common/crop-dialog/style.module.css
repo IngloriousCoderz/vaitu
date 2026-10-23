@@ -1,0 +1,46 @@
+/* The package dialog has a 32rem minimum width, which is wider than a phone.
+   This variant is fluid; the dialog scrolls as a whole on short viewports so
+   we do not need a custom flex column on the shell (Dialog owns that tree). */
+:global(.iw-dialog).cropDialog {
+  width: min(48rem, calc(100vw - 2 * var(--iw-space-4)));
+  min-width: 0;
+  max-width: none;
+  max-height: calc(
+    100dvh - 2 * var(--iw-space-4) - var(--safe-area-top) -
+      var(--safe-area-bottom)
+  );
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Let our Flex.render own the action row (package actions is already a flex). */
+.cropDialog :global(.iw-dialog-actions) {
+  display: block;
+}
+
+.cropActions :global(.iw-button) {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-inline: var(--iw-space-3);
+  font-size: var(--iw-font-size-sm);
+  white-space: nowrap;
+}
+
+/* The cropper takes the photo's proportions; capping its height keeps the
+   actions on screen, and a landscape phone has very little of it. */
+.cropViewport {
+  width: 100%;
+  --iw-image-cropper-max-height: 55dvh;
+}
+
+@media (max-height: 32rem) {
+  .cropViewport {
+    --iw-image-cropper-max-height: 35dvh;
+  }
+}
+
+.error {
+  /* Spacing only, like the form errors. */
+  margin: var(--iw-space-3) 0 0;
+}

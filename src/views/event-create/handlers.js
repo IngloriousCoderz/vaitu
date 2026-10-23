@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { cropImage } from "@inglorious/ui/image-cropper"
 import { Form, getFieldValue } from "@inglorious/web/form"
 import fixWebmDuration from "fix-webm-duration"
 
@@ -19,18 +20,12 @@ import {
   uploadEventImage,
 } from "../../api/images.js"
 import { stopTick } from "../../api/ticker.js"
-import {
-  createImageFile,
-  cropToBlob,
-  decodeImage,
-  sourceSize,
-} from "../../common/image.js"
+import { createImageFile } from "../../common/image.js"
 import {
   APPLICATION_DEADLINE_LEAD_DAYS,
   AUDIO_MAX_SECONDS,
-  COVER_PAN_STEP,
-  COVER_SCALE_STEP,
-  COVER_WHEEL_ZOOM_RATE,
+  COVER_OUTPUT_HEIGHT,
+  COVER_OUTPUT_WIDTH,
   DATE_ISO_LENGTH,
   DATETIME_LOCAL_LENGTH,
   DEADLINE_END_OF_DAY,
@@ -53,19 +48,8 @@ import {
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
-import {
-  applyCropPan,
-  applyCropResize,
-  clampCropRect,
-  cropHitTest,
-  cropOutputSize,
-  cropSourceRect,
-  defaultCropRect,
-  droppedImageUrls,
-  readCropRect,
-  scaleCropRect,
-  writeCropRect,
-} from "./helpers.js"
+import { COVER_CROPPER } from "./cover-cropper.js"
+import { droppedImageUrls } from "./helpers.js"
 
 // Module-scope recorder state (never in the entity: not serializable).
 let mediaRecorder = null
@@ -476,51 +460,19 @@ function readImageFile(entity, file) {
   }
 }
 
-// The crop dialog is transient: its source preview URL and active pointers are
-// not part of the saved event. Keeping them outside the entity also stops every
-// pointer move from being serialised into the store.
-/** @type {Map<number, { x: number, y: number }>} */
-let cropPointers = new Map()
-/** @type {number | null} */
-let cropPinchDistance = null
-/** @type {{ mode: string, handle: string | null, start: object } | null} */
-let cropDrag = null
-
-function clearCropPointers() {
-  cropPointers.clear()
-  cropPinchDistance = null
-  cropDrag = null
-}
-
-function pinchDistance() {
-  const points = [...cropPointers.values()]
-  if (points.length < 2) return null
-  return Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y)
-}
-
-function resetCropRect(entity) {
-  writeCropRect(entity, defaultCropRect())
-}
-
+// The frame and its gestures live in the cover cropper entity. This form only
+// keeps the file being framed and whether the dialog is open.
 function revokeCropPreview(entity) {
   if (entity.cropPreviewUrl) URL.revokeObjectURL(entity.cropPreviewUrl)
 }
 
 function closeCrop(entity) {
   revokeCropPreview(entity)
-  clearCropPointers()
   cropSessionFile = null
   entity.isCropOpen = false
-  entity.hasCropFile = false
   entity.cropPreviewUrl = null
-  entity.cropImageWidth = 0
-  entity.cropImageHeight = 0
-  entity.cropRestoreRect = null
-  entity.cropAllowFullPhoto = false
-  resetCropRect(entity)
   entity.cropError = null
   entity.isCropSaving = false
-  entity.isCropDragging = false
 }
 
 export function clearEventImages(entity) {
@@ -586,11 +538,7 @@ export function imagesRemove(entity, { id, url, slot } = {}) {
   )
 }
 
-export function coverCropOpen(
-  entity,
-  file,
-  { rect = null, allowFullPhoto = true } = {},
-) {
+export function coverCropOpen(entity, { file, rect = null } = {}, api) {
   entity.image_error = null
   entity.cropError = null
   if (!imageExtension(file?.type)) {
@@ -602,152 +550,14 @@ export function coverCropOpen(
     return
   }
   revokeCropPreview(entity)
-  clearCropPointers()
   cropSessionFile = file
-  entity.hasCropFile = true
   entity.cropPreviewUrl = URL.createObjectURL(file)
-  entity.cropImageWidth = 0
-  entity.cropImageHeight = 0
-  entity.cropAllowFullPhoto = allowFullPhoto
-  entity.cropRestoreRect = rect ? clampCropRect(rect) : null
-  resetCropRect(entity)
   entity.isCropOpen = true
   entity.isCropSaving = false
-  entity.isCropDragging = false
-}
-
-export function coverCropImageLoad(entity, { width, height } = {}) {
-  if (!width || !height) {
-    entity.cropImageWidth = 0
-    entity.cropImageHeight = 0
-    entity.cropError = t("errors.imageCrop")
-    return
-  }
-  entity.cropImageWidth = width
-  entity.cropImageHeight = height
-  if (entity.cropRestoreRect) {
-    writeCropRect(entity, entity.cropRestoreRect)
-    entity.cropRestoreRect = null
-  } else {
-    resetCropRect(entity)
-  }
-  entity.cropError = null
-}
-
-export function coverCropWheel(entity, deltaY) {
-  if (entity.isCropSaving || !deltaY || !entity.cropImageWidth) return
-  // Scroll up → larger crop area (same sense as pinch-out).
-  const factor = Math.exp(deltaY * COVER_WHEEL_ZOOM_RATE)
-  writeCropRect(entity, scaleCropRect(readCropRect(entity), factor))
-  entity.cropError = null
-}
-
-export function coverCropKeyDown(entity, { key } = {}) {
-  if (entity.isCropSaving || !entity.cropImageWidth) return
-  const rect = readCropRect(entity)
-  if (key === "ArrowLeft" || key === "ArrowRight") {
-    const direction = key === "ArrowLeft" ? -SINGULAR : SINGULAR
-    writeCropRect(entity, applyCropPan(rect, direction * COVER_PAN_STEP, 0))
-    return
-  }
-  if (key === "ArrowUp" || key === "ArrowDown") {
-    const direction = key === "ArrowUp" ? -SINGULAR : SINGULAR
-    writeCropRect(entity, applyCropPan(rect, 0, direction * COVER_PAN_STEP))
-    return
-  }
-  if (key === "+" || key === "=") {
-    writeCropRect(entity, scaleCropRect(rect, SINGULAR + COVER_SCALE_STEP))
-    return
-  }
-  if (key === "-" || key === "_") {
-    writeCropRect(entity, scaleCropRect(rect, SINGULAR - COVER_SCALE_STEP))
-  }
-}
-
-export function coverCropPointerDown(
-  entity,
-  { pointerId, clientX, clientY, width, height, localX, localY } = {},
-) {
-  if (entity.isCropSaving || pointerId == null) return
-  cropPointers.set(pointerId, { x: clientX, y: clientY })
-  entity.isCropDragging = true
-  entity.cropError = null
-
-  if (cropPointers.size >= 2) {
-    cropPinchDistance = pinchDistance()
-    cropDrag = null
-    return
-  }
-
-  if (!width || !height) return
-  const nx = localX != null ? localX / width : 0
-  const ny = localY != null ? localY / height : 0
-  const hit = cropHitTest(nx, ny, readCropRect(entity), width, height)
-  if (!hit) {
-    cropDrag = null
-    return
-  }
-  cropDrag = {
-    mode: hit === "move" ? "move" : "resize",
-    handle: hit === "move" ? null : hit,
-    start: readCropRect(entity),
-    originX: nx,
-    originY: ny,
-  }
-}
-
-export function coverCropPointerMove(
-  entity,
-  { pointerId, clientX, clientY, width, height, localX, localY } = {},
-) {
-  if (!cropPointers.has(pointerId) || !width || !height) return
-  cropPointers.set(pointerId, { x: clientX, y: clientY })
-
-  if (cropPointers.size >= 2) {
-    const distance = pinchDistance()
-    // Spread → larger crop area; pinch in → tighter.
-    if (cropPinchDistance && distance) {
-      writeCropRect(
-        entity,
-        scaleCropRect(
-          readCropRect(entity),
-          distance / cropPinchDistance,
-        ),
-      )
-      cropPinchDistance = distance
-    }
-    return
-  }
-
-  if (!cropDrag) return
-  const nx = localX != null ? localX / width : clientX / width
-  const ny = localY != null ? localY / height : clientY / height
-  const dx = nx - cropDrag.originX
-  const dy = ny - cropDrag.originY
-
-  if (cropDrag.mode === "resize" && cropDrag.handle) {
-    writeCropRect(
-      entity,
-      applyCropResize(cropDrag.start, cropDrag.handle, dx, dy),
-    )
-    return
-  }
-
-  writeCropRect(entity, applyCropPan(cropDrag.start, dx, dy))
-}
-
-export function coverCropPointerEnd(entity, { pointerId } = {}) {
-  if (pointerId != null) cropPointers.delete(pointerId)
-  else clearCropPointers()
-
-  if (cropPointers.size >= 2) {
-    cropPinchDistance = pinchDistance()
-    return
-  }
-
-  cropPinchDistance = null
-  cropDrag = null
-  if (cropPointers.size === 0) entity.isCropDragging = false
+  api.notify(`#${COVER_CROPPER}:srcChange`, {
+    src: entity.cropPreviewUrl,
+    rect,
+  })
 }
 
 export function coverCropCancel(entity) {
@@ -761,20 +571,10 @@ export const coverCropEdit = handleAsync("coverCropEdit", {
   start(entity) {
     entity.image_error = null
   },
-  async run({ id, url, cropX, cropY, cropW, cropH } = {}) {
-    const rect =
-      cropW != null && cropH != null
-        ? { x: cropX ?? 0, y: cropY ?? 0, w: cropW, h: cropH }
-        : null
+  async run({ id, url, rect = null } = {}) {
     const sourceFile = pendingSourceFile(id)
-    if (sourceFile instanceof File) {
-      return { file: sourceFile, rect, allowFullPhoto: true }
-    }
-    const file = pendingFile(id)
-    if (file instanceof File) {
-      // Display file only — already cropped or full with no separate original.
-      return { file, rect, allowFullPhoto: false }
-    }
+    if (sourceFile instanceof File) return { file: sourceFile, rect }
+    // A saved cover is already cropped: frame it again from what it shows.
     if (!url) throw new Error(t("errors.imageCrop"))
     let response
     try {
@@ -786,90 +586,44 @@ export const coverCropEdit = handleAsync("coverCropEdit", {
     const blob = await response.blob()
     const type = blob.type || IMAGE_JPEG_TYPE
     if (!imageExtension(type)) throw new Error(t("errors.imageType"))
-    return {
-      file: createImageFile(blob, "cover.jpg"),
-      rect: null,
-      allowFullPhoto: false,
-    }
+    return { file: createImageFile(blob, "cover.jpg"), rect: null }
   },
-  success(entity, { file, rect, allowFullPhoto }) {
-    coverCropOpen(entity, file, { rect, allowFullPhoto })
+  success(entity, crop, api) {
+    coverCropOpen(entity, crop, api)
   },
   error(entity, err) {
     entity.image_error = err.message ?? t("errors.imageCrop")
   },
 })
 
-// Keep the original file as the cover — no crop, no recompress.
-export function coverCropUseOriginal(entity) {
-  if (entity.isCropSaving || !entity.cropAllowFullPhoto) return
-  const file = cropSessionFile
-  if (!file) return
-  entity.image_error = null
-  revokePreview(entity.pending_cover)
-  entity.cover_url = null
-  const id = randomId()
-  rememberPendingFiles(id, { file, sourceFile: file })
-  entity.pending_cover = {
-    id,
-    previewUrl: URL.createObjectURL(file),
-    ...defaultCropRectAsFields(),
-  }
-  closeCrop(entity)
-}
-
-function defaultCropRectAsFields() {
-  const rect = defaultCropRect()
-  return { cropX: rect.x, cropY: rect.y, cropW: rect.w, cropH: rect.h }
-}
-
 export const coverCropConfirm = handleAsync("coverCropConfirm", {
   start(entity) {
     entity.isCropSaving = true
     entity.cropError = null
   },
-  async run({ cropX, cropY, cropW, cropH } = {}) {
+  async run({ rect } = {}) {
     const file = cropSessionFile
-    if (!file) throw new Error(t("errors.imageCrop"))
-    let source
+    if (!file || !rect) throw new Error(t("errors.imageCrop"))
     try {
-      source = await decodeImage(file)
-    } catch {
-      throw new Error(t("errors.imageCrop"))
-    }
-    try {
-      const { width, height } = sourceSize(source)
-      const rect = cropSourceRect(width, height, {
-        x: cropX,
-        y: cropY,
-        w: cropW,
-        h: cropH,
+      const blob = await cropImage(file, rect, {
+        maxWidth: COVER_OUTPUT_WIDTH,
+        maxHeight: COVER_OUTPUT_HEIGHT,
       })
-      const size = cropOutputSize(rect.sw, rect.sh)
-      const blob = await cropToBlob(source, rect, size)
-      return { blob, sourceFile: file, cropX, cropY, cropW, cropH }
+      return { blob, sourceFile: file, rect }
     } catch {
       throw new Error(t("errors.imageCrop"))
-    } finally {
-      source.close?.()
     }
   },
-  success(entity, { blob, sourceFile, cropX, cropY, cropW, cropH }) {
+  success(entity, { blob, sourceFile, rect }) {
     const file = createImageFile(blob, "cover.jpg")
     revokePreview(entity.pending_cover)
     entity.cover_url = null
     const id = randomId()
-    rememberPendingFiles(id, {
-      file,
-      sourceFile: sourceFile ?? null,
-    })
+    rememberPendingFiles(id, { file, sourceFile })
     entity.pending_cover = {
       id,
       previewUrl: URL.createObjectURL(file),
-      cropX,
-      cropY,
-      cropW,
-      cropH,
+      rect,
     }
     entity.image_error = null
     closeCrop(entity)

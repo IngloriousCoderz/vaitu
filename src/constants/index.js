@@ -31,8 +31,6 @@ export const HUE_SHIFT = 40
 export const JUST_OPENED_MIN_DAYS = 2
 export const SINGULAR = 1
 export const ZERO = 0
-export const HALF = 0.5
-export const PERCENT_SCALE = 100
 export const MONTH_INDEX_OFFSET = 1
 export const PAD_LENGTH = 2
 export const DATETIME_LOCAL_LENGTH = 16
@@ -53,23 +51,17 @@ export const IMAGE_MAX_BYTES = 5242880
 export const MIN_PHOTOS_TO_NAVIGATE = 2
 // Cover crop. The real boxes go from about 1.9:1 (tablet card) to 4.4:1
 // (desktop banner), so 21:9 is the closest single frame: 16:9 would be taller
-// than every one of them and lose the most to the centre crop.
+// than every one of them and lose the most to the centre crop. The output is
+// capped at 1680x720 and never upscaled.
 export const COVER_ASPECT_WIDTH = 21
 export const COVER_ASPECT_HEIGHT = 9
 export const COVER_ASPECT_RATIO = COVER_ASPECT_WIDTH / COVER_ASPECT_HEIGHT
 export const COVER_OUTPUT_WIDTH = 1680
 export const COVER_OUTPUT_HEIGHT = 720
-// Free crop: min side as a fraction of the photo; handle hit target in px.
-export const COVER_MIN_CROP = 0.1
-export const COVER_HANDLE_HIT_PX = 22
-export const COVER_WHEEL_ZOOM_RATE = 0.0015
-export const COVER_PAN_STEP = 0.02
-export const COVER_SCALE_STEP = 0.05
 // Profile photos: 2 MiB input, then a 512 px square before upload.
 export const AVATAR_MAX_BYTES = 2097152
 export const AVATAR_SIZE = 512
 export const IMAGE_JPEG_TYPE = "image/jpeg"
-export const IMAGE_JPEG_QUALITY = 0.9
 // UUID v4 fallback (insecure contexts lack crypto.randomUUID).
 export const UUID_RANDOM_BYTES = 16
 export const UUID_VERSION_INDEX = 6

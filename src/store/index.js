@@ -11,11 +11,13 @@ import { ApplicationDetail } from "../views/application-detail/index.js"
 import { ApplicationList } from "../views/application-list/index.js"
 import { ApplicationsReceived } from "../views/applications-received/index.js"
 import { Authentication } from "../views/authentication/index.js"
+import { CoverCropper } from "../views/event-create/cover-cropper.js"
 import { EventCreate } from "../views/event-create/index.js"
 import { EventDetail } from "../views/event-detail/index.js"
 import { EventList } from "../views/event-list/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
+import { AvatarCropper } from "../views/profile/avatar-cropper.js"
 import { Profile } from "../views/profile/index.js"
 import { Ranks } from "../views/ranks/index.js"
 import { entities } from "./entities"
@@ -33,6 +35,7 @@ export const store = createStore({
     EventList,
     EventDetail,
     EventCreate,
+    CoverCropper,
     ApplicationList,
     ApplicationDetail,
     CountrySelect,
@@ -42,6 +45,7 @@ export const store = createStore({
     NotFound,
     Onboarding,
     Profile,
+    AvatarCropper,
     Ranks,
     ...guards,
   },
