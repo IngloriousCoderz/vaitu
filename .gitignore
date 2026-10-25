@@ -51,6 +51,9 @@ lerna-debug.log*
 
 # Editor directories and files
 .vscode/*
+# Shared so the Deno extension type-checks supabase/functions.
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo

@@ -33,6 +33,7 @@ Vaitu started with wedding photographers in mind, and is expanding to other kind
 - [Prerequisites](#prerequisites)
 - [Getting started](#getting-started)
 - [Local backend (Supabase)](#local-backend-supabase)
+- [Edge functions](#edge-functions)
 - [Mobile (Capacitor)](#mobile-capacitor)
 - [Voice AI](#voice-ai-transcription--field-parsing)
 - [Useful commands](#useful-commands)
@@ -43,7 +44,8 @@ Vaitu started with wedding photographers in mind, and is expanding to other kind
 - `index.html`: The main entry point for your app.
 - `src/`: Your app's JavaScript source code.
 - `src/api/client.js`: Supabase client setup.
-- `supabase/`: Migrations, seed data, `config.toml` and edge functions.
+- `supabase/`: Migrations, seed data, `config.toml` and
+  [edge functions](#edge-functions).
 - `vite.config.js`: Vite configuration file.
 - `capacitor.config.ts`: Capacitor (mobile) configuration.
 - `package.json`: Project metadata and dependencies.
@@ -53,6 +55,7 @@ Vaitu started with wedding photographers in mind, and is expanding to other kind
 - [pnpm](https://pnpm.io/)
 - Docker Desktop (running) for the local Supabase stack
 - Supabase CLI: `brew install supabase/tap/supabase`
+- Deno, only to type-check edge functions: `brew install deno`
 - Mobile only: native platform tooling, see [Mobile (Capacitor)](#mobile-capacitor)
 
 ## Getting started
@@ -106,15 +109,13 @@ LAN IP (see [Mobile](#mobile-capacitor) below) — the emulator uses `10.0.2.2` 
 Three terminals:
 
 1. Supabase stack (already up after `supabase start`)
-2. `pnpm edge` — serves all three edge functions (hot-reload while editing)
+2. `pnpm edge` — serves all edge functions (hot-reload while editing)
 3. `pnpm dev --host` — frontend (phone/emulator loads it via LAN IP,
    configured in `capacitor.config.ts`)
 
-⚠️ `supabase/functions/.env` holds the AI provider keys and also a
-`SUPABASE_URL`. Keep that URL on `http://127.0.0.1:54321` while working
-locally — pointing it at the cloud project makes `pnpm edge` write to
-production. `VITE_SUPABASE_URL` in `.env.local` selects which backend the
-frontend talks to.
+`VITE_SUPABASE_URL` in `.env.local` selects which backend the frontend
+talks to. Edge functions always talk to the local database (see
+[Edge functions](#edge-functions)).
 
 ### Ports
 
@@ -138,7 +139,96 @@ There is one kind of account: it can post events and apply to other people's.
 append-only history — never edit an applied one, always add a new file in
 `supabase/migrations/`.
 
-### Edge functions from a physical device
+## Edge functions
+
+Server-side code that needs the service role or a third-party key lives in
+`supabase/functions/`, one folder per function. They run on Deno, not Node.
+
+| Function             | Called from             | Caller                | Does                                                                                       |
+| -------------------- | ----------------------- | --------------------- | ------------------------------------------------------------------------------------------ |
+| `check-email`        | Login/signup routing    | Anyone (rate-limited) | Says whether an account exists for an email                                                |
+| `deactivate-account` | Profile → deactivate    | Logged-in user        | Deactivates the caller, drops their applications/open events                               |
+| `transcribe-audio`   | Event form, voice input | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](#voice-ai-transcription--field-parsing)) |
+| `parse-event`        | Event form, voice input | Logged-in user        | Transcript → event fields ([Voice AI](#voice-ai-transcription--field-parsing))             |
+
+```
+supabase/functions/
+├── .env                 # third-party keys, gitignored
+├── deno.json            # keeps Deno off the app's node_modules; lint config
+├── _shared/
+│   ├── http.ts          # CORS, json(), serve(), upstreamError(), STATUS_CODE
+│   └── supabase.ts      # env(), admin() service-role client, currentUser()
+└── <name>/index.ts      # one per function
+```
+
+Folders starting with `_` are never deployed as functions.
+
+### Editor setup
+
+1. `brew install deno`
+2. Install the recommended VS Code extension `denoland.vscode-deno`
+   (VS Code offers it on opening the repo) and reload the window.
+
+`.vscode/settings.json` turns Deno on for `supabase/functions` only; the
+rest of the repo keeps the normal TypeScript/ESLint setup. Without the
+extension VS Code reports false errors such as `Cannot find name 'Deno'`.
+
+### Secrets
+
+Third-party keys go in `supabase/functions/.env` (see
+[Voice AI](#voice-ai-transcription--field-parsing) for the values). The
+functions hot-reload it.
+
+Don't put `SUPABASE_*` variables there: the CLI injects `SUPABASE_URL`,
+`SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` of the local stack
+itself and skips those lines with an `Env name cannot start with
+SUPABASE_` warning. Local functions therefore always talk to the local
+database. In production the platform injects them the same way.
+
+### Run, check, test
+
+```bash
+pnpm edge                     # serve with hot reload and logs in the terminal
+pnpm edge:check               # deno check + deno lint (needs Deno installed)
+pnpm test:integration         # includes the *.integration.test.js that call them
+```
+
+`supabase start` already serves the functions, so `pnpm edge` is only needed
+while editing one or to read its logs. The integration tests need the local
+stack running.
+
+### Adding a function
+
+1. Create `supabase/functions/<name>/index.ts` from this skeleton. Don't use
+   `supabase functions new`: it adds a per-function `deno.json` that replaces
+   the shared one.
+
+   ```ts
+   import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
+   import { json, serve, STATUS_CODE } from "../_shared/http.ts"
+   import { currentUser } from "../_shared/supabase.ts"
+
+   serve(async (req) => {
+     const user = await currentUser(req)
+     if (!user)
+       return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
+
+     return json({ ok: true })
+   }, "<name> failed")
+
+   // support functions below the handler
+   ```
+
+   Lay it out like the others: imports, constants, the `serve()` handler,
+   then the `function` declarations it uses. Status codes come from
+   `STATUS_CODE`, other numbers get a named constant.
+
+2. Call it from the app with `supabase.functions.invoke("<name>", { body })`.
+3. Cover it with a `*.integration.test.js` next to its caller.
+4. Add it to the table above and deploy it (see
+   [Deploying to the cloud](#deploying-to-the-cloud)).
+
+### From a physical device
 
 The app calls edge functions through Kong (`VITE_SUPABASE_URL` +
 `/functions/v1/...`), so no extra setup is needed beyond a reachable
@@ -161,8 +251,6 @@ If the app can't reach them, check in order:
      -d '{"email":"sender@vaitu.local"}'
    # expect: {"exists":true}
    ```
-
-4. `pnpm edge` is only needed for hot-reload while editing a function.
 
 ## Mobile (Capacitor)
 
@@ -260,11 +348,7 @@ OPENROUTER_API_KEY=<from openrouter.ai → Keys>
 
 Troubleshooting:
 
-- `500 "DEEPGRAM_API_KEY is not set"` → key in the wrong `.env`. The
-  functions also need `SUPABASE_URL` / `SUPABASE_ANON_KEY` /
-  `SUPABASE_SERVICE_ROLE_KEY` in the same file.
-  (With a full `supabase start` these are auto-injected; with only
-  `pnpm edge` running, the file is the only source.)
+- `500 "DEEPGRAM_API_KEY is not set"` → key in the wrong `.env`.
 - `401 INVALID_AUTH from Deepgram` → the key itself is bad: regenerate
   it in the Deepgram console (copy the full value, no spaces, no quotes)
   and replace it.
@@ -282,6 +366,7 @@ Troubleshooting:
 pnpm test                     # every test
 pnpm test:unit                # tests that need nothing running
 pnpm test:integration         # tests against the local Supabase (*.integration.test.js)
+pnpm edge:check               # type-check and lint the edge functions
 supabase status               # URLs + keys
 supabase db reset --yes       # wipe + migrate + reseed (deletes local rows!)
 supabase migration up         # apply new migrations only
@@ -292,7 +377,7 @@ supabase stop                 # stop everything (data kept in volume)
 
 The local stack is Docker-only and never reaches the internet. Production is
 Supabase Cloud, project ref `utzdcnnjxulwlsuhzjaq` (`eu-central-1`), and the
-deployable units are the SQL migrations plus the three edge functions — there
+deployable units are the SQL migrations plus the edge functions — there
 is no backend server process to containerize.
 
 ```bash
@@ -301,7 +386,7 @@ supabase link --project-ref utzdcnnjxulwlsuhzjaq
 supabase db push                                        # apply migrations
 supabase secrets set \
   DEEPGRAM_API_KEY=... OPENROUTER_API_KEY=...           # third-party keys
-supabase functions deploy check-email transcribe-audio parse-event
+supabase functions deploy                               # every function
 ```
 
 `supabase functions deploy` is required for every function change; `db push`

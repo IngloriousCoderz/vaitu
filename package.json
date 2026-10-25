@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "dev": "vite",
     "edge": "supabase functions serve",
+    "edge:check": "cd supabase/functions && deno check */index.ts && deno lint",
     "build": "vite build",
     "preview": "vite preview",
     "cap": "cap",
