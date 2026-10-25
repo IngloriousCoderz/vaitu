@@ -1,5 +1,5 @@
 import { Button } from "@inglorious/ui/button"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
@@ -28,11 +28,7 @@ export const ConfirmPrompt = {
   }) {
     const isDanger = tone === "danger"
     return html`<div class="${styles.prompt} ${className}">
-      ${
-        id
-          ? html`<p id=${id} class=${styles.message}>${message}</p>`
-          : html`<p class=${styles.message}>${message}</p>`
-      }
+      <p id=${id || nothing} class=${styles.message}>${message}</p>
       ${children}
       <div class="${styles.actions} ${isStacked ? styles.stacked : ""}">
         ${Button.render({

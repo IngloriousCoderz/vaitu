@@ -3,8 +3,7 @@
    footer row collapses to zero so anything inside it could never paint (the
    drawer is the navigation there).
 
-   Absolute inside the positioned shell, matching the FAB convention — so it
-   tracks the shell rather than the viewport, and the tab bar inset keeps it
+   Absolute inside the positioned shell, so it tracks the shell rather than the viewport, and the tab bar inset keeps it
    from covering the phone's navigation while it is on screen. */
 
 .bar {

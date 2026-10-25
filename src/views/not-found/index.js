@@ -9,11 +9,6 @@ import styles from "./style.module.css"
 
 // Reached through the `*` route. Keeps a bad link or a stale bookmark on a real
 // screen with a way out, rather than on the previous page or a blank one.
-
-function goToEvents(api) {
-  return () => api.notify("#router:navigate", paths.events)
-}
-
 export const NotFound = {
   render(entity, api) {
     const router = api.getEntity("router")
@@ -48,4 +43,8 @@ export const NotFound = {
       `,
     })
   },
+}
+
+function goToEvents(api) {
+  return () => api.notify("#router:navigate", paths.events)
 }

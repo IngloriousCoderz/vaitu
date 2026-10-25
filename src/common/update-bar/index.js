@@ -1,4 +1,4 @@
-import { TAKEOVER_TIMEOUT_MS,UPDATE_DEFER_KEY } from "../../constants/index.js"
+import { TAKEOVER_TIMEOUT_MS, UPDATE_DEFER_KEY } from "../../constants/index.js"
 import * as renderers from "./template.js"
 
 // An update is fully downloaded behind the current session: the type only
@@ -20,7 +20,7 @@ export const PwaUpdate = {
     entity.isDialogOpen = false
   },
 
-  updateReady(entity) {
+  ready(entity) {
     entity.isDialogOpen = false
     entity.isUpdateReady = true
     entity.isDismissed = false
@@ -28,25 +28,25 @@ export const PwaUpdate = {
 
   // The X on the pill: nothing is being declined, so it opens the dialog
   // asking whether to move over now or leave it to the next cold open.
-  updateAsk(entity) {
+  ask(entity) {
     entity.isDialogOpen = true
   },
 
   // Backdrop, Esc or the dialog's own ×: the pill stays, nothing armed.
-  updateDecline(entity) {
+  decline(entity) {
     entity.isDialogOpen = false
   },
 
   // "Next time": hide the pill and arm the boot check to reload once, the
   // moment the app opens over a waiting worker. One flag, one reload — spent
   // by the boot check in src/pwa.js so it can never loop.
-  updateDefer(entity) {
+  defer(entity) {
     window.localStorage.setItem(UPDATE_DEFER_KEY, "1")
     entity.isDialogOpen = false
     entity.isDismissed = true
   },
 
-  async updateRefresh(entity) {
+  async refresh(entity) {
     if (entity) entity.isDialogOpen = false
     const reload = () => window.location.reload()
     const registration = await navigator.serviceWorker?.getRegistration()
@@ -55,7 +55,10 @@ export const PwaUpdate = {
     await new Promise((resolve) => {
       const done = setTimeout(resolve, TAKEOVER_TIMEOUT_MS)
       worker.addEventListener("statechange", () => {
-        if (worker.state === "activated") { clearTimeout(done); resolve() }
+        if (worker.state === "activated") {
+          clearTimeout(done)
+          resolve()
+        }
       })
       worker.postMessage({ type: "SKIP_WAITING" })
     })

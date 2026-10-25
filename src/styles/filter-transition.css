@@ -9,41 +9,104 @@
     view-transition-name: filter-sheet;
   }
 
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-group(root),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-group(drawer),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-group(app-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-group(tab-bar) {
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-group(root),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-group(drawer),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-group(app-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-group(tab-bar) {
     animation: none;
   }
 
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-image-pair(root),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-image-pair(drawer),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-image-pair(app-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-image-pair(tab-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-image-pair(filter-sheet) {
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-image-pair(root),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-image-pair(drawer),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-image-pair(app-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-image-pair(tab-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-image-pair(filter-sheet) {
     isolation: auto;
   }
 
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-old(root),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-new(root),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-old(drawer),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-new(drawer),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-old(app-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-new(app-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-old(tab-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-new(tab-bar),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-old(filter-sheet),
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-new(filter-sheet) {
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-old(root),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-new(root),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-old(drawer),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-new(drawer),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-old(app-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-new(app-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-old(tab-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-new(tab-bar),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-old(filter-sheet),
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-new(filter-sheet) {
     animation: none;
     opacity: 1;
     mix-blend-mode: normal;
   }
 
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-old(filter-sheet) {
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-old(filter-sheet) {
     opacity: 0;
   }
 
-  :is(:root.vaitu-filter-transition, :root:active-view-transition-type(filter-editor))::view-transition-group(filter-sheet) {
+  :is(
+    :root.vaitu-filter-transition,
+    :root:active-view-transition-type(filter-editor)
+  )::view-transition-group(filter-sheet) {
     background: var(--vbg);
     overflow: hidden;
     border-radius: var(--iw-radius-2xl);

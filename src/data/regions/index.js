@@ -2,10 +2,6 @@ import { FIRST_INDEX } from "../../constants/index.js"
 import { regions as english } from "./en.js"
 import { regions as italian } from "./it.js"
 
-function names(value) {
-  return Array.isArray(value) ? value : [value]
-}
-
 const englishKeys = Object.keys(english)
 const italianKeys = Object.keys(italian)
 
@@ -27,3 +23,7 @@ export const regionSpellings = englishKeys.flatMap((key) => {
     canonical,
   }))
 })
+
+function names(value) {
+  return Array.isArray(value) ? value : [value]
+}

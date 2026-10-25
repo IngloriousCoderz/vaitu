@@ -5,7 +5,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
-import { t, trans } from "../../i18n/index.js"
+import { t, trans, translated } from "../../i18n/index.js"
 import { PasswordField } from "./password-field.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
@@ -62,7 +62,7 @@ export const SignupStep = {
               placeholder: t("auth.yourName"),
               isFullWidth: true,
               isRequired: true,
-              error: getFieldError(entity, "full_name"),
+              error: translated(getFieldError(entity, "full_name")),
               onChange: (value) => onField({ field: "full_name", value }),
               autocomplete: "name",
             })}

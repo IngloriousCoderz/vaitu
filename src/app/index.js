@@ -16,13 +16,13 @@ import { pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { NotificationsPanel } from "../common/notifications/template.js"
 import { UpdateBar, UpdateDialog } from "../common/update-bar/template.js"
-import { NOTIFICATION_BADGE_MAX } from "../constants/index.js"
+import { NO_UNREAD, NOTIFICATION_BADGE_MAX } from "../constants/index.js"
 import { t } from "../i18n/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
 import { AppDrawer } from "./drawer/template.js"
 import styles from "./style.module.css"
-import { Fab, TabBar } from "./tab-bar/template.js"
+import { TabBar } from "./tab-bar/template.js"
 
 // Where the package drawer turns from an overlay into a sidebar.
 const SIDEBAR_QUERY = "(min-width: 64rem)"
@@ -56,9 +56,9 @@ const CHROME = {
   applicationsReceived: { isHidden: true },
   ranks: { isHidden: true },
   // Pre-login, plus the catch-all: nothing to navigate with.
-  authentication: { isTabbarRendered: false, isFabRendered: false },
-  onboarding: { isTabbarRendered: false, isFabRendered: false },
-  notFound: { isTabbarRendered: false, isFabRendered: false },
+  authentication: { isTabbarRendered: false },
+  onboarding: { isTabbarRendered: false },
+  notFound: { isTabbarRendered: false },
 }
 
 const DEFAULT_CHROME = { tab: "events" }
@@ -97,7 +97,6 @@ export const App = {
              stretch and shrink-wraps to its content width. -->
         <section class=${styles.page}>${api.render(router.route)}</section>
       `,
-      fab: this.renderFab(api, chrome),
       tabbar: this.renderTabbar(api, chrome),
       updatebar: this.renderUpdateBar(api, pwaUpdate),
       notificationsPanel: this.renderNotificationsPanel(api),
@@ -114,14 +113,14 @@ export const App = {
     return [
       UpdateBar.render({
         isDismissed: pwaUpdate.isDismissed,
-        onRefresh: () => api.notify("#pwaUpdate:updateRefresh"),
-        onDismiss: () => api.notify("#pwaUpdate:updateAsk"),
+        onRefresh: () => api.notify("#pwaUpdate:refresh"),
+        onDismiss: () => api.notify("#pwaUpdate:ask"),
       }),
       UpdateDialog.render({
         isOpen: pwaUpdate.isDialogOpen,
-        onRefresh: () => api.notify("#pwaUpdate:updateRefresh"),
-        onDefer: () => api.notify("#pwaUpdate:updateDefer"),
-        onClose: () => api.notify("#pwaUpdate:updateDecline"),
+        onRefresh: () => api.notify("#pwaUpdate:refresh"),
+        onDefer: () => api.notify("#pwaUpdate:defer"),
+        onClose: () => api.notify("#pwaUpdate:decline"),
       }),
     ]
   },
@@ -170,7 +169,7 @@ export const App = {
             ariaLabel: t("nav.toggle"),
             className: styles.menuButton,
             onClick: () =>
-              api.notify("#shell:toggleDrawer", {
+              api.notify("#shell:drawerToggle", {
                 isWide: window.matchMedia(SIDEBAR_QUERY).matches,
               }),
           }),
@@ -223,15 +222,17 @@ export const App = {
               // tab carries the full page, so no viewport branch is needed.
               onClick: () => api.notify("#notifications:panelOpen"),
             }),
-            notifications.unread > 0
+            notifications.unread > NO_UNREAD
               ? html`<span
                   class=${notificationStyles.badge}
                   aria-label=${t("notifications.unreadAria", {
                     count: notifications.unread,
                   })}
-                  >${notifications.unread > NOTIFICATION_BADGE_MAX
-                    ? "9+"
-                    : notifications.unread}</span
+                  >${
+                    notifications.unread > NOTIFICATION_BADGE_MAX
+                      ? "9+"
+                      : notifications.unread
+                  }</span
                 >`
               : "",
           ],
@@ -264,24 +265,12 @@ export const App = {
       isHidden: shell.isDrawerHidden,
       isCollapsed: shell.isDrawerCollapsed,
       active: chrome.tab,
-      onClose: () => api.notify("#shell:closeDrawer"),
-      onCollapseToggle: () => api.notify("#shell:toggleDrawerCollapse"),
+      onClose: () => api.notify("#shell:drawerClose"),
+      onCollapseToggle: () => api.notify("#shell:drawerCollapseToggle"),
       onNavigate: (id) => {
-        api.notify("#shell:closeDrawer")
+        api.notify("#shell:drawerClose")
         api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.events)
       },
-    })
-  },
-
-  // The button only makes sense on My events, and stays mounted everywhere else
-  // so that showing and hiding it animates instead of remounting.
-  renderFab(api, chrome) {
-    if (chrome.isFabRendered === false) return null
-
-    return Fab.render({
-      low: false,
-      hidden: true,
-      onClick: () => api.notify("#router:navigate", paths.newEvent),
     })
   },
 
@@ -291,8 +280,8 @@ export const App = {
     if (chrome.isTabbarRendered === false) return null
 
     return TabBar.render({
-      active: chrome.tab,
-      hidden: chrome.isHidden ?? false,
+      value: chrome.tab,
+      isHidden: chrome.isHidden,
       onNavigate: (value) =>
         api.notify("#router:navigate", TAB_PATHS[value] ?? paths.events),
     })
@@ -303,8 +292,7 @@ export const App = {
   //
   // The tab bar used to be `position: fixed`, which made the bar a floating
   // overlay rather than layout. Everything downstream paid for that: pages had
-  // to reserve bottom padding equal to the bar (and a different amount per page,
-  // because the FAB moved), and the reserved strip had to be painted separately
+  // to reserve bottom padding equal to the bar, and the reserved strip had to be painted separately
   // or content showed through it. Giving the bar its own footer row removes the
   // whole class of problem — no page reserves space for it any more.
   //
@@ -312,7 +300,6 @@ export const App = {
   // row expands the shell instead of scrolling inside it.
   renderShell({
     content,
-    fab,
     tabbar,
     updatebar,
     notificationsPanel,
@@ -344,15 +331,15 @@ export const App = {
           className: styles.main,
           children: [content].filter(Boolean),
         }),
-        // FAB floats over the shell, so it is a direct child of the positioned
-        // shell. So does the update strip: from 48rem the footer row collapses
+        // The update strip floats over the shell, so it is a direct child of
+        // the positioned shell: from 48rem the footer row collapses
         // to zero (the drawer is the navigation), and anything inside it never
         // paints — a phone-only strip would defeat the update offer on the
         // desktops. As an overlay it floats above the tab bar where it exists
         // and tail-docks the content where it does not. The notifications
-        // drawer paints last of the three: it is the only one meant to cover
-        // the page wholesale.
-        ...[fab, updatebar, notificationsPanel].filter(Boolean),
+        // drawer paints last: it is the only one meant to cover the page
+        // wholesale.
+        ...[updatebar, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",
           direction: undefined,

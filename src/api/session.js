@@ -19,6 +19,14 @@ import { supabase } from "./client.js"
 
 const STORAGE_KEY = "vaitu-user"
 
+// Whether onboarding is still owed: from a signup until it is finished or
+// skipped. Outside the store for the reason above — signup sets it and
+// navigates in one batch, and the route guard reading an entity there would
+// still see it unset. sessionStorage, so it ends with the tab and onboarding is
+// offered once.
+
+const ONBOARDING_KEY = "vaitu-onboarding"
+
 /**
  * The signed-in user, or null.
  * @returns {{user_id: string, email: string} | null}
@@ -77,14 +85,6 @@ export async function endSession() {
 export function stampLogin() {
   void Promise.resolve(supabase.rpc("touch_login")).catch(() => {})
 }
-
-// Whether onboarding is still owed: from a signup until it is finished or
-// skipped. Outside the store for the reason above — signup sets it and
-// navigates in one batch, and the route guard reading an entity there would
-// still see it unset. sessionStorage, so it ends with the tab and onboarding is
-// offered once.
-
-const ONBOARDING_KEY = "vaitu-onboarding"
 
 /** @returns {boolean} */
 export function isOnboardingDue() {

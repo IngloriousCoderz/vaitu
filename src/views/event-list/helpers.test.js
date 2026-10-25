@@ -7,18 +7,6 @@ import {
   visibleEvents,
 } from "./helpers.js"
 
-function event(fields) {
-  return {
-    category: "wedding",
-    filterValue: "editorial",
-    region: "Tuscany",
-    eventInDays: 3,
-    title: "Ada & Grace",
-    subtitle: "Florence • Tuscany • 24 Oct",
-    ...fields,
-  }
-}
-
 const wedding = event({})
 const festival = event({
   category: "festival",
@@ -31,18 +19,6 @@ const festival = event({
 const soon = event({ title: "Soon", eventInDays: 7, region: "Lombardy" })
 const later = event({ title: "Later", eventInDays: 8 })
 const past = event({ title: "Past", eventInDays: -1, region: "Sicily" })
-
-function show(events, fields = {}) {
-  return visibleEvents(
-    events,
-    fields.query ?? "",
-    fields.category ?? "wedding",
-    fields.filter ?? "all",
-    fields.region ?? "all",
-    fields.period ?? "all",
-    fields.favorites ?? [],
-  ).map((item) => item.title)
-}
 
 describe("visibleEvents", () => {
   it("keeps the active category and the chosen style or genre", () => {
@@ -151,3 +127,27 @@ describe("sortEvents", () => {
     ])
   })
 })
+
+function event(fields) {
+  return {
+    category: "wedding",
+    filterValue: "editorial",
+    region: "Tuscany",
+    eventInDays: 3,
+    title: "Ada & Grace",
+    subtitle: "Florence • Tuscany • 24 Oct",
+    ...fields,
+  }
+}
+
+function show(events, fields = {}) {
+  return visibleEvents(
+    events,
+    fields.query ?? "",
+    fields.category ?? "wedding",
+    fields.filter ?? "all",
+    fields.region ?? "all",
+    fields.period ?? "all",
+    fields.favorites ?? [],
+  ).map((item) => item.title)
+}

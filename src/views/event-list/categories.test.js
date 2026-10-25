@@ -3,13 +3,6 @@ import { describe, expect, it } from "vitest"
 import { festivalGenres, weddingStyles } from "../../data/event-taxonomy.js"
 import { filtersForCategory } from "./categories.js"
 
-function chips(categoryId) {
-  return filtersForCategory(categoryId).map((chip) => ({
-    id: chip.id,
-    label: chip.label,
-  }))
-}
-
 describe("filtersForCategory", () => {
   it("offers every wedding style, with a chip that shows them all", () => {
     const wedding = chips("wedding")
@@ -36,3 +29,10 @@ describe("filtersForCategory", () => {
     )
   })
 })
+
+function chips(categoryId) {
+  return filtersForCategory(categoryId).map((chip) => ({
+    id: chip.id,
+    label: chip.label,
+  }))
+}

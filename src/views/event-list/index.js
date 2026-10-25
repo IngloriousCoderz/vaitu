@@ -10,7 +10,6 @@ import {
   deleteAsk,
   deleteCancel,
   eventRemove,
-  eventsLoad,
   favoriteChoiceSelect,
   favoriteDraftAdd,
   favoriteDraftInput,
@@ -22,6 +21,7 @@ import {
   filtersClear,
   filterSelect,
   filtersToggle,
+  load,
   ownerSelect,
   periodSelect,
   regionSelect,
@@ -52,25 +52,39 @@ export const EventList = {
   favoriteDraftAdd,
   favoriteDraftRemove,
   ...favoritesSave,
-  ...eventsLoad,
+  ...load,
   ...eventRemove,
   ...renderers,
 
-  create(entity) {
+  create(entity, _, api) {
     renderers.create(entity)
-    activateRealtime(`${entity.id}:events`, {
-      table: "events",
-      event: `#${entity.id}:eventsLoad`,
-    })
-    activateRealtime(`${entity.id}:applications`, {
-      table: "applications",
-      event: `#${entity.id}:eventsLoad`,
-    })
+    activateRealtime(
+      `${entity.id}:events`,
+      {
+        table: "events",
+        event: `#${entity.id}:load`,
+      },
+      api,
+    )
+    activateRealtime(
+      `${entity.id}:applications`,
+      {
+        table: "applications",
+        event: `#${entity.id}:load`,
+      },
+      api,
+    )
   },
 
   destroy(entity) {
     deactivateRealtime(`${entity.id}:events`)
     deactivateRealtime(`${entity.id}:applications`)
+  },
+
+  // The list is filtered by own events and applied marks, so it reloads for
+  // whoever just signed in.
+  sessionStart(entity, _, api) {
+    api.notify(`#${entity.id}:load`)
   },
 
   renderHeader(entity, api) {

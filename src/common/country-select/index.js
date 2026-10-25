@@ -3,7 +3,7 @@ import "./style.css"
 import { Combobox } from "@inglorious/ui/combobox"
 import { html } from "@inglorious/web"
 
-import { t, translatedLabel } from "../../i18n/index.js"
+import { t, translated, translatedLabel } from "../../i18n/index.js"
 import * as handlers from "./handlers.js"
 
 // The entity keeps translation keys for its texts, and keys on the options
@@ -22,6 +22,7 @@ export const CountrySelect = {
           searchPlaceholder: t(entity.searchPlaceholder),
           noOptionsMessage: t(entity.noOptionsMessage),
           loadingMessage: t(entity.loadingMessage),
+          error: translated(entity.error),
           options: entity.options.map((option) => ({
             ...option,
             label: translatedLabel(option),

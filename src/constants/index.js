@@ -29,8 +29,21 @@ export const HASH_SEED = 7
 export const HUE_DEGREES = 360
 export const HUE_SHIFT = 40
 export const JUST_OPENED_MIN_DAYS = 2
-export const SINGULAR = 1
-export const ZERO = 0
+// Counts that start from nothing.
+export const NO_UNREAD = 0
+export const NO_POINTS = 0
+export const NO_DAYS_LEFT = 0
+export const NO_TIME_LEFT = 0
+export const NO_TIME_RECORDED = 0
+export const ONE_DAY = 1
+export const ONE_HOUR = 1
+export const ONE_MINUTE = 1
+export const ONE_SECOND = 1
+// An event leads with its first photo, the cover; the gallery comes after it.
+export const COVER_INDEX = 0
+export const COVER_IMAGES = 1
+// What indexOf answers when there is nothing to find.
+export const NOT_FOUND = -1
 export const MONTH_INDEX_OFFSET = 1
 export const PAD_LENGTH = 2
 export const DATETIME_LOCAL_LENGTH = 16

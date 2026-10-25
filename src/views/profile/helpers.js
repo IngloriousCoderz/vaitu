@@ -1,12 +1,10 @@
-import {
-  FIRST_INDEX,
-  LAST_INDEX_OFFSET,
-  SINGULAR,
-} from "../../constants/index.js"
+import { FIRST_INDEX, LAST_INDEX_OFFSET } from "../../constants/index.js"
+
+const ONE_WORD = 1
 
 export function initials(name) {
   const words = (name ?? "").split(" ").filter(Boolean)
-  if (words.length <= SINGULAR)
+  if (words.length <= ONE_WORD)
     return (words.at(FIRST_INDEX)?.at(FIRST_INDEX) ?? "?").toUpperCase()
   return `${words.at(FIRST_INDEX)?.at(FIRST_INDEX)}${words.at(words.length - LAST_INDEX_OFFSET)?.at(FIRST_INDEX)}`.toUpperCase()
 }

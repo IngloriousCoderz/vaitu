@@ -63,7 +63,7 @@ export const save = handleAsync("save", {
   success(entity, _, api) {
     entity.status = "ready"
     api.notify("#authentication:onboardingFinish")
-    api.notify("#profile:profileLoad")
+    api.notify("#profile:load")
   },
   error(entity, err) {
     entity.status = "error"

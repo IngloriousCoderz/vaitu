@@ -22,55 +22,6 @@ const MOTIVATION = "Available the whole day"
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 const SHORTLIST_CAP = 1
 
-async function apply(eventId, motivation) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  return supabase.from("applications").insert({
-    event_id: eventId,
-    applicant_id: user.id,
-    motivation,
-  })
-}
-
-async function applicationId(eventId) {
-  const { data, error } = await supabase
-    .from("applications")
-    .select("id")
-    .eq("event_id", eventId)
-    .single()
-  if (error) throw error
-  return data.id
-}
-
-async function applicationIdFor(eventId, applicantId) {
-  const { data, error } = await supabase
-    .from("applications")
-    .select("id")
-    .eq("event_id", eventId)
-    .eq("applicant_id", applicantId)
-    .single()
-  if (error) throw error
-  return data.id
-}
-
-function assignWinner(eventId, applicationId) {
-  return supabase.rpc("assign_winner", {
-    p_event_id: eventId,
-    p_application_id: applicationId,
-  })
-}
-
-async function shortlist(eventId) {
-  const id = await applicationId(eventId)
-  const { error } = await supabase
-    .from("applications")
-    .update({ status: "shortlisted" })
-    .eq("id", id)
-  if (error) throw error
-  return id
-}
-
 describe("applying and choosing a winner", () => {
   let eventId = null
 
@@ -515,3 +466,52 @@ describe("applying twice", () => {
     TEST_TIMEOUT_MS,
   )
 })
+
+async function apply(eventId, motivation) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  return supabase.from("applications").insert({
+    event_id: eventId,
+    applicant_id: user.id,
+    motivation,
+  })
+}
+
+async function applicationId(eventId) {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("event_id", eventId)
+    .single()
+  if (error) throw error
+  return data.id
+}
+
+async function applicationIdFor(eventId, applicantId) {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("event_id", eventId)
+    .eq("applicant_id", applicantId)
+    .single()
+  if (error) throw error
+  return data.id
+}
+
+function assignWinner(eventId, applicationId) {
+  return supabase.rpc("assign_winner", {
+    p_event_id: eventId,
+    p_application_id: applicationId,
+  })
+}
+
+async function shortlist(eventId) {
+  const id = await applicationId(eventId)
+  const { error } = await supabase
+    .from("applications")
+    .update({ status: "shortlisted" })
+    .eq("id", id)
+  if (error) throw error
+  return id
+}

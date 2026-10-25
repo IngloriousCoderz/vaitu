@@ -3,47 +3,6 @@ import { describe, expect, it, vi } from "vitest"
 import { UPDATE_DEFER_KEY } from "../../constants/index.js"
 import { createUpdateCheck } from "./check-update.js"
 
-// Harnesses for the registration the browser would hand `onRegisteredSW`:
-// a registration that already holds a waiting worker, and one that installs
-// a new one on `update()` — with `statechange` driven by hand, since the
-// worker object is a plain stand-in for the real one.
-const waitingWorker = (state = "installed") => ({ state, listeners: [], addEventListener(type, handler) { this.listeners.push(handler) } })
-const registrationWith = (waiting = null) => ({
-  waiting,
-  installing: null,
-  listeners: [],
-  addEventListener(type, handler) { this.listeners.push(handler) },
-  installingOf: null,
-  update: vi.fn(),
-})
-
-const harness = ({ hadController = true, stored = null } = {}) => {
-  const notifications = []
-  const saved = { "vaitu-update-deferral": stored }
-  const storage = {
-    getItem: (key) => saved[key] ?? null,
-    removeItem: (key) => { delete saved[key] },
-    setItem: (key, value) => { saved[key] = value },
-  }
-  const listeners = []
-  const fakeDocument = { hidden: true, addEventListener: (type, handler) => listeners.push(handler) }
-  return {
-    check: createUpdateCheck({
-      checkEveryMs: 9_000_000,
-      notify: (event) => notifications.push(event),
-      storage,
-      document: fakeDocument,
-      hadController,
-    }),
-    registration: registrationWith(),
-    making: waitingWorker(),
-    notifications,
-    saved,
-    listeners,
-    fakeDocument,
-  }
-}
-
 describe("update check", () => {
   it("checks hourly and on coming back to the foreground, not while hidden", () => {
     vi.useFakeTimers()
@@ -74,14 +33,14 @@ describe("update check", () => {
     h.registration.installing = h.making
     h.check.announce(h.making)
     h.check.announce(h.making) // same worker again: still one claim
-    expect(h.notifications).toEqual(["#pwaUpdate:updateReady"])
+    expect(h.notifications).toEqual(["#pwaUpdate:ready"])
   })
 
   it("the waiting worker is announced at boot, before any check runs", () => {
     const h = harness()
     const registration = registrationWith(h.making)
     h.check.attach(registration)
-    expect(h.notifications).toEqual(["#pwaUpdate:updateReady"])
+    expect(h.notifications).toEqual(["#pwaUpdate:ready"])
   })
 
   it("an activated worker resets the single-notice guard", () => {
@@ -93,19 +52,21 @@ describe("update check", () => {
     for (const handler of first.listeners) handler()
     const next = waitingWorker()
     h.check.announce(next)
-    expect(h.notifications.filter((n) => n === "#pwaUpdate:updateReady")).toHaveLength(2)
+    expect(
+      h.notifications.filter((n) => n === "#pwaUpdate:ready"),
+    ).toHaveLength(2)
   })
 
   it("spends the deferral exactly once: reload onto the waiting worker, flag gone", () => {
     const h = harness({ stored: "1" })
     h.registration.waiting = h.making
     expect(h.check.spendDeferral(h.registration)).toBe(true)
-    expect(h.notifications).toEqual(["#pwaUpdate:updateRefresh"])
+    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
     expect(h.saved[UPDATE_DEFER_KEY]).toBeUndefined()
 
     // Boot again with the flag gone: the deferral is spent, not carried.
     expect(h.check.spendDeferral(h.registration)).toBe(false)
-    expect(h.notifications).toEqual(["#pwaUpdate:updateRefresh"])
+    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
   })
 
   it("a deferral that outlived its worker is spent silently, without a reload", () => {
@@ -122,10 +83,70 @@ describe("update check", () => {
     h.registration.waiting = h.making
     const lifecycle = h.check.attach(h.registration)
     // The boot reload is on its way: no announcement flash before it lands.
-    expect(h.notifications).toEqual(["#pwaUpdate:updateRefresh"])
+    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
     lifecycle.stop()
     vi.advanceTimersByTime(90_000_000)
     expect(h.registration.update).not.toHaveBeenCalled()
     vi.useRealTimers()
   })
 })
+
+// Harnesses for the registration the browser would hand `onRegisteredSW`:
+// a registration that already holds a waiting worker, and one that installs
+// a new one on `update()` — with `statechange` driven by hand, since the
+// worker object is a plain stand-in for the real one.
+function waitingWorker(state = "installed") {
+  return {
+    state,
+    listeners: [],
+    addEventListener(type, handler) {
+      this.listeners.push(handler)
+    },
+  }
+}
+function registrationWith(waiting = null) {
+  return {
+    waiting,
+    installing: null,
+    listeners: [],
+    addEventListener(type, handler) {
+      this.listeners.push(handler)
+    },
+    installingOf: null,
+    update: vi.fn(),
+  }
+}
+
+function harness({ hadController = true, stored = null } = {}) {
+  const notifications = []
+  const saved = { "vaitu-update-deferral": stored }
+  const storage = {
+    getItem: (key) => saved[key] ?? null,
+    removeItem: (key) => {
+      delete saved[key]
+    },
+    setItem: (key, value) => {
+      saved[key] = value
+    },
+  }
+  const listeners = []
+  const fakeDocument = {
+    hidden: true,
+    addEventListener: (type, handler) => listeners.push(handler),
+  }
+  return {
+    check: createUpdateCheck({
+      checkEveryMs: 9_000_000,
+      notify: (event) => notifications.push(event),
+      storage,
+      document: fakeDocument,
+      hadController,
+    }),
+    registration: registrationWith(),
+    making: waitingWorker(),
+    notifications,
+    saved,
+    listeners,
+    fakeDocument,
+  }
+}

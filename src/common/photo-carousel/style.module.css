@@ -10,7 +10,7 @@
 button:global(.iw-button).close {
   position: absolute;
   top: calc(var(--iw-space-3) + var(--safe-area-top, 0px));
-  right: var(--iw-space-3);
+  inset-inline-end: var(--iw-space-3);
   z-index: 1;
   width: 2.5rem;
   height: 2.5rem;
@@ -58,16 +58,16 @@ button:global(.iw-button).nav:hover {
 }
 
 .prev {
-  left: var(--iw-space-2);
+  inset-inline-start: var(--iw-space-2);
 }
 
 .next {
-  right: var(--iw-space-2);
+  inset-inline-end: var(--iw-space-2);
 }
 
 .counter {
   position: absolute;
-  right: var(--iw-space-3);
+  inset-inline-end: var(--iw-space-3);
   bottom: var(--iw-space-2);
   padding: 0.125rem 0.5rem;
   border-radius: 999px;

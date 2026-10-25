@@ -4,7 +4,39 @@ import {
   MIN_TEXT_LENGTH,
 } from "../constants/index.js"
 import { festivalGenres, weddingStyles } from "../data/event-taxonomy.js"
-import { t } from "../i18n/index.js"
+
+// An event has room for someone to apply.
+const MIN_PLACES = 1
+
+// ---------------------------------------------------------------------------
+// Validation
+//
+// Answers "is this allowed", in the shape Inglorious Web's Form.validate
+// expects: an object of errors with the same shape as the values, empty when
+// the values are fine.
+//
+// A wedding names two people. A festival names the act that draws the crowd.
+// Those are different facts about the world, not one fact with a flag, so they
+// are written as two functions. Adding a third kind of event means writing a
+// third function — not extending a lookup table.
+// ---------------------------------------------------------------------------
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+// Two shapes, because there are two callers. A datetime-local input yields
+// "2026-05-01T12:00" with no seconds and no zone; the API layer receives the
+// same value already converted to an ISO instant. Both are valid, and one
+// regex covering them is why the form and the API guard cannot disagree.
+const INSTANT =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?$/
+const TRANSCRIPT_STATUSES = ["none", "pending", "done", "error"]
+
+// The categories this app knows how to validate, named after the concepts
+// themselves. A category missing from here is rejected outright rather than
+// waved through with no rules at all, which is what the old fallback did.
+const DETAIL_VALIDATORS = {
+  wedding: validateWeddingDetails,
+  festival: validateFestivalDetails,
+}
 
 // Turns a submitted payload into the row the `events` table expects.
 //
@@ -49,27 +81,80 @@ export function normalizeEvent(payload = {}) {
     }),
   }
 }
-// ---------------------------------------------------------------------------
-// Validation
-//
-// Answers "is this allowed", in the shape Inglorious Web's Form.validate
-// expects: an object of errors with the same shape as the values, empty when
-// the values are fine.
-//
-// A wedding names two people. A festival names the act that draws the crowd.
-// Those are different facts about the world, not one fact with a flag, so they
-// are written as two functions. Adding a third kind of event means writing a
-// third function — not extending a lookup table.
-// ---------------------------------------------------------------------------
 
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
-// Two shapes, because there are two callers. A datetime-local input yields
-// "2026-05-01T12:00" with no seconds and no zone; the API layer receives the
-// same value already converted to an ISO instant. Both are valid, and one
-// regex covering them is why the form and the API guard cannot disagree.
-const INSTANT =
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?$/
-const TRANSCRIPT_STATUSES = ["none", "pending", "done", "error"]
+export function validateEvent(values = {}) {
+  const errors = {}
+  const category = values.category ?? DEFAULT_EVENT_CATEGORY
+  const details = values.details ?? {}
+
+  fail(
+    errors,
+    "category",
+    DETAIL_VALIDATORS[category] ? undefined : "validation.pickCategory",
+  )
+  fail(errors, "title", requiredText(values.title, "validation.addTitle"))
+  fail(
+    errors,
+    "location",
+    requiredText(values.location, "validation.addLocation"),
+  )
+  fail(errors, "country", requiredText(values.country, "validation.addCountry"))
+  fail(errors, "region", requiredText(values.region, "validation.addRegion"))
+  fail(
+    errors,
+    "event_date",
+    ISO_DATE.test(values.event_date ?? "") ? undefined : "validation.pickDate",
+  )
+  fail(
+    errors,
+    "application_deadline",
+    INSTANT.test(values.application_deadline ?? "")
+      ? undefined
+      : "validation.pickDeadline",
+  )
+  if (
+    values.max_applicants !== undefined &&
+    !(
+      Number.isInteger(values.max_applicants) &&
+      values.max_applicants >= MIN_PLACES
+    )
+  ) {
+    fail(errors, "max_applicants", "validation.pickPlaces")
+  }
+  if (values.audio_url && !isWebUrl(values.audio_url)) {
+    fail(errors, "audio_url", "validation.checkAudioLink")
+  }
+  if (
+    values.transcript_status !== undefined &&
+    !TRANSCRIPT_STATUSES.includes(values.transcript_status)
+  ) {
+    fail(errors, "transcript_status", "validation.unknownTranscript")
+  }
+
+  const validateDetails = DETAIL_VALIDATORS[category]
+  if (validateDetails) {
+    const detailErrors = validateDetails(
+      typeof details === "object" && details !== null ? details : {},
+    )
+    if (Object.keys(detailErrors).length) errors.details = detailErrors
+  }
+  return errors
+}
+
+// The API layer still throws a single message, so it needs the first one out
+// of a nested errors object. Depth-first, matching the order the fields are
+// validated in.
+export function firstError(errors = {}) {
+  for (const error of Object.values(errors)) {
+    if (error && typeof error === "object") {
+      const nested = firstError(error)
+      if (nested) return nested
+    } else if (error) {
+      return error
+    }
+  }
+  return undefined
+}
 
 function trimmed(value) {
   return typeof value === "string" ? value.trim() : ""
@@ -92,15 +177,15 @@ function validateWeddingDetails(details) {
   fail(
     errors,
     "spouse_first_name_1",
-    requiredText(details.spouse_first_name_1, t("validation.addName")),
+    requiredText(details.spouse_first_name_1, "validation.addName"),
   )
   fail(
     errors,
     "spouse_first_name_2",
-    requiredText(details.spouse_first_name_2, t("validation.addName")),
+    requiredText(details.spouse_first_name_2, "validation.addName"),
   )
   if (details.style && !oneOf(weddingStyles, details.style)) {
-    fail(errors, "style", t("validation.pickStyle"))
+    fail(errors, "style", "validation.pickStyle")
   }
   return errors
 }
@@ -110,80 +195,10 @@ function validateFestivalDetails(details) {
   fail(
     errors,
     "headliner",
-    requiredText(details.headliner, t("validation.addHeadliner")),
+    requiredText(details.headliner, "validation.addHeadliner"),
   )
   if (details.genre && !oneOf(festivalGenres, details.genre)) {
-    fail(errors, "genre", t("validation.pickGenre"))
-  }
-  return errors
-}
-
-// The categories this app knows how to validate, named after the concepts
-// themselves. A category missing from here is rejected outright rather than
-// waved through with no rules at all, which is what the old fallback did.
-const DETAIL_VALIDATORS = {
-  wedding: validateWeddingDetails,
-  festival: validateFestivalDetails,
-}
-
-export function validateEvent(values = {}) {
-  const errors = {}
-  const category = values.category ?? DEFAULT_EVENT_CATEGORY
-  const details = values.details ?? {}
-
-  fail(
-    errors,
-    "category",
-    DETAIL_VALIDATORS[category] ? undefined : t("validation.pickCategory"),
-  )
-  fail(errors, "title", requiredText(values.title, t("validation.addTitle")))
-  fail(
-    errors,
-    "location",
-    requiredText(values.location, t("validation.addLocation")),
-  )
-  fail(
-    errors,
-    "country",
-    requiredText(values.country, t("validation.addCountry")),
-  )
-  fail(errors, "region", requiredText(values.region, t("validation.addRegion")))
-  fail(
-    errors,
-    "event_date",
-    ISO_DATE.test(values.event_date ?? "")
-      ? undefined
-      : t("validation.pickDate"),
-  )
-  fail(
-    errors,
-    "application_deadline",
-    INSTANT.test(values.application_deadline ?? "")
-      ? undefined
-      : t("validation.pickDeadline"),
-  )
-  if (
-    values.max_applicants !== undefined &&
-    !(Number.isInteger(values.max_applicants) && values.max_applicants > 0)
-  ) {
-    fail(errors, "max_applicants", t("validation.pickPlaces"))
-  }
-  if (values.audio_url && !isWebUrl(values.audio_url)) {
-    fail(errors, "audio_url", t("validation.checkAudioLink"))
-  }
-  if (
-    values.transcript_status !== undefined &&
-    !TRANSCRIPT_STATUSES.includes(values.transcript_status)
-  ) {
-    fail(errors, "transcript_status", t("validation.unknownTranscript"))
-  }
-
-  const validateDetails = DETAIL_VALIDATORS[category]
-  if (validateDetails) {
-    const detailErrors = validateDetails(
-      typeof details === "object" && details !== null ? details : {},
-    )
-    if (Object.keys(detailErrors).length) errors.details = detailErrors
+    fail(errors, "genre", "validation.pickGenre")
   }
   return errors
 }
@@ -194,19 +209,4 @@ function isWebUrl(value) {
   } catch {
     return false
   }
-}
-
-// The API layer still throws a single message, so it needs the first one out
-// of a nested errors object. Depth-first, matching the order the fields are
-// validated in.
-export function firstError(errors = {}) {
-  for (const error of Object.values(errors)) {
-    if (error && typeof error === "object") {
-      const nested = firstError(error)
-      if (nested) return nested
-    } else if (error) {
-      return error
-    }
-  }
-  return undefined
 }

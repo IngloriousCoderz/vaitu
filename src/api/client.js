@@ -2,6 +2,12 @@ import { createClient } from "@supabase/supabase-js"
 
 import { SUPABASE_API_PORT } from "../constants/index.js"
 
+// Singleton. Publishable key only — row safety comes from RLS, not the key.
+export const supabase = createClient(
+  supabaseUrl(),
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+)
+
 // Dev over LAN needs no manual IP: when the page itself is served from a
 // LAN host (live reload, phone browser) and the baked URL is local,
 // Supabase lives on the same host. Production builds keep the baked URL.
@@ -15,9 +21,3 @@ function supabaseUrl() {
   if (isLanHost && isLocalBaked) return `http://${host}:${SUPABASE_API_PORT}`
   return baked
 }
-
-// Singleton. Publishable key only — row safety comes from RLS, not the key.
-export const supabase = createClient(
-  supabaseUrl(),
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-)

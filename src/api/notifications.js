@@ -1,4 +1,4 @@
-import { FEED_LIMIT,REQUEST_TIMEOUT_MS } from "../constants/index.js"
+import { FEED_LIMIT, REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import { supabase } from "./client.js"
 
 // Layer 1 of notifications: the in-app feed. Everything else (badges, deep

@@ -17,11 +17,13 @@ import { PageStatus } from "../../common/page-status/index.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import {
+  COVER_IMAGES,
+  COVER_INDEX,
   DATE_ISO_LENGTH,
   DATETIME_LOCAL_LENGTH,
-  SINGULAR,
+  FIRST_INDEX,
 } from "../../constants/index.js"
-import { currentLocale, t } from "../../i18n/index.js"
+import { currentLocale, t, translated } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 export const ApplicationsReceived = {
@@ -46,6 +48,8 @@ export const ApplicationsReceived = {
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
+    onPhotoSwipeStart,
+    dir,
   }) {
     const { items, status, error } = entity
     const selected_count = items.filter(
@@ -62,8 +66,11 @@ export const ApplicationsReceived = {
         PhotoCarousel.render({
           urls: photos,
           index: entity.photoIndex,
-          open: entity.photoPreview,
+          isOpen: entity.isPhotoPreviewOpen,
+          swipeStartX: entity.photoSwipeX,
+          dir,
           onStep: onPhotoStep,
+          onSwipeStart: onPhotoSwipeStart,
           onClose: onPhotoClose,
         }),
         html`
@@ -88,9 +95,11 @@ export const ApplicationsReceived = {
                                       inputType: "datetime-local",
                                       value: entity.reopen_deadline ?? "",
                                       isFullWidth: true,
-                                      error: getFieldError(
-                                        entity,
-                                        "reopen_deadline",
+                                      error: translated(
+                                        getFieldError(
+                                          entity,
+                                          "reopen_deadline",
+                                        ),
                                       ),
                                       onChange: onReopenDeadline,
                                     })}
@@ -171,8 +180,7 @@ export const ApplicationsReceived = {
               )
             }
             ${ErrorAlert.render({
-              error:
-                status === "error" && items.length >= SINGULAR ? error : null,
+              error: status === "error" && items.length ? error : null,
               className: styles.error,
             })}
           </main>
@@ -196,7 +204,7 @@ export const ApplicationsReceived = {
       [t("received.shortlist"), `${shortlisted}/${maxApplicants ?? "—"}`],
       [
         t("received.created"),
-        formatDay((recap.created_at ?? "").slice(0, DATE_ISO_LENGTH)),
+        formatDay((recap.created_at ?? "").slice(FIRST_INDEX, DATE_ISO_LENGTH)),
       ],
     ]
     return Card.render({
@@ -209,22 +217,22 @@ export const ApplicationsReceived = {
                 <button
                   type="button"
                   class=${styles.recapCover}
-                  @click=${() => onPhotoOpen(0)}
+                  @click=${() => onPhotoOpen(COVER_INDEX)}
                 >
-                  <img src=${photos[0]} alt="" />
+                  <img src=${photos[COVER_INDEX]} alt="" />
                 </button>
                 ${
-                  photos.length > SINGULAR
+                  photos.length > COVER_IMAGES
                     ? Flex.render({
                         gap: "sm",
                         wrap: "wrap",
                         className: styles.recapGallery,
-                        children: photos.slice(SINGULAR).map(
+                        children: photos.slice(COVER_IMAGES).map(
                           (url, i) =>
                             html`<button
                               type="button"
                               class=${styles.recapThumb}
-                              @click=${() => onPhotoOpen(i + SINGULAR)}
+                              @click=${() => onPhotoOpen(i + COVER_IMAGES)}
                             >
                               <img src=${url} alt="" />
                             </button>`,

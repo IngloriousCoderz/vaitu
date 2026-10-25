@@ -9,8 +9,11 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --fix",
-    "test:watch": "vitest",
+    "lint-staged": "lint-staged",
     "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "test:watch": "vitest",
     "dev": "vite",
     "edge": "supabase functions serve",
     "build": "vite build",
@@ -24,17 +27,18 @@
     "mobile:ios:dev": "CAP_LIVE=1 cap run ios",
     "mobile:android:dev": "CAP_LIVE=1 cap run android",
     "assets:compose": "node scripts/compose-logo-assets.mjs",
-    "assets": "pnpm assets:compose && capacitor-assets generate --ios --android"
+    "assets": "pnpm assets:compose && capacitor-assets generate --ios --android",
+    "prepare": "husky"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.3",
     "@capacitor/share": "^8.0.3",
-    "@iconify-icons/material-symbols": "^2.0.6",
+    "@iconify-icons/material-symbols": "^2.0.7",
     "@inglorious/i18n": "^1.2.2",
-    "@inglorious/motion": "^9.0.10",
-    "@inglorious/store": "^11.2.0",
-    "@inglorious/ui": "^8.3.0",
-    "@inglorious/web": "^6.7.1",
+    "@inglorious/motion": "^9.0.13",
+    "@inglorious/store": "^12.0.0",
+    "@inglorious/ui": "^8.4.2",
+    "@inglorious/web": "^6.8.1",
     "@supabase/supabase-js": "^2.118.0",
     "fix-webm-duration": "^1.0.6"
   },
@@ -43,28 +47,32 @@
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.5.3",
     "@capacitor/ios": "^8.5.3",
-    "@inglorious/eslint-config": "^1.1.4",
+    "@inglorious/eslint-config": "^1.2.0",
     "@inglorious/vite-plugin-hmr": "^1.1.0",
     "@vite-pwa/assets-generator": "^2.0.0",
     "eslint": "^10.13.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
     "rollup-plugin-minify-template-literals": "^2.2.0",
     "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4",
+    "vite": "^8.3.5",
     "vite-plugin-image-optimizer": "^2.0.3",
     "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.0.5",
     "workbox-window": "^7.4.1"
   },
-  "packageManager": "pnpm@10.15.0",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "eslint --fix --max-warnings=0 --no-warn-ignored",
+      "prettier --write"
+    ],
+    "*.{json,md,css,scss,html,yml,yaml}": "prettier --write"
+  },
+  "packageManager": "pnpm@12.15.0+sha512.b3951d6d6ff4a9f13dc7cf56cd28d2b8eb37dbcc9c68e52e1e1191873ea9f82a017287ab50baadc5ccc494f036c67c0e47eb13608c2fa36f47711b61ea128e61",
   "engines": {
     "node": ">= 22"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
   }
 }

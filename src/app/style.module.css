@@ -126,7 +126,8 @@ button:global(.iw-button).avatarButton {
 /* Beats .iw-flex.iw-flex-overflow-auto, whose overflow shorthand would otherwise
    turn the horizontal axis back into auto and paint a scrollbar whenever a page
    is a few pixels wider than the column. `clip` rather than `hidden` so it does
-   not create a containing block for the absolutely positioned FAB. */
+   not create a containing block for the overlays positioned on the shell, such
+   as the update bar. */
 :global(.iw-flex.iw-flex-overflow-auto).main {
   flex: 1 1 0;
   overflow-x: clip;

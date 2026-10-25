@@ -11,16 +11,20 @@ export const Shell = {
   // `isWide` comes from the caller, which can read the viewport: the same
   // button opens the overlay on a small screen and hides the sidebar on a
   // wide one.
-  toggleDrawer(entity, { isWide } = {}) {
+  drawerToggle(entity, { isWide } = {}) {
     if (isWide) entity.isDrawerHidden = !entity.isDrawerHidden
     else entity.isDrawerOpen = !entity.isDrawerOpen
   },
 
-  closeDrawer(entity) {
+  drawerClose(entity) {
     entity.isDrawerOpen = false
   },
 
-  toggleDrawerCollapse(entity) {
+  drawerCollapseToggle(entity) {
     entity.isDrawerCollapsed = !entity.isDrawerCollapsed
+  },
+
+  sessionEnd(entity) {
+    entity.isDrawerOpen = false
   },
 }

@@ -8,7 +8,7 @@ import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 
-import { LIST_STAGGER_CAP } from "../../constants/index.js"
+import { LIST_STAGGER_CAP, NO_UNREAD } from "../../constants/index.js"
 import { currentLocale, t } from "../../i18n/index.js"
 import { Page } from "../page/index.js"
 import { PageStatus } from "../page-status/index.js"
@@ -32,19 +32,21 @@ export const Notifications = {
 
   // The app bar names the tab; "Mark all read" lives here so the rows and
   // the button that empties their badge stay together.
-  renderHeader(entity, api) {
-    const unread = entity.unread ?? 0
+  renderHeader({ unread = NO_UNREAD, onMarkAll }) {
     return {
       title: t("notifications.title"),
       actions:
-        unread > 0
-          ? html`<button type="button" class=${styles.markAll}
-              @click=${() => api.notify("#notifications:readAll")}
-              >${Icon.render({
+        unread > NO_UNREAD
+          ? html`<button
+              type="button"
+              class=${styles.markAll}
+              @click=${onMarkAll}
+            >
+              ${Icon.render({
                 icon: markEmailReadOutline,
                 size: "md",
-              })}<span>${t("notifications.markAll")}</span></button
-            >`
+              })}<span>${t("notifications.markAll")}</span>
+            </button>`
           : "",
     }
   },
@@ -67,7 +69,7 @@ export const Notifications = {
                 emptyText: t("notifications.empty"),
               }) ??
               items.map((item, index) =>
-                renderFeedItem({ item, onOpenRow, index })
+                renderFeedItem({ item, onOpenRow, index }),
               )
             }
           </main>
@@ -77,11 +79,16 @@ export const Notifications = {
   },
 }
 
-// The tablet+ bell: a right-anchored drawer over the page, wired by the
+// The tablet+ bell: a drawer at the end of the line, over the page, wired by the
 // shell. The rows are the feed's rows; the page stays for the phone tab.
 export const NotificationsPanel = {
   render({ isOpen, entity, onClose, onOpenRow, onMarkAll }) {
-    const { items = [], status = "idle", unread = 0, error = null } = entity
+    const {
+      items = [],
+      status = "idle",
+      unread = NO_UNREAD,
+      error = null,
+    } = entity
     return Drawer.render({
       isOpen,
       /* The package drawer doubles as a docked sidebar at ≥64rem, where its
@@ -101,13 +108,17 @@ export const NotificationsPanel = {
           html`<span class=${styles.panelTitle}
             >${t("notifications.title")}</span
           >`,
-          unread > 0
-            ? html`<button type="button" class=${styles.markAll}
-                @click=${onMarkAll}>${Icon.render({
+          unread > NO_UNREAD
+            ? html`<button
+                type="button"
+                class=${styles.markAll}
+                @click=${onMarkAll}
+              >
+                ${Icon.render({
                   icon: markEmailReadOutline,
                   size: "md",
-                })}<span>${t("notifications.markAll")}</span></button
-              >`
+                })}<span>${t("notifications.markAll")}</span>
+              </button>`
             : "",
         ],
       }),
@@ -123,7 +134,7 @@ export const NotificationsPanel = {
               emptyText: t("notifications.empty"),
             }) ??
             items.map((item, index) =>
-              renderFeedItem({ item, onOpenRow, index })
+              renderFeedItem({ item, onOpenRow, index }),
             )
           }
         </div>

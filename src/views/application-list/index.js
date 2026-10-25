@@ -5,22 +5,26 @@ import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationList as renderers } from "./template.js"
 
-const { applicationsLoad, ...syncHandlers } = handlers
+const { load, ...syncHandlers } = handlers
 
 export const ApplicationList = {
   ...syncHandlers,
-  ...applicationsLoad,
+  ...load,
   ...renderers,
 
-  create(entity) {
+  create(entity, _, api) {
     entity.applications ??= []
     entity.status_filter ??= "all"
     entity.status ??= "idle"
     entity.error ??= null
-    activateRealtime(entity.id, {
-      table: "applications",
-      event: `#${entity.id}:applicationsLoad`,
-    })
+    activateRealtime(
+      entity.id,
+      {
+        table: "applications",
+        event: `#${entity.id}:load`,
+      },
+      api,
+    )
   },
 
   destroy(entity) {
@@ -54,7 +58,7 @@ export const ApplicationList = {
 
 function open(entity, status_filter, api) {
   entity.status_filter = status_filter ?? "all"
-  api.notify(`#${entity.id}:applicationsLoad`)
+  api.notify(`#${entity.id}:load`)
 }
 
 function close(entity) {

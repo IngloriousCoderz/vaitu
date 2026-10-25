@@ -7,9 +7,10 @@ const BASE = "https://project.supabase.co/storage/v1/object/public"
 
 describe("imageRefFromUrl", () => {
   it("reads an event image back as a bucket and path", () => {
-    expect(
-      imageRefFromUrl(`${BASE}/event-images/user-1/photo.jpg`),
-    ).toEqual({ bucket: "event-images", path: "user-1/photo.jpg" })
+    expect(imageRefFromUrl(`${BASE}/event-images/user-1/photo.jpg`)).toEqual({
+      bucket: "event-images",
+      path: "user-1/photo.jpg",
+    })
   })
 
   it("reads an avatar from its own bucket", () => {

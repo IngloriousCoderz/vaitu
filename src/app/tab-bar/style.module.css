@@ -25,32 +25,3 @@
 .tabbar.tabbarHidden {
   transform: translateY(110%);
 }
-
-.fab {
-  /* Absolute, not fixed: it now floats inside the shell, so it no longer
-     depends on the viewport and no longer has to be offset by a bar height
-     that pages were also compensating for.
-
-     Placement only. The box is the package's, via `size` on the component. */
-  position: absolute;
-  bottom: var(--vtabbar-height);
-  inset-inline-end: var(--vpage-gutter);
-  z-index: var(--iw-z-fixed);
-  cursor: pointer;
-  transition: bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.fabLow {
-  bottom: var(--vpage-bottom);
-}
-
-.fabHidden {
-  display: none !important;
-}
-
-/* On tablet and desktop the create action lives in the drawer. */
-@media (min-width: 48rem) {
-  .fab {
-    display: none !important;
-  }
-}

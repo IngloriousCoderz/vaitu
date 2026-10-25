@@ -4,11 +4,11 @@ import { Form } from "@inglorious/web/form"
 import { supabase } from "../../api/client.js"
 import {
   DATETIME_LOCAL_LENGTH,
+  FIRST_INDEX,
   MIN_PHOTOS_TO_NAVIGATE,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
 import { canonicalRegion } from "../../data/regions/resolve.js"
-import { t } from "../../i18n/index.js"
 
 export function expandToggle(entity, application_id) {
   entity.expanded_application_id =
@@ -17,20 +17,25 @@ export function expandToggle(entity, application_id) {
 }
 
 export function photoOpen(entity, index) {
-  entity.photoIndex = index ?? 0
-  entity.photoPreview = true
+  entity.photoIndex = index ?? FIRST_INDEX
+  entity.isPhotoPreviewOpen = true
 }
 
 export function photoClose(entity) {
-  entity.photoPreview = false
+  entity.isPhotoPreviewOpen = false
+}
+
+// Where a swipe on the enlarged photo began, so its end can tell which way it went.
+export function photoSwipeStart(entity, x) {
+  entity.photoSwipeX = x
 }
 
 export function photoStep(entity, delta) {
-  if (!entity.photoPreview) return
+  if (!entity.isPhotoPreviewOpen) return
   const urls = entity.event_recap?.image_urls ?? []
   const n = urls.length
   if (n < MIN_PHOTOS_TO_NAVIGATE) return
-  entity.photoIndex = ((entity.photoIndex ?? 0) + delta + n) % n
+  entity.photoIndex = ((entity.photoIndex ?? FIRST_INDEX) + delta + n) % n
 }
 
 export function assignAsk(entity, application_id) {
@@ -72,7 +77,7 @@ export function reopenSubmit(entity, _, api) {
   })
 }
 
-export const receivedLoad = handleAsync("receivedLoad", {
+export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -81,7 +86,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
     /* Realtime can fire this after the page has been left, when there is no
        event to load. `.eq("id", undefined)` is a malformed filter that comes
        back as a 400, so bail rather than ask. */
-    if (!event_id) throw new Error(t("errors.noEventForApplications"))
+    if (!event_id) throw new Error("errors.noEventForApplications")
 
     const { data: event, error: eventError } = await supabase
       .from("events")
@@ -127,7 +132,7 @@ export const receivedLoad = handleAsync("receivedLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadApplications")
+    entity.error = err.message ?? "errors.loadApplications"
   },
 })
 
@@ -150,7 +155,7 @@ export const statusSet = handleAsync("statusSet", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.update")
+    entity.error = err.message ?? "errors.update"
   },
 })
 
@@ -173,7 +178,7 @@ export const winnerAssign = handleAsync("winnerAssign", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.assignWinner")
+    entity.error = err.message ?? "errors.assignWinner"
   },
 })
 
@@ -190,7 +195,7 @@ export const eventReopen = handleAsync("eventReopen", {
           ? new Date(application_deadline).toISOString()
           : application_deadline
       if (new Date(iso).getTime() <= Date.now()) {
-        throw new Error(t("validation.futureDeadline"))
+        throw new Error("validation.futureDeadline")
       }
       patch.application_deadline = iso
     }
@@ -208,7 +213,7 @@ export const eventReopen = handleAsync("eventReopen", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.reopenEvent")
+    entity.error = err.message ?? "errors.reopenEvent"
   },
 })
 
@@ -227,7 +232,7 @@ function validateReopen(values) {
       ? new Date(value).toISOString()
       : value
   if (new Date(iso).getTime() <= Date.now()) {
-    errors.reopen_deadline = t("validation.futureDeadline")
+    errors.reopen_deadline = "validation.futureDeadline"
   }
   return errors
 }

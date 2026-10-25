@@ -6,7 +6,7 @@ export function statusFilterSelect(entity, status_filter) {
   entity.status_filter = status_filter
 }
 
-export const applicationsLoad = handleAsync("applicationsLoad", {
+export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null

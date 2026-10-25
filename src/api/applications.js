@@ -2,6 +2,8 @@ import { MIN_TEXT_LENGTH, REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import { supabase } from "./client.js"
 import { toViewModel } from "./events.js"
 
+const ICS_BUCKET = "event-ics"
+
 // My applications with their events, newest first. Shape reuses the event
 // view model plus application fields so cards render unchanged.
 export async function fetchMyApplications() {
@@ -132,8 +134,6 @@ export async function fetchReceivedDetail(application_id) {
   if (error) throw error
   return data
 }
-
-const ICS_BUCKET = "event-ics"
 
 export async function uploadIcsFile(application_id, ics) {
   const {

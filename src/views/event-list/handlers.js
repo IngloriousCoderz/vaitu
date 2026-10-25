@@ -15,7 +15,6 @@ import {
   regionFilterItems,
   sameRegion,
 } from "../../data/regions/resolve.js"
-import { t } from "../../i18n/index.js"
 import { withFilterTransition } from "./filter-transition.js"
 import { DEFAULT_SORT, distinctRegions } from "./helpers.js"
 
@@ -65,18 +64,6 @@ export function deleteAsk(entity, event_id) {
 
 export function deleteCancel(entity) {
   entity.confirmingDelete = null
-}
-
-function syncFavoriteCombobox(entity, api) {
-  if (!api) return
-  api.notify("#favorite-region-list:sync", "")
-  api.notify(
-    "#favorite-region-list:optionsSet",
-    favoriteRegionOptions(
-      (entity.events ?? []).map((event) => event.region),
-      entity.isEditingFavorites ? (entity.favoriteDraft ?? []) : [],
-    ),
-  )
 }
 
 export function favoritesEditStart(entity, _, api) {
@@ -132,7 +119,7 @@ export function appliedClear(entity) {
   entity.confirmingDelete = null
 }
 
-export const eventsLoad = handleAsync("eventsLoad", {
+export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -170,7 +157,7 @@ export const eventsLoad = handleAsync("eventsLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadEvents")
+    entity.error = err.message ?? "errors.loadEvents"
   },
 })
 
@@ -185,11 +172,11 @@ export const eventRemove = handleAsync("eventRemove", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.confirmingDelete = null
-    api.notify(`#${entity.id}:eventsLoad`)
+    api.notify(`#${entity.id}:load`)
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.deleteEvent")
+    entity.error = err.message ?? "errors.deleteEvent"
   },
 })
 
@@ -218,6 +205,18 @@ export const favoritesSave = handleAsync("favoritesSave", {
   },
   error(entity, err) {
     entity.favoritesStatus = "error"
-    entity.favoritesError = err.message ?? t("errors.saveFavorites")
+    entity.favoritesError = err.message ?? "errors.saveFavorites"
   },
 })
+
+function syncFavoriteCombobox(entity, api) {
+  if (!api) return
+  api.notify("#favorite-region-list:sync", "")
+  api.notify(
+    "#favorite-region-list:optionsSet",
+    favoriteRegionOptions(
+      (entity.events ?? []).map((event) => event.region),
+      entity.isEditingFavorites ? (entity.favoriteDraft ?? []) : [],
+    ),
+  )
+}

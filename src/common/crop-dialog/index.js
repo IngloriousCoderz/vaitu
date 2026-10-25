@@ -40,7 +40,7 @@ export const CropDialog = {
     api,
   ) {
     const cropper = api.getEntity(cropperId)
-    const isLoaded = cropper?.naturalWidth > 0
+    const isLoaded = Boolean(cropper?.naturalWidth)
     const shownError =
       error ?? (cropper?.hasError ? t("errors.imageCrop") : null)
 

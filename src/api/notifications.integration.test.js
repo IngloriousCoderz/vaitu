@@ -35,7 +35,11 @@ describe("notifications feed", () => {
     } = await supabase.auth.getUser()
     const { data, error } = await supabase
       .from("applications")
-      .insert({ event_id: eventId, applicant_id: user.id, motivation: MOTIVATION })
+      .insert({
+        event_id: eventId,
+        applicant_id: user.id,
+        motivation: MOTIVATION,
+      })
       .select("id")
       .single()
     if (error) throw error
@@ -81,9 +85,9 @@ describe("notifications feed", () => {
       // RLS answers with this user's rows only: the owner's received-row about
       // this very application must not appear in the applicant's feed.
       expect(data.every((row) => row.user_id === user.id)).toBe(true)
-      expect(
-        data.some((row) => row.type === "application_received"),
-      ).toBe(false)
+      expect(data.some((row) => row.type === "application_received")).toBe(
+        false,
+      )
     },
     TEST_TIMEOUT_MS,
   )

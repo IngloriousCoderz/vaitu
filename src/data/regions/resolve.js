@@ -1,22 +1,16 @@
 import { labelled } from "../../i18n/index.js"
 import { italianRegions, regionSpellings } from "./index.js"
 
-export { italianRegions }
-
-export const ITALY = "Italy"
-
-function regionKey(value) {
-  return (value ?? "")
-    .trim()
-    .toLowerCase()
-    .replace(/['’]/g, "")
-    .replace(/-/g, " ")
-    .replace(/\s+/g, " ")
-}
-
 const aliasByKey = new Map(
   regionSpellings.map(({ name, canonical }) => [regionKey(name), canonical]),
 )
+
+const ITALIAN_GROUP = "__group_italian"
+const OTHER_GROUP = "__group_other"
+
+export { italianRegions }
+
+export const ITALY = "Italy"
 
 /** App name for an Italian region. Toscana and Tuscany are both Tuscany. */
 export function canonicalRegion(value) {
@@ -96,19 +90,6 @@ export function regionFilterItems(eventRegions, favoriteRegions) {
   ]
 }
 
-const ITALIAN_GROUP = "__group_italian"
-const OTHER_GROUP = "__group_other"
-
-function regionOption(region) {
-  return { value: region, label: region }
-}
-
-function availableRegions(regions, taken) {
-  return uniqueRegions(regions)
-    .filter((region) => !taken.some((name) => sameRegion(name, region)))
-    .sort((left, right) => left.localeCompare(right))
-}
-
 /**
  * Favorite combobox: Italian regions, then the other names already on events.
  * Group labels are not selectable.
@@ -145,4 +126,23 @@ export function activeRegionAfterChange(activeRegion, items) {
   if (items.some((item) => item.id === activeRegion)) return activeRegion
   const alias = items.find((item) => sameRegion(item.id, activeRegion))
   return alias ? alias.id : "all"
+}
+
+function regionKey(value) {
+  return (value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+}
+
+function regionOption(region) {
+  return { value: region, label: region }
+}
+
+function availableRegions(regions, taken) {
+  return uniqueRegions(regions)
+    .filter((region) => !taken.some((name) => sameRegion(name, region)))
+    .sort((left, right) => left.localeCompare(right))
 }

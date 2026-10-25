@@ -21,15 +21,22 @@ import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import {
+  COVER_IMAGES,
+  COVER_INDEX,
   DAY_MS,
   MINUTES_PER_HOUR,
   MS_PER_SECOND,
+  NO_TIME_LEFT,
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
-  SINGULAR,
 } from "../../constants/index.js"
-import { t, translatedLabel } from "../../i18n/index.js"
+import { t, translated, translatedLabel } from "../../i18n/index.js"
 import styles from "./style.module.css"
+
+const toneClass = {
+  closing: styles.badgeClosing,
+  closed: styles.badgeClosed,
+}
 
 export const EventDetail = {
   render(props, api) {
@@ -47,14 +54,16 @@ export const EventDetail = {
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
+    onPhotoSwipeStart,
+    dir,
   }) {
     const { event, status, error } = entity
     const msLeft = event?.application_deadline
       ? new Date(event.application_deadline).getTime() -
         (entity.nowTs ?? Date.now())
       : null
-    const liveClosed = msLeft == null ? null : msLeft <= 0
-    const showClock = msLeft != null && msLeft > 0 && msLeft < DAY_MS
+    const liveClosed = msLeft == null ? null : msLeft <= NO_TIME_LEFT
+    const showClock = msLeft != null && msLeft > NO_TIME_LEFT && msLeft < DAY_MS
     const photos = event?.imageUrls ?? []
 
     return Page.render({
@@ -65,8 +74,11 @@ export const EventDetail = {
         PhotoCarousel.render({
           urls: photos,
           index: entity.photoIndex,
-          open: entity.photoPreview,
+          isOpen: entity.isPhotoPreviewOpen,
+          swipeStartX: entity.photoSwipeX,
+          dir,
           onStep: onPhotoStep,
+          onSwipeStart: onPhotoSwipeStart,
           onClose: onPhotoClose,
         }),
         html`
@@ -159,7 +171,7 @@ export const EventDetail = {
   },
 
   renderBanner(event, onPhotoOpen) {
-    const photo = event.imageUrls?.[0]
+    const photo = event.imageUrls?.[COVER_INDEX]
     return Flex.render({
       align: "center",
       justify: "center",
@@ -169,7 +181,7 @@ export const EventDetail = {
         ? html`<button
             type="button"
             class=${styles.bannerPhoto}
-            @click=${() => onPhotoOpen(0)}
+            @click=${() => onPhotoOpen(COVER_INDEX)}
           >
             <img class=${styles.bannerImage} src=${photo} alt="" />
           </button>`
@@ -180,7 +192,7 @@ export const EventDetail = {
   },
 
   renderGallery(event, onPhotoOpen) {
-    const photos = (event.imageUrls ?? []).slice(SINGULAR)
+    const photos = (event.imageUrls ?? []).slice(COVER_IMAGES)
     if (!photos.length) return ""
     return Flex.render({
       gap: "sm",
@@ -191,7 +203,7 @@ export const EventDetail = {
           html`<button
             type="button"
             class=${styles.galleryThumb}
-            @click=${() => onPhotoOpen(i + SINGULAR)}
+            @click=${() => onPhotoOpen(i + COVER_IMAGES)}
           >
             <img class=${styles.galleryImage} src=${url} alt="" />
           </button>`,
@@ -320,7 +332,7 @@ export const EventDetail = {
             placeholder: t("detail.motivationPlaceholder"),
             isFullWidth: true,
             isRequired: true,
-            error: getFieldError(entity, "motivation"),
+            error: translated(getFieldError(entity, "motivation")),
             onChange: (value) => onField({ field: "motivation", value }),
           })}
         </div>
@@ -342,11 +354,6 @@ export const EventDetail = {
       `,
     })
   },
-}
-
-const toneClass = {
-  closing: styles.badgeClosing,
-  closed: styles.badgeClosed,
 }
 
 function detailToneClass(event) {

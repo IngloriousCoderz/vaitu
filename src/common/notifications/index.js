@@ -1,4 +1,5 @@
 import { handleAsync } from "@inglorious/store/async"
+import { optimistic } from "@inglorious/store/optimistic"
 
 import {
   fetchMyNotifications,
@@ -11,11 +12,14 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { readUserId } from "../../api/session.js"
-import { t } from "../../i18n/index.js"
+import { NO_UNREAD } from "../../constants/index.js"
 import { paths } from "../../routes.js"
-import { store } from "../../store"
 import { pageRouteChange } from "../page-route.js"
 import { Notifications as renderers } from "./template.js"
+
+const ONE_NOTIFICATION = 1
+
+const WIDE_QUERY = "(min-width: 48rem)"
 
 /* Layer 1 of the notification system: the in-app bell. One entity carries the
    unread count the bell badge reads on every page, and the list the
@@ -28,13 +32,13 @@ import { Notifications as renderers } from "./template.js"
    activated after a load that proves a session; the match still reads
    readUserId() live, so a rebind after a peer device's mark never widens. */
 
-const listLoad = handleAsync("listLoad", {
+const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
   },
   run: fetchMyNotifications,
-  success(entity, items) {
+  success(entity, items, api) {
     entity.items = items
     entity.unread = items.filter((item) => !item.read).length
     entity.status = "ready"
@@ -43,18 +47,47 @@ const listLoad = handleAsync("listLoad", {
     // type before the client holds a token, and an anon-binding would remain
     // deaf to this user's rows from then on. Loaded with a session, both are
     // guaranteed: every reload that reaches success ran through one.
-    activateRealtime(entity.id, {
-      table: "notifications",
-      event: `#${entity.id}:listLoad`,
-      payload: null,
-      match: (change) => realtimeColumn(change, "user_id") === readUserId(),
-    })
+    activateRealtime(
+      entity.id,
+      {
+        table: "notifications",
+        event: `#${entity.id}:load`,
+        payload: null,
+        match: (change) => realtimeColumn(change, "user_id") === readUserId(),
+      },
+      api,
+    )
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("notifications.error")
+    entity.error = err.message ?? "notifications.error"
   },
 })
+
+// The badge is optimistic: a row reads as read the moment it is opened, and
+// rolls back if the database refused the write. The realtime nudge corrects
+// anything else.
+const readSave = optimistic(
+  handleAsync("readSave", { run: (id) => markNotificationRead(id) }),
+  (entity, id) => ({
+    items: entity.items.map((row) =>
+      row.id === id ? { ...row, read: true } : row,
+    ),
+    unread: Math.max(entity.unread - ONE_NOTIFICATION, NO_UNREAD),
+  }),
+)
+
+const readAll = optimistic(
+  handleAsync("readAll", { run: () => markAllNotificationsRead() }),
+  (entity) => ({
+    items: entity.items.map((row) => ({ ...row, read: true })),
+    unread: 0,
+  }),
+)
+
+// Viewport watchers, keyed by entity id. A MediaQueryList and its listener
+// are not data, so they stay out of the entity.
+const viewportWatchers = new Map()
 
 // Where a tap on a row lands. Direct answers: a received application goes
 // to the sender's review page while the event is open (its detail with the
@@ -81,9 +114,9 @@ export function pathFor(item) {
 
 export const Notifications = {
   ...renderers,
-  ...listLoad,
+  ...load,
 
-  create(entity) {
+  create(entity, _, api) {
     entity.items ??= []
     entity.unread ??= 0
     entity.status ??= "idle"
@@ -92,103 +125,92 @@ export const Notifications = {
     entity.isPanelOpen ??= false
 
     // Viewport watcher: on tablet/desktop the canonical UI is the drawer,
-    // not the full page. If the user resizes across the 48rem boundary we
-    // switch modes automatically.
+    // not the full page. Crossing the 48rem boundary switches modes, which
+    // viewportChange decides.
     if (typeof window !== "undefined") {
-      const mq = window.matchMedia("(min-width: 48rem)")
-      const handler = (e) => {
-        if (e.matches) {
-          // Mobile -> tablet: if we're on the notifications page, fold it
-          // and open the drawer instead.
-          if (window.location.pathname === "/notifications") {
-            store.notify("#notifications:panelOpen")
-            store.notify("#router:navigate", "/events", { replace: true })
-          }
-        } else {
-          // Tablet -> mobile: if the drawer is open, close it and show the
-          // full page so the tab bar entry works.
-          const notifications = store.getEntity("notifications")
-          if (notifications?.isPanelOpen) {
-            store.notify("#notifications:panelClose")
-            store.notify("#router:navigate", "/notifications", { replace: true })
-          }
-        }
-      }
-      mq.addEventListener("change", handler)
-      entity._mqHandler = handler
-      entity._mq = mq
+      const id = entity.id
+      const mq = window.matchMedia(WIDE_QUERY)
+      const listener = (e) =>
+        api.notify(`#${id}:viewportChange`, { isWide: e.matches })
+      mq.addEventListener("change", listener)
+      viewportWatchers.set(id, { mq, listener })
     }
   },
 
   destroy(entity) {
     deactivateRealtime(entity.id)
-    if (entity._mq && entity._mqHandler) {
-      entity._mq.removeEventListener("change", entity._mqHandler)
-      entity._mq = null
-      entity._mqHandler = null
+    const watcher = viewportWatchers.get(entity.id)
+    if (watcher) {
+      watcher.mq.removeEventListener("change", watcher.listener)
+      viewportWatchers.delete(entity.id)
     }
   },
 
+  // Mobile -> tablet: the notifications page folds into the drawer.
+  // Tablet -> mobile: an open drawer unfolds into the page, so the tab bar
+  // entry works.
+  viewportChange(entity, { isWide }, api) {
+    if (isWide) {
+      if (window.location.pathname !== paths.notifications) return
+      api.notify(`#${entity.id}:panelOpen`)
+      api.notify("#router:navigate", { to: paths.events, replace: true })
+      return
+    }
+    if (!entity.isPanelOpen) return
+    entity.isPanelOpen = false
+    api.notify("#router:navigate", { to: paths.notifications, replace: true })
+  },
+
   routeChange: pageRouteChange(routeOpen, routeClose),
+
+  renderHeader(entity, api) {
+    const id = entity.id
+    return renderers.renderHeader({
+      unread: entity.unread,
+      onMarkAll: () => api.notify(`#${id}:readAll`),
+    })
+  },
 
   render(entity, api) {
     // Snapshotted values into per-row closures: a click fires long after the
     // render that built it, and reading the live entity by then can throw
     // (the same rule the realtime wiring has obeyed forever).
     const id = entity.id
-    return this.renderInbox({
-      entity,
-      onOpenRow: (item) => {
-        const rowId = item.id
-        const path = pathFor(item)
-        api.notify(`#${id}:readSet`, rowId)
-        api.notify("#router:navigate", path)
+    return this.renderInbox(
+      {
+        entity,
+        onOpenRow: (item) => {
+          const rowId = item.id
+          const path = pathFor(item)
+          api.notify(`#${id}:readSet`, rowId)
+          api.notify("#router:navigate", path)
+        },
+        onMarkAll: () => api.notify(`#${id}:readAll`),
       },
-      onMarkAll: () => api.notify(`#${id}:readAll`),
-    }, api)
+      api,
+    )
   },
+
+  ...readSave,
+  ...readAll,
 
   // Opening a row marks it read — every path out leads to what the row is
   // about — and the shell navigates right after, in the same batch.
-  readSet(entity, id) {
+  readSet(entity, id, api) {
     const item = entity.items.find((row) => row.id === id)
-    if (item && !item.read) {
-      item.read = true
-      entity.unread = Math.max(entity.unread - 1, 0)
-      void markNotificationRead(id).catch(() => {
-        // The badge is optimistic; the database keeps it, and the realtime
-        // nudge corrects the local view if the write failed.
-        item.read = false
-        if (entity.status === "ready") {
-          entity.unread = Math.min(entity.unread + 1, entity.items.length)
-        }
-      })
-    }
+    if (item && !item.read) api.notify(`#${entity.id}:readSave`, id)
   },
 
-  readAll(entity) {
-    if (entity.unread === 0) return
-    const before = entity.items.filter((item) => !item.read).map((i) => i.id)
-    entity.items.forEach((item) => {
-      item.read = true
-    })
-    entity.unread = 0
-    void markAllNotificationsRead().catch(() => {
-      // The optimistic flip rolled back: the realtime nudge would have done
-      // the same, but until it arrives the badge stays honest.
-      const leftOut = new Set(before)
-      entity.items.forEach((item) => {
-        if (leftOut.has(item.id)) item.read = false
-      })
-      entity.unread = before.length
-    })
+  // The badge is live from the first screen, not the first visit to the tab.
+  sessionStart(entity, _, api) {
+    api.notify(`#${entity.id}:load`)
   },
 
   /* Sign-out: the feed stops being this user's. Rows are dropped so a stale
-     list never shows across the sign-in boundary; the next sign-in hears
-     trackSession and loads again. The drawer goes down with the feed: an
-     open panel outliving its session would hang over the sign-in screen. */
-  resetForSignOut(entity) {
+     list never shows across the sign-in boundary, and the next sessionStart
+     loads again. The drawer goes down with the feed: an open panel outliving
+     its session would hang over the sign-in screen. */
+  sessionEnd(entity) {
     // The channel was bound with the leaving user's JWT; no rows may keep
     // flowing. The next sign-in loads the feed, which rebinds the channel.
     deactivateRealtime(entity.id)
@@ -205,7 +227,7 @@ export const Notifications = {
   // already live), so it is cheap.
   panelOpen(entity, _payload, api) {
     entity.isPanelOpen = true
-    api.notify(`#${entity.id}:listLoad`)
+    api.notify(`#${entity.id}:load`)
   },
 
   panelClose(entity) {
@@ -217,14 +239,14 @@ function routeOpen(entity, _payload, api) {
   // Tablet/desktop: the /notifications route is only a deep-link / restored
   // session. The canonical UI is the right-side drawer — open it and return
   // to where the user was (or home), keeping the feed loaded in the panel.
-  if (typeof window !== "undefined" && window.matchMedia("(min-width: 48rem)").matches) {
+  if (typeof window !== "undefined" && window.matchMedia(WIDE_QUERY).matches) {
     api.notify(`#${entity.id}:panelOpen`)
     // Return to the last valid place (or /events) without a full page reload.
-    api.notify("#router:navigate", "/events", { replace: true })
+    api.notify("#router:navigate", { to: paths.events, replace: true })
     return
   }
   // Mobile: full page as before.
-  api.notify(`#${entity.id}:listLoad`)
+  api.notify(`#${entity.id}:load`)
 }
 
 // Leaving the tab keeps the rows: the bell badge outside this page reads the

@@ -1,4 +1,10 @@
-import { DATE_ISO_LENGTH, PAD_LENGTH, SINGULAR } from "../../constants/index.js"
+import {
+  DATE_ISO_LENGTH,
+  FIRST_INDEX,
+  MONTH_INDEX_OFFSET,
+  ONE_DAY,
+  PAD_LENGTH,
+} from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import { randomId } from "../../text/index.js"
 
@@ -36,14 +42,16 @@ export function calendarLinks({ title, eventDate, location }) {
 
 // YYYY-MM-DD, or the start of an ISO timestamp, as the YYYYMMDD iCalendar uses.
 function toStamp(dateStr) {
-  return dateStr.slice(0, DATE_ISO_LENGTH).replaceAll("-", "")
+  return dateStr.slice(FIRST_INDEX, DATE_ISO_LENGTH).replaceAll("-", "")
 }
 
 function endExclusive(dateStr) {
   const [year, month, day] = dateStr.split("-").map(Number)
-  const next = new Date(Date.UTC(year, month - SINGULAR, day + SINGULAR))
+  const next = new Date(
+    Date.UTC(year, month - MONTH_INDEX_OFFSET, day + ONE_DAY),
+  )
   const pad = (value) => String(value).padStart(PAD_LENGTH, "0")
-  return `${next.getUTCFullYear()}${pad(next.getUTCMonth() + SINGULAR)}${pad(next.getUTCDate())}`
+  return `${next.getUTCFullYear()}${pad(next.getUTCMonth() + MONTH_INDEX_OFFSET)}${pad(next.getUTCDate())}`
 }
 
 function escapeIcs(text) {

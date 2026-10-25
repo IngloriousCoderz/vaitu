@@ -15,14 +15,14 @@ import { FormActions } from "../../common/form-actions/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
+  COVER_IMAGES,
   MAX_EVENT_IMAGES,
+  NO_TIME_RECORDED,
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
-  SINGULAR,
-  ZERO,
 } from "../../constants/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
-import { t } from "../../i18n/index.js"
+import { t, translated } from "../../i18n/index.js"
 import { categories, categoryById } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
@@ -96,7 +96,7 @@ export const EventCreate = {
             this.renderDetailField({
               spec,
               details,
-              error: getFieldError(entity, `details.${spec.field}`),
+              error: translated(getFieldError(entity, `details.${spec.field}`)),
               onDetailField,
             }),
           )}
@@ -108,7 +108,7 @@ export const EventCreate = {
                   field: "title",
                   value: getFieldValue(entity, "title", ""),
                   placeholder: t("create.titleExample"),
-                  error: getFieldError(entity, "title"),
+                  error: translated(getFieldError(entity, "title")),
                   isRequired: true,
                   onField,
                 })
@@ -118,7 +118,7 @@ export const EventCreate = {
             field: "location",
             value: getFieldValue(entity, "location", ""),
             placeholder: t("create.locationExample"),
-            error: getFieldError(entity, "location"),
+            error: translated(getFieldError(entity, "location")),
             isRequired: true,
             onField,
           })}
@@ -135,7 +135,7 @@ export const EventCreate = {
                   field: "region",
                   value: getFieldValue(entity, "region", ""),
                   placeholder: t("create.regionExample"),
-                  error: getFieldError(entity, "region"),
+                  error: translated(getFieldError(entity, "region")),
                   isRequired: true,
                   onField,
                 })
@@ -150,7 +150,7 @@ export const EventCreate = {
             field: "event_date",
             value: getFieldValue(entity, "event_date", ""),
             type: "date",
-            error: getFieldError(entity, "event_date"),
+            error: translated(getFieldError(entity, "event_date")),
             isRequired: true,
             onField,
           })}
@@ -159,7 +159,7 @@ export const EventCreate = {
             field: "application_deadline",
             value: getFieldValue(entity, "application_deadline", ""),
             type: "datetime-local",
-            error: getFieldError(entity, "application_deadline"),
+            error: translated(getFieldError(entity, "application_deadline")),
             isRequired: true,
             onField,
           })}
@@ -168,7 +168,7 @@ export const EventCreate = {
             field: "max_applicants",
             value: getFieldValue(entity, "max_applicants", ""),
             type: "number",
-            error: getFieldError(entity, "max_applicants"),
+            error: translated(getFieldError(entity, "max_applicants")),
             isRequired: true,
             onField,
           })}
@@ -257,7 +257,7 @@ export const EventCreate = {
                     ${t("create.listening")}`,
                 })}
                 <p class=${styles.timer}>
-                  ${formatElapsed(entity.audio_elapsed ?? ZERO)} /
+                  ${formatElapsed(entity.audio_elapsed ?? NO_TIME_RECORDED)} /
                   ${formatElapsed(AUDIO_MAX_SECONDS)}
                 </p>
                 ${Button.render({
@@ -362,7 +362,7 @@ export const EventCreate = {
     onCoverEdit,
   }) {
     const coverSrc = entity.pending_cover?.previewUrl ?? entity.cover_url
-    const galleryMax = MAX_EVENT_IMAGES - SINGULAR
+    const galleryMax = MAX_EVENT_IMAGES - COVER_IMAGES
     const gallerySaved = entity.gallery_urls ?? []
     const galleryPending = entity.pending_gallery ?? []
     const galleryCount = gallerySaved.length + galleryPending.length

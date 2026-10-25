@@ -1,6 +1,7 @@
 import { Input } from "@inglorious/ui/input"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
+import { translated } from "../../i18n/index.js"
 import { RevealToggle } from "./reveal-toggle.js"
 
 // A password input with its reveal toggle, shared by login and signup so their
@@ -26,7 +27,7 @@ export const PasswordField = {
       placeholder: "••••••••",
       isFullWidth: true,
       isRequired: true,
-      error: getFieldError(entity, field),
+      error: translated(getFieldError(entity, field)),
       onChange: (value) => onField({ field, value }),
       autocomplete,
       // The reveal button lives in the field's own trailing slot rather than

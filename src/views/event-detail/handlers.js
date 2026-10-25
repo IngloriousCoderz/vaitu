@@ -4,8 +4,13 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
 import { readUserId } from "../../api/session.js"
-import { MIN_PHOTOS_TO_NAVIGATE } from "../../constants/index.js"
-import { t } from "../../i18n/index.js"
+import { startTick } from "../../api/ticker.js"
+import {
+  DAY_MS,
+  FIRST_INDEX,
+  MIN_PHOTOS_TO_NAVIGATE,
+  NO_TIME_LEFT,
+} from "../../constants/index.js"
 import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
@@ -17,20 +22,25 @@ export function clockTick(entity) {
 }
 
 export function photoOpen(entity, index) {
-  entity.photoIndex = index ?? 0
-  entity.photoPreview = true
+  entity.photoIndex = index ?? FIRST_INDEX
+  entity.isPhotoPreviewOpen = true
 }
 
 export function photoClose(entity) {
-  entity.photoPreview = false
+  entity.isPhotoPreviewOpen = false
+}
+
+// Where a swipe on the enlarged photo began, so its end can tell which way it went.
+export function photoSwipeStart(entity, x) {
+  entity.photoSwipeX = x
 }
 
 export function photoStep(entity, delta) {
-  if (!entity.photoPreview) return
+  if (!entity.isPhotoPreviewOpen) return
   const urls = entity.event?.imageUrls ?? []
   const n = urls.length
   if (n < MIN_PHOTOS_TO_NAVIGATE) return
-  entity.photoIndex = ((entity.photoIndex ?? 0) + delta + n) % n
+  entity.photoIndex = ((entity.photoIndex ?? FIRST_INDEX) + delta + n) % n
 }
 
 // Fill blanks from the profile without clobbering what the user typed.
@@ -71,7 +81,7 @@ export const apply = handleAsync("apply", {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error(t("errors.notLoggedIn"))
+    if (!user) throw new Error("errors.notLoggedIn")
     const { error: profileError } = await supabase
       .from("profiles")
       .update({
@@ -88,7 +98,7 @@ export const apply = handleAsync("apply", {
     })
     if (error) {
       if (error.code === "23505") {
-        throw new Error(t("errors.alreadyApplied"))
+        throw new Error("errors.alreadyApplied")
       }
       throw error
     }
@@ -97,15 +107,15 @@ export const apply = handleAsync("apply", {
   success(entity, _, api) {
     entity.applyStatus = "ready"
     entity.isSubmitted = true
-    api.notify("#eventList:eventsLoad")
+    api.notify("#eventList:load")
   },
   error(entity, err) {
     entity.applyStatus = "error"
-    entity.applyError = err.message ?? t("errors.applicationFailed")
+    entity.applyError = err.message ?? "errors.applicationFailed"
   },
 })
 
-export const detailLoad = handleAsync("detailLoad", {
+export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -113,13 +123,24 @@ export const detailLoad = handleAsync("detailLoad", {
   run(event_id) {
     return fetchEventDetail(event_id)
   },
-  success(entity, { event, senderName }) {
+  success(entity, { event, senderName }, api) {
     entity.status = "ready"
     entity.event = event
     entity.senderName = senderName
+    // The last day counts down by the minute.
+    if (needsClock(event)) {
+      const id = entity.id
+      startTick("clock", () => api.notify(`#${id}:clockTick`))
+    }
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadEvent")
+    entity.error = err.message ?? "errors.loadEvent"
   },
 })
+
+function needsClock(event) {
+  if (!event?.application_deadline) return false
+  const msLeft = new Date(event.application_deadline).getTime() - Date.now()
+  return msLeft > NO_TIME_LEFT && msLeft < DAY_MS
+}

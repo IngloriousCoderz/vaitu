@@ -12,34 +12,6 @@ const REMOVE_ONE = 1
 const NEXT_STEP = 1
 const PREV_STEP = -1
 
-function isHeading(option) {
-  return formatOption(option).isDisabled
-}
-
-function enabledIndex(options, start, step) {
-  for (
-    let index = start;
-    index >= FIRST_INDEX && index < options.length;
-    index += step
-  ) {
-    if (!isHeading(options[index])) return index
-  }
-  return NO_FOCUSED_INDEX
-}
-
-function doOpen(entity) {
-  if (entity.isDisabled) return
-  entity.isOpen = true
-
-  const filtered = filterOptions(entity.options, entity.searchTerm)
-  entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
-}
-
-function doClose(entity) {
-  entity.isOpen = false
-  entity.focusedIndex = NO_FOCUSED_INDEX
-}
-
 /**
  * Initialize entity defaults (mirrors UI package's create handler).
  * @param {any} entity
@@ -218,5 +190,33 @@ export function sync(entity, value) {
 export function optionsSet(entity, options) {
   entity.options = (options ?? []).map(formatOption)
   entity.searchTerm = ""
+  entity.focusedIndex = NO_FOCUSED_INDEX
+}
+
+function isHeading(option) {
+  return formatOption(option).isDisabled
+}
+
+function enabledIndex(options, start, step) {
+  for (
+    let index = start;
+    index >= FIRST_INDEX && index < options.length;
+    index += step
+  ) {
+    if (!isHeading(options[index])) return index
+  }
+  return NO_FOCUSED_INDEX
+}
+
+function doOpen(entity) {
+  if (entity.isDisabled) return
+  entity.isOpen = true
+
+  const filtered = filterOptions(entity.options, entity.searchTerm)
+  entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
+}
+
+function doClose(entity) {
+  entity.isOpen = false
   entity.focusedIndex = NO_FOCUSED_INDEX
 }

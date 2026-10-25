@@ -63,6 +63,8 @@ Vaitu started with wedding photographers in mind, and is expanding to other kind
    pnpm install
    ```
 
+   This also installs the git hooks: before a commit, ESLint and Prettier run on the staged files; before a push, the unit tests run.
+
 2. **Start the local backend** (see [Local backend](#local-backend-supabase) for details):
 
    ```sh
@@ -277,6 +279,9 @@ Troubleshooting:
 ## Useful commands
 
 ```bash
+pnpm test                     # every test
+pnpm test:unit                # tests that need nothing running
+pnpm test:integration         # tests against the local Supabase (*.integration.test.js)
 supabase status               # URLs + keys
 supabase db reset --yes       # wipe + migrate + reseed (deletes local rows!)
 supabase migration up         # apply new migrations only

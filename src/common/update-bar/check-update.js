@@ -16,7 +16,7 @@ export const createUpdateCheck = ({
   const announce = (worker) => {
     if (!hadController || announced === worker) return
     announced = worker
-    notify("#pwaUpdate:updateReady")
+    notify("#pwaUpdate:ready")
   }
 
   // "Next time" on the update dialog arms a one-shot deferral: this is where
@@ -26,7 +26,7 @@ export const createUpdateCheck = ({
   const spendDeferral = (registration) => {
     if (!storage.getItem(UPDATE_DEFER_KEY)) return false
     storage.removeItem(UPDATE_DEFER_KEY)
-    if (registration?.waiting) notify("#pwaUpdate:updateRefresh")
+    if (registration?.waiting) notify("#pwaUpdate:refresh")
     return true
   }
 

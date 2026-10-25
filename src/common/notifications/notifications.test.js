@@ -28,32 +28,6 @@ import { readUserId } from "../../api/session.js"
 import { Notifications, pathFor } from "./index.js"
 import { NotificationsPanel } from "./template.js"
 
-// handleAsync dispatches its lifecycle through api.notify; this stand-in does
-// the same, resolving the next handler by the event name it was handed, so the
-// async chain runs to the end inside the test.
-function makeApi(entity) {
-  const api = {
-    notify(event, payload) {
-      const name = event.slice(1).split(":")[1]
-      Notifications[name]?.(entity, payload, api)
-    },
-  }
-  return api
-}
-
-const notification = (over = {}) => ({
-  id: "n1",
-  type: "application_received",
-  read: false,
-  created_at: new Date().toISOString(),
-  event_id: "e1",
-  application_id: "a1",
-  event_title: "The Marchetti wedding",
-  event_status: "open",
-  applicant_name: "Test Sender",
-  ...over,
-})
-
 beforeEach(() => {
   vi.clearAllMocks()
   readUserId.mockReturnValue("user-1")
@@ -73,7 +47,7 @@ describe("Notifications.type-composition", () => {
     const composed = store.getType("Notifications")
     expect(typeof composed.renderInbox).toBe("function")
     expect(typeof composed.renderHeader).toBe("function")
-    expect(typeof composed.listLoadRun).toBe("function")
+    expect(typeof composed.loadRun).toBe("function")
     expect(typeof composed.routeChange).toBe("function")
 
     const entity = store.getState().notifications
@@ -112,7 +86,11 @@ describe("Notifications.panelOpen", () => {
   })
 
   it("panelClose folds the drawer without dropping the rows", () => {
-    const entity = { id: "notifications", isPanelOpen: true, items: [notification()] }
+    const entity = {
+      id: "notifications",
+      isPanelOpen: true,
+      items: [notification()],
+    }
     Notifications.panelClose(entity)
     expect(entity.isPanelOpen).toBe(false)
     expect(entity.items).toHaveLength(1)
@@ -120,7 +98,7 @@ describe("Notifications.panelOpen", () => {
   })
 })
 
-describe("Notifications.listLoad", () => {
+describe("Notifications.load", () => {
   it("fills the feed, counts the unread, and binds the channel", async () => {
     const entity = { id: "notifications" }
     Notifications.create(entity)
@@ -129,7 +107,7 @@ describe("Notifications.listLoad", () => {
       notification({ id: "n2", read: true, type: "event_closed" }),
     ])
 
-    Notifications.listLoad(entity, undefined, makeApi(entity))
+    Notifications.load(entity, undefined, makeApi(entity))
     await vi.waitFor(() => expect(entity.status).toBe("ready"))
 
     expect(entity.items).toHaveLength(2)
@@ -139,7 +117,7 @@ describe("Notifications.listLoad", () => {
     const [id, config] = activateRealtime.mock.calls.at(-1)
     expect(id).toBe("notifications")
     expect(config.table).toBe("notifications")
-    expect(config.event).toBe("#notifications:listLoad")
+    expect(config.event).toBe("#notifications:load")
 
     // Another user's row never opens the door.
     readUserId.mockReturnValue("user-1")
@@ -154,7 +132,7 @@ describe("Notifications.listLoad", () => {
       Object.assign(new Error("network gone"), { message: "network gone" }),
     )
 
-    Notifications.listLoad(entity, undefined, makeApi(entity))
+    Notifications.load(entity, undefined, makeApi(entity))
     await vi.waitFor(() => expect(entity.status).toBe("error"))
 
     expect(entity.error).toBe("network gone")
@@ -169,7 +147,7 @@ describe("Notifications.readSet", () => {
       unread: 1,
       status: "ready",
     }
-    Notifications.readSet(entity, "n1")
+    Notifications.readSet(entity, "n1", makeApi(entity))
 
     expect(entity.unread).toBe(0)
     expect(entity.items[0].read).toBe(true)
@@ -184,10 +162,41 @@ describe("Notifications.readSet", () => {
       status: "ready",
     }
     markNotificationRead.mockRejectedValue(new Error("offline"))
-    Notifications.readSet(entity, "n1")
+    Notifications.readSet(entity, "n1", makeApi(entity))
 
     await vi.waitFor(() => expect(entity.unread).toBe(1))
     expect(entity.items[0].read).toBe(false)
+  })
+})
+
+describe("Notifications.readSet on a read row", () => {
+  it("writes nothing", () => {
+    const entity = {
+      id: "notifications",
+      items: [notification({ read: true })],
+      unread: 0,
+      status: "ready",
+    }
+    Notifications.readSet(entity, "n1", makeApi(entity))
+
+    expect(markNotificationRead).not.toHaveBeenCalled()
+  })
+})
+
+describe("Notifications.viewportChange", () => {
+  it("unfolds an open drawer into the page, replacing the history entry", () => {
+    const entity = { id: "notifications", isPanelOpen: true }
+    const notified = []
+    Notifications.viewportChange(
+      entity,
+      { isWide: false },
+      { notify: (type, payload) => notified.push([type, payload]) },
+    )
+
+    expect(entity.isPanelOpen).toBe(false)
+    expect(notified).toEqual([
+      ["#router:navigate", { to: "/notifications", replace: true }],
+    ])
   })
 })
 
@@ -195,11 +204,14 @@ describe("Notifications.readAll", () => {
   it("empties the badge in one go", () => {
     const entity = {
       id: "notifications",
-      items: [notification(), notification({ id: "n2", type: "event_updated" })],
+      items: [
+        notification(),
+        notification({ id: "n2", type: "event_updated" }),
+      ],
       unread: 2,
       status: "ready",
     }
-    Notifications.readAll(entity)
+    Notifications.readAll(entity, undefined, makeApi(entity))
 
     expect(entity.unread).toBe(0)
     expect(entity.items.every((item) => item.read)).toBe(true)
@@ -214,7 +226,7 @@ describe("Notifications.readAll", () => {
       status: "ready",
     }
     markAllNotificationsRead.mockRejectedValue(new Error("offline"))
-    Notifications.readAll(entity)
+    Notifications.readAll(entity, undefined, makeApi(entity))
     expect(entity.unread).toBe(0)
 
     await vi.waitFor(() => expect(entity.unread).toBe(2))
@@ -222,7 +234,7 @@ describe("Notifications.readAll", () => {
   })
 })
 
-describe("Notifications.resetForSignOut", () => {
+describe("Notifications.sessionEnd", () => {
   it("leaves nothing of the previous user behind, and closes the channel", () => {
     const entity = {
       id: "notifications",
@@ -232,7 +244,7 @@ describe("Notifications.resetForSignOut", () => {
       error: "whatever",
       isPanelOpen: true,
     }
-    Notifications.resetForSignOut(entity)
+    Notifications.sessionEnd(entity)
     expect(entity.items).toEqual([])
     expect(entity.unread).toBe(0)
     expect(entity.status).toBe("idle")
@@ -259,7 +271,9 @@ describe("pathFor", () => {
       "/applications/a1",
     )
     expect(
-      pathFor(notification({ type: "application_rejected", event_status: "open" })),
+      pathFor(
+        notification({ type: "application_rejected", event_status: "open" }),
+      ),
     ).toBe("/applications/a1")
   })
 
@@ -272,9 +286,11 @@ describe("pathFor", () => {
     expect(
       pathFor(notification({ type: "application_received", event_id: null })),
     ).toBe("/events")
-    expect(pathFor(notification({ type: "application_selected", application_id: null }))).toBe(
-      "/applications",
-    )
+    expect(
+      pathFor(
+        notification({ type: "application_selected", application_id: null }),
+      ),
+    ).toBe("/applications")
   })
 })
 
@@ -282,7 +298,10 @@ describe("NotificationsPanel.render", () => {
   it("renders the drawer open when the bell opened it, folded when not", () => {
     const entity = {
       id: "notifications",
-      items: [notification(), notification({ id: "n2", read: true, type: "event_updated" })],
+      items: [
+        notification(),
+        notification({ id: "n2", read: true, type: "event_updated" }),
+      ],
       unread: 1,
       status: "ready",
       isPanelOpen: true,
@@ -305,3 +324,31 @@ describe("NotificationsPanel.render", () => {
     expect(closed).toContain("drawer(closed)")
   })
 })
+
+// handleAsync dispatches its lifecycle through api.notify; this stand-in does
+// the same, resolving the next handler by the event name it was handed, so the
+// async chain runs to the end inside the test.
+function makeApi(entity) {
+  const api = {
+    notify(event, payload) {
+      const name = event.slice(1).split(":")[1]
+      Notifications[name]?.(entity, payload, api)
+    },
+  }
+  return api
+}
+
+function notification(over = {}) {
+  return {
+    id: "n1",
+    type: "application_received",
+    read: false,
+    created_at: new Date().toISOString(),
+    event_id: "e1",
+    application_id: "a1",
+    event_title: "The Marchetti wedding",
+    event_status: "open",
+    applicant_name: "Test Sender",
+    ...over,
+  }
+}

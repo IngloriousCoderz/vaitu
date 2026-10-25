@@ -4,7 +4,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
-import { t } from "../../i18n/index.js"
+import { t, translated } from "../../i18n/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
@@ -33,7 +33,7 @@ export const EmailStep = {
               placeholder: t("auth.emailExample"),
               isFullWidth: true,
               isRequired: true,
-              error: getFieldError(entity, "email"),
+              error: translated(getFieldError(entity, "email")),
               onChange: (value) => onField({ field: "email", value }),
               autocomplete: "username",
               autocapitalize: "none",

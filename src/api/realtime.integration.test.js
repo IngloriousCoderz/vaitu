@@ -63,11 +63,6 @@ const api = {
   },
 }
 
-function isOpen(key) {
-  const topic = `realtime:vaitu-${key}`
-  return supabase.getChannels().some((channel) => channel.topic === topic)
-}
-
 test.each(screens)(
   "$name subscribes on create and drops the channel on destroy",
   async ({ type, keys, prepare }) => {
@@ -89,3 +84,8 @@ test.each(screens)(
   },
   TEST_TIMEOUT_MS,
 )
+
+function isOpen(key) {
+  const topic = `realtime:vaitu-${key}`
+  return supabase.getChannels().some((channel) => channel.topic === topic)
+}

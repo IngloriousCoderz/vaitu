@@ -1,18 +1,20 @@
 import { Form, getFieldError } from "@inglorious/web/form"
 
-import { isTicking, startTick } from "../../api/ticker.js"
 import { pageRouteChange } from "../../common/page-route.js"
-import { DEFAULT_MAX_APPLICANTS, ZERO } from "../../constants/index.js"
+import {
+  DEFAULT_MAX_APPLICANTS,
+  NO_TIME_RECORDED,
+} from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { validateEvent } from "../../validation/events.js"
 import { categoryById } from "../event-list/categories.js"
+import * as handlers from "./handlers.js"
 import {
   clearEventImages,
   clearPendingAudio,
   releaseRecorder,
 } from "./handlers.js"
-import * as handlers from "./handlers.js"
 import { EventCreate as renderers } from "./template.js"
 
 const {
@@ -68,7 +70,7 @@ export const EventCreate = {
     entity.is_audio_open ??= false
     entity.is_transcribing ??= false
     entity.is_parsing ??= false
-    entity.audio_elapsed ??= ZERO
+    entity.audio_elapsed ??= NO_TIME_RECORDED
     entity.audio_transcript ??= null
     entity.audio_error ??= null
     entity.status ??= "idle"
@@ -140,9 +142,6 @@ export const EventCreate = {
 
   render(entity, api) {
     const id = entity.id
-    if (entity.is_recording && !isTicking("audio")) {
-      startTick("audio", () => api.notify(`#${id}:audioTick`))
-    }
     return this.renderEventCreate(
       {
         entity,
@@ -213,7 +212,7 @@ function open(entity, { event_id } = {}, api) {
   entity.is_audio_open = false
   entity.is_transcribing = false
   entity.is_parsing = false
-  entity.audio_elapsed = ZERO
+  entity.audio_elapsed = NO_TIME_RECORDED
   entity.audio_transcript = null
   entity.audio_error = null
   clearEventImages(entity)

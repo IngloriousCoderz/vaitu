@@ -1,18 +1,8 @@
 import { beforeAll, describe, expect, it } from "vitest"
 
-import { JUST_OPENED_MIN_DAYS, SINGULAR, ZERO } from "../constants/index.js"
+import { JUST_OPENED_MIN_DAYS } from "../constants/index.js"
 import { ready } from "../i18n/index.js"
 import { countdownLabel, isApplicationClosed } from "./events.js"
-
-function event(fields) {
-  return {
-    isNew: false,
-    daysLeft: ZERO,
-    hoursLeft: ZERO,
-    minutesLeft: ZERO,
-    ...fields,
-  }
-}
 
 describe("countdownLabel", () => {
   beforeAll(() => ready)
@@ -20,7 +10,7 @@ describe("countdownLabel", () => {
   it("calls a new event just opened while more than two days remain", () => {
     expect(
       countdownLabel(
-        event({ isNew: true, daysLeft: JUST_OPENED_MIN_DAYS + SINGULAR }),
+        event({ isNew: true, daysLeft: JUST_OPENED_MIN_DAYS + 1 }),
       ),
     ).toBe("Just opened — apply early")
   })
@@ -35,16 +25,16 @@ describe("countdownLabel", () => {
   })
 
   it("drops to hours, then minutes, on the last day", () => {
-    expect(countdownLabel(event({ daysLeft: SINGULAR, hoursLeft: 3 }))).toBe(
+    expect(countdownLabel(event({ daysLeft: 1, hoursLeft: 3 }))).toBe(
       "Applications close in 3 hours",
     )
-    expect(countdownLabel(event({ hoursLeft: SINGULAR }))).toBe(
+    expect(countdownLabel(event({ hoursLeft: 1 }))).toBe(
       "Applications close in 1 hour",
     )
     expect(countdownLabel(event({ minutesLeft: 3 }))).toBe(
       "Applications close in 3 minutes",
     )
-    expect(countdownLabel(event({ minutesLeft: SINGULAR }))).toBe(
+    expect(countdownLabel(event({ minutesLeft: 1 }))).toBe(
       "Applications close in 1 minute",
     )
   })
@@ -58,8 +48,18 @@ describe("countdownLabel", () => {
 
 describe("isApplicationClosed", () => {
   it("closes on the deadline and stays open before it", () => {
-    expect(isApplicationClosed(event({ daysLeft: ZERO }))).toBe(true)
+    expect(isApplicationClosed(event({ daysLeft: 0 }))).toBe(true)
     expect(isApplicationClosed(event({ daysLeft: -1 }))).toBe(true)
-    expect(isApplicationClosed(event({ daysLeft: SINGULAR }))).toBe(false)
+    expect(isApplicationClosed(event({ daysLeft: 1 }))).toBe(false)
   })
 })
+
+function event(fields) {
+  return {
+    isNew: false,
+    daysLeft: 0,
+    hoursLeft: 0,
+    minutesLeft: 0,
+    ...fields,
+  }
+}

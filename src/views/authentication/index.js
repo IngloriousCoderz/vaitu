@@ -1,7 +1,7 @@
 import { Form } from "@inglorious/web/form"
 
-import { clearAuthErrors } from "./handlers.js"
 import * as handlers from "./handlers.js"
+import { clearAuthErrors } from "./handlers.js"
 import { Authentication as renderers } from "./template.js"
 
 const { emailCheck, login, signup, ...syncHandlers } = handlers

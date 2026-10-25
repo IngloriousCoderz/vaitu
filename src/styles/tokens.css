@@ -161,8 +161,6 @@
      it at all — this is just breathing room above the fold. */
   --vpage-gap: var(--iw-space-6);
 
-  --vfab-size: var(--iw-space-14);
-
   /* iOS zooms the whole viewport when a form control it focuses is under
      16px, and there is no way to zoom back out. Keep every input, select and
      textarea at or above this floor; `font-size` below it reintroduces the

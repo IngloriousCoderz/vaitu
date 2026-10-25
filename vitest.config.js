@@ -19,7 +19,27 @@ export default defineConfig({
   test: {
     // Everything under src/ is plain logic and runs fine without a DOM.
     environment: "node",
-    include: ["src/**/*.test.js"],
     setupFiles: ["src/test/setup.js"],
+
+    // An integration test talks to the local Supabase (`supabase start`), so
+    // it is named `*.integration.test.js` and runs on its own; a unit test
+    // needs nothing running.
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: ["src/**/*.test.js"],
+          exclude: ["src/**/*.integration.test.js"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          include: ["src/**/*.integration.test.js"],
+        },
+      },
+    ],
   },
 })

@@ -15,7 +15,7 @@ describe("PwaUpdate", () => {
   it("a worker claiming a page that already ran one readies the update", () => {
     const entity = {}
     PwaUpdate.create(entity)
-    PwaUpdate.updateReady(entity)
+    PwaUpdate.ready(entity)
     expect(entity.isUpdateReady).toBe(true)
     expect(entity.isDismissed).toBe(false)
   })
@@ -23,18 +23,18 @@ describe("PwaUpdate", () => {
   it("the X does not refuse anything: it asks when to apply", () => {
     const entity = {}
     PwaUpdate.create(entity)
-    PwaUpdate.updateReady(entity)
-    PwaUpdate.updateAsk(entity)
+    PwaUpdate.ready(entity)
+    PwaUpdate.ask(entity)
     expect(entity.isDialogOpen).toBe(true)
 
     // Closing without choosing keeps the pill as it was.
-    PwaUpdate.updateDecline(entity)
+    PwaUpdate.decline(entity)
     expect(entity.isDialogOpen).toBe(false)
     expect(entity.isDismissed).toBe(false)
 
     // A later claim quiets any dialog left open.
-    PwaUpdate.updateAsk(entity)
-    PwaUpdate.updateReady(entity)
+    PwaUpdate.ask(entity)
+    PwaUpdate.ready(entity)
     expect(entity.isDialogOpen).toBe(false)
     expect(entity.isDismissed).toBe(false)
   })
@@ -42,15 +42,19 @@ describe("PwaUpdate", () => {
   it("choosing next time hides the pill and arms one boot reload", () => {
     const entity = {}
     PwaUpdate.create(entity)
-    PwaUpdate.updateReady(entity)
-    PwaUpdate.updateAsk(entity)
+    PwaUpdate.ready(entity)
+    PwaUpdate.ask(entity)
     const setItem = vi.fn()
     const originalWindow = globalThis.window
     globalThis.window = {
-      localStorage: { getItem: vi.fn(() => null), removeItem: vi.fn(), setItem },
+      localStorage: {
+        getItem: vi.fn(() => null),
+        removeItem: vi.fn(),
+        setItem,
+      },
     }
     try {
-      PwaUpdate.updateDefer(entity)
+      PwaUpdate.defer(entity)
     } finally {
       globalThis.window = originalWindow
     }
@@ -65,7 +69,9 @@ describe("PwaUpdate", () => {
     const worker = {
       state: "installed",
       listeners,
-      addEventListener(type, handler) { listeners.push(handler) },
+      addEventListener(type, handler) {
+        listeners.push(handler)
+      },
       postMessage(message) {
         expect(message.type).toBe("SKIP_WAITING")
         this.state = "activated"
@@ -76,16 +82,24 @@ describe("PwaUpdate", () => {
     const originalNavigator = navigator
     globalThis.window = { location: { reload } }
     Object.defineProperty(globalThis, "navigator", {
-      value: { serviceWorker: { getRegistration: async () => ({ waiting: worker }) } },
+      value: {
+        serviceWorker: { getRegistration: async () => ({ waiting: worker }) },
+      },
       configurable: true,
     })
     try {
-      await PwaUpdate.updateRefresh()
+      await PwaUpdate.refresh()
       globalThis.window = originalWindow
-      Object.defineProperty(globalThis, "navigator", { value: originalNavigator, configurable: true })
+      Object.defineProperty(globalThis, "navigator", {
+        value: originalNavigator,
+        configurable: true,
+      })
     } catch (error) {
       globalThis.window = originalWindow
-      Object.defineProperty(globalThis, "navigator", { value: originalNavigator, configurable: true })
+      Object.defineProperty(globalThis, "navigator", {
+        value: originalNavigator,
+        configurable: true,
+      })
       throw error
     }
     expect(reload).toHaveBeenCalledOnce()
@@ -100,10 +114,13 @@ describe("PwaUpdate", () => {
       configurable: true,
     })
     try {
-      await PwaUpdate.updateRefresh()
+      await PwaUpdate.refresh()
     } finally {
       globalThis.window = originalWindow
-      Object.defineProperty(globalThis, "navigator", { value: navigator, configurable: true })
+      Object.defineProperty(globalThis, "navigator", {
+        value: navigator,
+        configurable: true,
+      })
     }
     expect(reload).toHaveBeenCalledOnce()
   })

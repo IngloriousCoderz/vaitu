@@ -17,6 +17,7 @@ import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
+import { NO_POINTS } from "../../constants/index.js"
 import {
   canonicalRegion,
   ITALY,
@@ -489,7 +490,7 @@ export const Profile = {
             ${progress.current ? t(`ranks.tier.${progress.current}`) : t("ranks.noRank")}
           </span>`,
           html`<span class=${styles.tierPoints}
-            >${t("ranks.points", { count: stats.points ?? 0 })}</span
+            >${t("ranks.points", { count: stats.points ?? NO_POINTS })}</span
           >`,
           Progress.render({
             color: "primary",

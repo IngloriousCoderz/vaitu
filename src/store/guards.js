@@ -19,23 +19,6 @@ import { paths } from "../routes"
 const PRE_LOGIN_ROUTES = new Set(["authentication", "onboarding"])
 
 /**
- * Reads a `from` value back out of a URL. Only same-origin paths are honoured —
- * anything starting with a scheme or with `//` would send a freshly signed-in
- * visitor off the site, so it is discarded rather than followed.
- * @param {unknown} value - The raw value.
- * @returns {string | null} A safe path, or null.
- */
-function safeFrom(value) {
-  if (typeof value !== "string") return null
-  if (!value.startsWith("/") || value.startsWith("//")) return null
-  return value
-}
-
-function isPreLogin(route) {
-  return PRE_LOGIN_ROUTES.has(route)
-}
-
-/**
  * Where a signed-out visitor goes, carrying where they were headed.
  * @param {string} path - The path they tried to reach.
  * @returns {{to: string, replace: boolean}} A navigation.
@@ -110,4 +93,21 @@ export function routeGuard(entity, payload, api) {
 
 export const guards = {
   Router: [Router, { routeChange: routeGuard }],
+}
+
+/**
+ * Reads a `from` value back out of a URL. Only same-origin paths are honoured —
+ * anything starting with a scheme or with `//` would send a freshly signed-in
+ * visitor off the site, so it is discarded rather than followed.
+ * @param {unknown} value - The raw value.
+ * @returns {string | null} A safe path, or null.
+ */
+function safeFrom(value) {
+  if (typeof value !== "string") return null
+  if (!value.startsWith("/") || value.startsWith("//")) return null
+  return value
+}
+
+function isPreLogin(route) {
+  return PRE_LOGIN_ROUTES.has(route)
 }

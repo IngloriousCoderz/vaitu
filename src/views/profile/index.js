@@ -8,13 +8,13 @@ import {
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { closeAvatarCrop } from "./handlers.js"
 import * as handlers from "./handlers.js"
+import { closeAvatarCrop } from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
 const {
-  profileLoad,
-  profileSave,
+  load,
+  save,
   localeSave,
   accountDeactivate,
   logout,
@@ -25,15 +25,21 @@ const {
 export const Profile = {
   ...Form,
   ...syncHandlers,
-  ...profileLoad,
-  ...profileSave,
+  ...load,
+  ...save,
   ...localeSave,
   ...accountDeactivate,
   ...logout,
   ...avatarSave,
   ...renderers,
 
-  create(entity) {
+  // The tab bar shows the profile on every page, so it loads at sign-in
+  // rather than on the first visit to the tab.
+  sessionStart(entity, _, api) {
+    api.notify(`#${entity.id}:load`)
+  },
+
+  create(entity, _, api) {
     entity.profile ??= null
     entity.stats ??= null
     entity.isEditing ??= false
@@ -60,17 +66,21 @@ export const Profile = {
     // it: it fires from a realtime message, by which point the draft this
     // entity was is revoked and reading entity.id throws.
     const id = entity.id
-    activateRealtime(id, {
-      table: "applications",
-      event: `#${id}:profileLoad`,
-      match: (change, state) => {
-        const applicantId = state[id]?.profile?.id
-        return (
-          applicantId != null &&
-          realtimeColumn(change, "applicant_id") === applicantId
-        )
+    activateRealtime(
+      id,
+      {
+        table: "applications",
+        event: `#${id}:load`,
+        match: (change, state) => {
+          const applicantId = state[id]?.profile?.id
+          return (
+            applicantId != null &&
+            realtimeColumn(change, "applicant_id") === applicantId
+          )
+        },
       },
-    })
+      api,
+    )
   },
 
   destroy(entity) {
@@ -90,20 +100,19 @@ export const Profile = {
         entity,
         onCancel: () => api.notify(`#${id}:editCancel`),
         onField: ({ field, value }) =>
-          api.notify(`#${id}:profileFieldSet`, { field, value }),
+          api.notify(`#${id}:fieldSet`, { field, value }),
         onFavoriteInput: (value) =>
           api.notify(`#${id}:favoriteInputSet`, value),
         onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
         onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
-        onSave: () => api.notify(`#${id}:profileSave`, { ...entity.values }),
+        onSave: () => api.notify(`#${id}:save`, { ...entity.values }),
         onEdit: () => api.notify(`#${id}:editStart`),
         onPhoto: (file) => api.notify(`#${id}:avatarCropOpen`, file),
         onPhotoCropCancel: () => api.notify(`#${id}:avatarCropCancel`),
         onPhotoCropApply: (rect) => api.notify(`#${id}:avatarSave`, { rect }),
         onLogout: () => api.notify(`#${id}:logout`),
         onDeactivateAsk: () => api.notify(`#${id}:accountDeactivateAsk`),
-        onDeactivateCancel: () =>
-          api.notify(`#${id}:accountDeactivateCancel`),
+        onDeactivateCancel: () => api.notify(`#${id}:accountDeactivateCancel`),
         onDeactivate: () => api.notify(`#${id}:accountDeactivate`),
         onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
         onOpenApplications: (status) =>
@@ -115,7 +124,7 @@ export const Profile = {
 }
 
 function open(entity, _, api) {
-  api.notify(`#${entity.id}:profileLoad`)
+  api.notify(`#${entity.id}:load`)
 }
 
 function close(entity) {

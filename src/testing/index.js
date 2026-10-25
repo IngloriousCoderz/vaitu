@@ -55,24 +55,6 @@ export function coupleTitle(id) {
   return `Ada${id} & Ben${id}`
 }
 
-// The signed-in user only. A shared title must not match another account's row.
-async function ownedEventId(title) {
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
-  if (authError) throw authError
-  if (!user) throw new Error("Not logged in")
-  const { data, error } = await supabase
-    .from("events")
-    .select("id")
-    .eq("title", title)
-    .eq("sender_id", user.id)
-    .maybeSingle()
-  if (error) throw error
-  return data?.id ?? null
-}
-
 export async function createEventAs(account, id, deadline, fields) {
   await signIn(account)
   const payload = { ...eventPayload(id, deadline), ...fields }
@@ -112,6 +94,24 @@ export async function removeStoredFile(bucket, path) {
     .storage.from(bucket)
     .remove([path])
   if (error) throw error
+}
+
+// The signed-in user only. A shared title must not match another account's row.
+async function ownedEventId(title) {
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser()
+  if (authError) throw authError
+  if (!user) throw new Error("Not logged in")
+  const { data, error } = await supabase
+    .from("events")
+    .select("id")
+    .eq("title", title)
+    .eq("sender_id", user.id)
+    .maybeSingle()
+  if (error) throw error
+  return data?.id ?? null
 }
 
 function serviceRoleClient() {

@@ -3,6 +3,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 
+import { COVER_INDEX } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import {
   deadlineBadge,
@@ -32,7 +33,7 @@ export const Card = {
     style,
   }) {
     const tone = deadlineTone(event)
-    const photo = event.imageUrls?.[0]
+    const photo = event.imageUrls?.[COVER_INDEX]
     const cardClass = [
       styles.card,
       divider ? "" : styles.cardFlat,

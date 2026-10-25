@@ -27,9 +27,7 @@ export const UpdateBar = {
         gap: "sm",
         className: styles.row,
         children: [
-          html`<span class=${styles.message}
-            >${t("pwa.updateReady")}</span
-          >`,
+          html`<span class=${styles.message}>${t("pwa.updateReady")}</span>`,
           Button.render({
             children: t("pwa.refresh"),
             variant: "primary",

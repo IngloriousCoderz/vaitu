@@ -7,7 +7,6 @@ import {
   MIN_PASSWORD_LENGTH,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
-import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { landingForSession } from "../../store/guards.js"
 
@@ -113,7 +112,7 @@ export const emailCheck = handleAsync("emailCheck", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.checkEmail")
+    entity.error = err.message ?? "errors.checkEmail"
   },
 })
 
@@ -136,8 +135,8 @@ export const login = handleAsync("login", {
     // Written before the notification, so the guard that the navigation raises
     // reads a signed-in visitor. Ordering is the whole trick here.
     writeUser(user)
-    api.notify("#eventList:eventsLoad")
-    api.notify("#profile:profileLoad")
+    api.notify("#eventList:load")
+    api.notify("#profile:load")
     const router = api.getEntity(ROUTER)
     api.notify("#router:navigate", {
       to: landingForSession(router),
@@ -146,7 +145,7 @@ export const login = handleAsync("login", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.login")
+    entity.error = err.message ?? "errors.login"
   },
 })
 
@@ -172,35 +171,38 @@ export const signup = handleAsync("signup", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.signup")
+    entity.error = err.message ?? "errors.signup"
   },
 })
 
 function validateEmail(values) {
   const errors = {}
   if (!EMAIL.test((values.email ?? "").trim())) {
-    errors.email = t("validation.validEmail")
+    errors.email = "validation.validEmail"
   }
   return errors
 }
 
 function validateLogin(values) {
   const errors = {}
-  if (!values.password) errors.password = t("validation.passwordRequired")
+  if (!values.password) errors.password = "validation.passwordRequired"
   return errors
 }
 
 function validateSignup(values) {
   const errors = {}
   if (!(values.full_name ?? "").trim())
-    errors.full_name = t("validation.nameRequired")
+    errors.full_name = "validation.nameRequired"
   if ((values.password ?? "").length < MIN_PASSWORD_LENGTH) {
-    errors.password = t("validation.passwordLength", {
-      count: MIN_PASSWORD_LENGTH,
-    })
+    errors.password = {
+      key: "validation.passwordLength",
+      values: {
+        count: MIN_PASSWORD_LENGTH,
+      },
+    }
   }
   if (values.password !== values.confirmPassword) {
-    errors.confirmPassword = t("validation.passwordsMismatch")
+    errors.confirmPassword = "validation.passwordsMismatch"
   }
   return errors
 }

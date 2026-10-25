@@ -1,5 +1,6 @@
 import { html } from "@inglorious/web"
 
+import { translated } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 // The quiet line a page shows instead of its content: an error, a loading
@@ -19,7 +20,7 @@ export const PageStatus = {
     isEmpty = false,
     emptyText,
   }) {
-    if (isError) return html`<p class=${styles.status}>${error}</p>`
+    if (isError) return html`<p class=${styles.status}>${translated(error)}</p>`
     if (isLoading) return html`<p class=${styles.status}>${loadingText}</p>`
     if (isEmpty) return html`<p class=${styles.status}>${emptyText}</p>`
     return null

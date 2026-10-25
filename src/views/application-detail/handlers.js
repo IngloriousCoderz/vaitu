@@ -7,7 +7,6 @@ import {
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
-import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
@@ -31,7 +30,7 @@ export function withdrawCancel(entity) {
   entity.isConfirmingWithdraw = false
 }
 
-export const applicationLoad = handleAsync("applicationLoad", {
+export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -46,7 +45,7 @@ export const applicationLoad = handleAsync("applicationLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadApplication")
+    entity.error = err.message ?? "errors.loadApplication"
   },
 })
 
@@ -64,7 +63,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.save")
+    entity.error = err.message ?? "errors.save"
   },
 })
 
@@ -79,12 +78,12 @@ export const withdraw = handleAsync("withdraw", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.isConfirmingWithdraw = false
-    api.notify("#eventList:eventsLoad")
+    api.notify("#eventList:load")
     api.notify("#router:navigate", paths.applications)
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.withdraw")
+    entity.error = err.message ?? "errors.withdraw"
   },
 })
 
@@ -103,6 +102,6 @@ export const giveUp = handleAsync("giveUp", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.giveUp")
+    entity.error = err.message ?? "errors.giveUp"
   },
 })

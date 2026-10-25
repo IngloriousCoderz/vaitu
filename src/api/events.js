@@ -8,9 +8,13 @@ import {
   HUE_DEGREES,
   JUST_OPENED_MIN_DAYS,
   MINUTES_PER_HOUR,
+  NO_DAYS_LEFT,
+  NO_TIME_LEFT,
+  NOT_FOUND,
+  ONE_DAY,
+  ONE_HOUR,
+  ONE_MINUTE,
   REQUEST_TIMEOUT_MS,
-  SINGULAR,
-  ZERO,
 } from "../constants/index.js"
 import { canonicalRegion, uniqueRegions } from "../data/regions/resolve.js"
 import { t } from "../i18n/index.js"
@@ -23,8 +27,14 @@ import {
 import { supabase } from "./client.js"
 import { deleteImage, imageRefFromUrl } from "./images.js"
 
+const NO_APPLICATIONS = 0
+const ONE_APPLICATION = 1
+
 const NEW_THRESHOLD_DAYS = 3
 const NEW_THRESHOLD_MS = NEW_THRESHOLD_DAYS * DAY_MS
+
+const AUDIO_BUCKET = "event-audio"
+
 // Boundary layer: rows → generic view models. Field names mirror the DB
 // (snake_case, no conversion); only display derivations happen here.
 export function toViewModel(row) {
@@ -87,21 +97,21 @@ export function toViewModel(row) {
 export function countdownLabel(event) {
   if (event.isNew && event.daysLeft > JUST_OPENED_MIN_DAYS)
     return t("countdown.justOpened")
-  if (event.daysLeft > SINGULAR)
+  if (event.daysLeft > ONE_DAY)
     return t("countdown.days", { count: event.daysLeft })
-  if (event.hoursLeft > SINGULAR)
+  if (event.hoursLeft > ONE_HOUR)
     return t("countdown.hours", { count: event.hoursLeft })
-  if (event.minutesLeft > SINGULAR)
+  if (event.minutesLeft > ONE_MINUTE)
     return t("countdown.minutes", { count: event.minutesLeft })
-  if (event.minutesLeft === SINGULAR)
+  if (event.minutesLeft === ONE_MINUTE)
     return t("countdown.minutes", { count: event.minutesLeft })
-  if (event.hoursLeft === SINGULAR)
+  if (event.hoursLeft === ONE_HOUR)
     return t("countdown.hours", { count: event.hoursLeft })
   return t("countdown.closed")
 }
 
 export function isApplicationClosed(event) {
-  return event.daysLeft <= ZERO
+  return event.daysLeft <= NO_DAYS_LEFT
 }
 
 export async function fetchEventDetail(id) {
@@ -129,14 +139,14 @@ export async function fetchEventDetail(id) {
       max_applicants: event.max_applicants,
       application_deadline: event.application_deadline,
       hoursLeft: Math.max(
-        ZERO,
+        NO_TIME_LEFT,
         Math.ceil(
           (new Date(event.application_deadline).getTime() - Date.now()) /
             HOUR_MS,
         ),
       ),
       minutesLeft: Math.max(
-        ZERO,
+        NO_TIME_LEFT,
         Math.ceil(
           (new Date(event.application_deadline).getTime() - Date.now()) /
             (HOUR_MS / MINUTES_PER_HOUR),
@@ -173,11 +183,12 @@ export async function fetchMyEvents() {
   if (applicationsError) throw applicationsError
   const counts = {}
   for (const row of applications ?? []) {
-    counts[row.event_id] = (counts[row.event_id] ?? ZERO) + SINGULAR
+    counts[row.event_id] =
+      (counts[row.event_id] ?? NO_APPLICATIONS) + ONE_APPLICATION
   }
   return events.map((row) => ({
     ...toViewModel(row),
-    applications_count: counts[row.id] ?? ZERO,
+    applications_count: counts[row.id] ?? NO_APPLICATIONS,
   }))
 }
 
@@ -192,16 +203,6 @@ export async function fetchOpenEvents() {
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return data.map(toViewModel)
-}
-
-// The form only has room for one message, so the first error stands in for the
-// whole set. Validating and normalizing stay separate: one decides whether the
-// write is allowed, the other decides what the row looks like.
-function prepareEvent(payload) {
-  const errors = validateEvent(payload)
-  const message = firstError(errors)
-  if (message) throw new Error(message)
-  return normalizeEvent(payload)
 }
 
 export async function createEvent(payload) {
@@ -270,27 +271,6 @@ export async function deleteEvent(event_id) {
   return true
 }
 
-async function removeEventAssets(event) {
-  const jobs = (event?.image_urls ?? []).map((url) => {
-    const ref = imageRefFromUrl(url)
-    return ref ? deleteImage(ref.path, ref.bucket) : Promise.resolve()
-  })
-  const audioPath = audioPathFromUrl(event?.audio_url)
-  if (audioPath) jobs.push(deleteEventAudio(audioPath))
-  await Promise.all(jobs)
-}
-
-const AUDIO_BUCKET = "event-audio"
-
-function audioPathFromUrl(url) {
-  if (typeof url !== "string") return null
-  const marker = `/${AUDIO_BUCKET}/`
-  const index = url.indexOf(marker)
-  if (index < 0) return null
-  const path = url.slice(index + marker.length).split(/[?#]/)[0]
-  return path ? decodeURIComponent(path) : null
-}
-
 export async function uploadEventAudio(blob) {
   const {
     data: { user },
@@ -355,4 +335,33 @@ export async function parseEvent(transcript) {
   })
   if (error) throw error
   return data?.fields ?? {}
+}
+
+// The form only has room for one message, so the first error stands in for the
+// whole set. Validating and normalizing stay separate: one decides whether the
+// write is allowed, the other decides what the row looks like.
+function prepareEvent(payload) {
+  const errors = validateEvent(payload)
+  const message = firstError(errors)
+  if (message) throw new Error(message)
+  return normalizeEvent(payload)
+}
+
+async function removeEventAssets(event) {
+  const jobs = (event?.image_urls ?? []).map((url) => {
+    const ref = imageRefFromUrl(url)
+    return ref ? deleteImage(ref.path, ref.bucket) : Promise.resolve()
+  })
+  const audioPath = audioPathFromUrl(event?.audio_url)
+  if (audioPath) jobs.push(deleteEventAudio(audioPath))
+  await Promise.all(jobs)
+}
+
+function audioPathFromUrl(url) {
+  if (typeof url !== "string") return null
+  const marker = `/${AUDIO_BUCKET}/`
+  const index = url.indexOf(marker)
+  if (index === NOT_FOUND) return null
+  const [path] = url.slice(index + marker.length).split(/[?#]/)
+  return path ? decodeURIComponent(path) : null
 }

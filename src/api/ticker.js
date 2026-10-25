@@ -1,13 +1,8 @@
 import { MS_PER_SECOND } from "../constants/index.js"
 
-// Deferred notifies. Owned by the render layer (index.js), which holds a
-// stable api — handler api proxies are revoked after dispatch, so handlers
-// must never schedule deferred notifies. Handlers only stop their own key.
+// Repeating notifies, one per key. A handler starts one with its api, which is
+// the store's own and outlives the handler, and stops it by the same key.
 const timers = {}
-
-export function isTicking(key) {
-  return timers[key] != null
-}
 
 export function startTick(key, notify, intervalMs = MS_PER_SECOND) {
   stopTick(key)

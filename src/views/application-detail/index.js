@@ -9,23 +9,22 @@ import {
   realtimeColumn,
 } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
-import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
-const { applicationLoad, save, withdraw, giveUp, ...syncHandlers } = handlers
+const { load, save, withdraw, giveUp, ...syncHandlers } = handlers
 
 export const ApplicationDetail = {
   ...Form,
   ...syncHandlers,
-  ...applicationLoad,
+  ...load,
   ...save,
   ...withdraw,
   ...giveUp,
   ...renderers,
 
-  create(entity) {
+  create(entity, _, api) {
     entity.application_id ??= null
     entity.application ??= null
     entity.initialValues = { motivation: "" }
@@ -38,18 +37,22 @@ export const ApplicationDetail = {
     // built them: they fire from a realtime message, by which point the
     // draft this entity was is revoked and reading entity.id throws.
     const id = entity.id
-    activateRealtime(id, {
-      table: "applications",
-      event: `#${id}:applicationLoad`,
-      payload: (state) => state[id]?.application_id,
-      match: (change, state) => {
-        const applicationId = state[id]?.application_id
-        return (
-          applicationId != null &&
-          realtimeColumn(change, "id") === applicationId
-        )
+    activateRealtime(
+      id,
+      {
+        table: "applications",
+        event: `#${id}:load`,
+        payload: (state) => state[id]?.application_id,
+        match: (change, state) => {
+          const applicationId = state[id]?.application_id
+          return (
+            applicationId != null &&
+            realtimeColumn(change, "id") === applicationId
+          )
+        },
       },
-    })
+      api,
+    )
   },
 
   destroy(entity) {
@@ -113,7 +116,7 @@ export const ApplicationDetail = {
 function validateMotivation(values) {
   const errors = {}
   if (!(values.motivation ?? "").trim()) {
-    errors.motivation = t("validation.motivationRequired")
+    errors.motivation = "validation.motivationRequired"
   }
   return errors
 }
@@ -124,7 +127,7 @@ function open(entity, { application_id }, api) {
   entity.isConfirmingWithdraw = false
   entity.isConfirmingGiveUp = false
   Form.reset(entity)
-  api.notify(`#${entity.id}:applicationLoad`, application_id)
+  api.notify(`#${entity.id}:load`, application_id)
 }
 
 function close(entity) {

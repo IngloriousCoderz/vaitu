@@ -22,8 +22,12 @@ import {
   sameRegion,
   uniqueRegions,
 } from "../../data/regions/resolve.js"
-import { t } from "../../i18n/index.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
+
+// The picked file stays outside the entity (not serialisable store data) while
+// the user frames it.
+/** @type {File | null} */
+let avatarFile = null
 
 export function editStart(entity, _, api) {
   entity.isEditing = true
@@ -43,25 +47,12 @@ export function editStart(entity, _, api) {
   syncFavoriteCombobox(entity, api)
 }
 
-function syncFavoriteCombobox(entity, api) {
-  if (!api) return
-  const events = api.getEntity("eventList")?.events ?? []
-  api.notify("#favorite-region-profile:sync", "")
-  api.notify(
-    "#favorite-region-profile:optionsSet",
-    favoriteRegionOptions(
-      events.map((event) => event.region),
-      entity.values?.favorite_regions ?? [],
-    ),
-  )
-}
-
 export function editCancel(entity) {
   entity.isEditing = false
   entity.error = null
 }
 
-export function profileFieldSet(entity, { field, value }, api) {
+export function fieldSet(entity, { field, value }, api) {
   if (!entity.isEditing) return
   if (field === "country") {
     const previous = entity.values.country ?? ""
@@ -126,17 +117,7 @@ export function favoriteRemove(entity, value, api) {
   syncFavoriteCombobox(entity, api)
 }
 
-// Token valid but user row gone (db reset), or auth rejected the token.
-// Network blips must NOT log out — only auth/row-gone errors.
-function isSessionDead(err) {
-  if (!err) return false
-  if (err.code === "PGRST116") return true
-  return /not logged in|jwt|expired|invalid.*token|user not found/i.test(
-    err.message ?? "",
-  )
-}
-
-export const profileLoad = handleAsync("profileLoad", {
+export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
@@ -145,7 +126,7 @@ export const profileLoad = handleAsync("profileLoad", {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error(t("errors.notLoggedIn"))
+    if (!user) throw new Error("errors.notLoggedIn")
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
@@ -201,12 +182,12 @@ export const profileLoad = handleAsync("profileLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadProfile")
+    entity.error = err.message ?? "errors.loadProfile"
     if (isSessionDead(err)) void endSession()
   },
 })
 
-export const profileSave = handleAsync("profileSave", {
+export const save = handleAsync("save", {
   start(entity) {
     entity.status = "saving"
     entity.error = null
@@ -215,7 +196,7 @@ export const profileSave = handleAsync("profileSave", {
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error(t("errors.notLoggedIn"))
+    if (!user) throw new Error("errors.notLoggedIn")
     const website = (profile.website ?? "").trim().toLowerCase()
     const instagram = (profile.instagram_handle ?? "")
       .trim()
@@ -250,27 +231,22 @@ export const profileSave = handleAsync("profileSave", {
     entity.status = "ready"
     entity.profile = { ...entity.profile, ...profile }
     entity.isEditing = false
-    api.notify("#eventList:eventsLoad")
+    api.notify("#eventList:load")
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.saveProfile")
+    entity.error = err.message ?? "errors.saveProfile"
   },
 })
-
-// The picked file stays outside the entity (not serialisable store data) while
-// the user frames it.
-/** @type {File | null} */
-let avatarFile = null
 
 export function avatarCropOpen(entity, file, api) {
   entity.avatarError = null
   if (!imageExtension(file?.type)) {
-    entity.avatarError = t("errors.imageType")
+    entity.avatarError = "errors.imageType"
     return
   }
   if (file.size > AVATAR_MAX_BYTES) {
-    entity.avatarError = t("errors.avatarSize")
+    entity.avatarError = "errors.avatarSize"
     return
   }
   revokeAvatarPreview(entity)
@@ -293,10 +269,6 @@ export function closeAvatarCrop(entity) {
   entity.isAvatarCropOpen = false
 }
 
-function revokeAvatarPreview(entity) {
-  if (entity.avatarPreviewUrl) URL.revokeObjectURL(entity.avatarPreviewUrl)
-}
-
 export const avatarSave = handleAsync("avatarSave", {
   start(entity) {
     entity.avatarStatus = "saving"
@@ -304,11 +276,11 @@ export const avatarSave = handleAsync("avatarSave", {
   },
   async run({ rect } = {}) {
     const file = avatarFile
-    if (!file || !rect) throw new Error(t("errors.imageCrop"))
+    if (!file || !rect) throw new Error("errors.imageCrop")
     const {
       data: { user },
     } = await supabase.auth.getUser()
-    if (!user) throw new Error(t("errors.notLoggedIn"))
+    if (!user) throw new Error("errors.notLoggedIn")
 
     // Crop the framed square and downscale it on the client before it reaches
     // the bucket, which also strips camera metadata.
@@ -320,7 +292,7 @@ export const avatarSave = handleAsync("avatarSave", {
         maxHeight: AVATAR_SIZE,
       })
     } catch {
-      throw new Error(t("errors.imageCrop"))
+      throw new Error("errors.imageCrop")
     }
 
     const uploaded = await uploadAvatar(createImageFile(blob, "avatar.jpg"))
@@ -350,7 +322,7 @@ export const avatarSave = handleAsync("avatarSave", {
   },
   error(entity, err) {
     entity.avatarStatus = "idle"
-    entity.avatarError = err.message ?? t("errors.saveProfile")
+    entity.avatarError = err.message ?? "errors.saveProfile"
   },
 })
 
@@ -407,7 +379,7 @@ export const accountDeactivate = handleAsync("accountDeactivate", {
   },
   error(entity) {
     entity.deactivateStatus = "idle"
-    entity.deactivateError = t("errors.deactivateAccount")
+    entity.deactivateError = "errors.deactivateAccount"
   },
 })
 
@@ -423,6 +395,33 @@ export const logout = handleAsync("logout", {
     // Clearing the session is enough — the guard moves the visitor to /login.
   },
   error(entity, err) {
-    entity.error = err.message ?? t("errors.logout")
+    entity.error = err.message ?? "errors.logout"
   },
 })
+
+function syncFavoriteCombobox(entity, api) {
+  if (!api) return
+  const events = api.getEntity("eventList")?.events ?? []
+  api.notify("#favorite-region-profile:sync", "")
+  api.notify(
+    "#favorite-region-profile:optionsSet",
+    favoriteRegionOptions(
+      events.map((event) => event.region),
+      entity.values?.favorite_regions ?? [],
+    ),
+  )
+}
+
+// Token valid but user row gone (db reset), or auth rejected the token.
+// Network blips must NOT log out — only auth/row-gone errors.
+function isSessionDead(err) {
+  if (!err) return false
+  if (err.code === "PGRST116") return true
+  return /not logged in|jwt|expired|invalid.*token|user not found/i.test(
+    err.message ?? "",
+  )
+}
+
+function revokeAvatarPreview(entity) {
+  if (entity.avatarPreviewUrl) URL.revokeObjectURL(entity.avatarPreviewUrl)
+}

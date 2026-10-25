@@ -10,8 +10,11 @@ import { html } from "@inglorious/web"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
+import { NO_POINTS } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
+
+const RANK_ORDER = ["bronze", "silver", "gold"]
 
 export const Ranks = {
   render(props, api) {
@@ -52,7 +55,7 @@ export const Ranks = {
                         ${progress.current ? t(`ranks.tier.${progress.current}`) : t("ranks.noRank")}
                       </span>`,
                       html`<span class=${styles.heroPoints}
-                        >${t("ranks.points", { count: mine?.points ?? 0 })}</span
+                        >${t("ranks.points", { count: mine?.points ?? NO_POINTS })}</span
                       >`,
                       Progress.render({
                         value: progress.percent,
@@ -163,8 +166,6 @@ export const Ranks = {
     })
   },
 }
-
-const RANK_ORDER = ["bronze", "silver", "gold"]
 
 function rankMin(tiers, rank) {
   if (rank === "gold") return tiers.goldMin

@@ -2,7 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { defaultTiers } from "../../common/tiers.js"
-import { t } from "../../i18n/index.js"
+import { NO_POINTS } from "../../constants/index.js"
 
 const DEFAULT_TIERS = defaultTiers()
 
@@ -38,7 +38,7 @@ export const tiersLoad = handleAsync("tiersLoad", {
         .select("points, tier")
         .eq("applicant_id", user.id)
         .maybeSingle()
-      if (stats) mine = { points: stats.points ?? 0, tier: stats.tier }
+      if (stats) mine = { points: stats.points ?? NO_POINTS, tier: stats.tier }
     }
     return { tiers, mine }
   },
@@ -49,6 +49,6 @@ export const tiersLoad = handleAsync("tiersLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadRanks")
+    entity.error = err.message ?? "errors.loadRanks"
   },
 })

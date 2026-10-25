@@ -1,6 +1,7 @@
 // Rank thresholds and progress. The tiers table is configuration rather than
 // view state, so both the profile and the ranks view read it from here.
 import {
+  NO_POINTS,
   PERCENT_MAX,
   POINTS_PER_APPLICATION,
   POINTS_PER_SELECTION,
@@ -8,7 +9,6 @@ import {
   TIER_BRONZE_MIN_POINTS,
   TIER_GOLD_MIN_POINTS,
   TIER_SILVER_MIN_POINTS,
-  ZERO,
 } from "../constants/index.js"
 import { t } from "../i18n/index.js"
 
@@ -24,7 +24,7 @@ export function defaultTiers() {
 }
 
 export function tierProgress(points, tiers) {
-  const earned = points ?? ZERO
+  const earned = points ?? NO_POINTS
   if (earned >= tiers.goldMin)
     return { current: "gold", next: null, nextMin: null, percent: PERCENT_MAX }
   if (earned >= tiers.silverMin)
@@ -58,7 +58,7 @@ export function tierProgress(points, tiers) {
 export function progressLabel(points, tiers) {
   const progress = tierProgress(points, tiers)
   if (!progress.nextMin) return t("ranks.maxReached")
-  const earned = points ?? ZERO
+  const earned = points ?? NO_POINTS
   const missing = progress.nextMin - earned
   return t("ranks.toNext", {
     points: t("ranks.points", { count: missing }),

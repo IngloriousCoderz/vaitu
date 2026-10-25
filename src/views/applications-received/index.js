@@ -8,23 +8,22 @@ import {
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { clearReopenError } from "./handlers.js"
 import * as handlers from "./handlers.js"
+import { clearReopenError } from "./handlers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
 
-const { receivedLoad, statusSet, winnerAssign, eventReopen, ...syncHandlers } =
-  handlers
+const { load, statusSet, winnerAssign, eventReopen, ...syncHandlers } = handlers
 
 export const ApplicationsReceived = {
   ...Form,
   ...syncHandlers,
-  ...receivedLoad,
+  ...load,
   ...statusSet,
   ...winnerAssign,
   ...eventReopen,
   ...renderers,
 
-  create(entity) {
+  create(entity, _, api) {
     entity.event_id ??= null
     entity.event_title ??= ""
     entity.event_status ??= "open"
@@ -38,7 +37,7 @@ export const ApplicationsReceived = {
     entity.confirming_assign ??= null
     entity.confirming_reopen ??= false
     entity.photoIndex ??= 0
-    entity.photoPreview ??= false
+    entity.isPhotoPreviewOpen ??= false
     entity.items ??= []
     entity.status ??= "idle"
     entity.error ??= null
@@ -46,15 +45,21 @@ export const ApplicationsReceived = {
     // built them: they fire from a realtime message, by which point the
     // draft this entity was is revoked and reading entity.id throws.
     const id = entity.id
-    activateRealtime(id, {
-      table: "applications",
-      event: `#${id}:receivedLoad`,
-      payload: (state) => state[id]?.event_id,
-      match: (change, state) => {
-        const eventId = state[id]?.event_id
-        return eventId != null && realtimeColumn(change, "event_id") === eventId
+    activateRealtime(
+      id,
+      {
+        table: "applications",
+        event: `#${id}:load`,
+        payload: (state) => state[id]?.event_id,
+        match: (change, state) => {
+          const eventId = state[id]?.event_id
+          return (
+            eventId != null && realtimeColumn(change, "event_id") === eventId
+          )
+        },
       },
-    })
+      api,
+    )
   },
 
   destroy(entity) {
@@ -135,6 +140,8 @@ export const ApplicationsReceived = {
         onPhotoOpen: (index) => api.notify(`#${id}:photoOpen`, index),
         onPhotoClose: () => api.notify(`#${id}:photoClose`),
         onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
+        dir: api.getEntity("i18n").dir,
+        onPhotoSwipeStart: (x) => api.notify(`#${id}:photoSwipeStart`, x),
       },
       api,
     )
@@ -154,8 +161,8 @@ function open(entity, event_id, api) {
   entity.expanded_application_id = null
   entity.confirming_assign = null
   entity.photoIndex = 0
-  entity.photoPreview = false
-  api.notify(`#${entity.id}:receivedLoad`, event_id)
+  entity.isPhotoPreviewOpen = false
+  api.notify(`#${entity.id}:load`, event_id)
 }
 
 function close(entity) {
@@ -169,7 +176,7 @@ function close(entity) {
   entity.confirming_reopen = false
   entity.reopen_deadline = ""
   entity.photoIndex = 0
-  entity.photoPreview = false
+  entity.isPhotoPreviewOpen = false
   clearReopenError(entity)
   entity.status = "idle"
   entity.error = null

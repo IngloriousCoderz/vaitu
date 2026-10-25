@@ -9,7 +9,7 @@ import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
-import { t } from "../../i18n/index.js"
+import { t, translated } from "../../i18n/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -111,7 +111,9 @@ export const ApplicationDetail = {
                               value: motivation,
                               rows: 5,
                               isFullWidth: true,
-                              error: getFieldError(entity, "motivation"),
+                              error: translated(
+                                getFieldError(entity, "motivation"),
+                              ),
                               onChange: (value) =>
                                 onField({ field: "motivation", value }),
                             })}

@@ -19,11 +19,13 @@ import {
   imageRefFromUrl,
   uploadEventImage,
 } from "../../api/images.js"
-import { stopTick } from "../../api/ticker.js"
+import { startTick, stopTick } from "../../api/ticker.js"
 import { createImageFile } from "../../common/image.js"
 import {
   APPLICATION_DEADLINE_LEAD_DAYS,
   AUDIO_MAX_SECONDS,
+  COVER_IMAGES,
+  COVER_INDEX,
   COVER_OUTPUT_HEIGHT,
   COVER_OUTPUT_WIDTH,
   DATE_ISO_LENGTH,
@@ -36,20 +38,21 @@ import {
   MAX_EVENT_IMAGES,
   MIN_AUDIO_BYTES,
   MONTH_INDEX_OFFSET,
+  NO_TIME_RECORDED,
+  ONE_SECOND,
   PAD_LENGTH,
-  SINGULAR,
-  ZERO,
 } from "../../constants/index.js"
 import { weddingStyles } from "../../data/event-taxonomy.js"
 import {
   regionAfterCountryChange,
   regionForCountry,
 } from "../../data/regions/resolve.js"
-import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls } from "./helpers.js"
+
+const NO_ROOM = 0
 
 // Module-scope recorder state (never in the entity: not serializable).
 let mediaRecorder = null
@@ -62,11 +65,14 @@ let pendingUrl = null
 let removedPath = null
 let recordStartedAt = null
 
-function audioPathFromUrl(url) {
-  if (typeof url !== "string") return null
-  const [, path] = url.split("/event-audio/")
-  return path ?? null
-}
+const FILLABLE_DETAILS = ["spouse_first_name_1", "spouse_first_name_2", "style"]
+
+// File blobs stay outside the entity (not serialisable store data). The entity
+// only keeps id + previewUrl + crop fractions.
+/** @type {Map<string, { file: File | null, sourceFile: File | null }>} */
+const pendingImageFiles = new Map()
+/** @type {File | null} */
+let cropSessionFile = null
 
 export function releaseRecorder() {
   stopTick("audio")
@@ -93,26 +99,6 @@ export function clearPendingAudio() {
   }
 }
 
-// Drops the un-saved take; deletes its bucket file when asked.
-// Keeps the preview URL when the current take still needs its player.
-async function dropPendingAudio(deleteFile, keepPreview = false) {
-  const path = pendingPath
-  pendingBlob = null
-  pendingPath = null
-  pendingUrl = null
-  if (!keepPreview && previewUrl) {
-    URL.revokeObjectURL(previewUrl)
-    previewUrl = null
-  }
-  if (deleteFile && path) {
-    try {
-      await deleteEventAudio(path)
-    } catch {
-      // Orphan file stays in the bucket; harmless for the spike.
-    }
-  }
-}
-
 export function fieldSet(entity, { field, value }, api) {
   if (field === "country") {
     const previous = getFieldValue(entity, "country", "")
@@ -128,44 +114,6 @@ export function fieldSet(entity, { field, value }, api) {
     Form.fieldChange(entity, { path: field, value })
   }
   entity.error = null
-}
-
-function shiftDate(dateStr, days) {
-  const [year, month, day] = dateStr.split("-").map(Number)
-  const shifted = new Date(Date.UTC(year, month - SINGULAR, day))
-  shifted.setUTCDate(shifted.getUTCDate() - days)
-  return shifted.toISOString().slice(FIRST_INDEX, DATE_ISO_LENGTH)
-}
-
-// UTC ISO from the DB back to local "YYYY-MM-DDTHH:MM" for datetime-local.
-// Without this, 17:30 local saved as 15:30Z shows back as 15:30.
-function toLocalInput(iso) {
-  if (typeof iso !== "string" || !iso) return ""
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return ""
-  const pad = (value) => String(value).padStart(PAD_LENGTH, "0")
-  const month = pad(date.getMonth() + MONTH_INDEX_OFFSET)
-  const day = pad(date.getDate())
-  return `${date.getFullYear()}-${month}-${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`
-}
-
-// Wedding default: deadline ~45 days before the event, end of day.
-// Only fills when empty (never overwrites the sender) and never in the past.
-function autofillDeadline(entity) {
-  const eventDate = getFieldValue(entity, "event_date", "")
-  if (
-    getFieldValue(entity, "application_deadline", "") ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(eventDate)
-  ) {
-    return
-  }
-  const candidate = `${shiftDate(eventDate, APPLICATION_DEADLINE_LEAD_DAYS)}T${DEADLINE_END_OF_DAY}`
-  if (new Date(candidate).getTime() > Date.now()) {
-    Form.fieldChange(entity, {
-      path: "application_deadline",
-      value: candidate,
-    })
-  }
 }
 
 export function eventDateSet(entity, { value }) {
@@ -213,26 +161,28 @@ export const audioRecord = handleAsync("audioRecord", {
       ? new MediaRecorder(stream, { mimeType })
       : new MediaRecorder(stream)
     mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > ZERO) audioChunks.push(e.data)
+      if (e.data.size) audioChunks.push(e.data)
     }
     mediaRecorder.start()
     recordStartedAt = Date.now()
     return true
   },
-  success(entity) {
+  success(entity, _, api) {
     entity.is_recording = true
-    entity.audio_elapsed = ZERO
+    entity.audio_elapsed = NO_TIME_RECORDED
+    const id = entity.id
+    startTick("audio", () => api.notify(`#${id}:audioTick`))
   },
   error(entity, err) {
     releaseRecorder()
     entity.is_recording = false
-    entity.audio_error = err?.message ?? t("errors.micUnavailable")
+    entity.audio_error = err?.message ?? "errors.micUnavailable"
   },
 })
 
 export function audioTick(entity, _, api) {
   if (!entity.is_recording) return
-  entity.audio_elapsed = (entity.audio_elapsed ?? ZERO) + SINGULAR
+  entity.audio_elapsed = (entity.audio_elapsed ?? NO_TIME_RECORDED) + ONE_SECOND
   if (entity.audio_elapsed >= AUDIO_MAX_SECONDS) {
     api.notify(`#${entity.id}:audioRecordStop`)
   }
@@ -279,7 +229,7 @@ export function audioRecordStop(entity, _, api) {
 export function audioEmpty(entity) {
   entity.audio_preview_url = null
   entity.audio_transcript = null
-  entity.audio_error = t("errors.emptyRecording")
+  entity.audio_error = "errors.emptyRecording"
 }
 
 export function audioOpen(entity) {
@@ -309,7 +259,7 @@ export const audioProcess = handleAsync("audioProcess", {
     entity.audio_error = null
   },
   async run() {
-    if (!pendingBlob) throw new Error(t("errors.noAudio"))
+    if (!pendingBlob) throw new Error("errors.noAudio")
     const blob = pendingBlob
     await dropPendingAudio(true, true)
     pendingBlob = blob
@@ -332,11 +282,9 @@ export const audioProcess = handleAsync("audioProcess", {
   error(entity, err) {
     entity.is_transcribing = false
     entity.audio_transcript = null
-    entity.audio_error = err?.message ?? t("errors.transcriptionFailed")
+    entity.audio_error = err?.message ?? "errors.transcriptionFailed"
   },
 })
-
-const FILLABLE_DETAILS = ["spouse_first_name_1", "spouse_first_name_2", "style"]
 
 // Fills empty inputs from the parsed transcript. Never overwrites the sender.
 export const audioParse = handleAsync("audioParse", {
@@ -404,76 +352,6 @@ export const audioParse = handleAsync("audioParse", {
     entity.is_parsing = false
   },
 })
-function revokePreview(item) {
-  if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl)
-  if (item?.id) forgetPendingFiles(item.id)
-}
-
-// Saved photos the user took out of the form are only deleted after the row
-// stops pointing at them. Deleting on removal broke the event whenever the user
-// left without saving: an orphan in the bucket is harmless, a dead link is not.
-function droppedImagePaths(event, image_urls) {
-  return droppedImageUrls(event.loaded_image_urls, image_urls)
-    .map(imageRefFromUrl)
-    .filter((ref) => ref?.bucket === EVENT_IMAGES_BUCKET)
-    .map((ref) => ref.path)
-}
-
-// File blobs stay outside the entity (not serialisable store data). The entity
-// only keeps id + previewUrl + crop fractions.
-/** @type {Map<string, { file: File | null, sourceFile: File | null }>} */
-const pendingImageFiles = new Map()
-/** @type {File | null} */
-let cropSessionFile = null
-
-function rememberPendingFiles(id, { file = null, sourceFile = null } = {}) {
-  if (!id) return
-  pendingImageFiles.set(id, { file, sourceFile })
-}
-
-function forgetPendingFiles(id) {
-  if (id) pendingImageFiles.delete(id)
-}
-
-function pendingFile(id) {
-  return pendingImageFiles.get(id)?.file ?? null
-}
-
-function pendingSourceFile(id) {
-  return pendingImageFiles.get(id)?.sourceFile ?? null
-}
-
-function readImageFile(entity, file) {
-  if (!imageExtension(file?.type)) {
-    entity.image_error = t("errors.imageType")
-    return null
-  }
-  if (file.size > IMAGE_MAX_BYTES) {
-    entity.image_error = t("errors.imageSize")
-    return null
-  }
-  const id = randomId()
-  rememberPendingFiles(id, { file })
-  return {
-    id,
-    previewUrl: URL.createObjectURL(file),
-  }
-}
-
-// The frame and its gestures live in the cover cropper entity. This form only
-// keeps the file being framed and whether the dialog is open.
-function revokeCropPreview(entity) {
-  if (entity.cropPreviewUrl) URL.revokeObjectURL(entity.cropPreviewUrl)
-}
-
-function closeCrop(entity) {
-  revokeCropPreview(entity)
-  cropSessionFile = null
-  entity.isCropOpen = false
-  entity.cropPreviewUrl = null
-  entity.cropError = null
-  entity.isCropSaving = false
-}
 
 export function clearEventImages(entity) {
   closeCrop(entity)
@@ -492,23 +370,29 @@ export function clearEventImages(entity) {
 export function imagesAdd(entity, { files } = {}) {
   const incoming = [...(files ?? [])]
   entity.image_error = null
-  const galleryMax = MAX_EVENT_IMAGES - SINGULAR
+  const galleryMax = MAX_EVENT_IMAGES - COVER_IMAGES
   const pending = [...(entity.pending_gallery ?? [])]
   const saved = entity.gallery_urls ?? []
   let room = galleryMax - saved.length - pending.length
-  if (room <= ZERO) {
-    entity.image_error = t("errors.imageLimit", { count: galleryMax })
+  if (room <= NO_ROOM) {
+    entity.image_error = {
+      key: "errors.imageLimit",
+      values: { count: galleryMax },
+    }
     return
   }
   for (const file of incoming) {
-    if (room <= ZERO) {
-      entity.image_error = t("errors.imageLimit", { count: galleryMax })
+    if (room <= NO_ROOM) {
+      entity.image_error = {
+        key: "errors.imageLimit",
+        values: { count: galleryMax },
+      }
       break
     }
     const next = readImageFile(entity, file)
     if (!next) continue
     pending.push(next)
-    room -= SINGULAR
+    room--
   }
   entity.pending_gallery = pending
 }
@@ -542,11 +426,11 @@ export function coverCropOpen(entity, { file, rect = null } = {}, api) {
   entity.image_error = null
   entity.cropError = null
   if (!imageExtension(file?.type)) {
-    entity.image_error = t("errors.imageType")
+    entity.image_error = "errors.imageType"
     return
   }
   if (file.size > IMAGE_MAX_BYTES) {
-    entity.image_error = t("errors.imageSize")
+    entity.image_error = "errors.imageSize"
     return
   }
   revokeCropPreview(entity)
@@ -575,24 +459,24 @@ export const coverCropEdit = handleAsync("coverCropEdit", {
     const sourceFile = pendingSourceFile(id)
     if (sourceFile instanceof File) return { file: sourceFile, rect }
     // A saved cover is already cropped: frame it again from what it shows.
-    if (!url) throw new Error(t("errors.imageCrop"))
+    if (!url) throw new Error("errors.imageCrop")
     let response
     try {
       response = await fetch(url)
     } catch {
-      throw new Error(t("errors.imageCrop"))
+      throw new Error("errors.imageCrop")
     }
-    if (!response.ok) throw new Error(t("errors.imageCrop"))
+    if (!response.ok) throw new Error("errors.imageCrop")
     const blob = await response.blob()
     const type = blob.type || IMAGE_JPEG_TYPE
-    if (!imageExtension(type)) throw new Error(t("errors.imageType"))
+    if (!imageExtension(type)) throw new Error("errors.imageType")
     return { file: createImageFile(blob, "cover.jpg"), rect: null }
   },
   success(entity, crop, api) {
     coverCropOpen(entity, crop, api)
   },
   error(entity, err) {
-    entity.image_error = err.message ?? t("errors.imageCrop")
+    entity.image_error = err.message ?? "errors.imageCrop"
   },
 })
 
@@ -603,7 +487,7 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
   },
   async run({ rect } = {}) {
     const file = cropSessionFile
-    if (!file || !rect) throw new Error(t("errors.imageCrop"))
+    if (!file || !rect) throw new Error("errors.imageCrop")
     try {
       const blob = await cropImage(file, rect, {
         maxWidth: COVER_OUTPUT_WIDTH,
@@ -611,7 +495,7 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
       })
       return { blob, sourceFile: file, rect }
     } catch {
-      throw new Error(t("errors.imageCrop"))
+      throw new Error("errors.imageCrop")
     }
   },
   success(entity, { blob, sourceFile, rect }) {
@@ -629,57 +513,12 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
     closeCrop(entity)
   },
   error(entity, err) {
-    entity.cropError = err.message ?? t("errors.imageCrop")
+    entity.cropError = err.message ?? "errors.imageCrop"
   },
   finally(entity) {
     entity.isCropSaving = false
   },
 })
-
-async function forgetImages(paths) {
-  for (const path of paths) {
-    try {
-      await deleteEventImage(path)
-    } catch {
-      // An orphaned file stays in the bucket. The row is what the page shows.
-    }
-  }
-}
-
-async function savedImageUrls(event) {
-  const uploaded = []
-  try {
-    const coverBlob = event.pending_cover?.id
-      ? pendingFile(event.pending_cover.id)
-      : null
-    const coverUpload = coverBlob ? await uploadEventImage(coverBlob) : null
-    if (coverUpload) uploaded.push(coverUpload)
-
-    const galleryUploads = []
-    for (const item of event.pending_gallery ?? []) {
-      const blob = pendingFile(item.id)
-      if (!blob) continue
-      const file = await uploadEventImage(blob)
-      galleryUploads.push(file)
-      uploaded.push(file)
-    }
-
-    const cover = coverUpload?.url ?? event.cover_url ?? null
-    const gallery = [
-      ...(event.gallery_urls ?? []),
-      ...galleryUploads.map((file) => file.url),
-    ]
-    return {
-      image_urls: cover ? [cover, ...gallery] : gallery,
-      uploadedPaths: uploaded.map((file) => file.path),
-    }
-  } catch (err) {
-    // A failure halfway through used to leave the already-uploaded gallery
-    // behind when the cover was the file that failed.
-    await forgetImages(uploaded.map((file) => file.path))
-    throw err
-  }
-}
 
 export function audioRemove(entity) {
   releaseRecorder()
@@ -693,30 +532,6 @@ export function audioRemove(entity) {
   entity.audio_transcript = null
   entity.audio_error = null
   void dropPendingAudio(true)
-}
-
-async function writeEvent(event, payload, audio_url) {
-  if (!event.editing_event_id) return createEvent(payload)
-  const previous = typeof event.audio_url === "string" ? event.audio_url : null
-  const result = await updateEvent(event.editing_event_id, payload)
-  const replaced = pendingBlob && previous && previous !== audio_url
-  if (replaced) {
-    const oldPath = audioPathFromUrl(previous)
-    if (oldPath) {
-      try {
-        await deleteEventAudio(oldPath)
-      } catch {
-        // Orphan file stays in the bucket; harmless for the spike.
-      }
-    }
-  } else if (!pendingBlob && !previous && removedPath) {
-    try {
-      await deleteEventAudio(removedPath)
-    } catch {
-      // Orphan file stays in the bucket; harmless for the spike.
-    }
-  }
-  return result
 }
 
 export const save = handleAsync("save", {
@@ -779,7 +594,7 @@ export const save = handleAsync("save", {
     clearPendingAudio()
     clearEventImages(entity)
     entity.audio_preview_url = null
-    api.notify("#eventList:eventsLoad")
+    api.notify("#eventList:load")
     // Saving has to leave the page, because the route is what unmounts it now,
     // and leaving is also what tidies the entity up: the route change runs
     // close(). An edit goes back to the event it came from. A new one goes to
@@ -793,7 +608,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.saveEvent")
+    entity.error = err.message ?? "errors.saveEvent"
   },
 })
 
@@ -824,8 +639,8 @@ export const editLoad = handleAsync("editLoad", {
     entity.isValid = true
     entity.audio_url = row.audio_url ?? null
     const photos = [...(row.image_urls ?? [])]
-    entity.cover_url = photos[FIRST_INDEX] ?? null
-    entity.gallery_urls = photos.slice(SINGULAR)
+    entity.cover_url = photos[COVER_INDEX] ?? null
+    entity.gallery_urls = photos.slice(COVER_IMAGES)
     entity.loaded_image_urls = photos
     entity.pending_cover = null
     entity.pending_gallery = []
@@ -842,6 +657,203 @@ export const editLoad = handleAsync("editLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? t("errors.loadEvent")
+    entity.error = err.message ?? "errors.loadEvent"
   },
 })
+
+function audioPathFromUrl(url) {
+  if (typeof url !== "string") return null
+  const [, path] = url.split("/event-audio/")
+  return path ?? null
+}
+
+// Drops the un-saved take; deletes its bucket file when asked.
+// Keeps the preview URL when the current take still needs its player.
+async function dropPendingAudio(deleteFile, keepPreview = false) {
+  const path = pendingPath
+  pendingBlob = null
+  pendingPath = null
+  pendingUrl = null
+  if (!keepPreview && previewUrl) {
+    URL.revokeObjectURL(previewUrl)
+    previewUrl = null
+  }
+  if (deleteFile && path) {
+    try {
+      await deleteEventAudio(path)
+    } catch {
+      // Orphan file stays in the bucket; harmless for the spike.
+    }
+  }
+}
+
+function shiftDate(dateStr, days) {
+  const [year, month, day] = dateStr.split("-").map(Number)
+  const shifted = new Date(Date.UTC(year, month - MONTH_INDEX_OFFSET, day))
+  shifted.setUTCDate(shifted.getUTCDate() - days)
+  return shifted.toISOString().slice(FIRST_INDEX, DATE_ISO_LENGTH)
+}
+
+// UTC ISO from the DB back to local "YYYY-MM-DDTHH:MM" for datetime-local.
+// Without this, 17:30 local saved as 15:30Z shows back as 15:30.
+function toLocalInput(iso) {
+  if (typeof iso !== "string" || !iso) return ""
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+  const pad = (value) => String(value).padStart(PAD_LENGTH, "0")
+  const month = pad(date.getMonth() + MONTH_INDEX_OFFSET)
+  const day = pad(date.getDate())
+  return `${date.getFullYear()}-${month}-${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
+// Wedding default: deadline ~45 days before the event, end of day.
+// Only fills when empty (never overwrites the sender) and never in the past.
+function autofillDeadline(entity) {
+  const eventDate = getFieldValue(entity, "event_date", "")
+  if (
+    getFieldValue(entity, "application_deadline", "") ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(eventDate)
+  ) {
+    return
+  }
+  const candidate = `${shiftDate(eventDate, APPLICATION_DEADLINE_LEAD_DAYS)}T${DEADLINE_END_OF_DAY}`
+  if (new Date(candidate).getTime() > Date.now()) {
+    Form.fieldChange(entity, {
+      path: "application_deadline",
+      value: candidate,
+    })
+  }
+}
+
+function revokePreview(item) {
+  if (item?.previewUrl) URL.revokeObjectURL(item.previewUrl)
+  if (item?.id) forgetPendingFiles(item.id)
+}
+
+// Saved photos the user took out of the form are only deleted after the row
+// stops pointing at them. Deleting on removal broke the event whenever the user
+// left without saving: an orphan in the bucket is harmless, a dead link is not.
+function droppedImagePaths(event, image_urls) {
+  return droppedImageUrls(event.loaded_image_urls, image_urls)
+    .map(imageRefFromUrl)
+    .filter((ref) => ref?.bucket === EVENT_IMAGES_BUCKET)
+    .map((ref) => ref.path)
+}
+
+function rememberPendingFiles(id, { file = null, sourceFile = null } = {}) {
+  if (!id) return
+  pendingImageFiles.set(id, { file, sourceFile })
+}
+
+function forgetPendingFiles(id) {
+  if (id) pendingImageFiles.delete(id)
+}
+
+function pendingFile(id) {
+  return pendingImageFiles.get(id)?.file ?? null
+}
+
+function pendingSourceFile(id) {
+  return pendingImageFiles.get(id)?.sourceFile ?? null
+}
+
+function readImageFile(entity, file) {
+  if (!imageExtension(file?.type)) {
+    entity.image_error = "errors.imageType"
+    return null
+  }
+  if (file.size > IMAGE_MAX_BYTES) {
+    entity.image_error = "errors.imageSize"
+    return null
+  }
+  const id = randomId()
+  rememberPendingFiles(id, { file })
+  return {
+    id,
+    previewUrl: URL.createObjectURL(file),
+  }
+}
+
+// The frame and its gestures live in the cover cropper entity. This form only
+// keeps the file being framed and whether the dialog is open.
+function revokeCropPreview(entity) {
+  if (entity.cropPreviewUrl) URL.revokeObjectURL(entity.cropPreviewUrl)
+}
+
+function closeCrop(entity) {
+  revokeCropPreview(entity)
+  cropSessionFile = null
+  entity.isCropOpen = false
+  entity.cropPreviewUrl = null
+  entity.cropError = null
+  entity.isCropSaving = false
+}
+
+async function forgetImages(paths) {
+  for (const path of paths) {
+    try {
+      await deleteEventImage(path)
+    } catch {
+      // An orphaned file stays in the bucket. The row is what the page shows.
+    }
+  }
+}
+
+async function savedImageUrls(event) {
+  const uploaded = []
+  try {
+    const coverBlob = event.pending_cover?.id
+      ? pendingFile(event.pending_cover.id)
+      : null
+    const coverUpload = coverBlob ? await uploadEventImage(coverBlob) : null
+    if (coverUpload) uploaded.push(coverUpload)
+
+    const galleryUploads = []
+    for (const item of event.pending_gallery ?? []) {
+      const blob = pendingFile(item.id)
+      if (!blob) continue
+      const file = await uploadEventImage(blob)
+      galleryUploads.push(file)
+      uploaded.push(file)
+    }
+
+    const cover = coverUpload?.url ?? event.cover_url ?? null
+    const gallery = [
+      ...(event.gallery_urls ?? []),
+      ...galleryUploads.map((file) => file.url),
+    ]
+    return {
+      image_urls: cover ? [cover, ...gallery] : gallery,
+      uploadedPaths: uploaded.map((file) => file.path),
+    }
+  } catch (err) {
+    // A failure halfway through used to leave the already-uploaded gallery
+    // behind when the cover was the file that failed.
+    await forgetImages(uploaded.map((file) => file.path))
+    throw err
+  }
+}
+
+async function writeEvent(event, payload, audio_url) {
+  if (!event.editing_event_id) return createEvent(payload)
+  const previous = typeof event.audio_url === "string" ? event.audio_url : null
+  const result = await updateEvent(event.editing_event_id, payload)
+  const replaced = pendingBlob && previous && previous !== audio_url
+  if (replaced) {
+    const oldPath = audioPathFromUrl(previous)
+    if (oldPath) {
+      try {
+        await deleteEventAudio(oldPath)
+      } catch {
+        // Orphan file stays in the bucket; harmless for the spike.
+      }
+    }
+  } else if (!pendingBlob && !previous && removedPath) {
+    try {
+      await deleteEventAudio(removedPath)
+    } catch {
+      // Orphan file stays in the bucket; harmless for the spike.
+    }
+  }
+  return result
+}

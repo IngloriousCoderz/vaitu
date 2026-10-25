@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { translated } from "../i18n/index.js"
 import { firstError, normalizeEvent, validateEvent } from "./events.js"
 
 const validWedding = {
@@ -144,46 +145,58 @@ describe("validateEvent", () => {
 
   it("keeps the date wording the UI already relied on", () => {
     expect(
-      validateEvent({ ...validWedding, event_date: "nope" }).event_date,
+      translated(
+        validateEvent({ ...validWedding, event_date: "nope" }).event_date,
+      ),
     ).toBe("Pick a date")
     expect(
-      validateEvent({ ...validWedding, application_deadline: "nope" })
-        .application_deadline,
+      translated(
+        validateEvent({ ...validWedding, application_deadline: "nope" })
+          .application_deadline,
+      ),
     ).toBe("Pick a deadline")
   })
 
   it("asks for the missing title in words a person can act on", () => {
-    expect(validateEvent({ ...validWedding, title: "  " }).title).toBe(
-      "Add a title",
-    )
+    expect(
+      translated(validateEvent({ ...validWedding, title: "  " }).title),
+    ).toBe("Add a title")
   })
 
   it("knows a wedding by its two names", () => {
     expect(
-      validateEvent({
-        ...validWedding,
-        details: { spouse_first_name_1: "Ada" },
-      }).details,
+      inWords(
+        validateEvent({
+          ...validWedding,
+          details: { spouse_first_name_1: "Ada" },
+        }).details,
+      ),
     ).toEqual({ spouse_first_name_2: "Add a name" })
 
-    expect(validateEvent({ ...validWedding, details: {} }).details).toEqual({
+    expect(
+      inWords(validateEvent({ ...validWedding, details: {} }).details),
+    ).toEqual({
       spouse_first_name_1: "Add a name",
       spouse_first_name_2: "Add a name",
     })
   })
 
   it("knows a festival by its headliner", () => {
-    expect(validateEvent({ ...validFestival, details: {} }).details).toEqual({
+    expect(
+      inWords(validateEvent({ ...validFestival, details: {} }).details),
+    ).toEqual({
       headliner: "Add a headliner",
     })
   })
 
   it("checks the optional style against the taxonomy", () => {
     expect(
-      validateEvent({
-        ...validWedding,
-        details: { ...validWedding.details, style: "x" },
-      }).details,
+      inWords(
+        validateEvent({
+          ...validWedding,
+          details: { ...validWedding.details, style: "x" },
+        }).details,
+      ),
     ).toEqual({ style: "Pick a style" })
     expect(
       validateEvent({
@@ -195,10 +208,12 @@ describe("validateEvent", () => {
 
   it("checks the optional genre against the taxonomy", () => {
     expect(
-      validateEvent({
-        ...validFestival,
-        details: { headliner: "Nina", genre: "x" },
-      }).details,
+      inWords(
+        validateEvent({
+          ...validFestival,
+          details: { headliner: "Nina", genre: "x" },
+        }).details,
+      ),
     ).toEqual({ genre: "Pick a genre" })
     expect(
       validateEvent({
@@ -211,7 +226,9 @@ describe("validateEvent", () => {
   it("rejects a category it knows nothing about", () => {
     // The old schema accepted this without looking at it at all.
     const reunion = { ...validWedding, category: "reunion", details: {} }
-    expect(validateEvent(reunion)).toEqual({ category: "Pick a category" })
+    expect(inWords(validateEvent(reunion))).toEqual({
+      category: "Pick a category",
+    })
   })
 })
 
@@ -227,3 +244,14 @@ describe("firstError", () => {
     expect(firstError({ details: { headliner: "Add one" } })).toBe("Add one")
   })
 })
+
+// The messages as a person reads them: validation keeps keys, and the page
+// translates them when it renders.
+function inWords(errors) {
+  return Object.fromEntries(
+    Object.entries(errors).map(([field, message]) => [
+      field,
+      translated(message),
+    ]),
+  )
+}

@@ -4,67 +4,56 @@
 
    What is left here is purely sizing and shape. Surface, line, radius, ink and
    muted ink all resolve through --iw-input-* and --iw-color-*, which
-   src/theme/tokens.css bridges to the app palette. Before that bridge existed
+   src/styles/tokens.css bridges to the app palette. Before that bridge existed
    this file restated all of them by hand, which is why it used to be the
    longest override sheet in the app. */
 
-.vaitu-country-select .iw-combobox-control {
-  height: auto;
-  font: inherit;
-  font-size: var(--vinput-font-size);
-  line-height: var(--iw-line-height-normal);
-  padding: var(--vcontrol-padding-block) 2.5rem var(--vcontrol-padding-block)
-    var(--vcontrol-padding-inline);
-}
+.vaitu-country-select {
+  .iw-combobox-control {
+    height: auto;
+    font: inherit;
+    font-size: var(--vinput-font-size);
+    line-height: var(--iw-line-height-normal);
+    padding: var(--vcontrol-padding-block) 2.5rem var(--vcontrol-padding-block)
+      var(--vcontrol-padding-inline);
 
-/* Joins the control to the panel below it, the way a native <select> does. */
-.vaitu-country-select .iw-combobox-control.iw-combobox-control-open {
-  border-end-start-radius: 0;
-  border-end-end-radius: 0;
-}
+    /* Joins the control to the panel below it, the way a native <select> does. */
+    &.iw-combobox-control-open {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+  }
 
-.vaitu-country-select .iw-combobox-dropdown {
-  border-radius: 0 0 var(--iw-radius-xl) var(--iw-radius-xl);
-}
+  .iw-combobox-dropdown {
+    border-radius: 0 0 var(--iw-radius-xl) var(--iw-radius-xl);
+  }
 
-.vaitu-country-select .iw-combobox-dropdown-search {
-  font-size: var(--vinput-font-size);
-}
+  .iw-combobox-dropdown-search {
+    font-size: var(--vinput-font-size);
+  }
 
-.vaitu-country-select
-  .iw-combobox-dropdown-options
-  .iw-combobox-dropdown-options-option {
-  font-size: var(--vinput-font-size);
-}
+  .iw-combobox-dropdown-options .iw-combobox-dropdown-options-option {
+    font-size: var(--vinput-font-size);
 
-.vaitu-country-select
-  .iw-combobox-dropdown-options
-  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-focused {
-  background: var(--vbadge-bg);
-}
+    &.iw-combobox-dropdown-options-option-focused,
+    &.iw-combobox-dropdown-options-option-selected {
+      background: var(--vbadge-bg);
+    }
 
-.vaitu-country-select
-  .iw-combobox-dropdown-options
-  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-selected {
-  background: var(--vbadge-bg);
-}
+    &.iw-combobox-dropdown-options-option-disabled {
+      opacity: 1;
+      cursor: default;
+      font-size: var(--iw-font-size-xs);
+      font-weight: var(--iw-font-weight-semibold);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--vmuted);
+      padding-top: var(--iw-space-3);
+      background: transparent;
 
-.vaitu-country-select
-  .iw-combobox-dropdown-options
-  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-disabled {
-  opacity: 1;
-  cursor: default;
-  font-size: var(--iw-font-size-xs);
-  font-weight: var(--iw-font-weight-semibold);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--vmuted);
-  padding-top: var(--iw-space-3);
-  background: transparent;
-}
-
-.vaitu-country-select
-  .iw-combobox-dropdown-options
-  .iw-combobox-dropdown-options-option.iw-combobox-dropdown-options-option-disabled.iw-combobox-dropdown-options-option-focused {
-  background: transparent;
+      &.iw-combobox-dropdown-options-option-focused {
+        background: transparent;
+      }
+    }
+  }
 }

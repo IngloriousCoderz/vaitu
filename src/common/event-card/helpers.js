@@ -4,8 +4,8 @@ import {
   HUE_DEGREES,
   HUE_SHIFT,
   LAST_INDEX_OFFSET,
+  NO_DAYS_LEFT,
   WEEK_DAYS,
-  ZERO,
 } from "../../constants/index.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
@@ -21,7 +21,7 @@ export function monogram(title) {
 
 export function deadlineBadge(event) {
   if (event.status === "assigned") return t("badge.assigned")
-  if (event.daysLeft <= ZERO) return t("badge.closed")
+  if (event.daysLeft <= NO_DAYS_LEFT) return t("badge.closed")
   if (event.daysLeft <= CLOSING_MAX_DAYS) return t("badge.closing")
   if (event.daysLeft < WEEK_DAYS)
     return t("badge.daysLeft", { count: event.daysLeft })
@@ -29,7 +29,7 @@ export function deadlineBadge(event) {
 }
 
 export function deadlineTone(event) {
-  if (event.daysLeft <= ZERO) return "closed"
+  if (event.daysLeft <= NO_DAYS_LEFT) return "closed"
   if (event.daysLeft <= CLOSING_MAX_DAYS) return "closing"
   return null
 }

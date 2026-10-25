@@ -1,6 +1,11 @@
-import { FIRST_INDEX, ZERO } from "../../constants/index.js"
+import { FIRST_INDEX } from "../../constants/index.js"
 import { sameRegion, uniqueRegions } from "../../data/regions/resolve.js"
 import { labelled } from "../../i18n/index.js"
+
+// An event happening today is already in every period.
+const TODAY = 0
+// What localeCompare answers for two equal strings.
+const SAME_ORDER = 0
 
 export const owners = [
   labelled("owners.explore", { id: "explore" }),
@@ -55,7 +60,7 @@ export function visibleEvents(
         : sameRegion(event.region, activeRegion))
     const matchesPeriod =
       period.days === null ||
-      (event.eventInDays >= ZERO && event.eventInDays <= period.days)
+      (event.eventInDays >= TODAY && event.eventInDays <= period.days)
     const matchesQuery =
       q === "" ||
       event.title.toLowerCase().includes(q) ||
@@ -68,14 +73,6 @@ export function visibleEvents(
       matchesQuery
     )
   })
-}
-
-function compareField(a, b, field, ascending) {
-  const left = a[field] ?? ""
-  const right = b[field] ?? ""
-  const order = String(left).localeCompare(String(right))
-  if (order !== ZERO) return ascending ? order : -order
-  return String(a.id).localeCompare(String(b.id))
 }
 
 export function sortEvents(events, sortId = DEFAULT_SORT) {
@@ -99,4 +96,12 @@ export function sortEvents(events, sortId = DEFAULT_SORT) {
     default:
       return list.sort((a, b) => compareField(a, b, "created_at", false))
   }
+}
+
+function compareField(a, b, field, ascending) {
+  const left = a[field] ?? ""
+  const right = b[field] ?? ""
+  const order = String(left).localeCompare(String(right))
+  if (order !== SAME_ORDER) return ascending ? order : -order
+  return String(a.id).localeCompare(String(b.id))
 }
