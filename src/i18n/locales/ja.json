@@ -190,7 +190,8 @@
     "saveProfile": "プロフィールを保存できませんでした",
     "logout": "ログアウトできませんでした",
     "loadRanks": "ランクを読み込めませんでした",
-    "deactivateAccount": "アカウントを無効にできませんでした。もう一度お試しください。"
+    "deactivateAccount": "アカウントを無効にできませんでした。もう一度お試しください。",
+    "resend": "メールを再送信できませんでした"
   },
   "auth": {
     "welcome": "Vaituへようこそ",
@@ -210,7 +211,11 @@
     "yourName": "お名前",
     "confirmPassword": "パスワード（確認）",
     "pleaseWait": "お待ちください…",
-    "emailExample": "you@example.com"
+    "emailExample": "you@example.com",
+    "checkInbox": "メールを確認してください",
+    "confirmationSent": "<strong>{{email}}</strong> に確認リンクを送信しました。リンクを開いてアカウントを有効にしてください。",
+    "confirmationResent": "再送信しました。届くまで少しかかる場合があります。",
+    "resendConfirmation": "メールを再送信"
   },
   "onboarding": {
     "title": "プロフィールを完成させましょう",

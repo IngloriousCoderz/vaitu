@@ -1,0 +1,3 @@
+# Netlify. Routes are resolved in the browser, so any path that is not a real
+# file (a deep link, an email confirmation link) gets the app shell.
+/*  /index.html  200

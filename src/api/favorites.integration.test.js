@@ -6,8 +6,8 @@ import {
   SEEKER,
   signIn,
   signOut,
+  signUp,
 } from "../testing/index.js"
-import { supabase } from "./client.js"
 import { fetchMyFavoriteRegions, saveFavoriteRegions } from "./events.js"
 
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
@@ -27,13 +27,7 @@ test(
   async () => {
     const id = crypto.randomUUID()
     const email = `vitest-${id}@vaitu.local`
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: SEEKER.password,
-      options: { data: { full_name: `Vitest ${id}` } },
-    })
-    expect(error).toBeNull()
-    userId = data.user.id
+    userId = await signUp({ email, fullName: `Vitest ${id}` })
 
     await signIn({ email, password: SEEKER.password })
     const saved = await saveFavoriteRegions(["Toscana", "Tuscany", "Provence"])

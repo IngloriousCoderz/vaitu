@@ -20,9 +20,33 @@ export function fieldSet(entity, { field, value }, api) {
   entity.error = null
 }
 
-export function skip(entity, _, api) {
-  api.notify("#authentication:onboardingFinish")
-}
+// Skipping counts as done: it is offered once, not on every sign-in.
+export const skip = handleAsync("skip", {
+  start(entity) {
+    entity.status = "saving"
+    entity.error = null
+  },
+  async run() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error("Not logged in")
+    const { error } = await supabase
+      .from("profiles")
+      .update({ onboarded_at: new Date().toISOString() })
+      .eq("id", user.id)
+    if (error) throw error
+    return true
+  },
+  success(entity, _, api) {
+    entity.status = "ready"
+    api.notify("#authentication:onboardingFinish")
+  },
+  error(entity, err) {
+    entity.status = "error"
+    entity.error = err.message ?? "Failed to save"
+  },
+})
 
 export function saveSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateOnboarding })
@@ -55,6 +79,7 @@ export const save = handleAsync("save", {
               ? site
               : `https://${site}`,
         instagram_handle: handle === "" ? "" : `@${handle}`,
+        onboarded_at: new Date().toISOString(),
       })
       .eq("id", user.id)
     if (error) throw error

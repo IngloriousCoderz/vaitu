@@ -327,11 +327,13 @@ and `supabase-js` reports it as `TypeError: Failed to fetch`.
 `supabase/config.toml` `[auth]` applies to the **local** stack only. On the
 cloud project these live under Authentication → URL Configuration:
 
-- **Site URL** → `https://vaitu.netlify.app` (currently still localhost)
-- **Redirect URLs** → add `https://vaitu.netlify.app/**`
+- **Site URL** → `https://app.vaitu.net`
+- **Redirect URLs** → add `https://app.vaitu.net/**`, plus any preview domain
 
-Neither affects CORS. Site URL only decides where email-confirmation links
-point; CORS on the REST and Auth gateways is open by default and echoes the
+Neither affects CORS. Signup asks for `<origin>/onboarding` as the
+confirmation link's target; an origin missing from Redirect URLs falls back to
+Site URL. Email confirmation is on in the cloud project (Authentication →
+Providers → Email), so that link is how a new account gets its session; CORS on the REST and Auth gateways is open by default and echoes the
 request origin, which the preflight checks confirm is working.
 
 ### Frontend deploy
@@ -350,5 +352,9 @@ Two traps worth knowing:
   baked URL is localhost/127.0.0.1 and the page is served from a real host. It
   cannot fire when the cloud URL is baked in, but a Netlify build missing
   `VITE_SUPABASE_URL` will silently point every request at
-  `https://vaitu.netlify.app:54321` and look exactly like a CORS failure.
+  `https://app.vaitu.net:54321` and look exactly like a CORS failure.
 - `dist/` is gitignored, so CI must run the build itself.
+- Routes are resolved in the browser, so the host must answer every path that
+  is not a file with `index.html`, or deep links and email confirmation links
+  hit the host's 404. `public/_redirects` does it on Netlify, `vercel.json` on
+  Vercel.

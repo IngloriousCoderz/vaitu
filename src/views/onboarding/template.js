@@ -111,6 +111,7 @@ export const Onboarding = {
                 variant: "ghost",
                 color: "primary",
                 size: "sm",
+                isDisabled: saving,
                 onClick: onSkip,
               }),
             ],

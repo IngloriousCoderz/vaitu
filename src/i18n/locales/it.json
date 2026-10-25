@@ -197,7 +197,8 @@
     "saveProfile": "Impossibile salvare il profilo",
     "logout": "Uscita non riuscita",
     "loadRanks": "Impossibile caricare i livelli",
-    "deactivateAccount": "Non è stato possibile disattivare l'account. Riprova."
+    "deactivateAccount": "Non è stato possibile disattivare l'account. Riprova.",
+    "resend": "Impossibile inviare di nuovo l'email"
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -217,7 +218,11 @@
     "yourName": "Il tuo nome",
     "confirmPassword": "Conferma la password",
     "pleaseWait": "Attendi…",
-    "emailExample": "tu@esempio.it"
+    "emailExample": "tu@esempio.it",
+    "checkInbox": "Controlla la posta",
+    "confirmationSent": "Abbiamo inviato un link di conferma a <strong>{{email}}</strong>. Aprilo per attivare il tuo account.",
+    "confirmationResent": "Inviata di nuovo. Potrebbe volerci un minuto.",
+    "resendConfirmation": "Invia di nuovo"
   },
   "onboarding": {
     "title": "Completa il tuo profilo",

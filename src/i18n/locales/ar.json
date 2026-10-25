@@ -205,7 +205,8 @@
     "saveProfile": "تعذر حفظ الملف الشخصي",
     "logout": "تعذر تسجيل الخروج",
     "loadRanks": "تعذر تحميل المراتب",
-    "deactivateAccount": "تعذر إلغاء تفعيل الحساب. حاول مرة أخرى."
+    "deactivateAccount": "تعذر إلغاء تفعيل الحساب. حاول مرة أخرى.",
+    "resend": "تعذّرت إعادة إرسال البريد"
   },
   "auth": {
     "welcome": "مرحبًا بك في Vaitu",
@@ -225,7 +226,11 @@
     "yourName": "اسمك",
     "confirmPassword": "تأكيد كلمة المرور",
     "pleaseWait": "يرجى الانتظار…",
-    "emailExample": "you@example.com"
+    "emailExample": "you@example.com",
+    "checkInbox": "تحقق من بريدك الوارد",
+    "confirmationSent": "أرسلنا رابط تأكيد إلى <strong>{{email}}</strong>. افتحه لتفعيل حسابك.",
+    "confirmationResent": "تم الإرسال مرة أخرى. قد يستغرق وصوله دقيقة.",
+    "resendConfirmation": "إعادة إرسال البريد"
   },
   "onboarding": {
     "title": "أكمل ملفك الشخصي",

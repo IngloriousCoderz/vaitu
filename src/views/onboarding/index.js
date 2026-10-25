@@ -3,12 +3,13 @@ import { Form } from "@inglorious/web/form"
 import * as handlers from "./handlers.js"
 import { Onboarding as renderers } from "./template.js"
 
-const { save, ...syncHandlers } = handlers
+const { save, skip, ...syncHandlers } = handlers
 
 export const Onboarding = {
   ...Form,
   ...syncHandlers,
   ...save,
+  ...skip,
   ...renderers,
 
   create(entity) {

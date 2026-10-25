@@ -73,7 +73,12 @@ export function routeGuard(entity, payload, api) {
   const user = readUser()
 
   if (!user) {
-    if (isPreLogin(payload.route)) return
+    // Onboarding saves to the profile, so a signed-out visitor may only wait
+    // there for a session already on its way: the one a confirmation link (or
+    // a signup without confirmation) is about to deliver. Anyone else, an
+    // expired link included, signs in first.
+    if (payload.route === "authentication") return
+    if (payload.route === "onboarding" && isOnboardingDue()) return
     api.notify("#router:navigate", signInTarget(payload.path))
     return
   }

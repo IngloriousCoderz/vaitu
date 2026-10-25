@@ -51,7 +51,8 @@ begin
       country = 'Italy',
       region = 'Tuscany',
       website = 'https://example.com',
-      instagram_handle = '@testsender'
+      instagram_handle = '@testsender',
+      onboarded_at = now()
   where id = v_sender_id;
 
   -- second test user: seeker, profile pre-filled so it can apply right away.
@@ -96,7 +97,8 @@ begin
       country = 'Italy',
       region = 'Lombardy',
       website = 'https://seeker.example.com',
-      instagram_handle = '@testseeker'
+      instagram_handle = '@testseeker',
+      onboarded_at = now()
   where id = v_seeker_id;
 
   insert into public.events

@@ -193,7 +193,8 @@
     "saveProfile": "Failed to save profile",
     "logout": "Logout failed",
     "loadRanks": "Failed to load ranks",
-    "deactivateAccount": "The account could not be deactivated. Try again."
+    "deactivateAccount": "The account could not be deactivated. Try again.",
+    "resend": "Could not resend the email"
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -213,7 +214,11 @@
     "yourName": "Your name",
     "confirmPassword": "Confirm password",
     "pleaseWait": "Please wait…",
-    "emailExample": "you@example.com"
+    "emailExample": "you@example.com",
+    "checkInbox": "Check your inbox",
+    "confirmationSent": "We sent a confirmation link to <strong>{{email}}</strong>. Open it to activate your account.",
+    "confirmationResent": "Sent again. It may take a minute to arrive.",
+    "resendConfirmation": "Resend email"
   },
   "onboarding": {
     "title": "Complete your profile",

@@ -197,7 +197,8 @@
     "saveProfile": "Impossible d'enregistrer le profil",
     "logout": "La déconnexion a échoué",
     "loadRanks": "Impossible de charger les niveaux",
-    "deactivateAccount": "Le compte n'a pas pu être désactivé. Réessayez."
+    "deactivateAccount": "Le compte n'a pas pu être désactivé. Réessayez.",
+    "resend": "Impossible de renvoyer l'e-mail"
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -217,7 +218,11 @@
     "yourName": "Votre nom",
     "confirmPassword": "Confirmez le mot de passe",
     "pleaseWait": "Veuillez patienter…",
-    "emailExample": "vous@exemple.fr"
+    "emailExample": "vous@exemple.fr",
+    "checkInbox": "Consultez votre boîte mail",
+    "confirmationSent": "Nous avons envoyé un lien de confirmation à <strong>{{email}}</strong>. Ouvrez-le pour activer votre compte.",
+    "confirmationResent": "Renvoyé. Cela peut prendre une minute.",
+    "resendConfirmation": "Renvoyer l'e-mail"
   },
   "onboarding": {
     "title": "Complétez votre profil",

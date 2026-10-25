@@ -4,7 +4,7 @@ import * as handlers from "./handlers.js"
 import { clearAuthErrors } from "./handlers.js"
 import { Authentication as renderers } from "./template.js"
 
-const { emailCheck, login, signup, ...syncHandlers } = handlers
+const { emailCheck, login, signup, resend, ...syncHandlers } = handlers
 
 export const Authentication = {
   ...Form,
@@ -12,6 +12,7 @@ export const Authentication = {
   ...emailCheck,
   ...login,
   ...signup,
+  ...resend,
   ...renderers,
 
   create(entity) {
@@ -26,6 +27,7 @@ export const Authentication = {
     entity.mode ??= "login"
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
+    entity.isResent ??= false
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -48,6 +50,7 @@ export const Authentication = {
           onCheckEmail: () => api.notify(`#${id}:emailSubmit`),
           onLogin: () => api.notify(`#${id}:loginSubmit`),
           onContinue: () => api.notify(`#${id}:signupSubmit`),
+          onResend: () => api.notify(`#${id}:resendSubmit`),
           onBackToEmail: () => api.notify(`#${id}:emailBack`),
           onTogglePassword: (inputId) => {
             api.notify(`#${id}:passwordToggle`)
@@ -84,6 +87,7 @@ function open(entity) {
   entity.mode = "login"
   entity.status = "idle"
   entity.error = null
+  entity.isResent = false
   entity.password = ""
   entity.confirmPassword = ""
   clearAuthErrors(entity)

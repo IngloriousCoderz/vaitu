@@ -1,4 +1,4 @@
-import { supabase } from "./client.js"
+import { isSignupConfirmation, supabase } from "./client.js"
 
 // Who is signed in, synchronously.
 //
@@ -26,6 +26,12 @@ const STORAGE_KEY = "vaitu-user"
 // offered once.
 
 const ONBOARDING_KEY = "vaitu-onboarding"
+
+// With email confirmation the signup tab never gets a session: the link in the
+// email opens a new tab, whose sessionStorage never saw the signup. So the link
+// itself says onboarding is owed. Set at import, before the route guard first
+// runs, since the guard imports this module.
+if (isSignupConfirmation) setOnboardingDue(true)
 
 /**
  * The signed-in user, or null.

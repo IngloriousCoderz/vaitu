@@ -10,6 +10,7 @@ import {
   SENDER,
   signIn,
   signOut,
+  signUp,
 } from "../testing/index.js"
 import {
   fetchReceivedDetail,
@@ -289,13 +290,7 @@ describe("the shortlist cap", () => {
     async () => {
       const id = crypto.randomUUID()
       const email = `vitest-${id}@vaitu.local`
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password: SEEKER.password,
-        options: { data: { full_name: `Vitest ${id}` } },
-      })
-      expect(signUpError).toBeNull()
-      userId = data.user.id
+      userId = await signUp({ email, fullName: `Vitest ${id}` })
 
       eventId = await createEventAs(SEEKER, crypto.randomUUID(), undefined, {
         max_applicants: SHORTLIST_CAP,
@@ -412,13 +407,7 @@ describe("someone else's application", () => {
 
       const accountId = crypto.randomUUID()
       const email = `vitest-${accountId}@vaitu.local`
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password: SEEKER.password,
-        options: { data: { full_name: `Vitest ${accountId}` } },
-      })
-      expect(signUpError).toBeNull()
-      userId = data.user.id
+      userId = await signUp({ email, fullName: `Vitest ${accountId}` })
       await signIn({ email, password: SEEKER.password })
 
       const { data: rows, error } = await supabase

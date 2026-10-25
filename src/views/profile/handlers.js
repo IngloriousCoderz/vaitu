@@ -10,7 +10,7 @@ import {
   imageRefFromUrl,
   uploadAvatar,
 } from "../../api/images.js"
-import { endSession } from "../../api/session.js"
+import { endSession, setOnboardingDue } from "../../api/session.js"
 import { createImageFile } from "../../common/image.js"
 import { defaultTiers } from "../../common/tiers.js"
 import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
@@ -22,6 +22,7 @@ import {
   sameRegion,
   uniqueRegions,
 } from "../../data/regions/resolve.js"
+import { paths } from "../../routes.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 
 // The picked file stays outside the entity (not serialisable store data) while
@@ -130,7 +131,7 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale, avatar_url",
+        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale, avatar_url, onboarded_at",
       )
       .eq("id", user.id)
       .single()
@@ -179,6 +180,15 @@ export const load = handleAsync("load", {
       userId: profile.id,
       locale: profile.locale,
     })
+
+    // The profile is what knows onboarding is still owed, wherever the session
+    // began: a login, a reopened app, a confirmation link on another device.
+    if (!profile.onboarded_at) {
+      setOnboardingDue(true)
+      if (api.getEntity("router").route !== "onboarding") {
+        api.notify("#router:navigate", { to: paths.onboarding, replace: true })
+      }
+    }
   },
   error(entity, err) {
     entity.status = "error"

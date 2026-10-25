@@ -44,6 +44,7 @@ export function onboardingFinish(entity, _, api) {
 export function emailBack(entity) {
   entity.step = "email"
   entity.error = null
+  entity.isResent = false
   clearAuthErrors(entity)
 }
 
@@ -127,23 +128,41 @@ export const login = handleAsync("login", {
       password,
     })
     if (error) throw error
-    return data.user
+    // Asked here rather than left to the profile load, so the first page after
+    // sign-in is already the right one instead of the event list for a moment.
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("onboarded_at")
+      .eq("id", data.user.id)
+      .single()
+    if (profileError) throw profileError
+    return { user: data.user, isOnboarded: Boolean(profile.onboarded_at) }
   },
-  success(entity, user, api) {
+  success(entity, { user, isOnboarded }, api) {
     entity.status = "ready"
     entity.password = ""
     // Written before the notification, so the guard that the navigation raises
     // reads a signed-in visitor. Ordering is the whole trick here.
     writeUser(user)
+    setOnboardingDue(!isOnboarded)
     api.notify("#eventList:load")
     api.notify("#profile:load")
     const router = api.getEntity(ROUTER)
     api.notify("#router:navigate", {
-      to: landingForSession(router),
+      to: isOnboarded ? landingForSession(router) : paths.onboarding,
       replace: true,
     })
   },
   error(entity, err) {
+    // Signed up but never clicked the link: the same inbox step as right
+    // after signup, with the way to send it again.
+    if (err.code === "email_not_confirmed") {
+      entity.status = "ready"
+      entity.error = null
+      entity.password = ""
+      entity.step = "confirm"
+      return
+    }
     entity.status = "error"
     entity.error = err.message ?? "errors.login"
   },
@@ -155,17 +174,27 @@ export const signup = handleAsync("signup", {
     entity.error = null
   },
   async run({ full_name, email, password }) {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: full_name.trim() } },
+      options: {
+        data: { full_name: full_name.trim() },
+        emailRedirectTo: confirmationRedirect(),
+      },
     })
     if (error) throw error
-    return true
+    return Boolean(data.session)
   },
-  success(entity, _, api) {
+  success(entity, hasSession, api) {
     entity.status = "ready"
     entity.password = ""
+    // Without email confirmation (local Supabase) the session is already here.
+    // With it, there is none until the link is clicked, and that link opens
+    // onboarding itself.
+    if (!hasSession) {
+      entity.step = "confirm"
+      return
+    }
     setOnboardingDue(true)
     api.notify("#router:navigate", paths.onboarding)
   },
@@ -174,6 +203,45 @@ export const signup = handleAsync("signup", {
     entity.error = err.message ?? "errors.signup"
   },
 })
+
+export const resend = handleAsync("resend", {
+  start(entity) {
+    entity.status = "loading"
+    entity.error = null
+    entity.isResent = false
+  },
+  async run({ email }) {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: confirmationRedirect() },
+    })
+    if (error) throw error
+    return true
+  },
+  success(entity) {
+    entity.status = "ready"
+    entity.isResent = true
+  },
+  error(entity, err) {
+    entity.status = "error"
+    entity.error = err.message ?? "errors.resend"
+  },
+})
+
+export function resendSubmit(entity, _, api) {
+  api.notify(`#${entity.id}:resend`, {
+    email: entity.values.email.trim().toLowerCase(),
+  })
+}
+
+// Where the confirmation link sends the new user: straight into onboarding, on
+// whichever origin they signed up from. The origin must be in the Supabase
+// redirect allowlist; one that is not (a native shell's) falls back to the
+// Site URL.
+function confirmationRedirect() {
+  return `${window.location.origin}${paths.onboarding}`
+}
 
 function validateEmail(values) {
   const errors = {}

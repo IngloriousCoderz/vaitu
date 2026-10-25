@@ -15,6 +15,7 @@ import {
   SENDER,
   signIn,
   signOut,
+  signUp,
 } from "../testing/index.js"
 import { updateApplicationStatus } from "./applications.js"
 import { supabase } from "./client.js"
@@ -23,9 +24,16 @@ import { createEvent, deleteEvent, fetchMyEvents } from "./events.js"
 const TEST_TIMEOUT_MS = 60000
 
 let userId = null
+// Owned by the seed sender, so deleting the signed-up user does not take it
+// along: a failure halfway through would leave it in the public list.
+let senderEventId = null
 
 afterAll(async () => {
   try {
+    if (senderEventId) {
+      await signIn(SENDER)
+      await deleteEvent(senderEventId)
+    }
     if (userId) await deleteSignedUpUser(userId)
   } finally {
     await signOut()
@@ -49,13 +57,7 @@ test(
   async () => {
     const id = crypto.randomUUID()
     const email = `vitest-${id}@vaitu.local`
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password: SEEKER.password,
-      options: { data: { full_name: `Vitest ${id}` } },
-    })
-    expect(signUpError).toBeNull()
-    userId = data.user.id
+    userId = await signUp({ email, fullName: `Vitest ${id}` })
 
     await signIn({ email, password: SEEKER.password })
     await createEvent(eventPayload(id))
@@ -76,7 +78,7 @@ test(
     // A sent application ends with the deactivation, as it does with an
     // account deletion: the organizer cannot select someone who left.
     const appliedId = crypto.randomUUID()
-    const senderEventId = await createEventAs(SENDER, appliedId)
+    senderEventId = await createEventAs(SENDER, appliedId)
     await signIn({ email, password: SEEKER.password })
 
     await signIn(SEEKER)
@@ -206,6 +208,7 @@ test(
 
     await signIn(SENDER)
     await deleteEvent(senderEventId)
+    senderEventId = null
 
     await deleteSignedUpUser(userId)
     userId = null

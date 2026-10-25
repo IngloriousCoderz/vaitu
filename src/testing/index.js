@@ -1,7 +1,8 @@
 // Shared setup for tests that hit the local Supabase with the public key.
 // A feature test signs in as one of the seed accounts, creates what it needs,
-// and deletes it afterwards. The service role is only used to remove what a
-// test created: a signed-up account, or a check-email rate-limit row.
+// and deletes it afterwards. The service role is only used to confirm a
+// signed-up account's email and to remove what a test created: a signed-up
+// account, or a check-email rate-limit row.
 
 import { execFileSync } from "node:child_process"
 
@@ -74,6 +75,24 @@ export async function deleteOwnedEventByTitle(title) {
   const eventId = await ownedEventId(title)
   if (!eventId) return
   await deleteEvent(eventId)
+}
+
+// Signs up with the public key, as the app does, so the profile trigger runs
+// the same way. Then confirms the email, standing in for the click on the link
+// that signing in now requires.
+export async function signUp({ email, fullName }) {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password: SEEKER.password,
+    options: { data: { full_name: fullName } },
+  })
+  if (error) throw error
+  const { error: confirmError } =
+    await serviceRoleClient().auth.admin.updateUserById(data.user.id, {
+      email_confirm: true,
+    })
+  if (confirmError) throw confirmError
+  return data.user.id
 }
 
 export async function deleteSignedUpUser(userId) {

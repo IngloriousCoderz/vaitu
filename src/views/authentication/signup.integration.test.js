@@ -12,6 +12,7 @@ import {
   SEEKER,
   signIn,
   signOut,
+  signUp,
 } from "../../testing/index.js"
 
 let userId = null
@@ -25,13 +26,7 @@ test("a new account can create an event", async () => {
   const id = crypto.randomUUID()
   const email = `vitest-${id}@vaitu.local`
   const fullName = `Vitest ${id}`
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password: SEEKER.password,
-    options: { data: { full_name: fullName } },
-  })
-  expect(error).toBeNull()
-  userId = data.user.id
+  userId = await signUp({ email, fullName: fullName })
   await signIn({ email, password: SEEKER.password })
 
   const { data: profile, error: profileError } = await supabase

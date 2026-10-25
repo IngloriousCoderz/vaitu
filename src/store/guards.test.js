@@ -1,10 +1,11 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { paths } from "../routes.js"
 import {
   isPreLoginPath,
   isPreLoginRoute,
   landingForSession,
+  routeGuard,
   signInTarget,
 } from "./guards.js"
 
@@ -46,5 +47,47 @@ describe("pre-login routes", () => {
     expect(isPreLoginPath(paths.login)).toBe(true)
     expect(isPreLoginPath(paths.onboarding)).toBe(true)
     expect(isPreLoginPath(paths.events)).toBe(false)
+  })
+})
+
+describe("routeGuard, signed out", () => {
+  // Storage as the browser would hold it: no user, and onboarding owed or not.
+  function guard(route, path, { isOnboardingDue }) {
+    const notify = vi.fn()
+    const originalWindow = globalThis.window
+    globalThis.window = {
+      localStorage: { getItem: () => null },
+      sessionStorage: { getItem: () => (isOnboardingDue ? "due" : null) },
+    }
+    try {
+      routeGuard({}, { route, path }, { notify })
+    } finally {
+      globalThis.window = originalWindow
+    }
+    return notify
+  }
+
+  it("lets a visitor wait on onboarding for a session that is on its way", () => {
+    const notify = guard("onboarding", paths.onboarding, {
+      isOnboardingDue: true,
+    })
+    expect(notify).not.toHaveBeenCalled()
+  })
+
+  it("sends a visitor with no session coming from onboarding to sign in", () => {
+    const notify = guard("onboarding", paths.onboarding, {
+      isOnboardingDue: false,
+    })
+    expect(notify).toHaveBeenCalledWith(
+      "#router:navigate",
+      signInTarget(paths.onboarding),
+    )
+  })
+
+  it("leaves the sign-in page open", () => {
+    const notify = guard("authentication", paths.login, {
+      isOnboardingDue: false,
+    })
+    expect(notify).not.toHaveBeenCalled()
   })
 })
