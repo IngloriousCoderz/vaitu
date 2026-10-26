@@ -1,0 +1,39 @@
+/* Inglorious UI's Snackbar in Vaitu's colours — same plate as the update bar
+   (../update-bar). The question is longer than a label, so the message wraps
+   at every width; two answers share the action slot. */
+
+.bar :global(.iw-snackbar-content) {
+  gap: var(--iw-space-4);
+  max-width: 36rem;
+  padding: var(--iw-space-3) var(--iw-space-3) var(--iw-space-3)
+    var(--iw-space-5);
+  border: 1px solid var(--iw-color-border);
+  border-radius: var(--iw-radius-xl);
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text-secondary);
+  box-shadow: var(--iw-shadow-md);
+  font-size: var(--iw-font-size-sm);
+}
+
+.bar :global(.iw-snackbar-message) {
+  overflow-wrap: anywhere;
+}
+
+/* From 64rem the drawer docks as a sidebar: clear its stripe (--vdrawer-stripe
+   from the shell) so the auto margins centre over the content column. */
+@media (min-width: 64rem) {
+  .bar {
+    inset-inline-start: calc(var(--vdrawer-stripe, 0rem) + var(--iw-space-4));
+    max-width: calc(100% - var(--vdrawer-stripe, 0rem) - 2 * var(--iw-space-4));
+  }
+}
+
+/* While the update bar is on screen the shell passes `isStacked` and this
+   parks a rung higher — same bottom formula as the package, plus one step. */
+:global(.iw-snackbar-bottom-center).barStacked {
+  bottom: calc(
+    var(--iw-snackbar-gap, var(--iw-space-4)) +
+      var(--iw-snackbar-offset-bottom, var(--safe-area-bottom, 0px)) +
+      var(--iw-space-16)
+  );
+}

@@ -113,19 +113,22 @@ button:global(.iw-button).avatarButton {
 
 /* From 64rem the package drawer is a fixed sidebar, 16rem wide or 4rem when
    collapsed, and the shell clears it. Hidden, it takes no room and the logo
-   comes back to the app bar. */
+   comes back to the app bar. The cleared width is also published as
+   --vdrawer-stripe on the same states — the padding is the only writer of
+   the number, the tail overlays (update bar, push prompt) read the token. */
 @media (min-width: 64rem) {
   :global(.iw-flex.iw-flex-padding-none).shellWide {
-    padding-inline-start: 16rem;
+    --vdrawer-stripe: 16rem;
+    padding-inline-start: var(--vdrawer-stripe);
     transition: padding-inline-start var(--iw-transition-fast);
   }
 
   :global(.iw-flex.iw-flex-padding-none).shellWide.shellDrawerCollapsed {
-    padding-inline-start: 4rem;
+    --vdrawer-stripe: 4rem;
   }
 
   :global(.iw-flex.iw-flex-padding-none).shellWide.shellDrawerHidden {
-    padding-inline-start: 0;
+    --vdrawer-stripe: 0rem;
   }
 
   .shellWide:not(.shellDrawerHidden) .brandTitle {

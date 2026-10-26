@@ -33,6 +33,9 @@ export default defineConfig({
         display: "standalone",
         start_url: "/",
       },
+      workbox: {
+        importScripts: ["sw-push.js"],
+      },
     }),
     ViteImageOptimizer(),
   ],

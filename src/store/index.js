@@ -6,6 +6,7 @@ import { Shell } from "../app/shell.js"
 import { CountrySelect } from "../common/country-select/index.js"
 import { LanguageSelect } from "../common/language-select/index.js"
 import { Notifications } from "../common/notifications/index.js"
+import { PushPrompt } from "../common/push-prompt/index.js"
 import { AppVersion } from "../common/update-required/index.js"
 import { I18n } from "../i18n/index.js"
 import { routes } from "../routes"
@@ -45,6 +46,7 @@ export const store = createStore({
     PwaUpdate,
     AppVersion,
     Notifications,
+    PushPrompt,
     ApplicationsReceived,
     NotFound,
     Onboarding,

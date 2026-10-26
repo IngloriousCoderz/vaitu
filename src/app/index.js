@@ -15,6 +15,7 @@ import { Logo } from "../common/logo/index.js"
 import { pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { NotificationsPanel } from "../common/notifications/template.js"
+import { PushPromptBar } from "../common/push-prompt/template.js"
 import { ReactivatedBar } from "../common/reactivated-bar/template.js"
 import { UpdateBar } from "../common/update-bar/template.js"
 import { NO_UNREAD, NOTIFICATION_BADGE_MAX } from "../constants/index.js"
@@ -84,6 +85,7 @@ export const App = {
 
     const shell = api.getEntity("shell")
     const pwaUpdate = api.getEntity("pwaUpdate")
+    const pushPrompt = api.getEntity("pushPrompt")
 
     // A native build below the platform's minimum gets the store screen and
     // nothing else: no chrome to reach the rest of the app through.
@@ -113,6 +115,7 @@ export const App = {
       updatebar:
         this.renderUpdateBar(api, pwaUpdate) ||
         this.renderReactivatedBar(api, shell),
+      pushPrompt: this.renderPushPrompt(api, pushPrompt, pwaUpdate),
       notificationsPanel: this.renderNotificationsPanel(api),
       // No tab bar counts as a hidden one: the footer row and the
       // snackbar offset both go.
@@ -136,6 +139,19 @@ export const App = {
     if (!shell.isReactivated) return ""
     return ReactivatedBar.render({
       onDismiss: () => api.notify("#shell:reactivatedDismiss"),
+    })
+  },
+
+  // Web Push's own permission question. The browser would raise it at boot
+  // with no context; the house asks as a Snackbar instead — same component
+  // as the update pill. A rung higher only while that pill is on screen.
+  // The question auto-applies its outcome: settle handles grant and refusal.
+  renderPushPrompt(api, pushPrompt, pwaUpdate) {
+    if (!pushPrompt?.isReady || pushPrompt.isBusy) return ""
+    return PushPromptBar.render({
+      isStacked: Boolean(pwaUpdate?.isUpdateReady),
+      onAsk: () => api.notify("#pushPrompt:ask"),
+      onDecline: () => api.notify("#pushPrompt:decline"),
     })
   },
 
@@ -316,6 +332,7 @@ export const App = {
     content,
     tabbar,
     updatebar,
+    pushPrompt,
     notificationsPanel,
     appBar,
     drawer,
@@ -349,9 +366,10 @@ export const App = {
         // The update pill is a fixed Snackbar, kept out of the footer row
         // only because that row collapses to zero from 48rem; it rises above
         // the tab bar through the shell's --iw-snackbar-offset-bottom. The
-        // notifications drawer paints last: it is the only one meant to cover
-        // the page wholesale.
-        ...[updatebar, notificationsPanel].filter(Boolean),
+        // push prompt pill uses the same slot and stacks a rung higher via
+        // isStacked. The notifications drawer paints last: it is the only one
+        // meant to cover the page wholesale.
+        ...[updatebar, pushPrompt, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",
           direction: undefined,

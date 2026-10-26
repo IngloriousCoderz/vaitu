@@ -437,5 +437,10 @@
       "eventUpdated": "{{title}} è stato aggiornato",
       "eventClosed": "{{title}} è stato chiuso"
     }
+  },
+  "push": {
+    "prompt": "Attivare le notifiche push? Ti avviseremo quando arrivano candidature e decisioni.",
+    "ask": "Avvisami",
+    "decline": "Non ora"
   }
 }

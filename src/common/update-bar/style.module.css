@@ -27,3 +27,16 @@
     white-space: nowrap;
   }
 }
+
+/* From 64rem the drawer docks as a sidebar over the shell's start edge: the
+   pill centres on the raw viewport by default, and one wide enough (or a
+   snug viewport like 1024–1150px) would run its left half under the
+   sidebar. The start edge clears the drawer's stripe (--vdrawer-stripe,
+   published by the shell) and the auto margins centre over the content
+   column instead — the same treatment the push prompt carries wholesale. */
+@media (min-width: 64rem) {
+  .bar {
+    inset-inline-start: calc(var(--vdrawer-stripe, 0rem) + var(--iw-space-4));
+    max-width: calc(100% - var(--vdrawer-stripe, 0rem) - 2 * var(--iw-space-4));
+  }
+}

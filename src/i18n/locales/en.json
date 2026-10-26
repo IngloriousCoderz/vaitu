@@ -426,5 +426,10 @@
       "eventUpdated": "{{title}} has updates",
       "eventClosed": "{{title}} was closed"
     }
+  },
+  "push": {
+    "prompt": "Turn on push notifications? We will tell you when applications and decisions land.",
+    "ask": "Notify me",
+    "decline": "Not now"
   }
 }
