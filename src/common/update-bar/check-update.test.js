@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { UPDATE_DEFER_KEY } from "../../constants/index.js"
 import { createUpdateCheck } from "./check-update.js"
 
 describe("update check", () => {
@@ -27,7 +26,7 @@ describe("update check", () => {
     expect(h.notifications).toEqual([])
   })
 
-  it("a worker claiming a page that already ran one readies the update, once per worker", () => {
+  it("a worker landing mid-session readies the pill, once per worker", () => {
     const h = harness()
     h.check.attach(h.registration)
     h.registration.installing = h.making
@@ -36,11 +35,31 @@ describe("update check", () => {
     expect(h.notifications).toEqual(["#pwaUpdate:ready"])
   })
 
-  it("the waiting worker is announced at boot, before any check runs", () => {
+  it("a worker waiting at boot is applied straight away, without the pill", () => {
     const h = harness()
-    const registration = registrationWith(h.making)
-    h.check.attach(registration)
-    expect(h.notifications).toEqual(["#pwaUpdate:ready"])
+    h.check.attach(registrationWith(h.making))
+    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
+  })
+
+  it("a waiting worker is applied on the way to the background", () => {
+    const h = harness()
+    h.check.attach(h.registration)
+    h.registration.waiting = h.making
+    h.check.announce(h.making)
+    h.fakeDocument.hidden = true
+    for (const handler of h.listeners) handler()
+    expect(h.notifications).toEqual(["#pwaUpdate:ready", "#pwaUpdate:refresh"])
+  })
+
+  it("coming back applies a waiting worker instead of checking again, once", () => {
+    const h = harness()
+    h.check.attach(h.registration)
+    h.registration.waiting = h.making
+    h.fakeDocument.hidden = false
+    for (const handler of h.listeners) handler()
+    for (const handler of h.listeners) handler()
+    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
+    expect(h.registration.update).not.toHaveBeenCalled()
   })
 
   it("an activated worker resets the single-notice guard", () => {
@@ -55,39 +74,6 @@ describe("update check", () => {
     expect(
       h.notifications.filter((n) => n === "#pwaUpdate:ready"),
     ).toHaveLength(2)
-  })
-
-  it("spends the deferral exactly once: reload onto the waiting worker, flag gone", () => {
-    const h = harness({ stored: "1" })
-    h.registration.waiting = h.making
-    expect(h.check.spendDeferral(h.registration)).toBe(true)
-    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
-    expect(h.saved[UPDATE_DEFER_KEY]).toBeUndefined()
-
-    // Boot again with the flag gone: the deferral is spent, not carried.
-    expect(h.check.spendDeferral(h.registration)).toBe(false)
-    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
-  })
-
-  it("a deferral that outlived its worker is spent silently, without a reload", () => {
-    const h = harness({ stored: "1" })
-    // No waiting worker: spent with no reload notification, never carried.
-    expect(h.check.spendDeferral(h.registration)).toBe(true)
-    expect(h.notifications).toEqual([])
-    expect(h.saved[UPDATE_DEFER_KEY]).toBeUndefined()
-  })
-
-  it("an armed deferral silences the pill it reloads past, and stops its interval", () => {
-    vi.useFakeTimers()
-    const h = harness({ stored: "1" })
-    h.registration.waiting = h.making
-    const lifecycle = h.check.attach(h.registration)
-    // The boot reload is on its way: no announcement flash before it lands.
-    expect(h.notifications).toEqual(["#pwaUpdate:refresh"])
-    lifecycle.stop()
-    vi.advanceTimersByTime(90_000_000)
-    expect(h.registration.update).not.toHaveBeenCalled()
-    vi.useRealTimers()
   })
 })
 
@@ -112,23 +98,12 @@ function registrationWith(waiting = null) {
     addEventListener(type, handler) {
       this.listeners.push(handler)
     },
-    installingOf: null,
     update: vi.fn(),
   }
 }
 
-function harness({ hadController = true, stored = null } = {}) {
+function harness({ hadController = true } = {}) {
   const notifications = []
-  const saved = { "vaitu-update-deferral": stored }
-  const storage = {
-    getItem: (key) => saved[key] ?? null,
-    removeItem: (key) => {
-      delete saved[key]
-    },
-    setItem: (key, value) => {
-      saved[key] = value
-    },
-  }
   const listeners = []
   const fakeDocument = {
     hidden: true,
@@ -138,14 +113,12 @@ function harness({ hadController = true, stored = null } = {}) {
     check: createUpdateCheck({
       checkEveryMs: 9_000_000,
       notify: (event) => notifications.push(event),
-      storage,
       document: fakeDocument,
       hadController,
     }),
     registration: registrationWith(),
     making: waitingWorker(),
     notifications,
-    saved,
     listeners,
     fakeDocument,
   }

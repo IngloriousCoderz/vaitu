@@ -15,7 +15,7 @@ import { Logo } from "../common/logo/index.js"
 import { pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { NotificationsPanel } from "../common/notifications/template.js"
-import { UpdateBar, UpdateDialog } from "../common/update-bar/template.js"
+import { UpdateBar } from "../common/update-bar/template.js"
 import { NO_UNREAD, NOTIFICATION_BADGE_MAX } from "../constants/index.js"
 import { t } from "../i18n/index.js"
 import { paths } from "../routes"
@@ -81,10 +81,20 @@ export const App = {
     // judge this route on the first render rather than after a request.
     const chrome = CHROME[router.route] ?? DEFAULT_CHROME
 
-    const showWide = !NO_WIDE_CHROME.has(router.route)
-
     const shell = api.getEntity("shell")
     const pwaUpdate = api.getEntity("pwaUpdate")
+
+    // A native build below the platform's minimum gets the store screen and
+    // nothing else: no chrome to reach the rest of the app through.
+    if (api.getEntity("appVersion").isUpdateRequired) {
+      return this.renderShell({
+        content: html`<section class=${styles.page}>
+          ${api.render("appVersion")}
+        </section>`,
+      })
+    }
+
+    const showWide = !NO_WIDE_CHROME.has(router.route)
 
     return this.renderShell({
       appBar: showWide ? this.renderAppBar(api, router.route) : null,
@@ -98,31 +108,21 @@ export const App = {
         <section class=${styles.page}>${api.render(router.route)}</section>
       `,
       tabbar: this.renderTabbar(api, chrome),
-      updatebar: this.renderUpdateBar(api, pwaUpdate),
+      updatebar: this.renderUpdateBar(api, pwaUpdate, chrome),
       notificationsPanel: this.renderNotificationsPanel(api),
       isTabbarHidden: chrome.isHidden ?? false,
       isWide: showWide,
     })
   },
 
-  // A new version claimed the running page: one pill to move over with a tap,
-  // and behind its X a dialog to pick when — now, or the next time the app
-  // opens (which happens on its own, so nothing is being refused).
-  renderUpdateBar(api, pwaUpdate) {
+  // A new version landed mid-session: one pill to move over with a tap. The
+  // update check applies it anyway on the next trip to the background.
+  renderUpdateBar(api, pwaUpdate, chrome) {
     if (!pwaUpdate.isUpdateReady) return ""
-    return [
-      UpdateBar.render({
-        isDismissed: pwaUpdate.isDismissed,
-        onRefresh: () => api.notify("#pwaUpdate:refresh"),
-        onDismiss: () => api.notify("#pwaUpdate:ask"),
-      }),
-      UpdateDialog.render({
-        isOpen: pwaUpdate.isDialogOpen,
-        onRefresh: () => api.notify("#pwaUpdate:refresh"),
-        onDefer: () => api.notify("#pwaUpdate:defer"),
-        onClose: () => api.notify("#pwaUpdate:decline"),
-      }),
-    ]
+    return UpdateBar.render({
+      isOverTabbar: chrome.isTabbarRendered !== false && !chrome.isHidden,
+      onRefresh: () => api.notify("#pwaUpdate:refresh"),
+    })
   },
 
   // What the bell opens: the feed's rows in a right-anchored drawer over
@@ -335,7 +335,7 @@ export const App = {
         // the positioned shell: from 48rem the footer row collapses
         // to zero (the drawer is the navigation), and anything inside it never
         // paints — a phone-only strip would defeat the update offer on the
-        // desktops. As an overlay it floats above the tab bar where it exists
+        // desktops. As an overlay it floats above the tab bar where it shows
         // and tail-docks the content where it does not. The notifications
         // drawer paints last: it is the only one meant to cover the page
         // wholesale.

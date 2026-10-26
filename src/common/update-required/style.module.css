@@ -1,0 +1,23 @@
+/* Same title and subtitle as the sign-in steps: the gate reads as the first
+   screen of the app, not as an error. */
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--iw-space-3);
+  max-width: 22rem;
+  margin-inline: auto;
+}
+
+.title {
+  margin: var(--iw-space-4) 0 0;
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: var(--iw-font-size-2xl);
+}
+
+.subtitle {
+  margin: 0 0 var(--iw-space-3);
+  font-size: var(--iw-font-size-sm);
+  color: var(--vmuted);
+}

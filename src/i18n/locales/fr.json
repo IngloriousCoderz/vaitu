@@ -131,10 +131,13 @@
   },
   "pwa": {
     "updateReady": "Nouvelle version disponible",
-    "refresh": "Mettre à jour",
-    "dismiss": "Options de mise à jour",
-    "deferQuestion": "La mise à jour peut se faire maintenant, ou la prochaine fois que vous ouvrez l'app.",
-    "defer": "La prochaine fois"
+    "refresh": "Mettre à jour"
+  },
+  "appUpdate": {
+    "title": "Mise à jour nécessaire",
+    "body": "Cette version de Vaitu n'est plus prise en charge. Mettez l'app à jour pour continuer à l'utiliser.",
+    "bodyNoLink": "Cette version de Vaitu n'est plus prise en charge. Mettez-la à jour depuis l'App Store pour continuer à l'utiliser.",
+    "update": "Mettre à jour"
   },
   "validation": {
     "addName": "Saisissez un prénom",

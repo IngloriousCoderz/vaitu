@@ -1,31 +1,37 @@
-/* The bar floats at the tail of the shell: above the tab bar on the phone,
-   a compact pill floating over the content on tablet and desktop, where the
-   footer row collapses to zero so anything inside it could never paint (the
-   drawer is the navigation there).
+/* A snackbar: a compact pill floating over the content at every width, the
+   way Android's in-app update and most PWAs announce a downloaded version.
+   On the phone it rides just above the tab bar when the route has one, and
+   sits clear of the home indicator when it does not (login, onboarding,
+   detail) — a full-width band there would read as a tab bar floating loose.
+   From 48rem the footer row collapses to zero (the drawer is the
+   navigation), so the pill always tail-docks the content.
 
-   Absolute inside the positioned shell, so it tracks the shell rather than the viewport, and the tab bar inset keeps it
-   from covering the phone's navigation while it is on screen. */
+   Absolute inside the positioned shell, so it tracks the shell rather than
+   the viewport. */
 
 .bar {
   position: absolute;
-  inset-inline: 0;
-  bottom: var(--vtabbar-height);
+  inset-inline: var(--iw-space-4);
+  bottom: calc(var(--iw-space-4) + env(safe-area-inset-bottom, 0px));
   z-index: var(--iw-z-fixed);
-  border-top: 1px solid var(--iw-color-border);
+  /* The pill only wraps its content and floats centered: it reads as a
+     message that happens to sit at the bottom, not as a band across it. */
+  width: fit-content;
+  margin-inline: auto;
+  border: 1px solid var(--iw-color-border);
+  border-radius: var(--iw-radius-xl);
   background: var(--iw-color-surface);
+  box-shadow: var(--iw-shadow-md);
+}
+
+.barOverTabbar {
+  bottom: calc(var(--vtabbar-height) + var(--iw-space-3));
 }
 
 @media (min-width: 48rem) {
-  .bar {
-    /* The pill only wraps its content and floats centered: it reads as a
-       message that happens to sit at the bottom, not as a band across it. */
-    inset-inline: var(--iw-space-4);
+  .bar,
+  .barOverTabbar {
     bottom: var(--iw-space-4);
-    width: fit-content;
-    margin-inline: auto;
-    border: 1px solid var(--iw-color-border);
-    border-radius: var(--iw-radius-xl);
-    box-shadow: var(--iw-shadow-md);
   }
 }
 
@@ -39,11 +45,18 @@
 
 .message {
   flex: 1;
-  /* With .row gated tight, the message buys a full breath of its own on the
-     right — the actions read as a clustered pair at the far end, with the
-     gap living between the message and them, not inside the pair. */
-  margin-inline-end: var(--iw-space-8);
+  /* With .row gated tight, the message buys a full breath of its own before
+     the button. */
+  margin-inline-end: var(--iw-space-4);
   font-size: var(--iw-font-size-sm);
   color: var(--iw-color-text-secondary);
-  white-space: nowrap;
+}
+
+/* A phone is too narrow for the message, the button and the X on one line
+   in every locale: the message wraps there, and keeps its line from 48rem. */
+@media (min-width: 48rem) {
+  .message {
+    margin-inline-end: var(--iw-space-8);
+    white-space: nowrap;
+  }
 }

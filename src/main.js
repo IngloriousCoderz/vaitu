@@ -2,6 +2,7 @@
 // rule wins, so this order is what lets the app override the package.
 import "@inglorious/ui/all.css"
 import "./pwa"
+import "./native-update"
 import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./styles/list-stagger.css"

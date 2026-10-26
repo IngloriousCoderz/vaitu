@@ -32,6 +32,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.5.3",
     "@capacitor/share": "^8.0.3",
     "@iconify-icons/material-symbols": "^2.0.7",

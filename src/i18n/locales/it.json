@@ -131,10 +131,13 @@
   },
   "pwa": {
     "updateReady": "Nuova versione disponibile",
-    "refresh": "Aggiorna ora",
-    "dismiss": "Opzioni di aggiornamento",
-    "deferQuestion": "L'aggiornamento può avvenire adesso o alla prossima apertura dell'app.",
-    "defer": "La prossima volta"
+    "refresh": "Aggiorna ora"
+  },
+  "appUpdate": {
+    "title": "È ora di aggiornare",
+    "body": "Questa versione di Vaitu non è più supportata. Aggiorna l'app per continuare a usarla.",
+    "bodyNoLink": "Questa versione di Vaitu non è più supportata. Aggiornala dall'App Store per continuare a usarla.",
+    "update": "Aggiorna"
   },
   "validation": {
     "addName": "Inserisci un nome",
