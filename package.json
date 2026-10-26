@@ -39,8 +39,8 @@
     "@inglorious/i18n": "^1.2.2",
     "@inglorious/motion": "^9.0.13",
     "@inglorious/store": "^12.0.0",
-    "@inglorious/ui": "^8.4.2",
-    "@inglorious/web": "^6.8.1",
+    "@inglorious/ui": "^8.5.0",
+    "@inglorious/web": "^6.9.0",
     "@supabase/supabase-js": "^2.118.0",
     "fix-webm-duration": "^1.0.6"
   },

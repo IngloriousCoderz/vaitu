@@ -18,6 +18,20 @@
   padding-top: var(--safe-area-top);
 }
 
+/* While the tab bar is on screen, snackbars (the update pill) rise above it:
+   Inglorious UI's Snackbar reads this offset. From 48rem the footer row
+   collapses, so the offset goes with it — `initial` leaves the variable
+   unset, and the Snackbar falls back to the safe area. */
+.shellTabbar {
+  --iw-snackbar-offset-bottom: var(--vtabbar-height);
+}
+
+@media (min-width: 48rem) {
+  .shellTabbar {
+    --iw-snackbar-offset-bottom: initial;
+  }
+}
+
 /* The route renders straight into this, so a short page still paints the full
    height of the content row (its own background). main is a flex item of a
    fixed-height shell, so the percentage resolves.

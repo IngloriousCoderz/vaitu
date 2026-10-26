@@ -30,7 +30,7 @@ does the rest:
 Anything not yet saved when the app goes to the background, such as a
 half-filled event form, is lost in that reload.
 
-The code is in `src/pwa.js` and `src/common/update-bar/`. The check never runs
+The rules live in `@inglorious/web/pwa` (`watchPwaUpdate`), wired in `src/pwa.js`; the pill is `src/common/update-bar/`. The check never runs
 inside the native apps.
 
 To try it locally, run `pnpm build && pnpm preview` and open the app. Then

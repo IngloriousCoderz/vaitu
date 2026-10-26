@@ -1,62 +1,29 @@
-/* A snackbar: a compact pill floating over the content at every width, the
-   way Android's in-app update and most PWAs announce a downloaded version.
-   On the phone it rides just above the tab bar when the route has one, and
-   sits clear of the home indicator when it does not (login, onboarding,
-   detail) — a full-width band there would read as a tab bar floating loose.
-   From 48rem the footer row collapses to zero (the drawer is the
-   navigation), so the pill always tail-docks the content.
+/* Inglorious UI's Snackbar in Vaitu's colours: a light pill on the surface
+   rather than the package's dark toast. Where it sits — centered at the
+   bottom, above the tab bar while the shell shows one — is the Snackbar's
+   job, read from the shell's --iw-snackbar-offset-bottom. */
 
-   Absolute inside the positioned shell, so it tracks the shell rather than
-   the viewport. */
-
-.bar {
-  position: absolute;
-  inset-inline: var(--iw-space-4);
-  bottom: calc(var(--iw-space-4) + env(safe-area-inset-bottom, 0px));
-  z-index: var(--iw-z-fixed);
-  /* The pill only wraps its content and floats centered: it reads as a
-     message that happens to sit at the bottom, not as a band across it. */
-  width: fit-content;
-  margin-inline: auto;
+.bar :global(.iw-snackbar-content) {
+  gap: var(--iw-space-4);
+  padding: var(--iw-space-3) var(--iw-space-3) var(--iw-space-3)
+    var(--iw-space-5);
   border: 1px solid var(--iw-color-border);
   border-radius: var(--iw-radius-xl);
   background: var(--iw-color-surface);
-  box-shadow: var(--iw-shadow-md);
-}
-
-.barOverTabbar {
-  bottom: calc(var(--vtabbar-height) + var(--iw-space-3));
-}
-
-@media (min-width: 48rem) {
-  .bar,
-  .barOverTabbar {
-    bottom: var(--iw-space-4);
-  }
-}
-
-/* Has to beat .iw-flex.iw-flex-padding-none — the Flex primitive's padding: 0
-   shorthand cancels the padding of lower-specificity classes over the Flex
-   node (the same fight the shell's notch padding wins by composing its
-   selector the same way). */
-:global(.iw-flex.iw-flex-padding-none).row {
-  padding: var(--iw-space-3) var(--iw-space-5);
-}
-
-.message {
-  flex: 1;
-  /* With .row gated tight, the message buys a full breath of its own before
-     the button. */
-  margin-inline-end: var(--iw-space-4);
-  font-size: var(--iw-font-size-sm);
   color: var(--iw-color-text-secondary);
+  box-shadow: var(--iw-shadow-md);
+  font-size: var(--iw-font-size-sm);
 }
 
-/* A phone is too narrow for the message, the button and the X on one line
-   in every locale: the message wraps there, and keeps its line from 48rem. */
+/* A phone is too narrow for the message and the button on one line in every
+   locale: the message wraps there, and keeps its line from 48rem, with a full
+   breath before the button. */
 @media (min-width: 48rem) {
-  .message {
-    margin-inline-end: var(--iw-space-8);
+  .bar :global(.iw-snackbar-content) {
+    gap: var(--iw-space-8);
+  }
+
+  .bar :global(.iw-snackbar-message) {
     white-space: nowrap;
   }
 }

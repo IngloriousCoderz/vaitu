@@ -183,16 +183,16 @@ importers:
         version: 1.2.2(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.13
-        version: 9.0.13(@inglorious/web@6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))
+        version: 9.0.13(@inglorious/web@6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))
       '@inglorious/store':
         specifier: ^12.0.0
         version: 12.0.0(@inglorious/utils@5.1.0)
       '@inglorious/ui':
-        specifier: ^8.4.2
-        version: 8.4.2(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))
+        specifier: ^8.5.0
+        version: 8.5.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))
       '@inglorious/web':
-        specifier: ^6.8.1
-        version: 6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))
+        specifier: ^6.9.0
+        version: 6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))
       '@supabase/supabase-js':
         specifier: ^2.118.0
         version: 2.118.0
@@ -1100,13 +1100,13 @@ packages:
     peerDependencies:
       '@inglorious/utils': 5.1.0
 
-  '@inglorious/ui@8.4.2':
-    resolution: {integrity: sha512-jfKh9VtsnFZot1YfPBXpYAw5TTwIVpFiceOgsVBNSI1jTEtEhDZFaNUZCJjNvbhUfqDvFTonWORyHiUnbdwAgw==}
+  '@inglorious/ui@8.5.0':
+    resolution: {integrity: sha512-RIyvTQ9MvbcU2pc8hwYpumbj6BrHyhNkP/2ojuRCbzSeUo+tgQ4XcOLRACTUh+6h/lBG4zfvXQjX/iYk9bcY7A==}
     engines: {node: '>= 22'}
     peerDependencies:
       '@inglorious/store': 12.0.0
       '@inglorious/utils': 5.1.0
-      '@inglorious/web': 6.8.1
+      '@inglorious/web': 6.9.0
 
   '@inglorious/utils@5.1.0':
     resolution: {integrity: sha512-SmK15U5QV01XpBIKw5CMMHBN5rxSZZ2tUESCDuBaN48+Pal0G49L0btWHWTkK81fn9VhAHRemvzTI0JcNT/wCQ==}
@@ -1118,8 +1118,8 @@ packages:
     peerDependencies:
       vite: ^7.1.3 || ^8.0.0
 
-  '@inglorious/web@6.8.1':
-    resolution: {integrity: sha512-zW+LI+xYBtB4ztZah6vyHSvM4kF5xCgMOAAgbh7c5o7FCpH5ITZfI+omIr+l41Fub7LP/vCite6C8ZBt172wSQ==}
+  '@inglorious/web@6.9.0':
+    resolution: {integrity: sha512-jsB7ZZCO96cQgdoPJl9lK8YC3IANYfzWMNw1k/CVp/QgC0HhvpMh3JmFOqdYfSx98S2rQAWW+JbHMoeoh1cJJA==}
     engines: {node: '>= 22'}
     peerDependencies:
       '@inglorious/store': 12.0.0
@@ -4794,20 +4794,20 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@inglorious/motion@9.0.13(@inglorious/web@6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))':
+  '@inglorious/motion@9.0.13(@inglorious/web@6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))':
     dependencies:
-      '@inglorious/web': 6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))
 
   '@inglorious/store@12.0.0(@inglorious/utils@5.1.0)':
     dependencies:
       '@inglorious/utils': 5.1.0
       mutative: 1.3.0
 
-  '@inglorious/ui@8.4.2(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))':
+  '@inglorious/ui@8.5.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0)))':
     dependencies:
       '@inglorious/store': 12.0.0(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0
-      '@inglorious/web': 6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))
 
   '@inglorious/utils@5.1.0': {}
 
@@ -4817,7 +4817,7 @@ snapshots:
       magic-string: 1.4.3
       vite: 8.3.5(@types/node@26.6.5)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
 
-  '@inglorious/web@6.8.1(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))':
+  '@inglorious/web@6.9.0(@inglorious/store@12.0.0(@inglorious/utils@5.1.0))':
     dependencies:
       '@inglorious/store': 12.0.0(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0

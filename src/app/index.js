@@ -108,20 +108,22 @@ export const App = {
         <section class=${styles.page}>${api.render(router.route)}</section>
       `,
       tabbar: this.renderTabbar(api, chrome),
-      updatebar: this.renderUpdateBar(api, pwaUpdate, chrome),
+      updatebar: this.renderUpdateBar(api, pwaUpdate),
       notificationsPanel: this.renderNotificationsPanel(api),
-      isTabbarHidden: chrome.isHidden ?? false,
+      // No tab bar counts as a hidden one: the footer row and the
+      // snackbar offset both go.
+      isTabbarHidden:
+        chrome.isTabbarRendered === false || (chrome.isHidden ?? false),
       isWide: showWide,
     })
   },
 
-  // A new version landed mid-session: one pill to move over with a tap. The
-  // update check applies it anyway on the next trip to the background.
-  renderUpdateBar(api, pwaUpdate, chrome) {
+  // A new version landed mid-session: one pill to move over with a tap. It
+  // is applied anyway on the next trip to the background (src/pwa.js).
+  renderUpdateBar(api, pwaUpdate) {
     if (!pwaUpdate.isUpdateReady) return ""
     return UpdateBar.render({
-      isOverTabbar: chrome.isTabbarRendered !== false && !chrome.isHidden,
-      onRefresh: () => api.notify("#pwaUpdate:refresh"),
+      onRefresh: () => api.notify("#pwaUpdate:pwaUpdateApply"),
     })
   },
 
@@ -319,6 +321,7 @@ export const App = {
         isWide && styles.shellWide,
         isDrawerHidden && styles.shellDrawerHidden,
         isDrawerCollapsed && styles.shellDrawerCollapsed,
+        !isTabbarHidden && styles.shellTabbar,
       ]
         .filter(Boolean)
         .join(" "),
@@ -331,14 +334,11 @@ export const App = {
           className: styles.main,
           children: [content].filter(Boolean),
         }),
-        // The update strip floats over the shell, so it is a direct child of
-        // the positioned shell: from 48rem the footer row collapses
-        // to zero (the drawer is the navigation), and anything inside it never
-        // paints — a phone-only strip would defeat the update offer on the
-        // desktops. As an overlay it floats above the tab bar where it shows
-        // and tail-docks the content where it does not. The notifications
-        // drawer paints last: it is the only one meant to cover the page
-        // wholesale.
+        // The update pill is a fixed Snackbar, kept out of the footer row
+        // only because that row collapses to zero from 48rem; it rises above
+        // the tab bar through the shell's --iw-snackbar-offset-bottom. The
+        // notifications drawer paints last: it is the only one meant to cover
+        // the page wholesale.
         ...[updatebar, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",

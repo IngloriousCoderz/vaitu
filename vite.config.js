@@ -16,9 +16,10 @@ export default defineConfig({
       injectRegister: false,
       // The worker waits for the SKIP_WAITING message regardless: the plugin
       // only auto-installs skipWaiting for the register script it injects,
-      // which this app does not use, and `src/pwa.js` runs the update flow
-      // itself instead. Naming that truthfully also keeps the register
-      // module from adding a second, competing reload on activation.
+      // which this app does not use, and `src/pwa.js` hands the registration
+      // to `watchPwaUpdate` from `@inglorious/web/pwa`, which sends it.
+      // Naming that truthfully also keeps the register module from adding a
+      // second, competing reload on activation.
       registerType: "prompt",
       pwaAssets: {
         config: true,
