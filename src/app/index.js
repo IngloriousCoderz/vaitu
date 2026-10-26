@@ -15,6 +15,7 @@ import { Logo } from "../common/logo/index.js"
 import { pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { NotificationsPanel } from "../common/notifications/template.js"
+import { ReactivatedBar } from "../common/reactivated-bar/template.js"
 import { UpdateBar } from "../common/update-bar/template.js"
 import { NO_UNREAD, NOTIFICATION_BADGE_MAX } from "../constants/index.js"
 import { t } from "../i18n/index.js"
@@ -108,7 +109,10 @@ export const App = {
         <section class=${styles.page}>${api.render(router.route)}</section>
       `,
       tabbar: this.renderTabbar(api, chrome),
-      updatebar: this.renderUpdateBar(api, pwaUpdate),
+      // One pill at a time: the update, being one tap, goes first.
+      updatebar:
+        this.renderUpdateBar(api, pwaUpdate) ||
+        this.renderReactivatedBar(api, shell),
       notificationsPanel: this.renderNotificationsPanel(api),
       // No tab bar counts as a hidden one: the footer row and the
       // snackbar offset both go.
@@ -124,6 +128,14 @@ export const App = {
     if (!pwaUpdate.isUpdateReady) return ""
     return UpdateBar.render({
       onRefresh: () => api.notify("#pwaUpdate:pwaUpdateApply"),
+    })
+  },
+
+  // The sign-in reactivated a deactivated account (src/main.js).
+  renderReactivatedBar(api, shell) {
+    if (!shell.isReactivated) return ""
+    return ReactivatedBar.render({
+      onDismiss: () => api.notify("#shell:reactivatedDismiss"),
     })
   },
 

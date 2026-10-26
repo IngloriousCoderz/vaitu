@@ -6,6 +6,7 @@ export const Shell = {
     entity.isDrawerOpen = false
     entity.isDrawerHidden = false
     entity.isDrawerCollapsed = false
+    entity.isReactivated = false
   },
 
   // `isWide` comes from the caller, which can read the viewport: the same
@@ -24,7 +25,18 @@ export const Shell = {
     entity.isDrawerCollapsed = !entity.isDrawerCollapsed
   },
 
+  // The sign-in brought a deactivated account back: a pill says what did not
+  // come back with it, until it is dismissed or the session ends.
+  reactivatedShow(entity) {
+    entity.isReactivated = true
+  },
+
+  reactivatedDismiss(entity) {
+    entity.isReactivated = false
+  },
+
   sessionEnd(entity) {
     entity.isDrawerOpen = false
+    entity.isReactivated = false
   },
 }

@@ -131,6 +131,10 @@
     "updateReady": "New version available",
     "refresh": "Update now"
   },
+  "reactivated": {
+    "message": "Welcome back! Your account is active again. The applications you had sent and your open events were removed when you deactivated it.",
+    "dismiss": "Got it"
+  },
   "appUpdate": {
     "title": "Time to update",
     "body": "This version of Vaitu is no longer supported. Update the app to keep using it.",

@@ -173,8 +173,14 @@ test(
 
     // Signing back in reactivates via touch_login (also called from main.js).
     await signIn({ email, password: SEEKER.password })
-    const { error: touchError } = await supabase.rpc("touch_login")
+    const { data: isReactivated, error: touchError } =
+      await supabase.rpc("touch_login")
     expect(touchError).toBeNull()
+    expect(isReactivated).toBe(true)
+
+    // Only the sign-in that reactivates says so: the app's notice shows once.
+    const { data: isReactivatedAgain } = await supabase.rpc("touch_login")
+    expect(isReactivatedAgain).toBe(false)
 
     const { data: restored } = await supabase
       .from("profiles")

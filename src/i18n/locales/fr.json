@@ -133,6 +133,10 @@
     "updateReady": "Nouvelle version disponible",
     "refresh": "Mettre à jour"
   },
+  "reactivated": {
+    "message": "Bon retour ! Votre compte est de nouveau actif. Les candidatures que vous aviez envoyées et vos événements ouverts ont été supprimés lors de sa désactivation.",
+    "dismiss": "Compris"
+  },
   "appUpdate": {
     "title": "Mise à jour nécessaire",
     "body": "Cette version de Vaitu n'est plus prise en charge. Mettez l'app à jour pour continuer à l'utiliser.",

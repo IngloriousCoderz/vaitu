@@ -1,0 +1,15 @@
+/* The update bar's light pill (see ../update-bar), but the message is a
+   sentence, not a label: it wraps at every width, held to a readable measure. */
+
+.bar :global(.iw-snackbar-content) {
+  gap: var(--iw-space-4);
+  max-width: 36rem;
+  padding: var(--iw-space-3) var(--iw-space-3) var(--iw-space-3)
+    var(--iw-space-5);
+  border: 1px solid var(--iw-color-border);
+  border-radius: var(--iw-radius-xl);
+  background: var(--iw-color-surface);
+  color: var(--iw-color-text-secondary);
+  box-shadow: var(--iw-shadow-md);
+  font-size: var(--iw-font-size-sm);
+}

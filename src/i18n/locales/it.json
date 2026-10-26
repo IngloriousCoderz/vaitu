@@ -133,6 +133,10 @@
     "updateReady": "Nuova versione disponibile",
     "refresh": "Aggiorna ora"
   },
+  "reactivated": {
+    "message": "Ti diamo il bentornato! Il tuo account è di nuovo attivo. Le candidature che avevi inviato e i tuoi eventi aperti sono stati rimossi quando l'hai disattivato.",
+    "dismiss": "Ho capito"
+  },
   "appUpdate": {
     "title": "È ora di aggiornare",
     "body": "Questa versione di Vaitu non è più supportata. Aggiorna l'app per continuare a usarla.",

@@ -42,7 +42,11 @@ store.notify("#eventList:load")
 function trackSession(session) {
   if (session) {
     writeUser(session.user)
-    stampLogin()
+    // Coming back is not an undo (deactivating deleted what they had sent and
+    // their open events), so the sign-in that reactivates says so.
+    stampLogin().then((isReactivated) => {
+      if (isReactivated) store.notify("#shell:reactivatedShow")
+    })
     // Whatever depends on who is signed in hears it here and reacts on its
     // own: the market, the profile and the bell each load (see their
     // `sessionStart`), so nothing waits for the page that needs it.

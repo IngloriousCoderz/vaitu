@@ -85,11 +85,15 @@ export async function endSession() {
 }
 
 /**
- * Records last_login_at and clears a prior soft-deactivation. Fire-and-forget:
- * a failed RPC must not block a session auth already accepted.
+ * Records last_login_at and clears a prior soft-deactivation. Never rejects:
+ * a failed RPC must not block a session auth already accepted, so it reads as
+ * "nothing was reactivated".
+ * @returns {Promise<boolean>} Whether this sign-in reactivated the account.
  */
 export function stampLogin() {
-  void Promise.resolve(supabase.rpc("touch_login")).catch(() => {})
+  return Promise.resolve(supabase.rpc("touch_login"))
+    .then(({ data }) => data === true)
+    .catch(() => false)
 }
 
 /** @returns {boolean} */
