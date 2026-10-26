@@ -135,21 +135,3 @@
 :global(.iw-drawer).panel :global(.iw-drawer-header) {
   padding-inline: var(--iw-space-4);
 }
-
-/* The package drawer doubles as the shell's sidebar at ≥64rem: docked, with
-   no drop shadow, no close button and its backdrop disabled. The
-   notifications panel is an overlay drawer at every width — it covers the
-   page wholesale — so those three come back for it alone. */
-@media (min-width: 64rem) {
-  :global(.iw-drawer).panel {
-    box-shadow: var(--iw-shadow-lg);
-  }
-
-  :global(.iw-drawer).panel :global(.iw-drawer-close) {
-    display: inline-flex;
-  }
-
-  :global(.iw-drawer-open).panel ~ :global(.iw-drawer-backdrop) {
-    display: flex;
-  }
-}

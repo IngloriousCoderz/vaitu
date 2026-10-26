@@ -91,12 +91,9 @@ export const NotificationsPanel = {
     } = entity
     return Drawer.render({
       isOpen,
-      /* The package drawer doubles as a docked sidebar at ≥64rem, where its
-         closed state keeps `transform: none` — a closed panel would paint on
-         the right edge of the page forever. `isHidden` is that state's off
-         switch: it slides this one out of the viewport whenever it is not
-         open, at every width. */
-      isHidden: !isOpen,
+      // An overlay at every width, never the docked sidebar the shell's
+      // drawer becomes on wide screens.
+      variant: "temporary",
       anchor: "right",
       className: styles.panel,
       onClose,

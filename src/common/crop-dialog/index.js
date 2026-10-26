@@ -51,16 +51,7 @@ export const CropDialog = {
       className: styles.cropDialog,
       onClose: onCancel,
       children: html`
-        <div
-          class=${styles.cropViewport}
-          @keydown=${(event) => {
-            if (event.key !== "Escape") return
-            event.preventDefault()
-            onCancel()
-          }}
-        >
-          ${api.render(cropperId)}
-        </div>
+        <div class=${styles.cropViewport}>${api.render(cropperId)}</div>
         ${ErrorAlert.render({ error: shownError, className: styles.error })}
       `,
       actions: Flex.render({

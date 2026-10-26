@@ -61,15 +61,22 @@
   font-weight: var(--iw-font-weight-semibold);
 }
 
-.progressTrack :global(.iw-progress-linear-track) {
-  background: var(--vline);
-  border-radius: var(--iw-radius-full);
+/* The package bar is a native <progress>: its custom properties size and
+   colour the track, and the bar's own pseudo-elements are repainted flat in
+   the accent, without the package's gradient. */
+.progressTrack {
+  --iw-progress-height: var(--iw-space-2);
+  --iw-progress-radius: var(--iw-radius-full);
+  --iw-progress-track-color: var(--vline);
 }
 
-.progressTrack :global(.iw-progress-linear-bar) {
+:global(.iw-progress-linear).progressTrack::-webkit-progress-value {
   background: var(--vaccent);
-  border-radius: var(--iw-radius-full);
   transition: width var(--iw-transition-slow);
+}
+
+:global(.iw-progress-linear).progressTrack::-moz-progress-bar {
+  background: var(--vaccent);
 }
 
 .progressLabel {
