@@ -255,21 +255,6 @@ button:global(.iw-button).photoRemove :global(.iw-icon-button-content) {
   z-index: 1;
 }
 
-.photoPick {
-  position: relative;
-}
-
-.fileInput {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.fileInput:disabled {
-  cursor: default;
-}
-
 .cancelButton {
   cursor: pointer;
   font: inherit;

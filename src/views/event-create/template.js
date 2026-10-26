@@ -385,27 +385,16 @@ export const EventCreate = {
             })
           : ""
       }
-      <div class=${styles.photoPick}>
-        ${Button.render({
-          children: coverSrc ? t("create.changeCover") : t("create.addCover"),
-          variant: "outline",
-          shape: "pill",
-          size: "md",
-          isFullWidth: true,
-          isDisabled: busy,
-        })}
-        <input
-          class=${styles.fileInput}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          ?disabled=${busy}
-          @change=${(e) => {
-            const [file] = e.target.files ?? []
-            if (file) onCoverSelect(file)
-            e.target.value = ""
-          }}
-        />
-      </div>
+      ${Button.render({
+        children: coverSrc ? t("create.changeCover") : t("create.addCover"),
+        variant: "outline",
+        shape: "pill",
+        size: "md",
+        isFullWidth: true,
+        isDisabled: busy,
+        accept: "image/jpeg,image/png,image/webp",
+        onFileSelect: ([file]) => onCoverSelect(file),
+      })}
       <span class="${styles.audioLabel} ${styles.galleryLabel}"
         >${t("create.gallery")}</span
       >
@@ -437,27 +426,17 @@ export const EventCreate = {
             })
           : ""
       }
-      <div class=${styles.photoPick}>
-        ${Button.render({
-          children: t("create.addGalleryPhotos"),
-          variant: "outline",
-          shape: "pill",
-          size: "md",
-          isFullWidth: true,
-          isDisabled: busy || galleryCount >= galleryMax,
-        })}
-        <input
-          class=${styles.fileInput}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          multiple
-          ?disabled=${busy || galleryCount >= galleryMax}
-          @change=${(e) => {
-            onImagesAdd({ files: [...e.target.files] })
-            e.target.value = ""
-          }}
-        />
-      </div>
+      ${Button.render({
+        children: t("create.addGalleryPhotos"),
+        variant: "outline",
+        shape: "pill",
+        size: "md",
+        isFullWidth: true,
+        isDisabled: busy || galleryCount >= galleryMax,
+        accept: "image/jpeg,image/png,image/webp",
+        isMultiple: true,
+        onFileSelect: (files) => onImagesAdd({ files: [...files] }),
+      })}
     </div>`
   },
 
