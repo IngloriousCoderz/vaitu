@@ -7,17 +7,12 @@
   padding-bottom: var(--vpage-bottom);
   background: var(--vbg);
   --iw-color-surface: var(--vbg);
-  --iw-color-border: var(--vline);
 }
 
 .tabbar {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   /* Named, so a page transition does not slide the bar with the page. */
   view-transition-name: tab-bar;
-}
-
-.tabbar nav {
-  width: 100%;
 }
 
 /* Slide down out of the footer row. The row itself collapses via

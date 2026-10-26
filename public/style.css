@@ -1,7 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
 /* Pin the rem base at 16px. Everything sized in rem across the app — ours and
    @inglorious/ui's — is calibrated against this, so it must not drift with a
    browser or OS default font-size setting. Users who need larger text get it
@@ -46,18 +42,6 @@ button.iw-button.iw-button-secondary {
   --iw-button-border: var(--vmuted);
 }
 
-/* Compact controls opt out of the touch-target floor above — a back link or
-   an inline icon toggle should hug its label, not carry a 48px box. Declared
-   here rather than in each page module because the rule being overridden is
-   here, and the doubled class keeps it winning on specificity. */
-button.iw-button.vaitu-compact {
-  min-height: 0;
-}
-
-button.iw-button.iw-button-primary {
-  --iw-button-text: var(--iw-color-primary-text);
-}
-
 span.iw-chip.iw-chip {
   border: 1px solid var(--vchip-border);
   background: transparent;
@@ -88,24 +72,8 @@ span.iw-chip.iw-chip-info {
   border-color: var(--iw-color-gray-500);
 }
 
-/* UI Select tuned to our inputs (same box, only the picker differs) */
-select.iw-select {
-  min-height: var(--vcontrol-height);
-  font-size: var(--vinput-font-size);
-  color: var(--vink);
-  background-color: var(--vsurface);
-  border: 1px solid var(--vline);
-  border-radius: var(--iw-radius-xl);
-  padding: var(--vcontrol-padding-block) 2.25rem var(--vcontrol-padding-block)
-    var(--vcontrol-padding-inline);
-}
-
 .iw-bottom-navigation-action-selected .iw-bottom-navigation-label {
   font-weight: 800;
-}
-
-nav.iw-bottom-navigation .iw-bottom-navigation-action-selected {
-  color: var(--vchip-active-bg);
 }
 
 /* App-wide calibration of the iw Alert, shared by every page's error box.
@@ -123,44 +91,7 @@ nav.iw-bottom-navigation .iw-bottom-navigation-action-selected {
   line-height: var(--iw-line-height-normal);
 }
 
-/* Search box rebuilt on the UI Input frame. Lives here (not in the module)
-   because public/ edits force a full reload, unlike module HMR. */
-.vaitu-search .iw-input-field .iw-input-frame {
-  background: var(--vsurface);
-  border-radius: var(--iw-radius-xl);
-  padding: var(--iw-space-3) 0.875rem;
-  gap: 0.5625rem;
-}
-
-.vaitu-search .iw-input-field input.iw-input {
-  border: none;
-  background: transparent;
-  min-height: 0;
-  height: auto;
-  padding: 0 0 0 1.25rem;
-  font-size: var(--vinput-font-size);
-  color: var(--vink);
-}
-
-.vaitu-search .iw-input-field input.iw-input::placeholder {
-  color: var(--vmuted);
-}
-
-.vaitu-search .iw-input-field input.iw-input:hover,
-.vaitu-search .iw-input-field input.iw-input:focus {
-  background: transparent;
-  border: none;
-  outline: none;
-  box-shadow: none;
-}
-
-.vaitu-search .iw-input-field span.iw-input-icon {
-  color: var(--vmuted);
-}
-
 body {
-  margin: 0;
   background: #e7e2d3;
-  font-family: var(--iw-font-family-sans);
   -webkit-font-smoothing: antialiased;
 }
