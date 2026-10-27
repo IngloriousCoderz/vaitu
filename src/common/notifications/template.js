@@ -64,7 +64,6 @@ export const Notifications = {
                 isError: status === "error",
                 error,
                 isLoading: status === "loading" || status === "idle",
-                loadingText: t("notifications.loading"),
                 isEmpty: !items.length,
                 emptyText: t("notifications.empty"),
               }) ??
@@ -126,7 +125,6 @@ export const NotificationsPanel = {
               isError: status === "error",
               error,
               isLoading: status === "loading" || status === "idle",
-              loadingText: t("notifications.loading"),
               isEmpty: !items.length,
               emptyText: t("notifications.empty"),
             }) ??

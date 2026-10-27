@@ -79,7 +79,6 @@ export const Ranks = {
                   isError: status === "error",
                   error,
                   isLoading: status === "loading",
-                  loadingText: t("ranks.loading"),
                 }) ??
                 (tiers
                   ? RANK_ORDER.map(

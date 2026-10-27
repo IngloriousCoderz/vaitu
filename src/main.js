@@ -21,7 +21,7 @@ import { isPreLoginPath, signInTarget } from "./store/guards.js"
 // After the starting language has loaded, so the first render is in it.
 // Navigations into and out of the pages with a back button slide in the
 // direction travelled; switching between top-level pages stays instant.
-ready.then(() =>
+ready.then(() => {
   mount(
     withTransitions(store, {
       routes: [
@@ -34,8 +34,11 @@ ready.then(() =>
     }),
     (api) => App.render(null, api),
     document.getElementById("root"),
-  ),
-)
+  )
+  // The HTML boot mark only covers the cold start; once the tree is up it
+  // would sit forever over the page.
+  document.getElementById("boot-splash")?.remove()
+})
 
 store.notify("#eventList:load")
 

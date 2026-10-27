@@ -268,7 +268,6 @@ export const EventList = {
                 isError: status === "error",
                 error,
                 isLoading: status === "loading",
-                loadingText: t("events.loading"),
                 isEmpty: !shown.length,
                 emptyText:
                   isMine && !myEvents.length

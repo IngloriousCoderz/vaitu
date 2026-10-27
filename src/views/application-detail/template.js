@@ -55,7 +55,6 @@ export const ApplicationDetail = {
               isError: status !== "loading" && !application,
               error,
               isLoading: status === "loading",
-              loadingText: t("application.loading"),
             }) ??
             html`
               <div class=${styles.stage}>

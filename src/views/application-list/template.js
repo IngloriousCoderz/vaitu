@@ -64,7 +64,6 @@ export const ApplicationList = {
                 isError: status === "error",
                 error,
                 isLoading: status === "loading",
-                loadingText: t("applications.loading"),
                 isEmpty: !shown.length,
                 emptyText: !applications.length
                   ? t("applications.none")

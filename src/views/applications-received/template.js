@@ -154,7 +154,6 @@ export const ApplicationsReceived = {
                 isError: status === "error" && !items.length,
                 error,
                 isLoading: status === "loading",
-                loadingText: t("applications.loading"),
                 isEmpty: !items.length,
                 emptyText:
                   entity.event_status === "open"

@@ -75,7 +75,6 @@ export const Profile = {
               isError: status === "error" && !profile,
               error,
               isLoading: status === "loading" || !profile,
-              loadingText: t("profile.loading"),
             }) ??
             html`
               ${Flex.render({

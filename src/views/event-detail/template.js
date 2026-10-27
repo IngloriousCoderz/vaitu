@@ -92,7 +92,6 @@ export const EventDetail = {
               isError: status === "error",
               error,
               isLoading: !event,
-              loadingText: t("detail.loading"),
             }) ??
             (entity.isSubmitted
               ? this.renderSubmitted({ onOpenEvents })
