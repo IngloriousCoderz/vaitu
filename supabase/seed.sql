@@ -2,9 +2,9 @@
 -- Mirrors the former static mock (src/data/events.js, since removed).
 -- Applied on `supabase db reset`. Rerunning on a non-fresh DB duplicates rows.
 
--- Wake secrets for push-notify (local Kong + the well-known demo service-role
--- JWT every `supabase start` uses). Cloud sets real values in the SQL editor;
--- see docs/edge-functions.md. Idempotent: skip if the name already exists.
+-- What the push trigger calls push-notify with: the local gateway, as the
+-- database container sees it, and the service-role key every local stack
+-- shares. Production sets its own (docs/deploying.md).
 do $$
 begin
   if not exists (

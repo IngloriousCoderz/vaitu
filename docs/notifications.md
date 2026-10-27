@@ -1,67 +1,92 @@
-# Notifications Architecture
+# Notifications
 
-Vaitu's notification system has three layers, each opt-in and independent.
+When something happens that a user should hear about, the database writes a
+row in `notifications` for them: an application to their event, a decision on
+their application, a change to an event they applied to. Triggers write these
+rows (`supabase/migrations/20261023000000_notifications.sql`), so no client
+can make one up, and a row is all the app needs to tell the user in two ways:
 
-## Layer 1 — In-App Bell (done)
+- **The bell** in the app shows the newest rows and counts the unread ones,
+  live while the app is open.
+- **A push** reaches a browser where the user allowed notifications, even
+  with the app closed.
 
-- Entity: `Notifications` in `src/common/notifications/index.js`
-- Realtime feed via Supabase Realtime on `notifications` table
-- Unread badge on the tab bar bell; tablet+ opens a right-side drawer
-- Optimistic mark-read; session-bound channel (rebinds on sign-in)
+The Android and iOS apps don't get pushes yet: they need Firebase and APNs,
+which Web Push doesn't cover.
 
-## Layer 2 — Web Push (this feature)
+## The bell
 
-- **Entity**: `PushPrompt` in `src/common/push-prompt/index.js`
-- **Permission UI**: `PushPromptBar` snackbar (twin of `UpdateBar`)
-- **Subscription**: `push_subscriptions` table (one row per user+browser)
-- **Edge function**: `push-notify` (self-contained, no app imports)
-- **Service worker**: `public/sw-push.js` (imported by Workbox SW)
-- **Wake chain**: DB trigger `vaitu_wake_push` → `pg_net.http_post` → Kong → `push-notify`
-- **CAS claim**: `pushed_at` IS NULL → NOW() ensures exactly-once per row
-- **Dead-endpoint sweep**: 404/410 responses delete the subscription row
-- **Decline persists**: `localStorage.vaitu-push-declined` survives sessions
-- **Silent resync**: `sessionStart` re-registers endpoint when permission=granted
-- **Native gate**: `isNative()` returns early — Layer 3 (FCM/APNs) is separate
+`src/common/notifications/` loads the feed at sign-in and listens for new rows
+over Supabase Realtime. A tap on a row marks it read and opens what it is
+about (`pathFor`).
 
-### Files
+## Web Push
 
-| Path                                                        | Role                                                                        |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `src/common/push-prompt/index.js`                           | Entity (`create`, `sessionStart`, `ask`, `settle`, `decline`, `sessionEnd`) |
-| `src/common/push-prompt/template.js`                        | `PushPromptBar` renderer (snackbar pill)                                    |
-| `src/common/push-prompt/style.module.css`                   | Pill geometry (drawer-aware, wraps, stacks)                                 |
-| `src/common/notifications/push-copy.js`                     | Pure composition: `pathFor`, `pushParamsFor`, `pushFor`                     |
-| `src/api/push.js`                                           | `subscribeToPush`, `forgetCurrentPush`                                      |
-| `supabase/functions/push-notify/index.ts`                   | Edge function (self-contained copy of composition)                          |
-| `supabase/migrations/20261026000001_push_subscriptions.sql` | Table + RLS + `pushed_at` + wake trigger                                    |
-| `public/sw-push.js`                                         | Classic SW handlers (`push`, `notificationclick`)                           |
-| `vite.config.js`                                            | `workbox.importScripts: ["sw-push.js"]`                                     |
+### Asking
 
-### Styling Law (Matteo)
+Browsers show their permission dialog once: refused there, the app can never
+ask again. So the first sign-in on a browser shows a pill instead, and the
+dialog only comes up after "Notify me". "Not now" hides the pill on that
+browser for good; notifications can still be allowed later from the browser's
+own settings. The pill is `src/common/push-prompt/`.
 
-- `--vdrawer-stripe` published by `src/app/style.module.css` as **inherited CSS var** at `≥64rem`
-- Values: `16rem` (open), `4rem` (collapsed), `0rem` (hidden)
-- Both `UpdateBar` and `PushPromptBar` consume via `var(--vdrawer-stripe, 0rem)`
-- **Never in `tokens.css`** — that file was reduced by 66 lines for this reason
+### Which browser gets whose pushes
 
-### Stacking
+Once notifications are allowed, every sign-in saves the browser's push
+subscription under the user who signed in, and signing out deletes it. A
+browser belongs to one user at a time: if a sign-out could not reach the
+server, the next person to sign in there takes the browser over. The client
+side is `src/api/push.js`; `endSession` in `src/api/session.js` does the
+deleting.
 
-- `isStacked = Boolean(pwaUpdate?.isUpdateReady)` only
-- `UpdateBar` non-dismissable (Matteo's rewrite removed `isDismissed`/`isDialogOpen`/`defer`)
-- Both pills use `@inglorious/ui` `Snackbar`; stacked push bumps `bottom` by `--iw-space-16`
+### Sending
 
-## Layer 3 — Native Push (FCM/APNs via Capacitor) — next card
+1. A row lands in `notifications`.
+2. If its recipient has a subscription, a trigger calls the `push-notify`
+   [edge function](edge-functions.md) with the row's id.
+3. `push-notify` marks the row as pushed, so it is never sent twice, writes
+   the message in the recipient's language, and sends it to each of their
+   browsers. A browser the push service reports as gone is deleted.
+4. The service worker (`public/sw-push.js`) shows it. A tap opens the same
+   screen as the row in the bell.
 
-- Requires Capacitor Push Notifications plugin
-- Separate entity, separate permission flow
-- Shares `push-copy.js` composition for wording parity
+The edge function can't import app code, so it keeps copies of the feed's
+lines (`wording.json`) and destinations (`message.ts`).
+`src/common/notifications/push.test.js` fails when they drift from the
+catalogues or from `pathFor`. After changing a line in
+`notifications.types`, copy it into `wording.json`.
 
-## Manual Test Roteiro
+## Setting up Web Push locally
 
-1. Two accounts (A = event owner, B = applicant) on two devices/browsers
-2. B applies → A sees toast (app open) + push (app closed)
-3. A selects → B sees toast + push
-4. A rejects → B sees toast + push
-5. Sign out B → endpoint row deleted; sign in B → silent resync
-6. "Not now" on B → pill never returns; browser settings can still grant
-7. Check `pushed_at` timestamp on notifications row after each push
+Pushes are signed with a VAPID key pair. Generate one:
+
+```bash
+npx web-push generate-vapid-keys
+```
+
+Put both halves in `supabase/functions/.env`, plus a contact for the push
+services:
+
+```bash
+VAPID_PUBLIC_KEY=<public key>
+VAPID_PRIVATE_KEY=<private key>
+VAPID_SUBJECT=mailto:<your email>
+```
+
+The public key also goes in `.env.local`, for the browser:
+
+```bash
+VITE_VAPID_PUBLIC_KEY=<public key>
+```
+
+`supabase/seed.sql` already gives the trigger the local function URL and key.
+
+The service worker only exists in a build, so try it with
+`pnpm build && pnpm preview`. Sign in as `sender@vaitu.local`, allow
+notifications and close the tab. Then, as `seeker@vaitu.local` in another
+browser, apply to one of the sender's events.
+
+Production needs the same keys, set as described in
+[Deploying](deploying.md).
+
+Next: [Mobile](mobile.md).

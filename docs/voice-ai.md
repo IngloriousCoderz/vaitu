@@ -41,4 +41,4 @@ In production they are set with `supabase secrets set` (see
 - Local Whisper was evaluated and dropped: worse on Italian proper nouns
   plus a ~150MB model download per device.
 
-Next: [Mobile](mobile.md).
+Next: [Notifications](notifications.md).

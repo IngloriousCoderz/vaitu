@@ -142,12 +142,10 @@ export const App = {
     })
   },
 
-  // Web Push's own permission question. The browser would raise it at boot
-  // with no context; the house asks as a Snackbar instead — same component
-  // as the update pill. A rung higher only while that pill is on screen.
-  // The question auto-applies its outcome: settle handles grant and refusal.
+  // The question before the browser's notification permission dialog, above
+  // the update pill when both are up.
   renderPushPrompt(api, pushPrompt, pwaUpdate) {
-    if (!pushPrompt?.isReady || pushPrompt.isBusy) return ""
+    if (!pushPrompt?.isOpen) return ""
     return PushPromptBar.render({
       isStacked: Boolean(pwaUpdate?.isUpdateReady),
       onAsk: () => api.notify("#pushPrompt:ask"),
@@ -365,10 +363,9 @@ export const App = {
         }),
         // The update pill is a fixed Snackbar, kept out of the footer row
         // only because that row collapses to zero from 48rem; it rises above
-        // the tab bar through the shell's --iw-snackbar-offset-bottom. The
-        // push prompt pill uses the same slot and stacks a rung higher via
-        // isStacked. The notifications drawer paints last: it is the only one
-        // meant to cover the page wholesale.
+        // the tab bar through the shell's --iw-snackbar-offset-bottom, and the
+        // push prompt with it. The notifications drawer paints last: it is
+        // the only one meant to cover the page wholesale.
         ...[updatebar, pushPrompt, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",

@@ -1,91 +1,80 @@
+import { handleAsync } from "@inglorious/store/async"
 import { isNative } from "@inglorious/web/mobile"
 
-import { forgetCurrentPush, subscribeToPush } from "../../api/push.js"
+import { isPushSupported, syncPushSubscription } from "../../api/push.js"
 import { PUSH_DECLINE_KEY } from "../../constants/index.js"
 import { PushPromptBar as renderers } from "./template.js"
 
-/* Layer 2's front door: the browser's own permission question, carried by the
-   house's one-row pill rather than a surprise dialog at boot. The pill only
-   rises when there is something undetermined to ask (permission is still
-   "default" and the user has not already declined this session forever);
-   "granted" is acted on silently — at every session start the endpoint is
-   re-registered, so a revoked row or rotated keys heal on the next sign-in
-   without any ceremony.
-
-   The gestures run inside the store's dispatch (a click notifies, handlers
-   run synchronously in that same click's task), which is exactly what
-   requestPermission needs; the ask itself lives in the entity like
-   PwaUpdate.refresh lives in its own. */
-
+// Asks for the permission Web Push needs, in a pill rather than the browser's
+// dialog straight away: the dialog only comes up once the user says yes, and
+// a browser that saw it refused never shows it again. "Not now" stops the
+// pill on this browser for good; the browser's own settings can still allow
+// notifications later.
+//
+// Once allowed, every sign-in files this browser's subscription under whoever
+// signed in. Signing out removes it (see endSession in src/api/session.js).
+// The native apps will get their pushes another way, so none of this runs
+// there.
 export const PushPrompt = {
   ...renderers,
 
   create(entity) {
-    entity.isReady = false
-    entity.isBusy = false
+    entity.isOpen = false
   },
 
-  sessionStart(entity) {
-    if (isNative()) return
-    if (typeof window === "undefined") return
-    if (!("Notification" in window)) return
-    if (window.localStorage.getItem(PUSH_DECLINE_KEY)) return
-
-    if (Notification.permission === "default") {
-      entity.isReady = true
+  sessionStart(entity, _, api) {
+    if (isNative() || !isPushSupported()) return
+    if (Notification.permission === "granted") {
+      api.notify(`#${entity.id}:sync`)
       return
     }
-    if (Notification.permission === "granted") {
-      entity.isReady = false
-      // Silent sync: re-announce this browser under the session's user.
-      // A failure is not a session failure — parked endpoints heal next
-      // sign-in, and there is nothing on screen to hang an error on.
-      subscribeToPush().catch(() => {})
-    }
+    entity.isOpen = Notification.permission === "default" && !isDeclined()
   },
 
-  async ask(entity, payload, api) {
-    if (entity.isBusy) return
-    entity.isBusy = true
-    try {
-      // The gesture's promise is awaited, which is where the store commits
-      // this handler's draft and revokes its proxy: everything decided here
-      // re-enters as its own dispatch (the same way authentication's
-      // handlers move the router after their awaits), never by writing
-      // through the dead reference.
-      const permission = await Notification.requestPermission()
-      api.notify("#pushPrompt:settle", permission)
-    } catch {
-      // A torn-down dialog or a dead registration is still an answer:
-      // settle to the same quiet end.
-      api.notify("#pushPrompt:settle", "denied")
-    }
+  sessionEnd(entity) {
+    entity.isOpen = false
   },
 
-  // The ask's landing: the question is answered, the pill goes down, and a
-  // grant turns into a subscription for the signed-in user. All synchronous,
-  // dispatched on its own fresh entity.
-  settle(entity, permission) {
-    entity.isReady = false
-    entity.isBusy = false
-    if (permission !== "granted") return
-    // A dead registration is not a question failure: parked endpoints heal
-    // at the next session start, silently.
-    subscribeToPush().catch(() => {})
-  },
+  // The pill goes down as the browser's dialog comes up. Dismissing the
+  // dialog leaves the permission undecided, so the next sign-in asks again.
+  // requestPermission runs within the tap that notified `ask`, which is what
+  // the browser needs to show the dialog.
+  ...handleAsync("ask", {
+    start(entity) {
+      entity.isOpen = false
+    },
+    run() {
+      return Notification.requestPermission()
+    },
+    success(entity, permission, api) {
+      if (permission === "granted") api.notify(`#${entity.id}:sync`)
+    },
+    error() {},
+  }),
 
-  // "Not now" means never ask on this device again: the flag is the decision,
-  // surviving sessions. The permission state itself is still the browser's —
-  // it can be re-granted from browser settings.
   decline(entity) {
-    window.localStorage.setItem(PUSH_DECLINE_KEY, "1")
-    entity.isReady = false
+    try {
+      window.localStorage.setItem(PUSH_DECLINE_KEY, "true")
+    } catch {
+      // Without storage the pill comes back next sign-in, nothing worse.
+    }
+    entity.isOpen = false
   },
 
-  // Sign-out: the endpoint stops pointing at this app for a user who is no
-  // longer here. The browser keeps the subscription itself — the next
-  // session's silent sync claims the same endpoint under whoever signs in.
-  async sessionEnd() {
-    await forgetCurrentPush().catch(() => {})
-  },
+  // Nothing on screen depends on it: a browser that fails to sync now tries
+  // again at the next sign-in.
+  ...handleAsync("sync", {
+    run() {
+      return syncPushSubscription()
+    },
+    error() {},
+  }),
+}
+
+function isDeclined() {
+  try {
+    return window.localStorage.getItem(PUSH_DECLINE_KEY) !== null
+  } catch {
+    return false
+  }
 }

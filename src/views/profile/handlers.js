@@ -395,8 +395,7 @@ export const accountDeactivate = handleAsync("accountDeactivate", {
 
 export const logout = handleAsync("logout", {
   async run() {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    await endSession()
     return true
   },
   success(entity) {

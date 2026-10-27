@@ -17,7 +17,8 @@ supabase login
 supabase link --project-ref utzdcnnjxulwlsuhzjaq
 supabase db push                                        # apply migrations
 supabase secrets set \
-  DEEPGRAM_API_KEY=... OPENROUTER_API_KEY=...           # third-party keys
+  DEEPGRAM_API_KEY=... OPENROUTER_API_KEY=... \
+  VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=... VAPID_SUBJECT=...  # third-party keys
 supabase functions deploy                               # every function
 ```
 
@@ -39,6 +40,19 @@ An empty function list with a working `db push` means every edge function is
 `/functions/v1/*` — a missing function 404s before CORS headers are applied,
 and `supabase-js` reports it as `TypeError: Failed to fetch`.
 
+### Push wake-up
+
+The trigger that wakes `push-notify` reads the project URL and service-role
+key from Vault, so neither is in a migration. Set them once in the SQL editor,
+with the service-role key from Project Settings → API:
+
+```sql
+select vault.create_secret('https://utzdcnnjxulwlsuhzjaq.supabase.co', 'project_url');
+select vault.create_secret('<service-role key>', 'service_role_key');
+```
+
+Until both exist, notifications still reach the bell but no push is sent.
+
 ### Dashboard settings that no migration can set
 
 `supabase/config.toml` `[auth]` applies to the **local** stack only. On the
@@ -57,10 +71,12 @@ origin, which the preflight checks confirm is working.
 ## Frontend
 
 `VITE_SUPABASE_URL` is inlined into `dist/` at build time, so Netlify needs it
-as a build-time env var — the gitignored `.env` is not available there.
+as a build-time env var — the gitignored `.env` is not available there. The
+same goes for `VITE_VAPID_PUBLIC_KEY`, the public half of the backend's VAPID
+key pair: without it, allowing notifications subscribes nothing.
 
 ```bash
-# Netlify: VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY set in the UI
+# Netlify: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_VAPID_PUBLIC_KEY set in the UI
 pnpm build          # emits dist/
 ```
 

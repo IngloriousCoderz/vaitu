@@ -3,32 +3,13 @@
 Server-side code that needs the service role or a third-party key lives in
 `supabase/functions/`, one folder per function. They run on Deno, not Node.
 
-| Function             | Called from                                         | Caller                | Does                                                                                                 |
-| -------------------- | --------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `check-email`        | Login/signup routing                                | Anyone (rate-limited) | Says whether an account exists for an email                                                          |
-| `deactivate-account` | Profile → deactivate                                | Logged-in user        | Deactivates the caller, drops their applications/open events                                         |
-| `transcribe-audio`   | Event form, voice input                             | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](voice-ai.md))                                      |
-| `parse-event`        | Event form, voice input                             | Logged-in user        | Transcript → event fields ([Voice AI](voice-ai.md))                                                  |
-| `push-notify`        | DB trigger `vaitu_wake_push` via `pg_net.http_post` | — (woken by DB)       | Assembles & sends Web Push for a new notification row; CAS claim on `pushed_at`; dead-endpoint sweep |
-
-### Database-woken functions
-
-`push-notify` is not invoked via `supabase.functions.invoke()`. Instead:
-
-1. A row lands in `notifications` (realtime already nudge the in-app bell).
-2. An `AFTER INSERT` trigger `vaitu_wake_push` fires and calls `net.http_post` against `{project_url}/functions/v1/push-notify` with the row's `id`.
-3. The function runs, does a `SELECT ... UPDATE ... SET pushed_at = NOW() WHERE pushed_at IS NULL` (CAS claim), assembles the toast from the row's joins, sends via `web-push`, sweeps 404/410 endpoints.
-
-This keeps the app's client out of the delivery path — no retry logic, no VAPID private keys in the browser, no race with the user closing the tab.
-
-The trigger reads `project_url` and `service_role_key` from Vault (never from the migration). Local `supabase/seed.sql` fills the demo Kong URL and service-role JWT; on cloud, set them once in the SQL editor:
-
-```sql
-select vault.create_secret('https://<project-ref>.supabase.co', 'project_url');
-select vault.create_secret('<SERVICE_ROLE_KEY>', 'service_role_key');
-```
-
-Missing secrets skip the wake — Layer 1 still writes the feed row.
+| Function             | Called from             | Caller                | Does                                                            |
+| -------------------- | ----------------------- | --------------------- | --------------------------------------------------------------- |
+| `check-email`        | Login/signup routing    | Anyone (rate-limited) | Says whether an account exists for an email                     |
+| `deactivate-account` | Profile → deactivate    | Logged-in user        | Deactivates the caller, drops their applications/open events    |
+| `transcribe-audio`   | Event form, voice input | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](voice-ai.md)) |
+| `parse-event`        | Event form, voice input | Logged-in user        | Transcript → event fields ([Voice AI](voice-ai.md))             |
+| `push-notify`        | A database trigger      | The database only     | Sends a new notification ([Notifications](notifications.md))    |
 
 ```
 supabase/functions/
@@ -55,7 +36,8 @@ extension VS Code reports false errors such as `Cannot find name 'Deno'`.
 ## Secrets
 
 Third-party keys go in `supabase/functions/.env` (see
-[Voice AI](voice-ai.md) for the values). The functions hot-reload it.
+[Voice AI](voice-ai.md) and [Notifications](notifications.md) for the
+values). The functions hot-reload it.
 
 Don't put `SUPABASE_*` variables there: the CLI injects `SUPABASE_URL`,
 `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` of the local stack

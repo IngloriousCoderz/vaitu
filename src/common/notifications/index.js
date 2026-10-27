@@ -15,9 +15,6 @@ import { readUserId } from "../../api/session.js"
 import { NO_UNREAD } from "../../constants/index.js"
 import { paths } from "../../routes.js"
 import { pageRouteChange } from "../page-route.js"
-// pathFor lives beside the push copy so the feed and the client-side push
-// helpers share one destination map; the edge function keeps its own mirror.
-import { pathFor } from "./push-copy.js"
 import { Notifications as renderers } from "./template.js"
 
 const ONE_NOTIFICATION = 1
@@ -92,8 +89,29 @@ const readAll = optimistic(
 // are not data, so they stay out of the entity.
 const viewportWatchers = new Map()
 
-// Re-export the feed's public door: App and tests import pathFor from here.
-export { pathFor } from "./push-copy.js"
+// Where a tap on a row lands. Direct answers: a received application goes
+// to the sender's review page while the event is open (its detail with the
+// recap once it is not), a decided application to the application's own
+// detail, everything else about an event to the event. A push lands on the
+// same screen: supabase/functions/push-notify/message.ts keeps a copy.
+export function pathFor(item) {
+  if (item.type === "application_received") {
+    return item.event_status === "open" && item.event_id
+      ? paths.receivedApplications(item.event_id)
+      : item.event_id
+        ? paths.event(item.event_id)
+        : paths.events
+  }
+  if (
+    item.type === "application_selected" ||
+    item.type === "application_rejected"
+  ) {
+    return item.application_id
+      ? paths.application(item.application_id)
+      : paths.applications
+  }
+  return item.event_id ? paths.event(item.event_id) : paths.events
+}
 
 export const Notifications = {
   ...renderers,

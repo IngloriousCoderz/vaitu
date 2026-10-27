@@ -1,113 +1,66 @@
-import { createStore } from "@inglorious/store"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterAll, describe, expect, test } from "vitest"
 
-vi.mock("./client.js", () => ({
-  supabase: {
-    from: vi.fn(() => ({ upsert: vi.fn(), delete: vi.fn() })),
-    auth: {
-      getUser: vi.fn().mockResolvedValue({
-        data: { user: { id: "user-123" } },
-      }),
-    },
-  },
-}))
+import { SEEKER, SENDER, signIn, signOut } from "../testing/index.js"
+import { supabase } from "./client.js"
+import { deletePushSubscription, savePushSubscription } from "./push.js"
 
-vi.mock("@inglorious/web/mobile", () => ({
-  isNative: () => false,
-}))
+// A browser's PushSubscription as JSON. The push service never sees it: these
+// tests only file it, and no notification is created along the way.
+const subscription = {
+  endpoint: `https://push.example.com/vitest-${crypto.randomUUID()}`,
+  keys: { p256dh: "vitest-p256dh", auth: "vitest-auth" },
+}
 
-describe("Push integration: entity + api", () => {
-  let store
-  let entity
-  let originalNotification
-  let originalSW
-  let mockSubscribe
-  let mockGetSubscription
-  let mockFrom
-  let mockUpsert
-  let mockDelete
+async function ownEndpoints() {
+  const { data, error } = await supabase
+    .from("push_subscriptions")
+    .select("endpoint")
+    .eq("endpoint", subscription.endpoint)
+  if (error) throw error
+  return data
+}
 
-  beforeEach(async () => {
-    originalNotification = globalThis.Notification
-    originalSW = navigator.serviceWorker
-
-    globalThis.Notification = class {
-      static permission = "default"
-      static requestPermission = vi.fn().mockResolvedValue("granted")
-    }
-
-    mockSubscribe = vi.fn().mockResolvedValue({
-      endpoint: "https://push.example.com/abc",
-      toJSON: () => ({ keys: { p256dh: "key1", auth: "key2" } }),
-    })
-    mockGetSubscription = vi.fn().mockResolvedValue({
-      endpoint: "https://push.example.com/abc",
-    })
-    mockUpsert = vi.fn().mockResolvedValue({ error: null })
-    mockDelete = vi.fn().mockResolvedValue({ error: null })
-    mockFrom = vi.fn(() => ({ upsert: mockUpsert, delete: mockDelete }))
-
-    navigator.serviceWorker = {
-      ready: Promise.resolve({
-        pushManager: {
-          subscribe: mockSubscribe,
-          getSubscription: mockGetSubscription,
-        },
-      }),
-    }
-
-    const { supabase } = await import("./client.js")
-    supabase.from = mockFrom
-
-    const { PushPrompt } = await import("../common/push-prompt/index.js")
-    store = createStore({ pushPrompt: PushPrompt })
-    entity = store.getEntity("pushPrompt")
+describe("push subscriptions", () => {
+  afterAll(async () => {
+    await signIn(SENDER)
+    await deletePushSubscription(subscription.endpoint)
+    await signOut()
   })
 
-  afterEach(() => {
-    globalThis.Notification = originalNotification
-    navigator.serviceWorker = originalSW
-    vi.resetModules()
+  test("a browser is filed under whoever signed in there", async () => {
+    await signIn(SEEKER)
+    await savePushSubscription(subscription)
+    expect(await ownEndpoints()).toHaveLength(1)
+
+    // Filing it again, as every sign-in does, changes nothing.
+    await savePushSubscription(subscription)
+    expect(await ownEndpoints()).toHaveLength(1)
   })
 
-  it("sessionStart -> ask -> settle(granted) -> subscribe called", async () => {
-    store.notify("#pushPrompt:sessionStart")
-    expect(entity.isReady).toBe(true)
+  // The seeker's sign-out never reached the server: the next user of the
+  // browser takes the endpoint over, and the seeker stops getting pushes there.
+  test("the next user of the browser takes it over", async () => {
+    await signIn(SENDER)
+    await savePushSubscription(subscription)
+    expect(await ownEndpoints()).toHaveLength(1)
 
-    await store.notify("#pushPrompt:ask")
-    expect(entity.isBusy).toBe(false)
-    expect(entity.isReady).toBe(false)
-
-    await vi.waitFor(() => expect(mockSubscribe).toHaveBeenCalled())
+    await signIn(SEEKER)
+    expect(await ownEndpoints()).toHaveLength(0)
   })
 
-  it("sessionStart -> ask -> settle(denied) -> no subscribe", async () => {
-    globalThis.Notification.requestPermission.mockResolvedValue("denied")
-    store.notify("#pushPrompt:sessionStart")
-    await store.notify("#pushPrompt:ask")
-    await vi.waitFor(() => expect(mockSubscribe).not.toHaveBeenCalled())
-  })
+  test("nobody files a browser signed out, or writes the table directly", async () => {
+    await signIn(SEEKER)
+    const { error: insertError } = await supabase
+      .from("push_subscriptions")
+      .insert({
+        endpoint: `${subscription.endpoint}-direct`,
+        user_id: (await supabase.auth.getUser()).data.user.id,
+        p256dh: "x",
+        auth: "x",
+      })
+    expect(insertError).not.toBeNull()
 
-  it("decline sets flag and hides pill; next sessionStart stays hidden", async () => {
-    store.notify("#pushPrompt:sessionStart")
-    expect(entity.isReady).toBe(true)
-    store.notify("#pushPrompt:decline")
-    expect(entity.isReady).toBe(false)
-
-    vi.resetModules()
-    const { supabase } = await import("./client.js")
-    supabase.from = mockFrom
-    const { PushPrompt: PushPrompt2 } =
-      await import("../common/push-prompt/index.js")
-    const store2 = createStore({ pushPrompt: PushPrompt2 })
-    const entity2 = store2.getEntity("pushPrompt")
-    store2.notify("#pushPrompt:sessionStart")
-    expect(entity2.isReady).toBe(false)
-  })
-
-  it("sessionEnd calls forgetCurrentPush", async () => {
-    await store.notify("#pushPrompt:sessionEnd")
-    expect(mockGetSubscription).toHaveBeenCalled()
-    expect(mockDelete).toHaveBeenCalled()
+    await signOut()
+    await expect(savePushSubscription(subscription)).rejects.toThrow()
   })
 })

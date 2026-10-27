@@ -5,11 +5,8 @@ import { Snackbar } from "@inglorious/ui/snackbar"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-// The permission question as a Snackbar in the shell's tail slot — the same
-// component and corner as the update bar, its twin. Two answers live in the
-// action slot (Snackbar only has one); `isStacked` parks this pill a rung
-// higher while the update bar is actually on screen. Drawer-aware start edge
-// and wrapping copy live in the stylesheet.
+// The permission question, in the same pill and corner as the update bar.
+// `isStacked` lifts it above that pill while both are on screen.
 export const PushPromptBar = {
   render({ isStacked = false, onAsk, onDecline }) {
     const className = [styles.bar, isStacked && styles.barStacked]

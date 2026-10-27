@@ -1,135 +1,114 @@
-import { createStore } from "@inglorious/store"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-
-if (typeof globalThis.window === "undefined") {
-  globalThis.window = globalThis
-}
-
-const { subscribeToPush, forgetCurrentPush } = vi.hoisted(() => ({
-  subscribeToPush: vi.fn().mockResolvedValue(undefined),
-  forgetCurrentPush: vi.fn().mockResolvedValue(undefined),
-}))
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 vi.mock("../../api/push.js", () => ({
-  subscribeToPush,
-  forgetCurrentPush,
+  isPushSupported: () => true,
+  syncPushSubscription: vi.fn(async () => {}),
 }))
+vi.mock("@inglorious/web/mobile", () => ({ isNative: vi.fn(() => false) }))
+// No DOM environment here: the pill itself is exercised live.
+vi.mock("./template.js", () => ({ PushPromptBar: {} }))
 
-vi.mock("@inglorious/web/mobile", () => ({
-  isNative: () => false,
-}))
+import { createStore } from "@inglorious/store"
+import { isNative } from "@inglorious/web/mobile"
 
-describe("PushPrompt entity", () => {
-  let store
-  let originalNotification
+import { syncPushSubscription } from "../../api/push.js"
+import { PUSH_DECLINE_KEY } from "../../constants/index.js"
+import { PushPrompt } from "./index.js"
 
-  beforeEach(async () => {
-    originalNotification = globalThis.Notification
+let stored
 
-    globalThis.Notification = class {
-      static permission = "default"
-      static requestPermission = vi.fn().mockResolvedValue("granted")
-    }
-    globalThis.window.Notification = globalThis.Notification
-    globalThis.window.localStorage = {
-      getItem: vi.fn().mockReturnValue(null),
-      setItem: vi.fn(),
-      removeItem: vi.fn(),
-    }
+beforeEach(() => {
+  vi.clearAllMocks()
+  stored = new Map()
+  vi.stubGlobal("localStorage", {
+    getItem: (key) => stored.get(key) ?? null,
+    setItem: (key, value) => stored.set(key, value),
+  })
+  vi.stubGlobal("window", globalThis)
+  vi.stubGlobal("Notification", {
+    permission: "default",
+    requestPermission: vi.fn(async () => "granted"),
+  })
+})
 
-    subscribeToPush.mockClear()
-    forgetCurrentPush.mockClear()
+function signIn() {
+  const store = createStore({
+    types: { PushPrompt },
+    entities: { pushPrompt: { type: "PushPrompt" } },
+  })
+  store.notify("sessionStart")
+  return store
+}
 
-    const { PushPrompt } = await import("./index.js")
-    store = createStore({
-      types: { PushPrompt },
-      entities: { pushPrompt: { type: "PushPrompt" } },
-      autoCreateEntities: true,
-    })
+describe("PushPrompt.sessionStart", () => {
+  it("asks while the browser has not been answered", () => {
+    expect(signIn().getState().pushPrompt.isOpen).toBe(true)
   })
 
-  afterEach(() => {
-    globalThis.Notification = originalNotification
-    if (globalThis.window) globalThis.window.Notification = originalNotification
-    vi.resetModules()
+  it("files the subscription without asking once allowed", async () => {
+    Notification.permission = "granted"
+    const store = signIn()
+    expect(store.getState().pushPrompt.isOpen).toBe(false)
+    await vi.waitFor(() => expect(syncPushSubscription).toHaveBeenCalled())
   })
 
-  function getEntity() {
-    return store.getState().pushPrompt
-  }
-
-  it("create initializes flags", () => {
-    const entity = getEntity()
-    expect(entity.isReady).toBe(false)
-    expect(entity.isBusy).toBe(false)
+  // The decline is about the pill, not about pushes: allowing them later in
+  // the browser's settings still gets this browser its pushes.
+  it("files the subscription once allowed, even after a decline", async () => {
+    stored.set(PUSH_DECLINE_KEY, "true")
+    Notification.permission = "granted"
+    signIn()
+    await vi.waitFor(() => expect(syncPushSubscription).toHaveBeenCalled())
   })
 
-  it("sessionStart with default permission sets isReady", () => {
-    store.notify("#pushPrompt:sessionStart")
-    expect(getEntity().isReady).toBe(true)
+  it("stays quiet after a decline, or a refusal in the browser", () => {
+    stored.set(PUSH_DECLINE_KEY, "true")
+    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
+
+    stored.clear()
+    Notification.permission = "denied"
+    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
   })
 
-  it("sessionStart with granted permission subscribes silently", async () => {
-    globalThis.Notification.permission = "granted"
-    store.notify("#pushPrompt:sessionStart")
-    expect(getEntity().isReady).toBe(false)
-    await vi.waitFor(() => expect(subscribeToPush).toHaveBeenCalled())
+  it("does nothing in the native apps", () => {
+    isNative.mockReturnValueOnce(true)
+    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
+  })
+})
+
+describe("PushPrompt.ask", () => {
+  it("files the subscription when the browser allows it", async () => {
+    const store = signIn()
+    store.notify("#pushPrompt:ask")
+    expect(store.getState().pushPrompt.isOpen).toBe(false)
+    await vi.waitFor(() => expect(syncPushSubscription).toHaveBeenCalled())
   })
 
-  it("sessionStart with declined flag does nothing", () => {
-    globalThis.window.localStorage.getItem.mockReturnValue("1")
-    store.notify("#pushPrompt:sessionStart")
-    expect(getEntity().isReady).toBe(false)
-  })
-
-  it("ask settles with permission and clears busy", async () => {
-    store.notify("#pushPrompt:sessionStart")
-    await store.notify("#pushPrompt:ask")
-    expect(getEntity().isBusy).toBe(false)
-    expect(getEntity().isReady).toBe(false)
-  })
-
-  it("ask does nothing when already busy", async () => {
-    getEntity().isBusy = true
-    await store.notify("#pushPrompt:ask")
-    expect(globalThis.Notification.requestPermission).not.toHaveBeenCalled()
-  })
-
-  it("settle on grant subscribes", async () => {
-    store.notify("#pushPrompt:settle", "granted")
-    await vi.waitFor(() => expect(subscribeToPush).toHaveBeenCalled())
-  })
-
-  it("settle on denied does not subscribe", async () => {
-    store.notify("#pushPrompt:settle", "denied")
-    await vi.waitFor(() => expect(subscribeToPush).not.toHaveBeenCalled())
-  })
-
-  it("decline sets localStorage flag and hides pill", () => {
-    store.notify("#pushPrompt:sessionStart")
-    store.notify("#pushPrompt:decline")
-    expect(globalThis.window.localStorage.setItem).toHaveBeenCalledWith(
-      "vaitu-push-declined",
-      "1",
+  it("goes quiet when the browser refuses", async () => {
+    Notification.requestPermission.mockResolvedValueOnce("denied")
+    const store = signIn()
+    store.notify("#pushPrompt:ask")
+    await vi.waitFor(() =>
+      expect(Notification.requestPermission).toHaveBeenCalled(),
     )
-    expect(getEntity().isReady).toBe(false)
+    expect(store.getState().pushPrompt.isOpen).toBe(false)
+    expect(syncPushSubscription).not.toHaveBeenCalled()
   })
+})
 
-  it("sessionEnd forgets current push", async () => {
-    await store.notify("#pushPrompt:sessionEnd")
-    expect(forgetCurrentPush).toHaveBeenCalled()
+describe("PushPrompt.decline", () => {
+  it("closes the pill for good on this browser", () => {
+    const store = signIn()
+    store.notify("#pushPrompt:decline")
+    expect(store.getState().pushPrompt.isOpen).toBe(false)
+    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
   })
+})
 
-  it("sessionStart on native returns early", async () => {
-    vi.doMock("@inglorious/web/mobile", () => ({ isNative: () => true }))
-    vi.resetModules()
-    const { PushPrompt: NativePushPrompt } = await import("./index.js")
-    const freshStore = createStore({
-      types: { PushPrompt: NativePushPrompt },
-      entities: { pushPrompt: { type: "PushPrompt" } },
-      autoCreateEntities: true,
-    })
-    freshStore.notify("#pushPrompt:sessionStart")
-    expect(freshStore.getState().pushPrompt.isReady).toBe(false)
+describe("PushPrompt.sessionEnd", () => {
+  it("takes the pill down with the session", () => {
+    const store = signIn()
+    store.notify("sessionEnd")
+    expect(store.getState().pushPrompt.isOpen).toBe(false)
   })
 })

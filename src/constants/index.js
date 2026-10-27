@@ -7,13 +7,8 @@ export const DAY_MS =
   MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
 export const HOUR_MS = MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR
 export const REQUEST_TIMEOUT_MS = 15000
-// The localStorage flag behind "Not now" on the push permission pill: the
-// browser holds the permission itself; this only records the user's no to
-// being asked again on this device.
+// Set by "Not now" on the push pill: this browser is not asked again.
 export const PUSH_DECLINE_KEY = "vaitu-push-declined"
-// URL-safe base64 is packed in 4-character blocks; VAPID keys need this
-// when restoring the '=' padding the Web Push API expects.
-export const BASE64_BLOCK_SIZE = 4
 export const MIN_PASSWORD_LENGTH = 6
 export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5

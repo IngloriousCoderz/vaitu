@@ -11,7 +11,7 @@ The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pro
 - **Choose the best candidate** and pass the job to them.
 - **Voice-to-form**: instead of filling in the whole event form by hand, record a voice message and the fields are filled in automatically. See [Voice AI](docs/voice-ai.md).
 - **PWA and native apps**: runs in the browser as a PWA and as a hybrid Android/iOS app via Capacitor.
-- **Web Push notifications** (Layer 2): real-time toast when applications or decisions arrive, even with the app closed. See [Notifications](docs/notifications.md).
+- **Notifications**: a bell in the app, and pushes to the browser even when the app is closed, for applications, decisions and changes to events. See [Notifications](docs/notifications.md).
 
 Vaitu started with wedding photographers in mind, and is expanding to other kinds of professionals and events, such as sound technicians at a festival.
 
@@ -68,7 +68,7 @@ Read in this order: each guide assumes the ones before it.
 2. [Styling](docs/styling.md): where styles come from and how to override a component.
 3. [Edge functions](docs/edge-functions.md): server-side code, secrets, and adding a function.
 4. [Voice AI](docs/voice-ai.md): the two providers behind voice-to-form.
-5. [Notifications](docs/notifications.md): the three-layer notification system (in-app bell, Web Push, native push).
+5. [Notifications](docs/notifications.md): the bell, Web Push, and setting up push keys.
 6. [Mobile](docs/mobile.md): running the Android and iOS apps.
 7. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
 8. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.

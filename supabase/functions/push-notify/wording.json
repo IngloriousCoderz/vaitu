@@ -1,0 +1,37 @@
+{
+  "ar": {
+    "applicationReceived": "قدّم {{name}} ترشّحه إلى {{title}}",
+    "applicationSelected": "لقد اخترتك لـ {{title}}",
+    "applicationRejected": "لم يتم اختيارك لـ {{title}}",
+    "eventUpdated": "طرأ تحديثات على {{title}}",
+    "eventClosed": "أُغلق {{title}}"
+  },
+  "en": {
+    "applicationReceived": "{{name}} applied to {{title}}",
+    "applicationSelected": "You were selected for {{title}}",
+    "applicationRejected": "You were not selected for {{title}}",
+    "eventUpdated": "{{title}} has updates",
+    "eventClosed": "{{title}} was closed"
+  },
+  "fr": {
+    "applicationReceived": "{{name}} a postulé à {{title}}",
+    "applicationSelected": "Vous avez été retenu pour {{title}}",
+    "applicationRejected": "Vous n'avez pas été retenu pour {{title}}",
+    "eventUpdated": "{{title}} a été mis à jour",
+    "eventClosed": "{{title}} a été clôturé"
+  },
+  "it": {
+    "applicationReceived": "{{name}} ha fatto candidatura per {{title}}",
+    "applicationSelected": "Sei stato selezionato per {{title}}",
+    "applicationRejected": "Non sei stato selezionato per {{title}}",
+    "eventUpdated": "{{title}} è stato aggiornato",
+    "eventClosed": "{{title}} è stato chiuso"
+  },
+  "ja": {
+    "applicationReceived": "{{name}}さんが「{{title}}」に応募しました",
+    "applicationSelected": "「{{title}}」に選ばれました",
+    "applicationRejected": "「{{title}}」は選外でした",
+    "eventUpdated": "「{{title}}」に更新があります",
+    "eventClosed": "「{{title}}」は締め切られました"
+  }
+}
