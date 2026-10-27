@@ -1,12 +1,25 @@
 /* The language picker sits between the details and the account buttons. */
-:global(.iw-flex).language {
-  margin-top: var(--iw-space-6);
-  text-align: start;
+
+.helpIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-inline-start: var(--iw-space-1);
+  border-radius: var(--iw-radius-full);
+  background: var(--vline);
+  color: var(--vmuted);
+  font-size: var(--iw-font-size-xs);
+  font-weight: var(--iw-font-weight-semibold);
+  cursor: help;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
-.languageLabel {
-  font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+.helpIcon:focus-visible {
+  outline: 2px solid var(--vaccent);
+  outline-offset: 2px;
 }
 
 .accountActions {

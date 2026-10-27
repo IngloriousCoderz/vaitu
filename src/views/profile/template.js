@@ -8,6 +8,8 @@ import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
+import { Switch } from "@inglorious/ui/switch"
+import { Tooltip } from "@inglorious/ui/tooltip"
 import { html } from "@inglorious/web"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
@@ -57,6 +59,7 @@ export const Profile = {
       onFavoriteInput,
       onFavoriteAdd,
       onFavoriteRemove,
+      onEmailOptOut,
     },
     api,
   ) {
@@ -275,6 +278,7 @@ export const Profile = {
                         ${this.renderRow(t("profile.subRole"), profile.sub_role)}
                       </dl>
                       ${this.renderLanguage(api)}
+                      ${this.renderEmailOptOut({ entity, onEmailOptOut })}
                       ${this.renderAccountActions({
                         onEdit,
                         onLogout,
@@ -388,14 +392,46 @@ export const Profile = {
     return Flex.render({
       justify: "between",
       align: "center",
-      gap: "md",
-      className: styles.language,
-      children: [
-        html`<span class=${styles.languageLabel}
-          >${t("profile.language")}</span
-        >`,
-        api.render("language"),
-      ],
+      className: styles.row,
+      children: html`
+        <dt>${t("profile.language")}</dt>
+        <dd>${api.render("language")}</dd>
+      `,
+    })
+  },
+
+  renderEmailOptOut({ entity, onEmailOptOut }) {
+    const profile = entity.profile
+    if (!profile) return ""
+    const receivesEmails = !profile.email_opt_out
+    return Flex.render({
+      justify: "between",
+      className: styles.row,
+      children: html`
+        <dt>
+          ${t("profile.emailOptOut")}
+          ${Tooltip.render({
+            content: t("profile.emailOptOutDesc"),
+            position: "top",
+            size: "sm",
+            isOpen: false,
+            children: html`<span
+              class=${styles.helpIcon}
+              role="button"
+              tabindex="0"
+              aria-label=${t("profile.emailOptOutDesc")}
+              >?</span
+            >`,
+          })}
+        </dt>
+        <dd>
+          ${Switch.render({
+            isChecked: receivesEmails,
+            isDisabled: entity.emailOptOutStatus === "saving",
+            onChange: (checked) => onEmailOptOut(!checked),
+          })}
+        </dd>
+      `,
     })
   },
 

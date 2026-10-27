@@ -131,7 +131,7 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale, avatar_url, onboarded_at",
+        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale, avatar_url, onboarded_at, email_opt_out",
       )
       .eq("id", user.id)
       .single()
@@ -354,6 +354,35 @@ export const localeSave = handleAsync("localeSave", {
   },
   error(_, err) {
     console.warn("[profile] language not saved:", err)
+  },
+})
+
+export const emailOptOutSave = handleAsync("emailOptOutSave", {
+  start(entity) {
+    entity.emailOptOutStatus = "saving"
+    entity.error = null
+  },
+  async run(emailOptOut) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) throw new Error("errors.notLoggedIn")
+    const { error } = await supabase
+      .from("profiles")
+      .update({ email_opt_out: emailOptOut })
+      .eq("id", user.id)
+    if (error) throw error
+    return emailOptOut
+  },
+  success(entity, emailOptOut) {
+    entity.emailOptOutStatus = "idle"
+    if (entity.profile)
+      entity.profile = { ...entity.profile, email_opt_out: emailOptOut }
+  },
+  error(entity, err) {
+    entity.emailOptOutStatus = "idle"
+    entity.error = err.message ?? "errors.saveEmailOptOut"
+    console.warn("[profile] email opt-out not saved:", err)
   },
 })
 

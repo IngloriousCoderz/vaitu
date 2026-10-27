@@ -206,7 +206,8 @@
     "logout": "La déconnexion a échoué",
     "loadRanks": "Impossible de charger les niveaux",
     "deactivateAccount": "Le compte n'a pas pu être désactivé. Réessayez.",
-    "resend": "Impossible de renvoyer l'e-mail"
+    "resend": "Impossible de renvoyer l'e-mail",
+    "saveEmailOptOut": "Impossible d'enregistrer la préférence email"
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -364,6 +365,8 @@
     "logOut": "Se déconnecter",
     "howRanksWork": "Comment fonctionnent les niveaux",
     "language": "Langue",
+    "emailOptOut": "Notifications par email",
+    "emailOptOutDesc": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés.",
     "deactivateAccount": "Désactiver le compte",
     "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts et toutes vos candidatures — envoyées et reçues — seront supprimés définitivement. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous.",
     "yesDeactivate": "Oui, désactiver",

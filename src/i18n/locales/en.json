@@ -202,7 +202,8 @@
     "logout": "Logout failed",
     "loadRanks": "Failed to load ranks",
     "deactivateAccount": "The account could not be deactivated. Try again.",
-    "resend": "Could not resend the email"
+    "resend": "Could not resend the email",
+    "saveEmailOptOut": "Failed to save email preference"
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -357,6 +358,8 @@
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
     "language": "Language",
+    "emailOptOut": "Email notifications",
+    "emailOptOutDesc": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent.",
     "deactivateAccount": "Deactivate account",
     "deactivateConfirm": "Deactivate your account? Your open events and all your applications — sent and received — are permanently deleted. Past events with winners and your stats stay. To come back, sign in again.",
     "yesDeactivate": "Yes, deactivate",

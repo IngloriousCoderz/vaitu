@@ -206,7 +206,8 @@
     "logout": "Uscita non riuscita",
     "loadRanks": "Impossibile caricare i livelli",
     "deactivateAccount": "Non è stato possibile disattivare l'account. Riprova.",
-    "resend": "Impossibile inviare di nuovo l'email"
+    "resend": "Impossibile inviare di nuovo l'email",
+    "saveEmailOptOut": "Impossibile salvare la preferenza email"
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -364,6 +365,8 @@
     "logOut": "Esci",
     "howRanksWork": "Come funzionano i livelli",
     "language": "Lingua",
+    "emailOptOut": "Notifiche email",
+    "emailOptOutDesc": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate.",
     "deactivateAccount": "Disattiva account",
     "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti e tutte le tue candidature — inviate e ricevute — verranno eliminati definitivamente. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo.",
     "yesDeactivate": "Sì, disattiva",
