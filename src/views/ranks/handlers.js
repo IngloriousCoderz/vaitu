@@ -34,9 +34,9 @@ export const tiersLoad = handleAsync("tiersLoad", {
     let mine = { points: 0, tier: null }
     if (user) {
       const { data: stats } = await supabase
-        .from("seeker_stats")
+        .from("profile_stats")
         .select("points, tier")
-        .eq("applicant_id", user.id)
+        .eq("profile_id", user.id)
         .maybeSingle()
       if (stats) mine = { points: stats.points ?? NO_POINTS, tier: stats.tier }
     }

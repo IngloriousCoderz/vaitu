@@ -19,7 +19,12 @@ import {
 } from "../testing/index.js"
 import { updateApplicationStatus } from "./applications.js"
 import { supabase } from "./client.js"
-import { createEvent, deleteEvent, fetchMyEvents } from "./events.js"
+import {
+  createEvent,
+  deleteEvent,
+  fetchEventDetail,
+  fetchMyEvents,
+} from "./events.js"
 
 const TEST_TIMEOUT_MS = 60000
 
@@ -48,6 +53,32 @@ test(
       status: 401,
       payload: { error: "Not logged in" },
     })
+  },
+  TEST_TIMEOUT_MS,
+)
+
+test(
+  "the activity stamps are not the user's to write",
+  async () => {
+    await signIn(SEEKER)
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    // Only the edge function deactivates and only touch_login reactivates, so
+    // the stamps they keep stay true.
+    const { error } = await supabase
+      .from("profiles")
+      .update({ is_active: false, last_login_at: null })
+      .eq("id", user.id)
+    expect(error?.message).toContain("permission denied")
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active")
+      .eq("id", user.id)
+      .single()
+    expect(profile.is_active).toBe(true)
   },
   TEST_TIMEOUT_MS,
 )
@@ -150,6 +181,10 @@ test(
       .single()
     expect(kept?.status).toBe("selected")
     expect(kept?.events?.id).toBe(assignedEvent.id)
+
+    // So does the poster's name on it: the winner still sees who it was.
+    const detail = await fetchEventDetail(assignedEvent.id)
+    expect(detail.senderName).toBe(`Vitest ${id}`)
 
     await signOut()
 

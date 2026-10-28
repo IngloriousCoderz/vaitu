@@ -31,11 +31,11 @@ test("a new account can create an event", async () => {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("full_name, email")
+    .select("full_name, country")
     .eq("id", userId)
     .single()
   expect(profileError).toBeNull()
-  expect(profile).toEqual({ full_name: fullName, email })
+  expect(profile).toEqual({ full_name: fullName, country: null })
 
   await createEvent(eventPayload(id))
   const mine = await fetchMyEvents()

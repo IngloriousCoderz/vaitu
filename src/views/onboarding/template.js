@@ -1,6 +1,7 @@
 import { Button } from "@inglorious/ui/button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
@@ -38,28 +39,28 @@ export const Onboarding = {
             ${api.render("country-onboarding")}
             ${ErrorLabel.render({ error: countryError })}
           </div>
-          ${
-            getFieldValue(entity, "country", "") === ITALY
-              ? html`
-                  <div class=${styles.field}>
-                    <span>${t("fields.regionOptional")}</span>
-                    ${api.render("region-onboarding")}
-                  </div>
-                `
-              : html`
-                  <div class=${styles.field}>
-                    ${Input.render({
-                      id: "onboarding-region",
-                      label: t("fields.regionOptional"),
-                      inputType: "text",
-                      value: getFieldValue(entity, "region", ""),
-                      placeholder: t("fields.regionExample"),
-                      isFullWidth: true,
-                      onChange: (value) => onField({ field: "region", value }),
-                    })}
-                  </div>
-                `
-          }
+          ${when(
+            getFieldValue(entity, "country", "") === ITALY,
+            () => html`
+              <div class=${styles.field}>
+                <span>${t("fields.regionOptional")}</span>
+                ${api.render("region-onboarding")}
+              </div>
+            `,
+            () => html`
+              <div class=${styles.field}>
+                ${Input.render({
+                  id: "onboarding-region",
+                  label: t("fields.regionOptional"),
+                  inputType: "text",
+                  value: getFieldValue(entity, "region", ""),
+                  placeholder: t("fields.regionExample"),
+                  isFullWidth: true,
+                  onChange: (value) => onField({ field: "region", value }),
+                })}
+              </div>
+            `,
+          )}
           <div class=${styles.field}>
             ${Input.render({
               id: "onboarding-website",

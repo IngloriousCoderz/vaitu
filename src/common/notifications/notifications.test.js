@@ -104,7 +104,7 @@ describe("Notifications.load", () => {
     Notifications.create(entity)
     fetchMyNotifications.mockResolvedValue([
       notification(),
-      notification({ id: "n2", read: true, type: "event_closed" }),
+      notification({ id: "n2", is_read: true, type: "event_closed" }),
     ])
 
     Notifications.load(entity, undefined, makeApi(entity))
@@ -150,7 +150,7 @@ describe("Notifications.readSet", () => {
     Notifications.readSet(entity, "n1", makeApi(entity))
 
     expect(entity.unread).toBe(0)
-    expect(entity.items[0].read).toBe(true)
+    expect(entity.items[0].is_read).toBe(true)
     expect(markNotificationRead).toHaveBeenCalledWith("n1")
   })
 
@@ -165,7 +165,7 @@ describe("Notifications.readSet", () => {
     Notifications.readSet(entity, "n1", makeApi(entity))
 
     await vi.waitFor(() => expect(entity.unread).toBe(1))
-    expect(entity.items[0].read).toBe(false)
+    expect(entity.items[0].is_read).toBe(false)
   })
 })
 
@@ -173,7 +173,7 @@ describe("Notifications.readSet on a read row", () => {
   it("writes nothing", () => {
     const entity = {
       id: "notifications",
-      items: [notification({ read: true })],
+      items: [notification({ is_read: true })],
       unread: 0,
       status: "ready",
     }
@@ -214,7 +214,7 @@ describe("Notifications.readAll", () => {
     Notifications.readAll(entity, undefined, makeApi(entity))
 
     expect(entity.unread).toBe(0)
-    expect(entity.items.every((item) => item.read)).toBe(true)
+    expect(entity.items.every((item) => item.is_read)).toBe(true)
     expect(markAllNotificationsRead).toHaveBeenCalled()
   })
 
@@ -230,7 +230,7 @@ describe("Notifications.readAll", () => {
     expect(entity.unread).toBe(0)
 
     await vi.waitFor(() => expect(entity.unread).toBe(2))
-    expect(entity.items.every((item) => !item.read)).toBe(true)
+    expect(entity.items.every((item) => !item.is_read)).toBe(true)
   })
 })
 
@@ -300,7 +300,7 @@ describe("NotificationsPanel.render", () => {
       id: "notifications",
       items: [
         notification(),
-        notification({ id: "n2", read: true, type: "event_updated" }),
+        notification({ id: "n2", is_read: true, type: "event_updated" }),
       ],
       unread: 1,
       status: "ready",
@@ -342,7 +342,7 @@ function notification(over = {}) {
   return {
     id: "n1",
     type: "application_received",
-    read: false,
+    is_read: false,
     created_at: new Date().toISOString(),
     event_id: "e1",
     application_id: "a1",

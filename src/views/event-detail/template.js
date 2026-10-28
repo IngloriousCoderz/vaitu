@@ -5,6 +5,7 @@ import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
@@ -93,76 +94,82 @@ export const EventDetail = {
               error,
               isLoading: !event,
             }) ??
-            (entity.isSubmitted
-              ? this.renderSubmitted({ onOpenEvents })
-              : html`
-                  <div class=${styles.stage}>
-                    ${this.renderBanner(event, onPhotoOpen)}
-                    <div class=${styles.story}>
-                      ${Flex.render({
-                        align: "center",
-                        justify: "between",
-                        gap: "sm",
-                        className: styles.topRow,
-                        children: [
-                          html`<h2 class=${styles.title}>${event.title}</h2>`,
-                          Badge.render({
-                            children: deadlineBadge(event),
-                            shape: "pill",
-                            className: detailToneClass(event),
-                          }),
-                        ],
-                      })}
-                      <p class=${styles.meta}>${eventSubtitle(event)}</p>
-                      ${Chip.render({ children: eventTag(event) })}
-                      ${this.renderGallery(event, onPhotoOpen)}
-                      ${this.renderFacts(event)}
-                      <p class=${styles.sender}>
-                        ${t("detail.organizedBy", { name: entity.senderName })}
-                      </p>
-                      <p class=${styles.countdown}>
-                        ${
-                          showClock
-                            ? t("countdown.clock", {
-                                time: formatClock(
-                                  Math.floor(msLeft / MS_PER_SECOND),
-                                ),
-                              })
-                            : countdownLabel(event)
-                        }
-                      </p>
-                    </div>
-                    <div class=${styles.panel}>
+            when(
+              entity.isSubmitted,
+              () => this.renderSubmitted({ onOpenEvents }),
+              () => html`
+                <div class=${styles.stage}>
+                  ${this.renderBanner(event, onPhotoOpen)}
+                  <div class=${styles.story}>
+                    ${Flex.render({
+                      align: "center",
+                      justify: "between",
+                      gap: "sm",
+                      className: styles.topRow,
+                      children: [
+                        html`<h2 class=${styles.title}>${event.title}</h2>`,
+                        Badge.render({
+                          children: deadlineBadge(event),
+                          shape: "pill",
+                          className: detailToneClass(event),
+                        }),
+                      ],
+                    })}
+                    <p class=${styles.meta}>${eventSubtitle(event)}</p>
+                    ${Chip.render({ children: eventTag(event) })}
+                    ${this.renderGallery(event, onPhotoOpen)}
+                    ${this.renderFacts(event)}
+                    <p class=${styles.sender}>
+                      ${t("detail.organizedBy", { name: entity.senderName })}
+                    </p>
+                    <p class=${styles.countdown}>
                       ${
-                        onOpenApplications
-                          ? html`
-                              <div class=${styles.actions}>
-                                ${Button.render({
-                                  variant: "outline",
-                                  shape: "pill",
-                                  isFullWidth: true,
-                                  children: t("detail.reviewApplications"),
-                                  onClick: onOpenApplications,
-                                })}
-                              </div>
-                            `
-                          : liveClosed || isApplicationClosed(event)
-                            ? html`
-                                <div class=${styles.closedBox}>
-                                  ${t("detail.closed")}
-                                </div>
-                              `
-                            : this.renderForm({
-                                entity,
-                                profileComplete,
-                                onField,
-                                onSubmit,
-                                onCompleteProfile,
-                              })
+                        showClock
+                          ? t("countdown.clock", {
+                              time: formatClock(
+                                Math.floor(msLeft / MS_PER_SECOND),
+                              ),
+                            })
+                          : countdownLabel(event)
                       }
-                    </div>
+                    </p>
                   </div>
-                `)
+                  <div class=${styles.panel}>
+                    ${when(
+                      onOpenApplications,
+                      () => html`
+                        <div class=${styles.actions}>
+                          ${Button.render({
+                            variant: "outline",
+                            shape: "pill",
+                            isFullWidth: true,
+                            children: t("detail.reviewApplications"),
+                            onClick: onOpenApplications,
+                          })}
+                        </div>
+                      `,
+                      () =>
+                        when(
+                          liveClosed || isApplicationClosed(event),
+                          () => html`
+                            <div class=${styles.closedBox}>
+                              ${t("detail.closed")}
+                            </div>
+                          `,
+                          () =>
+                            this.renderForm({
+                              entity,
+                              profileComplete,
+                              onField,
+                              onSubmit,
+                              onCompleteProfile,
+                            }),
+                        ),
+                    )}
+                  </div>
+                </div>
+              `,
+            )
           }
         `,
       ],
@@ -176,17 +183,21 @@ export const EventDetail = {
       justify: "center",
       className: styles.banner,
       style: `background:${thumbGradient(event.hue)}`,
-      children: photo
-        ? html`<button
+      children: when(
+        photo,
+        () =>
+          html`<button
             type="button"
             class=${styles.bannerPhoto}
             @click=${() => onPhotoOpen(COVER_INDEX)}
           >
             <img class=${styles.bannerImage} src=${photo} alt="" />
-          </button>`
-        : html`<span class=${styles.bannerMonogram}
+          </button>`,
+        () =>
+          html`<span class=${styles.bannerMonogram}
             >${monogram(event.title)}</span
           >`,
+      ),
     })
   },
 

@@ -7,6 +7,7 @@ import { Drawer } from "@inglorious/ui/drawer"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { LIST_STAGGER_CAP, NO_UNREAD } from "../../constants/index.js"
 import { currentLocale, t } from "../../i18n/index.js"
@@ -35,19 +36,20 @@ export const Notifications = {
   renderHeader({ unread = NO_UNREAD, onMarkAll }) {
     return {
       title: t("notifications.title"),
-      actions:
-        unread > NO_UNREAD
-          ? html`<button
-              type="button"
-              class=${styles.markAll}
-              @click=${onMarkAll}
-            >
-              ${Icon.render({
-                icon: markEmailReadOutline,
-                size: "md",
-              })}<span>${t("notifications.markAll")}</span>
-            </button>`
-          : "",
+      actions: when(
+        unread > NO_UNREAD,
+        () =>
+          html`<button
+            type="button"
+            class=${styles.markAll}
+            @click=${onMarkAll}
+          >
+            ${Icon.render({
+              icon: markEmailReadOutline,
+              size: "md",
+            })}<span>${t("notifications.markAll")}</span>
+          </button>`,
+      ),
     }
   },
 
@@ -104,8 +106,10 @@ export const NotificationsPanel = {
           html`<span class=${styles.panelTitle}
             >${t("notifications.title")}</span
           >`,
-          unread > NO_UNREAD
-            ? html`<button
+          when(
+            unread > NO_UNREAD,
+            () =>
+              html`<button
                 type="button"
                 class=${styles.markAll}
                 @click=${onMarkAll}
@@ -114,8 +118,8 @@ export const NotificationsPanel = {
                   icon: markEmailReadOutline,
                   size: "md",
                 })}<span>${t("notifications.markAll")}</span>
-              </button>`
-            : "",
+              </button>`,
+          ),
         ],
       }),
       children: html`
@@ -147,7 +151,7 @@ function renderFeedItem({ item, onOpenRow, index }) {
   const classes = [
     styles.item,
     "vaitu-list-item",
-    item.read ? styles.read : styles.unread,
+    item.is_read ? styles.read : styles.unread,
   ]
     .filter(Boolean)
     .join(" ")
@@ -165,7 +169,7 @@ function renderFeedItem({ item, onOpenRow, index }) {
         >${Icon.render({
           icon: INBOX_ICONS[item.type] ?? eventOutline,
           size: "md",
-        })}${item.read ? "" : html`<i class=${styles.dot}></i>`}</span
+        })}${when(!item.is_read, () => html`<i class=${styles.dot}></i>`)}</span
       >`,
       Flex.render({
         direction: "column",

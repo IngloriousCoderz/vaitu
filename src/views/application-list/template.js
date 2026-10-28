@@ -3,6 +3,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
@@ -105,13 +106,15 @@ export const ApplicationList = {
         }),
         html`
           <div class=${styles.applicationFooter}>
-            ${
-              isWinner
-                ? html`<span class=${styles.winnerTrophy}>
-                    ${Icon.render({ icon: trophyOutline, size: "lg" })}
-                  </span>`
-                : StatusChip.render({ status: application.applicationStatus })
-            }
+            ${when(
+              isWinner,
+              () =>
+                html`<span class=${styles.winnerTrophy}>
+                  ${Icon.render({ icon: trophyOutline, size: "lg" })}
+                </span>`,
+              () =>
+                StatusChip.render({ status: application.applicationStatus }),
+            )}
           </div>
         `,
       ],

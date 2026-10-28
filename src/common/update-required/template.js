@@ -1,5 +1,6 @@
 import { Button } from "@inglorious/ui/button"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { t } from "../../i18n/index.js"
 import { Logo } from "../logo/index.js"
@@ -19,16 +20,14 @@ export const render = (entity, api) =>
       <p class=${styles.subtitle}>
         ${t(entity.storeUrl ? "appUpdate.body" : "appUpdate.bodyNoLink")}
       </p>
-      ${
-        entity.storeUrl
-          ? Button.render({
-              children: t("appUpdate.update"),
-              variant: "primary",
-              shape: "pill",
-              isFullWidth: true,
-              onClick: () => api.notify(`#${entity.id}:storeOpen`),
-            })
-          : ""
-      }
+      ${when(entity.storeUrl, () =>
+        Button.render({
+          children: t("appUpdate.update"),
+          variant: "primary",
+          shape: "pill",
+          isFullWidth: true,
+          onClick: () => api.notify(`#${entity.id}:storeOpen`),
+        }),
+      )}
     </div>`,
   })

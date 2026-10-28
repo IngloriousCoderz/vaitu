@@ -124,11 +124,10 @@ export async function fetchEventDetail(id) {
     .single()
   if (error) throw error
 
-  const { data: sender, error: senderError } = await supabase
-    .from("sender_profiles_public")
-    .select("full_name")
-    .eq("id", event.sender_id)
-    .single()
+  const { data: senderName, error: senderError } = await supabase.rpc(
+    "event_poster_name",
+    { p_event_id: id },
+  )
   if (senderError) throw senderError
 
   const view = toViewModel(event)
@@ -153,7 +152,7 @@ export async function fetchEventDetail(id) {
         ),
       ),
     },
-    senderName: sender.full_name,
+    senderName: senderName ?? "",
   }
 }
 

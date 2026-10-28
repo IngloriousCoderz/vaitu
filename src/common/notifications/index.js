@@ -40,7 +40,7 @@ const load = handleAsync("load", {
   run: fetchMyNotifications,
   success(entity, items, api) {
     entity.items = items
-    entity.unread = items.filter((item) => !item.read).length
+    entity.unread = items.filter((item) => !item.is_read).length
     entity.status = "ready"
     // The channel binds to the JWT at subscribe time, so it is activated here
     // rather than in create(): a boot that restored a session activates the
@@ -71,7 +71,7 @@ const readSave = optimistic(
   handleAsync("readSave", { run: (id) => markNotificationRead(id) }),
   (entity, id) => ({
     items: entity.items.map((row) =>
-      row.id === id ? { ...row, read: true } : row,
+      row.id === id ? { ...row, is_read: true } : row,
     ),
     unread: Math.max(entity.unread - ONE_NOTIFICATION, NO_UNREAD),
   }),
@@ -80,7 +80,7 @@ const readSave = optimistic(
 const readAll = optimistic(
   handleAsync("readAll", { run: () => markAllNotificationsRead() }),
   (entity) => ({
-    items: entity.items.map((row) => ({ ...row, read: true })),
+    items: entity.items.map((row) => ({ ...row, is_read: true })),
     unread: 0,
   }),
 )
@@ -199,7 +199,7 @@ export const Notifications = {
   // about — and the shell navigates right after, in the same batch.
   readSet(entity, id, api) {
     const item = entity.items.find((row) => row.id === id)
-    if (item && !item.read) api.notify(`#${entity.id}:readSave`, id)
+    if (item && !item.is_read) api.notify(`#${entity.id}:readSave`, id)
   },
 
   // The badge is live from the first screen, not the first visit to the tab.

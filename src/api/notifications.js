@@ -13,7 +13,7 @@ export async function fetchMyNotifications() {
   const { data, error } = await supabase
     .from("notifications")
     .select(
-      "id, type, read, created_at, event_id, application_id, events(id, title, status, category), applications(applicant:profiles!applications_applicant_id_fkey(full_name))",
+      "id, type, is_read, created_at, event_id, application_id, events(id, title, status, category), applications(applicant:profiles!applications_applicant_id_fkey(full_name))",
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
@@ -23,7 +23,7 @@ export async function fetchMyNotifications() {
   return data.map((row) => ({
     id: row.id,
     type: row.type,
-    read: row.read,
+    is_read: row.is_read,
     created_at: row.created_at,
     event_id: row.event_id,
     application_id: row.application_id,
@@ -40,10 +40,10 @@ export async function markNotificationRead(id) {
   if (!user) throw new Error("Not logged in")
   const { data, error } = await supabase
     .from("notifications")
-    .update({ read: true })
+    .update({ is_read: true })
     .eq("id", id)
     .eq("user_id", user.id)
-    .eq("read", false)
+    .eq("is_read", false)
     .select("id")
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
@@ -57,9 +57,9 @@ export async function markAllNotificationsRead() {
   if (!user) throw new Error("Not logged in")
   const { data, error } = await supabase
     .from("notifications")
-    .update({ read: true })
+    .update({ is_read: true })
     .eq("user_id", user.id)
-    .eq("read", false)
+    .eq("is_read", false)
     .select("id")
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error

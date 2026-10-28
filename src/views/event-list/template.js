@@ -11,6 +11,7 @@ import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
@@ -177,91 +178,84 @@ export const EventList = {
               getLabel: (filter) => filter.label,
             })}
           </div>
-          ${
-            isFiltersVisible
-              ? html`
-                  <div class=${styles.backdrop} @click=${onToggleFilters}>
-                    <div
-                      class="${styles.sheet} vaitu-filter-sheet"
-                      @click=${(e) => e.stopPropagation()}
-                    >
-                      <div class=${styles.sheetHeading}>
-                        <h3 class=${styles.sheetTitle}>
-                          ${t("events.region")}
-                        </h3>
-                        ${IconButton.render({
-                          icon: Icon.render({
-                            icon: settingsOutline,
-                            size: "lg",
-                          }),
-                          ariaLabel: t("events.editFavorites"),
-                          variant: "ghost",
-                          color: "secondary",
-                          className: styles.sheetGear,
-                          onClick: onEditFavorites,
-                        })}
-                      </div>
-                      ${
-                        isEditingFavorites
-                          ? this.renderFavoriteEditor(
-                              {
-                                favoriteDraft,
-                                favoriteInput,
-                                favoritesStatus,
-                                favoritesError,
-                                onCancelFavorites,
-                                onFavoriteInput,
-                                onFavoriteAdd,
-                                onFavoriteRemove,
-                                onSaveFavorites,
-                              },
-                              api,
-                            )
-                          : ""
-                      }
-                      ${this.renderChipRow({
-                        items: regions,
-                        activeId: activeRegion,
-                        onSelect: onSelectRegion,
-                        getLabel: translatedLabel,
-                      })}
-                      <h3 class=${styles.sheetTitle}>${t("events.period")}</h3>
-                      ${this.renderChipRow({
-                        items: periods,
-                        activeId: activePeriod,
-                        onSelect: onSelectPeriod,
-                        getLabel: (period) => period.label,
-                      })}
-                      ${Button.render({
-                        children: t("events.clearAll"),
-                        variant: "ghost",
-                        isFullWidth: true,
-                        onClick: onClearFilters,
-                      })}
-                    </div>
+          ${when(
+            isFiltersVisible,
+            () => html`
+              <div class=${styles.backdrop} @click=${onToggleFilters}>
+                <div
+                  class="${styles.sheet} vaitu-filter-sheet"
+                  @click=${(e) => e.stopPropagation()}
+                >
+                  <div class=${styles.sheetHeading}>
+                    <h3 class=${styles.sheetTitle}>${t("events.region")}</h3>
+                    ${IconButton.render({
+                      icon: Icon.render({
+                        icon: settingsOutline,
+                        size: "lg",
+                      }),
+                      ariaLabel: t("events.editFavorites"),
+                      variant: "ghost",
+                      color: "secondary",
+                      className: styles.sheetGear,
+                      onClick: onEditFavorites,
+                    })}
                   </div>
-                `
-              : ""
-          }
-          ${
-            showResultsBar
-              ? Flex.render({
-                  align: "center",
-                  justify: "between",
-                  gap: "sm",
-                  wrap: "nowrap",
-                  className: styles.resultsBar,
-                  children: [
-                    html`<p class=${styles.resultsCount}>
-                      ${t("events.results", { count: shown.length })}
-                    </p>`,
-                    html`<div class=${styles.orderBy}>
-                      ${api.render("events-order-by")}
-                    </div>`,
-                  ],
-                })
-              : ""
-          }
+                  ${when(isEditingFavorites, () =>
+                    this.renderFavoriteEditor(
+                      {
+                        favoriteDraft,
+                        favoriteInput,
+                        favoritesStatus,
+                        favoritesError,
+                        onCancelFavorites,
+                        onFavoriteInput,
+                        onFavoriteAdd,
+                        onFavoriteRemove,
+                        onSaveFavorites,
+                      },
+                      api,
+                    ),
+                  )}
+                  ${this.renderChipRow({
+                    items: regions,
+                    activeId: activeRegion,
+                    onSelect: onSelectRegion,
+                    getLabel: translatedLabel,
+                  })}
+                  <h3 class=${styles.sheetTitle}>${t("events.period")}</h3>
+                  ${this.renderChipRow({
+                    items: periods,
+                    activeId: activePeriod,
+                    onSelect: onSelectPeriod,
+                    getLabel: (period) => period.label,
+                  })}
+                  ${Button.render({
+                    children: t("events.clearAll"),
+                    variant: "ghost",
+                    isFullWidth: true,
+                    onClick: onClearFilters,
+                  })}
+                </div>
+              </div>
+            `,
+          )}
+          ${when(showResultsBar, () =>
+            Flex.render({
+              align: "center",
+              justify: "between",
+              gap: "sm",
+              wrap: "nowrap",
+              className: styles.resultsBar,
+              children: [
+                html`<p class=${styles.resultsCount}>
+                  ${t("events.results", { count: shown.length })}
+                </p>`,
+                html`<div class=${styles.orderBy}>
+                  ${api.render("events-order-by")}
+                </div>`,
+              ],
+            }),
+          )}
           <main class="${styles.list} vaitu-list">
             ${
               PageStatus.render({
@@ -276,8 +270,10 @@ export const EventList = {
               }) ??
               shown.map((event, index) => {
                 const style = `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`
-                return isMine
-                  ? this.renderMyEvent({
+                return when(
+                  isMine,
+                  () =>
+                    this.renderMyEvent({
                       event,
                       style,
                       isConfirmingDelete: confirmingDelete === event.id,
@@ -286,15 +282,17 @@ export const EventList = {
                       onAskDelete,
                       onDelete,
                       onCancelDelete,
-                    })
-                  : Card.render({
+                    }),
+                  () =>
+                    Card.render({
                       event,
                       isApplied: Boolean(appliedMap[event.id]),
                       onOpen: onOpenEvent,
                       cover: true,
                       className: `vaitu-list-item ${styles.tile}`,
                       style,
-                    })
+                    }),
+                )
               })
             }
           </main>
@@ -331,16 +329,14 @@ export const EventList = {
               ${t("events.applications", { count: event.applications_count })}
             </span>
             <span class=${styles.rowActions}>
-              ${
-                event.status === "open"
-                  ? IconButton.render({
-                      icon: Icon.render({ icon: editOutline, size: "lg" }),
-                      ariaLabel: t("events.edit"),
-                      className: `${styles.miniButton} ${styles.editTint}`,
-                      onClick: () => onEdit(event.id),
-                    })
-                  : ""
-              }
+              ${when(event.status === "open", () =>
+                IconButton.render({
+                  icon: Icon.render({ icon: editOutline, size: "lg" }),
+                  ariaLabel: t("events.edit"),
+                  className: `${styles.miniButton} ${styles.editTint}`,
+                  onClick: () => onEdit(event.id),
+                }),
+              )}
               ${IconButton.render({
                 icon: Icon.render({ icon: deleteOutline, size: "lg" }),
                 ariaLabel: t("events.delete"),
@@ -350,15 +346,15 @@ export const EventList = {
             </span>
           </div>
         `,
-        isConfirmingDelete
-          ? ConfirmPrompt.render({
-              message: t("events.deleteConfirm"),
-              confirmLabel: t("events.yesDelete"),
-              className: styles.confirm,
-              onConfirm: () => onDelete(event.id),
-              onCancel: onCancelDelete,
-            })
-          : "",
+        when(isConfirmingDelete, () =>
+          ConfirmPrompt.render({
+            message: t("events.deleteConfirm"),
+            confirmLabel: t("events.yesDelete"),
+            className: styles.confirm,
+            onConfirm: () => onDelete(event.id),
+            onCancel: onCancelDelete,
+          }),
+        ),
       ],
     })
   },

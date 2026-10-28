@@ -2,6 +2,7 @@ import { Badge } from "@inglorious/ui/badge"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { COVER_INDEX } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
@@ -57,11 +58,9 @@ export const Card = {
         <p class=${styles.meta}>${eventSubtitle(event)}</p>
         <div class=${styles.tagRow}>
           ${Chip.render({ children: eventTag(event) })}
-          ${
-            isApplied
-              ? Chip.render({ children: t("card.applied"), color: "success" })
-              : ""
-          }
+          ${when(isApplied, () =>
+            Chip.render({ children: t("card.applied"), color: "success" }),
+          )}
         </div>
       `,
     ]
@@ -76,23 +75,25 @@ export const Card = {
           class=${styles.thumb}
           style="background:${thumbGradient(event.hue)}"
         >
-          ${
-            photo
-              ? html`<img class=${styles.thumbImage} src=${photo} alt="" />`
-              : html`<span class=${styles.monogram}
-                  >${monogram(event.title)}</span
-                >`
-          }
+          ${when(
+            photo,
+            () => html`<img class=${styles.thumbImage} src=${photo} alt="" />`,
+            () =>
+              html`<span class=${styles.monogram}
+                >${monogram(event.title)}</span
+              >`,
+          )}
         </div>
-        ${
-          cover
-            ? Flex.render({
-                direction: "column",
-                className: styles.body,
-                children: body,
-              })
-            : html`<div class=${styles.body}>${body}</div>`
-        }
+        ${when(
+          cover,
+          () =>
+            Flex.render({
+              direction: "column",
+              className: styles.body,
+              children: body,
+            }),
+          () => html`<div class=${styles.body}>${body}</div>`,
+        )}
       </article>
     `
   },

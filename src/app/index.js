@@ -7,7 +7,8 @@ import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { readUser } from "../api/session.js"
 import { BackButton } from "../common/back-button/index.js"
@@ -100,8 +101,8 @@ export const App = {
     const showWide = !NO_WIDE_CHROME.has(router.route)
 
     return this.renderShell({
-      appBar: showWide ? this.renderAppBar(api, router.route) : null,
-      drawer: showWide ? this.renderDrawer(api, chrome) : null,
+      appBar: when(showWide, () => this.renderAppBar(api, router.route)),
+      drawer: when(showWide, () => this.renderDrawer(api, chrome)),
       isDrawerHidden: shell.isDrawerHidden,
       isDrawerCollapsed: shell.isDrawerCollapsed,
       content: html`
@@ -188,9 +189,11 @@ export const App = {
     return AppBar.render({
       isElevated: false,
       className: styles.appBar,
-      leading: back
-        ? BackButton.render({ fallback: back }, api)
-        : IconButton.render({
+      leading: when(
+        back,
+        () => BackButton.render({ fallback: back }, api),
+        () =>
+          IconButton.render({
             icon: Icon.render({ icon: menuOutline, size: "lg" }),
             variant: "ghost",
             color: "secondary",
@@ -201,13 +204,17 @@ export const App = {
                 isWide: window.matchMedia(SIDEBAR_QUERY).matches,
               }),
           }),
+      ),
       // The brand stands in for the title where no sidebar shows it already.
-      title: isBrand
-        ? html`<span class=${styles.brandTitle}>${Logo.render()}</span
-            ><span class=${styles.brandAlt}>${title}</span>`
-        : title,
+      title: when(
+        isBrand,
+        () =>
+          html`<span class=${styles.brandTitle}>${Logo.render()}</span
+            ><span class=${styles.brandAlt}>${title}</span>`,
+        () => title,
+      ),
       subtitle,
-      trailing: html`${actions ?? ""}${this.renderGlobalActions(api, route)}`,
+      trailing: html`${actions ?? nothing}${this.renderGlobalActions(api, route)}`,
     })
   },
 
@@ -224,18 +231,18 @@ export const App = {
       gap: "sm",
       className: styles.globalActions,
       children: [
-        route === "eventCreate"
-          ? ""
-          : Button.render({
-              children: html`
-                ${Icon.render({ icon: addOutline, size: "lg" })}
-                <span>${t("nav.newEvent")}</span>
-              `,
-              color: "primary",
-              shape: "pill",
-              size: "md",
-              onClick: () => api.notify("#router:navigate", paths.newEvent),
-            }),
+        when(route !== "eventCreate", () =>
+          Button.render({
+            children: html`
+              ${Icon.render({ icon: addOutline, size: "lg" })}
+              <span>${t("nav.newEvent")}</span>
+            `,
+            color: "primary",
+            shape: "pill",
+            size: "md",
+            onClick: () => api.notify("#router:navigate", paths.newEvent),
+          }),
+        ),
         Flex.render({
           direction: "row",
           className: notificationStyles.bell,
@@ -250,8 +257,10 @@ export const App = {
               // tab carries the full page, so no viewport branch is needed.
               onClick: () => api.notify("#notifications:panelOpen"),
             }),
-            notifications.unread > NO_UNREAD
-              ? html`<span
+            when(
+              notifications.unread > NO_UNREAD,
+              () =>
+                html`<span
                   class=${notificationStyles.badge}
                   aria-label=${t("notifications.unreadAria", {
                     count: notifications.unread,
@@ -261,8 +270,8 @@ export const App = {
                       ? "9+"
                       : notifications.unread
                   }</span
-                >`
-              : "",
+                >`,
+            ),
           ],
         }),
         Button.render({

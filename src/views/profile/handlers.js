@@ -131,17 +131,17 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, sub_role, country, region, website, instagram_handle, favorite_regions, locale, avatar_url, onboarded_at, email_opt_out",
+        "id, full_name, country, region, website, instagram_handle, favorite_regions, locale, avatar_url, onboarded_at, is_email_opted_out",
       )
       .eq("id", user.id)
       .single()
     if (error) throw error
     const { data: stats } = await supabase
-      .from("seeker_stats")
+      .from("profile_stats")
       .select(
         "applications_count, shortlists_count, selections_count, points, tier",
       )
-      .eq("applicant_id", user.id)
+      .eq("profile_id", user.id)
       .maybeSingle()
     const { data: config } = await supabase
       .from("app_config")
@@ -369,14 +369,14 @@ export const emailOptOutSave = handleAsync("emailOptOutSave", {
     if (!user) throw new Error("errors.notLoggedIn")
     const { error } = await supabase
       .from("profiles")
-      .update({ email_opt_out: isOptedOut })
+      .update({ is_email_opted_out: isOptedOut })
       .eq("id", user.id)
     if (error) throw error
     return isOptedOut
   },
   success(entity, isOptedOut) {
     entity.emailOptOutStatus = "idle"
-    entity.profile = { ...entity.profile, email_opt_out: isOptedOut }
+    entity.profile = { ...entity.profile, is_email_opted_out: isOptedOut }
   },
   error(entity, err) {
     entity.emailOptOutStatus = "idle"

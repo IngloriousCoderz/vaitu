@@ -8,6 +8,7 @@ import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { getFieldError } from "@inglorious/web/form"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
@@ -75,78 +76,74 @@ export const ApplicationsReceived = {
         }),
         html`
           <header class=${styles.header}>
-            ${
+            ${when(
               entity.event_status === "assigned" ||
-              entity.event_status === "closed"
-                ? html`
-                    ${
-                      entity.confirming_reopen
-                        ? ConfirmPrompt.render({
-                            message:
-                              entity.event_status === "assigned"
-                                ? t("received.reopenAssigned")
-                                : t("received.reopenClosed"),
-                            children: deadlinePast(entity.event_deadline)
-                              ? html`
-                                  <div class=${styles.field}>
-                                    <span>${t("received.newDeadline")}</span>
-                                    ${Input.render({
-                                      id: "received-reopen-deadline",
-                                      inputType: "datetime-local",
-                                      value: entity.reopen_deadline ?? "",
-                                      isFullWidth: true,
-                                      error: translated(
-                                        getFieldError(
-                                          entity,
-                                          "reopen_deadline",
-                                        ),
-                                      ),
-                                      onChange: onReopenDeadline,
-                                    })}
-                                  </div>
-                                `
-                              : "",
-                            confirmLabel: t("received.yesReopen"),
-                            busyLabel: t("received.reopening"),
-                            cancelLabel:
-                              entity.event_status === "assigned"
-                                ? t("received.keepAssigned")
-                                : t("received.keepClosed"),
-                            tone: "primary",
-                            isBusy: status === "saving",
-                            isDisabled:
-                              deadlinePast(entity.event_deadline) &&
-                              (entity.reopen_deadline ?? "").length !==
-                                DATETIME_LOCAL_LENGTH,
-                            onConfirm: onReopen,
-                            onCancel: onCancelReopen,
-                          })
-                        : html`
-                            ${Button.render({
-                              children: t("received.reopen"),
-                              color: "primary",
-                              shape: "pill",
-                              size: "md",
+                entity.event_status === "closed",
+              () => html`
+                ${when(
+                  entity.confirming_reopen,
+                  () =>
+                    ConfirmPrompt.render({
+                      message:
+                        entity.event_status === "assigned"
+                          ? t("received.reopenAssigned")
+                          : t("received.reopenClosed"),
+                      children: when(
+                        deadlinePast(entity.event_deadline),
+                        () => html`
+                          <div class=${styles.field}>
+                            <span>${t("received.newDeadline")}</span>
+                            ${Input.render({
+                              id: "received-reopen-deadline",
+                              inputType: "datetime-local",
+                              value: entity.reopen_deadline ?? "",
                               isFullWidth: true,
-                              onClick: onAskReopen,
+                              error: translated(
+                                getFieldError(entity, "reopen_deadline"),
+                              ),
+                              onChange: onReopenDeadline,
                             })}
-                          `
-                    }
-                  `
-                : ""
-            }
+                          </div>
+                        `,
+                      ),
+                      confirmLabel: t("received.yesReopen"),
+                      busyLabel: t("received.reopening"),
+                      cancelLabel:
+                        entity.event_status === "assigned"
+                          ? t("received.keepAssigned")
+                          : t("received.keepClosed"),
+                      tone: "primary",
+                      isBusy: status === "saving",
+                      isDisabled:
+                        deadlinePast(entity.event_deadline) &&
+                        (entity.reopen_deadline ?? "").length !==
+                          DATETIME_LOCAL_LENGTH,
+                      onConfirm: onReopen,
+                      onCancel: onCancelReopen,
+                    }),
+                  () => html`
+                    ${Button.render({
+                      children: t("received.reopen"),
+                      color: "primary",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      onClick: onAskReopen,
+                    })}
+                  `,
+                )}
+              `,
+            )}
           </header>
 
-          ${
-            entity.event_recap
-              ? this.renderRecap(
-                  entity.event_recap,
-                  selected_count,
-                  entity.max_applicants,
-                  onPhotoOpen,
-                )
-              : ""
-          }
+          ${when(entity.event_recap, () =>
+            this.renderRecap(
+              entity.event_recap,
+              selected_count,
+              entity.max_applicants,
+              onPhotoOpen,
+            ),
+          )}
 
           <main class=${styles.list}>
             ${
@@ -210,38 +207,36 @@ export const ApplicationsReceived = {
       element: "div",
       className: styles.recap,
       body: html`
-        ${
-          photos.length
-            ? html`<div class=${styles.recapPhotos}>
-                <button
-                  type="button"
-                  class=${styles.recapCover}
-                  @click=${() => onPhotoOpen(COVER_INDEX)}
-                >
-                  <img src=${photos[COVER_INDEX]} alt="" />
-                </button>
-                ${
-                  photos.length > COVER_IMAGES
-                    ? Flex.render({
-                        gap: "sm",
-                        wrap: "wrap",
-                        className: styles.recapGallery,
-                        children: photos.slice(COVER_IMAGES).map(
-                          (url, i) =>
-                            html`<button
-                              type="button"
-                              class=${styles.recapThumb}
-                              @click=${() => onPhotoOpen(i + COVER_IMAGES)}
-                            >
-                              <img src=${url} alt="" />
-                            </button>`,
-                        ),
-                      })
-                    : ""
-                }
-              </div>`
-            : ""
-        }
+        ${when(
+          photos.length,
+          () =>
+            html`<div class=${styles.recapPhotos}>
+              <button
+                type="button"
+                class=${styles.recapCover}
+                @click=${() => onPhotoOpen(COVER_INDEX)}
+              >
+                <img src=${photos[COVER_INDEX]} alt="" />
+              </button>
+              ${when(photos.length > COVER_IMAGES, () =>
+                Flex.render({
+                  gap: "sm",
+                  wrap: "wrap",
+                  className: styles.recapGallery,
+                  children: photos.slice(COVER_IMAGES).map(
+                    (url, i) =>
+                      html`<button
+                        type="button"
+                        class=${styles.recapThumb}
+                        @click=${() => onPhotoOpen(i + COVER_IMAGES)}
+                      >
+                        <img src=${url} alt="" />
+                      </button>`,
+                  ),
+                }),
+              )}
+            </div>`,
+        )}
         <dl class=${styles.recapList}>
           ${rows.map(
             ([label, value]) => html`
@@ -291,137 +286,130 @@ export const ApplicationsReceived = {
             ${Icon.render({ icon: keyboardArrowDownOutline, size: "lg" })}
           </span>
         </button>
-        ${
-          expanded
-            ? html`
-                <div class=${styles.expanded}>
-                  <div class=${styles.links}>
-                    ${
-                      applicant.website
-                        ? html`
-                            <a
-                              class=${styles.metaLink}
-                              href=${applicant.website}
-                              target="_blank"
-                              rel="noopener"
-                            >
-                              ${Icon.render({ icon: globeOutline, size: "lg" })}
-                              <span>${applicant.website}</span>
-                            </a>
-                          `
-                        : ""
-                    }
-                    ${
-                      instagram
-                        ? html`
-                            <a
-                              class=${styles.metaLink}
-                              href=${`https://instagram.com/${instagram}`}
-                              target="_blank"
-                              rel="noopener"
-                            >
-                              ${Icon.render({ icon: photoCameraOutline, size: "lg" })}
-                              <span>@${instagram}</span>
-                            </a>
-                          `
-                        : ""
-                    }
-                    ${
-                      applicant.country
-                        ? html`
-                            <span class=${styles.metaRow}>
-                              ${Icon.render({ icon: locationOnOutline, size: "lg" })}
-                              <span>${applicant.country}</span>
-                            </span>
-                          `
-                        : ""
-                    }
+        ${when(
+          expanded,
+          () => html`
+            <div class=${styles.expanded}>
+              <div class=${styles.links}>
+                ${when(
+                  applicant.website,
+                  () => html`
+                    <a
+                      class=${styles.metaLink}
+                      href=${applicant.website}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      ${Icon.render({ icon: globeOutline, size: "lg" })}
+                      <span>${applicant.website}</span>
+                    </a>
+                  `,
+                )}
+                ${when(
+                  instagram,
+                  () => html`
+                    <a
+                      class=${styles.metaLink}
+                      href=${`https://instagram.com/${instagram}`}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      ${Icon.render({ icon: photoCameraOutline, size: "lg" })}
+                      <span>@${instagram}</span>
+                    </a>
+                  `,
+                )}
+                ${when(
+                  applicant.country,
+                  () => html`
+                    <span class=${styles.metaRow}>
+                      ${Icon.render({ icon: locationOnOutline, size: "lg" })}
+                      <span>${applicant.country}</span>
+                    </span>
+                  `,
+                )}
+              </div>
+              <p class=${styles.motivation}>${item.motivation}</p>
+              ${when(
+                (item.status === "pending" || item.status === "rejected") &&
+                  !event_assigned,
+                () => html`
+                  <div class=${styles.actions}>
+                    ${Button.render({
+                      children: t("received.shortlistAction"),
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      isDisabled: max_reached,
+                      className: styles.softInfo,
+                      onClick: () => onSelect(item.id),
+                    })}
+                    ${when(
+                      item.status === "pending",
+                      () => html`
+                        ${Button.render({
+                          children: t("received.reject"),
+                          color: "error",
+                          variant: "outline",
+                          shape: "pill",
+                          size: "md",
+                          onClick: () => onReject(item.id),
+                        })}
+                      `,
+                      () => html`
+                        ${Button.render({
+                          children: t("received.backToPending"),
+                          variant: "outline",
+                          shape: "pill",
+                          size: "md",
+                          onClick: () => onUnreject(item.id),
+                        })}
+                      `,
+                    )}
                   </div>
-                  <p class=${styles.motivation}>${item.motivation}</p>
-                  ${
-                    (item.status === "pending" || item.status === "rejected") &&
-                    !event_assigned
-                      ? html`
-                          <div class=${styles.actions}>
-                            ${Button.render({
-                              children: t("received.shortlistAction"),
-                              variant: "outline",
-                              shape: "pill",
-                              size: "md",
-                              isDisabled: max_reached,
-                              className: styles.softInfo,
-                              onClick: () => onSelect(item.id),
-                            })}
-                            ${
-                              item.status === "pending"
-                                ? html`
-                                    ${Button.render({
-                                      children: t("received.reject"),
-                                      color: "error",
-                                      variant: "outline",
-                                      shape: "pill",
-                                      size: "md",
-                                      onClick: () => onReject(item.id),
-                                    })}
-                                  `
-                                : html`
-                                    ${Button.render({
-                                      children: t("received.backToPending"),
-                                      variant: "outline",
-                                      shape: "pill",
-                                      size: "md",
-                                      onClick: () => onUnreject(item.id),
-                                    })}
-                                  `
-                            }
-                          </div>
-                        `
-                      : ""
-                  }
-                  ${
-                    item.status === "shortlisted" && !event_assigned
-                      ? html`
-                          ${
-                            confirming_assign
-                              ? ConfirmPrompt.render({
-                                  id: "assign-confirm",
-                                  message: t("received.assignConfirm"),
-                                  confirmLabel: t("received.yesAssign"),
-                                  busyLabel: t("received.assigning"),
-                                  cancelLabel: t("received.keepShortlist"),
-                                  tone: "primary",
-                                  isBusy: status === "saving",
-                                  onConfirm: () => onAssign(item.id),
-                                  onCancel: onCancelAssign,
-                                })
-                              : html`
-                                  <div class=${styles.actions}>
-                                    ${Button.render({
-                                      children: t("received.assign"),
-                                      color: "primary",
-                                      shape: "pill",
-                                      size: "md",
-                                      onClick: () => onAskAssign(item.id),
-                                    })}
-                                    ${Button.render({
-                                      children: t(
-                                        "received.removeFromShortlist",
-                                      ),
-                                      variant: "outline",
-                                      shape: "pill",
-                                      size: "md",
-                                      onClick: () => onUnshortlist(item.id),
-                                    })}
-                                  </div>
-                                `
-                          }
-                        `
-                      : ""
-                  }
-                </div>
-              `
-            : ""
-        }
+                `,
+              )}
+              ${when(
+                item.status === "shortlisted" && !event_assigned,
+                () => html`
+                  ${when(
+                    confirming_assign,
+                    () =>
+                      ConfirmPrompt.render({
+                        id: "assign-confirm",
+                        message: t("received.assignConfirm"),
+                        confirmLabel: t("received.yesAssign"),
+                        busyLabel: t("received.assigning"),
+                        cancelLabel: t("received.keepShortlist"),
+                        tone: "primary",
+                        isBusy: status === "saving",
+                        onConfirm: () => onAssign(item.id),
+                        onCancel: onCancelAssign,
+                      }),
+                    () => html`
+                      <div class=${styles.actions}>
+                        ${Button.render({
+                          children: t("received.assign"),
+                          color: "primary",
+                          shape: "pill",
+                          size: "md",
+                          onClick: () => onAskAssign(item.id),
+                        })}
+                        ${Button.render({
+                          children: t("received.removeFromShortlist"),
+                          variant: "outline",
+                          shape: "pill",
+                          size: "md",
+                          onClick: () => onUnshortlist(item.id),
+                        })}
+                      </div>
+                    `,
+                  )}
+                `,
+              )}
+            </div>
+          `,
+        )}
       </article>
     `
   },

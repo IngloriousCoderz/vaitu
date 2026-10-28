@@ -10,6 +10,7 @@ import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { CropDialog } from "../../common/crop-dialog/index.js"
@@ -105,9 +106,9 @@ export const Profile = {
                     accept: "image/jpeg,image/png,image/webp",
                     onFileSelect: ([file]) => onPhoto(file),
                   }),
-                  entity.isAvatarCropOpen
-                    ? ""
-                    : ErrorAlert.render({ error: entity.avatarError }),
+                  when(!entity.isAvatarCropOpen, () =>
+                    ErrorAlert.render({ error: entity.avatarError }),
+                  ),
                   this.renderAvatarCrop({
                     entity,
                     api,
@@ -118,178 +119,173 @@ export const Profile = {
               })}
               <h2 class=${styles.name}>${profile.full_name}</h2>
               <p class=${styles.email}>${profile.email}</p>
-              ${
-                entity.stats && entity.tierConfig
-                  ? this.renderTierBlock({
-                      stats: entity.stats,
-                      tiers: entity.tierConfig,
-                      onOpenRanks,
-                    })
-                  : ""
-              }
-              ${
-                entity.stats
-                  ? Flex.render({
-                      justify: "center",
-                      gap: "sm",
-                      className: styles.stats,
-                      children: [
-                        this.renderStat(
-                          entity.stats.applications_count,
-                          t("profile.applications"),
-                          "all",
-                          onOpenApplications,
+              ${when(entity.stats && entity.tierConfig, () =>
+                this.renderTierBlock({
+                  stats: entity.stats,
+                  tiers: entity.tierConfig,
+                  onOpenRanks,
+                }),
+              )}
+              ${when(entity.stats, () =>
+                Flex.render({
+                  justify: "center",
+                  gap: "sm",
+                  className: styles.stats,
+                  children: [
+                    this.renderStat(
+                      entity.stats.applications_count,
+                      t("profile.applications"),
+                      "all",
+                      onOpenApplications,
+                    ),
+                    this.renderStat(
+                      entity.stats.shortlists_count,
+                      t("profile.shortlisted"),
+                      "shortlisted",
+                      onOpenApplications,
+                    ),
+                    this.renderStat(
+                      entity.stats.selections_count,
+                      t("profile.wins"),
+                      "selected",
+                      onOpenApplications,
+                    ),
+                  ],
+                }),
+              )}
+              ${when(
+                entity.isEditing,
+                () => html`
+                  <h3 class=${styles.sectionTitle}>${t("profile.edit")}</h3>
+                  ${Flex.render({
+                    direction: "column",
+                    gap: "md",
+                    className: styles.editForm,
+                    children: html`
+                      ${this.renderEditField({
+                        label: t("auth.fullName"),
+                        field: "full_name",
+                        value: shown.full_name,
+                        placeholder: t("auth.yourName"),
+                        onField,
+                      })}
+                      ${this.renderEditField({
+                        label: t("fields.website"),
+                        field: "website",
+                        icon: "https://",
+                        value: (shown.website ?? "").replace(
+                          /^https?:\/\//i,
+                          "",
                         ),
-                        this.renderStat(
-                          entity.stats.shortlists_count,
-                          t("profile.shortlisted"),
-                          "shortlisted",
-                          onOpenApplications,
+                        placeholder: t("fields.websiteExample"),
+                        lowercase: true,
+                        inputmode: "url",
+                        onField,
+                      })}
+                      ${this.renderEditField({
+                        label: t("fields.instagram"),
+                        field: "instagram_handle",
+                        icon: "@",
+                        value: (shown.instagram_handle ?? "").replace(
+                          /^@+/,
+                          "",
                         ),
-                        this.renderStat(
-                          entity.stats.selections_count,
-                          t("profile.wins"),
-                          "selected",
-                          onOpenApplications,
-                        ),
-                      ],
-                    })
-                  : ""
-              }
-              ${
-                entity.isEditing
-                  ? html`
-                      <h3 class=${styles.sectionTitle}>${t("profile.edit")}</h3>
+                        placeholder: t("fields.instagramExample"),
+                        lowercase: true,
+                        onField,
+                      })}
                       ${Flex.render({
                         direction: "column",
-                        gap: "md",
-                        className: styles.editForm,
-                        children: html`
-                          ${this.renderEditField({
-                            label: t("auth.fullName"),
-                            field: "full_name",
-                            value: shown.full_name,
-                            placeholder: t("auth.yourName"),
-                            onField,
-                          })}
-                          ${this.renderEditField({
-                            label: t("fields.website"),
-                            field: "website",
-                            icon: "https://",
-                            value: (shown.website ?? "").replace(
-                              /^https?:\/\//i,
-                              "",
-                            ),
-                            placeholder: t("fields.websiteExample"),
-                            lowercase: true,
-                            inputmode: "url",
-                            onField,
-                          })}
-                          ${this.renderEditField({
-                            label: t("fields.instagram"),
-                            field: "instagram_handle",
-                            icon: "@",
-                            value: (shown.instagram_handle ?? "").replace(
-                              /^@+/,
-                              "",
-                            ),
-                            placeholder: t("fields.instagramExample"),
-                            lowercase: true,
-                            onField,
-                          })}
-                          ${Flex.render({
+                        className: styles.field,
+                        children: api.render("country-profile"),
+                      })}
+                      ${when(
+                        shown.country === ITALY,
+                        () =>
+                          Flex.render({
                             direction: "column",
                             className: styles.field,
-                            children: api.render("country-profile"),
-                          })}
-                          ${
-                            shown.country === ITALY
-                              ? Flex.render({
-                                  direction: "column",
-                                  className: styles.field,
-                                  children: api.render("region-profile"),
-                                })
-                              : this.renderEditField({
-                                  label: t("fields.region"),
-                                  field: "region",
-                                  value: shown.region,
-                                  placeholder: t("fields.regionOptional"),
-                                  onField,
-                                })
-                          }
-                          ${FavoriteRegions.render(
-                            {
-                              regions: shown.favorite_regions ?? [],
-                              input: entity.favoriteInput ?? "",
-                              inputId: "profile-favorite-region",
-                              onInput: onFavoriteInput,
-                              onAdd: onFavoriteAdd,
-                              onRemove: onFavoriteRemove,
-                              choiceId: "favorite-region-profile",
-                            },
-                            api,
-                          )}
-                          ${ErrorAlert.render({
-                            error: status === "error" && error ? error : null,
-                          })}
-                          ${Button.render({
-                            children: saving
-                              ? t("common.saving")
-                              : t("profile.save"),
-                            color: "primary",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            isDisabled: saving,
-                            onClick: onSave,
-                          })}
-                          ${Button.render({
-                            children: t("common.cancel"),
-                            variant: "outline",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            onClick: onCancel,
-                          })}
-                        `,
+                            children: api.render("region-profile"),
+                          }),
+                        () =>
+                          this.renderEditField({
+                            label: t("fields.region"),
+                            field: "region",
+                            value: shown.region,
+                            placeholder: t("fields.regionOptional"),
+                            onField,
+                          }),
+                      )}
+                      ${FavoriteRegions.render(
+                        {
+                          regions: shown.favorite_regions ?? [],
+                          input: entity.favoriteInput ?? "",
+                          inputId: "profile-favorite-region",
+                          onInput: onFavoriteInput,
+                          onAdd: onFavoriteAdd,
+                          onRemove: onFavoriteRemove,
+                          choiceId: "favorite-region-profile",
+                        },
+                        api,
+                      )}
+                      ${ErrorAlert.render({
+                        error: status === "error" && error ? error : null,
                       })}
-                    `
-                  : html`
-                      <dl class=${styles.rows}>
-                        ${this.renderRow(
-                          t("fields.website"),
-                          displayWebsite(profile.website),
-                          displayWebsite(profile.website) || null,
-                        )}
-                        ${this.renderRow(
-                          t("fields.instagram"),
-                          displayInstagram(profile.instagram_handle),
-                          instagramUrl(profile.instagram_handle),
-                        )}
-                        ${this.renderRow(t("fields.country"), profile.country)}
-                        ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
-                        ${this.renderRow(
-                          t("profile.favoriteRegions"),
-                          uniqueRegions(profile.favorite_regions ?? []).join(
-                            ", ",
-                          ),
-                        )}
-                        ${this.renderRow(t("profile.subRole"), profile.sub_role)}
-                        ${this.renderLanguage(api)}
-                      </dl>
-                      ${this.renderEmails({ entity, onEmailOptOut })}
-                      ${this.renderAccountActions({
-                        onEdit,
-                        onLogout,
-                        onDeactivateAsk,
+                      ${Button.render({
+                        children: saving
+                          ? t("common.saving")
+                          : t("profile.save"),
+                        color: "primary",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        isDisabled: saving,
+                        onClick: onSave,
                       })}
-                      ${this.renderDeactivateAccount({
-                        entity,
-                        onDeactivateCancel,
-                        onDeactivate,
+                      ${Button.render({
+                        children: t("common.cancel"),
+                        variant: "outline",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        onClick: onCancel,
                       })}
-                    `
-              }
+                    `,
+                  })}
+                `,
+                () => html`
+                  <dl class=${styles.rows}>
+                    ${this.renderRow(
+                      t("fields.website"),
+                      displayWebsite(profile.website),
+                      displayWebsite(profile.website) || null,
+                    )}
+                    ${this.renderRow(
+                      t("fields.instagram"),
+                      displayInstagram(profile.instagram_handle),
+                      instagramUrl(profile.instagram_handle),
+                    )}
+                    ${this.renderRow(t("fields.country"), profile.country)}
+                    ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
+                    ${this.renderRow(
+                      t("profile.favoriteRegions"),
+                      uniqueRegions(profile.favorite_regions ?? []).join(", "),
+                    )}
+                    ${this.renderLanguage(api)}
+                  </dl>
+                  ${this.renderEmails({ entity, onEmailOptOut })}
+                  ${this.renderAccountActions({
+                    onEdit,
+                    onLogout,
+                    onDeactivateAsk,
+                  })}
+                  ${this.renderDeactivateAccount({
+                    entity,
+                    onDeactivateCancel,
+                    onDeactivate,
+                  })}
+                `,
+              )}
             `
           }
         `,
@@ -321,20 +317,20 @@ export const Profile = {
       children: html`
         <dt>${label}</dt>
         <dd>
-          ${
-            href
-              ? html`
-                  <a
-                    class=${styles.rowLink}
-                    href=${href}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    ${value || "—"}
-                  </a>
-                `
-              : value || "—"
-          }
+          ${when(
+            href,
+            () => html`
+              <a
+                class=${styles.rowLink}
+                href=${href}
+                target="_blank"
+                rel="noopener"
+              >
+                ${value || "—"}
+              </a>
+            `,
+            () => value || "—",
+          )}
         </dd>
       `,
     })
@@ -407,7 +403,7 @@ export const Profile = {
         Switch.render({
           label: t("profile.emails"),
           description: t("profile.emailsDescription"),
-          isChecked: !entity.profile.email_opt_out,
+          isChecked: !entity.profile.is_email_opted_out,
           isDisabled: entity.emailOptOutStatus === "saving",
           onChange: (isReceiving) => onEmailOptOut(!isReceiving),
         }),

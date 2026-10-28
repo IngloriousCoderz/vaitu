@@ -15,6 +15,7 @@ import {
 import {
   fetchReceivedDetail,
   giveUpApplication,
+  updateMotivation,
   withdrawApplication,
 } from "./applications.js"
 import { supabase } from "./client.js"
@@ -451,6 +452,75 @@ describe("applying twice", () => {
 
       const { error } = await apply(eventId, MOTIVATION)
       expect(error.message).toContain("duplicate key")
+    },
+    TEST_TIMEOUT_MS,
+  )
+})
+
+describe("rewriting an application", () => {
+  let eventId = null
+  let otherEventId = null
+
+  afterAll(async () => {
+    try {
+      if (eventId) await deleteOwnedEvent(eventId)
+      if (otherEventId) await deleteOwnedEvent(otherEventId)
+    } finally {
+      await signOut()
+    }
+  }, TEST_TIMEOUT_MS)
+
+  test(
+    "only the applicant's motivation and the status can change",
+    async () => {
+      eventId = await createEventAs(SEEKER, crypto.randomUUID())
+      otherEventId = await createEventAs(
+        SEEKER,
+        crypto.randomUUID(),
+        pastDeadline(),
+      )
+      await signIn(SENDER)
+      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+      const id = await applicationId(eventId)
+
+      // Moving it would dodge the open and deadline checks applying makes.
+      const { error: moveError } = await supabase
+        .from("applications")
+        .update({ event_id: otherEventId })
+        .eq("id", id)
+      expect(moveError?.message).toContain("permission denied")
+
+      expect(await updateMotivation(id, `${MOTIVATION}, edited`)).toBe(true)
+
+      // The owner decides on the application, but the words stay the
+      // applicant's, and so does the authorship.
+      await signIn(SEEKER)
+      const {
+        data: { user: owner },
+      } = await supabase.auth.getUser()
+      const { error: motivationError } = await supabase
+        .from("applications")
+        .update({ motivation: "Rewritten by the owner" })
+        .eq("id", id)
+      expect(motivationError?.message).toContain(
+        "cannot change this motivation",
+      )
+      const { error: applicantError } = await supabase
+        .from("applications")
+        .update({ applicant_id: owner.id })
+        .eq("id", id)
+      expect(applicantError?.message).toContain("permission denied")
+
+      const { data, error } = await supabase
+        .from("applications")
+        .select("event_id, motivation")
+        .eq("id", id)
+        .single()
+      expect(error).toBeNull()
+      expect(data).toEqual({
+        event_id: eventId,
+        motivation: `${MOTIVATION}, edited`,
+      })
     },
     TEST_TIMEOUT_MS,
   )

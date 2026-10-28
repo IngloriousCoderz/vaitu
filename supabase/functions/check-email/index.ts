@@ -11,7 +11,7 @@ const HEX_DIGITS_PER_BYTE = 2
 // The auth flow asks "is there an account for this address?" to route the user
 // to login vs signup. That answer is a user-enumeration oracle, so it is
 // guarded rather than open:
-//   - existence is read from profiles.email (unique index) instead of dumping
+//   - existence is one indexed lookup in account_exists() instead of dumping
 //     auth.users through the service role on every keystroke;
 //   - attempts are counted per hashed client IP in check_email_rate_limit(),
 //     which is the only thing standing between this and a full account dump.
@@ -36,14 +36,12 @@ serve(async (req) => {
     return json({ error: "email is required" }, STATUS_CODE.BadRequest)
   }
 
-  const { data, error } = await db
-    .from("profiles")
-    .select("id")
-    .eq("email", email.trim().toLowerCase())
-    .maybeSingle()
+  const { data: exists, error } = await db.rpc("account_exists", {
+    p_email: email.trim().toLowerCase(),
+  })
   if (error) throw error
 
-  return json({ exists: Boolean(data) })
+  return json({ exists })
 }, "check failed")
 
 function clientIp(req: Request) {

@@ -1,6 +1,7 @@
 import { Button } from "@inglorious/ui/button"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
@@ -69,80 +70,81 @@ export const ApplicationDetail = {
                   <div class=${styles.statusRow}>
                     ${StatusChip.render({ status: application.applicationStatus })}
                   </div>
-                  ${
-                    links
-                      ? html`
-                          <h3 class=${styles.sectionTitle}>
-                            ${t("application.addToCalendar")}
-                          </h3>
-                          <div class=${styles.calendarRow}>
-                            ${Button.render({
-                              children: t("application.googleCalendar"),
-                              color: "primary",
-                              shape: "pill",
-                              size: "md",
-                              isFullWidth: true,
-                              onClick: () => onGoogleCalendar(links.googleUrl),
-                            })}
-                            ${Button.render({
-                              children: t("application.downloadIcs"),
-                              variant: "outline",
-                              shape: "pill",
-                              size: "md",
-                              isFullWidth: true,
-                              onClick: () =>
-                                onDownloadIcs(application.title, links.ics),
-                            })}
-                          </div>
-                        `
-                      : ""
-                  }
-                  ${
+                  ${when(
+                    links,
+                    () => html`
+                      <h3 class=${styles.sectionTitle}>
+                        ${t("application.addToCalendar")}
+                      </h3>
+                      <div class=${styles.calendarRow}>
+                        ${Button.render({
+                          children: t("application.googleCalendar"),
+                          color: "primary",
+                          shape: "pill",
+                          size: "md",
+                          isFullWidth: true,
+                          onClick: () => onGoogleCalendar(links.googleUrl),
+                        })}
+                        ${Button.render({
+                          children: t("application.downloadIcs"),
+                          variant: "outline",
+                          shape: "pill",
+                          size: "md",
+                          isFullWidth: true,
+                          onClick: () =>
+                            onDownloadIcs(application.title, links.ics),
+                        })}
+                      </div>
+                    `,
+                  )}
+                  ${when(
                     application.applicationStatus === "pending" ||
-                    application.applicationStatus === "shortlisted"
-                      ? html`
-                          <h3 class=${styles.sectionTitle}>
-                            ${t("application.yourMotivation")}
-                          </h3>
-                          <div class=${styles.field}>
-                            ${Textarea.render({
-                              id: "application-motivation",
-                              value: motivation,
-                              rows: 5,
-                              isFullWidth: true,
-                              error: translated(
-                                getFieldError(entity, "motivation"),
-                              ),
-                              onChange: (value) =>
-                                onField({ field: "motivation", value }),
-                            })}
-                          </div>
-                          ${Button.render({
-                            children:
-                              status === "saving"
-                                ? t("common.saving")
-                                : t("create.saveChanges"),
-                            color: "primary",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            isDisabled: !canSave,
-                            className: styles.saveButton,
-                            onClick: () => {
-                              if (canSave) onSave()
-                            },
-                          })}
-                        `
-                      : ""
-                  }
+                      application.applicationStatus === "shortlisted",
+                    () => html`
+                      <h3 class=${styles.sectionTitle}>
+                        ${t("application.yourMotivation")}
+                      </h3>
+                      <div class=${styles.field}>
+                        ${Textarea.render({
+                          id: "application-motivation",
+                          value: motivation,
+                          rows: 5,
+                          isFullWidth: true,
+                          error: translated(
+                            getFieldError(entity, "motivation"),
+                          ),
+                          onChange: (value) =>
+                            onField({ field: "motivation", value }),
+                        })}
+                      </div>
+                      ${Button.render({
+                        children:
+                          status === "saving"
+                            ? t("common.saving")
+                            : t("create.saveChanges"),
+                        color: "primary",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        isDisabled: !canSave,
+                        className: styles.saveButton,
+                        onClick: () => {
+                          if (canSave) onSave()
+                        },
+                      })}
+                    `,
+                  )}
                   ${ErrorAlert.render({
                     error: error && status !== "loading" ? error : null,
                     className: styles.error,
                   })}
-                  ${
-                    application.applicationStatus === "selected"
-                      ? entity.isConfirmingGiveUp
-                        ? ConfirmPrompt.render({
+                  ${when(
+                    application.applicationStatus === "selected",
+                    () =>
+                      when(
+                        entity.isConfirmingGiveUp,
+                        () =>
+                          ConfirmPrompt.render({
                             message: t("application.giveUpConfirm"),
                             confirmLabel: t("application.yesGiveUp"),
                             busyLabel: t("application.givingUp"),
@@ -152,21 +154,25 @@ export const ApplicationDetail = {
                             className: styles.confirm,
                             onConfirm: onGiveUp,
                             onCancel: onCancelGiveUp,
-                          })
-                        : html`
-                            ${Button.render({
-                              children: t("application.giveUp"),
-                              color: "error",
-                              variant: "outline",
-                              shape: "pill",
-                              size: "md",
-                              isFullWidth: true,
-                              className: styles.withdrawButton,
-                              onClick: onAskGiveUp,
-                            })}
-                          `
-                      : entity.isConfirmingWithdraw
-                        ? ConfirmPrompt.render({
+                          }),
+                        () => html`
+                          ${Button.render({
+                            children: t("application.giveUp"),
+                            color: "error",
+                            variant: "outline",
+                            shape: "pill",
+                            size: "md",
+                            isFullWidth: true,
+                            className: styles.withdrawButton,
+                            onClick: onAskGiveUp,
+                          })}
+                        `,
+                      ),
+                    () =>
+                      when(
+                        entity.isConfirmingWithdraw,
+                        () =>
+                          ConfirmPrompt.render({
                             message: t("application.withdrawConfirm"),
                             confirmLabel: t("application.yesWithdraw"),
                             busyLabel: t("application.withdrawing"),
@@ -176,20 +182,21 @@ export const ApplicationDetail = {
                             className: styles.confirm,
                             onConfirm: onWithdraw,
                             onCancel: onCancelWithdraw,
-                          })
-                        : html`
-                            ${Button.render({
-                              children: t("application.withdraw"),
-                              color: "error",
-                              variant: "outline",
-                              shape: "pill",
-                              size: "md",
-                              isFullWidth: true,
-                              className: styles.withdrawButton,
-                              onClick: onAskWithdraw,
-                            })}
-                          `
-                  }
+                          }),
+                        () => html`
+                          ${Button.render({
+                            children: t("application.withdraw"),
+                            color: "error",
+                            variant: "outline",
+                            shape: "pill",
+                            size: "md",
+                            isFullWidth: true,
+                            className: styles.withdrawButton,
+                            onClick: onAskWithdraw,
+                          })}
+                        `,
+                      ),
+                  )}
                 </div>
               </div>
             `

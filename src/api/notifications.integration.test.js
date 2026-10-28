@@ -65,7 +65,7 @@ describe("notifications feed", () => {
       expect(received).toBeTruthy()
       expect(received.event_id).toBe(eventId)
       expect(received.application_id).toBe(applicationId)
-      expect(received.read).toBe(false)
+      expect(received.is_read).toBe(false)
       expect(received.applicant_name).toBeTruthy()
     },
     TEST_TIMEOUT_MS,
@@ -126,7 +126,7 @@ describe("notifications feed", () => {
       // Other suites apply to the shared fixture accounts right now, so the
       // feed's aggregate unread counts move under our feet; the assertion
       // stays row-scoped, which no parallel writer can touch.
-      const unreadRows = before.filter((item) => !item.read)
+      const unreadRows = before.filter((item) => !item.is_read)
       expect(unreadRows.length).toBeGreaterThan(0)
 
       const chosen = unreadRows[0]
@@ -134,7 +134,7 @@ describe("notifications feed", () => {
       expect(updated.every((row) => row.id === chosen.id)).toBe(true)
 
       const after = await fetchMyNotifications()
-      expect(after.find((item) => item.id === chosen.id).read).toBe(true)
+      expect(after.find((item) => item.id === chosen.id).is_read).toBe(true)
     },
     TEST_TIMEOUT_MS,
   )
@@ -149,11 +149,11 @@ describe("notifications feed", () => {
       // Other suites apply to the shared fixtures right now: the feed's
       // aggregate unread counts move under our feet, so this case arms (or
       // merely counts) and then stays row-scoped.
-      const armed = before.find((item) => item.read)
+      const armed = before.find((item) => item.is_read)
       if (armed) {
         const { error: armError } = await supabase
           .from("notifications")
-          .update({ read: false })
+          .update({ is_read: false })
           .eq("id", armed.id)
         expect(armError).toBeNull()
       }
@@ -165,8 +165,45 @@ describe("notifications feed", () => {
       const after = await fetchMyNotifications()
       const known = new Set(before.map((item) => item.id))
       expect(
-        after.filter((item) => known.has(item.id)).every((item) => item.read),
+        after
+          .filter((item) => known.has(item.id))
+          .every((item) => item.is_read),
       ).toBe(true)
+    },
+    TEST_TIMEOUT_MS,
+  )
+
+  test(
+    "read is the only column a recipient can write",
+    async () => {
+      await signIn(SEEKER)
+      const [item] = await fetchMyNotifications()
+      expect(item).toBeTruthy()
+
+      // pushed_at is push-notify's exactly-once claim: a client stamping it
+      // would silence the push.
+      const { error } = await supabase
+        .from("notifications")
+        .update({ pushed_at: new Date().toISOString() })
+        .eq("id", item.id)
+      expect(error?.message).toContain("permission denied")
+    },
+    TEST_TIMEOUT_MS,
+  )
+
+  test(
+    "only the triggers write notifications",
+    async () => {
+      await signIn(SEEKER)
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      await signIn(SENDER)
+      const { error } = await supabase.rpc("notify_user", {
+        p_user: user.id,
+        p_type: "event_closed",
+      })
+      expect(error?.message).toContain("permission denied")
     },
     TEST_TIMEOUT_MS,
   )

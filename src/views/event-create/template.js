@@ -7,6 +7,7 @@ import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { CropDialog } from "../../common/crop-dialog/index.js"
@@ -100,19 +101,17 @@ export const EventCreate = {
               onDetailField,
             }),
           )}
-          ${
-            title_is_derived
-              ? ""
-              : this.renderTextField({
-                  label: t("fields.title"),
-                  field: "title",
-                  value: getFieldValue(entity, "title", ""),
-                  placeholder: t("create.titleExample"),
-                  error: translated(getFieldError(entity, "title")),
-                  isRequired: true,
-                  onField,
-                })
-          }
+          ${when(!title_is_derived, () =>
+            this.renderTextField({
+              label: t("fields.title"),
+              field: "title",
+              value: getFieldValue(entity, "title", ""),
+              placeholder: t("create.titleExample"),
+              error: translated(getFieldError(entity, "title")),
+              isRequired: true,
+              onField,
+            }),
+          )}
           ${this.renderTextField({
             label: t("fields.location"),
             field: "location",
@@ -123,23 +122,22 @@ export const EventCreate = {
             onField,
           })}
           <div class=${styles.field}>${api.render("country-create")}</div>
-          ${
-            country === ITALY
-              ? html`
-                  <div class=${styles.field}>
-                    ${api.render("region-create")}
-                  </div>
-                `
-              : this.renderTextField({
-                  label: t("fields.region"),
-                  field: "region",
-                  value: getFieldValue(entity, "region", ""),
-                  placeholder: t("create.regionExample"),
-                  error: translated(getFieldError(entity, "region")),
-                  isRequired: true,
-                  onField,
-                })
-          }
+          ${when(
+            country === ITALY,
+            () => html`
+              <div class=${styles.field}>${api.render("region-create")}</div>
+            `,
+            () =>
+              this.renderTextField({
+                label: t("fields.region"),
+                field: "region",
+                value: getFieldValue(entity, "region", ""),
+                placeholder: t("create.regionExample"),
+                error: translated(getFieldError(entity, "region")),
+                isRequired: true,
+                onField,
+              }),
+          )}
           <div class=${styles.field}>
             ${api.render(
               categoryId === "festival" ? "genre-create" : "style-create",
@@ -245,28 +243,101 @@ export const EventCreate = {
       className: styles.audioBox,
       children: html`
         <span class=${styles.audioLabel}>${t("create.voice")}</span>
-        ${
-          entity.is_recording
-            ? html`
+        ${when(
+          entity.is_recording,
+          () => html`
+            ${Flex.render({
+              element: "p",
+              align: "center",
+              gap: "sm",
+              className: styles.recording,
+              children: html`<span class=${styles.recDot}></span>
+                ${t("create.listening")}`,
+            })}
+            <p class=${styles.timer}>
+              ${formatElapsed(entity.audio_elapsed ?? NO_TIME_RECORDED)} /
+              ${formatElapsed(AUDIO_MAX_SECONDS)}
+            </p>
+            ${Button.render({
+              children: t("create.stop"),
+              variant: "outline",
+              shape: "pill",
+              size: "md",
+              isFullWidth: true,
+              onClick: onRecordStop,
+            })}
+            ${Button.render({
+              children: t("common.cancel"),
+              variant: "ghost",
+              color: "default",
+              size: "sm",
+              className: styles.cancelButton,
+              onClick: onCancelAudio,
+            })}
+          `,
+          () =>
+            when(
+              src,
+              () => html`
+                <audio controls src=${src} class=${styles.player}></audio>
+                ${when(
+                  entity.is_transcribing,
+                  () => html`
+                    <p class=${styles.transcribing}>
+                      ${t("create.transcribing")}
+                    </p>
+                  `,
+                  () =>
+                    when(
+                      entity.is_parsing,
+                      () => html`
+                        <p class=${styles.transcribing}>
+                          ${t("create.filling")}
+                        </p>
+                      `,
+                      () =>
+                        when(
+                          entity.audio_transcript,
+                          () => html`
+                            <p class=${styles.transcript}>
+                              “${entity.audio_transcript}”
+                            </p>
+                          `,
+                        ),
+                    ),
+                )}
                 ${Flex.render({
-                  element: "p",
-                  align: "center",
+                  direction: "column",
                   gap: "sm",
-                  className: styles.recording,
-                  children: html`<span class=${styles.recDot}></span>
-                    ${t("create.listening")}`,
+                  className: styles.audioActions,
+                  children: [
+                    Button.render({
+                      children: t("create.recordAgain"),
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      onClick: onRecordStart,
+                    }),
+                    Button.render({
+                      children: t("create.remove"),
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      onClick: onRemoveAudio,
+                    }),
+                  ],
                 })}
-                <p class=${styles.timer}>
-                  ${formatElapsed(entity.audio_elapsed ?? NO_TIME_RECORDED)} /
-                  ${formatElapsed(AUDIO_MAX_SECONDS)}
-                </p>
+              `,
+              () => html`
                 ${Button.render({
-                  children: t("create.stop"),
-                  variant: "outline",
+                  children: t("create.start"),
+                  color: "primary",
                   shape: "pill",
                   size: "md",
                   isFullWidth: true,
-                  onClick: onRecordStop,
+                  onClick: onRecordStart,
                 })}
                 ${Button.render({
                   children: t("common.cancel"),
@@ -276,74 +347,9 @@ export const EventCreate = {
                   className: styles.cancelButton,
                   onClick: onCancelAudio,
                 })}
-              `
-            : src
-              ? html`
-                  <audio controls src=${src} class=${styles.player}></audio>
-                  ${
-                    entity.is_transcribing
-                      ? html`
-                          <p class=${styles.transcribing}>
-                            ${t("create.transcribing")}
-                          </p>
-                        `
-                      : entity.is_parsing
-                        ? html`
-                            <p class=${styles.transcribing}>
-                              ${t("create.filling")}
-                            </p>
-                          `
-                        : entity.audio_transcript
-                          ? html`
-                              <p class=${styles.transcript}>
-                                “${entity.audio_transcript}”
-                              </p>
-                            `
-                          : ""
-                  }
-                  ${Flex.render({
-                    direction: "column",
-                    gap: "sm",
-                    className: styles.audioActions,
-                    children: [
-                      Button.render({
-                        children: t("create.recordAgain"),
-                        variant: "outline",
-                        shape: "pill",
-                        size: "md",
-                        isFullWidth: true,
-                        onClick: onRecordStart,
-                      }),
-                      Button.render({
-                        children: t("create.remove"),
-                        variant: "outline",
-                        shape: "pill",
-                        size: "md",
-                        isFullWidth: true,
-                        onClick: onRemoveAudio,
-                      }),
-                    ],
-                  })}
-                `
-              : html`
-                  ${Button.render({
-                    children: t("create.start"),
-                    color: "primary",
-                    shape: "pill",
-                    size: "md",
-                    isFullWidth: true,
-                    onClick: onRecordStart,
-                  })}
-                  ${Button.render({
-                    children: t("common.cancel"),
-                    variant: "ghost",
-                    color: "default",
-                    size: "sm",
-                    className: styles.cancelButton,
-                    onClick: onCancelAudio,
-                  })}
-                `
-        }
+              `,
+            ),
+        )}
         ${ErrorAlert.render({
           error: entity.audio_error,
           className: styles.error,
@@ -369,22 +375,20 @@ export const EventCreate = {
     return html`<div class=${styles.photos}>
       <span class=${styles.audioLabel}>${t("create.coverPhoto")}</span>
       <p class=${styles.photoHint}>${t("create.coverHint")}</p>
-      ${
-        coverSrc
-          ? this.renderPhoto({
-              src: coverSrc,
-              className: styles.coverPhoto,
-              onEdit: onCoverEdit,
-              onRemove: () =>
-                onImageRemove(
-                  entity.pending_cover
-                    ? { id: entity.pending_cover.id, slot: "cover" }
-                    : { url: entity.cover_url, slot: "cover" },
-                ),
-              isDisabled: busy,
-            })
-          : ""
-      }
+      ${when(coverSrc, () =>
+        this.renderPhoto({
+          src: coverSrc,
+          className: styles.coverPhoto,
+          onEdit: onCoverEdit,
+          onRemove: () =>
+            onImageRemove(
+              entity.pending_cover
+                ? { id: entity.pending_cover.id, slot: "cover" }
+                : { url: entity.cover_url, slot: "cover" },
+            ),
+          isDisabled: busy,
+        }),
+      )}
       ${Button.render({
         children: coverSrc ? t("create.changeCover") : t("create.addCover"),
         variant: "outline",
@@ -401,31 +405,29 @@ export const EventCreate = {
       <p class=${styles.photoHint}>
         ${t("create.galleryHint", { count: galleryMax })}
       </p>
-      ${
-        galleryCount
-          ? Flex.render({
-              gap: "sm",
-              wrap: "wrap",
-              children: [
-                ...gallerySaved.map((url) =>
-                  this.renderPhoto({
-                    src: url,
-                    onRemove: () => onImageRemove({ url, slot: "gallery" }),
-                    isDisabled: busy,
-                  }),
-                ),
-                ...galleryPending.map((photo) =>
-                  this.renderPhoto({
-                    src: photo.previewUrl,
-                    onRemove: () =>
-                      onImageRemove({ id: photo.id, slot: "gallery" }),
-                    isDisabled: busy,
-                  }),
-                ),
-              ],
-            })
-          : ""
-      }
+      ${when(galleryCount, () =>
+        Flex.render({
+          gap: "sm",
+          wrap: "wrap",
+          children: [
+            ...gallerySaved.map((url) =>
+              this.renderPhoto({
+                src: url,
+                onRemove: () => onImageRemove({ url, slot: "gallery" }),
+                isDisabled: busy,
+              }),
+            ),
+            ...galleryPending.map((photo) =>
+              this.renderPhoto({
+                src: photo.previewUrl,
+                onRemove: () =>
+                  onImageRemove({ id: photo.id, slot: "gallery" }),
+                isDisabled: busy,
+              }),
+            ),
+          ],
+        }),
+      )}
       ${Button.render({
         children: t("create.addGalleryPhotos"),
         variant: "outline",
@@ -442,19 +444,20 @@ export const EventCreate = {
 
   renderPhoto({ src, onRemove, onEdit, isDisabled, className = styles.photo }) {
     return html`<div class=${className}>
-      ${
-        onEdit
-          ? html`<button
-              type="button"
-              class=${styles.photoEdit}
-              ?disabled=${isDisabled}
-              aria-label=${t("create.editCover")}
-              @click=${onEdit}
-            >
-              <img class=${styles.photoImage} src=${src} alt="" />
-            </button>`
-          : html`<img class=${styles.photoImage} src=${src} alt="" />`
-      }
+      ${when(
+        onEdit,
+        () =>
+          html`<button
+            type="button"
+            class=${styles.photoEdit}
+            ?disabled=${isDisabled}
+            aria-label=${t("create.editCover")}
+            @click=${onEdit}
+          >
+            <img class=${styles.photoImage} src=${src} alt="" />
+          </button>`,
+        () => html`<img class=${styles.photoImage} src=${src} alt="" />`,
+      )}
       ${IconButton.render({
         icon: Icon.render({ icon: closeIcon, size: "sm" }),
         variant: "ghost",
