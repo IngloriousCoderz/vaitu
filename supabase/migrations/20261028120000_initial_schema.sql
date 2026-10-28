@@ -54,6 +54,8 @@ set search_path = ''
 as $$
   select extensions.unaccent('extensions.unaccent'::regdictionary, value)
 $$;
+-- events.search_text calls it as whoever writes the event.
+grant execute on function public.immutable_unaccent(text) to authenticated;
 create extension if not exists pg_net with schema extensions;
 
 alter default privileges revoke execute on functions from public;
