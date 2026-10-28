@@ -1,4 +1,5 @@
 import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
+import editCalendarOutline from "@iconify-icons/material-symbols/edit-calendar-outline"
 import eventOutline from "@iconify-icons/material-symbols/event-outline"
 import personOutline from "@iconify-icons/material-symbols/person-outline"
 import { Drawer } from "@inglorious/ui/drawer"
@@ -10,6 +11,11 @@ import { labelled } from "../../i18n/index.js"
 
 const NAV = [
   labelled("nav.events", { id: "events", icon: eventOutline, tab: "events" }),
+  labelled("nav.myEvents", {
+    id: "myEvents",
+    icon: editCalendarOutline,
+    tab: "myEvents",
+  }),
   labelled("nav.applications", {
     id: "applications",
     icon: assignmentOutline,

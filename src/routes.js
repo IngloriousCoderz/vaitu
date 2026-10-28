@@ -19,6 +19,7 @@ export const routes = {
   "/profile": "profile",
 
   // Literal before parameterised, see above.
+  "/events/mine": "myEvents",
   "/events/new": "eventCreate",
   "/events/:eventId/edit": "eventCreate",
 
@@ -36,6 +37,7 @@ export const routes = {
 // the link that reaches it cannot drift apart.
 export const paths = {
   events: "/events",
+  myEvents: "/events/mine",
   newEvent: "/events/new",
   event: (eventId) => `/events/${eventId}`,
   editEvent: (eventId) => `/events/${eventId}/edit`,

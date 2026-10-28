@@ -1,6 +1,6 @@
-/* One sticky group: brand bar, category tabs, search and pill filters.
-   They are wrapped in a single element rather than each being sticky
-   individually — four siblings with independent `top` offsets would stack on
+/* One sticky group: search and the row of filters that are on. They are
+   wrapped in a single element rather than each being sticky individually —
+   siblings with independent `top` offsets would stack on
    top of each other instead of travelling together as one bar.
 
    The negative inline margin cancels the page's gutter so the background
@@ -13,19 +13,6 @@
   background: var(--vbg);
   margin: 0 calc(-1 * var(--vpage-inline, var(--vpage-gutter)));
   padding: var(--vpage-top) var(--vpage-inline, var(--vpage-gutter)) 0;
-}
-
-.ownerSwitch {
-  padding: 0 0.125rem 0.875rem;
-}
-
-.ownerSwitch :global(.iw-button-group) {
-  display: flex;
-}
-
-.ownerSwitch :global(.iw-button) {
-  --iw-button-radius: var(--iw-radius-full);
-  flex: 1;
 }
 
 .resultsBar {
@@ -88,35 +75,6 @@
   scrollbar-width: none;
 }
 
-.categoryRow {
-  display: flex;
-  gap: var(--iw-space-5);
-  overflow-x: auto;
-  padding: var(--iw-space-1) 0.125rem 0;
-  scrollbar-width: none;
-}
-
-.categoryRow::-webkit-scrollbar {
-  display: none;
-}
-
-.categoryButton {
-  flex-shrink: 0;
-  border: none;
-  background: none;
-  padding: 0 0 var(--iw-space-2);
-  cursor: pointer;
-  font: inherit;
-  font-size: var(--iw-font-size-base);
-  font-weight: var(--iw-font-weight-semibold);
-  color: var(--vmuted);
-}
-
-.categoryActive {
-  color: var(--vink);
-  border-bottom: 2px solid var(--vchip-active-bg);
-}
-
 .chips::-webkit-scrollbar {
   display: none;
 }
@@ -127,6 +85,46 @@
   background: none;
   padding: 0;
   cursor: pointer;
+}
+
+/* Clear sits on the chips' centre line, after the last one. */
+.activeRow {
+  align-items: center;
+}
+
+/* The chip's own label carries the ×, so the whole chip is the target. */
+.chipRemove {
+  margin-inline-start: var(--iw-space-1);
+  opacity: 0.8;
+}
+
+button:global(.iw-button).clearAll {
+  flex-shrink: 0;
+}
+
+/* Anchors the count to the button's top end, as the bell does its badge. */
+.filterButton {
+  position: relative;
+  display: inline-flex;
+}
+
+.filterCount {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  min-width: 1rem;
+  height: 1rem;
+  padding-inline: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.625rem;
+  font-weight: var(--iw-font-weight-semibold);
+  line-height: 1;
+  border-radius: var(--iw-radius-full);
+  background: var(--vchip-active-bg);
+  color: var(--vchip-active-text);
+  pointer-events: none;
 }
 
 /* Muted like every icon button until a filter is on, which is worth
@@ -248,61 +246,11 @@ button.sheetGear {
 
 .list {
   padding-top: 0.375rem;
+  padding-bottom: var(--vfab-clearance);
 }
 
-:global(.iw-flex.iw-flex-padding-none).myEvent {
-  padding-bottom: 0.875rem;
-  border-bottom: 1px solid var(--vline);
-}
-
-.myEvent:last-child {
-  border-bottom: none;
-}
-
-.myEventFooter {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  margin-top: 0.625rem;
-}
-
-.count {
-  font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
-}
-
-.rowActions {
-  margin-inline-start: auto;
-  display: flex;
-  gap: var(--iw-space-2);
-}
-
-button.miniButton {
-  border: none;
-  background: none;
-  border-radius: var(--iw-radius-none);
-  box-shadow: none;
-  cursor: pointer;
-  padding: 0.375rem;
-  min-height: 0;
-  display: flex;
-}
-
-.editTint {
-  color: var(--vaccent);
-}
-
-.deleteTint {
-  color: var(--verror);
-}
-
-.confirm {
-  margin-top: 0.625rem;
-}
-
-/* The same order everywhere: Explore / My events picks whose events you see,
-   then categories, search and styles narrow them down. A wide screen only
-   centres the rows and gives them room, the way the Airbnb / Booking bar
+/* The same order everywhere: search, then the filters that are on. A wide
+   screen only centres the rows and gives them room, the way the Airbnb / Booking bar
    does. The logo and the filter live in the app bar. */
 @media (min-width: 48rem) {
   .stickyTop {
@@ -312,18 +260,6 @@ button.miniButton {
     gap: var(--iw-space-6);
     padding-top: var(--iw-space-2);
     padding-bottom: var(--iw-space-8);
-  }
-
-  .categoryRow {
-    justify-content: center;
-    gap: var(--iw-space-8);
-    padding: 0;
-    overflow: visible;
-  }
-
-  .categoryButton {
-    padding: var(--iw-space-2) var(--iw-space-1) var(--iw-space-3);
-    font-size: var(--iw-font-size-lg);
   }
 
   .stickyTop :global(.vaitu-search) {
@@ -352,19 +288,6 @@ button.miniButton {
     font-size: var(--iw-font-size-base);
   }
 
-  .ownerSwitch {
-    padding: 0;
-  }
-
-  .ownerSwitch :global(.iw-button-group) {
-    width: auto;
-  }
-
-  .ownerSwitch :global(.iw-button) {
-    flex: 0 0 auto;
-    min-width: 7.5rem;
-  }
-
   .resultsBar {
     margin: 0 0 var(--iw-space-2);
   }
@@ -382,9 +305,7 @@ button.miniButton {
     padding-bottom: var(--iw-space-10);
   }
 
-  .list .tile,
-  :global(.iw-flex.iw-flex-padding-none).myEvent,
-  :global(.iw-flex.iw-flex-padding-none).myEvent:last-child {
+  .list .tile {
     border: 1px solid var(--vline);
     border-radius: var(--iw-radius-2xl);
     padding: 0;
@@ -396,23 +317,8 @@ button.miniButton {
       transform var(--iw-transition-fast);
   }
 
-  .list .tile:active,
-  .myEvent:active {
+  .list .tile:active {
     scale: none;
-  }
-
-  .myEvent :global(article) {
-    flex: 1;
-    padding: 0;
-  }
-
-  .myEventFooter {
-    margin-top: 0;
-    padding: 0 var(--iw-space-4) var(--iw-space-4);
-  }
-
-  .myEvent .confirm {
-    margin: 0.625rem var(--iw-space-4) var(--iw-space-4);
   }
 }
 
@@ -425,8 +331,7 @@ button.miniButton {
 }
 
 @media (min-width: 48rem) and (hover: hover) {
-  .list .tile:hover,
-  .myEvent:hover {
+  .list .tile:hover {
     box-shadow: var(--iw-shadow-lg);
     transform: translateY(-2px);
   }
@@ -434,9 +339,7 @@ button.miniButton {
 
 @media (min-width: 48rem) and (prefers-reduced-motion: reduce) {
   .list .tile,
-  .myEvent,
-  .list .tile:hover,
-  .myEvent:hover {
+  .list .tile:hover {
     transition: none;
     transform: none;
   }

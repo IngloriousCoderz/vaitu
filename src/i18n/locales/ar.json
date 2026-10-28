@@ -1,15 +1,21 @@
 {
   "nav": {
     "events": "الفعاليات",
+    "myEvents": "فعالياتي",
     "applications": "الطلبات",
     "profile": "الملف الشخصي",
-    "new": "جديد",
     "newEvent": "فعالية جديدة",
     "toggle": "تبديل القائمة",
     "notifications": "الإشعارات",
-    "notificationsShort": "إشعارات",
     "account": "الحساب",
-    "profileOf": "الملف الشخصي: {{name}}"
+    "profileOf": "الملف الشخصي: {{name}}",
+    "tabs": {
+      "events": "استكشاف",
+      "applications": "الطلبات",
+      "myEvents": "منشوراتي",
+      "notifications": "إشعارات",
+      "profile": "حسابي"
+    }
   },
   "common": {
     "back": "رجوع",
@@ -80,8 +86,8 @@
     "festival": "المهرجانات"
   },
   "filters": {
-    "allStyles": "كل الأساليب",
-    "allGenres": "كل الأنواع",
+    "weddingStyle": "أسلوب الزفاف",
+    "festivalGenre": "نوع المهرجان",
     "allRegions": "كل المناطق",
     "myRegions": "مناطقي",
     "italianRegions": "المناطق الإيطالية",
@@ -108,11 +114,9 @@
     "location": "المكان",
     "eventDate": "تاريخ الفعالية",
     "deadline": "آخر موعد للتقديم",
-    "maxShortlist": "الحد الأقصى للقائمة المختصرة"
-  },
-  "owners": {
-    "explore": "استكشاف",
-    "mine": "فعالياتي"
+    "maxShortlist": "الحد الأقصى للقائمة المختصرة",
+    "interestedCategories": "الفعاليات التي تهمك",
+    "interestedCategoriesHint": "تعرض صفحتك هذه الفعاليات افتراضيًا. لا تختر أيًا منها لرؤية كل الفعاليات."
   },
   "periods": {
     "all": "كل التواريخ",
@@ -253,26 +257,36 @@
     "region": "المنطقة",
     "period": "الفترة",
     "clearAll": "مسح الكل",
-    "noneMine": "لم تنشر أي فعالية بعد.",
-    "noneMatch": "لا توجد فعاليات تطابق بحثك بعد.",
-    "edit": "تعديل الفعالية",
-    "delete": "حذف الفعالية",
-    "deleteConfirm": "حذف هذه الفعالية وجميع طلباتها؟",
-    "yesDelete": "نعم، احذف",
     "filters": "عوامل التصفية",
+    "type": "نوع الفعالية",
+    "removeFilter": "إزالة عامل التصفية: {{label}}",
+    "filtersOn_one": "عوامل التصفية، واحد مفعّل",
+    "filtersOn_two": "عوامل التصفية، اثنان مفعّلان",
+    "filtersOn_few": "عوامل التصفية، {{count}} مفعّلة",
+    "filtersOn_many": "عوامل التصفية، {{count}} مفعّلًا",
+    "filtersOn_other": "عوامل التصفية، {{count}} مفعّل",
+    "noneMatch": "لا توجد فعاليات تطابق بحثك بعد.",
     "saveRegions": "حفظ المناطق",
-    "applications_zero": "لا طلبات",
-    "applications_one": "طلب واحد",
-    "applications_two": "طلبان",
-    "applications_few": "{{count}} طلبات",
-    "applications_many": "{{count}} طلبًا",
-    "applications_other": "{{count}} طلب",
     "orderBy": "ترتيب حسب",
     "results_one": "حدث واحد",
     "results_two": "حدثان",
     "results_few": "{{count}} أحداث",
     "results_many": "{{count}} حدثًا",
     "results_other": "{{count}} حدث"
+  },
+  "myEvents": {
+    "title": "فعالياتي",
+    "none": "لم تنشر أي فعالية بعد.",
+    "edit": "تعديل الفعالية",
+    "delete": "حذف الفعالية",
+    "deleteConfirm": "حذف هذه الفعالية وجميع طلباتها؟",
+    "yesDelete": "نعم، احذف",
+    "applications_zero": "لا طلبات",
+    "applications_one": "طلب واحد",
+    "applications_two": "طلبان",
+    "applications_few": "{{count}} طلبات",
+    "applications_many": "{{count}} طلبًا",
+    "applications_other": "{{count}} طلب"
   },
   "applications": {
     "title": "طلباتي",
@@ -381,7 +395,8 @@
     "deactivateAccount": "إلغاء تفعيل الحساب",
     "deactivateConfirm": "إلغاء تفعيل حسابك؟ ستُحذف فعالياتك المفتوحة وجميع طلباتك — المُرسلة والمُستلمة — نهائيًا. تبقى الفعاليات السابقة التي فيها فائزون وإحصائياتك. للعودة، سجّل الدخول مرة أخرى.",
     "yesDeactivate": "نعم، إلغاء التفعيل",
-    "deactivating": "جارٍ إلغاء التفعيل…"
+    "deactivating": "جارٍ إلغاء التفعيل…",
+    "allCategories": "كل الفعاليات"
   },
   "facts": {
     "spouses": "العروسان"

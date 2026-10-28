@@ -66,6 +66,7 @@ create table public.profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   favorite_regions text[] not null default '{}',
+  interested_categories text[] not null default '{}',
   locale text,
   avatar_url text,
   is_active boolean not null default true,
@@ -75,6 +76,8 @@ create table public.profiles (
   onboarded_at timestamptz
 );
 
+comment on column public.profiles.interested_categories is
+  'Event categories the feed shows by default. Empty means every category.';
 comment on column public.profiles.is_active is
   'False after the user deactivates; true again on the next successful login.';
 comment on column public.profiles.last_login_at is
@@ -748,6 +751,7 @@ grant update (
   country,
   region,
   favorite_regions,
+  interested_categories,
   locale,
   avatar_url,
   onboarded_at,

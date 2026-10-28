@@ -1,0 +1,118 @@
+.list {
+  padding-top: var(--vpage-top);
+  padding-bottom: var(--vfab-clearance);
+}
+
+:global(.iw-flex.iw-flex-padding-none).myEvent {
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--vline);
+}
+
+.myEvent:last-child {
+  border-bottom: none;
+}
+
+.myEventFooter {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.625rem;
+}
+
+.count {
+  font-size: var(--iw-font-size-xs);
+  color: var(--vmuted);
+}
+
+.rowActions {
+  margin-inline-start: auto;
+  display: flex;
+  gap: var(--iw-space-2);
+}
+
+button.miniButton {
+  border: none;
+  background: none;
+  border-radius: var(--iw-radius-none);
+  box-shadow: none;
+  cursor: pointer;
+  padding: 0.375rem;
+  min-height: 0;
+  display: flex;
+}
+
+.editTint {
+  color: var(--vaccent);
+}
+
+.deleteTint {
+  color: var(--verror);
+}
+
+.confirm {
+  margin-top: 0.625rem;
+}
+
+@media (min-width: 48rem) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    gap: var(--iw-space-8);
+    align-items: stretch;
+    padding-top: var(--iw-space-5);
+    padding-bottom: var(--iw-space-10);
+  }
+
+  :global(.iw-flex.iw-flex-padding-none).myEvent,
+  :global(.iw-flex.iw-flex-padding-none).myEvent:last-child {
+    border: 1px solid var(--vline);
+    border-radius: var(--iw-radius-2xl);
+    padding: 0;
+    overflow: hidden;
+    background: var(--vsurface);
+    box-shadow: var(--iw-shadow-sm);
+    transition:
+      box-shadow var(--iw-transition-fast),
+      transform var(--iw-transition-fast);
+  }
+
+  .myEvent:active {
+    scale: none;
+  }
+
+  .myEvent :global(article) {
+    flex: 1;
+    padding: 0;
+  }
+
+  .myEventFooter {
+    margin-top: 0;
+    padding: 0 var(--iw-space-4) var(--iw-space-4);
+  }
+
+  .myEvent .confirm {
+    margin: 0.625rem var(--iw-space-4) var(--iw-space-4);
+  }
+}
+
+/* iPad portrait through iPad Pro landscape, as on the event list. */
+@media (min-width: 48rem) and (max-width: 87.5rem) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) and (hover: hover) {
+  .myEvent:hover {
+    box-shadow: var(--iw-shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 48rem) and (prefers-reduced-motion: reduce) {
+  .myEvent,
+  .myEvent:hover {
+    transition: none;
+    transform: none;
+  }
+}

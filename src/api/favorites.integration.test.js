@@ -8,7 +8,7 @@ import {
   signOut,
   signUp,
 } from "../testing/index.js"
-import { fetchMyFavoriteRegions, saveFavoriteRegions } from "./events.js"
+import { fetchMyFeedDefaults, saveFavoriteRegions } from "./events.js"
 
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 
@@ -32,7 +32,10 @@ test(
     await signIn({ email, password: SEEKER.password })
     const saved = await saveFavoriteRegions(["Toscana", "Tuscany", "Provence"])
     expect(saved).toEqual(["Tuscany", "Provence"])
-    expect(await fetchMyFavoriteRegions()).toEqual(["Tuscany", "Provence"])
+    expect(await fetchMyFeedDefaults()).toEqual({
+      favorite_regions: ["Tuscany", "Provence"],
+      interested_categories: [],
+    })
   },
   TEST_TIMEOUT_MS,
 )
@@ -44,7 +47,10 @@ test(
     await expect(saveFavoriteRegions(["Tuscany"])).rejects.toThrow(
       "Not logged in",
     )
-    expect(await fetchMyFavoriteRegions()).toEqual([])
+    expect(await fetchMyFeedDefaults()).toEqual({
+      favorite_regions: [],
+      interested_categories: [],
+    })
   },
   TEST_TIMEOUT_MS,
 )

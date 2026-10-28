@@ -1,5 +1,5 @@
-import addOutline from "@iconify-icons/material-symbols/add-outline"
 import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
+import editCalendarOutline from "@iconify-icons/material-symbols/edit-calendar-outline"
 import eventOutline from "@iconify-icons/material-symbols/event-outline"
 import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
 import personOutline from "@iconify-icons/material-symbols/person-outline"
@@ -10,21 +10,24 @@ import { html } from "@inglorious/web"
 import { labelled } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
+// Tab labels are short forms of their own: five share one bar's width, and
+// about nine characters fit a tab on a 360px phone before the label truncates.
+// The drawer and the page titles keep the long ones, where there is room.
 const tabs = [
-  labelled("nav.events", { value: "events", icon: eventOutline }),
-  labelled("nav.applications", {
+  labelled("nav.tabs.events", { value: "events", icon: eventOutline }),
+  labelled("nav.tabs.applications", {
     value: "applications",
     icon: assignmentOutline,
   }),
-  labelled("nav.new", { value: "new", icon: addOutline }),
-  // The tab label is the short form: five labels share one bar's width, and
-  // the full word truncates on a phone. The bell's aria-label keeps the long
-  // one, where there is room for it.
-  labelled("nav.notificationsShort", {
+  labelled("nav.tabs.myEvents", {
+    value: "myEvents",
+    icon: editCalendarOutline,
+  }),
+  labelled("nav.tabs.notifications", {
     value: "notifications",
     icon: notificationsOutline,
   }),
-  labelled("nav.profile", { value: "profile", icon: personOutline }),
+  labelled("nav.tabs.profile", { value: "profile", icon: personOutline }),
 ]
 
 // Shared bottom tab bar. Stays mounted at App level so hide/show animates

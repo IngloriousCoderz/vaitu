@@ -69,6 +69,7 @@ export const Card = {
       <article
         class=${cardClass}
         style=${style}
+        data-category=${event.category}
         @click=${onOpen ? () => onOpen(event.id) : null}
       >
         <div

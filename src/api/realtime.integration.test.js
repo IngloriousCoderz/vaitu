@@ -14,6 +14,7 @@ import { ApplicationList } from "../views/application-list/index.js"
 import { ApplicationsReceived } from "../views/applications-received/index.js"
 import { EventDetail } from "../views/event-detail/index.js"
 import { EventList } from "../views/event-list/index.js"
+import { MyEvents } from "../views/my-events/index.js"
 import { Profile } from "../views/profile/index.js"
 import { supabase } from "./client.js"
 
@@ -25,6 +26,11 @@ const screens = [
   {
     name: "event list",
     type: EventList,
+    keys: (id) => [`${id}:events`, `${id}:applications`],
+  },
+  {
+    name: "my events",
+    type: MyEvents,
     keys: (id) => [`${id}:events`, `${id}:applications`],
   },
   {

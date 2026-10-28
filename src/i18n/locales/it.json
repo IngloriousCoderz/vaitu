@@ -1,15 +1,21 @@
 {
   "nav": {
     "events": "Eventi",
+    "myEvents": "I miei eventi",
     "applications": "Candidature",
     "profile": "Profilo",
-    "new": "Nuovo",
     "newEvent": "Nuovo evento",
     "toggle": "Apri o chiudi la navigazione",
     "notifications": "Notifiche",
-    "notificationsShort": "Avvisi",
     "account": "Account",
-    "profileOf": "Profilo: {{name}}"
+    "profileOf": "Profilo: {{name}}",
+    "tabs": {
+      "events": "Esplora",
+      "applications": "Proposte",
+      "myEvents": "Pubblicati",
+      "notifications": "Avvisi",
+      "profile": "Profilo"
+    }
   },
   "common": {
     "back": "Indietro",
@@ -74,8 +80,8 @@
     "festival": "Festival"
   },
   "filters": {
-    "allStyles": "Tutti gli stili",
-    "allGenres": "Tutti i generi",
+    "weddingStyle": "Stile del matrimonio",
+    "festivalGenre": "Genere del festival",
     "allRegions": "Tutte le regioni",
     "myRegions": "Le mie regioni",
     "italianRegions": "Regioni italiane",
@@ -102,11 +108,9 @@
     "location": "Luogo",
     "eventDate": "Data dell'evento",
     "deadline": "Scadenza candidature",
-    "maxShortlist": "Posti in shortlist"
-  },
-  "owners": {
-    "explore": "Esplora",
-    "mine": "I miei eventi"
+    "maxShortlist": "Posti in shortlist",
+    "interestedCategories": "Eventi che ti interessano",
+    "interestedCategoriesHint": "Il tuo feed mostra questi di default. Non sceglierne nessuno per vedere tutti gli eventi."
   },
   "periods": {
     "all": "Tutte le date",
@@ -245,21 +249,29 @@
     "region": "Regione",
     "period": "Periodo",
     "clearAll": "Azzera tutto",
-    "noneMine": "Non hai ancora pubblicato eventi.",
-    "noneMatch": "Nessun evento corrisponde alla tua ricerca.",
-    "edit": "Modifica evento",
-    "delete": "Elimina evento",
-    "deleteConfirm": "Eliminare questo evento e tutte le sue candidature?",
-    "yesDelete": "Sì, elimina",
     "filters": "Filtri",
+    "type": "Tipo di evento",
+    "removeFilter": "Rimuovi filtro: {{label}}",
+    "filtersOn_one": "Filtri, {{count}} attivo",
+    "filtersOn_other": "Filtri, {{count}} attivi",
+    "filtersOn_many": "Filtri, {{count}} attivi",
+    "noneMatch": "Nessun evento corrisponde alla tua ricerca.",
     "saveRegions": "Salva regioni",
-    "applications_one": "{{count}} candidatura",
-    "applications_other": "{{count}} candidature",
-    "applications_many": "{{count}} candidature",
     "orderBy": "Ordina per",
     "results_one": "{{count}} evento",
     "results_other": "{{count}} eventi",
     "results_many": "{{count}} eventi"
+  },
+  "myEvents": {
+    "title": "I miei eventi",
+    "none": "Non hai ancora pubblicato eventi.",
+    "edit": "Modifica evento",
+    "delete": "Elimina evento",
+    "deleteConfirm": "Eliminare questo evento e tutte le sue candidature?",
+    "yesDelete": "Sì, elimina",
+    "applications_one": "{{count}} candidatura",
+    "applications_other": "{{count}} candidature",
+    "applications_many": "{{count}} candidature"
   },
   "applications": {
     "title": "Le mie candidature",
@@ -365,7 +377,8 @@
     "deactivateAccount": "Disattiva account",
     "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti e tutte le tue candidature — inviate e ricevute — verranno eliminati definitivamente. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo.",
     "yesDeactivate": "Sì, disattiva",
-    "deactivating": "Disattivazione…"
+    "deactivating": "Disattivazione…",
+    "allCategories": "Tutti gli eventi"
   },
   "facts": {
     "spouses": "Sposi"

@@ -40,6 +40,7 @@ export function editStart(entity, _, api) {
     country,
     region: regionForCountry(country, entity.profile?.region ?? ""),
     favorite_regions: uniqueRegions(entity.profile?.favorite_regions ?? []),
+    interested_categories: entity.profile?.interested_categories ?? [],
   }
   Form.reset(entity)
   entity.error = null
@@ -80,6 +81,17 @@ export function favoritesApply(entity, regions, api) {
     })
   }
   syncFavoriteCombobox(entity, api)
+}
+
+export function interestToggle(entity, categoryId) {
+  if (!entity.isEditing) return
+  const current = entity.values.interested_categories ?? []
+  Form.fieldChange(entity, {
+    path: "interested_categories",
+    value: current.includes(categoryId)
+      ? current.filter((id) => id !== categoryId)
+      : [...current, categoryId],
+  })
 }
 
 export function favoriteInputSet(entity, value) {
@@ -131,7 +143,7 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, country, region, website, instagram_handle, favorite_regions, locale, avatar_url, onboarded_at, is_email_opted_out",
+        "id, full_name, country, region, website, instagram_handle, favorite_regions, interested_categories, locale, avatar_url, onboarded_at, is_email_opted_out",
       )
       .eq("id", user.id)
       .single()
@@ -232,6 +244,7 @@ export const save = handleAsync("save", {
               ),
             ]
           : [],
+        interested_categories: profile.interested_categories ?? [],
       })
       .eq("id", user.id)
     if (error) throw error

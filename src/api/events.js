@@ -191,13 +191,19 @@ export async function fetchMyEvents() {
   }))
 }
 
+// Open events to apply to, so your own are left out: they live in My events.
 export async function fetchOpenEvents() {
-  const { data, error } = await supabase
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  let query = supabase
     .from("events")
     .select(
       "id, category, title, location, region, event_date, application_deadline, created_at, image_urls, details",
     )
     .eq("status", "open")
+  if (user) query = query.neq("sender_id", user.id)
+  const { data, error } = await query
     .order("application_deadline", { ascending: true })
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
@@ -314,18 +320,23 @@ export async function saveFavoriteRegions(regions) {
   return favorite_regions
 }
 
-export async function fetchMyFavoriteRegions() {
+// What the feed shows by default: the regions and categories in the profile.
+export async function fetchMyFeedDefaults() {
+  const none = { favorite_regions: [], interested_categories: [] }
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) return []
+  if (!user) return none
   const { data, error } = await supabase
     .from("profiles")
-    .select("favorite_regions")
+    .select("favorite_regions, interested_categories")
     .eq("id", user.id)
     .single()
-  if (error) return []
-  return data?.favorite_regions ?? []
+  if (error) return none
+  return {
+    favorite_regions: data?.favorite_regions ?? [],
+    interested_categories: data?.interested_categories ?? [],
+  }
 }
 
 export async function parseEvent(transcript) {

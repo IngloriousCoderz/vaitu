@@ -2,9 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { fetchMyApplicationMap } from "../../api/applications.js"
 import {
-  deleteEvent,
-  fetchMyEvents,
-  fetchMyFavoriteRegions,
+  fetchMyFeedDefaults,
   fetchOpenEvents,
   saveFavoriteRegions,
 } from "../../api/events.js"
@@ -16,27 +14,29 @@ import {
   sameRegion,
 } from "../../data/regions/resolve.js"
 import { withFilterTransition } from "./filter-transition.js"
-import { DEFAULT_SORT, distinctRegions } from "./helpers.js"
+import { DEFAULT_SORT, defaultRegion, distinctRegions } from "./helpers.js"
 
 export function search(entity, query) {
   entity.query = query
 }
 
-export function categorySelect(entity, categoryId) {
-  entity.activeCategory = categoryId
-  entity.activeFilter = "all"
+export function typeToggle(entity, categoryId) {
+  entity.activeTypes = toggled(entity.activeTypes, categoryId)
 }
 
-export function filterSelect(entity, filterId) {
-  entity.activeFilter = filterId
+export function detailToggle(entity, value) {
+  entity.activeDetails = toggled(entity.activeDetails, value)
 }
 
 export function filtersToggle(entity) {
   entity.isFiltersVisible = !entity.isFiltersVisible
 }
 
+// Picking the default region is the same as picking none, so it leaves no
+// chip behind.
 export function regionSelect(entity, region) {
-  entity.activeRegion = region
+  entity.activeRegion =
+    region === defaultRegion(entity.favoriteRegions) ? null : region
 }
 
 export function periodSelect(entity, periodId) {
@@ -48,22 +48,11 @@ export function sortSelect(entity, payload) {
     typeof payload === "string" ? payload : (payload?.value ?? DEFAULT_SORT)
 }
 
-export function ownerSelect(entity, owner) {
-  entity.activeOwner = owner
-  entity.confirmingDelete = null
-}
-
 export function filtersClear(entity) {
-  entity.activeRegion = "all"
+  entity.activeTypes = []
+  entity.activeDetails = []
+  entity.activeRegion = null
   entity.activePeriod = "all"
-}
-
-export function deleteAsk(entity, event_id) {
-  entity.confirmingDelete = event_id
-}
-
-export function deleteCancel(entity) {
-  entity.confirmingDelete = null
 }
 
 export function favoritesEditStart(entity, _, api) {
@@ -112,38 +101,32 @@ export function favoriteDraftRemove(entity, value, api) {
   syncFavoriteCombobox(entity, api)
 }
 
-export function appliedClear(entity) {
-  entity.appliedMap = {}
-  entity.myEvents = []
-  entity.activeOwner = "explore"
-  entity.confirmingDelete = null
-}
-
 export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
     entity.error = null
   },
   async run() {
-    const [events, myEvents, appliedMap, favoriteRegions] = await Promise.all([
+    const [events, appliedMap, defaults] = await Promise.all([
       fetchOpenEvents(),
-      fetchMyEvents(),
       fetchMyApplicationMap(),
-      fetchMyFavoriteRegions(),
+      fetchMyFeedDefaults(),
     ])
-    return { events, myEvents, appliedMap, favoriteRegions }
+    return {
+      events,
+      appliedMap,
+      favoriteRegions: defaults.favorite_regions,
+      interests: defaults.interested_categories,
+    }
   },
-  success(entity, { events, myEvents, appliedMap, favoriteRegions }, api) {
+  success(entity, { events, appliedMap, favoriteRegions, interests }, api) {
     entity.status = "ready"
     entity.events = events
-    entity.myEvents = myEvents
     entity.appliedMap = appliedMap
+    entity.interests = interests
     if (!entity.isEditingFavorites) {
       entity.favoriteRegions = favoriteRegions
-      entity.activeRegion = activeRegionAfterChange(
-        entity.activeRegion,
-        regionFilterItems(distinctRegions(events), favoriteRegions),
-      )
+      keepRegion(entity)
     }
     syncFavoriteCombobox(entity, api)
     const profile = api.getEntity("profile")
@@ -161,25 +144,6 @@ export const load = handleAsync("load", {
   },
 })
 
-export const eventRemove = handleAsync("eventRemove", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
-  },
-  run(event_id) {
-    return deleteEvent(event_id)
-  },
-  success(entity, _, api) {
-    entity.status = "ready"
-    entity.confirmingDelete = null
-    api.notify(`#${entity.id}:load`)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = err.message ?? "errors.deleteEvent"
-  },
-})
-
 export const favoritesSave = handleAsync("favoritesSave", {
   start(entity) {
     entity.favoritesStatus = "saving"
@@ -190,10 +154,7 @@ export const favoritesSave = handleAsync("favoritesSave", {
   },
   success(entity, regions, api) {
     entity.favoriteRegions = regions
-    entity.activeRegion = activeRegionAfterChange(
-      entity.activeRegion,
-      regionFilterItems(distinctRegions(entity.events), regions),
-    )
+    keepRegion(entity)
     api.notify("#profile:favoritesApply", regions)
     syncFavoriteCombobox(entity, api)
     // The close has to be its own update. This one is already rendering, and a
@@ -208,6 +169,25 @@ export const favoritesSave = handleAsync("favoritesSave", {
     entity.favoritesError = err.message ?? "errors.saveFavorites"
   },
 })
+
+// The picked region after the list of regions changed: the same one under
+// its new spelling, or back to the default once it is gone or has become it.
+function keepRegion(entity) {
+  if (entity.activeRegion === null) return
+  regionSelect(
+    entity,
+    activeRegionAfterChange(
+      entity.activeRegion,
+      regionFilterItems(distinctRegions(entity.events), entity.favoriteRegions),
+    ),
+  )
+}
+
+function toggled(list, value) {
+  return list.includes(value)
+    ? list.filter((item) => item !== value)
+    : [...list, value]
+}
 
 function syncFavoriteCombobox(entity, api) {
   if (!api) return

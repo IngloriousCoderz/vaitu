@@ -18,6 +18,7 @@ import { CoverCropper } from "../views/event-create/cover-cropper.js"
 import { EventCreate } from "../views/event-create/index.js"
 import { EventDetail } from "../views/event-detail/index.js"
 import { EventList } from "../views/event-list/index.js"
+import { MyEvents } from "../views/my-events/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
 import { AvatarCropper } from "../views/profile/avatar-cropper.js"
@@ -36,6 +37,7 @@ export const store = createStore({
     I18n,
     Authentication,
     EventList,
+    MyEvents,
     EventDetail,
     EventCreate,
     CoverCropper,

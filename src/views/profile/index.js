@@ -109,6 +109,8 @@ export const Profile = {
           api.notify(`#${id}:favoriteInputSet`, value),
         onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
         onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
+        onToggleInterest: (categoryId) =>
+          api.notify(`#${id}:interestToggle`, categoryId),
         onSave: () => api.notify(`#${id}:save`, { ...entity.values }),
         onEdit: () => api.notify(`#${id}:editStart`),
         onPhoto: (file) => api.notify(`#${id}:avatarCropOpen`, file),

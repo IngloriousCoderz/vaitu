@@ -81,8 +81,9 @@ header:global(.iw-app-bar).appBar {
   padding-inline: var(--vpage-gutter);
 }
 
-/* A phone navigates with the tab bar, which also carries New and Profile, so
-   the menu button and the app's own actions start at tablet width. The
+/* A phone navigates with the tab bar, which also carries Profile, and creates
+   with the FAB, so the menu button and the app's own actions start at tablet
+   width. The
    display has to beat the package's own on the same nodes. */
 button:global(.iw-button).menuButton,
 :global(.iw-flex).globalActions {

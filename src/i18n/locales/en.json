@@ -1,15 +1,21 @@
 {
   "nav": {
     "events": "Events",
+    "myEvents": "My events",
     "applications": "Applications",
     "profile": "Profile",
-    "new": "New",
     "newEvent": "New event",
     "toggle": "Toggle navigation",
     "notifications": "Notifications",
-    "notificationsShort": "Inbox",
     "account": "Account",
-    "profileOf": "Profile: {{name}}"
+    "profileOf": "Profile: {{name}}",
+    "tabs": {
+      "events": "Explore",
+      "applications": "Applied",
+      "myEvents": "Posted",
+      "notifications": "Inbox",
+      "profile": "Profile"
+    }
   },
   "common": {
     "back": "Back",
@@ -72,8 +78,8 @@
     "festival": "Festivals"
   },
   "filters": {
-    "allStyles": "All Styles",
-    "allGenres": "All Genres",
+    "weddingStyle": "Wedding style",
+    "festivalGenre": "Festival genre",
     "allRegions": "All regions",
     "myRegions": "My regions",
     "italianRegions": "Italian regions",
@@ -100,11 +106,9 @@
     "location": "Location",
     "eventDate": "Event date",
     "deadline": "Application deadline",
-    "maxShortlist": "Max shortlist"
-  },
-  "owners": {
-    "explore": "Explore",
-    "mine": "My events"
+    "maxShortlist": "Max shortlist",
+    "interestedCategories": "Events you are interested in",
+    "interestedCategoriesHint": "Your feed shows these by default. Pick none to see every event."
   },
   "periods": {
     "all": "All dates",
@@ -241,19 +245,26 @@
     "region": "Region",
     "period": "Period",
     "clearAll": "Clear all",
-    "noneMine": "You haven't posted any event yet.",
+    "filters": "Filters",
+    "type": "Event type",
+    "removeFilter": "Remove filter: {{label}}",
+    "filtersOn_one": "Filters, {{count}} on",
+    "filtersOn_other": "Filters, {{count}} on",
     "noneMatch": "No events match your search yet.",
+    "saveRegions": "Save regions",
+    "orderBy": "Order by",
+    "results_one": "{{count}} event",
+    "results_other": "{{count}} events"
+  },
+  "myEvents": {
+    "title": "My events",
+    "none": "You haven't posted any event yet.",
     "edit": "Edit event",
     "delete": "Delete event",
     "deleteConfirm": "Delete this event and all its applications?",
     "yesDelete": "Yes, delete",
-    "filters": "Filters",
-    "saveRegions": "Save regions",
     "applications_one": "{{count}} application",
-    "applications_other": "{{count}} applications",
-    "orderBy": "Order by",
-    "results_one": "{{count}} event",
-    "results_other": "{{count}} events"
+    "applications_other": "{{count}} applications"
   },
   "applications": {
     "title": "My Applications",
@@ -358,7 +369,8 @@
     "deactivateAccount": "Deactivate account",
     "deactivateConfirm": "Deactivate your account? Your open events and all your applications — sent and received — are permanently deleted. Past events with winners and your stats stay. To come back, sign in again.",
     "yesDeactivate": "Yes, deactivate",
-    "deactivating": "Deactivating…"
+    "deactivating": "Deactivating…",
+    "allCategories": "All events"
   },
   "facts": {
     "spouses": "Spouses"

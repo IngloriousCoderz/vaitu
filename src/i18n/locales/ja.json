@@ -1,15 +1,21 @@
 {
   "nav": {
     "events": "イベント",
+    "myEvents": "自分のイベント",
     "applications": "応募",
     "profile": "マイページ",
-    "new": "新規",
     "newEvent": "新しいイベント",
     "toggle": "ナビゲーションを切り替え",
     "notifications": "お知らせ",
-    "notificationsShort": "通知",
     "account": "アカウント",
-    "profileOf": "プロフィール：{{name}}"
+    "profileOf": "プロフィール：{{name}}",
+    "tabs": {
+      "events": "探す",
+      "applications": "応募",
+      "myEvents": "投稿",
+      "notifications": "通知",
+      "profile": "マイページ"
+    }
   },
   "common": {
     "back": "戻る",
@@ -70,8 +76,8 @@
     "festival": "フェスティバル"
   },
   "filters": {
-    "allStyles": "すべてのスタイル",
-    "allGenres": "すべてのジャンル",
+    "weddingStyle": "結婚式のスタイル",
+    "festivalGenre": "フェスのジャンル",
     "allRegions": "すべての地域",
     "myRegions": "お気に入りの地域",
     "italianRegions": "イタリアの州",
@@ -98,11 +104,9 @@
     "location": "会場",
     "eventDate": "開催日",
     "deadline": "応募締切",
-    "maxShortlist": "候補の上限"
-  },
-  "owners": {
-    "explore": "探す",
-    "mine": "自分のイベント"
+    "maxShortlist": "候補の上限",
+    "interestedCategories": "興味のあるイベント",
+    "interestedCategoriesHint": "フィードには最初にこれらが表示されます。何も選ばなければすべてのイベントが表示されます。"
   },
   "periods": {
     "all": "すべての日程",
@@ -238,17 +242,23 @@
     "region": "地域",
     "period": "期間",
     "clearAll": "すべてクリア",
-    "noneMine": "まだイベントを投稿していません。",
+    "filters": "フィルター",
+    "type": "イベントの種類",
+    "removeFilter": "フィルターを解除：{{label}}",
+    "filtersOn_other": "フィルター（{{count}}件適用中）",
     "noneMatch": "検索に一致するイベントはまだありません。",
+    "saveRegions": "地域を保存",
+    "orderBy": "並べ替え",
+    "results_other": "イベント{{count}}件"
+  },
+  "myEvents": {
+    "title": "自分のイベント",
+    "none": "まだイベントを投稿していません。",
     "edit": "イベントを編集",
     "delete": "イベントを削除",
     "deleteConfirm": "このイベントとすべての応募を削除しますか？",
     "yesDelete": "削除する",
-    "filters": "絞り込み",
-    "saveRegions": "地域を保存",
-    "applications_other": "応募{{count}}件",
-    "orderBy": "並べ替え",
-    "results_other": "イベント{{count}}件"
+    "applications_other": "応募{{count}}件"
   },
   "applications": {
     "title": "自分の応募",
@@ -352,7 +362,8 @@
     "deactivateAccount": "アカウントを無効化",
     "deactivateConfirm": "アカウントを無効化しますか？開催中のイベントと、送った・受け取ったすべての応募は完全に削除されます。優勝者の決まった過去のイベントと統計は残ります。戻るには再度サインインしてください。",
     "yesDeactivate": "はい、無効化する",
-    "deactivating": "無効化中…"
+    "deactivating": "無効化中…",
+    "allCategories": "すべてのイベント"
   },
   "facts": {
     "spouses": "新郎新婦"

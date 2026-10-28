@@ -8,7 +8,6 @@ import "./styles/tokens.css"
 import "./styles/list-stagger.css"
 import "./styles/filter-transition.css"
 
-import { withTransitions } from "@inglorious/ui/view-transitions"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
@@ -19,22 +18,8 @@ import { store } from "./store"
 import { isPreLoginPath, signInTarget } from "./store/guards.js"
 
 // After the starting language has loaded, so the first render is in it.
-// Navigations into and out of the pages with a back button slide in the
-// direction travelled; switching between top-level pages stays instant.
 ready.then(() => {
-  mount(
-    withTransitions(store, {
-      routes: [
-        "eventDetail",
-        "eventCreate",
-        "applicationsReceived",
-        "applicationDetail",
-        "ranks",
-      ],
-    }),
-    (api) => App.render(null, api),
-    document.getElementById("root"),
-  )
+  mount(store, (api) => App.render(null, api), document.getElementById("root"))
   // The HTML boot mark only covers the cold start; once the tree is up it
   // would sit forever over the page.
   document.getElementById("boot-splash")?.remove()

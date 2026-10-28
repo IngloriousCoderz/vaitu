@@ -1,0 +1,26 @@
+.picker {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: var(--iw-space-2);
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-medium);
+  color: var(--iw-color-text);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+}
+
+.hint {
+  margin: var(--iw-space-2) 0 0;
+  font-size: var(--iw-font-size-xs);
+  color: var(--vmuted);
+}

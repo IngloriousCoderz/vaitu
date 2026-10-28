@@ -18,6 +18,7 @@ export const Onboarding = {
       region: "",
       website: "",
       instagram: "",
+      interested_categories: [],
     }
     Form.create(entity)
     entity.status ??= "idle"
@@ -32,6 +33,8 @@ export const Onboarding = {
         entity,
         onField: ({ field, value }) =>
           api.notify(`#${id}:fieldSet`, { field, value }),
+        onToggleInterest: (categoryId) =>
+          api.notify(`#${id}:interestToggle`, categoryId),
         onSave: () => api.notify(`#${id}:saveSubmit`),
         onSkip: () => api.notify(`#${id}:skip`),
       },

@@ -83,7 +83,7 @@ export const ApplicationsReceived = {
         shortlisted,
         received: items.length,
       }),
-      back: paths.events,
+      back: paths.myEvents,
     }
   },
 

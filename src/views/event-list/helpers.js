@@ -1,16 +1,12 @@
 import { FIRST_INDEX } from "../../constants/index.js"
 import { sameRegion, uniqueRegions } from "../../data/regions/resolve.js"
-import { labelled } from "../../i18n/index.js"
+import { labelled, translatedLabel } from "../../i18n/index.js"
+import { categoryById, categoryOfDetail, filterSections } from "./categories.js"
 
 // An event happening today is already in every period.
 const TODAY = 0
 // What localeCompare answers for two equal strings.
 const SAME_ORDER = 0
-
-export const owners = [
-  labelled("owners.explore", { id: "explore" }),
-  labelled("owners.mine", { id: "mine" }),
-]
 
 export const periods = [
   labelled("periods.all", { id: "all", days: null }),
@@ -37,27 +33,87 @@ export function distinctRegions(allEvents) {
   )
 }
 
+// The categories the feed shows. A picked style or genre brings its category
+// in, so "Techno" on its own means techno festivals, not every wedding too.
+// With nothing picked, the profile's interests are the default. Empty means
+// every category.
+export function typesInScope(types, details, interests = []) {
+  const fromDetails = details.map(categoryOfDetail).filter(Boolean)
+  const picked = [...new Set([...types, ...fromDetails])]
+  return picked.length ? picked : interests
+}
+
+// The region the feed starts from: your favorites once you have some.
+export function defaultRegion(favoriteRegions) {
+  return favoriteRegions.length ? "mine" : "all"
+}
+
+// A region picked in the sheet, or the default while none is (null).
+export function regionInEffect(activeRegion, favoriteRegions) {
+  return activeRegion ?? defaultRegion(favoriteRegions)
+}
+
+// What the active-filter row shows: every filter that is on, in the order the
+// sheet lists them, each with the kind of filter that removing it clears. The
+// defaults from the profile are just the feed, so they are not filters: a
+// region shows only once picked over the default (null).
+export function activeFilters({ types, details, region, period, regions }) {
+  const detailOptions = filterSections([]).flatMap((section) => section.options)
+  const regionItem = regions.find((item) => item.id === region)
+  const periodItem = periods.find((item) => item.id === period)
+  return [
+    ...types.map((id) => ({
+      kind: "type",
+      id,
+      label: categoryById(id).label,
+    })),
+    ...details.map((id) => ({
+      kind: "detail",
+      id,
+      label: detailOptions.find((option) => option.id === id)?.label ?? id,
+    })),
+    ...(region === null
+      ? []
+      : [
+          {
+            kind: "region",
+            id: region,
+            label: regionItem ? translatedLabel(regionItem) : region,
+          },
+        ]),
+    ...(period === "all" || !periodItem
+      ? []
+      : [{ kind: "period", id: period, label: periodItem.label }]),
+  ]
+}
+
 export function visibleEvents(
   allEvents,
-  query,
-  activeCategory,
-  activeFilter,
-  activeRegion,
-  activePeriod,
-  favoriteRegions = [],
+  {
+    query = "",
+    types = [],
+    details = [],
+    interests = [],
+    region = "all",
+    period: periodId = "all",
+    favoriteRegions = [],
+  } = {},
 ) {
   const q = query.trim().toLowerCase()
-  const period =
-    periods.find((p) => p.id === activePeriod) ?? periods[FIRST_INDEX]
+  const period = periods.find((p) => p.id === periodId) ?? periods[FIRST_INDEX]
+  const scope = typesInScope(types, details, interests)
+  // A category with no style or genre picked shows all of its events.
+  const detailCategories = new Set(details.map(categoryOfDetail))
   return allEvents.filter((event) => {
-    const matchesCategory = event.category === activeCategory
-    const matchesFilter =
-      activeFilter === "all" || event.filterValue === activeFilter
+    const matchesType = !scope.length || scope.includes(event.category)
+    const matchesDetail =
+      !detailCategories.has(event.category) ||
+      details.includes(event.filterValue)
     const matchesRegion =
-      activeRegion === "all" ||
-      (activeRegion === "mine"
+      region === "all" ||
+      (region === "mine"
         ? favoriteRegions.some((favorite) => sameRegion(favorite, event.region))
-        : sameRegion(event.region, activeRegion))
+        : sameRegion(event.region, region))
     const matchesPeriod =
       period.days === null ||
       (event.eventInDays >= TODAY && event.eventInDays <= period.days)
@@ -66,8 +122,8 @@ export function visibleEvents(
       event.title.toLowerCase().includes(q) ||
       event.subtitle.toLowerCase().includes(q)
     return (
-      matchesCategory &&
-      matchesFilter &&
+      matchesType &&
+      matchesDetail &&
       matchesRegion &&
       matchesPeriod &&
       matchesQuery

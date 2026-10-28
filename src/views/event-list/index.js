@@ -2,14 +2,10 @@ import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { categories, filtersForCategory } from "./categories.js"
+import { categories, filterSections } from "./categories.js"
 import { withFilterTransition } from "./filter-transition.js"
 import {
-  appliedClear,
-  categorySelect,
-  deleteAsk,
-  deleteCancel,
-  eventRemove,
+  detailToggle,
   favoriteChoiceSelect,
   favoriteDraftAdd,
   favoriteDraftInput,
@@ -19,31 +15,34 @@ import {
   favoritesEditStart,
   favoritesSave,
   filtersClear,
-  filterSelect,
   filtersToggle,
   load,
-  ownerSelect,
   periodSelect,
   regionSelect,
   search,
   sortSelect,
+  typeToggle,
 } from "./handlers.js"
-import { distinctRegions, owners, periods } from "./helpers.js"
+import {
+  activeFilters,
+  distinctRegions,
+  periods,
+  regionInEffect,
+  typesInScope,
+} from "./helpers.js"
 import { EventList as renderers } from "./template.js"
+
+const ONE_INTEREST = 1
 
 export const EventList = {
   search,
-  categorySelect,
-  filterSelect,
-  ownerSelect,
+  typeToggle,
+  detailToggle,
   periodSelect,
   regionSelect,
   sortSelect,
   filtersToggle,
   filtersClear,
-  appliedClear,
-  deleteAsk,
-  deleteCancel,
   favoritesEditStart,
   favoritesEditCancel,
   favoritesEditClose,
@@ -53,7 +52,6 @@ export const EventList = {
   favoriteDraftRemove,
   ...favoritesSave,
   ...load,
-  ...eventRemove,
   ...renderers,
 
   create(entity, _, api) {
@@ -81,8 +79,8 @@ export const EventList = {
     deactivateRealtime(`${entity.id}:applications`)
   },
 
-  // The list is filtered by own events and applied marks, so it reloads for
-  // whoever just signed in.
+  // The list leaves out your own events and marks the ones you applied to, so
+  // it reloads for whoever just signed in.
   sessionStart(entity, _, api) {
     api.notify(`#${entity.id}:load`)
   },
@@ -92,8 +90,7 @@ export const EventList = {
       title: t("events.title"),
       isBrand: true,
       actions: this.renderHeaderActions({
-        hasActiveFilters:
-          entity.activeRegion !== "all" || entity.activePeriod !== "all",
+        filterCount: filtersOn(entity).length,
         onToggleFilters: () => api.notify(`#${entity.id}:filtersToggle`),
       }),
     }
@@ -101,49 +98,56 @@ export const EventList = {
 
   render(entity, api) {
     const id = entity.id
-    const myEventIds = new Set(entity.myEvents.map((event) => event.id))
+    const scope = typesInScope(
+      entity.activeTypes,
+      entity.activeDetails,
+      entity.interests,
+    )
+    const [onlyType, ...otherTypes] = scope
     return this.renderEventList(
       {
         events: entity.events,
-        myEvents: entity.myEvents,
-        myEventIds,
-        activeOwner: entity.activeOwner,
-        confirmingDelete: entity.confirmingDelete,
         appliedMap: entity.appliedMap,
         status: entity.status,
         error: entity.error,
-        categories,
-        activeCategory: entity.activeCategory,
-        filters: filtersForCategory(entity.activeCategory),
-        regions: regionFilterItems(
-          distinctRegions(entity.events),
-          entity.favoriteRegions,
-        ),
+        // One category in scope skins the page in its colours; a mixed feed
+        // stays neutral and each card carries its own.
+        category: otherTypes.length ? undefined : onlyType,
+        types: categories,
+        // Someone interested in one category alone has nothing to switch
+        // between: the profile is where they widen it.
+        showTypes: entity.interests.length !== ONE_INTEREST,
+        sections: filterSections(scope),
+        active: filtersOn(entity),
+        regions: regionsOf(entity),
         isEditingFavorites: entity.isEditingFavorites,
         favoriteDraft: entity.favoriteDraft,
         favoriteInput: entity.favoriteInput,
         favoritesStatus: entity.favoritesStatus,
         favoritesError: entity.favoritesError,
-        owners,
         periods,
         query: entity.query,
-        activeFilter: entity.activeFilter,
-        activeRegion: entity.activeRegion,
+        activeTypes: entity.activeTypes,
+        activeDetails: entity.activeDetails,
+        interests: entity.interests,
+        activeRegion: regionInEffect(
+          entity.activeRegion,
+          entity.favoriteRegions,
+        ),
         activePeriod: entity.activePeriod,
         activeSort: entity.activeSort,
         favoriteRegions: entity.favoriteRegions,
         isFiltersVisible: entity.isFiltersVisible,
-        onSelectOwner: (owner) => api.notify(`#${id}:ownerSelect`, owner),
-        onEdit: (event_id) =>
-          api.notify("#router:navigate", paths.editEvent(event_id)),
-        onAskDelete: (event_id) => api.notify(`#${id}:deleteAsk`, event_id),
-        onDelete: (event_id) => api.notify(`#${id}:eventRemove`, event_id),
-        onCancelDelete: () => api.notify(`#${id}:deleteCancel`),
         onSearch: (value) => api.notify(`#${id}:search`, value),
-        onSelectCategory: (categoryId) =>
-          api.notify(`#${id}:categorySelect`, categoryId),
-        onSelectFilter: (filterId) =>
-          api.notify(`#${id}:filterSelect`, filterId),
+        onToggleType: (categoryId) =>
+          api.notify(`#${id}:typeToggle`, categoryId),
+        onToggleDetail: (value) => api.notify(`#${id}:detailToggle`, value),
+        onRemoveFilter: ({ kind, id: value }) => {
+          if (kind === "type") api.notify(`#${id}:typeToggle`, value)
+          if (kind === "detail") api.notify(`#${id}:detailToggle`, value)
+          if (kind === "region") api.notify(`#${id}:regionSelect`, null)
+          if (kind === "period") api.notify(`#${id}:periodSelect`, "all")
+        },
         onToggleFilters: () => api.notify(`#${id}:filtersToggle`),
         onSelectRegion: (region) => api.notify(`#${id}:regionSelect`, region),
         onEditFavorites: () => {
@@ -163,13 +167,7 @@ export const EventList = {
           api.notify(`#${id}:periodSelect`, periodId),
         onClearFilters: () => api.notify(`#${id}:filtersClear`),
         onOpenEvent: (event_id) => {
-          // Two different destinations from two lists. Your own event leads to the
-          // applications you received; anything else leads to the event itself, or
-          // to your application on it when there is one.
-          if (myEventIds.has(event_id)) {
-            api.notify("#router:navigate", paths.receivedApplications(event_id))
-            return
-          }
+          // The event itself, or your application on it when there is one.
           const applicationId = entity.appliedMap[event_id]
           if (applicationId) {
             api.notify("#router:navigate", paths.application(applicationId))
@@ -181,4 +179,21 @@ export const EventList = {
       api,
     )
   },
+}
+
+function regionsOf(entity) {
+  return regionFilterItems(
+    distinctRegions(entity.events),
+    entity.favoriteRegions,
+  )
+}
+
+function filtersOn(entity) {
+  return activeFilters({
+    types: entity.activeTypes,
+    details: entity.activeDetails,
+    region: entity.activeRegion,
+    period: entity.activePeriod,
+    regions: regionsOf(entity),
+  })
 }

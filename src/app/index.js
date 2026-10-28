@@ -24,6 +24,7 @@ import { t } from "../i18n/index.js"
 import { paths } from "../routes"
 import { initials } from "../views/profile/helpers.js"
 import { AppDrawer } from "./drawer/template.js"
+import { Fab } from "./fab/template.js"
 import styles from "./style.module.css"
 import { TabBar } from "./tab-bar/template.js"
 
@@ -35,7 +36,7 @@ const SIDEBAR_QUERY = "(min-width: 64rem)"
 const TAB_PATHS = {
   events: paths.events,
   applications: paths.applications,
-  new: paths.newEvent,
+  myEvents: paths.myEvents,
   notifications: paths.notifications,
   profile: paths.profile,
 }
@@ -47,8 +48,11 @@ const TAB_PATHS = {
 //                    nothing selected (the pushed-over pages)
 //   isHidden       — bar stays mounted and translated away, so it can animate out
 //   isRendered     — false for the routes that never had a bar or a button
+//   hasFab         — the phone's button to create an event, where posting is
+//                    what the page is for
 const CHROME = {
-  eventList: { tab: "events" },
+  eventList: { tab: "events", hasFab: true },
+  myEvents: { tab: "myEvents", hasFab: true },
   applicationList: { tab: "applications" },
   applicationDetail: { tab: "applications" },
   notifications: { tab: "notifications" },
@@ -72,6 +76,7 @@ const NO_WIDE_CHROME = new Set(["authentication", "onboarding"])
 
 const DRAWER_PATHS = {
   events: paths.events,
+  myEvents: paths.myEvents,
   applications: paths.applications,
   profile: paths.profile,
 }
@@ -100,6 +105,11 @@ export const App = {
 
     const showWide = !NO_WIDE_CHROME.has(router.route)
 
+    const updatebar =
+      this.renderUpdateBar(api, pwaUpdate) ||
+      this.renderReactivatedBar(api, shell)
+    const pushPromptBar = this.renderPushPrompt(api, pushPrompt, pwaUpdate)
+
     return this.renderShell({
       appBar: when(showWide, () => this.renderAppBar(api, router.route)),
       drawer: when(showWide, () => this.renderDrawer(api, chrome)),
@@ -112,11 +122,15 @@ export const App = {
         <section class=${styles.page}>${api.render(router.route)}</section>
       `,
       tabbar: this.renderTabbar(api, chrome),
+      fab: when(chrome.hasFab, () =>
+        Fab.render({
+          pillCount: [updatebar, pushPromptBar].filter(Boolean).length,
+          onClick: () => api.notify("#router:navigate", paths.newEvent),
+        }),
+      ),
       // One pill at a time: the update, being one tap, goes first.
-      updatebar:
-        this.renderUpdateBar(api, pwaUpdate) ||
-        this.renderReactivatedBar(api, shell),
-      pushPrompt: this.renderPushPrompt(api, pushPrompt, pwaUpdate),
+      updatebar,
+      pushPrompt: pushPromptBar,
       notificationsPanel: this.renderNotificationsPanel(api),
       // No tab bar counts as a hidden one: the footer row and the
       // snackbar offset both go.
@@ -338,6 +352,7 @@ export const App = {
   renderShell({
     content,
     tabbar,
+    fab,
     updatebar,
     pushPrompt,
     notificationsPanel,
@@ -375,7 +390,7 @@ export const App = {
         // the tab bar through the shell's --iw-snackbar-offset-bottom, and the
         // push prompt with it. The notifications drawer paints last: it is
         // the only one meant to cover the page wholesale.
-        ...[updatebar, pushPrompt, notificationsPanel].filter(Boolean),
+        ...[fab, updatebar, pushPrompt, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",
           direction: undefined,

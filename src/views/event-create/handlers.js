@@ -598,12 +598,13 @@ export const save = handleAsync("save", {
     // Saving has to leave the page, because the route is what unmounts it now,
     // and leaving is also what tidies the entity up: the route change runs
     // close(). An edit goes back to the event it came from. A new one goes to
-    // the list, because the insert hands back no id to navigate to.
+    // My events, where it now shows up: the insert hands back no id to
+    // navigate to.
     api.notify(
       "#router:navigate",
       entity.editing_event_id
         ? paths.event(entity.editing_event_id)
-        : paths.events,
+        : paths.myEvents,
     )
   },
   error(entity, err) {

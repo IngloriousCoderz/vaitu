@@ -4,6 +4,7 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
+import { CategoryPicker } from "../../common/category-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
@@ -17,7 +18,7 @@ export const Onboarding = {
     return this.renderOnboarding(props, api)
   },
 
-  renderOnboarding({ entity, onField, onSave, onSkip }, api) {
+  renderOnboarding({ entity, onField, onToggleInterest, onSave, onSkip }, api) {
     const saving = entity.status === "saving"
     const countryError = getFieldError(entity, "country")
 
@@ -27,6 +28,16 @@ export const Onboarding = {
         html`
           <h2 class=${styles.title}>${t("onboarding.title")}</h2>
           <p class=${styles.subtitle}>${t("onboarding.subtitle")}</p>
+
+          <div class=${styles.field}>
+            ${CategoryPicker.render({
+              label: t("fields.interestedCategories"),
+              hint: t("fields.interestedCategoriesHint"),
+              value: getFieldValue(entity, "interested_categories", []),
+              isDisabled: saving,
+              onToggle: onToggleInterest,
+            })}
+          </div>
 
           <div
             class=${

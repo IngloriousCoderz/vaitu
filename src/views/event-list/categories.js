@@ -13,8 +13,8 @@ export const categories = [
     filters: [
       {
         id: "style",
-        get allLabel() {
-          return t("filters.allStyles")
+        get title() {
+          return t("filters.weddingStyle")
         },
         options: weddingStyles,
       },
@@ -66,8 +66,8 @@ export const categories = [
     filters: [
       {
         id: "genre",
-        get allLabel() {
-          return t("filters.allGenres")
+        get title() {
+          return t("filters.festivalGenre")
         },
         options: festivalGenres,
       },
@@ -102,16 +102,35 @@ export function categoryById(id) {
   return categories.find((c) => c.id === id) ?? categories[FIRST_INDEX]
 }
 
-// Chips for the active category: "show all" + one per valid option.
-// Option values come from the same source the validators check, so a filter
-// chip can never offer a value the form would reject.
-export function filtersForCategory(categoryId) {
-  const [dimension] = categoryById(categoryId).filters
-  return [
-    { id: "all", label: dimension.allLabel },
-    ...dimension.options.map((option) => ({
-      id: option.value,
-      label: option.label,
+// One section of chips per filter dimension of these categories, or of every
+// category when none is picked. Option values come from the same source the
+// validators check, so a filter chip can never offer a value the form would
+// reject.
+export function filterSections(categoryIds) {
+  const scoped = categoryIds.length
+    ? categories.filter((category) => categoryIds.includes(category.id))
+    : categories
+  return scoped.flatMap((category) =>
+    category.filters.map((dimension) => ({
+      id: dimension.id,
+      category: category.id,
+      title: dimension.title,
+      options: dimension.options.map((option) => ({
+        id: option.value,
+        label: option.label,
+      })),
     })),
-  ]
+  )
+}
+
+// The category a style or genre belongs to. Values are unique across
+// categories, so the value alone says which.
+export function categoryOfDetail(value) {
+  return (
+    categories.find((category) =>
+      category.filters.some((dimension) =>
+        dimension.options.some((option) => option.value === value),
+      ),
+    )?.id ?? null
+  )
 }

@@ -20,6 +20,16 @@ export function fieldSet(entity, { field, value }, api) {
   entity.error = null
 }
 
+export function interestToggle(entity, categoryId) {
+  const current = getFieldValue(entity, "interested_categories", [])
+  Form.fieldChange(entity, {
+    path: "interested_categories",
+    value: current.includes(categoryId)
+      ? current.filter((id) => id !== categoryId)
+      : [...current, categoryId],
+  })
+}
+
 // Skipping counts as done: it is offered once, not on every sign-in.
 export const skip = handleAsync("skip", {
   start(entity) {
@@ -60,7 +70,7 @@ export const save = handleAsync("save", {
     entity.status = "saving"
     entity.error = null
   },
-  async run({ country, region, website, instagram }) {
+  async run({ country, region, website, instagram, interested_categories }) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -79,6 +89,7 @@ export const save = handleAsync("save", {
               ? site
               : `https://${site}`,
         instagram_handle: handle === "" ? "" : `@${handle}`,
+        interested_categories,
         onboarded_at: new Date().toISOString(),
       })
       .eq("id", user.id)
@@ -89,6 +100,8 @@ export const save = handleAsync("save", {
     entity.status = "ready"
     api.notify("#authentication:onboardingFinish")
     api.notify("#profile:load")
+    // The categories picked here are what the feed now shows by default.
+    api.notify("#eventList:load")
   },
   error(entity, err) {
     entity.status = "error"

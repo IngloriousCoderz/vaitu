@@ -76,8 +76,13 @@ export const EventDetail = {
     (payload) => payload.params.eventId,
   ),
 
+  // Your own event is left out of the list, so it falls back to My events.
   renderHeader(entity) {
-    return { title: entity.event?.title ?? "", back: paths.events }
+    return {
+      title: entity.event?.title ?? "",
+      back:
+        entity.event?.senderId === readUserId() ? paths.myEvents : paths.events,
+    }
   },
 
   render(entity, api) {

@@ -12,6 +12,7 @@ import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
+import { CategoryPicker } from "../../common/category-picker/index.js"
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
@@ -26,6 +27,7 @@ import {
   uniqueRegions,
 } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
+import { categoryById } from "../event-list/categories.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 import {
   displayInstagram,
@@ -59,6 +61,7 @@ export const Profile = {
       onFavoriteInput,
       onFavoriteAdd,
       onFavoriteRemove,
+      onToggleInterest,
       onEmailOptOut,
     },
     api,
@@ -216,6 +219,13 @@ export const Profile = {
                             onField,
                           }),
                       )}
+                      ${CategoryPicker.render({
+                        label: t("fields.interestedCategories"),
+                        hint: t("fields.interestedCategoriesHint"),
+                        value: shown.interested_categories ?? [],
+                        isDisabled: saving,
+                        onToggle: onToggleInterest,
+                      })}
                       ${FavoriteRegions.render(
                         {
                           regions: shown.favorite_regions ?? [],
@@ -267,6 +277,12 @@ export const Profile = {
                     )}
                     ${this.renderRow(t("fields.country"), profile.country)}
                     ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
+                    ${this.renderRow(
+                      t("fields.interestedCategories"),
+                      (profile.interested_categories ?? [])
+                        .map((id) => categoryById(id).label)
+                        .join(", ") || t("profile.allCategories"),
+                    )}
                     ${this.renderRow(
                       t("profile.favoriteRegions"),
                       uniqueRegions(profile.favorite_regions ?? []).join(", "),

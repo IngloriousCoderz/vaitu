@@ -131,7 +131,7 @@ export const EventCreate = {
       title: entity.editing_event_id
         ? t("create.editTitle")
         : t("create.newTitle"),
-      back: paths.events,
+      back: entity.editing_event_id ? paths.myEvents : paths.events,
       actions: this.renderHeaderActions({
         entity,
         onRecordStop: () => api.notify(`#${id}:audioRecordStop`),

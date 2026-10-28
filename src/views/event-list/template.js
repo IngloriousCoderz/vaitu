@@ -1,10 +1,7 @@
-import deleteOutline from "@iconify-icons/material-symbols/delete-outline"
-import editOutline from "@iconify-icons/material-symbols/edit-outline"
 import instantMixOutline from "@iconify-icons/material-symbols/instant-mix-outline"
 import searchOutline from "@iconify-icons/material-symbols/search-outline"
 import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 import { Button } from "@inglorious/ui/button"
-import { ButtonGroup } from "@inglorious/ui/button-group"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
@@ -13,13 +10,11 @@ import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
-import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t, translatedLabel } from "../../i18n/index.js"
 import { DEFAULT_SORT, sortEvents, visibleEvents } from "./helpers.js"
@@ -28,18 +23,17 @@ import styles from "./style.module.css"
 export const EventList = {
   create(entity) {
     entity.query ??= ""
-    entity.activeCategory ??= "wedding"
-    entity.activeFilter ??= "all"
-    entity.activeRegion ??= "all"
+    entity.activeTypes ??= []
+    entity.activeDetails ??= []
+    // null is the default region, which follows the favorites.
+    entity.activeRegion ??= null
     entity.activePeriod ??= "all"
     entity.activeSort ??= DEFAULT_SORT
     entity.isFiltersVisible ??= false
-    entity.activeOwner ??= "explore"
     entity.events ??= []
-    entity.myEvents ??= []
-    entity.confirmingDelete ??= null
     entity.appliedMap ??= {}
     entity.favoriteRegions ??= []
+    entity.interests ??= []
     entity.isEditingFavorites ??= false
     entity.favoriteDraft ??= []
     entity.favoriteInput ??= ""
@@ -56,39 +50,34 @@ export const EventList = {
   renderEventList(
     {
       events,
-      myEvents,
-      myEventIds,
-      activeOwner,
-      confirmingDelete,
       appliedMap,
       status,
       error,
-      categories,
-      activeCategory,
-      filters,
+      category,
+      types,
+      showTypes,
+      sections,
+      active,
       regions,
       isEditingFavorites,
       favoriteDraft,
       favoriteInput,
       favoritesStatus,
       favoritesError,
-      owners,
       periods,
       query,
-      activeFilter,
+      activeTypes,
+      activeDetails,
+      interests,
       activeRegion,
       activePeriod,
       activeSort,
       favoriteRegions,
       isFiltersVisible,
-      onSelectOwner,
-      onEdit,
-      onAskDelete,
-      onDelete,
-      onCancelDelete,
       onSearch,
-      onSelectCategory,
-      onSelectFilter,
+      onToggleType,
+      onToggleDetail,
+      onRemoveFilter,
       onToggleFilters,
       onSelectRegion,
       onEditFavorites,
@@ -103,63 +92,27 @@ export const EventList = {
     },
     api,
   ) {
-    const isMine = activeOwner === "mine"
     const shown = sortEvents(
-      visibleEvents(
-        isMine ? myEvents : events.filter((event) => !myEventIds.has(event.id)),
+      visibleEvents(events, {
         query,
-        activeCategory,
-        activeFilter,
-        activeRegion,
-        activePeriod,
+        types: activeTypes,
+        details: activeDetails,
+        interests,
+        region: activeRegion,
+        period: activePeriod,
         favoriteRegions,
-      ),
+      }),
       activeSort,
     )
     const showResultsBar = status === "ready" || status === "saving"
 
     return Page.render({
       variant: "sticky",
-      category: activeCategory,
+      category,
       wide: true,
       children: [
         html`
           <div class=${styles.stickyTop}>
-            <div class=${styles.ownerSwitch}>
-              ${ButtonGroup.render({
-                buttons: owners.map((owner) =>
-                  owner.id === activeOwner
-                    ? { value: owner.id, label: owner.label, color: "primary" }
-                    : {
-                        value: owner.id,
-                        label: owner.label,
-                        variant: "outline",
-                      },
-                ),
-                value: activeOwner,
-                size: "sm",
-                onChange: onSelectOwner,
-              })}
-            </div>
-
-            <div class=${styles.categoryRow}>
-              ${categories.map(
-                (category) => html`
-                  <button
-                    type="button"
-                    class=${
-                      category.id === activeCategory
-                        ? `${styles.categoryButton} ${styles.categoryActive}`
-                        : styles.categoryButton
-                    }
-                    @click=${() => onSelectCategory(category.id)}
-                  >
-                    ${category.label}
-                  </button>
-                `,
-              )}
-            </div>
-
             <div class="vaitu-search">
               ${Input.render({
                 inputType: "search",
@@ -171,12 +124,9 @@ export const EventList = {
               })}
             </div>
 
-            ${this.renderChipRow({
-              items: filters,
-              activeId: activeFilter,
-              onSelect: onSelectFilter,
-              getLabel: (filter) => filter.label,
-            })}
+            ${when(active.length, () =>
+              this.renderActiveRow({ active, onRemoveFilter, onClearFilters }),
+            )}
           </div>
           ${when(
             isFiltersVisible,
@@ -186,6 +136,29 @@ export const EventList = {
                   class="${styles.sheet} vaitu-filter-sheet"
                   @click=${(e) => e.stopPropagation()}
                 >
+                  ${when(
+                    showTypes,
+                    () => html`
+                      <h3 class=${styles.sheetTitle}>${t("events.type")}</h3>
+                      ${this.renderChipRow({
+                        items: types,
+                        isActive: (type) => activeTypes.includes(type.id),
+                        onSelect: onToggleType,
+                        getLabel: (type) => type.label,
+                      })}
+                    `,
+                  )}
+                  ${sections.map(
+                    (section) => html`
+                      <h3 class=${styles.sheetTitle}>${section.title}</h3>
+                      ${this.renderChipRow({
+                        items: section.options,
+                        isActive: (option) => activeDetails.includes(option.id),
+                        onSelect: onToggleDetail,
+                        getLabel: (option) => option.label,
+                      })}
+                    `,
+                  )}
                   <div class=${styles.sheetHeading}>
                     <h3 class=${styles.sheetTitle}>${t("events.region")}</h3>
                     ${IconButton.render({
@@ -218,14 +191,14 @@ export const EventList = {
                   )}
                   ${this.renderChipRow({
                     items: regions,
-                    activeId: activeRegion,
+                    isActive: (region) => region.id === activeRegion,
                     onSelect: onSelectRegion,
                     getLabel: translatedLabel,
                   })}
                   <h3 class=${styles.sheetTitle}>${t("events.period")}</h3>
                   ${this.renderChipRow({
                     items: periods,
-                    activeId: activePeriod,
+                    isActive: (period) => period.id === activePeriod,
                     onSelect: onSelectPeriod,
                     getLabel: (period) => period.label,
                   })}
@@ -263,37 +236,18 @@ export const EventList = {
                 error,
                 isLoading: status === "loading",
                 isEmpty: !shown.length,
-                emptyText:
-                  isMine && !myEvents.length
-                    ? t("events.noneMine")
-                    : t("events.noneMatch"),
+                emptyText: t("events.noneMatch"),
               }) ??
-              shown.map((event, index) => {
-                const style = `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`
-                return when(
-                  isMine,
-                  () =>
-                    this.renderMyEvent({
-                      event,
-                      style,
-                      isConfirmingDelete: confirmingDelete === event.id,
-                      onOpenEvent,
-                      onEdit,
-                      onAskDelete,
-                      onDelete,
-                      onCancelDelete,
-                    }),
-                  () =>
-                    Card.render({
-                      event,
-                      isApplied: Boolean(appliedMap[event.id]),
-                      onOpen: onOpenEvent,
-                      cover: true,
-                      className: `vaitu-list-item ${styles.tile}`,
-                      style,
-                    }),
-                )
-              })
+              shown.map((event, index) =>
+                Card.render({
+                  event,
+                  isApplied: Boolean(appliedMap[event.id]),
+                  onOpen: onOpenEvent,
+                  cover: true,
+                  className: `vaitu-list-item ${styles.tile}`,
+                  style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
+                }),
+              )
             }
           </main>
         `,
@@ -301,73 +255,60 @@ export const EventList = {
     })
   },
 
-  renderMyEvent({
-    event,
-    style,
-    isConfirmingDelete,
-    onOpenEvent,
-    onEdit,
-    onAskDelete,
-    onDelete,
-    onCancelDelete,
-  }) {
-    return Flex.render({
-      direction: "column",
-      className: `${styles.myEvent} vaitu-list-item`,
-      style,
-      children: [
-        Card.render({
-          event,
-          divider: false,
-          cover: true,
-          onOpen: onOpenEvent,
-        }),
-        html`
-          <div class=${styles.myEventFooter}>
-            ${StatusChip.render({ status: event.status })}
-            <span class=${styles.count}>
-              ${t("events.applications", { count: event.applications_count })}
-            </span>
-            <span class=${styles.rowActions}>
-              ${when(event.status === "open", () =>
-                IconButton.render({
-                  icon: Icon.render({ icon: editOutline, size: "lg" }),
-                  ariaLabel: t("events.edit"),
-                  className: `${styles.miniButton} ${styles.editTint}`,
-                  onClick: () => onEdit(event.id),
-                }),
-              )}
-              ${IconButton.render({
-                icon: Icon.render({ icon: deleteOutline, size: "lg" }),
-                ariaLabel: t("events.delete"),
-                className: `${styles.miniButton} ${styles.deleteTint}`,
-                onClick: () => onAskDelete(event.id),
-              })}
-            </span>
-          </div>
-        `,
-        when(isConfirmingDelete, () =>
-          ConfirmPrompt.render({
-            message: t("events.deleteConfirm"),
-            confirmLabel: t("events.yesDelete"),
-            className: styles.confirm,
-            onConfirm: () => onDelete(event.id),
-            onCancel: onCancelDelete,
-          }),
-        ),
-      ],
-    })
+  renderHeaderActions({ filterCount, onToggleFilters }) {
+    return html`
+      <span class=${styles.filterButton}>
+        ${IconButton.render({
+          icon: Icon.render({ icon: instantMixOutline, size: "lg" }),
+          variant: "ghost",
+          color: "secondary",
+          ariaLabel: filterCount
+            ? t("events.filtersOn", { count: filterCount })
+            : t("events.filters"),
+          className: filterCount ? styles.filterActive : "",
+          onClick: onToggleFilters,
+        })}
+        ${when(
+          filterCount,
+          () =>
+            html`<span class=${styles.filterCount} aria-hidden="true"
+              >${filterCount}</span
+            >`,
+        )}
+      </span>
+    `
   },
 
-  renderHeaderActions({ hasActiveFilters, onToggleFilters }) {
-    return IconButton.render({
-      icon: Icon.render({ icon: instantMixOutline, size: "lg" }),
-      variant: "ghost",
-      color: "secondary",
-      ariaLabel: t("events.filters"),
-      className: hasActiveFilters ? styles.filterActive : "",
-      onClick: onToggleFilters,
-    })
+  // Each filter that is on, as a chip that turns it off, and a way to turn
+  // them all off. Region and period stop hiding in the sheet once set.
+  renderActiveRow({ active, onRemoveFilter, onClearFilters }) {
+    return html`
+      <div class="${styles.chips} ${styles.activeRow}">
+        ${active.map(
+          (filter) => html`
+            <button
+              type="button"
+              class=${styles.chipButton}
+              aria-label=${t("events.removeFilter", { label: filter.label })}
+              @click=${() => onRemoveFilter(filter)}
+            >
+              ${Chip.render({
+                children: html`${filter.label}
+                  <span class=${styles.chipRemove} aria-hidden="true">×</span>`,
+                color: "primary",
+              })}
+            </button>
+          `,
+        )}
+        ${Button.render({
+          children: t("events.clearAll"),
+          variant: "ghost",
+          size: "sm",
+          className: styles.clearAll,
+          onClick: onClearFilters,
+        })}
+      </div>
+    `
   },
 
   renderFavoriteEditor(
@@ -421,7 +362,7 @@ export const EventList = {
     `
   },
 
-  renderChipRow({ items, activeId, onSelect, getLabel }) {
+  renderChipRow({ items, isActive, onSelect, getLabel }) {
     return html`
       <div class=${styles.chips}>
         ${items.map(
@@ -433,7 +374,7 @@ export const EventList = {
             >
               ${Chip.render({
                 children: getLabel(item),
-                color: item.id === activeId ? "primary" : "default",
+                color: isActive(item) ? "primary" : "default",
               })}
             </button>
           `,

@@ -90,6 +90,12 @@
      Re-measure if the bar's internals change. */
   --vtabbar-height: 4.875rem;
 
+  /* The FAB that floats over the end of a list (src/app/fab), and the room
+     the list leaves under its last card for it: its height plus its lift
+     off the tab bar. */
+  --vfab-size: var(--iw-space-14);
+  --vfab-clearance: calc(var(--vfab-size) + var(--iw-space-2));
+
   /* Clearance for a page with no bottom overlay (detail, ranks, create).
      Since the bar became a footer row these pages no longer reserve space for
      it at all — this is just breathing room above the fold. */
