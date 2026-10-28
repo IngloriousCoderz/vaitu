@@ -360,29 +360,27 @@ export const localeSave = handleAsync("localeSave", {
 export const emailOptOutSave = handleAsync("emailOptOutSave", {
   start(entity) {
     entity.emailOptOutStatus = "saving"
-    entity.error = null
+    entity.emailOptOutError = null
   },
-  async run(emailOptOut) {
+  async run(isOptedOut) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) throw new Error("errors.notLoggedIn")
     const { error } = await supabase
       .from("profiles")
-      .update({ email_opt_out: emailOptOut })
+      .update({ email_opt_out: isOptedOut })
       .eq("id", user.id)
     if (error) throw error
-    return emailOptOut
+    return isOptedOut
   },
-  success(entity, emailOptOut) {
+  success(entity, isOptedOut) {
     entity.emailOptOutStatus = "idle"
-    if (entity.profile)
-      entity.profile = { ...entity.profile, email_opt_out: emailOptOut }
+    entity.profile = { ...entity.profile, email_opt_out: isOptedOut }
   },
   error(entity, err) {
     entity.emailOptOutStatus = "idle"
-    entity.error = err.message ?? "errors.saveEmailOptOut"
-    console.warn("[profile] email opt-out not saved:", err)
+    entity.emailOptOutError = err.message ?? "errors.saveEmailOptOut"
   },
 })
 

@@ -9,7 +9,6 @@ import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
 import { Switch } from "@inglorious/ui/switch"
-import { Tooltip } from "@inglorious/ui/tooltip"
 import { html } from "@inglorious/web"
 
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
@@ -276,9 +275,9 @@ export const Profile = {
                           ),
                         )}
                         ${this.renderRow(t("profile.subRole"), profile.sub_role)}
+                        ${this.renderLanguage(api)}
                       </dl>
-                      ${this.renderLanguage(api)}
-                      ${this.renderEmailOptOut({ entity, onEmailOptOut })}
+                      ${this.renderEmails({ entity, onEmailOptOut })}
                       ${this.renderAccountActions({
                         onEdit,
                         onLogout,
@@ -385,8 +384,6 @@ export const Profile = {
     })
   },
 
-  // Editing is the profile's main action; logging out is there when you need
-  // it, quieter, and never in the way.
   // The app's language, each named in itself.
   renderLanguage(api) {
     return Flex.render({
@@ -400,41 +397,27 @@ export const Profile = {
     })
   },
 
-  renderEmailOptOut({ entity, onEmailOptOut }) {
-    const profile = entity.profile
-    if (!profile) return ""
-    const receivesEmails = !profile.email_opt_out
+  // On means the user gets emails: the stored flag is the opt-out.
+  renderEmails({ entity, onEmailOptOut }) {
     return Flex.render({
-      justify: "between",
-      className: styles.row,
-      children: html`
-        <dt>
-          ${t("profile.emailOptOut")}
-          ${Tooltip.render({
-            content: t("profile.emailOptOutDesc"),
-            position: "top",
-            size: "sm",
-            isOpen: false,
-            children: html`<span
-              class=${styles.helpIcon}
-              role="button"
-              tabindex="0"
-              aria-label=${t("profile.emailOptOutDesc")}
-              >?</span
-            >`,
-          })}
-        </dt>
-        <dd>
-          ${Switch.render({
-            isChecked: receivesEmails,
-            isDisabled: entity.emailOptOutStatus === "saving",
-            onChange: (checked) => onEmailOptOut(!checked),
-          })}
-        </dd>
-      `,
+      direction: "column",
+      gap: "sm",
+      className: styles.emails,
+      children: [
+        Switch.render({
+          label: t("profile.emails"),
+          description: t("profile.emailsDescription"),
+          isChecked: !entity.profile.email_opt_out,
+          isDisabled: entity.emailOptOutStatus === "saving",
+          onChange: (isReceiving) => onEmailOptOut(!isReceiving),
+        }),
+        ErrorAlert.render({ error: entity.emailOptOutError }),
+      ],
     })
   },
 
+  // Editing is the profile's main action; logging out is there when you need
+  // it, quieter, and never in the way.
   renderAccountActions({ onEdit, onLogout, onDeactivateAsk }) {
     return Flex.render({
       direction: "column",

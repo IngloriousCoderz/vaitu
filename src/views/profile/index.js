@@ -65,6 +65,7 @@ export const Profile = {
     entity.status ??= "idle"
     entity.error ??= null
     entity.emailOptOutStatus ??= "idle"
+    entity.emailOptOutError ??= null
     // The id is snapshotted because this closure outlives the batch that built
     // it: it fires from a realtime message, by which point the draft this
     // entity was is revoked and reading entity.id throws.
@@ -120,8 +121,8 @@ export const Profile = {
         onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
         onOpenApplications: (status) =>
           api.notify("#router:navigate", paths.applicationsByStatus(status)),
-        onEmailOptOut: (emailOptOut) =>
-          api.notify(`#${id}:emailOptOutSave`, emailOptOut),
+        onEmailOptOut: (isOptedOut) =>
+          api.notify(`#${id}:emailOptOutSave`, isOptedOut),
       },
       api,
     )
