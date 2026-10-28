@@ -1,12 +1,6 @@
-import { FIRST_INDEX } from "../../constants/index.js"
-import { sameRegion, uniqueRegions } from "../../data/regions/resolve.js"
+import { uniqueRegions } from "../../data/regions/resolve.js"
 import { labelled, translatedLabel } from "../../i18n/index.js"
 import { categoryById, categoryOfDetail, filterSections } from "./categories.js"
-
-// An event happening today is already in every period.
-const TODAY = 0
-// What localeCompare answers for two equal strings.
-const SAME_ORDER = 0
 
 export const periods = [
   labelled("periods.all", { id: "all", days: null }),
@@ -27,10 +21,9 @@ export const sorts = [
   labelled("sorts.deadlineFarthest", { value: "deadline_desc" }),
 ]
 
-export function distinctRegions(allEvents) {
-  return uniqueRegions(allEvents.map((event) => event.region)).sort((a, b) =>
-    a.localeCompare(b),
-  )
+// Each region once, under the name the app stores, in alphabetical order.
+export function distinctRegions(regions) {
+  return uniqueRegions(regions).sort((a, b) => a.localeCompare(b))
 }
 
 // The categories the feed shows. A picked style or genre brings its category
@@ -85,79 +78,4 @@ export function activeFilters({ types, details, region, period, regions }) {
       ? []
       : [{ kind: "period", id: period, label: periodItem.label }]),
   ]
-}
-
-export function visibleEvents(
-  allEvents,
-  {
-    query = "",
-    types = [],
-    details = [],
-    interests = [],
-    region = "all",
-    period: periodId = "all",
-    favoriteRegions = [],
-  } = {},
-) {
-  const q = query.trim().toLowerCase()
-  const period = periods.find((p) => p.id === periodId) ?? periods[FIRST_INDEX]
-  const scope = typesInScope(types, details, interests)
-  // A category with no style or genre picked shows all of its events.
-  const detailCategories = new Set(details.map(categoryOfDetail))
-  return allEvents.filter((event) => {
-    const matchesType = !scope.length || scope.includes(event.category)
-    const matchesDetail =
-      !detailCategories.has(event.category) ||
-      details.includes(event.filterValue)
-    const matchesRegion =
-      region === "all" ||
-      (region === "mine"
-        ? favoriteRegions.some((favorite) => sameRegion(favorite, event.region))
-        : sameRegion(event.region, region))
-    const matchesPeriod =
-      period.days === null ||
-      (event.eventInDays >= TODAY && event.eventInDays <= period.days)
-    const matchesQuery =
-      q === "" ||
-      event.title.toLowerCase().includes(q) ||
-      event.subtitle.toLowerCase().includes(q)
-    return (
-      matchesType &&
-      matchesDetail &&
-      matchesRegion &&
-      matchesPeriod &&
-      matchesQuery
-    )
-  })
-}
-
-export function sortEvents(events, sortId = DEFAULT_SORT) {
-  const list = [...events]
-  switch (sortId) {
-    case "event_date_desc":
-      return list.sort((a, b) => compareField(a, b, "event_date", false))
-    case "event_date_asc":
-      return list.sort((a, b) => compareField(a, b, "event_date", true))
-    case "deadline_desc":
-      return list.sort((a, b) =>
-        compareField(a, b, "application_deadline", false),
-      )
-    case "created_asc":
-      return list.sort((a, b) => compareField(a, b, "created_at", true))
-    case "deadline_asc":
-      return list.sort((a, b) =>
-        compareField(a, b, "application_deadline", true),
-      )
-    case "created_desc":
-    default:
-      return list.sort((a, b) => compareField(a, b, "created_at", false))
-  }
-}
-
-function compareField(a, b, field, ascending) {
-  const left = a[field] ?? ""
-  const right = b[field] ?? ""
-  const order = String(left).localeCompare(String(right))
-  if (order !== SAME_ORDER) return ascending ? order : -order
-  return String(a.id).localeCompare(String(b.id))
 }

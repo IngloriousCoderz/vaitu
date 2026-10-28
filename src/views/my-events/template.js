@@ -95,14 +95,18 @@ export const MyEvents = {
                 IconButton.render({
                   icon: Icon.render({ icon: editOutline, size: "lg" }),
                   ariaLabel: t("myEvents.edit"),
-                  className: `${styles.miniButton} ${styles.editTint}`,
+                  variant: "ghost",
+                  color: "primary",
+                  shape: "round",
                   onClick: () => onEdit(event.id),
                 }),
               )}
               ${IconButton.render({
                 icon: Icon.render({ icon: deleteOutline, size: "lg" }),
                 ariaLabel: t("myEvents.delete"),
-                className: `${styles.miniButton} ${styles.deleteTint}`,
+                variant: "ghost",
+                color: "error",
+                shape: "round",
                 onClick: () => onAskDelete(event.id),
               })}
             </span>

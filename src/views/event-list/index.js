@@ -1,25 +1,23 @@
+import { debounce } from "@inglorious/utils/function"
+
 import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { categories, filterSections } from "./categories.js"
-import { withFilterTransition } from "./filter-transition.js"
 import {
   detailToggle,
-  favoriteChoiceSelect,
-  favoriteDraftAdd,
-  favoriteDraftInput,
-  favoriteDraftRemove,
-  favoritesEditCancel,
-  favoritesEditClose,
-  favoritesEditStart,
-  favoritesSave,
   filtersClear,
+  filtersClose,
   filtersToggle,
   load,
+  pageFetch,
+  pageMore,
   periodSelect,
   regionSelect,
+  regionsFetch,
   search,
+  searchRun,
   sortSelect,
   typeToggle,
 } from "./handlers.js"
@@ -33,25 +31,29 @@ import {
 import { EventList as renderers } from "./template.js"
 
 const ONE_INTEREST = 1
+// How long typing has to pause before the feed is asked again.
+const SEARCH_DELAY_MS = 300
+
+const searchSoon = debounce(
+  (api, id) => api.notify(`#${id}:searchRun`),
+  SEARCH_DELAY_MS,
+)
 
 export const EventList = {
   search,
+  searchRun,
   typeToggle,
   detailToggle,
   periodSelect,
   regionSelect,
   sortSelect,
   filtersToggle,
+  filtersClose,
   filtersClear,
-  favoritesEditStart,
-  favoritesEditCancel,
-  favoritesEditClose,
-  favoriteDraftInput,
-  favoriteChoiceSelect,
-  favoriteDraftAdd,
-  favoriteDraftRemove,
-  ...favoritesSave,
+  pageMore,
   ...load,
+  ...pageFetch,
+  ...regionsFetch,
   ...renderers,
 
   create(entity, _, api) {
@@ -107,6 +109,8 @@ export const EventList = {
     return this.renderEventList(
       {
         events: entity.events,
+        total: entity.total,
+        isLoadingMore: entity.isLoadingMore,
         appliedMap: entity.appliedMap,
         status: entity.status,
         error: entity.error,
@@ -120,25 +124,20 @@ export const EventList = {
         sections: filterSections(scope),
         active: filtersOn(entity),
         regions: regionsOf(entity),
-        isEditingFavorites: entity.isEditingFavorites,
-        favoriteDraft: entity.favoriteDraft,
-        favoriteInput: entity.favoriteInput,
-        favoritesStatus: entity.favoritesStatus,
-        favoritesError: entity.favoritesError,
         periods,
         query: entity.query,
         activeTypes: entity.activeTypes,
         activeDetails: entity.activeDetails,
-        interests: entity.interests,
         activeRegion: regionInEffect(
           entity.activeRegion,
           entity.favoriteRegions,
         ),
         activePeriod: entity.activePeriod,
-        activeSort: entity.activeSort,
-        favoriteRegions: entity.favoriteRegions,
         isFiltersVisible: entity.isFiltersVisible,
-        onSearch: (value) => api.notify(`#${id}:search`, value),
+        onSearch: (value) => {
+          api.notify(`#${id}:search`, value)
+          searchSoon(api, id)
+        },
         onToggleType: (categoryId) =>
           api.notify(`#${id}:typeToggle`, categoryId),
         onToggleDetail: (value) => api.notify(`#${id}:detailToggle`, value),
@@ -148,24 +147,16 @@ export const EventList = {
           if (kind === "region") api.notify(`#${id}:regionSelect`, null)
           if (kind === "period") api.notify(`#${id}:periodSelect`, "all")
         },
-        onToggleFilters: () => api.notify(`#${id}:filtersToggle`),
         onSelectRegion: (region) => api.notify(`#${id}:regionSelect`, region),
-        onEditFavorites: () => {
-          if (entity.isEditingFavorites) return
-          withFilterTransition(() => api.notify(`#${id}:favoritesEditStart`))
+        onCloseFilters: () => api.notify(`#${id}:filtersClose`),
+        onOpenPreferences: () => {
+          api.notify(`#${id}:filtersClose`)
+          api.notify("#router:navigate", paths.preferences)
         },
-        onCancelFavorites: () =>
-          withFilterTransition(() => api.notify(`#${id}:favoritesEditCancel`)),
-        onFavoriteInput: (value) =>
-          api.notify(`#${id}:favoriteDraftInput`, value),
-        onFavoriteAdd: (value) => api.notify(`#${id}:favoriteDraftAdd`, value),
-        onFavoriteRemove: (value) =>
-          api.notify(`#${id}:favoriteDraftRemove`, value),
-        onSaveFavorites: () =>
-          api.notify(`#${id}:favoritesSave`, entity.favoriteDraft),
         onSelectPeriod: (periodId) =>
           api.notify(`#${id}:periodSelect`, periodId),
         onClearFilters: () => api.notify(`#${id}:filtersClear`),
+        onPageMore: () => api.notify(`#${id}:pageMore`),
         onOpenEvent: (event_id) => {
           // The event itself, or your application on it when there is one.
           const applicationId = entity.appliedMap[event_id]
@@ -183,7 +174,7 @@ export const EventList = {
 
 function regionsOf(entity) {
   return regionFilterItems(
-    distinctRegions(entity.events),
+    distinctRegions(entity.regions),
     entity.favoriteRegions,
   )
 }

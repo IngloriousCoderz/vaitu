@@ -4,8 +4,11 @@
     "myEvents": "My events",
     "applications": "Applications",
     "profile": "Profile",
+    "preferences": "Preferences",
     "newEvent": "New event",
     "toggle": "Toggle navigation",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
     "notifications": "Notifications",
     "account": "Account",
     "profileOf": "Profile: {{name}}",
@@ -27,7 +30,8 @@
     "photoPreview": "Photos",
     "photoPrevious": "Previous photo",
     "photoNext": "Next photo",
-    "photoClose": "Close photos"
+    "photoClose": "Close photos",
+    "close": "Close"
   },
   "favorites": {
     "typeRegion": "Or type a region"
@@ -93,7 +97,6 @@
     "genre": "Genre",
     "country": "Country",
     "region": "Region",
-    "favoriteRegions": "Favorite regions (optional)",
     "regionOptional": "Region (optional)",
     "regionExample": "Tuscany",
     "websiteOptional": "Website (optional)",
@@ -193,7 +196,6 @@
     "reopenEvent": "Failed to reopen event",
     "loadEvents": "Failed to load events",
     "deleteEvent": "Failed to delete event",
-    "saveFavorites": "Failed to save favorite regions",
     "loadApplication": "Failed to load application",
     "save": "Failed to save",
     "withdraw": "Failed to withdraw",
@@ -207,7 +209,8 @@
     "loadRanks": "Failed to load ranks",
     "deactivateAccount": "The account could not be deactivated. Try again.",
     "resend": "Could not resend the email",
-    "saveEmailOptOut": "Failed to save email preference"
+    "loadPreferences": "Failed to load preferences",
+    "savePreferences": "Failed to save preferences"
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -241,7 +244,7 @@
   "events": {
     "title": "Events",
     "search": "Find events by city, style or genre…",
-    "editFavorites": "Edit favorite regions",
+    "feedPreferences": "Feed preferences",
     "region": "Region",
     "period": "Period",
     "clearAll": "Clear all",
@@ -251,7 +254,6 @@
     "filtersOn_one": "Filters, {{count}} on",
     "filtersOn_other": "Filters, {{count}} on",
     "noneMatch": "No events match your search yet.",
-    "saveRegions": "Save regions",
     "orderBy": "Order by",
     "results_one": "{{count}} event",
     "results_other": "{{count}} events"
@@ -360,17 +362,22 @@
     "cropHint": "Drag the frame to move it. Pull a corner to resize it, or pinch to scale it.",
     "cropApply": "Use photo",
     "save": "Save profile",
-    "favoriteRegions": "Favorite regions",
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
-    "language": "Language",
-    "emails": "Email notifications",
-    "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent.",
     "deactivateAccount": "Deactivate account",
     "deactivateConfirm": "Deactivate your account? Your open events and all your applications — sent and received — are permanently deleted. Past events with winners and your stats stay. To come back, sign in again.",
     "yesDeactivate": "Yes, deactivate",
-    "deactivating": "Deactivating…",
-    "allCategories": "All events"
+    "deactivating": "Deactivating…"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "feed": "Your feed",
+    "feedHint": "What the events list shows before you filter it.",
+    "favoriteRegions": "Favorite regions",
+    "app": "App",
+    "language": "Language",
+    "emails": "Email notifications",
+    "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent."
   },
   "facts": {
     "spouses": "Spouses"

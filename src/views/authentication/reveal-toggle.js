@@ -15,6 +15,9 @@ export const RevealToggle = {
       ariaLabel: isPasswordVisible ? "Hide password" : "Show password",
       variant: "ghost",
       color: "secondary",
+      shape: "round",
+      // Small, so it fits inside the field without making it taller.
+      size: "sm",
       onClick: () => onTogglePassword(inputId),
     })
   },

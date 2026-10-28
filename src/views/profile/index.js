@@ -12,24 +12,14 @@ import * as handlers from "./handlers.js"
 import { closeAvatarCrop } from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
-const {
-  load,
-  save,
-  localeSave,
-  emailOptOutSave,
-  accountDeactivate,
-  logout,
-  avatarSave,
-  ...syncHandlers
-} = handlers
+const { load, save, accountDeactivate, logout, avatarSave, ...syncHandlers } =
+  handlers
 
 export const Profile = {
   ...Form,
   ...syncHandlers,
   ...load,
   ...save,
-  ...localeSave,
-  ...emailOptOutSave,
   ...accountDeactivate,
   ...logout,
   ...avatarSave,
@@ -51,10 +41,8 @@ export const Profile = {
       instagram_handle: "",
       country: "",
       region: "",
-      favorite_regions: [],
     }
     Form.create(entity)
-    entity.favoriteInput ??= ""
     entity.isConfirmingDeactivate ??= false
     entity.deactivateStatus ??= "idle"
     entity.deactivateError ??= null
@@ -64,8 +52,6 @@ export const Profile = {
     entity.isAvatarCropOpen ??= false
     entity.status ??= "idle"
     entity.error ??= null
-    entity.emailOptOutStatus ??= "idle"
-    entity.emailOptOutError ??= null
     // The id is snapshotted because this closure outlives the batch that built
     // it: it fires from a realtime message, by which point the draft this
     // entity was is revoked and reading entity.id throws.
@@ -105,12 +91,6 @@ export const Profile = {
         onCancel: () => api.notify(`#${id}:editCancel`),
         onField: ({ field, value }) =>
           api.notify(`#${id}:fieldSet`, { field, value }),
-        onFavoriteInput: (value) =>
-          api.notify(`#${id}:favoriteInputSet`, value),
-        onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
-        onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
-        onToggleInterest: (categoryId) =>
-          api.notify(`#${id}:interestToggle`, categoryId),
         onSave: () => api.notify(`#${id}:save`, { ...entity.values }),
         onEdit: () => api.notify(`#${id}:editStart`),
         onPhoto: (file) => api.notify(`#${id}:avatarCropOpen`, file),
@@ -123,8 +103,8 @@ export const Profile = {
         onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
         onOpenApplications: (status) =>
           api.notify("#router:navigate", paths.applicationsByStatus(status)),
-        onEmailOptOut: (isOptedOut) =>
-          api.notify(`#${id}:emailOptOutSave`, isOptedOut),
+        onOpenPreferences: () =>
+          api.notify("#router:navigate", paths.preferences),
       },
       api,
     )

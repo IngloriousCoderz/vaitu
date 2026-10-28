@@ -6,7 +6,6 @@ import "./native-update"
 import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./styles/list-stagger.css"
-import "./styles/filter-transition.css"
 
 import { mount } from "@inglorious/web"
 

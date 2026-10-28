@@ -15,12 +15,8 @@ import { createImageFile } from "../../common/image.js"
 import { defaultTiers } from "../../common/tiers.js"
 import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
 import {
-  canonicalRegion,
-  favoriteRegionOptions,
   regionAfterCountryChange,
   regionForCountry,
-  sameRegion,
-  uniqueRegions,
 } from "../../data/regions/resolve.js"
 import { paths } from "../../routes.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
@@ -39,14 +35,11 @@ export function editStart(entity, _, api) {
     instagram_handle: entity.profile?.instagram_handle ?? "",
     country,
     region: regionForCountry(country, entity.profile?.region ?? ""),
-    favorite_regions: uniqueRegions(entity.profile?.favorite_regions ?? []),
-    interested_categories: entity.profile?.interested_categories ?? [],
   }
   Form.reset(entity)
   entity.error = null
   api.notify("#country-profile:sync", entity.values.country ?? "")
   api.notify("#region-profile:sync", entity.values.region ?? "")
-  syncFavoriteCombobox(entity, api)
 }
 
 export function editCancel(entity) {
@@ -70,66 +63,6 @@ export function fieldSet(entity, { field, value }, api) {
   Form.fieldChange(entity, { path: field, value })
 }
 
-export function favoritesApply(entity, regions, api) {
-  if (!entity.profile) return
-  const favorite_regions = Array.isArray(regions) ? regions : []
-  entity.profile = { ...entity.profile, favorite_regions }
-  if (entity.isEditing) {
-    Form.fieldChange(entity, {
-      path: "favorite_regions",
-      value: [...favorite_regions],
-    })
-  }
-  syncFavoriteCombobox(entity, api)
-}
-
-export function interestToggle(entity, categoryId) {
-  if (!entity.isEditing) return
-  const current = entity.values.interested_categories ?? []
-  Form.fieldChange(entity, {
-    path: "interested_categories",
-    value: current.includes(categoryId)
-      ? current.filter((id) => id !== categoryId)
-      : [...current, categoryId],
-  })
-}
-
-export function favoriteInputSet(entity, value) {
-  entity.favoriteInput = value ?? ""
-}
-
-export function favoriteAdd(entity, value, api) {
-  if (!entity.isEditing) return
-  const clean = canonicalRegion(value)
-  if (!clean) return
-  const current = entity.values.favorite_regions ?? []
-  if (!current.some((region) => sameRegion(region, clean))) {
-    Form.fieldChange(entity, {
-      path: "favorite_regions",
-      value: [...current, clean],
-    })
-  }
-  entity.favoriteInput = ""
-  entity.error = null
-  syncFavoriteCombobox(entity, api)
-}
-
-export function favoriteChoiceSelect(entity, { value }, api) {
-  favoriteAdd(entity, value, api)
-}
-
-export function favoriteRemove(entity, value, api) {
-  if (!entity.isEditing) return
-  Form.fieldChange(entity, {
-    path: "favorite_regions",
-    value: (entity.values.favorite_regions ?? []).filter(
-      (region) => !sameRegion(region, value),
-    ),
-  })
-  entity.error = null
-  syncFavoriteCombobox(entity, api)
-}
-
 export const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
@@ -143,7 +76,7 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, country, region, website, instagram_handle, favorite_regions, interested_categories, locale, avatar_url, onboarded_at, is_email_opted_out",
+        "id, full_name, country, region, website, instagram_handle, locale, avatar_url, onboarded_at",
       )
       .eq("id", user.id)
       .single()
@@ -237,24 +170,15 @@ export const save = handleAsync("save", {
         instagram_handle: instagram === "" ? "" : `@${instagram}`,
         country: (profile.country ?? "").trim(),
         region: (profile.region ?? "").trim(),
-        favorite_regions: Array.isArray(profile.favorite_regions)
-          ? [
-              ...new Set(
-                profile.favorite_regions.map((r) => r.trim()).filter(Boolean),
-              ),
-            ]
-          : [],
-        interested_categories: profile.interested_categories ?? [],
       })
       .eq("id", user.id)
     if (error) throw error
     return profile
   },
-  success(entity, profile, api) {
+  success(entity, profile) {
     entity.status = "ready"
     entity.profile = { ...entity.profile, ...profile }
     entity.isEditing = false
-    api.notify("#eventList:load")
   },
   error(entity, err) {
     entity.status = "error"
@@ -349,54 +273,6 @@ export const avatarSave = handleAsync("avatarSave", {
   },
 })
 
-export const localeSave = handleAsync("localeSave", {
-  async run(locale) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) return null
-    const { error } = await supabase
-      .from("profiles")
-      .update({ locale })
-      .eq("id", user.id)
-    if (error) throw error
-    return locale
-  },
-  success(entity, locale) {
-    if (locale && entity.profile) entity.profile = { ...entity.profile, locale }
-  },
-  error(_, err) {
-    console.warn("[profile] language not saved:", err)
-  },
-})
-
-export const emailOptOutSave = handleAsync("emailOptOutSave", {
-  start(entity) {
-    entity.emailOptOutStatus = "saving"
-    entity.emailOptOutError = null
-  },
-  async run(isOptedOut) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error("errors.notLoggedIn")
-    const { error } = await supabase
-      .from("profiles")
-      .update({ is_email_opted_out: isOptedOut })
-      .eq("id", user.id)
-    if (error) throw error
-    return isOptedOut
-  },
-  success(entity, isOptedOut) {
-    entity.emailOptOutStatus = "idle"
-    entity.profile = { ...entity.profile, is_email_opted_out: isOptedOut }
-  },
-  error(entity, err) {
-    entity.emailOptOutStatus = "idle"
-    entity.emailOptOutError = err.message ?? "errors.saveEmailOptOut"
-  },
-})
-
 export function accountDeactivateAsk(entity) {
   entity.isConfirmingDeactivate = true
   entity.deactivateError = null
@@ -447,19 +323,6 @@ export const logout = handleAsync("logout", {
     entity.error = err.message ?? "errors.logout"
   },
 })
-
-function syncFavoriteCombobox(entity, api) {
-  if (!api) return
-  const events = api.getEntity("eventList")?.events ?? []
-  api.notify("#favorite-region-profile:sync", "")
-  api.notify(
-    "#favorite-region-profile:optionsSet",
-    favoriteRegionOptions(
-      events.map((event) => event.region),
-      entity.values?.favorite_regions ?? [],
-    ),
-  )
-}
 
 // Token valid but user row gone (db reset), or auth rejected the token.
 // Network blips must NOT log out — only auth/row-gone errors.

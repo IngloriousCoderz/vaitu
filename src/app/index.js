@@ -62,6 +62,7 @@ const CHROME = {
   eventCreate: { isHidden: true },
   applicationsReceived: { isHidden: true },
   ranks: { isHidden: true },
+  preferences: { tab: "preferences", isHidden: true },
   // Pre-login, plus the catch-all: nothing to navigate with.
   authentication: { isTabbarRendered: false },
   onboarding: { isTabbarRendered: false },
@@ -79,6 +80,7 @@ const DRAWER_PATHS = {
   myEvents: paths.myEvents,
   applications: paths.applications,
   profile: paths.profile,
+  preferences: paths.preferences,
 }
 
 export const App = {
@@ -211,6 +213,7 @@ export const App = {
             icon: Icon.render({ icon: menuOutline, size: "lg" }),
             variant: "ghost",
             color: "secondary",
+            shape: "round",
             ariaLabel: t("nav.toggle"),
             className: styles.menuButton,
             onClick: () =>
@@ -265,6 +268,7 @@ export const App = {
               icon: Icon.render({ icon: notificationsOutline, size: "lg" }),
               variant: "ghost",
               color: "secondary",
+              shape: "round",
               ariaLabel: t("nav.notifications"),
               // Tablet+ opens the right-side drawer over the page; on a
               // phone this button is hidden and the tab bar's Notifications

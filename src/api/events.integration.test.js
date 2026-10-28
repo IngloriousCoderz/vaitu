@@ -17,6 +17,8 @@ import {
   deleteEvent,
   fetchEventForEdit,
   fetchMyEvents,
+  fetchOpenEventRegions,
+  fetchOpenEventsPage,
   updateEvent,
 } from "./events.js"
 
@@ -123,6 +125,64 @@ describe("editing an event", () => {
       await signIn(SEEKER)
       const row = await fetchEventForEdit(ownedEventId)
       expect(row.title).toBe(payload.title)
+    },
+    TEST_TIMEOUT_MS,
+  )
+})
+
+describe("the feed", () => {
+  let ownedEventId = null
+  let ownedUuid = null
+
+  afterAll(async () => {
+    try {
+      if (ownedEventId) await deleteOwnedEvent(ownedEventId)
+      else if (ownedUuid) {
+        await deleteOwnedEventByTitle(eventPayload(ownedUuid).title)
+      }
+    } finally {
+      await signOut()
+    }
+  }, TEST_TIMEOUT_MS)
+
+  test(
+    "finds an open event by search, style and region, and offers its region to others only",
+    async () => {
+      ownedUuid = crypto.randomUUID()
+      // A region of its own, so what the region list holds is down to this
+      // event alone.
+      const region = `Vitest ${ownedUuid}`
+      ownedEventId = await createEventAs(SEEKER, ownedUuid, undefined, {
+        region,
+      })
+      await signIn(SENDER)
+
+      const feed = {
+        categories: ["wedding"],
+        details: [{ key: "style", category: "wedding", values: ["editorial"] }],
+        regions: [region],
+        dateFrom: null,
+        dateTo: null,
+        search: `ada${ownedUuid}`.toLowerCase(),
+        order: [["created_at", false]],
+      }
+      const page = await fetchOpenEventsPage(feed, { from: 0, to: 23 })
+      expect(page.events.map((event) => event.id)).toEqual([ownedEventId])
+      expect(page.total).toBe(1)
+
+      const otherStyle = await fetchOpenEventsPage(
+        { ...feed, details: [{ ...feed.details[0], values: ["classic"] }] },
+        { from: 0, to: 23 },
+      )
+      expect(otherStyle.total).toBe(0)
+
+      expect(await fetchOpenEventRegions()).toContain(region)
+      expect(await fetchOpenEventRegions(["wedding"])).toContain(region)
+      expect(await fetchOpenEventRegions(["festival"])).not.toContain(region)
+
+      // The feed leaves out your own events, and so do its regions.
+      await signIn(SEEKER)
+      expect(await fetchOpenEventRegions()).not.toContain(region)
     },
     TEST_TIMEOUT_MS,
   )

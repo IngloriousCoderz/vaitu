@@ -58,14 +58,9 @@ export const entities = {
   }),
   "style-create": detailSelect("style", weddingStyles, "fields.style"),
   "genre-create": detailSelect("genre", festivalGenres, "fields.genre"),
-  "favorite-region-list": favoriteRegionSelect(
-    "eventList",
+  "favorite-region-preferences": favoriteRegionSelect(
+    "preferences",
     "favoriteChoiceSelect",
-  ),
-  "favorite-region-profile": favoriteRegionSelect(
-    "profile",
-    "favoriteChoiceSelect",
-    { label: "fields.favoriteRegions" },
   ),
   // Same combobox as Country / style: short list, no search.
   "events-order-by": {

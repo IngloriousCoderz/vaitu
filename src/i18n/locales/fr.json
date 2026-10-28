@@ -4,8 +4,11 @@
     "myEvents": "Mes événements",
     "applications": "Candidatures",
     "profile": "Profil",
+    "preferences": "Préférences",
     "newEvent": "Nouvel événement",
     "toggle": "Ouvrir ou fermer la navigation",
+    "collapse": "Réduire la barre latérale",
+    "expand": "Développer la barre latérale",
     "notifications": "Notifications",
     "account": "Compte",
     "profileOf": "Profil : {{name}}",
@@ -27,7 +30,8 @@
     "photoPreview": "Photos",
     "photoPrevious": "Photo précédente",
     "photoNext": "Photo suivante",
-    "photoClose": "Fermer les photos"
+    "photoClose": "Fermer les photos",
+    "close": "Fermer"
   },
   "favorites": {
     "typeRegion": "Ou saisissez une région"
@@ -95,7 +99,6 @@
     "genre": "Genre",
     "country": "Pays",
     "region": "Région",
-    "favoriteRegions": "Régions favorites (facultatif)",
     "regionOptional": "Région (facultatif)",
     "regionExample": "Toscane",
     "websiteOptional": "Site web (facultatif)",
@@ -197,7 +200,6 @@
     "reopenEvent": "Impossible de rouvrir l'événement",
     "loadEvents": "Impossible de charger les événements",
     "deleteEvent": "Impossible de supprimer l'événement",
-    "saveFavorites": "Impossible d'enregistrer les régions favorites",
     "loadApplication": "Impossible de charger la candidature",
     "save": "L'enregistrement a échoué",
     "withdraw": "Impossible de retirer la candidature",
@@ -211,7 +213,8 @@
     "loadRanks": "Impossible de charger les niveaux",
     "deactivateAccount": "Le compte n'a pas pu être désactivé. Réessayez.",
     "resend": "Impossible de renvoyer l'e-mail",
-    "saveEmailOptOut": "Impossible d'enregistrer la préférence email"
+    "loadPreferences": "Impossible de charger les préférences",
+    "savePreferences": "Impossible d'enregistrer les préférences"
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -245,7 +248,7 @@
   "events": {
     "title": "Événements",
     "search": "Chercher par ville, style ou genre…",
-    "editFavorites": "Modifier les régions favorites",
+    "feedPreferences": "Préférences du fil",
     "region": "Région",
     "period": "Période",
     "clearAll": "Tout effacer",
@@ -256,7 +259,6 @@
     "filtersOn_other": "Filtres, {{count}} actifs",
     "filtersOn_many": "Filtres, {{count}} actifs",
     "noneMatch": "Aucun événement ne correspond à votre recherche.",
-    "saveRegions": "Enregistrer les régions",
     "orderBy": "Trier par",
     "results_one": "{{count}} événement",
     "results_other": "{{count}} événements",
@@ -368,17 +370,22 @@
     "cropHint": "Faites glisser le cadre pour le déplacer. Tirez un coin pour le redimensionner, ou pincez pour le mettre à l'échelle.",
     "cropApply": "Utiliser la photo",
     "save": "Enregistrer le profil",
-    "favoriteRegions": "Régions favorites",
     "logOut": "Se déconnecter",
     "howRanksWork": "Comment fonctionnent les niveaux",
-    "language": "Langue",
-    "emails": "Notifications par email",
-    "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés.",
     "deactivateAccount": "Désactiver le compte",
     "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts et toutes vos candidatures — envoyées et reçues — seront supprimés définitivement. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous.",
     "yesDeactivate": "Oui, désactiver",
-    "deactivating": "Désactivation…",
-    "allCategories": "Tous les événements"
+    "deactivating": "Désactivation…"
+  },
+  "preferences": {
+    "title": "Préférences",
+    "feed": "Votre fil",
+    "feedHint": "Ce que la liste des événements affiche avant tout filtre.",
+    "favoriteRegions": "Régions favorites",
+    "app": "Application",
+    "language": "Langue",
+    "emails": "Notifications par email",
+    "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés."
   },
   "facts": {
     "spouses": "Mariés"

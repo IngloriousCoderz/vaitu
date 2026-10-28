@@ -3,21 +3,21 @@ import searchOutline from "@iconify-icons/material-symbols/search-outline"
 import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
+import { Dialog } from "@inglorious/ui/dialog"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
+import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
-import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
-import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t, translatedLabel } from "../../i18n/index.js"
-import { DEFAULT_SORT, sortEvents, visibleEvents } from "./helpers.js"
+import { DEFAULT_SORT } from "./helpers.js"
 import styles from "./style.module.css"
 
 export const EventList = {
@@ -31,14 +31,18 @@ export const EventList = {
     entity.activeSort ??= DEFAULT_SORT
     entity.isFiltersVisible ??= false
     entity.events ??= []
+    // How many events the filters match, of which `events` are the pages
+    // loaded so far.
+    entity.total ??= 0
+    entity.isLoadingMore ??= false
+    // The latest page and regions requests: answers to older ones are dropped.
+    entity.request ??= 0
+    entity.regionsRequest ??= 0
+    // Every region the feed could show an event in, as stored.
+    entity.regions ??= []
     entity.appliedMap ??= {}
     entity.favoriteRegions ??= []
     entity.interests ??= []
-    entity.isEditingFavorites ??= false
-    entity.favoriteDraft ??= []
-    entity.favoriteInput ??= ""
-    entity.favoritesStatus ??= "idle"
-    entity.favoritesError ??= null
     entity.status ??= "loading"
     entity.error ??= null
   },
@@ -50,6 +54,8 @@ export const EventList = {
   renderEventList(
     {
       events,
+      total,
+      isLoadingMore,
       appliedMap,
       status,
       error,
@@ -59,51 +65,28 @@ export const EventList = {
       sections,
       active,
       regions,
-      isEditingFavorites,
-      favoriteDraft,
-      favoriteInput,
-      favoritesStatus,
-      favoritesError,
       periods,
       query,
       activeTypes,
       activeDetails,
-      interests,
       activeRegion,
       activePeriod,
-      activeSort,
-      favoriteRegions,
       isFiltersVisible,
       onSearch,
       onToggleType,
       onToggleDetail,
       onRemoveFilter,
-      onToggleFilters,
+      onCloseFilters,
       onSelectRegion,
-      onEditFavorites,
-      onCancelFavorites,
-      onFavoriteInput,
-      onFavoriteAdd,
-      onFavoriteRemove,
-      onSaveFavorites,
+      onOpenPreferences,
       onSelectPeriod,
       onClearFilters,
       onOpenEvent,
+      onPageMore,
     },
     api,
   ) {
-    const shown = sortEvents(
-      visibleEvents(events, {
-        query,
-        types: activeTypes,
-        details: activeDetails,
-        interests,
-        region: activeRegion,
-        period: activePeriod,
-        favoriteRegions,
-      }),
-      activeSort,
-    )
+    const hasMore = status === "ready" && events.length < total
     const showResultsBar = status === "ready" || status === "saving"
 
     return Page.render({
@@ -128,90 +111,69 @@ export const EventList = {
               this.renderActiveRow({ active, onRemoveFilter, onClearFilters }),
             )}
           </div>
-          ${when(
-            isFiltersVisible,
-            () => html`
-              <div class=${styles.backdrop} @click=${onToggleFilters}>
-                <div
-                  class="${styles.sheet} vaitu-filter-sheet"
-                  @click=${(e) => e.stopPropagation()}
-                >
-                  ${when(
-                    showTypes,
-                    () => html`
-                      <h3 class=${styles.sheetTitle}>${t("events.type")}</h3>
-                      ${this.renderChipRow({
-                        items: types,
-                        isActive: (type) => activeTypes.includes(type.id),
-                        onSelect: onToggleType,
-                        getLabel: (type) => type.label,
-                      })}
-                    `,
-                  )}
-                  ${sections.map(
-                    (section) => html`
-                      <h3 class=${styles.sheetTitle}>${section.title}</h3>
-                      ${this.renderChipRow({
-                        items: section.options,
-                        isActive: (option) => activeDetails.includes(option.id),
-                        onSelect: onToggleDetail,
-                        getLabel: (option) => option.label,
-                      })}
-                    `,
-                  )}
-                  <div class=${styles.sheetHeading}>
-                    <h3 class=${styles.sheetTitle}>${t("events.region")}</h3>
-                    ${IconButton.render({
-                      icon: Icon.render({
-                        icon: settingsOutline,
-                        size: "lg",
-                      }),
-                      ariaLabel: t("events.editFavorites"),
-                      variant: "ghost",
-                      color: "secondary",
-                      className: styles.sheetGear,
-                      onClick: onEditFavorites,
-                    })}
-                  </div>
-                  ${when(isEditingFavorites, () =>
-                    this.renderFavoriteEditor(
-                      {
-                        favoriteDraft,
-                        favoriteInput,
-                        favoritesStatus,
-                        favoritesError,
-                        onCancelFavorites,
-                        onFavoriteInput,
-                        onFavoriteAdd,
-                        onFavoriteRemove,
-                        onSaveFavorites,
-                      },
-                      api,
-                    ),
-                  )}
+          ${Dialog.render({
+            id: "filters",
+            isOpen: isFiltersVisible,
+            // A sheet rising from the bottom on a phone, a dialog above.
+            variant: "sheet",
+            closeLabel: t("common.close"),
+            title: html`<span class=${styles.dialogTitle}>
+              ${t("events.filters")}
+              ${IconButton.render({
+                icon: Icon.render({ icon: settingsOutline, size: "lg" }),
+                ariaLabel: t("events.feedPreferences"),
+                variant: "ghost",
+                color: "secondary",
+                shape: "round",
+                onClick: onOpenPreferences,
+              })}
+            </span>`,
+            onClose: onCloseFilters,
+            children: html`
+              ${when(
+                showTypes,
+                () => html`
+                  <h3 class=${styles.filterTitle}>${t("events.type")}</h3>
                   ${this.renderChipRow({
-                    items: regions,
-                    isActive: (region) => region.id === activeRegion,
-                    onSelect: onSelectRegion,
-                    getLabel: translatedLabel,
+                    items: types,
+                    isActive: (type) => activeTypes.includes(type.id),
+                    onSelect: onToggleType,
+                    getLabel: (type) => type.label,
                   })}
-                  <h3 class=${styles.sheetTitle}>${t("events.period")}</h3>
+                `,
+              )}
+              ${sections.map(
+                (section) => html`
+                  <h3 class=${styles.filterTitle}>${section.title}</h3>
                   ${this.renderChipRow({
-                    items: periods,
-                    isActive: (period) => period.id === activePeriod,
-                    onSelect: onSelectPeriod,
-                    getLabel: (period) => period.label,
+                    items: section.options,
+                    isActive: (option) => activeDetails.includes(option.id),
+                    onSelect: onToggleDetail,
+                    getLabel: (option) => option.label,
                   })}
-                  ${Button.render({
-                    children: t("events.clearAll"),
-                    variant: "ghost",
-                    isFullWidth: true,
-                    onClick: onClearFilters,
-                  })}
-                </div>
-              </div>
+                `,
+              )}
+              <h3 class=${styles.filterTitle}>${t("events.region")}</h3>
+              ${this.renderChipRow({
+                items: regions,
+                isActive: (region) => region.id === activeRegion,
+                onSelect: onSelectRegion,
+                getLabel: translatedLabel,
+              })}
+              <h3 class=${styles.filterTitle}>${t("events.period")}</h3>
+              ${this.renderChipRow({
+                items: periods,
+                isActive: (period) => period.id === activePeriod,
+                onSelect: onSelectPeriod,
+                getLabel: (period) => period.label,
+              })}
             `,
-          )}
+            actions: Button.render({
+              children: t("events.clearAll"),
+              variant: "ghost",
+              onClick: onClearFilters,
+            }),
+          })}
           ${when(showResultsBar, () =>
             Flex.render({
               align: "center",
@@ -221,7 +183,7 @@ export const EventList = {
               className: styles.resultsBar,
               children: [
                 html`<p class=${styles.resultsCount}>
-                  ${t("events.results", { count: shown.length })}
+                  ${t("events.results", { count: total })}
                 </p>`,
                 html`<div class=${styles.orderBy}>
                   ${api.render("events-order-by")}
@@ -235,10 +197,10 @@ export const EventList = {
                 isError: status === "error",
                 error,
                 isLoading: status === "loading",
-                isEmpty: !shown.length,
+                isEmpty: !events.length,
                 emptyText: t("events.noneMatch"),
               }) ??
-              shown.map((event, index) =>
+              events.map((event, index) =>
                 Card.render({
                   event,
                   isApplied: Boolean(appliedMap[event.id]),
@@ -250,6 +212,18 @@ export const EventList = {
               )
             }
           </main>
+          ${when(
+            hasMore,
+            () => html`
+              <div
+                class=${styles.listEnd}
+                role="status"
+                ${watchEnd(onPageMore)}
+              >
+                ${when(isLoadingMore, () => t("common.loading"))}
+              </div>
+            `,
+          )}
         `,
       ],
     })
@@ -262,6 +236,7 @@ export const EventList = {
           icon: Icon.render({ icon: instantMixOutline, size: "lg" }),
           variant: "ghost",
           color: "secondary",
+          shape: "round",
           ariaLabel: filterCount
             ? t("events.filtersOn", { count: filterCount })
             : t("events.filters"),
@@ -280,7 +255,7 @@ export const EventList = {
   },
 
   // Each filter that is on, as a chip that turns it off, and a way to turn
-  // them all off. Region and period stop hiding in the sheet once set.
+  // them all off. Region and period stop hiding in the dialog once set.
   renderActiveRow({ active, onRemoveFilter, onClearFilters }) {
     return html`
       <div class="${styles.chips} ${styles.activeRow}">
@@ -311,57 +286,6 @@ export const EventList = {
     `
   },
 
-  renderFavoriteEditor(
-    {
-      favoriteDraft,
-      favoriteInput,
-      favoritesStatus,
-      favoritesError,
-      onCancelFavorites,
-      onFavoriteInput,
-      onFavoriteAdd,
-      onFavoriteRemove,
-      onSaveFavorites,
-    },
-    api,
-  ) {
-    const saving = favoritesStatus === "saving"
-    return html`
-      <div class=${styles.favoriteEditor}>
-        ${FavoriteRegions.render(
-          {
-            regions: favoriteDraft ?? [],
-            input: favoriteInput ?? "",
-            inputId: "list-favorite-region",
-            isDisabled: saving,
-            onInput: onFavoriteInput,
-            onAdd: onFavoriteAdd,
-            onRemove: onFavoriteRemove,
-            choiceId: "favorite-region-list",
-          },
-          api,
-        )}
-        ${ErrorAlert.render({ error: favoritesError })}
-        ${Button.render({
-          children: saving ? t("common.saving") : t("events.saveRegions"),
-          color: "primary",
-          shape: "pill",
-          size: "md",
-          isFullWidth: true,
-          isDisabled: saving,
-          onClick: onSaveFavorites,
-        })}
-        ${Button.render({
-          children: t("common.cancel"),
-          variant: "ghost",
-          isFullWidth: true,
-          isDisabled: saving,
-          onClick: onCancelFavorites,
-        })}
-      </div>
-    `
-  },
-
   renderChipRow({ items, isActive, onSelect, getLabel }) {
     return html`
       <div class=${styles.chips}>
@@ -382,4 +306,31 @@ export const EventList = {
       </div>
     `
   },
+}
+
+// Calls `onVisible` when the element comes within a screen of the viewport,
+// to load the next page before the list runs out. It observes again on every
+// render: a page too short to push the element away would otherwise never be
+// reported again, since the observer only reports changes.
+const observers = new WeakMap()
+
+function watchEnd(onVisible) {
+  return ref((element) => {
+    if (!element) return
+    element.onVisible = onVisible
+    let observer = observers.get(element)
+    if (!observer) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) entry.target.onVisible?.()
+          }
+        },
+        { rootMargin: "100% 0px" },
+      )
+      observers.set(element, observer)
+    }
+    observer.unobserve(element)
+    observer.observe(element)
+  })
 }

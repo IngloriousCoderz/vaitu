@@ -62,7 +62,12 @@ export function saveSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateOnboarding })
   if (!entity.isValid) return
   entity.error = null
-  api.notify(`#${entity.id}:save`, { ...entity.values })
+  // The save runs after this handler's draft is revoked: the picked
+  // categories go as a copy, the rest are strings.
+  api.notify(`#${entity.id}:save`, {
+    ...entity.values,
+    interested_categories: [...entity.values.interested_categories],
+  })
 }
 
 export const save = handleAsync("save", {

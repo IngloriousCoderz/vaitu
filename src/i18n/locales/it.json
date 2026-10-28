@@ -4,8 +4,11 @@
     "myEvents": "I miei eventi",
     "applications": "Candidature",
     "profile": "Profilo",
+    "preferences": "Preferenze",
     "newEvent": "Nuovo evento",
     "toggle": "Apri o chiudi la navigazione",
+    "collapse": "Comprimi la barra laterale",
+    "expand": "Espandi la barra laterale",
     "notifications": "Notifiche",
     "account": "Account",
     "profileOf": "Profilo: {{name}}",
@@ -27,7 +30,8 @@
     "photoPreview": "Foto",
     "photoPrevious": "Foto precedente",
     "photoNext": "Foto successiva",
-    "photoClose": "Chiudi foto"
+    "photoClose": "Chiudi foto",
+    "close": "Chiudi"
   },
   "favorites": {
     "typeRegion": "Oppure scrivi una regione"
@@ -95,7 +99,6 @@
     "genre": "Genere",
     "country": "Paese",
     "region": "Regione",
-    "favoriteRegions": "Regioni preferite (facoltativo)",
     "regionOptional": "Regione (facoltativo)",
     "regionExample": "Toscana",
     "websiteOptional": "Sito web (facoltativo)",
@@ -197,7 +200,6 @@
     "reopenEvent": "Impossibile riaprire l'evento",
     "loadEvents": "Impossibile caricare gli eventi",
     "deleteEvent": "Impossibile eliminare l'evento",
-    "saveFavorites": "Impossibile salvare le regioni preferite",
     "loadApplication": "Impossibile caricare la candidatura",
     "save": "Salvataggio non riuscito",
     "withdraw": "Impossibile ritirare la candidatura",
@@ -211,7 +213,8 @@
     "loadRanks": "Impossibile caricare i livelli",
     "deactivateAccount": "Non è stato possibile disattivare l'account. Riprova.",
     "resend": "Impossibile inviare di nuovo l'email",
-    "saveEmailOptOut": "Impossibile salvare la preferenza email"
+    "loadPreferences": "Impossibile caricare le preferenze",
+    "savePreferences": "Impossibile salvare le preferenze"
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -245,7 +248,7 @@
   "events": {
     "title": "Eventi",
     "search": "Cerca eventi per città, stile o genere…",
-    "editFavorites": "Modifica le regioni preferite",
+    "feedPreferences": "Preferenze del feed",
     "region": "Regione",
     "period": "Periodo",
     "clearAll": "Azzera tutto",
@@ -256,7 +259,6 @@
     "filtersOn_other": "Filtri, {{count}} attivi",
     "filtersOn_many": "Filtri, {{count}} attivi",
     "noneMatch": "Nessun evento corrisponde alla tua ricerca.",
-    "saveRegions": "Salva regioni",
     "orderBy": "Ordina per",
     "results_one": "{{count}} evento",
     "results_other": "{{count}} eventi",
@@ -368,17 +370,22 @@
     "cropHint": "Trascina la cornice per spostarla. Tira un angolo per ridimensionarla, oppure pizzica per scalarla.",
     "cropApply": "Usa la foto",
     "save": "Salva profilo",
-    "favoriteRegions": "Regioni preferite",
     "logOut": "Esci",
     "howRanksWork": "Come funzionano i livelli",
-    "language": "Lingua",
-    "emails": "Notifiche email",
-    "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate.",
     "deactivateAccount": "Disattiva account",
     "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti e tutte le tue candidature — inviate e ricevute — verranno eliminati definitivamente. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo.",
     "yesDeactivate": "Sì, disattiva",
-    "deactivating": "Disattivazione…",
-    "allCategories": "Tutti gli eventi"
+    "deactivating": "Disattivazione…"
+  },
+  "preferences": {
+    "title": "Preferenze",
+    "feed": "Il tuo feed",
+    "feedHint": "Cosa mostra l'elenco degli eventi prima di filtrarlo.",
+    "favoriteRegions": "Regioni preferite",
+    "app": "App",
+    "language": "Lingua",
+    "emails": "Notifiche email",
+    "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate."
   },
   "facts": {
     "spouses": "Sposi"

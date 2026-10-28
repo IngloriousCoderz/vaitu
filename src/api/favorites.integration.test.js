@@ -8,7 +8,8 @@ import {
   signOut,
   signUp,
 } from "../testing/index.js"
-import { fetchMyFeedDefaults, saveFavoriteRegions } from "./events.js"
+import { supabase } from "./client.js"
+import { fetchMyFeedDefaults } from "./events.js"
 
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 
@@ -23,30 +24,38 @@ afterAll(async () => {
 }, TEST_TIMEOUT_MS)
 
 test(
-  "favorite regions are stored under one spelling and read back",
+  "the feed defaults are the regions and categories saved on the profile",
   async () => {
     const id = crypto.randomUUID()
     const email = `vitest-${id}@vaitu.local`
     userId = await signUp({ email, fullName: `Vitest ${id}` })
 
     await signIn({ email, password: SEEKER.password })
-    const saved = await saveFavoriteRegions(["Toscana", "Tuscany", "Provence"])
-    expect(saved).toEqual(["Tuscany", "Provence"])
+    expect(await fetchMyFeedDefaults()).toEqual({
+      favorite_regions: [],
+      interested_categories: [],
+    })
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        favorite_regions: ["Tuscany", "Provence"],
+        interested_categories: ["wedding"],
+      })
+      .eq("id", userId)
+    expect(error).toBeNull()
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: ["Tuscany", "Provence"],
-      interested_categories: [],
+      interested_categories: ["wedding"],
     })
   },
   TEST_TIMEOUT_MS,
 )
 
 test(
-  "a signed-out visitor cannot save favorite regions",
+  "a signed-out visitor has no feed defaults",
   async () => {
     await signOut()
-    await expect(saveFavoriteRegions(["Tuscany"])).rejects.toThrow(
-      "Not logged in",
-    )
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: [],
       interested_categories: [],

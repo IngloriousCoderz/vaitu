@@ -19,6 +19,7 @@ export const BackButton = {
       }),
       variant: "ghost",
       color: "secondary",
+      shape: "round",
       ariaLabel: t("common.back"),
       onClick: () => api.notify("#router:back", fallback),
     })

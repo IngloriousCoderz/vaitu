@@ -16,7 +16,7 @@ import {
   ONE_MINUTE,
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
-import { canonicalRegion, uniqueRegions } from "../data/regions/resolve.js"
+import { canonicalRegion } from "../data/regions/resolve.js"
 import { t } from "../i18n/index.js"
 import { randomId } from "../text/index.js"
 import {
@@ -26,8 +26,10 @@ import {
 } from "../validation/events.js"
 import { supabase } from "./client.js"
 import { deleteImage, imageRefFromUrl } from "./images.js"
+import { readUserId } from "./session.js"
 
 const NO_APPLICATIONS = 0
+const NO_ROWS = 0
 const ONE_APPLICATION = 1
 
 const NEW_THRESHOLD_DAYS = 3
@@ -191,23 +193,74 @@ export async function fetchMyEvents() {
   }))
 }
 
-// Open events to apply to, so your own are left out: they live in My events.
-export async function fetchOpenEvents() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+const OPEN_EVENT_COLUMNS =
+  "id, category, title, location, region, event_date, application_deadline, created_at, image_urls, details"
+
+/**
+ * One page of the open events a feed query matches (see feedQuery in
+ * views/event-list), with how many it matches in all. Your own are left out:
+ * they live in My events.
+ * @param {ReturnType<import("../views/event-list/query.js").feedQuery>} feed
+ * @param {{ from: number, to: number }} range - Row indexes, both inclusive.
+ */
+export async function fetchOpenEventsPage(feed, { from, to }) {
+  // Asked for a region no open event is in: nothing to fetch.
+  if (feed.regions?.length === NO_ROWS) return { events: [], total: NO_ROWS }
+  const userId = readUserId()
   let query = supabase
     .from("events")
-    .select(
-      "id, category, title, location, region, event_date, application_deadline, created_at, image_urls, details",
-    )
+    .select(OPEN_EVENT_COLUMNS, { count: "exact" })
     .eq("status", "open")
-  if (user) query = query.neq("sender_id", user.id)
-  const { data, error } = await query
-    .order("application_deadline", { ascending: true })
+  if (userId) query = query.neq("sender_id", userId)
+  if (feed.categories.length) query = query.in("category", feed.categories)
+  // A category with styles or genres picked keeps only those; the others keep
+  // everything. Style and genre values are plain words, safe in the filter.
+  if (feed.details.length) {
+    query = query.or(
+      [
+        `category.not.in.(${feed.details.map((d) => d.category).join(",")})`,
+        ...feed.details.map(
+          (d) => `details->>${d.key}.in.(${d.values.join(",")})`,
+        ),
+      ].join(","),
+    )
+  }
+  if (feed.regions) query = query.in("region", feed.regions)
+  if (feed.dateFrom) {
+    query = query
+      .gte("event_date", feed.dateFrom)
+      .lte("event_date", feed.dateTo)
+  }
+  if (feed.search) {
+    query = query.ilike("search_text", `%${escapeLike(feed.search)}%`)
+  }
+  for (const [column, ascending] of feed.order) {
+    query = query.order(column, { ascending })
+  }
+  const { data, error, count } = await query
+    .order("id")
+    .range(from, to)
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
-  return data.map(toViewModel)
+  return { events: data.map(toViewModel), total: count ?? NO_ROWS }
+}
+
+/**
+ * Every region the feed could show an event in, as stored: open events other
+ * than your own, in these categories (every category when empty).
+ * @param {string[]} categories
+ */
+export async function fetchOpenEventRegions(categories = []) {
+  const { data, error } = await supabase
+    .rpc("open_event_regions", { categories })
+    .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
+  if (error) throw error
+  return data
+}
+
+// The search box's text taken literally: % and _ are LIKE wildcards.
+function escapeLike(text) {
+  return text.replace(/[\\%_]/g, "\\$&")
 }
 
 export async function createEvent(payload) {
@@ -304,20 +357,6 @@ export async function transcribeAudio(path) {
 export async function deleteEventAudio(path) {
   const { error } = await supabase.storage.from(AUDIO_BUCKET).remove([path])
   if (error) throw error
-}
-
-export async function saveFavoriteRegions(regions) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
-  const favorite_regions = uniqueRegions(regions ?? [])
-  const { error } = await supabase
-    .from("profiles")
-    .update({ favorite_regions })
-    .eq("id", user.id)
-  if (error) throw error
-  return favorite_regions
 }
 
 // What the feed shows by default: the regions and categories in the profile.

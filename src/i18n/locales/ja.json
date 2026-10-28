@@ -4,8 +4,11 @@
     "myEvents": "自分のイベント",
     "applications": "応募",
     "profile": "マイページ",
+    "preferences": "設定",
     "newEvent": "新しいイベント",
     "toggle": "ナビゲーションを切り替え",
+    "collapse": "サイドバーを折りたたむ",
+    "expand": "サイドバーを展開",
     "notifications": "お知らせ",
     "account": "アカウント",
     "profileOf": "プロフィール：{{name}}",
@@ -27,7 +30,8 @@
     "photoPreview": "写真",
     "photoPrevious": "前の写真",
     "photoNext": "次の写真",
-    "photoClose": "写真を閉じる"
+    "photoClose": "写真を閉じる",
+    "close": "閉じる"
   },
   "favorites": {
     "typeRegion": "または地域を入力"
@@ -91,7 +95,6 @@
     "genre": "ジャンル",
     "country": "国",
     "region": "地域",
-    "favoriteRegions": "お気に入りの地域（任意）",
     "regionOptional": "地域（任意）",
     "regionExample": "トスカーナ",
     "websiteOptional": "ウェブサイト（任意）",
@@ -190,7 +193,6 @@
     "reopenEvent": "イベントを再開できませんでした",
     "loadEvents": "イベントを読み込めませんでした",
     "deleteEvent": "イベントを削除できませんでした",
-    "saveFavorites": "お気に入りの地域を保存できませんでした",
     "loadApplication": "応募を読み込めませんでした",
     "save": "保存できませんでした",
     "withdraw": "取り下げられませんでした",
@@ -204,7 +206,8 @@
     "loadRanks": "ランクを読み込めませんでした",
     "deactivateAccount": "アカウントを無効にできませんでした。もう一度お試しください。",
     "resend": "メールを再送信できませんでした",
-    "saveEmailOptOut": "メール設定を保存できませんでした"
+    "loadPreferences": "設定を読み込めませんでした",
+    "savePreferences": "設定を保存できませんでした"
   },
   "auth": {
     "welcome": "Vaituへようこそ",
@@ -238,7 +241,7 @@
   "events": {
     "title": "イベント",
     "search": "都市・スタイル・ジャンルでイベントを検索…",
-    "editFavorites": "お気に入りの地域を編集",
+    "feedPreferences": "フィードの設定",
     "region": "地域",
     "period": "期間",
     "clearAll": "すべてクリア",
@@ -247,7 +250,6 @@
     "removeFilter": "フィルターを解除：{{label}}",
     "filtersOn_other": "フィルター（{{count}}件適用中）",
     "noneMatch": "検索に一致するイベントはまだありません。",
-    "saveRegions": "地域を保存",
     "orderBy": "並べ替え",
     "results_other": "イベント{{count}}件"
   },
@@ -353,17 +355,22 @@
     "cropHint": "枠をドラッグで移動。角を引っ張ってサイズ変更、ピンチで拡大縮小。",
     "cropApply": "この写真を使う",
     "save": "プロフィールを保存",
-    "favoriteRegions": "お気に入りの地域",
     "logOut": "ログアウト",
     "howRanksWork": "ランクのしくみ",
-    "language": "言語",
-    "emails": "メール通知",
-    "emailsDescription": "新しいイベント、応募、アップデートについてメールを受け取ります。アカウント必須メール（セキュリティ、請求）は常に送信されます。",
     "deactivateAccount": "アカウントを無効化",
     "deactivateConfirm": "アカウントを無効化しますか？開催中のイベントと、送った・受け取ったすべての応募は完全に削除されます。優勝者の決まった過去のイベントと統計は残ります。戻るには再度サインインしてください。",
     "yesDeactivate": "はい、無効化する",
-    "deactivating": "無効化中…",
-    "allCategories": "すべてのイベント"
+    "deactivating": "無効化中…"
+  },
+  "preferences": {
+    "title": "設定",
+    "feed": "フィード",
+    "feedHint": "絞り込む前のイベント一覧に表示される内容です。",
+    "favoriteRegions": "お気に入りの地域",
+    "app": "アプリ",
+    "language": "言語",
+    "emails": "メール通知",
+    "emailsDescription": "新しいイベント、応募、アップデートについてメールを受け取ります。アカウント必須メール（セキュリティ、請求）は常に送信されます。"
   },
   "facts": {
     "spouses": "新郎新婦"

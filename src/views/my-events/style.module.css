@@ -30,25 +30,6 @@
   gap: var(--iw-space-2);
 }
 
-button.miniButton {
-  border: none;
-  background: none;
-  border-radius: var(--iw-radius-none);
-  box-shadow: none;
-  cursor: pointer;
-  padding: 0.375rem;
-  min-height: 0;
-  display: flex;
-}
-
-.editTint {
-  color: var(--vaccent);
-}
-
-.deleteTint {
-  color: var(--verror);
-}
-
 .confirm {
   margin-top: 0.625rem;
 }

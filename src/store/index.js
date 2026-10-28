@@ -21,6 +21,7 @@ import { EventList } from "../views/event-list/index.js"
 import { MyEvents } from "../views/my-events/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
+import { Preferences } from "../views/preferences/index.js"
 import { AvatarCropper } from "../views/profile/avatar-cropper.js"
 import { Profile } from "../views/profile/index.js"
 import { Ranks } from "../views/ranks/index.js"
@@ -53,6 +54,7 @@ export const store = createStore({
     NotFound,
     Onboarding,
     Profile,
+    Preferences,
     AvatarCropper,
     Ranks,
     ...guards,

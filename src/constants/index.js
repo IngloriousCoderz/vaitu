@@ -6,6 +6,12 @@ export const HOURS_PER_DAY = 24
 export const DAY_MS =
   MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY
 export const HOUR_MS = MS_PER_SECOND * SECONDS_PER_MINUTE * MINUTES_PER_HOUR
+export const MINUTE_MS = MS_PER_SECOND * SECONDS_PER_MINUTE
+// "2026-10-28": the date part of an ISO timestamp.
+export const ISO_DATE_LENGTH = 10
+// Events per page of the feed: a few screens on a phone, two or three rows of
+// cards on a desktop.
+export const FEED_PAGE_SIZE = 24
 export const REQUEST_TIMEOUT_MS = 15000
 // Set by "Not now" on the push pill: this browser is not asked again.
 export const PUSH_DECLINE_KEY = "vaitu-push-declined"

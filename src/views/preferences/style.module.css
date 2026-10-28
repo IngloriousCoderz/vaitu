@@ -1,0 +1,42 @@
+.sectionTitle {
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: var(--iw-font-size-xl);
+  margin: var(--iw-space-6) 0 var(--iw-space-1);
+}
+
+.sectionTitle:first-child {
+  margin-top: var(--iw-space-2);
+}
+
+.sectionHint {
+  margin: 0 0 var(--iw-space-4);
+  font-size: var(--iw-font-size-sm);
+  color: var(--vmuted);
+}
+
+.group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+/* Same as the category picker's legend, so the two read as a pair. */
+.legend {
+  display: block;
+  padding: 0;
+  margin-bottom: var(--iw-space-2);
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-medium);
+  color: var(--iw-color-text);
+}
+
+.error {
+  margin-top: var(--iw-space-4);
+}
+
+.language {
+  display: flex;
+  flex-direction: column;
+}

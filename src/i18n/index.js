@@ -18,7 +18,8 @@ const {
   catalogues: import.meta.glob("./locales/*.json"),
   defaultLocale: "en",
   storageKey: "vaitu-locale",
-  saveUserLocale: (locale, api) => api.notify("#profile:localeSave", locale),
+  saveUserLocale: (locale, api) =>
+    api.notify("#preferences:localeSave", locale),
 })
 
 export { currentLocale, labelled, languages, ready, t, trans, translatedLabel }

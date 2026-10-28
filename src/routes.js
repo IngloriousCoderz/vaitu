@@ -29,6 +29,7 @@ export const routes = {
   "/applications/:applicationId": "applicationDetail",
   "/notifications": "notifications",
   "/ranks": "ranks",
+  "/preferences": "preferences",
 
   "*": "notFound",
 }
@@ -48,6 +49,7 @@ export const paths = {
   notifications: "/notifications",
   profile: "/profile",
   ranks: "/ranks",
+  preferences: "/preferences",
   login: "/login",
   onboarding: "/onboarding",
 }

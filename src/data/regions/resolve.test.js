@@ -92,11 +92,11 @@ describe("regionFilterItems", () => {
     expect(items[0].label).toBe("All regions")
   })
 
-  it("puts favorites first and does not repeat them among the others", () => {
+  it("puts my regions first, then favorites, without repeating them among the others", () => {
     const items = regionFilterItems(["Provence", "Tuscany"], ["Toscana"])
     expect(items.map((item) => ({ id: item.id, label: item.label }))).toEqual([
-      { id: "all", label: "All regions" },
       { id: "mine", label: "My regions" },
+      { id: "all", label: "All regions" },
       { id: "Tuscany", label: "Tuscany" },
       { id: "Provence", label: "Provence" },
     ])

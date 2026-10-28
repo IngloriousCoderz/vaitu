@@ -36,6 +36,24 @@
 --     anyone's IP.
 
 create extension if not exists pg_cron;
+-- Trigram indexes make the feed's substring search fast, and unaccent lets
+-- "forli" find "Forlì".
+create extension if not exists pg_trgm with schema extensions;
+create extension if not exists unaccent with schema extensions;
+
+-- unaccent() is only stable, because its dictionary could change, so a
+-- generated column cannot call it. Naming the dictionary pins it, which makes
+-- this wrapper safe to declare immutable.
+create or replace function public.immutable_unaccent(value text)
+returns text
+language sql
+immutable
+parallel safe
+strict
+set search_path = ''
+as $$
+  select extensions.unaccent('extensions.unaccent'::regdictionary, value)
+$$;
 create extension if not exists pg_net with schema extensions;
 
 alter default privileges revoke execute on functions from public;
@@ -181,17 +199,31 @@ create table public.events (
   transcript text,
   transcript_status text not null default 'none'
     check (transcript_status in ('none', 'pending', 'done', 'error')),
-  image_urls text[] not null default '{}'
+  image_urls text[] not null default '{}',
+  -- What the feed's search box matches, lowercased and without accents: the
+  -- title, the couple a wedding card shows instead, the place, and a
+  -- festival's headliner.
+  search_text text generated always as (
+    public.immutable_unaccent(lower(
+      title || ' ' || location || ' ' || region || ' ' ||
+      coalesce(details ->> 'spouse_first_name_1', '') || ' ' ||
+      coalesce(details ->> 'spouse_first_name_2', '') || ' ' ||
+      coalesce(details ->> 'headliner', '')
+    ))
+  ) stored
 );
 
 create index events_sender_id_idx on public.events (sender_id);
 create index events_browse_idx on public.events (status, region, event_date);
 create index events_category_idx on public.events (category);
+create index events_search_idx on public.events
+  using gin (search_text extensions.gin_trgm_ops);
 -- GIN covers containment queries, e.g. details @> '{"style":"editorial"}'.
 create index events_details_gin_idx on public.events using gin (details);
 -- B-tree expression index covers key extraction,
 -- e.g. details->>'style' = 'editorial'.
 create index events_details_style_idx on public.events ((details ->> 'style'));
+create index events_details_genre_idx on public.events ((details ->> 'genre'));
 
 -- ----------------------------------------------------------- applications ---
 
@@ -740,6 +772,29 @@ grant select on public.profile_stats to authenticated;
 grant select on public.app_config to anon, authenticated;
 
 grant select on public.events to anon, authenticated;
+
+-- Every region the feed could show an event in, as stored: open events
+-- other than your own, in the given categories (every category when empty).
+-- The feed offers them as filters without loading the events, so they match
+-- what it can return. The client folds spellings together.
+create or replace function public.open_event_regions(
+  categories text[] default '{}'
+)
+returns setof text
+language sql
+stable
+security invoker
+set search_path = ''
+as $$
+  select distinct e.region
+  from public.events e
+  where e.status = 'open'
+    and (auth.uid() is null or e.sender_id <> auth.uid())
+    and (cardinality(categories) = 0 or e.category = any (categories))
+$$;
+
+grant execute on function public.open_event_regions(text[])
+  to anon, authenticated;
 grant insert, update, delete on public.events to authenticated;
 
 revoke insert, update on public.profiles from anon, authenticated;

@@ -8,26 +8,18 @@ import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
-import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { CategoryPicker } from "../../common/category-picker/index.js"
 import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
 import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
-import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
-import {
-  canonicalRegion,
-  ITALY,
-  uniqueRegions,
-} from "../../data/regions/resolve.js"
+import { canonicalRegion, ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
-import { categoryById } from "../event-list/categories.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 import {
   displayInstagram,
@@ -58,11 +50,7 @@ export const Profile = {
       onDeactivate,
       onOpenApplications,
       onOpenRanks,
-      onFavoriteInput,
-      onFavoriteAdd,
-      onFavoriteRemove,
-      onToggleInterest,
-      onEmailOptOut,
+      onOpenPreferences,
     },
     api,
   ) {
@@ -219,25 +207,6 @@ export const Profile = {
                             onField,
                           }),
                       )}
-                      ${CategoryPicker.render({
-                        label: t("fields.interestedCategories"),
-                        hint: t("fields.interestedCategoriesHint"),
-                        value: shown.interested_categories ?? [],
-                        isDisabled: saving,
-                        onToggle: onToggleInterest,
-                      })}
-                      ${FavoriteRegions.render(
-                        {
-                          regions: shown.favorite_regions ?? [],
-                          input: entity.favoriteInput ?? "",
-                          inputId: "profile-favorite-region",
-                          onInput: onFavoriteInput,
-                          onAdd: onFavoriteAdd,
-                          onRemove: onFavoriteRemove,
-                          choiceId: "favorite-region-profile",
-                        },
-                        api,
-                      )}
                       ${ErrorAlert.render({
                         error: status === "error" && error ? error : null,
                       })}
@@ -277,21 +246,10 @@ export const Profile = {
                     )}
                     ${this.renderRow(t("fields.country"), profile.country)}
                     ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
-                    ${this.renderRow(
-                      t("fields.interestedCategories"),
-                      (profile.interested_categories ?? [])
-                        .map((id) => categoryById(id).label)
-                        .join(", ") || t("profile.allCategories"),
-                    )}
-                    ${this.renderRow(
-                      t("profile.favoriteRegions"),
-                      uniqueRegions(profile.favorite_regions ?? []).join(", "),
-                    )}
-                    ${this.renderLanguage(api)}
                   </dl>
-                  ${this.renderEmails({ entity, onEmailOptOut })}
                   ${this.renderAccountActions({
                     onEdit,
+                    onOpenPreferences,
                     onLogout,
                     onDeactivateAsk,
                   })}
@@ -396,41 +354,12 @@ export const Profile = {
     })
   },
 
-  // The app's language, each named in itself.
-  renderLanguage(api) {
-    return Flex.render({
-      justify: "between",
-      align: "center",
-      className: styles.row,
-      children: html`
-        <dt>${t("profile.language")}</dt>
-        <dd>${api.render("language")}</dd>
-      `,
-    })
-  },
-
-  // On means the user gets emails: the stored flag is the opt-out.
-  renderEmails({ entity, onEmailOptOut }) {
-    return Flex.render({
-      direction: "column",
-      gap: "sm",
-      className: styles.emails,
-      children: [
-        Switch.render({
-          label: t("profile.emails"),
-          description: t("profile.emailsDescription"),
-          isChecked: !entity.profile.is_email_opted_out,
-          isDisabled: entity.emailOptOutStatus === "saving",
-          onChange: (isReceiving) => onEmailOptOut(!isReceiving),
-        }),
-        ErrorAlert.render({ error: entity.emailOptOutError }),
-      ],
-    })
-  },
-
-  // Editing is the profile's main action; logging out is there when you need
-  // it, quieter, and never in the way.
-  renderAccountActions({ onEdit, onLogout, onDeactivateAsk }) {
+  renderAccountActions({
+    onEdit,
+    onOpenPreferences,
+    onLogout,
+    onDeactivateAsk,
+  }) {
     return Flex.render({
       direction: "column",
       gap: "sm",
@@ -443,6 +372,14 @@ export const Profile = {
           size: "md",
           isFullWidth: true,
           onClick: onEdit,
+        }),
+        Button.render({
+          children: t("nav.preferences"),
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          onClick: onOpenPreferences,
         }),
         Button.render({
           children: t("profile.logOut"),
@@ -527,6 +464,8 @@ export const Profile = {
                 icon: Icon.render({ icon: helpOutline, size: "lg" }),
                 variant: "ghost",
                 color: "secondary",
+                shape: "round",
+                size: "sm",
                 ariaLabel: t("profile.howRanksWork"),
                 className: styles.ranksHelp,
                 onClick: onOpenRanks,
