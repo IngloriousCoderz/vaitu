@@ -24,7 +24,7 @@ Vaitu started with wedding photographers in mind, and is expanding to other kind
 - **Mobile**: Capacitor (Android and iOS), plus PWA support
 - **Backend**: Supabase (Postgres, Auth, Storage and Edge Functions)
 - **AI**: Deepgram (transcription) and OpenRouter (field parsing)
-- **Hosting**: Supabase Cloud (backend) and Netlify (frontend)
+- **Hosting**: Supabase Cloud (backend) and Vercel (frontend)
 
 ## Getting started
 

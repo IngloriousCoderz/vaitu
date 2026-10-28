@@ -2,7 +2,7 @@
 
 The local stack is Docker-only and never reaches the internet. Production is
 two pieces deployed separately: the backend on Supabase Cloud and the
-frontend on Netlify. Getting a new version in front of users who already have
+frontend on Vercel. Getting a new version in front of users who already have
 the app is covered in [Releasing updates](releasing-updates.md).
 
 ## Backend
@@ -70,13 +70,17 @@ origin, which the preflight checks confirm is working.
 
 ## Frontend
 
-`VITE_SUPABASE_URL` is inlined into `dist/` at build time, so Netlify needs it
+The frontend is the Vercel project `inglorious-vaitu`, served at
+`https://app.vaitu.net` (a CNAME to `inglorious-vaitu.vercel.app`).
+
+`VITE_SUPABASE_URL` is inlined into `dist/` at build time, so Vercel needs it
 as a build-time env var — the gitignored `.env` is not available there. The
 same goes for `VITE_VAPID_PUBLIC_KEY`, the public half of the backend's VAPID
 key pair: without it, allowing notifications subscribes nothing.
 
 ```bash
-# Netlify: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_VAPID_PUBLIC_KEY set in the UI
+# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_VAPID_PUBLIC_KEY set in
+# Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/
 ```
 
@@ -84,13 +88,12 @@ Traps worth knowing:
 
 - `src/api/client.js` rewrites the URL to `http://<page-host>:54321` when the
   baked URL is localhost/127.0.0.1 and the page is served from a real host. It
-  cannot fire when the cloud URL is baked in, but a Netlify build missing
+  cannot fire when the cloud URL is baked in, but a Vercel build missing
   `VITE_SUPABASE_URL` will silently point every request at
   `https://app.vaitu.net:54321` and look exactly like a CORS failure.
 - `dist/` is gitignored, so CI must run the build itself.
 - Routes are resolved in the browser, so the host must answer every path that
   is not a file with `index.html`, or deep links and email confirmation links
-  hit the host's 404. `public/_redirects` does it on Netlify, `vercel.json` on
-  Vercel.
+  hit the host's 404. `vercel.json` rewrites them.
 
 Next: [Releasing updates](releasing-updates.md).
