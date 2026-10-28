@@ -245,7 +245,6 @@
     "region": "Regione",
     "period": "Periodo",
     "clearAll": "Azzera tutto",
-    "loading": "Caricamento eventi…",
     "noneMine": "Non hai ancora pubblicato eventi.",
     "noneMatch": "Nessun evento corrisponde alla tua ricerca.",
     "edit": "Modifica evento",
@@ -264,7 +263,6 @@
   },
   "applications": {
     "title": "Le mie candidature",
-    "loading": "Caricamento candidature…",
     "none": "Non ti sei ancora candidato a nessun evento.",
     "noneWithStatus": "Nessuna candidatura con questo stato."
   },
@@ -342,7 +340,6 @@
     "maxReached": "Livello massimo raggiunto",
     "toNext": "{{points}} per {{tier}}",
     "subtitle": "Guadagna punti con ogni candidatura. I livelli più alti compaiono sul tuo profilo.",
-    "loading": "Caricamento livelli…",
     "howTitle": "Come funzionano i punti",
     "perApplication": "per candidatura",
     "perShortlist": "per shortlist",
@@ -350,7 +347,6 @@
   },
   "profile": {
     "title": "Profilo",
-    "loading": "Caricamento profilo…",
     "applications": "Candidature",
     "shortlisted": "In shortlist",
     "wins": "Vinti",
@@ -393,7 +389,6 @@
     "clock": "Le candidature chiudono tra {{time}}"
   },
   "detail": {
-    "loading": "Caricamento evento…",
     "organizedBy": "Organizzato da {{name}}",
     "reviewApplications": "Rivedi le candidature ricevute",
     "closed": "Le candidature per questo evento sono chiuse.",
@@ -412,7 +407,6 @@
     "apply": "Candidati"
   },
   "application": {
-    "loading": "Caricamento candidatura…",
     "addToCalendar": "Aggiungi al calendario",
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Scarica .ics",
@@ -430,7 +424,6 @@
   "notifications": {
     "error": "Impossibile caricare le notifiche",
     "title": "Notifiche",
-    "loading": "Caricamento delle notifiche",
     "empty": "Ancora niente di nuovo. Una candidatura ai tuoi eventi, una decisione su una tua richiesta: compare qui.",
     "markAll": "Segna tutto come letto",
     "unreadAria": "{{count}} notifiche non lette",

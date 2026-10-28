@@ -96,19 +96,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Cold-start mark before the app mounts. Manifest splash stays a static PNG;
-   this is the animated SVG that covers the HTML gap until JS is ready. */
+/* The manifest splash is a static image: this animated one covers the time
+   between the first paint and the app mounting, which removes it. */
 .boot-splash {
   position: fixed;
   inset: 0;
   z-index: 9999;
   display: grid;
   place-items: center;
-  background: #e7e2d3;
-  pointer-events: none;
-}
-
-.boot-splash img {
-  width: 5rem;
-  height: 5rem;
+  background: inherit;
 }

@@ -241,7 +241,6 @@
     "region": "Region",
     "period": "Period",
     "clearAll": "Clear all",
-    "loading": "Loading events…",
     "noneMine": "You haven't posted any event yet.",
     "noneMatch": "No events match your search yet.",
     "edit": "Edit event",
@@ -258,7 +257,6 @@
   },
   "applications": {
     "title": "My Applications",
-    "loading": "Loading applications…",
     "none": "You haven't applied for any event yet.",
     "noneWithStatus": "Nothing with this status."
   },
@@ -335,7 +333,6 @@
     "maxReached": "Max rank reached",
     "toNext": "{{points}} to {{tier}}",
     "subtitle": "Earn points with every application. Higher ranks show on your profile.",
-    "loading": "Loading ranks…",
     "howTitle": "How points work",
     "perApplication": "per application",
     "perShortlist": "per shortlist",
@@ -343,7 +340,6 @@
   },
   "profile": {
     "title": "Profile",
-    "loading": "Loading profile…",
     "applications": "Applications",
     "shortlisted": "Shortlisted",
     "wins": "Wins",
@@ -383,7 +379,6 @@
     "clock": "Applications close in {{time}}"
   },
   "detail": {
-    "loading": "Loading event…",
     "organizedBy": "Organized by {{name}}",
     "reviewApplications": "Review the applications you received",
     "closed": "Applications are closed for this event.",
@@ -401,7 +396,6 @@
     "apply": "Apply"
   },
   "application": {
-    "loading": "Loading application…",
     "addToCalendar": "Add to calendar",
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Download .ics",
@@ -419,7 +413,6 @@
   "notifications": {
     "error": "Could not load notifications",
     "title": "Notifications",
-    "loading": "Loading notifications",
     "empty": "Nothing new yet. When someone applies to your events, or one of yours is decided, it lands here.",
     "markAll": "Mark all read",
     "unreadAria": "{{count}} unread notifications",

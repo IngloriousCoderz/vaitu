@@ -245,7 +245,6 @@
     "region": "Région",
     "period": "Période",
     "clearAll": "Tout effacer",
-    "loading": "Chargement des événements…",
     "noneMine": "Vous n'avez encore publié aucun événement.",
     "noneMatch": "Aucun événement ne correspond à votre recherche.",
     "edit": "Modifier l'événement",
@@ -264,7 +263,6 @@
   },
   "applications": {
     "title": "Mes candidatures",
-    "loading": "Chargement des candidatures…",
     "none": "Vous n'avez encore candidaté à aucun événement.",
     "noneWithStatus": "Aucune candidature avec ce statut."
   },
@@ -342,7 +340,6 @@
     "maxReached": "Niveau maximal atteint",
     "toNext": "{{points}} avant {{tier}}",
     "subtitle": "Gagnez des points à chaque candidature. Les niveaux les plus élevés apparaissent sur votre profil.",
-    "loading": "Chargement des niveaux…",
     "howTitle": "Comment gagner des points",
     "perApplication": "par candidature",
     "perShortlist": "par présélection",
@@ -350,7 +347,6 @@
   },
   "profile": {
     "title": "Profil",
-    "loading": "Chargement du profil…",
     "applications": "Candidatures",
     "shortlisted": "Présélections",
     "wins": "Remportés",
@@ -393,7 +389,6 @@
     "clock": "Candidatures closes dans {{time}}"
   },
   "detail": {
-    "loading": "Chargement de l'événement…",
     "organizedBy": "Organisé par {{name}}",
     "reviewApplications": "Voir les candidatures reçues",
     "closed": "Les candidatures sont closes pour cet événement.",
@@ -412,7 +407,6 @@
     "apply": "Candidater"
   },
   "application": {
-    "loading": "Chargement de la candidature…",
     "addToCalendar": "Ajouter au calendrier",
     "googleCalendar": "Google Agenda",
     "downloadIcs": "Télécharger le .ics",
@@ -430,7 +424,6 @@
   "notifications": {
     "error": "Impossible de charger les notifications",
     "title": "Notifications",
-    "loading": "Chargement des notifications",
     "empty": "Rien de neuf pour l'instant. Une candidature à vos événements, une décision sur l'une des vôtres, et c'est ici.",
     "markAll": "Tout marquer comme lu",
     "unreadAria": "{{count}} notifications non lues",

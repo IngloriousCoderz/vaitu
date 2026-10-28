@@ -7,20 +7,3 @@
      screens. It does nothing anywhere else. */
   grid-column: 1 / -1;
 }
-
-/* The wait mark lives on the viewport, not in the page flow: every route
-   that is still fetching shows the same centred Vaitu trail. */
-.loading {
-  position: fixed;
-  inset: 0;
-  z-index: var(--iw-z-fixed);
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-  grid-column: 1 / -1;
-}
-
-.spinner {
-  width: 5rem;
-  height: 5rem;
-}
