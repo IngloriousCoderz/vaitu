@@ -1,9 +1,11 @@
-// Web Push, inside the service worker vite-plugin-pwa generates (vite.config.js
-// imports this file into it). push-notify sends each message fully worded, so
-// all that happens here is showing it, and opening its screen on a tap.
+// Pushes in a browser, inside the service worker vite-plugin-pwa generates
+// (vite.config.js imports this file into it). They come from Firebase Cloud
+// Messaging as plain Web Push, so Firebase's own worker is not needed:
+// push-notify sends each message fully worded in its data, and all that
+// happens here is showing it, and opening its screen on a tap.
 
 self.addEventListener("push", (event) => {
-  const { title, body, url } = event.data.json()
+  const { title, body, url } = event.data.json().data
   event.waitUntil(
     // The icon pwa-assets.config.js generates from the logo. No badge: it
     // needs a one-colour shape, and the logo is not one.

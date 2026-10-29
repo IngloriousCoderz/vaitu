@@ -18,7 +18,7 @@ supabase link --project-ref utzdcnnjxulwlsuhzjaq
 supabase db push                                        # apply migrations
 supabase secrets set \
   DEEPGRAM_API_KEY=... OPENROUTER_API_KEY=... \
-  VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=... VAPID_SUBJECT=...  # third-party keys
+  FCM_SERVICE_ACCOUNT="$(cat service-account.json)"     # third-party keys
 supabase functions deploy                               # every function
 ```
 
@@ -40,18 +40,31 @@ An empty function list with a working `db push` means every edge function is
 `/functions/v1/*` — a missing function 404s before CORS headers are applied,
 and `supabase-js` reports it as `TypeError: Failed to fetch`.
 
-### Push wake-up
+### Resetting before launch
 
-The trigger that wakes `push-notify` reads the project URL and service-role
-key from Vault, so neither is in a migration. Set them once in the SQL editor,
-with the service-role key from Project Settings → API:
+Until launch, production holds nothing worth keeping, so a schema change goes
+in the initial migration and production starts over from it, test accounts
+and events included:
 
-```sql
-select vault.create_secret('https://utzdcnnjxulwlsuhzjaq.supabase.co', 'project_url');
-select vault.create_secret('<service-role key>', 'service_role_key');
+```bash
+supabase db reset --linked --sql-paths ./seed.sql
+pnpm vault:push
 ```
 
-Until both exist, notifications still reach the bell but no push is sent.
+`--sql-paths ./seed.sql` leaves out `seed-local.sql`, which holds the local
+stack's Vault values (its gateway, `http://kong:8000`, and its demo key);
+forgetting it does no harm, since `vault:push` overwrites them.
+
+### Push wake-up
+
+The trigger that wakes `push-notify` reads the project URL and the legacy
+`service_role` key from Vault, so neither is in a migration or a seed.
+`pnpm vault:push` (`scripts/push-vault-secrets.mjs`) sets both on the linked
+project, taking the key from the Supabase CLI's login, so it is never written
+down. It must be the legacy key, the one starting `eyJ`: `push-notify` reads
+the caller's role out of it, which the newer `sb_secret_` keys do not carry.
+
+Until both are set, notifications still reach the bell but no push is sent.
 
 ### Dashboard settings that no migration can set
 
@@ -75,12 +88,13 @@ The frontend is the Vercel project `inglorious-vaitu`, served at
 
 `VITE_SUPABASE_URL` is inlined into `dist/` at build time, so Vercel needs it
 as a build-time env var — the gitignored `.env` is not available there. The
-same goes for `VITE_VAPID_PUBLIC_KEY`, the public half of the backend's VAPID
-key pair: without it, allowing notifications subscribes nothing.
+same goes for the `VITE_FIREBASE_*` values (see
+[Notifications](notifications.md#the-browser)): without them, allowing
+notifications in the PWA files no token.
 
 ```bash
-# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_VAPID_PUBLIC_KEY set in
-# Project Settings → Environment Variables (Production), then redeploy
+# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY and the five VITE_FIREBASE_*
+# set in Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/
 ```
 

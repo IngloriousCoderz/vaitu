@@ -1,50 +1,68 @@
 import { handleAsync } from "@inglorious/store/async"
-import { isNative } from "@inglorious/web/mobile"
 
-import { isPushSupported, syncPushSubscription } from "../../api/push.js"
+import {
+  isPushSupported,
+  pushPermission,
+  requestPushPermission,
+  syncPushToken,
+} from "../../api/push.js"
 import { PUSH_DECLINE_KEY } from "../../constants/index.js"
 import { PushPromptBar as renderers } from "./template.js"
 
-// Asks for the permission Web Push needs, in a pill rather than the browser's
+// Asks for the permission pushes need, in a pill rather than the system's
 // dialog straight away: the dialog only comes up once the user says yes, and
-// a browser that saw it refused never shows it again. "Not now" stops the
-// pill on this browser for good; the browser's own settings can still allow
-// notifications later.
+// a device that saw it refused may never show it again. "Not now" stops the
+// pill on this device for good; the system's own settings can still allow
+// notifications later. The same pill serves browsers and the native apps.
 //
-// Once allowed, every sign-in files this browser's subscription under whoever
-// signed in. Signing out removes it (see endSession in src/api/session.js).
-// The native apps will get their pushes another way, so none of this runs
-// there.
+// Once allowed, every sign-in files this device's token under whoever signed
+// in. Signing out removes it (see endSession in src/api/session.js).
 export const PushPrompt = {
   ...renderers,
 
   create(entity) {
     entity.isOpen = false
+    entity.isSignedIn = false
   },
 
   sessionStart(entity, _, api) {
-    if (isNative() || !isPushSupported()) return
-    if (Notification.permission === "granted") {
-      api.notify(`#${entity.id}:sync`)
-      return
-    }
-    entity.isOpen = Notification.permission === "default" && !isDeclined()
+    entity.isSignedIn = true
+    api.notify(`#${entity.id}:check`)
   },
 
   sessionEnd(entity) {
+    entity.isSignedIn = false
     entity.isOpen = false
   },
 
-  // The pill goes down as the browser's dialog comes up. Dismissing the
+  // Asking the device is async, so a sign-out can land before the answer: the
+  // pill only opens for someone still signed in.
+  ...handleAsync("check", {
+    async run() {
+      if (!(await isPushSupported())) return null
+      return pushPermission()
+    },
+    success(entity, permission, api) {
+      if (!entity.isSignedIn) return
+      if (permission === "granted") {
+        api.notify(`#${entity.id}:sync`)
+        return
+      }
+      entity.isOpen = permission === "prompt" && !isDeclined()
+    },
+    error() {},
+  }),
+
+  // The pill goes down as the system's dialog comes up. Dismissing the
   // dialog leaves the permission undecided, so the next sign-in asks again.
-  // requestPermission runs within the tap that notified `ask`, which is what
-  // the browser needs to show the dialog.
+  // requestPushPermission runs within the tap that notified `ask`, which is
+  // what a browser needs to show the dialog.
   ...handleAsync("ask", {
     start(entity) {
       entity.isOpen = false
     },
     run() {
-      return Notification.requestPermission()
+      return requestPushPermission()
     },
     success(entity, permission, api) {
       if (permission === "granted") api.notify(`#${entity.id}:sync`)
@@ -61,11 +79,11 @@ export const PushPrompt = {
     entity.isOpen = false
   },
 
-  // Nothing on screen depends on it: a browser that fails to sync now tries
+  // Nothing on screen depends on it: a device that fails to sync now tries
   // again at the next sign-in.
   ...handleAsync("sync", {
     run() {
-      return syncPushSubscription()
+      return syncPushToken()
     },
     error() {},
   }),

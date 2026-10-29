@@ -1,4 +1,6 @@
 allowBuilds:
+  "@firebase/util": true
+  protobufjs: true
   sharp: true
 
 # Our own packages are used the day they are published.

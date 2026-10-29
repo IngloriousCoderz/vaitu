@@ -71,6 +71,12 @@ address. Keep your computer LAN IP in `.env.local`, then rebuild.
 Find it with `ipconfig getifaddr en0` (macOS),
 `hostname -I | awk '{print $1}'` (Linux), `ipconfig` (Windows).
 
+Pushes need the Firebase files `android/app/google-services.json` and
+`ios/App/GoogleService-Info.plist` (see
+[Notifications](notifications.md#the-native-apps)). Without the first, the
+Android build still succeeds but logs that it skipped the google-services
+plugin, and the app gets no pushes.
+
 After adding or upgrading a Capacitor plugin, run `pnpm mobile:sync` so the
 native projects pick it up.
 

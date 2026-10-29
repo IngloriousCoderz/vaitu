@@ -15,6 +15,8 @@ export const FEED_PAGE_SIZE = 24
 export const REQUEST_TIMEOUT_MS = 15000
 // Set by "Not now" on the push pill: this browser is not asked again.
 export const PUSH_DECLINE_KEY = "vaitu-push-declined"
+// The FCM token this device filed, so the sign-out can delete its row.
+export const PUSH_TOKEN_KEY = "vaitu-push-token"
 export const MIN_PASSWORD_LENGTH = 6
 export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5

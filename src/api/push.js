@@ -1,66 +1,140 @@
+import { Capacitor } from "@capacitor/core"
+import { FirebaseMessaging } from "@capacitor-firebase/messaging"
+import { initializeApp } from "firebase/app"
+
+import { PUSH_TOKEN_KEY } from "../constants/index.js"
 import { supabase } from "./client.js"
 
-// Notifications, layer 2: Web Push. The browser holds the subscription; the
-// database holds its endpoint and keys under the user signed in here, which
-// is where push-notify looks them up. The service worker that receives the
-// pushes is public/sw-push.js.
+// Notifications, layer 2: pushes, through Firebase Cloud Messaging on every
+// platform. The device holds an FCM token; the database holds it under the
+// user signed in here, which is where push-notify looks it up. In a browser
+// the pushes land in public/sw-push.js; in the native apps the system shows
+// them and onPushTap hears the tap.
 
-const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY
+const PLATFORM = Capacitor.getPlatform()
+const IS_WEB = PLATFORM === "web"
 
-export function isPushSupported() {
-  return (
-    typeof window !== "undefined" &&
-    "Notification" in window &&
-    "PushManager" in window &&
-    "serviceWorker" in navigator
-  )
+// The public half of the Web Push key pair in the Firebase console.
+const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY
+
+let isFirebaseReady = false
+
+// The native apps read the Firebase project from google-services.json and
+// GoogleService-Info.plist. A browser needs it in JS, set before the plugin's
+// first call, which is when the plugin loads its web half.
+function messaging() {
+  if (IS_WEB && !isFirebaseReady) {
+    initializeApp({
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    })
+    isFirebaseReady = true
+  }
+  return FirebaseMessaging
+}
+
+/** @returns {Promise<boolean>} */
+export async function isPushSupported() {
+  const { isSupported } = await messaging().isSupported()
+  return isSupported
 }
 
 /**
- * Subscribes this browser, or reuses the subscription it already has, and
+ * Whether this device may show pushes. "prompt" covers never asked and asked
+ * but dismissed, which on Android also comes back as "prompt-with-rationale".
+ * @returns {Promise<"granted" | "denied" | "prompt">}
+ */
+export async function pushPermission() {
+  const { receive } = await messaging().checkPermissions()
+  return toPermission(receive)
+}
+
+/**
+ * Brings up the system's permission dialog. In a browser it must run within a
+ * tap, so Notification.requestPermission is called before anything awaits.
+ * @returns {Promise<"granted" | "denied" | "prompt">}
+ */
+export async function requestPushPermission() {
+  if (IS_WEB) return toPermission(await Notification.requestPermission())
+  const { receive } = await messaging().requestPermissions()
+  return toPermission(receive)
+}
+
+function toPermission(state) {
+  return state === "granted" || state === "denied" ? state : "prompt"
+}
+
+/**
+ * Gets this device's token, the same one again unless FCM rotated it, and
  * files it under the signed-in user. Needs the permission granted.
  */
-export async function syncPushSubscription() {
-  const registration = await navigator.serviceWorker.ready
-  const subscription =
-    (await registration.pushManager.getSubscription()) ??
-    (await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: VAPID_PUBLIC_KEY,
-    }))
-  await savePushSubscription(subscription.toJSON())
+export async function syncPushToken() {
+  const options = IS_WEB
+    ? {
+        vapidKey: VAPID_KEY,
+        serviceWorkerRegistration: await navigator.serviceWorker.ready,
+      }
+    : {}
+  const { token } = await messaging().getToken(options)
+  await savePushToken(token, PLATFORM)
+  try {
+    window.localStorage.setItem(PUSH_TOKEN_KEY, token)
+  } catch {
+    // Without storage the sign-out cannot delete the row; the next sign-in
+    // here takes the token over.
+  }
 }
 
 /**
- * Stops this browser receiving the signed-in user's pushes. Must run before
- * the sign-out: the row can only be deleted with the user's own token.
+ * Stops this device receiving the signed-in user's pushes. Must run before
+ * the sign-out: the row can only be deleted with the user's own token. The
+ * token comes from storage rather than FCM, which would mint one on a device
+ * that never had any.
  */
-export async function forgetPushSubscription() {
-  if (!isPushSupported()) return
-  // Not `ready`, which never settles where no worker was registered (dev).
-  const registration = await navigator.serviceWorker.getRegistration()
-  const subscription = await registration?.pushManager.getSubscription()
-  if (subscription) await deletePushSubscription(subscription.endpoint)
+export async function forgetPushToken() {
+  let token
+  try {
+    token = window.localStorage.getItem(PUSH_TOKEN_KEY)
+  } catch {
+    return
+  }
+  if (!token) return
+  await deletePushToken(token)
+  window.localStorage.removeItem(PUSH_TOKEN_KEY)
 }
 
 /**
- * @param {{endpoint: string, keys: {p256dh: string, auth: string}}} subscription
- *   A PushSubscription as JSON.
+ * Calls back with a push's destination when it is tapped in the native apps.
+ * A browser's taps are the service worker's.
+ * @param {(url: string) => void} listener
  */
-export async function savePushSubscription({ endpoint, keys }) {
-  const { error } = await supabase.rpc("save_push_subscription", {
-    p_endpoint: endpoint,
-    p_p256dh: keys.p256dh,
-    p_auth: keys.auth,
+export function onPushTap(listener) {
+  if (IS_WEB) return
+  messaging().addListener("notificationActionPerformed", ({ notification }) => {
+    const url = notification.data?.url
+    if (url) listener(url)
+  })
+}
+
+/**
+ * @param {string} token An FCM registration token.
+ * @param {"web" | "android" | "ios"} platform
+ */
+export async function savePushToken(token, platform) {
+  const { error } = await supabase.rpc("save_push_token", {
+    p_token: token,
+    p_platform: platform,
   })
   if (error) throw error
 }
 
-/** @param {string} endpoint */
-export async function deletePushSubscription(endpoint) {
+/** @param {string} token */
+export async function deletePushToken(token) {
   const { error } = await supabase
-    .from("push_subscriptions")
+    .from("push_tokens")
     .delete()
-    .eq("endpoint", endpoint)
+    .eq("token", token)
   if (error) throw error
 }

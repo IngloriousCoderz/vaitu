@@ -1,17 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 vi.mock("../../api/push.js", () => ({
-  isPushSupported: () => true,
-  syncPushSubscription: vi.fn(async () => {}),
+  isPushSupported: vi.fn(async () => true),
+  pushPermission: vi.fn(async () => "prompt"),
+  requestPushPermission: vi.fn(async () => "granted"),
+  syncPushToken: vi.fn(async () => {}),
 }))
-vi.mock("@inglorious/web/mobile", () => ({ isNative: vi.fn(() => false) }))
 // No DOM environment here: the pill itself is exercised live.
 vi.mock("./template.js", () => ({ PushPromptBar: {} }))
 
 import { createStore } from "@inglorious/store"
-import { isNative } from "@inglorious/web/mobile"
 
-import { syncPushSubscription } from "../../api/push.js"
+import {
+  isPushSupported,
+  pushPermission,
+  requestPushPermission,
+  syncPushToken,
+} from "../../api/push.js"
 import { PUSH_DECLINE_KEY } from "../../constants/index.js"
 import { PushPrompt } from "./index.js"
 
@@ -25,89 +30,102 @@ beforeEach(() => {
     setItem: (key, value) => stored.set(key, value),
   })
   vi.stubGlobal("window", globalThis)
-  vi.stubGlobal("Notification", {
-    permission: "default",
-    requestPermission: vi.fn(async () => "granted"),
-  })
 })
 
-function signIn() {
+// Signs in and lets the device answer whether it may show pushes.
+async function signIn() {
   const store = createStore({
     types: { PushPrompt },
     entities: { pushPrompt: { type: "PushPrompt" } },
   })
   store.notify("sessionStart")
+  await settle()
   return store
 }
 
+function settle() {
+  return new Promise((resolve) => setTimeout(resolve))
+}
+
 describe("PushPrompt.sessionStart", () => {
-  it("asks while the browser has not been answered", () => {
-    expect(signIn().getState().pushPrompt.isOpen).toBe(true)
+  it("asks while the device has not been answered", async () => {
+    expect((await signIn()).getState().pushPrompt.isOpen).toBe(true)
   })
 
-  it("files the subscription without asking once allowed", async () => {
-    Notification.permission = "granted"
-    const store = signIn()
+  it("files the token without asking once allowed", async () => {
+    pushPermission.mockResolvedValueOnce("granted")
+    const store = await signIn()
     expect(store.getState().pushPrompt.isOpen).toBe(false)
-    await vi.waitFor(() => expect(syncPushSubscription).toHaveBeenCalled())
+    expect(syncPushToken).toHaveBeenCalled()
   })
 
   // The decline is about the pill, not about pushes: allowing them later in
-  // the browser's settings still gets this browser its pushes.
-  it("files the subscription once allowed, even after a decline", async () => {
+  // the system's settings still gets this device its pushes.
+  it("files the token once allowed, even after a decline", async () => {
     stored.set(PUSH_DECLINE_KEY, "true")
-    Notification.permission = "granted"
-    signIn()
-    await vi.waitFor(() => expect(syncPushSubscription).toHaveBeenCalled())
+    pushPermission.mockResolvedValueOnce("granted")
+    await signIn()
+    expect(syncPushToken).toHaveBeenCalled()
   })
 
-  it("stays quiet after a decline, or a refusal in the browser", () => {
+  it("stays quiet after a decline, or a refusal on the device", async () => {
     stored.set(PUSH_DECLINE_KEY, "true")
-    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
+    expect((await signIn()).getState().pushPrompt.isOpen).toBe(false)
 
     stored.clear()
-    Notification.permission = "denied"
-    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
+    pushPermission.mockResolvedValueOnce("denied")
+    expect((await signIn()).getState().pushPrompt.isOpen).toBe(false)
   })
 
-  it("does nothing in the native apps", () => {
-    isNative.mockReturnValueOnce(true)
-    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
+  it("stays quiet where pushes are not supported", async () => {
+    isPushSupported.mockResolvedValueOnce(false)
+    expect((await signIn()).getState().pushPrompt.isOpen).toBe(false)
+    expect(pushPermission).not.toHaveBeenCalled()
+  })
+
+  it("stays quiet for a sign-out that lands before the answer", async () => {
+    const store = createStore({
+      types: { PushPrompt },
+      entities: { pushPrompt: { type: "PushPrompt" } },
+    })
+    store.notify("sessionStart")
+    store.notify("sessionEnd")
+    await settle()
+    expect(store.getState().pushPrompt.isOpen).toBe(false)
   })
 })
 
 describe("PushPrompt.ask", () => {
-  it("files the subscription when the browser allows it", async () => {
-    const store = signIn()
+  it("files the token when the device allows it", async () => {
+    const store = await signIn()
     store.notify("#pushPrompt:ask")
     expect(store.getState().pushPrompt.isOpen).toBe(false)
-    await vi.waitFor(() => expect(syncPushSubscription).toHaveBeenCalled())
+    await vi.waitFor(() => expect(syncPushToken).toHaveBeenCalled())
   })
 
-  it("goes quiet when the browser refuses", async () => {
-    Notification.requestPermission.mockResolvedValueOnce("denied")
-    const store = signIn()
+  it("goes quiet when the device refuses", async () => {
+    requestPushPermission.mockResolvedValueOnce("denied")
+    const store = await signIn()
     store.notify("#pushPrompt:ask")
-    await vi.waitFor(() =>
-      expect(Notification.requestPermission).toHaveBeenCalled(),
-    )
+    await settle()
+    expect(requestPushPermission).toHaveBeenCalled()
     expect(store.getState().pushPrompt.isOpen).toBe(false)
-    expect(syncPushSubscription).not.toHaveBeenCalled()
+    expect(syncPushToken).not.toHaveBeenCalled()
   })
 })
 
 describe("PushPrompt.decline", () => {
-  it("closes the pill for good on this browser", () => {
-    const store = signIn()
+  it("closes the pill for good on this device", async () => {
+    const store = await signIn()
     store.notify("#pushPrompt:decline")
     expect(store.getState().pushPrompt.isOpen).toBe(false)
-    expect(signIn().getState().pushPrompt.isOpen).toBe(false)
+    expect((await signIn()).getState().pushPrompt.isOpen).toBe(false)
   })
 })
 
 describe("PushPrompt.sessionEnd", () => {
-  it("takes the pill down with the session", () => {
-    const store = signIn()
+  it("takes the pill down with the session", async () => {
+    const store = await signIn()
     store.notify("sessionEnd")
     expect(store.getState().pushPrompt.isOpen).toBe(false)
   })

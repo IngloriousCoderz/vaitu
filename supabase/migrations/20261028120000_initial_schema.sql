@@ -996,38 +996,37 @@ create trigger trg_event_changed
   )
   execute function public.vaitu_on_event_changed();
 
--- ----------------------------------------------------- push_subscriptions ---
+-- ------------------------------------------------------------ push_tokens ---
 
--- A browser endpoint belongs to one user at a time, whoever last signed in
--- there, so two people sharing a laptop never both get pushes on it.
-create table public.push_subscriptions (
+-- A token belongs to one user at a time, whoever last signed in on that
+-- device, so two people sharing a laptop or a phone never both get pushes on
+-- it. platform says how push-notify words the message for it.
+create table public.push_tokens (
+  token text primary key,
   user_id uuid not null references public.profiles (id) on delete cascade,
-  endpoint text primary key,
-  p256dh text not null,
-  auth text not null,
+  platform text not null check (platform in ('web', 'android', 'ios')),
   created_at timestamptz not null default now()
 );
 
-create index push_subscriptions_user_id_idx
-  on public.push_subscriptions (user_id);
+create index push_tokens_user_id_idx
+  on public.push_tokens (user_id);
 
-alter table public.push_subscriptions enable row level security;
+alter table public.push_tokens enable row level security;
 
--- Writes go through save_push_subscription: the endpoint may still be held by
--- the previous user of this browser (a sign-out that could not reach the
--- server), and RLS would hide that row from the one taking it over.
-create policy "Users can read their own push subscriptions"
-  on public.push_subscriptions for select
+-- Writes go through save_push_token: the token may still be held by the
+-- previous user of this device (a sign-out that could not reach the server),
+-- and RLS would hide that row from the one taking it over.
+create policy "Users can read their own push tokens"
+  on public.push_tokens for select
   using (auth.uid() = user_id);
 
-create policy "Users can delete their own push subscriptions"
-  on public.push_subscriptions for delete
+create policy "Users can delete their own push tokens"
+  on public.push_tokens for delete
   using (auth.uid() = user_id);
 
-create function public.save_push_subscription(
-  p_endpoint text,
-  p_p256dh text,
-  p_auth text
+create function public.save_push_token(
+  p_token text,
+  p_platform text
 )
 returns void
 language plpgsql
@@ -1039,16 +1038,15 @@ begin
     raise exception 'Not logged in';
   end if;
 
-  insert into public.push_subscriptions (endpoint, user_id, p256dh, auth)
-  values (p_endpoint, auth.uid(), p_p256dh, p_auth)
-  on conflict (endpoint) do update
+  insert into public.push_tokens (token, user_id, platform)
+  values (p_token, auth.uid(), p_platform)
+  on conflict (token) do update
   set user_id = excluded.user_id,
-      p256dh = excluded.p256dh,
-      auth = excluded.auth;
+      platform = excluded.platform;
 end;
 $$;
 
-grant execute on function public.save_push_subscription(text, text, text)
+grant execute on function public.save_push_token(text, text)
   to authenticated;
 
 -- The wake that turns a notifications insert into a push, for recipients with
@@ -1069,7 +1067,7 @@ declare
   v_key text;
 begin
   if not exists (
-    select 1 from public.push_subscriptions where user_id = new.user_id
+    select 1 from public.push_tokens where user_id = new.user_id
   ) then
     return new;
   end if;

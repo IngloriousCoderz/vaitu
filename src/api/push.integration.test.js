@@ -2,65 +2,64 @@ import { afterAll, describe, expect, test } from "vitest"
 
 import { SEEKER, SENDER, signIn, signOut } from "../testing/index.js"
 import { supabase } from "./client.js"
-import { deletePushSubscription, savePushSubscription } from "./push.js"
+import { deletePushToken, savePushToken } from "./push.js"
 
-// A browser's PushSubscription as JSON. The push service never sees it: these
-// tests only file it, and no notification is created along the way.
-const subscription = {
-  endpoint: `https://push.example.com/vitest-${crypto.randomUUID()}`,
-  keys: { p256dh: "vitest-p256dh", auth: "vitest-auth" },
-}
+// An FCM token in shape only. FCM never sees it: these tests only file it,
+// and no notification is created along the way.
+const token = `vitest-${crypto.randomUUID()}`
 
-async function ownEndpoints() {
+async function ownTokens() {
   const { data, error } = await supabase
-    .from("push_subscriptions")
-    .select("endpoint")
-    .eq("endpoint", subscription.endpoint)
+    .from("push_tokens")
+    .select("token, platform")
+    .eq("token", token)
   if (error) throw error
   return data
 }
 
-describe("push subscriptions", () => {
+describe("push tokens", () => {
   afterAll(async () => {
     await signIn(SENDER)
-    await deletePushSubscription(subscription.endpoint)
+    await deletePushToken(token)
     await signOut()
   })
 
-  test("a browser is filed under whoever signed in there", async () => {
+  test("a device is filed under whoever signed in there", async () => {
     await signIn(SEEKER)
-    await savePushSubscription(subscription)
-    expect(await ownEndpoints()).toHaveLength(1)
+    await savePushToken(token, "web")
+    expect(await ownTokens()).toEqual([{ token, platform: "web" }])
 
     // Filing it again, as every sign-in does, changes nothing.
-    await savePushSubscription(subscription)
-    expect(await ownEndpoints()).toHaveLength(1)
+    await savePushToken(token, "web")
+    expect(await ownTokens()).toHaveLength(1)
   })
 
   // The seeker's sign-out never reached the server: the next user of the
-  // browser takes the endpoint over, and the seeker stops getting pushes there.
-  test("the next user of the browser takes it over", async () => {
+  // device takes the token over, and the seeker stops getting pushes there.
+  test("the next user of the device takes it over", async () => {
     await signIn(SENDER)
-    await savePushSubscription(subscription)
-    expect(await ownEndpoints()).toHaveLength(1)
+    await savePushToken(token, "web")
+    expect(await ownTokens()).toHaveLength(1)
 
     await signIn(SEEKER)
-    expect(await ownEndpoints()).toHaveLength(0)
+    expect(await ownTokens()).toHaveLength(0)
   })
 
-  test("nobody files a browser signed out, or writes the table directly", async () => {
+  test("only the platforms push-notify knows how to word for", async () => {
     await signIn(SEEKER)
-    const { error: insertError } = await supabase
-      .from("push_subscriptions")
-      .insert({
-        endpoint: `${subscription.endpoint}-direct`,
-        user_id: (await supabase.auth.getUser()).data.user.id,
-        p256dh: "x",
-        auth: "x",
-      })
+    await expect(savePushToken(`${token}-other`, "windows")).rejects.toThrow()
+  })
+
+  test("nobody files a device signed out, or writes the table directly", async () => {
+    await signIn(SEEKER)
+    const { error: insertError } = await supabase.from("push_tokens").insert({
+      token: `${token}-direct`,
+      user_id: (await supabase.auth.getUser()).data.user.id,
+      platform: "web",
+    })
     expect(insertError).not.toBeNull()
 
     await signOut()
-    await expect(savePushSubscription(subscription)).rejects.toThrow()
+    await expect(savePushToken(token, "web")).rejects.toThrow()
   })
 })

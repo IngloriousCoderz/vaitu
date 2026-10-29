@@ -1,5 +1,5 @@
 import { isSignupConfirmation, supabase } from "./client.js"
-import { forgetPushSubscription } from "./push.js"
+import { forgetPushToken } from "./push.js"
 
 // Who is signed in, synchronously.
 //
@@ -79,12 +79,12 @@ export function clearUser() {
 /**
  * Ends the session everywhere — our record and Supabase's tokens together. Used
  * on sign-out and whenever the server rejects a token we were still holding.
- * This browser's pushes go first, while the token can still delete them; with
+ * This device's pushes go first, while the token can still delete them; with
  * a token already rejected they stay until the next sign-in here takes the
- * endpoint over.
+ * device over.
  */
 export async function endSession() {
-  await forgetPushSubscription().catch(() => {})
+  await forgetPushToken().catch(() => {})
   clearUser()
   await supabase.auth.signOut()
 }
