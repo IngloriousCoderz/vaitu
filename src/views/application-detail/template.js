@@ -4,7 +4,7 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
@@ -140,62 +140,52 @@ export const ApplicationDetail = {
                   })}
                   ${when(
                     application.applicationStatus === "selected",
-                    () =>
-                      when(
-                        entity.isConfirmingGiveUp,
-                        () =>
-                          ConfirmPrompt.render({
-                            message: t("application.giveUpConfirm"),
-                            confirmLabel: t("application.yesGiveUp"),
-                            busyLabel: t("application.givingUp"),
-                            isBusy: status === "saving",
-                            isDisabled: isBusy,
-                            isStacked: true,
-                            className: styles.confirm,
-                            onConfirm: onGiveUp,
-                            onCancel: onCancelGiveUp,
-                          }),
-                        () => html`
-                          ${Button.render({
-                            children: t("application.giveUp"),
-                            color: "error",
-                            variant: "outline",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            className: styles.withdrawButton,
-                            onClick: onAskGiveUp,
-                          })}
-                        `,
-                      ),
-                    () =>
-                      when(
-                        entity.isConfirmingWithdraw,
-                        () =>
-                          ConfirmPrompt.render({
-                            message: t("application.withdrawConfirm"),
-                            confirmLabel: t("application.yesWithdraw"),
-                            busyLabel: t("application.withdrawing"),
-                            isBusy: status === "withdrawing",
-                            isDisabled: isBusy,
-                            isStacked: true,
-                            className: styles.confirm,
-                            onConfirm: onWithdraw,
-                            onCancel: onCancelWithdraw,
-                          }),
-                        () => html`
-                          ${Button.render({
-                            children: t("application.withdraw"),
-                            color: "error",
-                            variant: "outline",
-                            shape: "pill",
-                            size: "md",
-                            isFullWidth: true,
-                            className: styles.withdrawButton,
-                            onClick: onAskWithdraw,
-                          })}
-                        `,
-                      ),
+                    () => html`
+                      ${Button.render({
+                        children: t("application.giveUp"),
+                        color: "error",
+                        variant: "outline",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        className: styles.withdrawButton,
+                        onClick: onAskGiveUp,
+                      })}
+                      ${ConfirmDialog.render({
+                        id: "give-up-confirm",
+                        isOpen: entity.isConfirmingGiveUp,
+                        message: t("application.giveUpConfirm"),
+                        error: status === "error" ? error : null,
+                        confirmLabel: t("application.yesGiveUp"),
+                        busyLabel: t("application.givingUp"),
+                        isBusy: status === "saving",
+                        onConfirm: onGiveUp,
+                        onCancel: onCancelGiveUp,
+                      })}
+                    `,
+                    () => html`
+                      ${Button.render({
+                        children: t("application.withdraw"),
+                        color: "error",
+                        variant: "outline",
+                        shape: "pill",
+                        size: "md",
+                        isFullWidth: true,
+                        className: styles.withdrawButton,
+                        onClick: onAskWithdraw,
+                      })}
+                      ${ConfirmDialog.render({
+                        id: "withdraw-confirm",
+                        isOpen: entity.isConfirmingWithdraw,
+                        message: t("application.withdrawConfirm"),
+                        error: status === "error" ? error : null,
+                        confirmLabel: t("application.yesWithdraw"),
+                        busyLabel: t("application.withdrawing"),
+                        isBusy: status === "withdrawing",
+                        onConfirm: onWithdraw,
+                        onCancel: onCancelWithdraw,
+                      })}
+                    `,
                   )}
                 </div>
               </div>

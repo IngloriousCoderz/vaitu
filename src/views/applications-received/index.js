@@ -118,14 +118,8 @@ export const ApplicationsReceived = {
             status: "pending",
             event_id: entity.event_id,
           }),
-        onAskAssign: (application_id) => {
-          api.notify(`#${id}:assignAsk`, application_id)
-          requestAnimationFrame(() => {
-            document
-              .getElementById("assign-confirm")
-              ?.scrollIntoView({ behavior: "smooth", block: "center" })
-          })
-        },
+        onAskAssign: (application_id) =>
+          api.notify(`#${id}:assignAsk`, application_id),
         onAssign: (application_id) =>
           api.notify(`#${id}:winnerAssign`, {
             event_id: entity.event_id,

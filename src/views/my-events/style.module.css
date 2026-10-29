@@ -30,10 +30,6 @@
   gap: var(--iw-space-2);
 }
 
-.confirm {
-  margin-top: 0.625rem;
-}
-
 @media (min-width: 48rem) {
   .list {
     display: grid;
@@ -69,10 +65,6 @@
   .myEventFooter {
     margin-top: 0;
     padding: 0 var(--iw-space-4) var(--iw-space-4);
-  }
-
-  .myEvent .confirm {
-    margin: 0.625rem var(--iw-space-4) var(--iw-space-4);
   }
 }
 

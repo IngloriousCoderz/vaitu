@@ -6,7 +6,7 @@ import { IconButton } from "@inglorious/ui/icon-button"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
@@ -29,6 +29,7 @@ export const MyEvents = {
     onCancelDelete,
   }) {
     const { events, confirmingDelete, status, error } = entity
+    const isConfirmingDelete = confirmingDelete != null
 
     return Page.render({
       variant: "sticky",
@@ -38,7 +39,8 @@ export const MyEvents = {
           <main class="${styles.list} vaitu-list">
             ${
               PageStatus.render({
-                isError: status === "error",
+                // A failed delete is the dialog's to show: the list stays.
+                isError: status === "error" && !isConfirmingDelete,
                 error,
                 isLoading: status === "loading",
                 isEmpty: !events.length,
@@ -48,31 +50,29 @@ export const MyEvents = {
                 this.renderMyEvent({
                   event,
                   style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
-                  isConfirmingDelete: confirmingDelete === event.id,
                   onOpenEvent,
                   onEdit,
                   onAskDelete,
-                  onDelete,
-                  onCancelDelete,
                 }),
               )
             }
           </main>
         `,
+        ConfirmDialog.render({
+          id: "delete-event-confirm",
+          isOpen: isConfirmingDelete,
+          message: t("myEvents.deleteConfirm"),
+          error: isConfirmingDelete && status === "error" ? error : null,
+          confirmLabel: t("myEvents.yesDelete"),
+          isBusy: status === "saving",
+          onConfirm: () => onDelete(confirmingDelete),
+          onCancel: onCancelDelete,
+        }),
       ],
     })
   },
 
-  renderMyEvent({
-    event,
-    style,
-    isConfirmingDelete,
-    onOpenEvent,
-    onEdit,
-    onAskDelete,
-    onDelete,
-    onCancelDelete,
-  }) {
+  renderMyEvent({ event, style, onOpenEvent, onEdit, onAskDelete }) {
     return Flex.render({
       direction: "column",
       className: `${styles.myEvent} vaitu-list-item`,
@@ -112,15 +112,6 @@ export const MyEvents = {
             </span>
           </div>
         `,
-        when(isConfirmingDelete, () =>
-          ConfirmPrompt.render({
-            message: t("myEvents.deleteConfirm"),
-            confirmLabel: t("myEvents.yesDelete"),
-            className: styles.confirm,
-            onConfirm: () => onDelete(event.id),
-            onCancel: onCancelDelete,
-          }),
-        ),
       ],
     })
   },

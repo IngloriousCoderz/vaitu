@@ -11,7 +11,7 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError } from "@inglorious/web/form"
 
-import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
@@ -80,58 +80,55 @@ export const ApplicationsReceived = {
               entity.event_status === "assigned" ||
                 entity.event_status === "closed",
               () => html`
-                ${when(
-                  entity.confirming_reopen,
-                  () =>
-                    ConfirmPrompt.render({
-                      message:
-                        entity.event_status === "assigned"
-                          ? t("received.reopenAssigned")
-                          : t("received.reopenClosed"),
-                      children: when(
-                        deadlinePast(entity.event_deadline),
-                        () => html`
-                          <div class=${styles.field}>
-                            <span>${t("received.newDeadline")}</span>
-                            ${Input.render({
-                              id: "received-reopen-deadline",
-                              inputType: "datetime-local",
-                              value: entity.reopen_deadline ?? "",
-                              isFullWidth: true,
-                              error: translated(
-                                getFieldError(entity, "reopen_deadline"),
-                              ),
-                              onChange: onReopenDeadline,
-                            })}
-                          </div>
-                        `,
-                      ),
-                      confirmLabel: t("received.yesReopen"),
-                      busyLabel: t("received.reopening"),
-                      cancelLabel:
-                        entity.event_status === "assigned"
-                          ? t("received.keepAssigned")
-                          : t("received.keepClosed"),
-                      tone: "primary",
-                      isBusy: status === "saving",
-                      isDisabled:
-                        deadlinePast(entity.event_deadline) &&
-                        (entity.reopen_deadline ?? "").length !==
-                          DATETIME_LOCAL_LENGTH,
-                      onConfirm: onReopen,
-                      onCancel: onCancelReopen,
-                    }),
-                  () => html`
-                    ${Button.render({
-                      children: t("received.reopen"),
-                      color: "primary",
-                      shape: "pill",
-                      size: "md",
-                      isFullWidth: true,
-                      onClick: onAskReopen,
-                    })}
-                  `,
-                )}
+                ${Button.render({
+                  children: t("received.reopen"),
+                  color: "primary",
+                  shape: "pill",
+                  size: "md",
+                  isFullWidth: true,
+                  onClick: onAskReopen,
+                })}
+                ${ConfirmDialog.render({
+                  id: "reopen-confirm",
+                  isOpen: entity.confirming_reopen,
+                  message:
+                    entity.event_status === "assigned"
+                      ? t("received.reopenAssigned")
+                      : t("received.reopenClosed"),
+                  children: when(
+                    deadlinePast(entity.event_deadline),
+                    () => html`
+                      <div class=${styles.field}>
+                        <span>${t("received.newDeadline")}</span>
+                        ${Input.render({
+                          id: "received-reopen-deadline",
+                          inputType: "datetime-local",
+                          value: entity.reopen_deadline ?? "",
+                          isFullWidth: true,
+                          error: translated(
+                            getFieldError(entity, "reopen_deadline"),
+                          ),
+                          onChange: onReopenDeadline,
+                        })}
+                      </div>
+                    `,
+                  ),
+                  error: status === "error" ? error : null,
+                  confirmLabel: t("received.yesReopen"),
+                  busyLabel: t("received.reopening"),
+                  cancelLabel:
+                    entity.event_status === "assigned"
+                      ? t("received.keepAssigned")
+                      : t("received.keepClosed"),
+                  tone: "primary",
+                  isBusy: status === "saving",
+                  isDisabled:
+                    deadlinePast(entity.event_deadline) &&
+                    (entity.reopen_deadline ?? "").length !==
+                      DATETIME_LOCAL_LENGTH,
+                  onConfirm: onReopen,
+                  onCancel: onCancelReopen,
+                })}
               `,
             )}
           </header>
@@ -163,6 +160,8 @@ export const ApplicationsReceived = {
                   expanded: entity.expanded_application_id === item.id,
                   max_reached,
                   confirming_assign: entity.confirming_assign === item.id,
+                  status,
+                  error,
                   event_assigned: entity.event_status === "assigned",
                   onToggle,
                   onSelect,
@@ -256,6 +255,8 @@ export const ApplicationsReceived = {
     expanded,
     max_reached,
     confirming_assign,
+    status,
+    error,
     event_assigned,
     onToggle,
     onSelect,
@@ -372,39 +373,35 @@ export const ApplicationsReceived = {
               ${when(
                 item.status === "shortlisted" && !event_assigned,
                 () => html`
-                  ${when(
-                    confirming_assign,
-                    () =>
-                      ConfirmPrompt.render({
-                        id: "assign-confirm",
-                        message: t("received.assignConfirm"),
-                        confirmLabel: t("received.yesAssign"),
-                        busyLabel: t("received.assigning"),
-                        cancelLabel: t("received.keepShortlist"),
-                        tone: "primary",
-                        isBusy: status === "saving",
-                        onConfirm: () => onAssign(item.id),
-                        onCancel: onCancelAssign,
-                      }),
-                    () => html`
-                      <div class=${styles.actions}>
-                        ${Button.render({
-                          children: t("received.assign"),
-                          color: "primary",
-                          shape: "pill",
-                          size: "md",
-                          onClick: () => onAskAssign(item.id),
-                        })}
-                        ${Button.render({
-                          children: t("received.removeFromShortlist"),
-                          variant: "outline",
-                          shape: "pill",
-                          size: "md",
-                          onClick: () => onUnshortlist(item.id),
-                        })}
-                      </div>
-                    `,
-                  )}
+                  <div class=${styles.actions}>
+                    ${Button.render({
+                      children: t("received.assign"),
+                      color: "primary",
+                      shape: "pill",
+                      size: "md",
+                      onClick: () => onAskAssign(item.id),
+                    })}
+                    ${Button.render({
+                      children: t("received.removeFromShortlist"),
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      onClick: () => onUnshortlist(item.id),
+                    })}
+                  </div>
+                  ${ConfirmDialog.render({
+                    id: `assign-confirm-${item.id}`,
+                    isOpen: confirming_assign,
+                    message: t("received.assignConfirm"),
+                    error: status === "error" ? error : null,
+                    confirmLabel: t("received.yesAssign"),
+                    busyLabel: t("received.assigning"),
+                    cancelLabel: t("received.keepShortlist"),
+                    tone: "primary",
+                    isBusy: status === "saving",
+                    onConfirm: () => onAssign(item.id),
+                    onCancel: onCancelAssign,
+                  })}
                 `,
               )}
             </div>

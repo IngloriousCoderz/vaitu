@@ -30,10 +30,6 @@
   margin: var(--iw-space-3) 0 0;
 }
 
-.confirm {
-  margin-top: var(--iw-space-5);
-}
-
 .calendarRow {
   display: flex;
   flex-direction: column;

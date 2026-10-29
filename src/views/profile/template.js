@@ -11,7 +11,7 @@ import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { ConfirmPrompt } from "../../common/confirm-prompt/index.js"
+import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
@@ -405,21 +405,17 @@ export const Profile = {
 
   // Soft-deactivate: data stays for re-engagement; signing in again restores.
   renderDeactivateAccount({ entity, onDeactivateCancel, onDeactivate }) {
-    if (!entity.isConfirmingDeactivate) return ""
-    return html`
-      ${ConfirmPrompt.render({
-        id: "deactivate-account-confirm",
-        message: t("profile.deactivateConfirm"),
-        confirmLabel: t("profile.yesDeactivate"),
-        busyLabel: t("profile.deactivating"),
-        isBusy: entity.deactivateStatus === "deactivating",
-        isStacked: true,
-        className: styles.deactivateConfirm,
-        onConfirm: onDeactivate,
-        onCancel: onDeactivateCancel,
-      })}
-      ${ErrorAlert.render({ error: entity.deactivateError })}
-    `
+    return ConfirmDialog.render({
+      id: "deactivate-account-confirm",
+      isOpen: entity.isConfirmingDeactivate,
+      message: t("profile.deactivateConfirm"),
+      error: entity.deactivateError,
+      confirmLabel: t("profile.yesDeactivate"),
+      busyLabel: t("profile.deactivating"),
+      isBusy: entity.deactivateStatus === "deactivating",
+      onConfirm: onDeactivate,
+      onCancel: onDeactivateCancel,
+    })
   },
 
   renderTierBlock({ stats, tiers, onOpenRanks }) {
