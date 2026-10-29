@@ -16,6 +16,14 @@ describe("calendarLinks", () => {
     )
   })
 
+  it("leaves the place out when the event has none", () => {
+    const placeless = calendarLinks({
+      title: "Ada & Grace",
+      eventDate: "2026-06-01",
+    })
+    expect(placeless.ics).toContain("LOCATION:\r\n")
+  })
+
   it("stamps the file with today's date", () => {
     const today = new Date().toISOString().slice(0, 10).replaceAll("-", "")
     expect(links.ics).toContain(`DTSTAMP:${today}T000000Z`)

@@ -41,7 +41,7 @@ export const ApplicationDetail = {
         ? calendarLinks({
             title: application.title,
             eventDate: application.event_date,
-            location: application.subtitle,
+            location: application.place,
           })
         : null
 

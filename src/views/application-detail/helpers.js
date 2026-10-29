@@ -8,7 +8,8 @@ import {
 import { t } from "../../i18n/index.js"
 import { randomId } from "../../text/index.js"
 
-export function calendarLinks({ title, eventDate, location }) {
+// An event with no place yet still goes in the calendar, just without one.
+export function calendarLinks({ title, eventDate, location = "" }) {
   if (!eventDate) return null
   const start = toStamp(eventDate)
   const end = endExclusive(eventDate)
