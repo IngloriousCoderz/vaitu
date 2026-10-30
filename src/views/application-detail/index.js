@@ -38,7 +38,7 @@ export const ApplicationDetail = {
     // draft this entity was is revoked and reading entity.id throws.
     const id = entity.id
     activateRealtime(
-      id,
+      `${id}:applications`,
       {
         table: "applications",
         event: `#${id}:load`,
@@ -53,10 +53,26 @@ export const ApplicationDetail = {
       },
       api,
     )
+    // The event the application is for: its sender can edit, close or assign
+    // it while this page is open.
+    activateRealtime(
+      `${id}:events`,
+      {
+        table: "events",
+        event: `#${id}:load`,
+        payload: (state) => state[id]?.application_id,
+        match: (change, state) => {
+          const eventId = state[id]?.application?.id
+          return eventId != null && realtimeColumn(change, "id") === eventId
+        },
+      },
+      api,
+    )
   },
 
   destroy(entity) {
-    deactivateRealtime(entity.id)
+    deactivateRealtime(`${entity.id}:applications`)
+    deactivateRealtime(`${entity.id}:events`)
   },
 
   saveSubmit(entity, _, api) {

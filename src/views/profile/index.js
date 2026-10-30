@@ -61,12 +61,13 @@ export const Profile = {
       {
         table: "applications",
         event: `#${id}:load`,
+        // A delete carries the row's id only (see realtimeColumn), which
+        // cannot say whose application it was, so every delete reloads.
         match: (change, state) => {
           const applicantId = state[id]?.profile?.id
-          return (
-            applicantId != null &&
-            realtimeColumn(change, "applicant_id") === applicantId
-          )
+          if (applicantId == null) return false
+          if (change.eventType === "DELETE") return true
+          return realtimeColumn(change, "applicant_id") === applicantId
         },
       },
       api,

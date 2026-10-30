@@ -18,9 +18,18 @@ export const ApplicationList = {
     entity.status ??= "idle"
     entity.error ??= null
     activateRealtime(
-      entity.id,
+      `${entity.id}:applications`,
       {
         table: "applications",
+        event: `#${entity.id}:load`,
+      },
+      api,
+    )
+    // Each row shows its event, which its sender can edit, close or assign.
+    activateRealtime(
+      `${entity.id}:events`,
+      {
+        table: "events",
         event: `#${entity.id}:load`,
       },
       api,
@@ -28,7 +37,8 @@ export const ApplicationList = {
   },
 
   destroy(entity) {
-    deactivateRealtime(entity.id)
+    deactivateRealtime(`${entity.id}:applications`)
+    deactivateRealtime(`${entity.id}:events`)
   },
 
   routeChange: pageRouteChange(open, close, (payload) => payload.query.status),

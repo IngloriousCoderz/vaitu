@@ -46,16 +46,36 @@ export const ApplicationsReceived = {
     // draft this entity was is revoked and reading entity.id throws.
     const id = entity.id
     activateRealtime(
-      id,
+      `${id}:applications`,
       {
         table: "applications",
         event: `#${id}:load`,
         payload: (state) => state[id]?.event_id,
         match: (change, state) => {
           const eventId = state[id]?.event_id
-          return (
-            eventId != null && realtimeColumn(change, "event_id") === eventId
-          )
+          if (eventId == null) return false
+          // A withdrawal is a delete, which carries the row's id and nothing
+          // else (see realtimeColumn), so it is matched against the rows on
+          // screen.
+          if (change.eventType === "DELETE") {
+            return state[id].items.some((item) => item.id === change.old?.id)
+          }
+          return realtimeColumn(change, "event_id") === eventId
+        },
+      },
+      api,
+    )
+    // The recap shows the event, which can close while the page is open: at
+    // its deadline, or from another device.
+    activateRealtime(
+      `${id}:events`,
+      {
+        table: "events",
+        event: `#${id}:load`,
+        payload: (state) => state[id]?.event_id,
+        match: (change, state) => {
+          const eventId = state[id]?.event_id
+          return eventId != null && realtimeColumn(change, "id") === eventId
         },
       },
       api,
@@ -63,7 +83,8 @@ export const ApplicationsReceived = {
   },
 
   destroy(entity) {
-    deactivateRealtime(entity.id)
+    deactivateRealtime(`${entity.id}:applications`)
+    deactivateRealtime(`${entity.id}:events`)
   },
 
   routeChange: pageRouteChange(

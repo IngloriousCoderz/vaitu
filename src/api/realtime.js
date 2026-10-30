@@ -8,6 +8,9 @@ import { readUserId } from "./session.js"
 // the name. A local map drops the handle when removeChannel fails, and the
 // channel keeps running with nothing left that can close it.
 
+// A column of the changed row, from the new values or else the old. A DELETE on
+// a table under RLS carries the primary key only, whatever its replica
+// identity, so any other column reads null there: match a delete by id.
 export function realtimeColumn(change, column) {
   const value = change?.new?.[column] ?? change?.old?.[column]
   return value == null ? null : value

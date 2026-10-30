@@ -47,13 +47,21 @@ const load = handleAsync("load", {
     // type before the client holds a token, and an anon-binding would remain
     // deaf to this user's rows from then on. Loaded with a session, both are
     // guaranteed: every reload that reaches success ran through one.
+    // The id is snapshotted: the match runs from a realtime message, once
+    // this draft is revoked.
+    const id = entity.id
     activateRealtime(
-      entity.id,
+      id,
       {
         table: "notifications",
-        event: `#${entity.id}:load`,
+        event: `#${id}:load`,
         payload: null,
-        match: (change) => realtimeColumn(change, "user_id") === readUserId(),
+        // A row deleted with its application or event carries only its id
+        // (see realtimeColumn), so a delete is matched against the feed.
+        match: (change, state) =>
+          change.eventType === "DELETE"
+            ? state[id]?.items.some((item) => item.id === change.old?.id)
+            : realtimeColumn(change, "user_id") === readUserId(),
       },
       api,
     )
