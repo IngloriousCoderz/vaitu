@@ -69,6 +69,7 @@ Read in this order: each guide assumes the ones before it.
 3. [Edge functions](docs/edge-functions.md): server-side code, secrets, and adding a function.
 4. [Voice AI](docs/voice-ai.md): the two providers behind voice-to-form.
 5. [Notifications](docs/notifications.md): the bell, pushes through Firebase, and setting Firebase up.
-6. [Mobile](docs/mobile.md): running the Android and iOS apps.
-7. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
-8. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.
+6. [Analytics](docs/analytics.md): usage statistics, only with consent.
+7. [Mobile](docs/mobile.md): running the Android and iOS apps.
+8. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
+9. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.

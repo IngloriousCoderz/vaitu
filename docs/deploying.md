@@ -89,11 +89,12 @@ The frontend is the Vercel project `inglorious-vaitu`, served at
 `VITE_SUPABASE_URL` is inlined into `dist/` at build time, so Vercel needs it
 as a build-time env var — the gitignored `.env` is not available there. The
 same goes for the `VITE_FIREBASE_*` values (see
-[Notifications](notifications.md#the-browser)): without them, allowing
-notifications in the PWA files no token.
+[Notifications](notifications.md#the-browser) and
+[Analytics](analytics.md#setting-it-up)): without them, allowing
+notifications in the PWA files no token, and the PWA measures nothing.
 
 ```bash
-# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY and the five VITE_FIREBASE_*
+# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY and the six VITE_FIREBASE_*
 # set in Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/
 ```

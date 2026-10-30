@@ -384,7 +384,9 @@
     "app": "App",
     "language": "Lingua",
     "emails": "Notifiche email",
-    "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate."
+    "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate.",
+    "analytics": "Statistiche di utilizzo",
+    "analyticsDescription": "Ci permette di misurare come usi l'app, tramite Google Analytics. Niente pubblicità."
   },
   "facts": {
     "spouses": "Sposi"
@@ -455,5 +457,10 @@
     "prompt": "Attivare le notifiche push? Ti avviseremo quando arrivano candidature e decisioni.",
     "ask": "Avvisami",
     "decline": "Non ora"
+  },
+  "analytics": {
+    "prompt": "Possiamo misurare come usi Vaitu? Ci aiuta a migliorarla. Niente pubblicità, e i tuoi dati non vengono venduti.",
+    "accept": "Consenti",
+    "decline": "No, grazie"
   }
 }

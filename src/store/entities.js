@@ -15,6 +15,8 @@ const regionOptions = italianRegions.map((region) => ({
 }))
 
 export const entities = {
+  // Usage statistics, once the user agreed (src/common/analytics-consent/).
+  analytics: { type: "AnalyticsConsent" },
   // The active language. `#i18n:localeChange` switches it.
   i18n: { type: "I18n" },
   // The language picker, on the sign-in screen and on the profile. Its value

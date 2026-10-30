@@ -384,7 +384,9 @@
     "app": "Application",
     "language": "Langue",
     "emails": "Notifications par email",
-    "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés."
+    "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés.",
+    "analytics": "Statistiques d'utilisation",
+    "analyticsDescription": "Nous permet de mesurer comment vous utilisez l'app, via Google Analytics. Sans publicité."
   },
   "facts": {
     "spouses": "Mariés"
@@ -455,5 +457,10 @@
     "prompt": "Activer les notifications push ? Nous vous préviendrons quand des candidatures et décisions arrivent.",
     "ask": "Me notifier",
     "decline": "Pas maintenant"
+  },
+  "analytics": {
+    "prompt": "Pouvons-nous mesurer comment vous utilisez Vaitu ? Cela nous aide à l'améliorer. Pas de publicité, et vos données ne sont pas vendues.",
+    "accept": "Autoriser",
+    "decline": "Non merci"
   }
 }

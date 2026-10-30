@@ -85,6 +85,14 @@ export const Preferences = {
                   isChecked: !entity.is_email_opted_out,
                   onChange: onEmails,
                 }),
+                // Withdrawn as easily as given: the same choice as the pill.
+                Switch.render({
+                  label: t("preferences.analytics"),
+                  description: t("preferences.analyticsDescription"),
+                  isChecked: api.getEntity("analytics")?.consent === "granted",
+                  onChange: (isOn) =>
+                    api.notify("#analytics:analyticsConsent", isOn),
+                }),
               ],
             })}
             ${ErrorAlert.render({

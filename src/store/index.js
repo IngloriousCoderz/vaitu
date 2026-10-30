@@ -4,6 +4,7 @@ import { Router, setRoutes } from "@inglorious/web/router"
 
 import { liveAlways, livePage, liveSession } from "../api/live.js"
 import { Shell } from "../app/shell.js"
+import { AnalyticsConsent } from "../common/analytics-consent/index.js"
 import { CountrySelect } from "../common/country-select/index.js"
 import { LanguageSelect } from "../common/language-select/index.js"
 import { Notifications } from "../common/notifications/index.js"
@@ -61,6 +62,7 @@ export const store = createStore({
     PwaUpdate,
     AppVersion,
     PushPrompt,
+    AnalyticsConsent,
     NotFound,
     Onboarding,
     Preferences,

@@ -376,7 +376,9 @@
     "app": "App",
     "language": "Language",
     "emails": "Email notifications",
-    "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent."
+    "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent.",
+    "analytics": "Usage statistics",
+    "analyticsDescription": "Lets us measure how you use the app, through Google Analytics. No ads."
   },
   "facts": {
     "spouses": "Spouses"
@@ -443,5 +445,10 @@
     "prompt": "Turn on push notifications? We will tell you when applications and decisions land.",
     "ask": "Notify me",
     "decline": "Not now"
+  },
+  "analytics": {
+    "prompt": "May we measure how you use Vaitu? It helps us make it better. No ads, and your data is not sold.",
+    "accept": "Allow",
+    "decline": "No thanks"
   }
 }

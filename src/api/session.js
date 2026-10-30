@@ -1,5 +1,5 @@
 import { isSignupConfirmation, supabase } from "./client.js"
-import { forgetPushToken } from "./push.js"
+import { push } from "./push.js"
 
 // Who is signed in, synchronously.
 //
@@ -84,7 +84,7 @@ export function clearUser() {
  * device over.
  */
 export async function endSession() {
-  await forgetPushToken().catch(() => {})
+  await push.unregister().catch(() => {})
   clearUser()
   await supabase.auth.signOut()
 }

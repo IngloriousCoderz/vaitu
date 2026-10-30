@@ -2,13 +2,20 @@ import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { Snackbar } from "@inglorious/ui/snackbar"
 
-import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-// The permission question, in the same pill and corner as the update bar.
-// `isStacked` lifts it above that pill while both are on screen.
-export const PushPromptBar = {
-  render({ isStacked = false, onAsk, onDecline }) {
+// A yes-or-no question in the same pill and corner as the update bar: the
+// analytics consent and the push permission. `isStacked` lifts it above that
+// pill while both are on screen.
+export const PromptBar = {
+  render({
+    message,
+    askLabel,
+    declineLabel,
+    isStacked = false,
+    onAsk,
+    onDecline,
+  }) {
     const className = [styles.bar, isStacked && styles.barStacked]
       .filter(Boolean)
       .join(" ")
@@ -16,21 +23,21 @@ export const PushPromptBar = {
       isOpen: true,
       position: "bottom-center",
       className,
-      message: t("push.prompt"),
+      message,
       action: Flex.render({
         direction: "row",
         align: "center",
         gap: "sm",
         children: [
           Button.render({
-            children: t("push.ask"),
+            children: askLabel,
             variant: "primary",
             shape: "pill",
             size: "sm",
             onClick: onAsk,
           }),
           Button.render({
-            children: t("push.decline"),
+            children: declineLabel,
             variant: "ghost",
             shape: "pill",
             size: "sm",

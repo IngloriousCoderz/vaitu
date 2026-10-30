@@ -130,4 +130,4 @@ notifications and close the tab. Then, as `seeker@vaitu.local` in another
 browser, apply to one of the sender's events. On Android, sign in as the
 sender with `pnpm mobile:android`, allow notifications and leave the app.
 
-Next: [Mobile](mobile.md).
+Next: [Analytics](analytics.md).

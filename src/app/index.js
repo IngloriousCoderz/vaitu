@@ -16,7 +16,7 @@ import { Logo } from "../common/logo/index.js"
 import { pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { NotificationsPanel } from "../common/notifications/template.js"
-import { PushPromptBar } from "../common/push-prompt/template.js"
+import { PromptBar } from "../common/prompt-bar/index.js"
 import { ReactivatedBar } from "../common/reactivated-bar/template.js"
 import { UpdateBar } from "../common/update-bar/template.js"
 import { NO_UNREAD, NOTIFICATION_BADGE_MAX } from "../constants/index.js"
@@ -94,6 +94,7 @@ export const App = {
     const shell = api.getEntity("shell")
     const pwaUpdate = api.getEntity("pwaUpdate")
     const pushPrompt = api.getEntity("pushPrompt")
+    const analytics = api.getEntity("analytics")
 
     // A native build below the platform's minimum gets the store screen and
     // nothing else: no chrome to reach the rest of the app through.
@@ -110,7 +111,9 @@ export const App = {
     const updatebar =
       this.renderUpdateBar(api, pwaUpdate) ||
       this.renderReactivatedBar(api, shell)
-    const pushPromptBar = this.renderPushPrompt(api, pushPrompt, pwaUpdate)
+    const pushPromptBar =
+      this.renderAnalyticsPrompt(api, analytics, pwaUpdate) ||
+      this.renderPushPrompt(api, pushPrompt, pwaUpdate)
 
     return this.renderShell({
       appBar: when(showWide, () => this.renderAppBar(api, router.route)),
@@ -159,11 +162,28 @@ export const App = {
     })
   },
 
+  // The usage-statistics question, in the push pill's place and before it:
+  // one question at a time, the visitor's own first.
+  renderAnalyticsPrompt(api, analytics, pwaUpdate) {
+    if (!analytics?.isAsking) return ""
+    return PromptBar.render({
+      message: t("analytics.prompt"),
+      askLabel: t("analytics.accept"),
+      declineLabel: t("analytics.decline"),
+      isStacked: Boolean(pwaUpdate?.isUpdateReady),
+      onAsk: () => api.notify("#analytics:analyticsConsent", true),
+      onDecline: () => api.notify("#analytics:analyticsConsent", false),
+    })
+  },
+
   // The question before the browser's notification permission dialog, above
   // the update pill when both are up.
   renderPushPrompt(api, pushPrompt, pwaUpdate) {
     if (!pushPrompt?.isOpen) return ""
-    return PushPromptBar.render({
+    return PromptBar.render({
+      message: t("push.prompt"),
+      askLabel: t("push.ask"),
+      declineLabel: t("push.decline"),
       isStacked: Boolean(pwaUpdate?.isUpdateReady),
       onAsk: () => api.notify("#pushPrompt:pushAsk"),
       onDecline: () => api.notify("#pushPrompt:pushDecline"),

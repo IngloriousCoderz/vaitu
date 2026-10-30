@@ -8,8 +8,6 @@ vi.mock("../../api/push.js", () => ({
     register: vi.fn(async () => {}),
   },
 }))
-// No DOM environment here: the pill itself is exercised live.
-vi.mock("./template.js", () => ({ PushPromptBar: {} }))
 
 import { createStore } from "@inglorious/store"
 

@@ -166,6 +166,9 @@ importers:
 
   .:
     dependencies:
+      '@capacitor-firebase/analytics':
+        specifier: ^8.5.2
+        version: 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
       '@capacitor-firebase/messaging':
         specifier: ^8.5.2
         version: 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
@@ -181,12 +184,15 @@ importers:
       '@iconify-icons/material-symbols':
         specifier: ^2.0.8
         version: 2.0.8
+      '@inglorious/firebase':
+        specifier: ^0.1.0
+        version: 0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)
       '@inglorious/i18n':
         specifier: ^1.3.0
         version: 1.3.0(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.18
-        version: 9.0.18(@inglorious/web@6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
+        version: 9.0.18(@inglorious/web@6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
       '@inglorious/store':
         specifier: ^12.1.1
         version: 12.1.1(@inglorious/utils@5.1.0)
@@ -195,13 +201,13 @@ importers:
         version: 0.1.0(@supabase/supabase-js@2.118.0)
       '@inglorious/ui':
         specifier: ^9.8.0
-        version: 9.8.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
+        version: 9.8.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
       '@inglorious/utils':
         specifier: ^5.1.0
         version: 5.1.0
       '@inglorious/web':
-        specifier: ^6.12.0
-        version: 6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+        specifier: ^6.13.0
+        version: 6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
       '@supabase/supabase-js':
         specifier: ^2.118.0
         version: 2.118.0
@@ -808,6 +814,15 @@ packages:
   '@canvas/image-data@1.1.0':
     resolution: {integrity: sha512-QdObRRjRbcXGmM1tmJ+MrHcaz1MftF2+W7YI+MsphnsCrmtyfS0d5qJbk0MeSbUeyM/jCb0hmnkXPsy026L7dA==}
 
+  '@capacitor-firebase/analytics@8.5.2':
+    resolution: {integrity: sha512-r+XW5o3zIq8BP5Xj+lcR9KGtORcHM3X/oZugAa7weLo6JqWmjqe6u+6ulpfFfgPAXv1aOzHVXSbEz1sRPuwCTg==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
+      firebase: ^12.6.0
+    peerDependenciesMeta:
+      firebase:
+        optional: true
+
   '@capacitor-firebase/messaging@8.5.2':
     resolution: {integrity: sha512-6EFxNeU/9teXdlQMmlHdjVqAMq+rr2po8oxLflvGuA6Xy+LPKbKccvamShXnTLjGO30beD6YmERNv5k9SxeGvg==}
     peerDependencies:
@@ -1342,6 +1357,20 @@ packages:
       eslint-plugin-tailwindcss:
         optional: true
 
+  '@inglorious/firebase@0.1.0':
+    resolution: {integrity: sha512-vqe76K886FJGJkZTx2kce9tDMSZ3G8iHF3jYjlZFjgWzLUUs09K+HT+yQZvMFUMmVW0K5V2flC1kV2J4n+6a/w==}
+    engines: {node: '>= 22'}
+    peerDependencies:
+      '@capacitor-firebase/analytics': ^8.5.2
+      '@capacitor-firebase/messaging': ^8.5.2
+      '@capacitor/core': ^8.0.0
+      firebase: ^12.6.0
+    peerDependenciesMeta:
+      '@capacitor-firebase/analytics':
+        optional: true
+      '@capacitor-firebase/messaging':
+        optional: true
+
   '@inglorious/i18n@1.3.0':
     resolution: {integrity: sha512-9ALyUKylpl4NDAY8RqBZ7keRNYOc8c2vaZTAmtYjq/IO2nLrrnLtW/BPGzcXWpkAXx72C/7y048WP6A69Lq2PQ==}
     engines: {node: '>= 22'}
@@ -1382,8 +1411,8 @@ packages:
     peerDependencies:
       vite: ^7.1.3 || ^8.0.0
 
-  '@inglorious/web@6.12.0':
-    resolution: {integrity: sha512-iWrNF0JvhD5rOchqw3YY6PFoCr+yAsPUJuNpJ7x6VtO41w7XcIEk0eCK9uanM+gj4J4zZVhwML/Hq044fkirZA==}
+  '@inglorious/web@6.13.0':
+    resolution: {integrity: sha512-dsJqtL8P608kcdf6yYjaCbjORuCiceilwNLopG4CPYEB6rnvHHW3zz/iyqgCI4R75D8Z0UbR/PUd8O5nnBjAbA==}
     engines: {node: '>= 26'}
     peerDependencies:
       '@inglorious/store': ^12.1.1
@@ -4863,6 +4892,12 @@ snapshots:
 
   '@canvas/image-data@1.1.0': {}
 
+  '@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
+    optionalDependencies:
+      firebase: 12.19.0
+
   '@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)':
     dependencies:
       '@capacitor/core': 8.6.0
@@ -5461,15 +5496,23 @@ snapshots:
       eslint-plugin-simple-import-sort: 14.0.0(eslint@10.13.0(jiti@2.7.0))
       globals: 17.13.0
 
+  '@inglorious/firebase@0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)':
+    dependencies:
+      '@capacitor/core': 8.6.0
+      firebase: 12.19.0
+    optionalDependencies:
+      '@capacitor-firebase/analytics': 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
+      '@capacitor-firebase/messaging': 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
+
   '@inglorious/i18n@1.3.0(typescript@7.0.2)':
     dependencies:
       i18next: 26.5.11(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
-  '@inglorious/motion@9.0.18(@inglorious/web@6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
+  '@inglorious/motion@9.0.18(@inglorious/web@6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
     dependencies:
-      '@inglorious/web': 6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
 
   '@inglorious/store@12.1.1(@inglorious/utils@5.1.0)':
     dependencies:
@@ -5480,11 +5523,11 @@ snapshots:
     dependencies:
       '@supabase/supabase-js': 2.118.0
 
-  '@inglorious/ui@9.8.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
+  '@inglorious/ui@9.8.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0
-      '@inglorious/web': 6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
 
   '@inglorious/utils@5.1.0': {}
 
@@ -5494,7 +5537,7 @@ snapshots:
       magic-string: 1.4.5
       vite: 8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
 
-  '@inglorious/web@6.12.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))':
+  '@inglorious/web@6.13.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0

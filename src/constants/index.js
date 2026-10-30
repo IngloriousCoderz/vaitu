@@ -17,6 +17,8 @@ export const REQUEST_TIMEOUT_MS = 15000
 export const PUSH_DECLINE_KEY = "vaitu-push-declined"
 // The FCM token this device filed, so the sign-out can delete its row.
 export const PUSH_TOKEN_KEY = "vaitu-push-token"
+// The answer to the usage-statistics question: "granted" or "denied".
+export const ANALYTICS_CONSENT_KEY = "vaitu-analytics-consent"
 export const MIN_PASSWORD_LENGTH = 6
 export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5

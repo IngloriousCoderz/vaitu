@@ -28,6 +28,11 @@
             android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Usage statistics only once the user agreed: Analytics starts off,
+             and the app turns it on (src/common/analytics-consent/). -->
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
     </application>
 
     <!-- Permissions -->
