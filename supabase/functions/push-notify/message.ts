@@ -53,6 +53,11 @@ function line(item: FeedItem, locale: Locale) {
       return fill(lines.applicationSelected, { title })
     case "application_rejected":
       return fill(lines.applicationRejected, { title })
+    case "application_withdrawn":
+      return fill(lines.applicationWithdrawn, {
+        name: item.applicant_name ?? "",
+        title,
+      })
     case "event_closed":
       return fill(lines.eventClosed, { title })
     default:
@@ -65,7 +70,10 @@ function fill(line: string, values: Record<string, string>) {
 }
 
 function destination(item: FeedItem) {
-  if (item.type === "application_received") {
+  if (
+    item.type === "application_received" ||
+    item.type === "application_withdrawn"
+  ) {
     if (!item.event_id) return "/events"
     return item.event_status === "open"
       ? `/events/${item.event_id}/applications`

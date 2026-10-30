@@ -53,10 +53,18 @@ const screens = [
   {
     name: "applications received",
     type: ApplicationsReceived,
-    keys: (id) => [id],
+    keys: (id) => [`${id}:applications`, `${id}:events`],
   },
-  { name: "application list", type: ApplicationList, keys: (id) => [id] },
-  { name: "application detail", type: ApplicationDetail, keys: (id) => [id] },
+  {
+    name: "application list",
+    type: ApplicationList,
+    keys: (id) => [`${id}:applications`, `${id}:events`],
+  },
+  {
+    name: "application detail",
+    type: ApplicationDetail,
+    keys: (id) => [`${id}:applications`, `${id}:events`],
+  },
 ]
 
 const api = {

@@ -12,6 +12,7 @@ const TYPES = [
   "application_received",
   "application_selected",
   "application_rejected",
+  "application_withdrawn",
   "event_updated",
   "event_closed",
 ]
@@ -58,17 +59,17 @@ describe("messageFor", () => {
   it("fills the recipient's language", () => {
     expect(messageFor(notification(), "it")).toEqual({
       title: "Vaitu",
-      body: "Carla ha fatto candidatura per Ada & Ben",
+      body: "Carla ha inviato una candidatura per Ada & Ben!",
       url: "/events/e1/applications",
     })
   })
 
   it("falls back to English for a language it has no lines in", () => {
     expect(messageFor(notification(), "de").body).toBe(
-      "Carla applied to Ada & Ben",
+      "Carla applied to Ada & Ben!",
     )
     expect(messageFor(notification(), null).body).toBe(
-      "Carla applied to Ada & Ben",
+      "Carla applied to Ada & Ben!",
     )
   })
 })

@@ -1,6 +1,7 @@
 import eventOutline from "@iconify-icons/material-symbols/event-outline"
 import markEmailReadOutline from "@iconify-icons/material-symbols/mark-email-read-outline"
 import notificationsActiveOutline from "@iconify-icons/material-symbols/notifications-active-outline"
+import personCancelOutline from "@iconify-icons/material-symbols/person-cancel-outline"
 import personCheckOutline from "@iconify-icons/material-symbols/person-check-outline"
 import personRemoveOutline from "@iconify-icons/material-symbols/person-remove-outline"
 import { Drawer } from "@inglorious/ui/drawer"
@@ -22,6 +23,7 @@ const INBOX_ICONS = {
   application_received: notificationsActiveOutline,
   application_selected: personCheckOutline,
   application_rejected: personRemoveOutline,
+  application_withdrawn: personCancelOutline,
   event_updated: eventOutline,
   event_closed: eventOutline,
 }
@@ -202,6 +204,11 @@ function feedLine(item) {
       return t("notifications.types.applicationSelected", { title })
     case "application_rejected":
       return t("notifications.types.applicationRejected", { title })
+    case "application_withdrawn":
+      return t("notifications.types.applicationWithdrawn", {
+        name: item.applicant_name ?? "",
+        title,
+      })
     case "event_closed":
       return t("notifications.types.eventClosed", { title })
     default:

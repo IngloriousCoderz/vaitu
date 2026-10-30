@@ -836,12 +836,17 @@ create table public.notifications (
       'application_received',
       'application_selected',
       'application_rejected',
+      'application_withdrawn',
       'event_updated',
       'event_closed'
     )
   ),
   event_id uuid references public.events (id) on delete cascade,
   application_id uuid references public.applications (id) on delete cascade,
+  -- Who withdrew, as they were named then: the application the feed would
+  -- read the name through is gone, and with it the sender's right to read
+  -- the applicant's profile.
+  applicant_name text,
   is_read boolean not null default false,
   created_at timestamptz not null default now(),
   -- Exactly-once claim for push-notify: null -> now() under READ COMMITTED.
@@ -880,7 +885,8 @@ create or replace function public.notify_user(
   p_user uuid,
   p_type text,
   p_event uuid default null,
-  p_application uuid default null
+  p_application uuid default null,
+  p_applicant_name text default null
 )
 returns void
 language plpgsql
@@ -894,8 +900,9 @@ begin
     select 1 from public.profiles
     where id = p_user and is_active
   ) then return; end if;
-  insert into public.notifications (user_id, type, event_id, application_id)
-  values (p_user, p_type, p_event, p_application);
+  insert into public.notifications
+    (user_id, type, event_id, application_id, applicant_name)
+  values (p_user, p_type, p_event, p_application, p_applicant_name);
 end;
 $$;
 
@@ -951,6 +958,39 @@ create trigger trg_application_decided
   when (old.status is distinct from new.status
         and new.status in ('selected', 'rejected'))
   execute function public.vaitu_on_application_decided();
+
+-- The applicant withdrew: the event's sender learns of it. Only when they
+-- withdrew it themselves: deleting the event takes its applications with it
+-- as the sender, and deactivating an account does so as the service role,
+-- and neither is news to tell the sender.
+create or replace function public.vaitu_on_application_withdrawn()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is distinct from old.applicant_id then
+    return old;
+  end if;
+  perform public.notify_user(
+    (
+      select sender_id from public.events where id = old.event_id
+    ),
+    'application_withdrawn',
+    old.event_id,
+    null,
+    (
+      select full_name from public.profiles where id = old.applicant_id
+    )
+  );
+  return old;
+end;
+$$;
+
+create trigger trg_application_withdrawn
+  after delete on public.applications
+  for each row execute function public.vaitu_on_application_withdrawn();
 
 -- The event changed shape (edits, or closed for good): the applicants with a
 -- live application learn of it. Column-listed so a mere touch never notifies.

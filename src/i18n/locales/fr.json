@@ -447,10 +447,11 @@
     "markAll": "Tout marquer comme lu",
     "unreadAria": "{{count}} notifications non lues",
     "types": {
-      "applicationReceived": "{{name}} a postulé à {{title}}",
-      "applicationSelected": "Vous avez été retenu pour {{title}}",
-      "applicationRejected": "Vous n'avez pas été retenu pour {{title}}",
-      "eventUpdated": "{{title}} a été mis à jour",
+      "applicationReceived": "{{name}} a postulé à {{title}} !",
+      "applicationSelected": "Bonne nouvelle : vous avez été retenu pour {{title}} !",
+      "applicationRejected": "Cette fois, vous n'avez pas été retenu pour {{title}}",
+      "applicationWithdrawn": "{{name}} a retiré sa candidature à {{title}}",
+      "eventUpdated": "{{title}} a été mis à jour !",
       "eventClosed": "{{title}} a été clôturé"
     }
   },

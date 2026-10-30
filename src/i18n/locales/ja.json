@@ -424,10 +424,11 @@
     "markAll": "すべて既読にする",
     "unreadAria": "未読の通知が{{count}}件あります",
     "types": {
-      "applicationReceived": "{{name}}さんが「{{title}}」に応募しました",
-      "applicationSelected": "「{{title}}」に選ばれました",
-      "applicationRejected": "「{{title}}」は選外でした",
-      "eventUpdated": "「{{title}}」に更新があります",
+      "applicationReceived": "{{name}}さんが「{{title}}」に応募しました！",
+      "applicationSelected": "おめでとうございます！「{{title}}」に選ばれました！",
+      "applicationRejected": "今回は「{{title}}」は選外となりました",
+      "applicationWithdrawn": "{{name}}さんが「{{title}}」への応募を取り下げました",
+      "eventUpdated": "「{{title}}」に更新があります！",
       "eventClosed": "「{{title}}」は締め切られました"
     }
   },

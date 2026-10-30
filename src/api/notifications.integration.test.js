@@ -244,3 +244,60 @@ describe("notifications feed", () => {
     TEST_TIMEOUT_MS,
   )
 })
+
+// The application is gone by the time the owner reads the row, so the row
+// carries the name itself. The cleanup deletes the event with an application
+// still on it: that delete is the owner's, and must not read as a withdrawal.
+describe("withdrawal notification", () => {
+  let eventId = null
+
+  beforeAll(async () => {
+    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+  }, TEST_TIMEOUT_MS)
+
+  afterAll(async () => {
+    await signOut()
+    if (eventId) await deleteOwnedEvent(eventId)
+  })
+
+  test(
+    "withdrawing tells the event's owner who withdrew",
+    async () => {
+      await signIn(SENDER)
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      const apply = () =>
+        supabase
+          .from("applications")
+          .insert({
+            event_id: eventId,
+            applicant_id: user.id,
+            motivation: MOTIVATION,
+          })
+          .select("id")
+          .single()
+      const { data: withdrawn, error: applyError } = await apply()
+      if (applyError) throw applyError
+      const { error: withdrawError } = await supabase
+        .from("applications")
+        .delete()
+        .eq("id", withdrawn.id)
+      if (withdrawError) throw withdrawError
+      // Applied again, so the cleanup deletes an event with an application.
+      const { error: reapplyError } = await apply()
+      if (reapplyError) throw reapplyError
+
+      await signIn(SEEKER)
+      const items = await fetchMyNotifications()
+      const row = items.find(
+        (item) =>
+          item.type === "application_withdrawn" && item.event_id === eventId,
+      )
+      expect(row).toBeTruthy()
+      expect(row.application_id).toBeNull()
+      expect(row.applicant_name).toBeTruthy()
+    },
+    TEST_TIMEOUT_MS,
+  )
+})

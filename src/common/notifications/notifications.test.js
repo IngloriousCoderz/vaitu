@@ -266,6 +266,15 @@ describe("pathFor", () => {
     expect(pathFor(notification({ event_status: "closed" }))).toBe("/events/e1")
   })
 
+  // The application is gone, so the sender lands where it used to be listed.
+  it("a withdrawal visits the event's received applications", () => {
+    const withdrawn = { type: "application_withdrawn", application_id: null }
+    expect(pathFor(notification(withdrawn))).toBe("/events/e1/applications")
+    expect(
+      pathFor(notification({ ...withdrawn, event_status: "closed" })),
+    ).toBe("/events/e1")
+  })
+
   it("a decided application visits the application detail", () => {
     expect(pathFor(notification({ type: "application_selected" }))).toBe(
       "/applications/a1",

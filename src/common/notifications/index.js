@@ -103,7 +103,10 @@ const viewportWatchers = new Map()
 // detail, everything else about an event to the event. A push lands on the
 // same screen: supabase/functions/push-notify/message.ts keeps a copy.
 export function pathFor(item) {
-  if (item.type === "application_received") {
+  if (
+    item.type === "application_received" ||
+    item.type === "application_withdrawn"
+  ) {
     return item.event_status === "open" && item.event_id
       ? paths.receivedApplications(item.event_id)
       : item.event_id

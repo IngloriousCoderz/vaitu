@@ -447,10 +447,11 @@
     "markAll": "Segna tutto come letto",
     "unreadAria": "{{count}} notifiche non lette",
     "types": {
-      "applicationReceived": "{{name}} ha fatto candidatura per {{title}}",
-      "applicationSelected": "Sei stato selezionato per {{title}}",
-      "applicationRejected": "Non sei stato selezionato per {{title}}",
-      "eventUpdated": "{{title}} è stato aggiornato",
+      "applicationReceived": "{{name}} ha inviato una candidatura per {{title}}!",
+      "applicationSelected": "Ottime notizie: sei stato selezionato per {{title}}!",
+      "applicationRejected": "Questa volta non sei stato selezionato per {{title}}",
+      "applicationWithdrawn": "{{name}} ha ritirato la candidatura per {{title}}",
+      "eventUpdated": "{{title}} è stato aggiornato!",
       "eventClosed": "{{title}} è stato chiuso"
     }
   },

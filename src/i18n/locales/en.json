@@ -435,10 +435,11 @@
     "markAll": "Mark all read",
     "unreadAria": "{{count}} unread notifications",
     "types": {
-      "applicationReceived": "{{name}} applied to {{title}}",
-      "applicationSelected": "You were selected for {{title}}",
-      "applicationRejected": "You were not selected for {{title}}",
-      "eventUpdated": "{{title}} has updates",
+      "applicationReceived": "{{name}} applied to {{title}}!",
+      "applicationSelected": "Great news: you were selected for {{title}}!",
+      "applicationRejected": "You were not selected for {{title}} this time",
+      "applicationWithdrawn": "{{name}} withdrew their application to {{title}}",
+      "eventUpdated": "{{title}} has updates!",
       "eventClosed": "{{title}} was closed"
     }
   },

@@ -477,10 +477,11 @@
     "markAll": "وضع الكل كمقروء",
     "unreadAria": "{{count}} إشعارات غير مقروءة",
     "types": {
-      "applicationReceived": "قدّم {{name}} ترشّحه إلى {{title}}",
-      "applicationSelected": "لقد اخترتك لـ {{title}}",
-      "applicationRejected": "لم يتم اختيارك لـ {{title}}",
-      "eventUpdated": "طرأ تحديثات على {{title}}",
+      "applicationReceived": "قدّم {{name}} ترشّحه إلى {{title}}!",
+      "applicationSelected": "أخبار رائعة: تم اختيارك لـ {{title}}!",
+      "applicationRejected": "لم يتم اختيارك لـ {{title}} هذه المرة",
+      "applicationWithdrawn": "سحب {{name}} ترشّحه من {{title}}",
+      "eventUpdated": "طرأت تحديثات على {{title}}!",
       "eventClosed": "أُغلق {{title}}"
     }
   },

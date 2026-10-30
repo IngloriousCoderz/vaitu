@@ -13,7 +13,7 @@ export async function fetchMyNotifications() {
   const { data, error } = await supabase
     .from("notifications")
     .select(
-      "id, type, is_read, created_at, event_id, application_id, events(id, title, status, category), applications(applicant:profiles!applications_applicant_id_fkey(full_name))",
+      "id, type, is_read, created_at, event_id, application_id, applicant_name, events(id, title, status, category), applications(applicant:profiles!applications_applicant_id_fkey(full_name))",
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
@@ -29,7 +29,9 @@ export async function fetchMyNotifications() {
     application_id: row.application_id,
     event_title: row.events?.title ?? null,
     event_status: row.events?.status ?? null,
-    applicant_name: row.applications?.applicant?.full_name ?? null,
+    // A withdrawal's application is gone, so its row keeps the name itself.
+    applicant_name:
+      row.applications?.applicant?.full_name ?? row.applicant_name ?? null,
   }))
 }
 

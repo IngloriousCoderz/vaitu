@@ -19,25 +19,31 @@ export function realtimeColumn(change, column) {
 export function activateRealtime(key, { table, event, payload, match }, api) {
   deactivateRealtime(key)
   const channel = supabase.channel(channelName(key))
-  channel
-    .on(
-      "postgres_changes",
-      {
-        event: "*",
-        schema: "public",
-        table,
-      },
-      (change) => {
-        const state = api.getEntities()
-        if (!readUserId()) return
-        if (match && !match(change, state)) return
-        api.notify(
-          event,
-          typeof payload === "function" ? payload(state) : payload,
-        )
-      },
-    )
-    .subscribe()
+  channel.on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table,
+    },
+    (change) => {
+      const state = api.getEntities()
+      if (!readUserId()) return
+      if (match && !match(change, state)) return
+      api.notify(
+        event,
+        typeof payload === "function" ? payload(state) : payload,
+      )
+    },
+  )
+  // Not before the saved session is restored: a channel that joins while it
+  // is, as every page's create() does at boot, joins as anon and stays so,
+  // since handing it the same token later changes nothing. Such a channel
+  // still gets deletes, which skip RLS, and nothing else. Skipped if the
+  // channel was deactivated in the meantime.
+  void supabase.auth.getSession().then(() => {
+    if (supabase.getChannels().includes(channel)) channel.subscribe()
+  })
 }
 
 export function deactivateRealtime(key) {
