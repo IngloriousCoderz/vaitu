@@ -4,8 +4,6 @@ import { SEEKER, SENDER, signIn, signOut } from "../testing/index.js"
 import { supabase } from "./client.js"
 import { deletePushToken, savePushToken } from "./push.js"
 
-// An FCM token in shape only. FCM never sees it: these tests only file it,
-// and no notification is created along the way.
 const token = `vitest-${crypto.randomUUID()}`
 
 async function ownTokens() {
@@ -29,13 +27,10 @@ describe("push tokens", () => {
     await savePushToken(token, "web")
     expect(await ownTokens()).toEqual([{ token, platform: "web" }])
 
-    // Filing it again, as every sign-in does, changes nothing.
     await savePushToken(token, "web")
     expect(await ownTokens()).toHaveLength(1)
   })
 
-  // The seeker's sign-out never reached the server: the next user of the
-  // device takes the token over, and the seeker stops getting pushes there.
   test("the next user of the device takes it over", async () => {
     await signIn(SENDER)
     await savePushToken(token, "web")

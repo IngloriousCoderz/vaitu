@@ -1,10 +1,5 @@
 import { labelled } from "../i18n/index.js"
 
-// Taxonomy for events: the values the backend accepts, paired with the labels
-// the UI shows. Data rather than validation — the validators in src/validation
-// read their enums from these lists, and the filters and cards read them too,
-// so adding a value touches one place.
-
 export const weddingStyles = [
   labelled("taxonomy.style.editorial", { value: "editorial" }),
   labelled("taxonomy.style.documentary", { value: "documentary" }),

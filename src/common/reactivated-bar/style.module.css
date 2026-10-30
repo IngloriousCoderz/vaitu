@@ -1,6 +1,3 @@
-/* The update bar's light pill (see ../update-bar), but the message is a
-   sentence, not a label: it wraps at every width, held to a readable measure. */
-
 .bar :global(.iw-snackbar-content) {
   gap: var(--iw-space-4);
   max-width: 36rem;

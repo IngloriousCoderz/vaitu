@@ -9,17 +9,12 @@ import { VitePWA } from "vite-plugin-pwa"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     VitePWA({
       injectRegister: false,
-      // The worker waits for the SKIP_WAITING message regardless: the plugin
-      // only auto-installs skipWaiting for the register script it injects,
-      // which this app does not use, and `src/pwa.js` hands the registration
-      // to `watchPwaUpdate` from `@inglorious/web/pwa`, which sends it.
-      // Naming that truthfully also keeps the register module from adding a
-      // second, competing reload on activation.
+      // "prompt" on purpose: watchPwaUpdate sends SKIP_WAITING itself, and the
+      // plugin's own register script would add a second, competing reload.
       registerType: "prompt",
       pwaAssets: {
         config: true,

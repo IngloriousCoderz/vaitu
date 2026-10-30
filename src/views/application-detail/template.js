@@ -148,7 +148,6 @@ export const ApplicationDetail = {
                   ${ConfirmDialog.render({
                     id: "withdraw-confirm",
                     isOpen: entity.isConfirmingWithdraw,
-                    // The winner's withdrawal reopens the event.
                     message:
                       application.applicationStatus === "selected"
                         ? t("application.withdrawWinnerConfirm")

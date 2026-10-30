@@ -4,8 +4,6 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 import { translated } from "../../i18n/index.js"
 import { RevealToggle } from "./reveal-toggle.js"
 
-// A password input with its reveal toggle, shared by login and signup so their
-// password fields cannot drift apart. `field` names the form value it edits.
 export const PasswordField = {
   render({
     id,
@@ -30,9 +28,6 @@ export const PasswordField = {
       error: translated(getFieldError(entity, field)),
       onChange: (value) => onField({ field, value }),
       autocomplete,
-      // The reveal button lives in the field's own trailing slot rather than
-      // floating over it in a wrapper, which is what stopped the input from
-      // taking the full width of the row.
       iconAfter: RevealToggle.render({
         isPasswordVisible: isVisible,
         inputId: id,

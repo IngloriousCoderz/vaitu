@@ -403,7 +403,6 @@ export const Profile = {
     })
   },
 
-  // Soft-deactivate: data stays for re-engagement; signing in again restores.
   renderDeactivateAccount({ entity, onDeactivateCancel, onDeactivate }) {
     return ConfirmDialog.render({
       id: "deactivate-account-confirm",

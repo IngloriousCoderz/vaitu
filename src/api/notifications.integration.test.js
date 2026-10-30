@@ -19,10 +19,6 @@ import {
 const MOTIVATION = "Available the whole weekend"
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 
-/* The triggers write through notify_user, so the feed's rows are asserted as
-   real database effects of the flows everyone else already runs: apply, choose,
-   reject, edit. The event is deleted at the end, and the cascade takes every
-   notification created along the way with it. */
 describe("notifications feed", () => {
   let eventId = null
   let applicationId = null
@@ -56,8 +52,6 @@ describe("notifications feed", () => {
     async () => {
       await signIn(SEEKER)
       const items = await fetchMyNotifications()
-      // Other suites run against the same fixtures right now, so the row is
-      // found by event, not by type alone.
       const received = items.find(
         (item) =>
           item.type === "application_received" && item.event_id === eventId,
@@ -82,8 +76,6 @@ describe("notifications feed", () => {
         .from("notifications")
         .select("id, user_id")
       expect(error).toBeNull()
-      // RLS answers with this user's rows only: the owner's received-row about
-      // this very application must not appear in the applicant's feed.
       expect(data.every((row) => row.user_id === user.id)).toBe(true)
       expect(data.some((row) => row.type === "application_received")).toBe(
         false,
@@ -101,8 +93,6 @@ describe("notifications feed", () => {
         .update({ status: "shortlisted" })
         .eq("id", applicationId)
       if (shortlistError) throw shortlistError
-      // The house writes `selected` only through assign_winner (it sets the
-      // `vaitu.assigning` flag the trigger enforces).
       const { error: winnerError } = await supabase.rpc("assign_winner", {
         p_event_id: eventId,
         p_application_id: applicationId,
@@ -123,9 +113,6 @@ describe("notifications feed", () => {
     async () => {
       await signIn(SENDER)
       const before = await fetchMyNotifications()
-      // Other suites apply to the shared fixture accounts right now, so the
-      // feed's aggregate unread counts move under our feet; the assertion
-      // stays row-scoped, which no parallel writer can touch.
       const unreadRows = before.filter((item) => !item.is_read)
       expect(unreadRows.length).toBeGreaterThan(0)
 
@@ -146,9 +133,6 @@ describe("notifications feed", () => {
       const before = await fetchMyNotifications()
       expect(before.length).toBeGreaterThan(0)
 
-      // Other suites apply to the shared fixtures right now: the feed's
-      // aggregate unread counts move under our feet, so this case arms (or
-      // merely counts) and then stays row-scoped.
       const armed = before.find((item) => item.is_read)
       if (armed) {
         const { error: armError } = await supabase
@@ -158,7 +142,6 @@ describe("notifications feed", () => {
         expect(armError).toBeNull()
       }
 
-      // Either an armed row or an already-unread one: at least one target.
       const updated = await markAllNotificationsRead()
       expect(updated.length).toBeGreaterThanOrEqual(1)
 
@@ -180,8 +163,6 @@ describe("notifications feed", () => {
       const [item] = await fetchMyNotifications()
       expect(item).toBeTruthy()
 
-      // pushed_at is push-notify's exactly-once claim: a client stamping it
-      // would silence the push.
       const { error } = await supabase
         .from("notifications")
         .update({ pushed_at: new Date().toISOString() })
@@ -245,9 +226,6 @@ describe("notifications feed", () => {
   )
 })
 
-// The application is gone by the time the owner reads the row, so the row
-// carries the name itself. The cleanup deletes the event with an application
-// still on it: that delete is the owner's, and must not read as a withdrawal.
 describe("withdrawal notification", () => {
   let eventId = null
 
@@ -284,7 +262,6 @@ describe("withdrawal notification", () => {
         .delete()
         .eq("id", withdrawn.id)
       if (withdrawError) throw withdrawError
-      // Applied again, so the cleanup deletes an event with an application.
       const { error: reapplyError } = await apply()
       if (reapplyError) throw reapplyError
 

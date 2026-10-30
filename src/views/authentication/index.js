@@ -32,7 +32,6 @@ export const Authentication = {
     entity.error ??= null
   },
 
-  // The route is what opens this page, exactly as it does for every other one.
   routeChange(entity, payload) {
     if (payload.route !== entity.id) return
     open(entity)
@@ -67,9 +66,6 @@ export const Authentication = {
   },
 }
 
-// After the visibility toggle re-renders (type password<->text resets the
-// cursor to 0), put focus back at the end of that same field so typing can
-// continue. "Cursor" = the blinking text-insertion point.
 function restoreCursor(inputId) {
   requestAnimationFrame(() => {
     const el = document.getElementById(inputId)
@@ -79,9 +75,6 @@ function restoreCursor(inputId) {
   })
 }
 
-// Entering the sign-in route starts the form over, every time. Without this the
-// step survives from whoever was here last: sign in, sign out, come back, and you
-// land on the password screen with the previous address still filled in.
 function open(entity) {
   entity.step = "email"
   entity.mode = "login"

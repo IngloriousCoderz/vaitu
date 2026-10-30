@@ -10,9 +10,6 @@ import { html } from "@inglorious/web"
 import { labelled } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-// Tab labels are short forms of their own: five share one bar's width, and
-// about nine characters fit a tab on a 360px phone before the label truncates.
-// The drawer and the page titles keep the long ones, where there is room.
 const tabs = [
   labelled("nav.tabs.events", { value: "events", icon: eventOutline }),
   labelled("nav.tabs.applications", {
@@ -30,8 +27,6 @@ const tabs = [
   labelled("nav.tabs.profile", { value: "profile", icon: personOutline }),
 ]
 
-// Shared bottom tab bar. Stays mounted at App level so hide/show animates
-// via CSS instead of remounting per page.
 export const TabBar = {
   render({ value, isHidden = false, onNavigate }) {
     return html`

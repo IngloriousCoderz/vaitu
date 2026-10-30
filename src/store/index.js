@@ -39,7 +39,6 @@ export const store = createStore({
     Shell,
     I18n,
     Authentication,
-    // Live: each reloads when a table it reads changes (src/api/live.js).
     EventList: [EventList, liveAlways(["events", "applications"])],
     MyEvents: [MyEvents, livePage(["events", "applications"])],
     EventDetail: [EventDetail, livePage(["events"], (e) => e.event_id)],

@@ -1,11 +1,3 @@
-/* One sticky group: search and the row of filters that are on. They are
-   wrapped in a single element rather than each being sticky individually —
-   siblings with independent `top` offsets would stack on
-   top of each other instead of travelling together as one bar.
-
-   The negative inline margin cancels the page's gutter so the background
-   spans the full column. Without it the list would scroll visibly through the
-   gutters either side of the pinned group. */
 .stickyTop {
   position: sticky;
   top: 0;
@@ -35,7 +27,6 @@
   margin-inline-start: auto;
 }
 
-/* Same CountrySelect combobox, label beside the control. */
 .orderBy :global(.iw-combobox) {
   flex-direction: row;
   align-items: center;
@@ -87,12 +78,10 @@
   cursor: pointer;
 }
 
-/* Clear sits on the chips' centre line, after the last one. */
 .activeRow {
   align-items: center;
 }
 
-/* The chip's own label carries the ×, so the whole chip is the target. */
 .chipRemove {
   margin-inline-start: var(--iw-space-1);
   opacity: 0.8;
@@ -102,7 +91,6 @@ button:global(.iw-button).clearAll {
   flex-shrink: 0;
 }
 
-/* Anchors the count to the button's top end, as the bell does its badge. */
 .filterButton {
   position: relative;
   display: inline-flex;
@@ -127,15 +115,11 @@ button:global(.iw-button).clearAll {
   pointer-events: none;
 }
 
-/* Muted like every icon button until a filter is on, which is worth
-   showing. The secondary colour is set at (0,2,1) in public/style.css, so
-   this has to outrank it. */
 button:global(.iw-button.iw-button-secondary).filterActive {
   --iw-button-bg: var(--vchip-active-bg);
   --iw-button-color: var(--vchip-active-bg);
 }
 
-/* The dialog's title, with the way to the preferences beside it. */
 .dialogTitle {
   display: flex;
   align-items: center;
@@ -149,8 +133,6 @@ button:global(.iw-button.iw-button-secondary).filterActive {
   margin: 0.875rem 0 0;
 }
 
-/* Where the next page loads from: in view, it asks for it. Tall enough to
-   hold the loading line, so the page does not jump when it shows. */
 .listEnd {
   min-height: var(--iw-space-12);
   text-align: center;
@@ -163,9 +145,6 @@ button:global(.iw-button.iw-button-secondary).filterActive {
   padding-bottom: var(--vfab-clearance);
 }
 
-/* The same order everywhere: search, then the filters that are on. A wide
-   screen only centres the rows and gives them room, the way the Airbnb / Booking bar
-   does. The logo and the filter live in the app bar. */
 @media (min-width: 48rem) {
   .stickyTop {
     display: flex;
@@ -236,8 +215,6 @@ button:global(.iw-button.iw-button-secondary).filterActive {
   }
 }
 
-/* iPad portrait through iPad Pro landscape. auto-fill drops to one column
-   once the side inset and the 22rem minimum no longer fit two cards. */
 @media (min-width: 48rem) and (max-width: 87.5rem) {
   .list {
     grid-template-columns: repeat(2, minmax(0, 1fr));

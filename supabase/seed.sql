@@ -1,8 +1,3 @@
--- Vaitu · seed: sender + seeker + 6 open wedding events.
--- Mirrors the former static mock (src/data/events.js, since removed).
--- Applied on `supabase db reset`, locally and, until launch, in production.
--- Rerunning on a non-fresh DB duplicates rows. Local-only values go in
--- seed-local.sql.
 
 do $$
 declare
@@ -35,7 +30,6 @@ begin
   )
   on conflict (id) do nothing;
 
-  -- GoTrue v2 requires an identity row for login.
   insert into auth.identities (user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at)
   values (
     v_sender_id,
@@ -57,7 +51,6 @@ begin
       onboarded_at = now()
   where id = v_sender_id;
 
-  -- second test user: seeker, profile pre-filled so it can apply right away.
   insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, confirmation_token, recovery_token, email_change_token_new, email_change_token_current, email_change, phone_change_token, phone_change, reauthentication_token, raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
   values (
     '00000000-0000-0000-0000-000000000000',

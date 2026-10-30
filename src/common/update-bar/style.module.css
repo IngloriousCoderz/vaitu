@@ -1,8 +1,3 @@
-/* Inglorious UI's Snackbar in Vaitu's colours: a light pill on the surface
-   rather than the package's dark toast. Where it sits — centered at the
-   bottom, above the tab bar while the shell shows one — is the Snackbar's
-   job, read from the shell's --iw-snackbar-offset-bottom. */
-
 .bar :global(.iw-snackbar-content) {
   gap: var(--iw-space-4);
   padding: var(--iw-space-3) var(--iw-space-3) var(--iw-space-3)
@@ -15,9 +10,6 @@
   font-size: var(--iw-font-size-sm);
 }
 
-/* A phone is too narrow for the message and the button on one line in every
-   locale: the message wraps there, and keeps its line from 48rem, with a full
-   breath before the button. */
 @media (min-width: 48rem) {
   .bar :global(.iw-snackbar-content) {
     gap: var(--iw-space-8);
@@ -28,9 +20,6 @@
   }
 }
 
-/* From 64rem the drawer is docked, and a pill centred on the viewport would
-   run under it. Starting past the drawer (--vdrawer-stripe, from the shell)
-   centres it over the content instead. */
 @media (min-width: 64rem) {
   .bar {
     inset-inline-start: calc(var(--vdrawer-stripe, 0rem) + var(--iw-space-4));

@@ -3,14 +3,6 @@ import { html } from "@inglorious/web"
 import { t, translated } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-// The quiet stand-in a page shows instead of its content: an error, the
-// loading mark, or an empty state, checked in that order. Each page passes its
-// own conditions, because they differ: some pages keep showing stale data on
-// error, some count a missing record as still loading.
-//
-// Returns null when the content should render, so a page writes
-// `PageStatus.render({ … }) ?? html`…`` and the content is only built once
-// there is something to build it from.
 export const PageStatus = {
   render({
     isError = false,

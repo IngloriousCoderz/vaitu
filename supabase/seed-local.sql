@@ -1,8 +1,3 @@
--- Vaitu · local Vault: what the push trigger calls push-notify with. kong is
--- the local stack's API gateway, as the database container sees it, and the
--- key is the demo service-role key every local stack shares, so neither is a
--- secret. Both are wrong anywhere else: production resets with seed.sql only,
--- and gets its own values from `pnpm vault:push` (docs/deploying.md).
 do $$
 begin
   if not exists (

@@ -1,9 +1,3 @@
-// Shared setup for tests that hit the local Supabase with the public key.
-// A feature test signs in as one of the seed accounts, creates what it needs,
-// and deletes it afterwards. The service role is only used to confirm a
-// signed-up account's email and to remove what a test created: a signed-up
-// account, or a check-email rate-limit row.
-
 import { execFileSync } from "node:child_process"
 
 import { createClient } from "@supabase/supabase-js"
@@ -23,8 +17,6 @@ export async function signIn(account) {
 }
 
 export async function signOut() {
-  // Files run in parallel and share the two seed accounts. The default scope
-  // revokes every session of that account, including one another file is using.
   const { error } = await supabase.auth.signOut({ scope: "local" })
   if (error) throw error
 }
@@ -77,9 +69,6 @@ export async function deleteOwnedEventByTitle(title) {
   await deleteEvent(eventId)
 }
 
-// Signs up with the public key, as the app does, so the profile trigger runs
-// the same way. Then confirms the email, standing in for the click on the link
-// that signing in now requires.
 export async function signUp({ email, fullName }) {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -115,7 +104,6 @@ export async function removeStoredFile(bucket, path) {
   if (error) throw error
 }
 
-// The signed-in user only. A shared title must not match another account's row.
 async function ownedEventId(title) {
   const {
     data: { user },

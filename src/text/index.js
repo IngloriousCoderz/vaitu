@@ -19,7 +19,6 @@ export function capitalize(text) {
   )
 }
 
-// crypto.randomUUID needs a secure context (missing over http LAN).
 export function randomId() {
   if (typeof crypto.randomUUID === "function") return crypto.randomUUID()
   const bytes = new Uint8Array(UUID_RANDOM_BYTES)
@@ -31,6 +30,5 @@ export function randomId() {
   const hex = [...bytes]
     .map((byte) => byte.toString(UUID_HEX_RADIX).padStart(PAD_LENGTH, "0"))
     .join("")
-  // The 8-4-4-4-12 grouping every UUID is written in.
   return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5")
 }

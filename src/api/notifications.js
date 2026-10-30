@@ -1,10 +1,6 @@
 import { FEED_LIMIT, REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import { supabase } from "./client.js"
 
-// Layer 1 of notifications: the in-app feed. Everything else (badges, deep
-// links, later Web Push/FCM/APNs senders) reads the same table these return.
-// Newest first, capped — this is a bell, not an archive.
-
 export async function fetchMyNotifications() {
   const {
     data: { user },
@@ -29,7 +25,6 @@ export async function fetchMyNotifications() {
     application_id: row.application_id,
     event_title: row.events?.title ?? null,
     event_status: row.events?.status ?? null,
-    // A withdrawal's application is gone, so its row keeps the name itself.
     applicant_name:
       row.applications?.applicant?.full_name ?? row.applicant_name ?? null,
   }))

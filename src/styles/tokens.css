@@ -1,19 +1,3 @@
-/* Vaitu theme tokens. Neutral chrome + per-category skins.
-   Page root carries data-category="wedding|festival"; tokens flip the skin.
-
-   UNITS. Every length here is rem, and the rem base is pinned to 16px in
-   public/style.css, so 1rem === the old 16px. px survives in exactly two
-   places across the whole app: hairline borders (1px/2px/3px) and the
-   screen-reader-only clipping in authentication/. Both are meant to stay
-   thin when the user scales text up — a 1px divider that grows to 3px is a
-   divider, a 3px one is a slab.
-
-   Everything that @inglorious/ui already defines a token for (space scale,
-   radii, type scale, shadows, z-index, easings) is referenced straight from
-   that package at the point of use. Only app-specific concepts that have no
-   iw equivalent get a --v* token, and those alias the iw scale where one
-   fits. */
-
 [data-category],
 [data-category] * {
   transition: var(--iw-transition-slow);
@@ -32,79 +16,35 @@
   --vtitle-font: Georgia, "Times New Roman", serif;
   --vtitle-weight: var(--iw-font-weight-normal);
 
-  /* Error ink and the faint wash behind it. Off the iw error scale rather
-     than a hardcoded hex, and the wash is mixed from the ink so the two
-     cannot drift apart when --verror changes. */
   --verror: var(--iw-color-error-dark);
   --verror-surface: color-mix(in srgb, var(--verror) 8%, transparent);
 
-  /* Medal tints on the leaderboard and profile. */
   --vmedal-bronze: #9a6b4f;
   --vmedal-silver: #7c7689;
   --vmedal-gold: #e07b39;
 
-  /* ========================================
-     LAYOUT METRICS
-     App-specific lengths with no iw equivalent. Everything that does have
-     one is referenced from @inglorious/ui at the point of use instead.
-     ======================================== */
-
-  /* Width of the narrow centred column that login, onboarding and not found
-     keep from tablet up. A phone always fills its width. */
   --vpage-max-width: 26.875rem;
 
-  /* Tablet and up: the bottom bar leaves, and the package drawer takes
-     navigation. It slides over the page below 64rem and is a sidebar from
-     there, as the package has it. */
   --vlayout-wide: 48rem;
 
-  /* Horizontal gutter either side of the column's content. */
   --vpage-gutter: 1.125rem;
 
-  /* Minimum height of a tappable control (button, select). */
   --vcontrol-height: 3rem;
 
-  /* Padding inside the app's own inputs, selects and textareas. Split into
-     longhands because the select overrides only its trailing edge — it needs
-     room for the package's chevron where a text input does not. */
   --vcontrol-padding-block: 0.6875rem;
   --vcontrol-padding-inline: 0.8125rem;
 
-  /* Top spacing above a page's first element. The shell already absorbs the
-     notch (padding-top), so this is purely breathing room. Pages that own a
-     pinned <header> carry this on the header instead, so the sticky bar has
-     no gap above it for content to show through. */
   --vpage-top: var(--iw-space-4);
 
-  /* How far the tab bar keeps its buttons clear of the iOS home indicator.
-     env(safe-area-inset-bottom) is ~2.125rem on a notched iPhone and 0 on
-     Android. Set to 0 to seat the bar flush on both — see the note in
-     the app shell (src/app/style.module.css) about the footer height. Flip back to
-     env(safe-area-inset-bottom) if the labels ever end up under the home
-     indicator. */
   --vpage-bottom: 0;
 
-  /* Height of the tab bar itself, excluding any safe-area inset.
-     Measured in the browser from the bar's own box (78px): nav padding 8+8,
-     border-top 1, action padding 8+8, icon 24 (Icon lg), gap 4, label 12px.
-     Re-measure if the bar's internals change. */
   --vtabbar-height: 4.875rem;
 
-  /* The FAB that floats over the end of a list (src/app/fab), and the room
-     the list leaves under its last card for it: its height plus its lift
-     off the tab bar. */
   --vfab-size: var(--iw-space-14);
   --vfab-clearance: calc(var(--vfab-size) + var(--iw-space-2));
 
-  /* Clearance for a page with no bottom overlay (detail, ranks, create).
-     Since the bar became a footer row these pages no longer reserve space for
-     it at all — this is just breathing room above the fold. */
   --vpage-gap: var(--iw-space-6);
 
-  /* iOS zooms the whole viewport when a form control it focuses is under
-     16px, and there is no way to zoom back out. Keep every input, select and
-     textarea at or above this floor; `font-size` below it reintroduces the
-     "page doesn't fit and I can't scroll back" symptom on a fresh bug report. */
   --vinput-font-size: var(--iw-font-size-base);
 }
 
@@ -120,8 +60,6 @@
   --vmedal-silver: #7c7689;
   --vmedal-gold: #e07b39;
 
-  /* Overrides the theme host's primary for this subtree. This block is a
-     descendant of <body>, so a declaration here beats the inherited value. */
   --iw-color-primary: var(--vaccent);
   --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
   --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);

@@ -6,16 +6,6 @@ import { t } from "../../i18n/index.js"
 import { ErrorAlert } from "../error-alert/index.js"
 import styles from "./style.module.css"
 
-// The "are you sure?" step before an action that is hard to take back, as a
-// sheet: on a phone it rises from the bottom edge, from 48rem it is a centred
-// dialog. It is modal, so the page waits behind it and focus goes back to the
-// button that opened it: the page keeps that button and only flips `isOpen`.
-//
-// A message, anything the action needs (`children`, such as a field), the
-// action's error when it failed (the page behind is out of sight), then the
-// confirm and cancel buttons. `tone` is "danger" for destructive actions and
-// "primary" for ones that move things forward. Esc, the backdrop and the close
-// button all cancel, except while the action runs.
 export const ConfirmDialog = {
   render({
     id,

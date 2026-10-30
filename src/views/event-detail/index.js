@@ -50,7 +50,6 @@ export const EventDetail = {
     (payload) => payload.params.eventId,
   ),
 
-  // Your own event is left out of the list, so it falls back to My events.
   renderHeader(entity) {
     return {
       title: entity.event?.title ?? "",
@@ -75,8 +74,6 @@ export const EventDetail = {
         onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
         dir: api.getEntity("i18n").dir,
         onPhotoSwipeStart: (x) => api.notify(`#${id}:photoSwipeStart`, x),
-        // Only the organiser has applications to review. The card that used to go
-        // straight here now opens the event, so this is how the page is reached.
         onOpenApplications:
           entity.event?.senderId === readUserId()
             ? () =>

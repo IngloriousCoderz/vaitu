@@ -1,7 +1,3 @@
-// Calls the local check-email function with the public key. Each case sends
-// its own address in x-forwarded-for, because the limit is 20 attempts per
-// hashed client IP. The service role only deletes those rows afterwards.
-
 import { afterAll, expect, test } from "vitest"
 
 import { supabase } from "../../api/client.js"

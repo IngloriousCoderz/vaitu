@@ -54,7 +54,7 @@ import { droppedImageUrls } from "./helpers.js"
 
 const NO_ROOM = 0
 
-// Module-scope recorder state (never in the entity: not serializable).
+// Module scope, not the entity: the recorder is not serializable.
 let mediaRecorder = null
 let mediaStream = null
 let audioChunks = []
@@ -67,8 +67,6 @@ let recordStartedAt = null
 
 const FILLABLE_DETAILS = ["spouse_first_name_1", "spouse_first_name_2", "style"]
 
-// File blobs stay outside the entity (not serialisable store data). The entity
-// only keeps id + previewUrl + crop fractions.
 /** @type {Map<string, { file: File | null, sourceFile: File | null }>} */
 const pendingImageFiles = new Map()
 /** @type {File | null} */
@@ -133,8 +131,6 @@ export function categorySelect(entity, category, api) {
   entity.errors = {}
   entity.isValid = true
   entity.error = null
-  // Clearing the form's errors has to clear the comboboxes' too, or a message
-  // outlives the thing that caused it.
   api.notify("#country-create:errorSet", null)
   api.notify("#region-create:errorSet", null)
   api.notify("#style-create:sync", "")
@@ -202,7 +198,6 @@ export function audioRecordStop(entity, _, api) {
     audioChunks = []
     if (blob.type.includes("webm") && durationMs != null) {
       try {
-        // Firefox omits Duration in WebM — the player shows 0:00 and stalls.
         blob = await fixWebmDuration(blob, durationMs, { logger: false })
       } catch {
         // Keep the raw blob: transcription still works, only duration suffers.
@@ -251,8 +246,6 @@ export function audioClipReady(entity, { url }, api) {
   api.notify(`#${entity.id}:audioProcess`)
 }
 
-// Uploads the fresh take (dropping any previous one), then transcribes it
-// on the server. Save reuses the result — no second upload.
 export const audioProcess = handleAsync("audioProcess", {
   start(entity) {
     entity.is_transcribing = true
@@ -270,7 +263,6 @@ export const audioProcess = handleAsync("audioProcess", {
   },
   success(entity, { transcript, url }, api) {
     entity.is_transcribing = false
-    // Stable bucket URL from now on — the object URL dies with the swap.
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl)
       previewUrl = null
@@ -286,7 +278,6 @@ export const audioProcess = handleAsync("audioProcess", {
   },
 })
 
-// Fills empty inputs from the parsed transcript. Never overwrites the sender.
 export const audioParse = handleAsync("audioParse", {
   start(entity) {
     entity.is_parsing = true
@@ -365,8 +356,6 @@ export function clearEventImages(entity) {
   entity.image_error = null
 }
 
-// Gallery photos only show inside the event. The cover is handled by
-// coverCropOpen/coverCropConfirm so it can be framed first.
 export function imagesAdd(entity, { files } = {}) {
   const incoming = [...(files ?? [])]
   entity.image_error = null
@@ -449,8 +438,6 @@ export function coverCropCancel(entity) {
   closeCrop(entity)
 }
 
-// Re-open on the original source photo (not the cropped output) and restore
-// the last frame when we still have it on pending_cover.
 export const coverCropEdit = handleAsync("coverCropEdit", {
   start(entity) {
     entity.image_error = null
@@ -458,7 +445,6 @@ export const coverCropEdit = handleAsync("coverCropEdit", {
   async run({ id, url, rect = null } = {}) {
     const sourceFile = pendingSourceFile(id)
     if (sourceFile instanceof File) return { file: sourceFile, rect }
-    // A saved cover is already cropped: frame it again from what it shows.
     if (!url) throw new Error("errors.imageCrop")
     let response
     try {
@@ -595,11 +581,6 @@ export const save = handleAsync("save", {
     clearEventImages(entity)
     entity.audio_preview_url = null
     api.notify("#eventList:load")
-    // Saving has to leave the page, because the route is what unmounts it now,
-    // and leaving is also what tidies the entity up: the route change runs
-    // close(). An edit goes back to the event it came from. A new one goes to
-    // My events, where it now shows up: the insert hands back no id to
-    // navigate to.
     api.notify(
       "#router:navigate",
       entity.editing_event_id
@@ -668,8 +649,6 @@ function audioPathFromUrl(url) {
   return path ?? null
 }
 
-// Drops the un-saved take; deletes its bucket file when asked.
-// Keeps the preview URL when the current take still needs its player.
 async function dropPendingAudio(deleteFile, keepPreview = false) {
   const path = pendingPath
   pendingBlob = null
@@ -707,8 +686,6 @@ function toLocalInput(iso) {
   return `${date.getFullYear()}-${month}-${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 
-// Wedding default: deadline ~45 days before the event, end of day.
-// Only fills when empty (never overwrites the sender) and never in the past.
 function autofillDeadline(entity) {
   const eventDate = getFieldValue(entity, "event_date", "")
   if (
@@ -731,9 +708,8 @@ function revokePreview(item) {
   if (item?.id) forgetPendingFiles(item.id)
 }
 
-// Saved photos the user took out of the form are only deleted after the row
-// stops pointing at them. Deleting on removal broke the event whenever the user
-// left without saving: an orphan in the bucket is harmless, a dead link is not.
+// Removed photos are deleted only once the row stops pointing at them: an
+// orphan in the bucket is harmless, a dead link is not.
 function droppedImagePaths(event, image_urls) {
   return droppedImageUrls(event.loaded_image_urls, image_urls)
     .map(imageRefFromUrl)
@@ -775,8 +751,6 @@ function readImageFile(entity, file) {
   }
 }
 
-// The frame and its gestures live in the cover cropper entity. This form only
-// keeps the file being framed and whether the dialog is open.
 function revokeCropPreview(entity) {
   if (entity.cropPreviewUrl) URL.revokeObjectURL(entity.cropPreviewUrl)
 }
@@ -828,8 +802,6 @@ async function savedImageUrls(event) {
       uploadedPaths: uploaded.map((file) => file.path),
     }
   } catch (err) {
-    // A failure halfway through used to leave the already-uploaded gallery
-    // behind when the cover was the file that failed.
     await forgetImages(uploaded.map((file) => file.path))
     throw err
   }

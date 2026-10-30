@@ -30,7 +30,6 @@ import {
 import { EventList as renderers } from "./template.js"
 
 const ONE_INTEREST = 1
-// How long typing has to pause before the feed is asked again.
 const SEARCH_DELAY_MS = 300
 
 const searchSoon = debounce(
@@ -59,8 +58,6 @@ export const EventList = {
     renderers.create(entity)
   },
 
-  // The list leaves out your own events and marks the ones you applied to, so
-  // it reloads for whoever just signed in.
   sessionStart(entity, _, api) {
     api.notify(`#${entity.id}:load`)
   },
@@ -92,12 +89,8 @@ export const EventList = {
         appliedMap: entity.appliedMap,
         status: entity.status,
         error: entity.error,
-        // One category in scope skins the page in its colours; a mixed feed
-        // stays neutral and each card carries its own.
         category: otherTypes.length ? undefined : onlyType,
         types: categories,
-        // Someone interested in one category alone has nothing to switch
-        // between: the profile is where they widen it.
         showTypes: entity.interests.length !== ONE_INTEREST,
         sections: filterSections(scope),
         active: filtersOn(entity),
@@ -136,7 +129,6 @@ export const EventList = {
         onClearFilters: () => api.notify(`#${id}:filtersClear`),
         onPageMore: () => api.notify(`#${id}:pageMore`),
         onOpenEvent: (event_id) => {
-          // The event itself, or your application on it when there is one.
           const applicationId = entity.appliedMap[event_id]
           if (applicationId) {
             api.notify("#router:navigate", paths.application(applicationId))

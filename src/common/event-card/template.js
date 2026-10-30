@@ -21,7 +21,6 @@ const toneClass = {
   closed: styles.badgeClosed,
 }
 
-// Generic card: renders title/subtitle/tag slots, whatever the category mapped.
 export const Card = {
   render({
     event,

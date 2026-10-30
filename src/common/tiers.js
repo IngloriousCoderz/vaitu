@@ -1,5 +1,3 @@
-// Rank thresholds and progress. The tiers table is configuration rather than
-// view state, so both the profile and the ranks view read it from here.
 import {
   NO_POINTS,
   PERCENT_MAX,

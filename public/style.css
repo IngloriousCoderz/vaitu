@@ -1,13 +1,9 @@
-/* Pin the rem base at 16px. Everything sized in rem across the app — ours and
-   @inglorious/ui's — is calibrated against this, so it must not drift with a
-   browser or OS default font-size setting. Users who need larger text get it
-   from page zoom, which scales rem and px alike. */
+/* Pin the rem base at 16px: every rem size, ours and @inglorious/ui's, is
+   calibrated against it. Larger text comes from page zoom. */
 html {
   font-size: 100%;
 }
 
-/* App feel: no tap flash, no sticky focus rings from touch/mouse.
-   Keyboard focus keeps its ring via :focus-visible. */
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -23,19 +19,8 @@ textarea {
   line-height: var(--iw-line-height-normal);
 }
 
-/* UI package primary lives in src/theme/tokens.css (per-category bridge) */
-
-/* Calibrate UI package primitives to our sizing/colors.
-   NOTE: selectors carry an element prefix on purpose — package rules are
-   .iw-x.iw-y (0,2,0) and inject after this file, so bare classes lose. */
-/* UI package calibration (buttons, chips) */
-
-/* Secondary is the quiet colour, and icons are quiet by default: an icon
-   button is `variant: "ghost", color: "secondary"` unless its colour means
-   something (primary action, delete, an active filter). Icons inside inputs,
-   lists and the tab bar are muted by the package already, through
-   --iw-color-text-muted. The package paints secondary a fixed cool grey;
-   ours is the category's muted ink. */
+/* Selectors carry an element prefix on purpose: package rules are .iw-x.iw-y
+   (0,2,0) and load after this file, so bare classes lose. */
 button.iw-button.iw-button-secondary {
   --iw-button-color: var(--vmuted);
   --iw-button-bg: var(--vmuted);
@@ -76,15 +61,9 @@ span.iw-chip.iw-chip-info {
   font-weight: 800;
 }
 
-/* App-wide calibration of the iw Alert, shared by every page's error box.
-   Doubled class on purpose — see the note at the top of this file: the
-   package's .iw-alert-error is a bare (0,1,0) class that loads after us, so a
-   single-class override would lose on order.
-
-   Deliberately NOT used for .warn / .disclaimer. Those are neutral notes, not
-   failures, and Alert hardcodes role="alert" — an assertive live region. Making
-   screen readers announce "Only 5 names will be forwarded to the organizer" as
-   an error would be worse than the duplication it saves. */
+/* Doubled class on purpose: .iw-alert-error is (0,1,0) and loads after us. Not
+   for neutral notes: Alert has role="alert", which screen readers announce as
+   an error. */
 .iw-alert.vaitu-alert {
   --iw-alert-color: var(--verror);
   font-size: var(--iw-font-size-sm);
@@ -96,8 +75,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* The manifest splash is a static image: this animated one covers the time
-   between the first paint and the app mounting, which removes it. */
 .boot-splash {
   position: fixed;
   inset: 0;

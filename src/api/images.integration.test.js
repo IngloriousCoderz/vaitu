@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest"
 
 import { imageExtension, imageRefFromUrl } from "./images.js"
 
-// Host does not matter: imageRefFromUrl only looks for `/<bucket>/` in the path.
 const BASE = "https://project.supabase.co/storage/v1/object/public"
 
 describe("imageRefFromUrl", () => {

@@ -1,6 +1,3 @@
-/* Absolute inside the positioned shell, just above the tab bar's footer row,
-   plus one pill height for each pill on screen: the Snackbar stacks them from
-   the same offset (see ../../common/push-prompt). */
 button:global(.iw-button.iw-fab).fab {
   --vfab-pills: 0;
   position: absolute;
@@ -12,7 +9,6 @@ button:global(.iw-button.iw-fab).fab {
   width: var(--vfab-size);
   height: var(--vfab-size);
   z-index: var(--iw-z-fixed);
-  /* Named, so a page transition does not slide it with the page. */
   view-transition-name: fab;
   transition: bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }

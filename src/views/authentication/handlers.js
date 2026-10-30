@@ -128,8 +128,6 @@ export const login = handleAsync("login", {
       password,
     })
     if (error) throw error
-    // Asked here rather than left to the profile load, so the first page after
-    // sign-in is already the right one instead of the event list for a moment.
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("onboarded_at")
@@ -141,8 +139,6 @@ export const login = handleAsync("login", {
   success(entity, { user, isOnboarded }, api) {
     entity.status = "ready"
     entity.password = ""
-    // Written before the notification, so the guard that the navigation raises
-    // reads a signed-in visitor. Ordering is the whole trick here.
     writeUser(user)
     setOnboardingDue(!isOnboarded)
     api.notify("#eventList:load")
@@ -154,8 +150,6 @@ export const login = handleAsync("login", {
     })
   },
   error(entity, err) {
-    // Signed up but never clicked the link: the same inbox step as right
-    // after signup, with the way to send it again.
     if (err.code === "email_not_confirmed") {
       entity.status = "ready"
       entity.error = null
@@ -188,9 +182,6 @@ export const signup = handleAsync("signup", {
   success(entity, hasSession, api) {
     entity.status = "ready"
     entity.password = ""
-    // Without email confirmation (local Supabase) the session is already here.
-    // With it, there is none until the link is clicked, and that link opens
-    // onboarding itself.
     if (!hasSession) {
       entity.step = "confirm"
       return
@@ -235,10 +226,6 @@ export function resendSubmit(entity, _, api) {
   })
 }
 
-// Where the confirmation link sends the new user: straight into onboarding, on
-// whichever origin they signed up from. The origin must be in the Supabase
-// redirect allowlist; one that is not (a native shell's) falls back to the
-// Site URL.
 function confirmationRedirect() {
   return `${window.location.origin}${paths.onboarding}`
 }

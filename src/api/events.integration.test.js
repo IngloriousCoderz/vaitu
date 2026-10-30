@@ -22,7 +22,6 @@ import {
   updateEvent,
 } from "./events.js"
 
-// A Supabase call waits up to 15s. Vitest's default of 5s would hide that error.
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 
 let eventId = null
@@ -79,7 +78,6 @@ describe("deleting an event", () => {
       ownedEventId = await createEventAs(SEEKER, ownedUuid)
 
       await signIn(SENDER)
-      // The policy deletes nothing and reports no error.
       await deleteEvent(ownedEventId)
 
       await signIn(SEEKER)
@@ -116,7 +114,6 @@ describe("editing an event", () => {
       ownedEventId = await createEventAs(SEEKER, ownedUuid)
 
       await signIn(SENDER)
-      // The policy updates nothing and reports no error.
       await updateEvent(ownedEventId, {
         ...payload,
         title: `Hijack ${ownedUuid}`,
@@ -149,8 +146,6 @@ describe("the feed", () => {
     "finds an open event by search, style and region, and offers its region to others only",
     async () => {
       ownedUuid = crypto.randomUUID()
-      // A region of its own, so what the region list holds is down to this
-      // event alone.
       const region = `Vitest ${ownedUuid}`
       ownedEventId = await createEventAs(SEEKER, ownedUuid, undefined, {
         region,
@@ -180,7 +175,6 @@ describe("the feed", () => {
       expect(await fetchOpenEventRegions(["wedding"])).toContain(region)
       expect(await fetchOpenEventRegions(["festival"])).not.toContain(region)
 
-      // The feed leaves out your own events, and so do its regions.
       await signIn(SEEKER)
       expect(await fetchOpenEventRegions()).not.toContain(region)
     },

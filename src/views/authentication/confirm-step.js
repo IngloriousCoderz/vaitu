@@ -9,8 +9,6 @@ import { t, trans } from "../../i18n/index.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
-// After signup, until the link in the email is clicked. Nothing here can sign
-// the visitor in: the link opens onboarding in its own tab, with the session.
 export const ConfirmStep = {
   render({ entity, isBusy, onResend, onBackToEmail }) {
     return html`

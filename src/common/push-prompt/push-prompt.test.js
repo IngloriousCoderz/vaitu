@@ -37,8 +37,6 @@ function storeWithPrompt() {
   })
 }
 
-// How the pill behaves is createPushPrompt's, tested in @inglorious/web;
-// here, only that the session drives it, with this app's decline key.
 describe("PushPrompt", () => {
   it("opens at sign-in and closes at sign-out", async () => {
     const store = storeWithPrompt()

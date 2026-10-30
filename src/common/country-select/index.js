@@ -6,9 +6,6 @@ import { html } from "@inglorious/web"
 import { t, translated, translatedLabel } from "../../i18n/index.js"
 import * as handlers from "./handlers.js"
 
-// The entity keeps translation keys for its texts, and keys on the options
-// that are copy rather than data (styles, genres, group headings): rendering
-// translates them, so the select follows the active language.
 export const CountrySelect = {
   ...Combobox,
   ...handlers,

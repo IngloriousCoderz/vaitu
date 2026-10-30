@@ -37,8 +37,6 @@ const NEW_THRESHOLD_MS = NEW_THRESHOLD_DAYS * DAY_MS
 
 const AUDIO_BUCKET = "event-audio"
 
-// Boundary layer: rows → generic view models. Field names mirror the DB
-// (snake_case, no conversion); only display derivations happen here.
 export function toViewModel(row) {
   const [year] = row.event_date.split("-").map(Number)
   const region = canonicalRegion(row.region)
@@ -53,8 +51,6 @@ export function toViewModel(row) {
     eventInDays: Math.ceil(
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
-    // Display text is derived at render (see common/event-card), so it
-    // follows the active language: the date is formatted then, in its locale.
     place: [row.location, region].filter(Boolean).join(" • "),
     audio_url: row.audio_url ?? null,
     imageUrls: row.image_urls ?? [],
@@ -204,7 +200,6 @@ const OPEN_EVENT_COLUMNS =
  * @param {{ from: number, to: number }} range - Row indexes, both inclusive.
  */
 export async function fetchOpenEventsPage(feed, { from, to }) {
-  // Asked for a region no open event is in: nothing to fetch.
   if (feed.regions?.length === NO_ROWS) return { events: [], total: NO_ROWS }
   const userId = readUserId()
   let query = supabase
@@ -213,8 +208,6 @@ export async function fetchOpenEventsPage(feed, { from, to }) {
     .eq("status", "open")
   if (userId) query = query.neq("sender_id", userId)
   if (feed.categories.length) query = query.in("category", feed.categories)
-  // A category with styles or genres picked keeps only those; the others keep
-  // everything. Style and genre values are plain words, safe in the filter.
   if (feed.details.length) {
     query = query.or(
       [
@@ -258,7 +251,6 @@ export async function fetchOpenEventRegions(categories = []) {
   return data
 }
 
-// The search box's text taken literally: % and _ are LIKE wildcards.
 function escapeLike(text) {
   return text.replace(/[\\%_]/g, "\\$&")
 }
@@ -307,9 +299,6 @@ export async function updateEvent(event_id, payload) {
 }
 
 export async function deleteEvent(event_id) {
-  // Read the assets before the row goes away: once it is deleted there is no
-  // record of which files belonged to it. The cleanup itself is best effort and
-  // runs after the delete, so a stuck bucket never blocks the event removal.
   const { data, error } = await supabase
     .from("events")
     .select("image_urls, audio_url")
@@ -359,7 +348,6 @@ export async function deleteEventAudio(path) {
   if (error) throw error
 }
 
-// What the feed shows by default: the regions and categories in the profile.
 export async function fetchMyFeedDefaults() {
   const none = { favorite_regions: [], interested_categories: [] }
   const {
@@ -386,9 +374,6 @@ export async function parseEvent(transcript) {
   return data?.fields ?? {}
 }
 
-// The form only has room for one message, so the first error stands in for the
-// whole set. Validating and normalizing stay separate: one decides whether the
-// write is allowed, the other decides what the row looks like.
 function prepareEvent(payload) {
   const errors = validateEvent(payload)
   const message = firstError(errors)

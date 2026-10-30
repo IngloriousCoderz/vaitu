@@ -1,8 +1,6 @@
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import { supabase } from "./client.js"
 
-// The columns of a profile that are how the app works for its owner rather
-// than who they are. Field names mirror the DB, like everywhere in the client.
 const COLUMNS = "interested_categories, favorite_regions, is_email_opted_out"
 
 export async function fetchMyPreferences() {

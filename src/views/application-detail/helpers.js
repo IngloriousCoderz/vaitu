@@ -8,7 +8,6 @@ import {
 import { t } from "../../i18n/index.js"
 import { randomId } from "../../text/index.js"
 
-// An event with no place yet still goes in the calendar, just without one.
 export function calendarLinks({ title, eventDate, location = "" }) {
   if (!eventDate) return null
   const start = toStamp(eventDate)
@@ -41,7 +40,6 @@ export function calendarLinks({ title, eventDate, location = "" }) {
   }
 }
 
-// YYYY-MM-DD, or the start of an ISO timestamp, as the YYYYMMDD iCalendar uses.
 function toStamp(dateStr) {
   return dateStr.slice(FIRST_INDEX, DATE_ISO_LENGTH).replaceAll("-", "")
 }

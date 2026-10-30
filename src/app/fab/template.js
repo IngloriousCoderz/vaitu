@@ -7,15 +7,12 @@ import styles from "./style.module.css"
 
 const LIFTS = [null, styles.fabOverOnePill, styles.fabOverTwoPills]
 
-// Creates an event, on a phone only: from tablet up the app bar has the New
-// event button. Everything but placement comes from the package.
 export const Fab = {
   render({ pillCount, onClick }) {
     return IwFab.render({
       children: Icon.render({ icon: addOutline, size: "lg" }),
       color: "primary",
       ariaLabel: t("nav.newEvent"),
-      // Rises over the pills (update, push prompt) rather than under them.
       className: [styles.fab, LIFTS[pillCount]].filter(Boolean).join(" "),
       onClick,
     })

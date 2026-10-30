@@ -28,11 +28,8 @@ import { Fab } from "./fab/template.js"
 import styles from "./style.module.css"
 import { TabBar } from "./tab-bar/template.js"
 
-// Where the package drawer turns from an overlay into a sidebar.
 const SIDEBAR_QUERY = "(min-width: 64rem)"
 
-// Which tab a given tab bar entry navigates to. The bar reports a value, the
-// router owns the path.
 const TAB_PATHS = {
   events: paths.events,
   applications: paths.applications,
@@ -41,15 +38,6 @@ const TAB_PATHS = {
   profile: paths.profile,
 }
 
-// Chrome per route. The old cascade worked these out while choosing a page; with
-// the route already resolved they are a lookup.
-//
-//   tab            — the active tab, null for a bar that stays mounted with
-//                    nothing selected (the pushed-over pages)
-//   isHidden       — bar stays mounted and translated away, so it can animate out
-//   isRendered     — false for the routes that never had a bar or a button
-//   hasFab         — the phone's button to create an event, where posting is
-//                    what the page is for
 const CHROME = {
   eventList: { tab: "events", hasFab: true },
   myEvents: { tab: "myEvents", hasFab: true },
@@ -57,13 +45,11 @@ const CHROME = {
   applicationDetail: { tab: "applications" },
   notifications: { tab: "notifications" },
   profile: { tab: "profile" },
-  // Detail sits on top of a tab, so the bar is replaced rather than hidden.
   eventDetail: { isTabbarRendered: false },
   eventCreate: { isHidden: true },
   applicationsReceived: { isHidden: true },
   ranks: { isHidden: true },
   preferences: { tab: "preferences", isHidden: true },
-  // Pre-login, plus the catch-all: nothing to navigate with.
   authentication: { isTabbarRendered: false },
   onboarding: { isTabbarRendered: false },
   notFound: { isTabbarRendered: false },
@@ -71,8 +57,6 @@ const CHROME = {
 
 const DEFAULT_CHROME = { tab: "events" }
 
-// Login and onboarding have no app chrome. Everywhere else, tablet and desktop
-// keep the drawer even when the phone hides the bottom bar.
 const NO_WIDE_CHROME = new Set(["authentication", "onboarding"])
 
 const DRAWER_PATHS = {
@@ -87,8 +71,6 @@ export const App = {
   render(_, api) {
     const router = api.getEntity("router")
 
-    // No boot gate: the guard reads the session from localStorage, so it can
-    // judge this route on the first render rather than after a request.
     const chrome = CHROME[router.route] ?? DEFAULT_CHROME
 
     const shell = api.getEntity("shell")
@@ -96,8 +78,6 @@ export const App = {
     const pushPrompt = api.getEntity("pushPrompt")
     const analytics = api.getEntity("analytics")
 
-    // A native build below the platform's minimum gets the store screen and
-    // nothing else: no chrome to reach the rest of the app through.
     if (api.getEntity("appVersion").isUpdateRequired) {
       return this.renderShell({
         content: html`<section class=${styles.page}>
@@ -133,20 +113,15 @@ export const App = {
           onClick: () => api.notify("#router:navigate", paths.newEvent),
         }),
       ),
-      // One pill at a time: the update, being one tap, goes first.
       updatebar,
       pushPrompt: pushPromptBar,
       notificationsPanel: this.renderNotificationsPanel(api),
-      // No tab bar counts as a hidden one: the footer row and the
-      // snackbar offset both go.
       isTabbarHidden:
         chrome.isTabbarRendered === false || (chrome.isHidden ?? false),
       isWide: showWide,
     })
   },
 
-  // A new version landed mid-session: one pill to move over with a tap. It
-  // is applied anyway on the next trip to the background (src/pwa.js).
   renderUpdateBar(api, pwaUpdate) {
     if (!pwaUpdate.isUpdateReady) return ""
     return UpdateBar.render({
@@ -154,7 +129,6 @@ export const App = {
     })
   },
 
-  // The sign-in reactivated a deactivated account (src/main.js).
   renderReactivatedBar(api, shell) {
     if (!shell.isReactivated) return ""
     return ReactivatedBar.render({
@@ -162,8 +136,6 @@ export const App = {
     })
   },
 
-  // The usage-statistics question, in the push pill's place and before it:
-  // one question at a time, the visitor's own first.
   renderAnalyticsPrompt(api, analytics, pwaUpdate) {
     if (!analytics?.isAsking) return ""
     return PromptBar.render({
@@ -176,8 +148,6 @@ export const App = {
     })
   },
 
-  // The question before the browser's notification permission dialog, above
-  // the update pill when both are up.
   renderPushPrompt(api, pushPrompt, pwaUpdate) {
     if (!pushPrompt?.isOpen) return ""
     return PromptBar.render({
@@ -190,10 +160,6 @@ export const App = {
     })
   },
 
-  // What the bell opens: the feed's rows in a right-anchored drawer over
-  // whatever page is under it. The rows' paths resolve here (the drawer is
-  // the shell's, not the notifications entity's), and a tap marks the row
-  // read, folds the drawer, and walks — all in the one batch.
   renderNotificationsPanel(api) {
     const notifications = api.getEntity("notifications")
     if (!notifications) return ""
@@ -212,10 +178,6 @@ export const App = {
     })
   },
 
-  // One app bar for every page. The page fills it through an optional
-  // renderHeader(entity, api) on its type, returning { title, subtitle, back,
-  // actions, isBrand }: `back` is the fallback path for the back button, which
-  // then replaces the menu button; `actions` go before the app's own.
   renderAppBar(api, route) {
     const entity = api.getEntity(route)
     const type = entity && api.getType(entity.type)
@@ -242,7 +204,6 @@ export const App = {
               }),
           }),
       ),
-      // The brand stands in for the title where no sidebar shows it already.
       title: when(
         isBrand,
         () =>
@@ -255,9 +216,6 @@ export const App = {
     })
   },
 
-  // New event, notifications and who is signed in. The tab bar carries the
-  // first and the last on a phone, so these start at tablet width. The form
-  // itself does not offer to start another one.
   renderGlobalActions(api, route) {
     const notifications = api.getEntity("notifications")
     const profile = api.getEntity("profile").profile
@@ -290,9 +248,6 @@ export const App = {
               color: "secondary",
               shape: "round",
               ariaLabel: t("nav.notifications"),
-              // Tablet+ opens the right-side drawer over the page; on a
-              // phone this button is hidden and the tab bar's Notifications
-              // tab carries the full page, so no viewport branch is needed.
               onClick: () => api.notify("#notifications:panelOpen"),
             }),
             when(
@@ -349,8 +304,6 @@ export const App = {
     })
   },
 
-  // Single shape so the bar node persists across navigations and hide/show
-  // animates via class toggle rather than remounting.
   renderTabbar(api, chrome) {
     if (chrome.isTabbarRendered === false) return null
 
@@ -362,17 +315,6 @@ export const App = {
     })
   },
 
-  // App shell: header / scrolling content / footer, per the ScrollableContent
-  // story in @inglorious/ui's flex primitives.
-  //
-  // The tab bar used to be `position: fixed`, which made the bar a floating
-  // overlay rather than layout. Everything downstream paid for that: pages had
-  // to reserve bottom padding equal to the bar, and the reserved strip had to be painted separately
-  // or content showed through it. Giving the bar its own footer row removes the
-  // whole class of problem — no page reserves space for it any more.
-  //
-  // `.iw-flex-overflow-auto` also sets min-height:0, without which the content
-  // row expands the shell instead of scrolling inside it.
   renderShell({
     content,
     tabbar,
@@ -409,11 +351,6 @@ export const App = {
           className: styles.main,
           children: [content].filter(Boolean),
         }),
-        // The update pill is a fixed Snackbar, kept out of the footer row
-        // only because that row collapses to zero from 48rem; it rises above
-        // the tab bar through the shell's --iw-snackbar-offset-bottom, and the
-        // push prompt with it. The notifications drawer paints last: it is
-        // the only one meant to cover the page wholesale.
         ...[fab, updatebar, pushPrompt, notificationsPanel].filter(Boolean),
         Flex.render({
           element: "footer",

@@ -78,9 +78,6 @@ export const EventCreate = {
   },
 
   saveSubmit(entity, _, api) {
-    // Validates what will be saved, not the raw form: a category whose title is
-    // built from other fields has no title field, so the form's own title stays
-    // empty and failed "Add a title" where nobody could see it.
     Form.validate(entity, {
       validate: (values) =>
         validateEvent({ ...values, title: eventTitle(values) }),
@@ -88,11 +85,8 @@ export const EventCreate = {
     syncComboboxErrors(entity, api)
     if (!entity.isValid) return
     const values = entity.values
-    // Copied here, while `values` is still the live draft. Everything below
-    // travels through a notify, and a payload outlives the batch that built it:
-    // by the time the save handler reads it, the store has committed and revoked
-    // the proxies this one was read from. Passing the reference on meant the
-    // insert died on "Cannot perform 'get' on a proxy that has been revoked".
+    // Copied while `values` is still a live draft: the save reads it after the
+    // batch, when the draft is revoked.
     const details = { ...(values.details ?? {}) }
     const title = eventTitle(values)
     entity.error = null
@@ -180,9 +174,6 @@ export const EventCreate = {
   },
 }
 
-// The country and region comboboxes are separate entities rendered by id, so
-// they cannot read the form's errors. Hand them over where validation runs, the
-// same way their values and options are already handed over.
 function syncComboboxErrors(entity, api) {
   api.notify("#country-create:errorSet", getFieldError(entity, "country"))
   api.notify("#region-create:errorSet", getFieldError(entity, "region"))
@@ -190,8 +181,6 @@ function syncComboboxErrors(entity, api) {
   api.notify("#genre-create:errorSet", getFieldError(entity, "details.genre"))
 }
 
-// The title the event is saved under: typed in for a category that asks for
-// one, otherwise built from its fields, such as the couple's names.
 function eventTitle(values) {
   const title_from = categoryById(values.category).title_from
   if (title_from.input) return values.title

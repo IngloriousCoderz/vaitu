@@ -1,7 +1,5 @@
 import { STATUS_CODE } from "jsr:@std/http@1/status"
 
-// The app calls every function through supabase.functions.invoke(), which
-// sends a CORS preflight first.
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -9,7 +7,6 @@ const cors = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 }
 
-// Enough of a third-party error body to tell what went wrong.
 const TEXT_START = 0
 const UPSTREAM_DETAIL_LENGTH = 200
 
@@ -23,8 +20,6 @@ export function json(
   return Response.json(body, { status, headers: { ...cors, ...headers } })
 }
 
-// Answers the preflight and turns anything thrown into a 500 carrying its
-// message, so handlers only spell out the expected failures.
 export function serve(
   handler: (req: Request) => Promise<Response>,
   fallbackError: string,
@@ -46,7 +41,6 @@ export function serve(
   })
 }
 
-// A failed call to a third-party API, named after the service.
 export async function upstreamError(service: string, res: Response) {
   const detail = await res.text()
   return new Error(

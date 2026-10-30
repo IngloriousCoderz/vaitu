@@ -7,8 +7,6 @@ import { t, trans } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import styles from "./style.module.css"
 
-// Reached through the `*` route. Keeps a bad link or a stale bookmark on a real
-// screen with a way out, rather than on the previous page or a blank one.
 export const NotFound = {
   render(entity, api) {
     const router = api.getEntity("router")

@@ -8,8 +8,6 @@ import { t } from "../../i18n/index.js"
 import { ErrorAlert } from "../error-alert/index.js"
 import styles from "./style.module.css"
 
-// A cropper type locked to one shape and labelled in the current language.
-// Register it on the store: autoCreateEntities names the entity after it.
 export function createCropper({ label, aspectRatio }) {
   return {
     ...ImageCropper,
@@ -23,8 +21,6 @@ export function createCropper({ label, aspectRatio }) {
   }
 }
 
-// The dialog around a cropper entity. The page owns the file and whether the
-// dialog is open; the cropper owns the frame, which `onApply` reads from it.
 export const CropDialog = {
   render(
     {

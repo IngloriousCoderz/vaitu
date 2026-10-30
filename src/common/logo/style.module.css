@@ -4,7 +4,6 @@
   gap: var(--iw-space-2);
 }
 
-/* 24px high; the mark is half again as wide. */
 .mark {
   height: 1.5rem;
   flex: 0 0 auto;

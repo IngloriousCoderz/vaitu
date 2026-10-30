@@ -46,9 +46,6 @@
   font-weight: var(--iw-font-weight-semibold);
 }
 
-/* The package bar is a native <progress>: its custom properties size and
-   colour the track, and the bar's own pseudo-elements are repainted flat in
-   the accent, without the package's gradient. */
 .progressTrack {
   --iw-progress-height: var(--iw-space-2);
   --iw-progress-radius: var(--iw-radius-full);
@@ -105,9 +102,6 @@
   text-align: start;
 }
 
-/* One column, one gap: fields, the error and the buttons are spaced by the
-   Flex, not by margins of their own. The page centres its text; a form
-   reads from the left. */
 .editForm {
   text-align: start;
 }

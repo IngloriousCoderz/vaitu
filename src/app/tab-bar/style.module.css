@@ -1,8 +1,4 @@
 .tabbar {
-  /* Not fixed any more: the app shell (src/app/style.module.css) gives the bar its own
-     footer row, so it occupies layout and pages no longer reserve padding for
-     it. Being an overlay was the root of the clearance maths and of the
-     transparent-strip bug. */
   width: 100%;
   padding-bottom: var(--vpage-bottom);
   background: var(--vbg);
@@ -11,12 +7,9 @@
 
 .tabbar {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  /* Named, so a page transition does not slide the bar with the page. */
   view-transition-name: tab-bar;
 }
 
-/* Slide down out of the footer row. The row itself collapses via
-   .appFooterHidden, so this is purely the visual exit. */
 .tabbar.tabbarHidden {
   transform: translateY(110%);
 }

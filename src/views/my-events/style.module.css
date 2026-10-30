@@ -68,7 +68,6 @@
   }
 }
 
-/* iPad portrait through iPad Pro landscape, as on the event list. */
 @media (min-width: 48rem) and (max-width: 87.5rem) {
   .list {
     grid-template-columns: repeat(2, minmax(0, 1fr));

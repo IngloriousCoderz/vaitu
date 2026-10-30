@@ -1,29 +1,19 @@
-// Paths are matched in declaration order and the first match wins, so a literal
-// path has to come before the parameterised one it would otherwise be captured
-// by: `/events/new` before `/events/:eventId`. `*` is always matched last, whatever
-// order it is declared in.
-//
-// Values are entity ids, not type names, because the router renders whatever id
-// the route resolves to.
+// First match wins: literal paths before parameterised ones (/events/new before
+// /events/:eventId). Values are entity ids.
 
 export const routes = {
-  // Pre-login. Guarded the other way round — these bounce a signed-in user away.
   "/login": "authentication",
   "/onboarding": "onboarding",
 
-  // Tabs. A bare / is the same page as /events rather than a redirect, so a cold
-  // start on the app's home link does not bounce through a second entry.
   "/": "eventList",
   "/events": "eventList",
   "/applications": "applicationList",
   "/profile": "profile",
 
-  // Literal before parameterised, see above.
   "/events/mine": "myEvents",
   "/events/new": "eventCreate",
   "/events/:eventId/edit": "eventCreate",
 
-  // Pushed on top of a tab root.
   "/events/:eventId": "eventDetail",
   "/events/:eventId/applications": "applicationsReceived",
   "/applications/:applicationId": "applicationDetail",
@@ -34,8 +24,6 @@ export const routes = {
   "*": "notFound",
 }
 
-// Paths the entity handlers need to build. Kept beside the table so a route and
-// the link that reaches it cannot drift apart.
 export const paths = {
   events: "/events",
   myEvents: "/events/mine",

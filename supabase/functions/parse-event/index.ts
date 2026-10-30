@@ -4,8 +4,6 @@ import { currentUser, env } from "../_shared/supabase.ts"
 
 const MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
 
-// From the first "{" to the last "}": models wrap their JSON in prose or
-// code fences despite being told not to.
 const JSON_OBJECT = /\{[\s\S]*\}/
 
 serve(async (req) => {
@@ -42,8 +40,6 @@ serve(async (req) => {
   return json({ fields: JSON.parse(fields) })
 }, "parse failed")
 
-// Built per request: a worker can outlive midnight, and "today" anchors the
-// year of dates spoken without one.
 function systemPrompt() {
   const [today] = new Date().toISOString().split("T")
 

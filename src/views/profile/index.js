@@ -20,8 +20,6 @@ export const Profile = {
   ...avatarSave,
   ...renderers,
 
-  // The tab bar shows the profile on every page, so it loads at sign-in
-  // rather than on the first visit to the tab.
   sessionStart(entity, _, api) {
     api.notify(`#${entity.id}:load`)
   },

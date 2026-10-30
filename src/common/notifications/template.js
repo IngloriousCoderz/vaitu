@@ -16,9 +16,6 @@ import { Page } from "../page/index.js"
 import { PageStatus } from "../page-status/index.js"
 import styles from "./style.module.css"
 
-// Whose notification is which: one icon per type, read straight from the
-// database's type column. Event edits and closures share the event glyph —
-// they differ in tone, not in shape.
 const INBOX_ICONS = {
   application_received: notificationsActiveOutline,
   application_selected: personCheckOutline,
@@ -33,8 +30,6 @@ export const Notifications = {
     return this.renderInbox(props, api)
   },
 
-  // The app bar names the tab; "Mark all read" lives here so the rows and
-  // the button that empties their badge stay together.
   renderHeader({ unread = NO_UNREAD, onMarkAll }) {
     return {
       title: t("notifications.title"),
@@ -83,8 +78,6 @@ export const Notifications = {
   },
 }
 
-// The tablet+ bell: a drawer at the end of the line, over the page, wired by the
-// shell. The rows are the feed's rows; the page stays for the phone tab.
 export const NotificationsPanel = {
   render({ isOpen, entity, onClose, onOpenRow, onMarkAll }) {
     const {
@@ -95,8 +88,6 @@ export const NotificationsPanel = {
     } = entity
     return Drawer.render({
       isOpen,
-      // An overlay at every width, never the docked sidebar the shell's
-      // drawer becomes on wide screens.
       variant: "temporary",
       anchor: "right",
       className: styles.panel,
@@ -146,11 +137,6 @@ export const NotificationsPanel = {
   },
 }
 
-// One feed row on any surface it is shown on: the inbox page, or the
-// right-side drawer the shell opens over it. Clicking always hands the row
-// back to the surface that rendered it — the type maps the row elsewhere:
-// the owner's review page while the event is open, the application's own
-// detail once decided, the event's detail for anything about the event.
 function renderFeedItem({ item, onOpenRow, index }) {
   const classes = [
     styles.item,
@@ -190,8 +176,6 @@ function renderFeedItem({ item, onOpenRow, index }) {
   })
 }
 
-// One textual line per type, driven by the row itself: the applicant's name
-// for a received application, the event's title for everything else.
 function feedLine(item) {
   const title = item.event_title ?? ""
   switch (item.type) {

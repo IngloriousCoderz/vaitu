@@ -1,7 +1,3 @@
-/* The bell with its unread bubble, and the feed list. The bell wraps in a
-   relative row so the badge can anchor to its top-right; the feed rows follow
-   the application-list stagger (the `vaitu-list-item` utility does the rest). */
-
 .bell {
   position: relative;
 }
@@ -35,16 +31,12 @@
   border-top: 1px solid var(--iw-color-border);
 }
 
-/* The house flex zeroes the row's padding through `.iw-flex` composed with
-   `iw-flex-padding-none` — a two-class rule this file's plain `.item` can
-   never outweigh, however late it loads. Matching that weight is what buys
-   the rows' own breathing room back. */
+/* Two classes, to outweigh .iw-flex.iw-flex-padding-none zeroing the row's
+   padding. */
 :global(.iw-flex).item {
   padding-block: var(--iw-space-3);
 }
 
-/* The stack's own top rule draws a line above nothing: the header's border
-   (the page's title) is already there, so the first row starts clean. */
 .item:first-child {
   border-top: none;
 }
@@ -108,9 +100,6 @@
   color: var(--iw-color-text);
 }
 
-/* The right-side drawer the shell opens for the bell: same rows as the tab,
-   hairline header inside the house drawer's title slot, and a body that owns
-   the scroll (the drawer's own `iw-drawer-body` already flexes the height). */
 .panelTitle {
   font-size: var(--iw-font-size-lg);
   font-weight: 600;
@@ -125,9 +114,6 @@
   padding-inline: var(--iw-space-4);
 }
 
-/* The package drawer is a 16rem rail; a feed the user reads by hand gets
-   one more notch. Same notch for the header, so the title, "Mark all read"
-   and the X line up with the rows beneath instead of hugging the edge. */
 :global(.iw-drawer).panel {
   width: 20rem;
 }

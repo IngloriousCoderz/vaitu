@@ -4,8 +4,6 @@ import { html } from "@inglorious/web"
 import { categories } from "../../views/event-list/categories.js"
 import styles from "./style.module.css"
 
-// The event categories as toggle chips, for picking the ones a profile is
-// interested in. None picked means every category.
 export const CategoryPicker = {
   render({ label, hint, value = [], isDisabled = false, onToggle }) {
     return html`

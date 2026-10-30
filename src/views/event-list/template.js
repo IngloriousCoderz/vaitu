@@ -25,20 +25,15 @@ export const EventList = {
     entity.query ??= ""
     entity.activeTypes ??= []
     entity.activeDetails ??= []
-    // null is the default region, which follows the favorites.
     entity.activeRegion ??= null
     entity.activePeriod ??= "all"
     entity.activeSort ??= DEFAULT_SORT
     entity.isFiltersVisible ??= false
     entity.events ??= []
-    // How many events the filters match, of which `events` are the pages
-    // loaded so far.
     entity.total ??= 0
     entity.isLoadingMore ??= false
-    // The latest page and regions requests: answers to older ones are dropped.
     entity.request ??= 0
     entity.regionsRequest ??= 0
-    // Every region the feed could show an event in, as stored.
     entity.regions ??= []
     entity.appliedMap ??= {}
     entity.favoriteRegions ??= []
@@ -114,7 +109,6 @@ export const EventList = {
           ${Dialog.render({
             id: "filters",
             isOpen: isFiltersVisible,
-            // A sheet rising from the bottom on a phone, a dialog above.
             variant: "sheet",
             closeLabel: t("common.close"),
             title: html`<span class=${styles.dialogTitle}>
@@ -254,8 +248,6 @@ export const EventList = {
     `
   },
 
-  // Each filter that is on, as a chip that turns it off, and a way to turn
-  // them all off. Region and period stop hiding in the dialog once set.
   renderActiveRow({ active, onRemoveFilter, onClearFilters }) {
     return html`
       <div class="${styles.chips} ${styles.activeRow}">
@@ -308,10 +300,6 @@ export const EventList = {
   },
 }
 
-// Calls `onVisible` when the element comes within a screen of the viewport,
-// to load the next page before the list runs out. It observes again on every
-// render: a page too short to push the element away would otherwise never be
-// reported again, since the observer only reports changes.
 const observers = new WeakMap()
 
 function watchEnd(onVisible) {

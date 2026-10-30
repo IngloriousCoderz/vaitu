@@ -7,9 +7,6 @@ import { when } from "@inglorious/web/directives/when"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-// The favorite regions editor: the chosen regions as removable chips, the
-// region combobox, and a free-text field for names the combobox does not
-// know. Saving stays with the caller.
 export const FavoriteRegions = {
   render(
     {

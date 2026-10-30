@@ -1,8 +1,3 @@
-/* Rows ease themselves in on a staggered delay. Direct children of .vaitu-list
-   opt in with .vaitu-list-item; the row number arrives as the --vaitu-list-index
-   custom property, set by the templates and capped at LIST_STAGGER_CAP so the
-   last rows do not wait behind a long list. */
-
 @keyframes vaitu-list-in {
   from {
     opacity: 0;

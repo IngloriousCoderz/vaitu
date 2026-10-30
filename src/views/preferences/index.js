@@ -6,8 +6,6 @@ import { Preferences as renderers } from "./template.js"
 
 const { load, save, localeSave, ...syncHandlers } = handlers
 
-// How the app works for you, as opposed to who you are (the profile): what the
-// feed starts from, the language and the emails. Each change saves at once.
 export const Preferences = {
   ...syncHandlers,
   ...load,

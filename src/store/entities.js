@@ -15,12 +15,8 @@ const regionOptions = italianRegions.map((region) => ({
 }))
 
 export const entities = {
-  // Usage statistics, once the user agreed (src/common/analytics-consent/).
   analytics: { type: "AnalyticsConsent" },
-  // The active language. `#i18n:localeChange` switches it.
   i18n: { type: "I18n" },
-  // The language picker, on the sign-in screen and on the profile. Its value
-  // is the active language; picking one notifies `#i18n:localeChange`.
   language: {
     type: "LanguageSelect",
     selectedValue: null,
@@ -64,7 +60,6 @@ export const entities = {
     "preferences",
     "favoriteChoiceSelect",
   ),
-  // Same combobox as Country / style: short list, no search.
   "events-order-by": {
     type: "CountrySelect",
     label: "events.orderBy",
@@ -89,10 +84,6 @@ export const entities = {
   },
 }
 
-// `label` and `isRequired` are rendered by the combobox itself now, so a form
-// does not have to wrap it in a hand-written label to show one. Labels,
-// placeholders and messages are translation keys: state keeps the key and
-// CountrySelect translates it when it renders, so they follow the language.
 function countrySelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
@@ -119,7 +110,6 @@ function countrySelect(targetId, targetEvent, overrides = {}) {
   }
 }
 
-// Same combobox as the country field. The form shows it only for Italy.
 function regionSelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
@@ -146,8 +136,6 @@ function regionSelect(targetId, targetEvent, overrides = {}) {
   }
 }
 
-// Same combobox as the country field. Style and genre are short lists, so the
-// panel has no search box; the dropdown still sits on the control.
 function detailSelect(targetField, options, label) {
   return {
     type: "CountrySelect",
@@ -173,7 +161,6 @@ function detailSelect(targetField, options, label) {
   }
 }
 
-// Same combobox as the country field. Picking a region adds a favorite.
 function favoriteRegionSelect(targetId, targetEvent, overrides = {}) {
   return {
     ...regionSelect(targetId, targetEvent, overrides),

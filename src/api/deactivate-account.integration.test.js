@@ -1,9 +1,3 @@
-// Soft-deactivates through the edge function. The account, its past events
-// with winners and its storage stay so the person can sign back in
-// (touch_login reactivates); the applications they sent and their open events
-// — with the applications received on those — are deleted, exactly as an
-// account deletion does.
-
 import { afterAll, expect, test } from "vitest"
 
 import {
@@ -29,8 +23,6 @@ import {
 const TEST_TIMEOUT_MS = 60000
 
 let userId = null
-// Owned by the seed sender, so deleting the signed-up user does not take it
-// along: a failure halfway through would leave it in the public list.
 let senderEventId = null
 
 afterAll(async () => {
@@ -65,8 +57,6 @@ test(
       data: { user },
     } = await supabase.auth.getUser()
 
-    // Only the edge function deactivates and only touch_login reactivates, so
-    // the stamps they keep stay true.
     const { error } = await supabase
       .from("profiles")
       .update({ is_active: false, last_login_at: null })
@@ -97,8 +87,6 @@ test(
     )
     expect(created).toBeTruthy()
 
-    // A past event with a winner belongs to another user's history and
-    // points: it must survive the deactivation untouched.
     const assignedId = crypto.randomUUID()
     await createEvent(eventPayload(assignedId))
     const assignedEvent = (await fetchMyEvents()).find(
@@ -106,8 +94,6 @@ test(
     )
     expect(assignedEvent).toBeTruthy()
 
-    // A sent application ends with the deactivation, as it does with an
-    // account deletion: the organizer cannot select someone who left.
     const appliedId = crypto.randomUUID()
     senderEventId = await createEventAs(SENDER, appliedId)
     await signIn({ email, password: SEEKER.password })
@@ -130,8 +116,6 @@ test(
     expect(sentApplication).toBeTruthy()
 
     await signIn({ email, password: SEEKER.password })
-    // Shortlist then assign the winner, the way the received-applications
-    // screen does it: direct 'selected' writes are reserved to assign_winner.
     await updateApplicationStatus(sentApplication.id, "shortlisted")
     const { error: assignError } = await supabase.rpc("assign_winner", {
       p_event_id: assignedEvent.id,
@@ -149,7 +133,6 @@ test(
     } = await supabase.auth.getUser()
     await signIn({ email, password: SEEKER.password })
 
-    // The body cannot choose a victim. The token decides who is deactivated.
     const result = await invoke("deactivate-account", { user_id: sender.id })
     expect(result).toEqual({ status: 200, payload: { deactivated: true } })
 
@@ -162,8 +145,6 @@ test(
     expect(profile.is_active).toBe(false)
     expect(profile.deactivated_at).toBeTruthy()
 
-    // The application to the (now deleted) open event is gone with it: the
-    // organizer left and nobody can select anyone ever again.
     await signIn(SEEKER)
     const { data: orphaned, error: orphanedError } = await supabase
       .from("applications")
@@ -172,8 +153,6 @@ test(
     expect(orphanedError).toBeNull()
     expect(orphaned).toEqual([])
 
-    // The selected application stays, with its event reachable: a filtered
-    // join here would come back as null and break the applications screen.
     const { data: kept } = await supabase
       .from("applications")
       .select("id, status, events(id)")
@@ -182,7 +161,6 @@ test(
     expect(kept?.status).toBe("selected")
     expect(kept?.events?.id).toBe(assignedEvent.id)
 
-    // So does the poster's name on it: the winner still sees who it was.
     const detail = await fetchEventDetail(assignedEvent.id)
     expect(detail.senderName).toBe(`Vitest ${id}`)
 
@@ -197,8 +175,6 @@ test(
     expect(eventError).toBeNull()
     expect(publicEvent).toBeNull()
 
-    // The sent application is gone the moment the account left — an organizer
-    // cannot select someone inactive.
     const { data: received, error: receivedError } = await supabase
       .from("applications")
       .select("id")
@@ -206,14 +182,12 @@ test(
     expect(receivedError).toBeNull()
     expect(received).toEqual([])
 
-    // Signing back in reactivates via touch_login (also called from main.js).
     await signIn({ email, password: SEEKER.password })
     const { data: isReactivated, error: touchError } =
       await supabase.rpc("touch_login")
     expect(touchError).toBeNull()
     expect(isReactivated).toBe(true)
 
-    // Only the sign-in that reactivates says so: the app's notice shows once.
     const { data: isReactivatedAgain } = await supabase.rpc("touch_login")
     expect(isReactivatedAgain).toBe(false)
 
@@ -226,7 +200,6 @@ test(
     expect(restored.deactivated_at).toBeNull()
     expect(restored.last_login_at).toBeTruthy()
 
-    // The open event does not come back — deleted, not hidden.
     const { data: visibleAgain } = await supabase
       .from("events")
       .select("id")
@@ -234,13 +207,11 @@ test(
       .maybeSingle()
     expect(visibleAgain).toBeNull()
 
-    // The past event with its winner does.
     const mine = (await fetchMyEvents()).find(
       (event) => event.title === coupleTitle(assignedId),
     )
     expect(mine?.status).toBe("assigned")
 
-    // Removed for good: the sent applications do not come back.
     const { count } = await supabase
       .from("applications")
       .select("id", { count: "exact" })

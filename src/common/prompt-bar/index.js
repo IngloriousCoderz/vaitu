@@ -4,9 +4,6 @@ import { Snackbar } from "@inglorious/ui/snackbar"
 
 import styles from "./style.module.css"
 
-// A yes-or-no question in the same pill and corner as the update bar: the
-// analytics consent and the push permission. `isStacked` lifts it above that
-// pill while both are on screen.
 export const PromptBar = {
   render({
     message,

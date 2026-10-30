@@ -11,7 +11,6 @@ describe("randomId", () => {
   })
 
   it("builds a version 4 UUID where crypto.randomUUID is missing", () => {
-    // Plain http over the LAN is not a secure context, so randomUUID is gone.
     const real = globalThis.crypto
     vi.stubGlobal("crypto", {
       getRandomValues: (bytes) => real.getRandomValues(bytes),

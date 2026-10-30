@@ -20,11 +20,6 @@
 .iw-theme-vaitu {
   font-family: var(--iw-font-family-sans);
 
-  /* ========================================
-     BOOTSTRAP THEME - Bootstrap Inspired
-     ======================================== */
-
-  /* Semantic Colors */
   --iw-color-bg: var(--vbg);
   --iw-color-bg-secondary: color-mix(
     in srgb,
@@ -53,23 +48,15 @@
   --iw-color-text-muted: var(--vmuted);
 
   --iw-color-border: var(--vline);
-  --iw-color-border-focus: #86b7fe; /* TODO */
-
+  --iw-color-border-focus: #86b7fe;
   --iw-color-primary: var(--vaccent);
   --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
   --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
-  --iw-color-primary-text: var(--iw-color-white); /* TODO */
-
-  /* TODO: These three seem unused so far */
+  --iw-color-primary-text: var(--iw-color-white);
   --iw-color-accent: #6f42c1;
   --iw-color-accent-hover: #5a32a3;
   --iw-color-accent-active: #4328a4;
 
-  /* ========================================
-     COMPONENT TOKENS
-     ======================================== */
-
-  /* Button */
   --iw-button-bg: var(--iw-color-primary);
   --iw-button-bg-hover: var(--iw-color-primary-hover);
   --iw-button-bg-active: var(--iw-color-primary-active);
@@ -91,7 +78,6 @@
   --iw-button-ghost-text: var(--iw-color-text);
   --iw-button-ghost-border: transparent;
 
-  /* Input */
   --iw-input-bg: var(--iw-color-bg);
   --iw-input-bg-hover: var(--iw-color-white);
   --iw-input-bg-focus: var(--iw-color-white);
@@ -103,21 +89,17 @@
   --iw-input-radius: var(--iw-radius-xl);
   --iw-input-shadow-focus: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 
-  /* App bar and drawer sit on the page background, not on a surface. */
   --iw-app-bar-bg: var(--iw-color-bg);
   --iw-drawer-bg: var(--iw-color-bg);
 
-  /* Card */
   --iw-card-bg: var(--iw-color-surface);
   --iw-card-border: var(--iw-color-border);
   --iw-card-radius: var(--iw-radius-lg);
   --iw-card-shadow: none;
   --iw-card-shadow-hover: none;
 
-  /* Badge */
   --iw-badge-radius: var(--iw-radius-md);
 
-  /* List: items show the container they sit in, drawer or page. */
   --iw-list-item: transparent;
   --iw-list-item-selected: color-mix(
     in srgb,
@@ -125,7 +107,6 @@
     transparent
   );
 
-  /* Alert */
   --iw-alert-radius: var(--iw-radius-md);
   --iw-alert-shadow: none;
   color-scheme: light;

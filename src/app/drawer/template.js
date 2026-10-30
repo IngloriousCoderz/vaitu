@@ -34,8 +34,6 @@ const NAV = [
   }),
 ]
 
-// The package drawer with the brand in its header, as in the Inglorious UI
-// dashboard. Who is signed in lives at the end of the app bar instead.
 export const AppDrawer = {
   render({
     isOpen,

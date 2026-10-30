@@ -51,7 +51,6 @@ describe("pre-login routes", () => {
 })
 
 describe("routeGuard, signed out", () => {
-  // Storage as the browser would hold it: no user, and onboarding owed or not.
   function guard(route, path, { isOnboardingDue }) {
     const notify = vi.fn()
     const originalWindow = globalThis.window

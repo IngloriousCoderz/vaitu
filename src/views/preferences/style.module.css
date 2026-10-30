@@ -22,7 +22,6 @@
   min-width: 0;
 }
 
-/* Same as the category picker's legend, so the two read as a pair. */
 .legend {
   display: block;
   padding: 0;

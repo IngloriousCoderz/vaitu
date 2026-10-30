@@ -1,5 +1,3 @@
-/* Same title and subtitle as the sign-in steps: the gate reads as the first
-   screen of the app, not as an error. */
 .gate {
   display: flex;
   flex-direction: column;

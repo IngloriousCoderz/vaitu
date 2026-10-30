@@ -1,9 +1,5 @@
 import { createI18n } from "@inglorious/i18n"
 
-// The app's languages are the catalogues in ./locales, one file each, loaded
-// when needed. English is the fallback: a key missing from another catalogue
-// shows in English rather than as the key itself. The language follows the
-// user's account through their profile.
 const {
   I18n: BaseI18n,
   t,
@@ -24,7 +20,6 @@ const {
 
 export { currentLocale, labelled, languages, ready, t, trans, translatedLabel }
 
-// Signed out: later language choices wait for the next user.
 export const I18n = [
   BaseI18n,
   {

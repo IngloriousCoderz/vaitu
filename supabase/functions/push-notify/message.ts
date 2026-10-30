@@ -1,13 +1,8 @@
 import wording from "./wording.json" with { type: "json" }
 
-// What a push says and where a tap on it lands, for a notification in the
-// feed's own shape (src/api/notifications.js flattens its rows the same way).
-//
-// A function cannot import app source, so the lines and the destinations are
-// copies: wording.json of each catalogue's notifications.types, and
-// destination() of the feed's pathFor. src/common/notifications/push.test.js
-// holds both to the originals, so a change on one side fails until the other
-// follows.
+// Copies of the feed's lines (wording.json) and destinations (pathFor): a
+// function cannot import app source. src/common/notifications/push.test.js
+// fails when they drift.
 
 export interface FeedItem {
   type: string

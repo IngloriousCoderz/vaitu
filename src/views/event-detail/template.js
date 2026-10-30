@@ -84,11 +84,8 @@ export const EventDetail = {
         }),
         html`
           ${
-            /* Keyed on the data rather than on the status string. `open` sets
-               status to "idle" with a null event before its load handler starts,
-               and a render landing in that window used to fall through to the
-               detail branch and read event.hue off null. Anything without an
-               event yet is loading, whatever the status happens to say. */
+            /* Keyed on the data, not the status: `open` sets status to idle
+               with a null event before the load starts. */
             PageStatus.render({
               isError: status === "error",
               error,

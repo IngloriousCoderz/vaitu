@@ -4,8 +4,6 @@ import { toViewModel } from "./events.js"
 
 const ICS_BUCKET = "event-ics"
 
-// My applications with their events, newest first. Shape reuses the event
-// view model plus application fields so cards render unchanged.
 export async function fetchMyApplications() {
   const {
     data: { user },
@@ -83,8 +81,6 @@ export async function updateMotivation(application_id, motivation) {
   return true
 }
 
-// At any stage, the winner's too: the database then gives the sender back the
-// shortlist and reopens the event (reopen_on_winner_withdrawn).
 export async function withdrawApplication(application_id) {
   const { error } = await supabase
     .from("applications")

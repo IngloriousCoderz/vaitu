@@ -1,6 +1,3 @@
-/* The update bar's pill (../update-bar), for a question too long to keep on
-   one line: the message wraps at every width. */
-
 .bar :global(.iw-snackbar-content) {
   gap: var(--iw-space-4);
   max-width: 36rem;
@@ -18,7 +15,6 @@
   overflow-wrap: anywhere;
 }
 
-/* Centred over the content, not under the docked drawer: see ../update-bar. */
 @media (min-width: 64rem) {
   .bar {
     inset-inline-start: calc(var(--vdrawer-stripe, 0rem) + var(--iw-space-4));
@@ -26,7 +22,6 @@
   }
 }
 
-/* Above the update bar: the Snackbar's own bottom, plus one pill. */
 :global(.iw-snackbar-bottom-center).barStacked {
   bottom: calc(
     var(--iw-snackbar-gap, var(--iw-space-4)) +

@@ -39,10 +39,6 @@ export async function deleteImage(path, bucket) {
   if (error) throw error
 }
 
-// Public URLs carry the bucket in the path. Reading it back means an avatar
-// uploaded before the `avatars` bucket existed is still deleted from the bucket
-// it actually lives in. External URLs (an OAuth picture, for example) return
-// null and are left alone.
 export function imageRefFromUrl(url) {
   if (typeof url !== "string") return null
   for (const bucket of BUCKETS) {

@@ -22,8 +22,6 @@ afterAll(async () => {
   if (eventId) await deleteOwnedEvent(eventId)
 })
 
-// The whole chain against the local stack: Realtime delivers a change to a
-// table the entity reads, and the entity's own load runs.
 test(
   "a change to a table the entity reads reloads it",
   async () => {
@@ -35,7 +33,6 @@ test(
       types: { Probe: [{ load }, liveAlways(["applications"])] },
       entities: { probe: { type: "Probe" } },
     })
-    // Realtime needs a moment to start sending a newly joined channel's rows.
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     const {

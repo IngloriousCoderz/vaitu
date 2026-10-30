@@ -181,9 +181,6 @@ describe("a passed deadline", () => {
   })
 })
 
-// Assigning rejects everyone else; the winner withdrawing hands the sender
-// back the shortlist they had, and nothing they decided after the
-// assignment.
 describe("the shortlist after the winner withdraws", () => {
   let eventId = null
   let userId = null
@@ -208,8 +205,6 @@ describe("the shortlist after the winner withdraws", () => {
     await signOut()
   }, TEST_TIMEOUT_MS)
 
-  // The sender applies, both are shortlisted (unless told otherwise), the
-  // sender wins and the other is rejected; returns the winner's application.
   async function assignSender({ shortlistOther = true } = {}) {
     await signIn(SENDER)
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
@@ -242,7 +237,6 @@ describe("the shortlist after the winner withdraws", () => {
     "keeps a rejection the sender made after the assignment",
     async () => {
       const winnerId = await assignSender({ shortlistOther: false })
-      // The sender reconsiders, then rejects the other applicant on purpose.
       await setStatus(otherId, "pending")
       await setStatus(otherId, "rejected")
 
@@ -259,8 +253,6 @@ describe("the shortlist after the winner withdraws", () => {
 describe("withdrawing an application", () => {
   let eventId = null
 
-  // Created here rather than inside the first test, so the second one does not
-  // depend on its predecessor having run.
   beforeAll(async () => {
     eventId = await createEventAs(SEEKER, crypto.randomUUID())
   })
@@ -401,10 +393,6 @@ describe("the applicant's own status", () => {
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
       const id = await applicationId(eventId)
 
-      // The applicant must not be able to move their own status, so the write
-      // has to be refused. Asserting that directly is the point of the test;
-      // reading the row back afterwards only inferred it, and hid the error
-      // that says who the write actually ran as.
       const { error: shortlistError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
@@ -542,7 +530,6 @@ describe("rewriting an application", () => {
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
       const id = await applicationId(eventId)
 
-      // Moving it would dodge the open and deadline checks applying makes.
       const { error: moveError } = await supabase
         .from("applications")
         .update({ event_id: otherEventId })
@@ -551,8 +538,6 @@ describe("rewriting an application", () => {
 
       expect(await updateMotivation(id, `${MOTIVATION}, edited`)).toBe(true)
 
-      // The owner decides on the application, but the words stay the
-      // applicant's, and so does the authorship.
       await signIn(SEEKER)
       const {
         data: { user: owner },

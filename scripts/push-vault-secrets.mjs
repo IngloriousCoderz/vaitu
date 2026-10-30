@@ -1,10 +1,3 @@
-// Sets what the push trigger calls push-notify with in the linked project's
-// Vault: the project's own URL, and its legacy service-role key (the one
-// push-notify can read a role out of). The key comes from the Supabase CLI's
-// login and goes straight into Vault, so it is never written down: not in
-// git, not in a seed, not on the command line. Run it after every reset of
-// the linked project; it overwrites whatever is there.
-
 import { execFileSync } from "node:child_process"
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
@@ -50,8 +43,6 @@ end;
 $$;
 `
 
-// A file rather than an argument, which any process could read; readable by
-// this user only, and gone once the query has run.
 const dir = mkdtempSync(path.join(tmpdir(), "vaitu-vault-"))
 const file = path.join(dir, "secrets.sql")
 try {

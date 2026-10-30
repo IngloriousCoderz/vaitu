@@ -32,8 +32,7 @@ export const load = handleAsync("load", {
   success(entity, application) {
     entity.status = "ready"
     entity.application = application
-    // Realtime reloads the page while it is open: what the user is typing
-    // stays.
+    // Realtime reloads keep what the user is typing.
     if (entity.isPristine) entity.values.motivation = application.motivation
   },
   error(entity, err) {

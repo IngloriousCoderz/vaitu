@@ -1,5 +1,3 @@
-/* Full-width buttons one above the other on a phone, where the sheet spans
-   the screen; side by side from 48rem, where it is a centred dialog. */
 .actions {
   display: flex;
   flex-direction: column;

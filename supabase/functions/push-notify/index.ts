@@ -7,16 +7,6 @@ import { admin } from "../_shared/supabase.ts"
 import { type FcmMessage, send } from "./fcm.ts"
 import { messageFor, type PushMessage } from "./message.ts"
 
-// Sends a new notification to every device its recipient allowed pushes on,
-// browsers and native apps alike, through Firebase Cloud Messaging.
-//
-// Only the database calls this: vaitu_wake_push, the trigger on notifications,
-// posts the row's id with the service-role key once the insert commits. The
-// row is claimed by setting pushed_at, so a repeated call finds nothing left
-// to send. A failed send is not retried, since the feed still has the row. A
-// token FCM no longer knows (404: the app was uninstalled, the browser reset,
-// the permission revoked) is deleted.
-
 serve(async (req) => {
   if (callerRole(req) !== "service_role") {
     return json({ error: "Database only" }, STATUS_CODE.Forbidden)
@@ -55,7 +45,6 @@ serve(async (req) => {
       application_id: data.application_id,
       event_title: event?.title ?? null,
       event_status: event?.status ?? null,
-      // A withdrawal's application is gone, so its row keeps the name itself.
       applicant_name:
         one(one(data.applications)?.applicant)?.full_name ??
         data.applicant_name ??
@@ -97,9 +86,6 @@ serve(async (req) => {
   return json({ sent })
 }, "push failed")
 
-// A browser gets the message as data only: public/sw-push.js shows it. The
-// native apps get a notification the system shows by itself, even with the
-// app closed, and the destination as data for the tap.
 function fcmMessage(
   token: string,
   platform: string,
@@ -126,8 +112,6 @@ function one<T>(embed: T | T[] | null | undefined) {
   return (Array.isArray(embed) ? embed[0] : embed) ?? null
 }
 
-// The gateway has already verified the token's signature; its role says
-// whether the database sent it or a client holding the publishable key.
 function callerRole(req: Request) {
   const token = (req.headers.get("authorization") ?? "").replace(
     /^Bearer\s+/i,

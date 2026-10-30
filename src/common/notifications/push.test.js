@@ -29,8 +29,6 @@ function notification(fields = {}) {
   }
 }
 
-// push-notify cannot import app source, so it carries copies; these hold the
-// copies to the originals.
 describe("push-notify's copies", () => {
   it("words every notification the way the feed does, in every language", () => {
     const fromCatalogues = Object.fromEntries(

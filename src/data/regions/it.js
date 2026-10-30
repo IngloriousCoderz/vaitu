@@ -1,4 +1,3 @@
-// Italian name for the same key in en.js.
 export const regions = {
   abruzzo: "Abruzzo",
   aostaValley: "Valle d'Aosta",

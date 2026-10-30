@@ -6,13 +6,8 @@ import { fetchAppVersion } from "../../api/app-versions.js"
 import { isOutdated } from "./is-outdated.js"
 import * as renderers from "./template.js"
 
-// The native gate. The iOS and Android apps carry their web code inside the
-// binary, so the service worker behind the update pill never reaches them:
-// `src/native-update.js` asks for a check at launch and on every resume, and
-// while the installed build is below the platform's `min_build` the shell
-// renders nothing but this screen, sending the user to the store. A failed
-// check (offline, timeout) keeps the last answer: the gate never closes on a
-// guess, and never opens on one either.
+// A failed check keeps the last answer: the gate never closes or opens on a
+// guess.
 export const AppVersion = {
   ...renderers,
 
@@ -36,8 +31,6 @@ export const AppVersion = {
     error() {},
   }),
 
-  // An address outside the app: Capacitor hands it to the system, which
-  // opens the App Store or Play Store app on its listing.
   storeOpen(entity) {
     window.location.assign(entity.storeUrl)
   },

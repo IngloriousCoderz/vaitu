@@ -12,7 +12,6 @@ serve(async (req) => {
 
   const user = await currentUser(req)
   if (!user) return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
-  // Uploads live under a folder named after their owner.
   const [owner] = audio_path.split("/")
   if (owner !== user.id) {
     return json({ error: "Not your audio" }, STATUS_CODE.Forbidden)

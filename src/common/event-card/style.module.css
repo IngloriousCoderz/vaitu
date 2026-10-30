@@ -94,8 +94,6 @@
   --iw-badge-on-accent: #8c4632;
 }
 
-/* Wide lists ask for a cover: the colour block stands in for the photo those
-   grids lead with, and the text sits underneath it. The phone row is unchanged. */
 @media (min-width: 48rem) {
   .cover {
     flex-direction: column;

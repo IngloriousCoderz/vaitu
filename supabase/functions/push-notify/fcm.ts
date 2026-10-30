@@ -4,11 +4,6 @@ import { encodeBase64Url } from "jsr:@std/encoding@1/base64url"
 import { upstreamError } from "../_shared/http.ts"
 import { env } from "../_shared/supabase.ts"
 
-// Firebase Cloud Messaging's HTTP v1 API, which reaches browsers, Android and
-// iOS alike. It takes an OAuth access token, which the service account in the
-// FCM_SERVICE_ACCOUNT secret (the JSON file Firebase hands out) gets from
-// Google by signing a short-lived JWT.
-
 interface ServiceAccount {
   project_id: string
   client_email: string
@@ -26,9 +21,7 @@ export interface FcmMessage {
 const TOKEN_URL = "https://oauth2.googleapis.com/token"
 const SCOPE = "https://www.googleapis.com/auth/firebase.messaging"
 const MS_PER_SECOND = 1000
-// Google's limit for the JWT, and so for the access token it buys.
 const TOKEN_LIFETIME_S = 3600
-// Renewed this long before it runs out, so no send starts with a dying token.
 const RENEW_MARGIN_S = 60
 
 let access: { token: string; expiresAt: number } | null = null
@@ -49,8 +42,6 @@ export async function send(message: FcmMessage) {
   )
 }
 
-// One token serves every send until it nears its end, across the requests a
-// worker handles.
 async function accessToken(account: ServiceAccount) {
   const now = Math.floor(Date.now() / MS_PER_SECOND)
   if (access && access.expiresAt - RENEW_MARGIN_S > now) return access.token
@@ -97,7 +88,6 @@ function part(value: unknown) {
   return encodeBase64Url(new TextEncoder().encode(JSON.stringify(value)))
 }
 
-// The key's DER bytes, from the PEM text between its BEGIN and END lines.
 function pemBody(pem: string) {
   return decodeBase64(pem.replace(/-----[^-]+-----/g, "").replace(/\s/g, ""))
 }

@@ -13,14 +13,8 @@ import styles from "./style.module.css"
 
 const SWIPE_PX = 40
 const NEXT_PHOTO = 1
-// The counter counts photos from one.
 const COUNTER_BASE = 1
 
-// Full-screen look at event photos. Carousel only while enlarged; the X
-// (and the solid backdrop) close it. A swipe is told apart from a tap by where
-// it began, which the caller keeps (`swipeStartX`, set through `onSwipeStart`).
-// In a right-to-left language the photos run the other way: the arrows mirror,
-// and a swipe towards the start of the line moves on.
 export const PhotoCarousel = {
   render({
     urls,

@@ -3,18 +3,9 @@ import { Router } from "@inglorious/web/router"
 import { isOnboardingDue, readUser } from "../api/session.js"
 import { paths } from "../routes"
 
-// The access policy, in one place: a route resolved -> may this visitor be here?
-//
-// Both halves of the decision read localStorage rather than the store. The store
-// commits a handler's batch only after every notification queued inside it has
-// run, so a guard firing on the navigation that a sign-in raised would read the
-// session from before the sign-in and turn the visitor away. localStorage was
-// written before any of that started, so there is no window in which the two
-// disagree and no need to defer anything.
-//
-// It is also deny-by-default: a new route is guarded unless someone deliberately
-// opts it out, which is the safer way round for an app where every page but two
-// needs a session.
+// Reads localStorage, not the store: a guard firing inside a sign-in's batch
+// would still see the visitor signed out. Deny-by-default: a new route needs a
+// session unless opted out.
 
 const PRE_LOGIN_ROUTES = new Set(["authentication", "onboarding"])
 
@@ -73,10 +64,6 @@ export function routeGuard(entity, payload, api) {
   const user = readUser()
 
   if (!user) {
-    // Onboarding saves to the profile, so a signed-out visitor may only wait
-    // there for a session already on its way: the one a confirmation link (or
-    // a signup without confirmation) is about to deliver. Anyone else, an
-    // expired link included, signs in first.
     if (payload.route === "authentication") return
     if (payload.route === "onboarding" && isOnboardingDue()) return
     api.notify("#router:navigate", signInTarget(payload.path))
@@ -85,7 +72,6 @@ export function routeGuard(entity, payload, api) {
 
   if (!isPreLogin(payload.route)) return
 
-  // Onboarding is offered once, straight after a signup.
   if (payload.route === "onboarding") {
     if (!isOnboardingDue()) {
       api.notify("#router:navigate", { to: paths.events, replace: true })

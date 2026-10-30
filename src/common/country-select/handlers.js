@@ -37,7 +37,6 @@ export function create(entity) {
   entity.isSearchable ??= false
   entity.isClearable ??= false
 
-  // Translation keys, translated when the select renders.
   entity.placeholder ??= "combobox.select"
   entity.searchPlaceholder ??= "combobox.search"
   entity.noOptionsMessage ??= "combobox.noOptions"
@@ -82,7 +81,6 @@ export function optionSelect(entity, option, api) {
   entity.selectedValue = optionValue
   doClose(entity)
 
-  // Propagate selection to parent entity
   if (entity.targetId && entity.targetEvent && entity.targetField) {
     api.notify(`#${entity.targetId}:${entity.targetEvent}`, {
       field: entity.targetField,
@@ -100,7 +98,6 @@ export function clear(entity, _payload, api) {
   if (entity.isDisabled) return
   entity.selectedValue = entity.isMulti ? [] : null
 
-  // Propagate clearing to parent entity
   if (entity.targetId && entity.targetEvent && entity.targetField) {
     api.notify(`#${entity.targetId}:${entity.targetEvent}`, {
       field: entity.targetField,

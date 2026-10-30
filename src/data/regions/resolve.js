@@ -80,8 +80,6 @@ export function regionFilterItems(eventRegions, favoriteRegions) {
   const others = uniqueRegions(eventRegions).filter(
     (region) => !favorites.some((favorite) => sameRegion(favorite, region)),
   )
-  // The default comes first: "My regions" once there are favorites, since that
-  // is what the feed starts from and what clearing the filters goes back to.
   return [
     ...(favorites.length
       ? [labelled("filters.myRegions", { id: "mine" })]

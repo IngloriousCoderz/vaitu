@@ -441,8 +441,6 @@ function prettyValue(value) {
   return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
-// A stored value (status, style, genre) by name in the active language,
-// trying each key prefix in turn; the prettified value when none has it.
 function translatedValue(prefixes, value) {
   if (!value) return "—"
   const keys = [prefixes].flat().map((prefix) => `${prefix}${value}`)

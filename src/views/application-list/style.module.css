@@ -1,5 +1,3 @@
-/* Title and status filters travel as one bar. A sticky header alone let the
-   chips slide underneath it and get sliced in half. */
 .stickyTop {
   position: sticky;
   top: 0;

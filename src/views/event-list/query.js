@@ -13,8 +13,6 @@ import {
   typesInScope,
 } from "./helpers.js"
 
-// Column and direction per sort, in the order the query applies them. The
-// fetch adds the id last, so equal values still page in a stable order.
 const SORT_ORDERS = {
   created_desc: [["created_at", false]],
   created_asc: [["created_at", true]],
@@ -78,7 +76,6 @@ export function feedQuery({
   }
 }
 
-// Today in the visitor's calendar, as the database writes a date.
 export function localToday(now = new Date()) {
   const offset = now.getTimezoneOffset() * MINUTE_MS
   return new Date(now.getTime() - offset)
@@ -86,7 +83,6 @@ export function localToday(now = new Date()) {
     .slice(FIRST_INDEX, ISO_DATE_LENGTH)
 }
 
-// Lowercase and without accents, as the database keeps the text it searches.
 function plain(text) {
   return text
     .trim()

@@ -4,10 +4,6 @@ import { withLiveReload } from "@inglorious/web/decorators/with-live-reload"
 import { supabase } from "./client.js"
 import { readUserId } from "./session.js"
 
-// Live data: an entity reloads, through its own `load`, whenever a table it
-// reads changes (withLiveReload, over Supabase Realtime). Which rows changed
-// does not matter. src/store/index.js says who reads what.
-
 const source = realtimeSource(supabase)
 
 /**

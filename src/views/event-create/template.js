@@ -227,8 +227,6 @@ export const EventCreate = {
     onRemoveAudio,
   }) {
     const src = entity.audio_preview_url ?? entity.audio_url
-    // Edit mode with saved audio stays mic-only until tapped: a fresh take
-    // (preview) always shows, saved audio alone does not.
     if (
       !entity.is_audio_open &&
       !entity.is_recording &&
@@ -512,8 +510,6 @@ export const EventCreate = {
     return html`
       <div class=${styles.field}>
         ${Input.render({
-          // Stable so the label is bound to the input rather than just sitting
-          // next to it.
           id: `create-${field}`,
           label,
           inputType: type ?? "text",

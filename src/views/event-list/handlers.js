@@ -23,10 +23,6 @@ import {
 } from "./helpers.js"
 import { feedQuery, localToday } from "./query.js"
 
-// The database filters, searches, sorts and pages the feed, so every change
-// to what it shows asks it again from the first page.
-
-// The box shows every keystroke; the query waits for a pause (searchRun).
 export function search(entity, query) {
   entity.query = query
 }
@@ -35,8 +31,6 @@ export function searchRun(entity, _, api) {
   refetch(entity, api)
 }
 
-// Types, styles and genres change which categories are in scope, and with
-// them the regions on offer: those come first, then the page.
 export function typeToggle(entity, categoryId, api) {
   entity.activeTypes = toggled(entity.activeTypes, categoryId)
   fetchRegions(entity, api, "reset")
@@ -51,13 +45,10 @@ export function filtersToggle(entity) {
   entity.isFiltersVisible = !entity.isFiltersVisible
 }
 
-// Its ×, Esc or a click outside it.
 export function filtersClose(entity) {
   entity.isFiltersVisible = false
 }
 
-// Picking the default region is the same as picking none, so it leaves no
-// chip behind.
 export function regionSelect(entity, region, api) {
   entity.activeRegion =
     region === defaultRegion(entity.favoriteRegions) ? null : region
@@ -83,7 +74,6 @@ export function filtersClear(entity, _, api) {
   fetchRegions(entity, api, "reset")
 }
 
-// The next page, when the end of the list scrolls into view.
 export function pageMore(entity, _, api) {
   const isBusy = entity.status !== "ready" || entity.isLoadingMore
   if (isBusy || entity.events.length >= entity.total) return
@@ -94,9 +84,6 @@ export function pageMore(entity, _, api) {
   })
 }
 
-// What the feed starts from (your interests and favorite regions) and which
-// events you applied to. Then the regions, and the first page, or as many
-// pages as were on screen when this is a refresh.
 export const load = handleAsync("load", {
   start(entity) {
     if (!entity.events.length) entity.status = "loading"
@@ -125,9 +112,6 @@ export const load = handleAsync("load", {
   },
 })
 
-// The regions the feed could show an event in, for the categories in scope.
-// A picked region they no longer include goes back to the default, and the
-// page follows: `then` is the page fetch's mode.
 export const regionsFetch = handleAsync("regionsFetch", {
   async run({ request, categories, then }) {
     try {
@@ -154,14 +138,10 @@ export const regionsFetch = handleAsync("regionsFetch", {
     } else {
       refetch(entity, api)
     }
-    // The favorite-region picker offers the regions on events too.
     api.notify("#preferences:favoriteOptionsSync")
   },
 })
 
-// A page of events. Each request is numbered, and an answer to anything but
-// the latest is dropped: typing in the search box sends one per keystroke,
-// and they can come back in any order.
 export const pageFetch = handleAsync("pageFetch", {
   start(entity, { mode }) {
     if (mode === "reset") entity.status = "loading"
@@ -190,13 +170,9 @@ export const pageFetch = handleAsync("pageFetch", {
   },
 })
 
-// The payloads below reach their run as a later event, after this handler's
-// draft of the entity is revoked, so they carry copies of its arrays: one
-// passed through as is (the interests, when nothing is picked) would throw on
-// the first read.
+// Copies: the runs read them after this draft is revoked.
 function fetchRegions(entity, api, then) {
   entity.regionsRequest += 1
-  // A reset shows the loader now, not only once the regions are back.
   if (then === "reset") entity.status = "loading"
   api.notify(`#${entity.id}:regionsFetch`, {
     request: entity.regionsRequest,
@@ -239,15 +215,11 @@ function fetchPage(entity, api, { mode, from, to }) {
   })
 }
 
-// A new event shifts every later one down a row, so the next page can repeat
-// the last of this one.
 function appended(events, page) {
   const ids = new Set(events.map((event) => event.id))
   return [...events, ...page.filter((event) => !ids.has(event.id))]
 }
 
-// The picked region after the list of regions changed: the same one under
-// its new spelling, or back to the default once it is gone or has become it.
 function keepRegion(entity) {
   if (entity.activeRegion === null) return
   const region = activeRegionAfterChange(

@@ -1,32 +1,9 @@
-// WHY THIS EXISTS (and why it is not reimplementing @capacitor/assets)
-//
-// @capacitor/assets does ~95% of the work: it emits all 148 Android files and
-// 14 iOS files, writes Contents.json, and handles dark variants and every
-// density. This script only produces the five SOURCE images that Full Control
-// mode consumes. Delete it and you lose per-target sizing, not the generator.
-//
-// The alternative — a hand-made square assets/logo.svg with the mark pre-inset
-// — was tested and rejected. It works for icons, but splash scaling in
-// @capacitor/assets is computed from the SOURCE FILE width, not the artwork
-// (`asset.width * logoSplashScale`, see platforms/ios/index.js). So the correct
-// flag is `--logoSplashScale 1.456`, a number derived from this specific logo's
-// inset fraction. Change the logo and the splash silently shrinks to ~6% — no
-// error, just a too-small mark. This script derives the size instead, so a
-// different logo just produces different (correct) numbers.
-//
-// Two sharp traps this absorbs, both hit during development:
-//
-//  1. resize(w, h) defaults to fit:"cover" — it fills the box and CROPS the
-//     overflow. On a non-square mark that slices the swoosh tips and the dot
-//     off both sides. Pass width only, which preserves aspect.
-//  2. Android adaptive icons are masked to the middle 72/108 of the canvas.
-//     55% of the canvas is the largest size with zero pixels outside that
-//     circle; 60% clips the tips, 70% loses ~10% of the mark.
-//
-// Cost of keeping it: 57 lines, and it uses sharp, already a devDependency.
-// Worst case if it rots is wrong-sized icons, not a broken app.
-//
-// Run via `pnpm assets` (compose + generate).
+// Why not @capacitor/assets alone: it scales the splash from the source file's
+// width, not the artwork, so a hand-made logo needs a magic --logoSplashScale
+// that breaks silently when the logo changes. This derives the sizes.
+// Two traps it absorbs: resize(w, h) crops a non-square mark, so pass the width
+// only; Android adaptive icons are masked to the middle 72/108, so the mark
+// fits in 55% of the canvas.
 
 import { mkdir, readFile } from "node:fs/promises"
 import { fileURLToPath } from "node:url"
@@ -39,8 +16,8 @@ const OUT = fileURLToPath(new URL("../assets/", import.meta.url))
 const LIGHT = "#f6f3ea"
 const DARK = "#2b2b26"
 
-const ICON_MARK = 0.75 // iOS / legacy: only rounded corners, no circle mask
-const ADAPTIVE_MARK = 0.75 // Android adaptive: should fit the 72/108 circle, but 75% is also fine
+const ICON_MARK = 0.75
+const ADAPTIVE_MARK = 0.75
 const SPLASH_MARK = 0.3
 
 function rgb(hex) {
@@ -55,10 +32,6 @@ async function main() {
   const svg = await readFile(LOGO)
   await mkdir(OUT, { recursive: true })
 
-  // Scale by WIDTH ONLY, so the mark spans `fraction` of the canvas width and
-  // keeps its aspect. A two-argument resize() would default to fit:"cover",
-  // which fills the square canvas and slices the left/right ends off the swoosh
-  // and the dot (sharp 0.32+, hit on Android when the viewBox was cropped).
   const mark = (canvas, fraction) =>
     sharp(svg)
       .resize(Math.round(canvas * fraction))

@@ -25,7 +25,6 @@ export function photoClose(entity) {
   entity.isPhotoPreviewOpen = false
 }
 
-// Where a swipe on the enlarged photo began, so its end can tell which way it went.
 export function photoSwipeStart(entity, x) {
   entity.photoSwipeX = x
 }
@@ -83,9 +82,6 @@ export const load = handleAsync("load", {
     entity.error = null
   },
   async run(event_id) {
-    /* Realtime can fire this after the page has been left, when there is no
-       event to load. `.eq("id", undefined)` is a malformed filter that comes
-       back as a 400, so bail rather than ask. */
     if (!event_id) throw new Error("errors.noEventForApplications")
 
     const { data: event, error: eventError } = await supabase
@@ -149,8 +145,8 @@ export const statusSet = handleAsync("statusSet", {
     if (error) throw error
     return { application_id, status }
   },
-  // The change shows at once, from what was written: realtime reloads the
-  // list too, but it can lag or drop, as in the Android app's WebView.
+  // Applied at once: realtime reloads the list too, but can lag or drop
+  // (Android WebView).
   success(entity, { application_id, status }) {
     entity.status = "ready"
     entity.items = entity.items.map((item) =>
@@ -176,8 +172,6 @@ export const winnerAssign = handleAsync("winnerAssign", {
     if (error) throw error
     return event_id
   },
-  // Assigning rejects the others and closes the event, so the page reloads
-  // rather than wait for realtime.
   success(entity, event_id, api) {
     entity.status = "ready"
     entity.confirming_assign = null

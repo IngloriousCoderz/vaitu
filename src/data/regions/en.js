@@ -1,5 +1,3 @@
-// Names the app stores and shows. Keys match the other language files.
-// When a region has more than one English name, the first is the one we keep.
 export const regions = {
   abruzzo: "Abruzzo",
   aostaValley: "Aosta Valley",

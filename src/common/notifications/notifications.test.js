@@ -5,7 +5,6 @@ vi.mock("../../api/notifications.js", () => ({
   markNotificationRead: vi.fn(async () => []),
   markAllNotificationsRead: vi.fn(async () => []),
 }))
-// No DOM environment here: the house drawer is exercised live and by build.
 vi.mock("@inglorious/ui/drawer", () => ({
   Drawer: { render: (props) => `drawer(${props.isOpen ? "open" : "closed"})` },
 }))
@@ -25,9 +24,6 @@ beforeEach(() => {
 })
 
 describe("Notifications.type-composition", () => {
-  // The store composes every type before honoring it; the render bridge talks
-  // to its siblings through `this`, so the composed type must have kept them
-  // and the render must survive a store-fresh entity.
   it("the composed type still knows its renderers", () => {
     const store = createStore({
       types: { Notifications },
@@ -56,7 +52,6 @@ describe("Notifications.create", () => {
     expect(entity.items).toEqual([])
     expect(entity.unread).toBe(0)
     expect(entity.status).toBe("idle")
-    // The drawer the shell opens starts closed, like the tab it mirrors.
     expect(entity.isPanelOpen).toBe(false)
   })
 })
@@ -227,7 +222,6 @@ describe("Notifications.sessionEnd", () => {
     expect(entity.unread).toBe(0)
     expect(entity.status).toBe("idle")
     expect(entity.error).toBeNull()
-    // An open drawer outliving its session would hang over the sign-in screen.
     expect(entity.isPanelOpen).toBe(false)
   })
 })
@@ -243,7 +237,6 @@ describe("pathFor", () => {
     expect(pathFor(notification({ event_status: "closed" }))).toBe("/events/e1")
   })
 
-  // The application is gone, so the sender lands where it used to be listed.
   it("a withdrawal visits the event's received applications", () => {
     const withdrawn = { type: "application_withdrawn", application_id: null }
     expect(pathFor(notification(withdrawn))).toBe("/events/e1/applications")
@@ -311,9 +304,6 @@ describe("NotificationsPanel.render", () => {
   })
 })
 
-// handleAsync dispatches its lifecycle through api.notify; this stand-in does
-// the same, resolving the next handler by the event name it was handed, so the
-// async chain runs to the end inside the test.
 function makeApi(entity) {
   const api = {
     notify(event, payload) {

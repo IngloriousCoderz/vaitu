@@ -15,14 +15,6 @@ const ONE_NOTIFICATION = 1
 
 const WIDE_QUERY = "(min-width: 48rem)"
 
-/* Layer 1 of the notification system: the in-app bell. One entity carries the
-   unread count the bell badge reads on every page, and the list the
-   /notifications tab shows. It is kept fresh two ways: a full load at sign-in
-   and whenever the tab opens, and a reload on any change to the user's rows
-   (a new notification, a withdrawal cascade, a mark from a peer device), so
-   the badge fills while the user browses elsewhere. The reload is
-   withLiveReload's (src/store/index.js). */
-
 const load = handleAsync("load", {
   start(entity) {
     entity.status = "loading"
@@ -40,9 +32,6 @@ const load = handleAsync("load", {
   },
 })
 
-// The badge is optimistic: a row reads as read the moment it is opened, and
-// rolls back if the database refused the write. The realtime nudge corrects
-// anything else.
 const readSave = optimistic(
   handleAsync("readSave", { run: (id) => markNotificationRead(id) }),
   (entity, id) => ({
@@ -61,15 +50,8 @@ const readAll = optimistic(
   }),
 )
 
-// Viewport watchers, keyed by entity id. A MediaQueryList and its listener
-// are not data, so they stay out of the entity.
 const viewportWatchers = new Map()
 
-// Where a tap on a row lands. Direct answers: a received application goes
-// to the sender's review page while the event is open (its detail with the
-// recap once it is not), a decided application to the application's own
-// detail, everything else about an event to the event. A push lands on the
-// same screen: supabase/functions/push-notify/message.ts keeps a copy.
 export function pathFor(item) {
   if (
     item.type === "application_received" ||
@@ -101,12 +83,8 @@ export const Notifications = {
     entity.unread ??= 0
     entity.status ??= "idle"
     entity.error ??= null
-    // The tablet+ drawer the shell opens over the page; closed at rest.
     entity.isPanelOpen ??= false
 
-    // Viewport watcher: on tablet/desktop the canonical UI is the drawer,
-    // not the full page. Crossing the 48rem boundary switches modes, which
-    // viewportChange decides.
     if (typeof window !== "undefined") {
       const id = entity.id
       const mq = window.matchMedia(WIDE_QUERY)
@@ -125,9 +103,6 @@ export const Notifications = {
     }
   },
 
-  // Mobile -> tablet: the notifications page folds into the drawer.
-  // Tablet -> mobile: an open drawer unfolds into the page, so the tab bar
-  // entry works.
   viewportChange(entity, { isWide }, api) {
     if (isWide) {
       if (window.location.pathname !== paths.notifications) return
@@ -151,9 +126,8 @@ export const Notifications = {
   },
 
   render(entity, api) {
-    // Snapshotted values into per-row closures: a click fires long after the
-    // render that built it, and reading the live entity by then can throw
-    // (the same rule every callback that outlives its render obeys).
+    // Snapshot values: a click fires after the render, when reading the entity
+    // can throw.
     const id = entity.id
     return this.renderInbox(
       {
@@ -173,22 +147,15 @@ export const Notifications = {
   ...readSave,
   ...readAll,
 
-  // Opening a row marks it read — every path out leads to what the row is
-  // about — and the shell navigates right after, in the same batch.
   readSet(entity, id, api) {
     const item = entity.items.find((row) => row.id === id)
     if (item && !item.is_read) api.notify(`#${entity.id}:readSave`, id)
   },
 
-  // The badge is live from the first screen, not the first visit to the tab.
   sessionStart(entity, _, api) {
     api.notify(`#${entity.id}:load`)
   },
 
-  /* Sign-out: the feed stops being this user's. Rows are dropped so a stale
-     list never shows across the sign-in boundary, and the next sessionStart
-     loads again. The drawer goes down with the feed: an open panel outliving
-     its session would hang over the sign-in screen. */
   sessionEnd(entity) {
     entity.isPanelOpen = false
     entity.items = []
@@ -197,10 +164,6 @@ export const Notifications = {
     entity.error = null
   },
 
-  // The bell on tablet+: open the right-side drawer over whatever page is
-  // under it, and refresh the feed while opening — the badge could be stale
-  // since the last visit, and a fresh load rebinds nothing (the channel is
-  // already live), so it is cheap.
   panelOpen(entity, _payload, api) {
     entity.isPanelOpen = true
     api.notify(`#${entity.id}:load`)
@@ -212,21 +175,14 @@ export const Notifications = {
 }
 
 function routeOpen(entity, _payload, api) {
-  // Tablet/desktop: the /notifications route is only a deep-link / restored
-  // session. The canonical UI is the right-side drawer — open it and return
-  // to where the user was (or home), keeping the feed loaded in the panel.
   if (typeof window !== "undefined" && window.matchMedia(WIDE_QUERY).matches) {
     api.notify(`#${entity.id}:panelOpen`)
-    // Return to the last valid place (or /events) without a full page reload.
     api.notify("#router:navigate", { to: paths.events, replace: true })
     return
   }
-  // Mobile: full page as before.
   api.notify(`#${entity.id}:load`)
 }
 
-// Leaving the tab keeps the rows: the bell badge outside this page reads the
-// very list this page fills, so emptying it on exit would orphan the badge.
 function routeClose(entity) {
   entity.status = entity.items.length ? "ready" : "idle"
 }

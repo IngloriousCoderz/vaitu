@@ -39,7 +39,6 @@ export const MyEvents = {
           <main class="${styles.list} vaitu-list">
             ${
               PageStatus.render({
-                // A failed delete is the dialog's to show: the list stays.
                 isError: status === "error" && !isConfirmingDelete,
                 error,
                 isLoading: status === "loading" && !events.length,

@@ -1,4 +1,3 @@
-/* A plain div rather than iw Flex: Flex always sets its own padding to none. */
 .formActions {
   display: flex;
   flex-direction: column;

@@ -30,7 +30,6 @@ export function photoClose(entity) {
   entity.isPhotoPreviewOpen = false
 }
 
-// Where a swipe on the enlarged photo began, so its end can tell which way it went.
 export function photoSwipeStart(entity, x) {
   entity.photoSwipeX = x
 }
@@ -43,7 +42,6 @@ export function photoStep(entity, delta) {
   entity.photoIndex = ((entity.photoIndex ?? FIRST_INDEX) + delta + n) % n
 }
 
-// Fill blanks from the profile without clobbering what the user typed.
 export function prefill(entity, profile) {
   if (!profile || !entity.values) return
   if (!getFieldValue(entity, "full_name", "")) {
@@ -57,7 +55,6 @@ export function prefill(entity, profile) {
   }
 }
 
-// Requires a session, then runs the real insert via `apply`.
 export function applicationSubmit(entity, _, api) {
   if (!readUserId()) {
     api.notify("#router:navigate", paths.login)
@@ -127,7 +124,6 @@ export const load = handleAsync("load", {
     entity.status = "ready"
     entity.event = event
     entity.senderName = senderName
-    // The last day counts down by the minute.
     if (needsClock(event)) {
       const id = entity.id
       startTick("clock", () => api.notify(`#${id}:clockTick`))

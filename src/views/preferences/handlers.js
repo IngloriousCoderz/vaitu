@@ -8,11 +8,7 @@ import {
   sameRegion,
 } from "../../data/regions/resolve.js"
 
-// Every change saves at once, like a switch: the entity shows it straight
-// away, and a failed save reloads what the database kept.
-
-// Each save gets the new list itself, not the entity's: the save runs after
-// this handler's draft is revoked.
+// The new list itself: the save runs after this draft is revoked.
 export function interestToggle(entity, categoryId, api) {
   const interested_categories = entity.interested_categories.includes(
     categoryId,
@@ -62,8 +58,6 @@ export function emailsSet(entity, isReceiving, api) {
   })
 }
 
-// The region combobox offers what is not chosen yet: the Italian regions and
-// the other names already on events.
 export function favoriteOptionsSync(entity, _, api) {
   const regions = api.getEntity("eventList")?.regions ?? []
   api.notify("#favorite-region-preferences:sync", "")
@@ -102,7 +96,6 @@ export const save = handleAsync("save", {
     return savePreferences(fields)
   },
   success(entity, fields, api) {
-    // Interests and favorite regions are what the feed starts from.
     if (fields.interested_categories || fields.favorite_regions) {
       api.notify("#eventList:load")
     }
@@ -113,10 +106,7 @@ export const save = handleAsync("save", {
   },
 })
 
-// Called by i18n when the language picker changes, so the next session on
-// any device starts in it.
 export const localeSave = handleAsync("localeSave", {
-  // Signed out, the choice stays on this device only.
   run(locale) {
     return readUserId() ? savePreferences({ locale }) : null
   },

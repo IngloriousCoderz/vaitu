@@ -28,7 +28,6 @@ export const MyEvents = {
     const id = entity.id
     return this.renderMyEvents({
       entity,
-      // Your own event leads to the applications you received.
       onOpenEvent: (event_id) =>
         api.notify("#router:navigate", paths.receivedApplications(event_id)),
       onEdit: (event_id) =>

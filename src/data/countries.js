@@ -1,5 +1,3 @@
-// Static world country list (UN members + common others, English names).
-// Stored as-is in profiles.country.
 export const countries = [
   "Afghanistan",
   "Albania",

@@ -1,6 +1,3 @@
-// Removes the user it creates with the local service role. The assertions
-// sign in with the public key.
-
 import { afterAll, expect, test } from "vitest"
 
 import { supabase } from "../../api/client.js"

@@ -38,7 +38,6 @@ export function thumbGradient(hue) {
   return `linear-gradient(135deg, hsl(${hue} 25% 38%), hsl(${(hue + HUE_SHIFT) % HUE_DEGREES} 30% 22%))`
 }
 
-// "Florence • Tuscany • 24 Oct", with the date in the active locale.
 export function eventSubtitle(event) {
   const date = new Intl.DateTimeFormat(currentLocale(), {
     month: "short",
@@ -47,8 +46,6 @@ export function eventSubtitle(event) {
   return [event.place, date].filter(Boolean).join(" • ")
 }
 
-// The style or genre, by name in the active language; the raw value when
-// there is no translation for it.
 export function eventTag(event) {
   if (!event.filterValue) return ""
   const kind = event.category === "festival" ? "genre" : "style"

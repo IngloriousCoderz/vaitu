@@ -1,7 +1,4 @@
 :global(.iw-flex.iw-flex-padding-none).header {
-  /* Pinned to the top of the scrolling content row. The shell absorbs
-   the notch, so top:0 lands just below it with no gap for content to show
-   through. The background is what hides the list scrolling underneath. */
   position: sticky;
   top: 0;
   z-index: var(--iw-z-sticky);
@@ -28,8 +25,6 @@
   cursor: pointer;
 }
 
-/* Block, not flex. A flex parent sends the native select menu and the date
-   popup to the top of the scroller instead of the field. */
 .field {
   display: block;
   margin-top: var(--iw-space-5);
@@ -50,7 +45,6 @@
   line-height: var(--iw-line-height-normal);
 }
 
-/* The package frame is flex, which throws the date popup off the input. */
 .field :global(.iw-input-field) :global(.iw-input-frame) {
   display: block;
 }
@@ -79,8 +73,6 @@
 }
 
 .error {
-  /* Spacing only. Colour, surface, radius, padding and font-size come from
-     the iw Alert calibrated as .vaitu-alert in public/style.css. */
   margin: var(--iw-space-3) 0 0;
 }
 
@@ -173,7 +165,6 @@
   margin-bottom: var(--iw-space-3);
 }
 
-/* Covers are cropped to 21:9, so the preview shows exactly that frame. */
 .coverPhoto .photoImage {
   width: 100%;
   height: auto;
@@ -218,8 +209,6 @@
   border-radius: var(--iw-radius-xl);
 }
 
-/* The X stays visible on every photo and keeps a 44px touch target even on a
-   small gallery thumbnail. The button is deliberately larger than its icon. */
 button:global(.iw-button).photoRemove {
   position: absolute;
   top: 0.25rem;
@@ -237,8 +226,6 @@ button:global(.iw-button).photoRemove {
   z-index: 1;
 }
 
-/* The hit area is 44px but the visible circle stays small, so it does not hide
-   half of an 88px gallery thumbnail. */
 button:global(.iw-button).photoRemove::before {
   content: "";
   position: absolute;

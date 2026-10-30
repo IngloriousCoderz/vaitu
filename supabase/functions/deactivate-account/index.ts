@@ -2,19 +2,9 @@ import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 import { json, serve, STATUS_CODE } from "../_shared/http.ts"
 import { admin, currentUser } from "../_shared/supabase.ts"
 
-// Soft-deactivates the caller's account, and only theirs.
-//
-// The applications they sent are deleted, the same as an account deletion:
-// an organizer cannot select someone who is not on the platform, so their
-// candidacy must be gone from the received list the moment they leave.
-// Their open events go as well, and the applications received on those events
-// cascade away with them — an open event nobody can ever be picked for has no
-// reason to exist. Past events with winners are part of other users' points
-// and history, so they stay, and stay readable for the winner.
-//
-// Auth user, profile, closed or assigned events and storage stay in place so
-// we can email the person to come back. Signing in again runs touch_login()
-// and reactivates.
+// The sent applications go, so organizers cannot pick someone who left, and the
+// open events go with what they received. Past events with winners stay: they
+// are other users' points and history.
 serve(async (req) => {
   const user = await currentUser(req)
   if (!user) return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
@@ -30,7 +20,6 @@ serve(async (req) => {
     .eq("applicant_id", user.id)
   if (sentError) throw sentError
 
-  // Open events of theirs end the same way (received applications cascade).
   const { error: openError } = await db
     .from("events")
     .delete()

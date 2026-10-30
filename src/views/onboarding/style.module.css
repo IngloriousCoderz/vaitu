@@ -27,7 +27,5 @@
 }
 
 .error {
-  /* Spacing only. Colour, surface, radius, padding and font-size come from
-     the iw Alert calibrated as .vaitu-alert in public/style.css. */
   margin: 0;
 }

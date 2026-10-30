@@ -30,7 +30,6 @@ export function interestToggle(entity, categoryId) {
   })
 }
 
-// Skipping counts as done: it is offered once, not on every sign-in.
 export const skip = handleAsync("skip", {
   start(entity) {
     entity.status = "saving"
@@ -62,8 +61,7 @@ export function saveSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateOnboarding })
   if (!entity.isValid) return
   entity.error = null
-  // The save runs after this handler's draft is revoked: the picked
-  // categories go as a copy, the rest are strings.
+  // Copied: the save runs after this draft is revoked.
   api.notify(`#${entity.id}:save`, {
     ...entity.values,
     interested_categories: [...entity.values.interested_categories],
@@ -105,7 +103,6 @@ export const save = handleAsync("save", {
     entity.status = "ready"
     api.notify("#authentication:onboardingFinish")
     api.notify("#profile:load")
-    // The categories picked here are what the feed now shows by default.
     api.notify("#eventList:load")
   },
   error(entity, err) {

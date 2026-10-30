@@ -25,8 +25,6 @@
 }
 
 .error {
-  /* Spacing only. Colour, surface, radius, padding and font-size come from
-     the iw Alert calibrated as .vaitu-alert in public/style.css. */
   margin: var(--iw-space-3) 0 0;
 }
 
@@ -37,8 +35,6 @@
   margin-top: var(--iw-space-3);
 }
 
-/* From tablet up the event sits beside the application, the same split as
-   opening an event: the story on the left, the action in a card on the right. */
 @media (min-width: 48rem) {
   .stage {
     display: grid;

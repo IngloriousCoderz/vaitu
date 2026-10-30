@@ -21,8 +21,6 @@ import {
 import { paths } from "../../routes.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 
-// The picked file stays outside the entity (not serialisable store data) while
-// the user frames it.
 /** @type {File | null} */
 let avatarFile = null
 
@@ -119,15 +117,12 @@ export const load = handleAsync("load", {
     entity.profile = profile
     entity.stats = stats
     entity.tierConfig = tiers
-    // Detail may have opened before the profile arrived — fill its blanks.
     api.notify("#eventDetail:prefill", profile)
     api.notify("#i18n:userLocaleLoad", {
       userId: profile.id,
       locale: profile.locale,
     })
 
-    // The profile is what knows onboarding is still owed, wherever the session
-    // began: a login, a reopened app, a confirmation link on another device.
     if (!profile.onboarded_at) {
       setOnboardingDue(true)
       if (api.getEntity("router").route !== "onboarding") {
@@ -229,8 +224,6 @@ export const avatarSave = handleAsync("avatarSave", {
     } = await supabase.auth.getUser()
     if (!user) throw new Error("errors.notLoggedIn")
 
-    // Crop the framed square and downscale it on the client before it reaches
-    // the bucket, which also strips camera metadata.
     let blob
     try {
       blob = await cropImage(file, rect, {
@@ -262,8 +255,6 @@ export const avatarSave = handleAsync("avatarSave", {
       previous &&
       !(previous.bucket === uploaded.bucket && previous.path === uploaded.path)
     ) {
-      // Best effort: the profile row already points at the new file, and a
-      // failed cleanup should not turn a successful save into an error.
       void deleteImage(previous.path, previous.bucket).catch(() => {})
     }
   },
@@ -283,10 +274,6 @@ export function accountDeactivateCancel(entity) {
   entity.deactivateError = null
 }
 
-// Soft-deactivates on the server (profile stays; events stay, but leave Explore).
-// Ending the session afterwards is what moves the visitor to the sign-in screen:
-// main.js answers it like any other sign-out. Signing in again runs touch_login
-// and reactivates.
 export const accountDeactivate = handleAsync("accountDeactivate", {
   start(entity) {
     entity.deactivateStatus = "deactivating"
@@ -317,15 +304,13 @@ export const logout = handleAsync("logout", {
   success(entity) {
     entity.profile = null
     entity.status = "idle"
-    // Clearing the session is enough — the guard moves the visitor to /login.
   },
   error(entity, err) {
     entity.error = err.message ?? "errors.logout"
   },
 })
 
-// Token valid but user row gone (db reset), or auth rejected the token.
-// Network blips must NOT log out — only auth/row-gone errors.
+// Only a rejected token or a missing row logs out, never a network blip.
 function isSessionDead(err) {
   if (!err) return false
   if (err.code === "PGRST116") return true

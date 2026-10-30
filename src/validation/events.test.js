@@ -76,9 +76,6 @@ describe("normalizeEvent", () => {
   })
 
   it("returns a details object of its own", () => {
-    // The form hands us `details` as a live draft proxy, which the store
-    // revokes as soon as anything is awaited. A row that still points at it
-    // dies inside the Supabase call, several frames away from the cause.
     const source = { ...validWedding, details: { spouse_first_name_1: "Ada" } }
     const row = normalizeEvent(source)
 
@@ -97,15 +94,11 @@ describe("normalizeEvent", () => {
   })
 
   it("forwards a transcript instead of dropping it", () => {
-    // The old schema silently discarded this key, so the column was never
-    // written even though the form went to real trouble to produce it.
     const row = normalizeEvent({ ...validWedding, transcript: "Welcome" })
     expect(row.transcript).toBe("Welcome")
   })
 
   it("leaves transcript_status out when the caller omits it", () => {
-    // A default here landed on updates too, and reset a transcript that had
-    // already finished. createEvent supplies it for new rows instead.
     expect(normalizeEvent(validWedding)).not.toHaveProperty("transcript_status")
     expect(
       normalizeEvent({ ...validWedding, transcript_status: "done" })
@@ -224,7 +217,6 @@ describe("validateEvent", () => {
   })
 
   it("rejects a category it knows nothing about", () => {
-    // The old schema accepted this without looking at it at all.
     const reunion = { ...validWedding, category: "reunion", details: {} }
     expect(inWords(validateEvent(reunion))).toEqual({
       category: "Pick a category",
@@ -245,8 +237,6 @@ describe("firstError", () => {
   })
 })
 
-// The messages as a person reads them: validation keeps keys, and the page
-// translates them when it renders.
 function inWords(errors) {
   return Object.fromEntries(
     Object.entries(errors).map(([field, message]) => [

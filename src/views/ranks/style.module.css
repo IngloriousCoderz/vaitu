@@ -44,9 +44,6 @@
   color: var(--vmuted);
 }
 
-/* The package bar is a native <progress>: its custom properties size and
-   colour the track, and the bar's own pseudo-elements are repainted flat in
-   the accent, without the package's gradient. */
 .progressTrack {
   --iw-progress-height: var(--iw-space-2);
   --iw-progress-radius: var(--iw-radius-full);

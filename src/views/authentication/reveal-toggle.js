@@ -3,8 +3,6 @@ import visibilityOutline from "@iconify-icons/material-symbols/visibility-outlin
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 
-// The reveal control that sits in a password field's trailing slot. Shared by
-// login and signup so the three fields cannot drift apart.
 export const RevealToggle = {
   render({ isPasswordVisible, inputId, onTogglePassword }) {
     return IconButton.render({
@@ -16,7 +14,6 @@ export const RevealToggle = {
       variant: "ghost",
       color: "secondary",
       shape: "round",
-      // Small, so it fits inside the field without making it taller.
       size: "sm",
       onClick: () => onTogglePassword(inputId),
     })
