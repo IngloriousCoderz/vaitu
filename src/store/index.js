@@ -2,6 +2,7 @@ import { createStore } from "@inglorious/store"
 import { PwaUpdate } from "@inglorious/web/pwa"
 import { Router, setRoutes } from "@inglorious/web/router"
 
+import { liveAlways, livePage, liveSession } from "../api/live.js"
 import { Shell } from "../app/shell.js"
 import { CountrySelect } from "../common/country-select/index.js"
 import { LanguageSelect } from "../common/language-select/index.js"
@@ -37,23 +38,31 @@ export const store = createStore({
     Shell,
     I18n,
     Authentication,
-    EventList,
-    MyEvents,
-    EventDetail,
+    // Live: each reloads when a table it reads changes (src/api/live.js).
+    EventList: [EventList, liveAlways(["events", "applications"])],
+    MyEvents: [MyEvents, livePage(["events", "applications"])],
+    EventDetail: [EventDetail, livePage(["events"], (e) => e.event_id)],
+    ApplicationList: [ApplicationList, livePage(["applications", "events"])],
+    ApplicationDetail: [
+      ApplicationDetail,
+      livePage(["applications", "events"], (e) => e.application_id),
+    ],
+    ApplicationsReceived: [
+      ApplicationsReceived,
+      livePage(["applications", "events"], (e) => e.event_id),
+    ],
+    Profile: [Profile, livePage(["applications"])],
+    Notifications: [Notifications, liveSession(["notifications"])],
+
     EventCreate,
     CoverCropper,
-    ApplicationList,
-    ApplicationDetail,
     CountrySelect,
     LanguageSelect,
     PwaUpdate,
     AppVersion,
-    Notifications,
     PushPrompt,
-    ApplicationsReceived,
     NotFound,
     Onboarding,
-    Profile,
     Preferences,
     AvatarCropper,
     Ranks,

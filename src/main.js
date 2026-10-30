@@ -10,7 +10,6 @@ import "./styles/list-stagger.css"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
-import { onPushTap } from "./api/push.js"
 import { clearUser, endSession, stampLogin, writeUser } from "./api/session.js"
 import { App } from "./app"
 import { ready } from "./i18n/index.js"
@@ -26,11 +25,6 @@ ready.then(() => {
 })
 
 store.notify("#eventList:load")
-
-// A push tapped in the native apps opens its screen, as the service worker
-// does in a browser. The route guard still stands between it and a visitor
-// who signed out since.
-onPushTap((url) => store.notify("#router:navigate", url))
 
 function trackSession(session) {
   if (session) {

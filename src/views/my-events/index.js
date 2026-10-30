@@ -1,4 +1,3 @@
-import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
@@ -12,33 +11,11 @@ export const MyEvents = {
   ...eventRemove,
   ...renderers,
 
-  create(entity, _, api) {
+  create(entity) {
     entity.events ??= []
     entity.confirmingDelete ??= null
     entity.status ??= "idle"
     entity.error ??= null
-    activateRealtime(
-      `${entity.id}:events`,
-      {
-        table: "events",
-        event: `#${entity.id}:load`,
-      },
-      api,
-    )
-    // The cards count the applications each event received.
-    activateRealtime(
-      `${entity.id}:applications`,
-      {
-        table: "applications",
-        event: `#${entity.id}:load`,
-      },
-      api,
-    )
-  },
-
-  destroy(entity) {
-    deactivateRealtime(`${entity.id}:events`)
-    deactivateRealtime(`${entity.id}:applications`)
   },
 
   routeChange: pageRouteChange(open, close),

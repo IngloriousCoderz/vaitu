@@ -16,9 +16,11 @@ Messaging (FCM), one service for the PWA, Android and iOS alike.
 
 ## The bell
 
-`src/common/notifications/` loads the feed at sign-in and listens for new rows
-over Supabase Realtime. A tap on a row marks it read and opens what it is
-about (`pathFor`).
+`src/common/notifications/` loads the feed at sign-in, and again whenever the
+`notifications` table changes, like every live screen: `src/store/index.js`
+lists which tables each one reads, and `src/api/live.js` wires them to
+Supabase Realtime. A tap on a row marks it read and opens what it is about
+(`pathFor`).
 
 ## Pushes
 
@@ -29,7 +31,9 @@ app may never ask again. So the first sign-in on a device shows a pill
 instead, and the dialog only comes up after "Notify me". "Not now" hides the
 pill on that device for good; notifications can still be allowed later from
 the browser's or the phone's own settings. The pill is
-`src/common/push-prompt/`, the same in the PWA and the native apps.
+`src/common/push-prompt/`, the same in the PWA and the native apps: the
+`createPushPrompt` type from `@inglorious/web/push`, over the FCM adapter
+`push` in `src/api/push.js`.
 
 ### Which device gets whose pushes
 
@@ -52,8 +56,8 @@ which wraps `@capacitor-firebase/messaging`; `endSession` in
 4. In a browser, the service worker (`public/sw-push.js`) shows it: browsers
    get the message as data only, so the app decides how it looks. The native
    apps get a notification the system shows by itself. Either way a tap opens
-   the same screen as the row in the bell; in the native apps `onPushTap`
-   hears it.
+   the same screen as the row in the bell; in the native apps the adapter's
+   `onTap` hears it, and the pill's type navigates there.
 
 While the native app is open, Android shows no notification: the bell already
 has the row.

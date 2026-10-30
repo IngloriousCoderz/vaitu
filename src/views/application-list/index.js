@@ -1,4 +1,3 @@
-import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
@@ -12,33 +11,11 @@ export const ApplicationList = {
   ...load,
   ...renderers,
 
-  create(entity, _, api) {
+  create(entity) {
     entity.applications ??= []
     entity.status_filter ??= "all"
     entity.status ??= "idle"
     entity.error ??= null
-    activateRealtime(
-      `${entity.id}:applications`,
-      {
-        table: "applications",
-        event: `#${entity.id}:load`,
-      },
-      api,
-    )
-    // Each row shows its event, which its sender can edit, close or assign.
-    activateRealtime(
-      `${entity.id}:events`,
-      {
-        table: "events",
-        event: `#${entity.id}:load`,
-      },
-      api,
-    )
-  },
-
-  destroy(entity) {
-    deactivateRealtime(`${entity.id}:applications`)
-    deactivateRealtime(`${entity.id}:events`)
   },
 
   routeChange: pageRouteChange(open, close, (payload) => payload.query.status),

@@ -10,6 +10,9 @@ import { supabase } from "./client.js"
 // user signed in here, which is where push-notify looks it up. In a browser
 // the pushes land in public/sw-push.js; in the native apps the system shows
 // them and onPushTap hears the tap.
+//
+// `push` is the adapter createPushPrompt (@inglorious/web/push) asks and
+// registers through; src/common/push-prompt/ is the type made from it.
 
 const PLATFORM = Capacitor.getPlatform()
 const IS_WEB = PLATFORM === "web"
@@ -36,7 +39,7 @@ function messaging() {
 }
 
 /** @returns {Promise<boolean>} */
-export async function isPushSupported() {
+async function isPushSupported() {
   const { isSupported } = await messaging().isSupported()
   return isSupported
 }
@@ -46,7 +49,7 @@ export async function isPushSupported() {
  * but dismissed, which on Android also comes back as "prompt-with-rationale".
  * @returns {Promise<"granted" | "denied" | "prompt">}
  */
-export async function pushPermission() {
+async function pushPermission() {
   const { receive } = await messaging().checkPermissions()
   return toPermission(receive)
 }
@@ -56,7 +59,7 @@ export async function pushPermission() {
  * tap, so Notification.requestPermission is called before anything awaits.
  * @returns {Promise<"granted" | "denied" | "prompt">}
  */
-export async function requestPushPermission() {
+async function requestPushPermission() {
   if (IS_WEB) return toPermission(await Notification.requestPermission())
   const { receive } = await messaging().requestPermissions()
   return toPermission(receive)
@@ -70,7 +73,7 @@ function toPermission(state) {
  * Gets this device's token, the same one again unless FCM rotated it, and
  * files it under the signed-in user. Needs the permission granted.
  */
-export async function syncPushToken() {
+async function syncPushToken() {
   const options = IS_WEB
     ? {
         vapidKey: VAPID_KEY,
@@ -85,6 +88,14 @@ export async function syncPushToken() {
     // Without storage the sign-out cannot delete the row; the next sign-in
     // here takes the token over.
   }
+}
+
+export const push = {
+  isSupported: isPushSupported,
+  permission: pushPermission,
+  request: requestPushPermission,
+  register: syncPushToken,
+  onTap: onPushTap,
 }
 
 /**
@@ -110,7 +121,7 @@ export async function forgetPushToken() {
  * A browser's taps are the service worker's.
  * @param {(url: string) => void} listener
  */
-export function onPushTap(listener) {
+function onPushTap(listener) {
   if (IS_WEB) return
   messaging().addListener("notificationActionPerformed", ({ notification }) => {
     const url = notification.data?.url

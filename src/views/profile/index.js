@@ -1,10 +1,5 @@
 import { Form } from "@inglorious/web/form"
 
-import {
-  activateRealtime,
-  deactivateRealtime,
-  realtimeColumn,
-} from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
@@ -31,7 +26,7 @@ export const Profile = {
     api.notify(`#${entity.id}:load`)
   },
 
-  create(entity, _, api) {
+  create(entity) {
     entity.profile ??= null
     entity.stats ??= null
     entity.isEditing ??= false
@@ -52,30 +47,6 @@ export const Profile = {
     entity.isAvatarCropOpen ??= false
     entity.status ??= "idle"
     entity.error ??= null
-    // The id is snapshotted because this closure outlives the batch that built
-    // it: it fires from a realtime message, by which point the draft this
-    // entity was is revoked and reading entity.id throws.
-    const id = entity.id
-    activateRealtime(
-      id,
-      {
-        table: "applications",
-        event: `#${id}:load`,
-        // A delete carries the row's id only (see realtimeColumn), which
-        // cannot say whose application it was, so every delete reloads.
-        match: (change, state) => {
-          const applicantId = state[id]?.profile?.id
-          if (applicantId == null) return false
-          if (change.eventType === "DELETE") return true
-          return realtimeColumn(change, "applicant_id") === applicantId
-        },
-      },
-      api,
-    )
-  },
-
-  destroy(entity) {
-    deactivateRealtime(entity.id)
   },
 
   routeChange: pageRouteChange(open, close),

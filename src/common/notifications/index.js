@@ -6,12 +6,6 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from "../../api/notifications.js"
-import {
-  activateRealtime,
-  deactivateRealtime,
-  realtimeColumn,
-} from "../../api/realtime.js"
-import { readUserId } from "../../api/session.js"
 import { NO_UNREAD } from "../../constants/index.js"
 import { paths } from "../../routes.js"
 import { pageRouteChange } from "../page-route.js"
@@ -24,13 +18,10 @@ const WIDE_QUERY = "(min-width: 48rem)"
 /* Layer 1 of the notification system: the in-app bell. One entity carries the
    unread count the bell badge reads on every page, and the list the
    /notifications tab shows. It is kept fresh two ways: a full load at sign-in
-   and whenever the tab opens, and a realtime nudge on any write to the user's
-   rows (a new notification, a withdrawal cascade, a mark from a peer
-   device), so the badge fills while the user browses elsewhere.
-
-   The channel binds to the caller JWT at subscribe time, so it is only
-   activated after a load that proves a session; the match still reads
-   readUserId() live, so a rebind after a peer device's mark never widens. */
+   and whenever the tab opens, and a reload on any change to the user's rows
+   (a new notification, a withdrawal cascade, a mark from a peer device), so
+   the badge fills while the user browses elsewhere. The reload is
+   withLiveReload's (src/store/index.js). */
 
 const load = handleAsync("load", {
   start(entity) {
@@ -38,33 +29,10 @@ const load = handleAsync("load", {
     entity.error = null
   },
   run: fetchMyNotifications,
-  success(entity, items, api) {
+  success(entity, items) {
     entity.items = items
     entity.unread = items.filter((item) => !item.is_read).length
     entity.status = "ready"
-    // The channel binds to the JWT at subscribe time, so it is activated here
-    // rather than in create(): a boot that restored a session activates the
-    // type before the client holds a token, and an anon-binding would remain
-    // deaf to this user's rows from then on. Loaded with a session, both are
-    // guaranteed: every reload that reaches success ran through one.
-    // The id is snapshotted: the match runs from a realtime message, once
-    // this draft is revoked.
-    const id = entity.id
-    activateRealtime(
-      id,
-      {
-        table: "notifications",
-        event: `#${id}:load`,
-        payload: null,
-        // A row deleted with its application or event carries only its id
-        // (see realtimeColumn), so a delete is matched against the feed.
-        match: (change, state) =>
-          change.eventType === "DELETE"
-            ? state[id]?.items.some((item) => item.id === change.old?.id)
-            : realtimeColumn(change, "user_id") === readUserId(),
-      },
-      api,
-    )
   },
   error(entity, err) {
     entity.status = "error"
@@ -150,7 +118,6 @@ export const Notifications = {
   },
 
   destroy(entity) {
-    deactivateRealtime(entity.id)
     const watcher = viewportWatchers.get(entity.id)
     if (watcher) {
       watcher.mq.removeEventListener("change", watcher.listener)
@@ -186,7 +153,7 @@ export const Notifications = {
   render(entity, api) {
     // Snapshotted values into per-row closures: a click fires long after the
     // render that built it, and reading the live entity by then can throw
-    // (the same rule the realtime wiring has obeyed forever).
+    // (the same rule every callback that outlives its render obeys).
     const id = entity.id
     return this.renderInbox(
       {
@@ -223,9 +190,6 @@ export const Notifications = {
      loads again. The drawer goes down with the feed: an open panel outliving
      its session would hang over the sign-in screen. */
   sessionEnd(entity) {
-    // The channel was bound with the leaving user's JWT; no rows may keep
-    // flowing. The next sign-in loads the feed, which rebinds the channel.
-    deactivateRealtime(entity.id)
     entity.isPanelOpen = false
     entity.items = []
     entity.unread = 0

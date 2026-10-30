@@ -1,10 +1,5 @@
 import { Form } from "@inglorious/web/form"
 
-import {
-  activateRealtime,
-  deactivateRealtime,
-  realtimeColumn,
-} from "../../api/realtime.js"
 import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
@@ -23,7 +18,7 @@ export const ApplicationsReceived = {
   ...eventReopen,
   ...renderers,
 
-  create(entity, _, api) {
+  create(entity) {
     entity.event_id ??= null
     entity.event_title ??= ""
     entity.event_status ??= "open"
@@ -41,50 +36,6 @@ export const ApplicationsReceived = {
     entity.items ??= []
     entity.status ??= "idle"
     entity.error ??= null
-    // The id is snapshotted because these closures outlive the batch that
-    // built them: they fire from a realtime message, by which point the
-    // draft this entity was is revoked and reading entity.id throws.
-    const id = entity.id
-    activateRealtime(
-      `${id}:applications`,
-      {
-        table: "applications",
-        event: `#${id}:load`,
-        payload: (state) => state[id]?.event_id,
-        match: (change, state) => {
-          const eventId = state[id]?.event_id
-          if (eventId == null) return false
-          // A withdrawal is a delete, which carries the row's id and nothing
-          // else (see realtimeColumn), so it is matched against the rows on
-          // screen.
-          if (change.eventType === "DELETE") {
-            return state[id].items.some((item) => item.id === change.old?.id)
-          }
-          return realtimeColumn(change, "event_id") === eventId
-        },
-      },
-      api,
-    )
-    // The recap shows the event, which can close while the page is open: at
-    // its deadline, or from another device.
-    activateRealtime(
-      `${id}:events`,
-      {
-        table: "events",
-        event: `#${id}:load`,
-        payload: (state) => state[id]?.event_id,
-        match: (change, state) => {
-          const eventId = state[id]?.event_id
-          return eventId != null && realtimeColumn(change, "id") === eventId
-        },
-      },
-      api,
-    )
-  },
-
-  destroy(entity) {
-    deactivateRealtime(`${entity.id}:applications`)
-    deactivateRealtime(`${entity.id}:events`)
   },
 
   routeChange: pageRouteChange(

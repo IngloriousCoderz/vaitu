@@ -1,6 +1,5 @@
 import { debounce } from "@inglorious/utils/function"
 
-import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
@@ -56,29 +55,8 @@ export const EventList = {
   ...regionsFetch,
   ...renderers,
 
-  create(entity, _, api) {
+  create(entity) {
     renderers.create(entity)
-    activateRealtime(
-      `${entity.id}:events`,
-      {
-        table: "events",
-        event: `#${entity.id}:load`,
-      },
-      api,
-    )
-    activateRealtime(
-      `${entity.id}:applications`,
-      {
-        table: "applications",
-        event: `#${entity.id}:load`,
-      },
-      api,
-    )
-  },
-
-  destroy(entity) {
-    deactivateRealtime(`${entity.id}:events`)
-    deactivateRealtime(`${entity.id}:applications`)
   },
 
   // The list leaves out your own events and marks the ones you applied to, so

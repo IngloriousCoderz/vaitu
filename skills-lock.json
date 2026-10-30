@@ -5,7 +5,7 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge/SKILL.md",
-      "computedHash": "8052958c63f1d453fee99a9eab27fffc5e4ffa85e599ce5184787e6394d7e5b7"
+      "computedHash": "8778734e831d632823d73f020109d9a65ac686dd037e6ae9382b944a35a7a01f"
     },
     "forge-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
@@ -23,13 +23,19 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/store/SKILL.md",
-      "computedHash": "e60e01ebfcb1b27fc0e674740062e0405164ef66d0a2693a2e8cf8b992fffa7c"
+      "computedHash": "a616e3cf62592850a906c97c6e81c8364e2a57aad65210f2d9fe775dbe62d6e5"
+    },
+    "supabase": {
+      "source": "IngloriousCoderz/forge-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase/SKILL.md",
+      "computedHash": "59cf9e6d5a940f0cfe5aee44e528c0e658aef505ef277abdbe23b55a156b4dff"
     },
     "ui": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui/SKILL.md",
-      "computedHash": "ad9605b89c88316a684c74f8bd195af1bad07a2dd03275d3d2e7aadd72df0cd1"
+      "computedHash": "f3f43406d936e762d13371aa371e3934374add350b2092eb20ba50e907d35e58"
     },
     "ui-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
@@ -47,13 +53,13 @@
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web/SKILL.md",
-      "computedHash": "034b8124fa065246e196c46c0b497cfa9ffb3ac899eefa0d6adf3499644bd4ff"
+      "computedHash": "90b89d585d0d7572f78ff8515fc1c9cd9e17f3a37eb920a24d39afb5f64228df"
     },
     "web-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web-best-practices/SKILL.md",
-      "computedHash": "f3bd18bafb3813916bebdd373e2ee9d8bb1d2cbce0413a76043242c65af4120e"
+      "computedHash": "36732e0fe7fccb30f2e4e7d6e071ac233dcb00267b493059a544bb1b7526edce"
     }
   }
 }

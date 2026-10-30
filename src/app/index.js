@@ -165,8 +165,8 @@ export const App = {
     if (!pushPrompt?.isOpen) return ""
     return PushPromptBar.render({
       isStacked: Boolean(pwaUpdate?.isUpdateReady),
-      onAsk: () => api.notify("#pushPrompt:ask"),
-      onDecline: () => api.notify("#pushPrompt:decline"),
+      onAsk: () => api.notify("#pushPrompt:pushAsk"),
+      onDecline: () => api.notify("#pushPrompt:pushDecline"),
     })
   },
 

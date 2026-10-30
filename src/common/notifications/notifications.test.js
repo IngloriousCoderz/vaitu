@@ -5,12 +5,6 @@ vi.mock("../../api/notifications.js", () => ({
   markNotificationRead: vi.fn(async () => []),
   markAllNotificationsRead: vi.fn(async () => []),
 }))
-vi.mock("../../api/realtime.js", () => ({
-  activateRealtime: vi.fn(),
-  deactivateRealtime: vi.fn(),
-  realtimeColumn: (change, column) => change?.new?.[column] ?? null,
-}))
-vi.mock("../../api/session.js", () => ({ readUserId: vi.fn() }))
 // No DOM environment here: the house drawer is exercised live and by build.
 vi.mock("@inglorious/ui/drawer", () => ({
   Drawer: { render: (props) => `drawer(${props.isOpen ? "open" : "closed"})` },
@@ -23,14 +17,11 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from "../../api/notifications.js"
-import { activateRealtime, deactivateRealtime } from "../../api/realtime.js"
-import { readUserId } from "../../api/session.js"
 import { Notifications, pathFor } from "./index.js"
 import { NotificationsPanel } from "./template.js"
 
 beforeEach(() => {
   vi.clearAllMocks()
-  readUserId.mockReturnValue("user-1")
 })
 
 describe("Notifications.type-composition", () => {
@@ -59,7 +50,7 @@ describe("Notifications.type-composition", () => {
 })
 
 describe("Notifications.create", () => {
-  it("starts empty and quiet: the channel binds only after a load", () => {
+  it("starts empty and quiet", () => {
     const entity = { id: "notifications" }
     Notifications.create(entity)
     expect(entity.items).toEqual([])
@@ -67,9 +58,6 @@ describe("Notifications.create", () => {
     expect(entity.status).toBe("idle")
     // The drawer the shell opens starts closed, like the tab it mirrors.
     expect(entity.isPanelOpen).toBe(false)
-    // Realtime waits for the first successful load: a boot restoring a
-    // session has no JWT yet, and an anon binding would stay deaf.
-    expect(activateRealtime).not.toHaveBeenCalled()
   })
 })
 
@@ -99,7 +87,7 @@ describe("Notifications.panelOpen", () => {
 })
 
 describe("Notifications.load", () => {
-  it("fills the feed, counts the unread, and binds the channel", async () => {
+  it("fills the feed and counts the unread", async () => {
     const entity = { id: "notifications" }
     Notifications.create(entity)
     fetchMyNotifications.mockResolvedValue([
@@ -113,16 +101,6 @@ describe("Notifications.load", () => {
     expect(entity.items).toHaveLength(2)
     expect(entity.unread).toBe(1)
     expect(entity.error).toBeNull()
-
-    const [id, config] = activateRealtime.mock.calls.at(-1)
-    expect(id).toBe("notifications")
-    expect(config.table).toBe("notifications")
-    expect(config.event).toBe("#notifications:load")
-
-    // Another user's row never opens the door.
-    readUserId.mockReturnValue("user-1")
-    expect(config.match({ new: { user_id: "user-2" } })).toBe(false)
-    expect(config.match({ new: { user_id: "user-1" } })).toBe(true)
   })
 
   it("a failed load becomes a readable error", async () => {
@@ -251,7 +229,6 @@ describe("Notifications.sessionEnd", () => {
     expect(entity.error).toBeNull()
     // An open drawer outliving its session would hang over the sign-in screen.
     expect(entity.isPanelOpen).toBe(false)
-    expect(deactivateRealtime).toHaveBeenCalledWith("notifications")
   })
 })
 

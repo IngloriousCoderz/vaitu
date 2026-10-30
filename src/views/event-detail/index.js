@@ -1,10 +1,5 @@
 import { Form } from "@inglorious/web/form"
 
-import {
-  activateRealtime,
-  deactivateRealtime,
-  realtimeColumn,
-} from "../../api/realtime.js"
 import { readUserId } from "../../api/session.js"
 import { stopTick } from "../../api/ticker.js"
 import { pageRouteChange } from "../../common/page-route.js"
@@ -22,7 +17,7 @@ export const EventDetail = {
   ...load,
   ...renderers,
 
-  create(entity, _, api) {
+  create(entity) {
     entity.event_id ??= null
     entity.event ??= null
     entity.senderName ??= null
@@ -40,27 +35,6 @@ export const EventDetail = {
     entity.applyError ??= null
     entity.photoIndex ??= 0
     entity.isPhotoPreviewOpen ??= false
-    // The id is snapshotted because these closures outlive the batch that
-    // built them: they fire from a realtime message, by which point the
-    // draft this entity was is revoked and reading entity.id throws.
-    const id = entity.id
-    activateRealtime(
-      id,
-      {
-        table: "events",
-        event: `#${id}:load`,
-        payload: (state) => state[id]?.event_id,
-        match: (change, state) => {
-          const eventId = state[id]?.event_id
-          return eventId != null && realtimeColumn(change, "id") === eventId
-        },
-      },
-      api,
-    )
-  },
-
-  destroy(entity) {
-    deactivateRealtime(entity.id)
   },
 
   applySubmit(entity, _, api) {
