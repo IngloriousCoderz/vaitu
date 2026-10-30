@@ -8,7 +8,7 @@ import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
-const { load, save, withdraw, giveUp, ...syncHandlers } = handlers
+const { load, save, withdraw, ...syncHandlers } = handlers
 
 export const ApplicationDetail = {
   ...Form,
@@ -16,7 +16,6 @@ export const ApplicationDetail = {
   ...load,
   ...save,
   ...withdraw,
-  ...giveUp,
   ...renderers,
 
   create(entity) {
@@ -25,7 +24,6 @@ export const ApplicationDetail = {
     entity.initialValues = { motivation: "" }
     Form.create(entity)
     entity.isConfirmingWithdraw ??= false
-    entity.isConfirmingGiveUp ??= false
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -57,9 +55,6 @@ export const ApplicationDetail = {
           api.notify(`#${id}:fieldSet`, { field, value }),
         onSave: () => api.notify(`#${id}:saveSubmit`),
         onAskWithdraw: () => api.notify(`#${id}:withdrawAsk`),
-        onAskGiveUp: () => api.notify(`#${id}:giveUpAsk`),
-        onGiveUp: () => api.notify(`#${id}:giveUp`, entity.application_id),
-        onCancelGiveUp: () => api.notify(`#${id}:giveUpCancel`),
         onGoogleCalendar: (url) => window.open(url, "_blank", "noopener"),
         onDownloadIcs: (title, ics) => {
           void (async () => {
@@ -96,7 +91,6 @@ function open(entity, { application_id }, api) {
   entity.application_id = application_id
   entity.application = null
   entity.isConfirmingWithdraw = false
-  entity.isConfirmingGiveUp = false
   Form.reset(entity)
   api.notify(`#${entity.id}:load`, application_id)
 }

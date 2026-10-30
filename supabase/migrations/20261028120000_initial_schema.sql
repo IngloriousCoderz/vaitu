@@ -230,7 +230,8 @@ create index events_details_genre_idx on public.events ((details ->> 'genre'));
 -- ----------------------------------------------------------- applications ---
 
 -- pending -> shortlisted (max max_applicants) -> selected (winner, via
--- assign_winner), or rejected.
+-- assign_winner), or rejected. The applicant can withdraw at any point,
+-- the winner too: see reopen_on_winner_withdrawn.
 create table public.applications (
   id uuid primary key default gen_random_uuid(),
   event_id uuid not null references public.events (id) on delete cascade,
@@ -238,6 +239,11 @@ create table public.applications (
   motivation text not null,
   status text not null default 'pending'
     check (status in ('pending', 'shortlisted', 'selected', 'rejected')),
+  -- Where assign_winner found an application it rejected, so a winner who
+  -- withdraws hands the sender back the shortlist they had. Any later status
+  -- change clears it.
+  status_before_assign text
+    check (status_before_assign in ('pending', 'shortlisted')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (event_id, applicant_id)
@@ -337,6 +343,12 @@ begin
     return new;
   end if;
 
+  -- A shortlist given back after the winner withdrew fitted when it was
+  -- made: a cap lowered since must not stop the withdrawal.
+  if current_setting('vaitu.restoring', true) = 'on' then
+    return new;
+  end if;
+
   select max_applicants into v_max
   from public.events
   where id = new.event_id;
@@ -360,9 +372,9 @@ create trigger trg_applications_selection_cap
   for each row execute function public.enforce_selection_cap();
 
 -- The applicant can update their own row, so status changes are guarded here.
--- They belong to the event owner, except give up (selected -> shortlisted).
--- selected is written only by assign_winner, which sets a transaction flag
--- the trigger can see.
+-- They belong to the event owner. selected is written only by assign_winner,
+-- and a rejection undone only by reopen_on_winner_withdrawn: each sets a
+-- transaction flag the trigger can see.
 create or replace function public.enforce_application_status_change()
 returns trigger
 language plpgsql
@@ -383,10 +395,14 @@ begin
     return new;
   end if;
 
-  if auth.uid() = new.applicant_id
-    and old.status = 'selected'
-    and new.status = 'shortlisted' then
+  if current_setting('vaitu.restoring', true) = 'on' then
     return new;
+  end if;
+
+  -- A decision taken after the assignment is the sender's: a withdrawing
+  -- winner must not undo it.
+  if current_setting('vaitu.assigning', true) is distinct from 'on' then
+    new.status_before_assign := null;
   end if;
 
   select sender_id into v_sender_id
@@ -485,7 +501,9 @@ begin
   where id = p_application_id;
 
   update public.applications
-  set status = 'rejected', updated_at = now()
+  set status = 'rejected',
+      status_before_assign = status,
+      updated_at = now()
   where event_id = p_event_id
     and id <> p_application_id
     and status <> 'rejected';
@@ -494,55 +512,60 @@ $$;
 
 grant execute on function public.assign_winner(uuid, uuid) to authenticated;
 
--- Winner gives up: reopen the event automatically. Applicants cannot update
--- events (RLS), so the flip lives here: when no selected application remains
--- on an assigned event, it goes back to open and the sender picks another
--- winner from the shortlist.
-create or replace function public.reopen_on_give_up()
+-- The winner withdraws: the applications assign_winner rejected go back to
+-- where they were, and the event reopens for the sender to pick again.
+-- Applicants cannot update events (RLS), so this lives here. Only a winner
+-- withdrawing: deleting the event takes its applications with it as the
+-- sender, and deactivating an account does so as the service role.
+create or replace function public.reopen_on_winner_withdrawn()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  v_remaining integer;
   v_event public.events%rowtype;
 begin
-  if old.status <> 'selected' or new.status = 'selected' then
-    return new;
+  if old.status <> 'selected'
+    or auth.uid() is distinct from old.applicant_id then
+    return old;
   end if;
+
+  perform set_config('vaitu.restoring', 'on', true);
+  update public.applications
+  set status = status_before_assign,
+      status_before_assign = null,
+      updated_at = now()
+  where event_id = old.event_id
+    and status = 'rejected'
+    and status_before_assign is not null;
+  perform set_config('vaitu.restoring', 'off', true);
 
   select * into v_event
   from public.events
-  where id = new.event_id;
-
-  if v_event.status <> 'assigned' then
-    return new;
-  end if;
+  where id = old.event_id;
 
   -- Past deadline: stays assigned, the sender reopens with a new one.
-  if v_event.application_deadline <= now() then
-    return new;
+  if v_event.status <> 'assigned'
+    or v_event.application_deadline <= now()
+    or exists (
+      select 1 from public.applications
+      where event_id = old.event_id and status = 'selected'
+    ) then
+    return old;
   end if;
 
-  select count(*) into v_remaining
-  from public.applications
-  where event_id = new.event_id
-    and status = 'selected';
+  update public.events
+  set status = 'open', updated_at = now()
+  where id = old.event_id;
 
-  if v_remaining = 0 then
-    update public.events
-    set status = 'open', updated_at = now()
-    where id = new.event_id;
-  end if;
-
-  return new;
+  return old;
 end;
 $$;
 
-create trigger trg_reopen_on_give_up
-  after update of status on public.applications
-  for each row execute function public.reopen_on_give_up();
+create trigger trg_reopen_on_winner_withdrawn
+  after delete on public.applications
+  for each row execute function public.reopen_on_winner_withdrawn();
 
 -- Closes events whose application_deadline has passed. Returns the number of
 -- events closed.

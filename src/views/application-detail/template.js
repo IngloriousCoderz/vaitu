@@ -25,9 +25,6 @@ export const ApplicationDetail = {
     onSave,
     onAskWithdraw,
     onWithdraw,
-    onAskGiveUp,
-    onGiveUp,
-    onCancelGiveUp,
     onCancelWithdraw,
     onGoogleCalendar,
     onDownloadIcs,
@@ -138,55 +135,31 @@ export const ApplicationDetail = {
                     error: error && status !== "loading" ? error : null,
                     className: styles.error,
                   })}
-                  ${when(
-                    application.applicationStatus === "selected",
-                    () => html`
-                      ${Button.render({
-                        children: t("application.giveUp"),
-                        color: "error",
-                        variant: "outline",
-                        shape: "pill",
-                        size: "md",
-                        isFullWidth: true,
-                        className: styles.withdrawButton,
-                        onClick: onAskGiveUp,
-                      })}
-                      ${ConfirmDialog.render({
-                        id: "give-up-confirm",
-                        isOpen: entity.isConfirmingGiveUp,
-                        message: t("application.giveUpConfirm"),
-                        error: status === "error" ? error : null,
-                        confirmLabel: t("application.yesGiveUp"),
-                        busyLabel: t("application.givingUp"),
-                        isBusy: status === "saving",
-                        onConfirm: onGiveUp,
-                        onCancel: onCancelGiveUp,
-                      })}
-                    `,
-                    () => html`
-                      ${Button.render({
-                        children: t("application.withdraw"),
-                        color: "error",
-                        variant: "outline",
-                        shape: "pill",
-                        size: "md",
-                        isFullWidth: true,
-                        className: styles.withdrawButton,
-                        onClick: onAskWithdraw,
-                      })}
-                      ${ConfirmDialog.render({
-                        id: "withdraw-confirm",
-                        isOpen: entity.isConfirmingWithdraw,
-                        message: t("application.withdrawConfirm"),
-                        error: status === "error" ? error : null,
-                        confirmLabel: t("application.yesWithdraw"),
-                        busyLabel: t("application.withdrawing"),
-                        isBusy: status === "withdrawing",
-                        onConfirm: onWithdraw,
-                        onCancel: onCancelWithdraw,
-                      })}
-                    `,
-                  )}
+                  ${Button.render({
+                    children: t("application.withdraw"),
+                    color: "error",
+                    variant: "outline",
+                    shape: "pill",
+                    size: "md",
+                    isFullWidth: true,
+                    className: styles.withdrawButton,
+                    onClick: onAskWithdraw,
+                  })}
+                  ${ConfirmDialog.render({
+                    id: "withdraw-confirm",
+                    isOpen: entity.isConfirmingWithdraw,
+                    // The winner's withdrawal reopens the event.
+                    message:
+                      application.applicationStatus === "selected"
+                        ? t("application.withdrawWinnerConfirm")
+                        : t("application.withdrawConfirm"),
+                    error: status === "error" ? error : null,
+                    confirmLabel: t("application.yesWithdraw"),
+                    busyLabel: t("application.withdrawing"),
+                    isBusy: status === "withdrawing",
+                    onConfirm: onWithdraw,
+                    onCancel: onCancelWithdraw,
+                  })}
                 </div>
               </div>
             `

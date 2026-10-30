@@ -14,7 +14,6 @@ import {
 } from "../testing/index.js"
 import {
   fetchReceivedDetail,
-  giveUpApplication,
   updateMotivation,
   withdrawApplication,
 } from "./applications.js"
@@ -114,23 +113,15 @@ describe("applying and choosing a winner", () => {
     expect(event.status).toBe("assigned")
   })
 
-  test("a selected application cannot be withdrawn", async () => {
-    await signIn(SENDER)
-    await expect(
-      withdrawApplication(await applicationId(eventId)),
-    ).rejects.toThrow("Selected applications cannot be withdrawn")
-  })
-
-  test("the winner giving up reopens the event", async () => {
+  test("the winner withdrawing reopens the event", async () => {
     await signIn(SENDER)
     const id = await applicationId(eventId)
-    await giveUpApplication(id)
+    await withdrawApplication(id)
 
-    const { data: application, error: applicationError } = await supabase
+    const { data: applications, error: applicationError } = await supabase
       .from("applications")
-      .select("status")
+      .select("id")
       .eq("id", id)
-      .single()
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select("status")
@@ -138,7 +129,7 @@ describe("applying and choosing a winner", () => {
       .single()
     expect(applicationError).toBeNull()
     expect(eventError).toBeNull()
-    expect(application.status).toBe("shortlisted")
+    expect(applications).toEqual([])
     expect(event.status).toBe("open")
   })
 })
@@ -163,7 +154,7 @@ describe("a passed deadline", () => {
     expect(error.message).toContain("Application deadline has passed")
   })
 
-  test("giving up after the deadline leaves the event assigned", async () => {
+  test("the winner withdrawing after the deadline leaves the event assigned", async () => {
     const eventId = await createEventAs(SEEKER, crypto.randomUUID())
     eventIds.push(eventId)
     await signIn(SENDER)
@@ -179,22 +170,90 @@ describe("a passed deadline", () => {
     expect(deadlineError).toBeNull()
 
     await signIn(SENDER)
-    await giveUpApplication(id)
-    const { data: application, error: applicationError } = await supabase
-      .from("applications")
-      .select("status")
-      .eq("id", id)
-      .single()
+    await withdrawApplication(id)
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select("status")
       .eq("id", eventId)
       .single()
-    expect(applicationError).toBeNull()
     expect(eventError).toBeNull()
-    expect(application.status).toBe("shortlisted")
     expect(event.status).toBe("assigned")
   })
+})
+
+// Assigning rejects everyone else; the winner withdrawing hands the sender
+// back the shortlist they had, and nothing they decided after the
+// assignment.
+describe("the shortlist after the winner withdraws", () => {
+  let eventId = null
+  let userId = null
+  let winnerUserId = null
+  let otherId = null
+
+  beforeAll(async () => {
+    const id = crypto.randomUUID()
+    const email = `vitest-${id}@vaitu.local`
+    userId = await signUp({ email, fullName: `Vitest ${id}` })
+    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+
+    await signIn({ email, password: SEEKER.password })
+    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+    await signIn(SENDER)
+    winnerUserId = (await supabase.auth.getUser()).data.user.id
+  }, TEST_TIMEOUT_MS)
+
+  afterAll(async () => {
+    if (eventId) await deleteOwnedEvent(eventId)
+    if (userId) await deleteSignedUpUser(userId)
+    await signOut()
+  }, TEST_TIMEOUT_MS)
+
+  // The sender applies, both are shortlisted (unless told otherwise), the
+  // sender wins and the other is rejected; returns the winner's application.
+  async function assignSender({ shortlistOther = true } = {}) {
+    await signIn(SENDER)
+    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+
+    await signIn(SEEKER)
+    const winnerId = await applicationIdFor(eventId, winnerUserId)
+    otherId = await applicationIdFor(eventId, userId)
+    await setStatus(winnerId, "shortlisted")
+    if (shortlistOther) await setStatus(otherId, "shortlisted")
+    expect((await assignWinner(eventId, winnerId)).error).toBeNull()
+    expect(await statusOf(otherId)).toBe("rejected")
+    return winnerId
+  }
+
+  test(
+    "comes back as it was before the assignment",
+    async () => {
+      const winnerId = await assignSender()
+
+      await signIn(SENDER)
+      await withdrawApplication(winnerId)
+
+      await signIn(SEEKER)
+      expect(await statusOf(otherId)).toBe("shortlisted")
+    },
+    TEST_TIMEOUT_MS,
+  )
+
+  test(
+    "keeps a rejection the sender made after the assignment",
+    async () => {
+      const winnerId = await assignSender({ shortlistOther: false })
+      // The sender reconsiders, then rejects the other applicant on purpose.
+      await setStatus(otherId, "pending")
+      await setStatus(otherId, "rejected")
+
+      await signIn(SENDER)
+      await withdrawApplication(winnerId)
+
+      await signIn(SEEKER)
+      expect(await statusOf(otherId)).toBe("rejected")
+    },
+    TEST_TIMEOUT_MS,
+  )
 })
 
 describe("withdrawing an application", () => {
@@ -545,6 +604,24 @@ async function applicationId(eventId) {
     .single()
   if (error) throw error
   return data.id
+}
+
+async function statusOf(applicationId) {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("status")
+    .eq("id", applicationId)
+    .single()
+  if (error) throw error
+  return data.status
+}
+
+async function setStatus(applicationId, status) {
+  const { error } = await supabase
+    .from("applications")
+    .update({ status })
+    .eq("id", applicationId)
+  if (error) throw error
 }
 
 async function applicationIdFor(eventId, applicantId) {

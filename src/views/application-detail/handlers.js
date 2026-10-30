@@ -3,7 +3,6 @@ import { Form } from "@inglorious/web/form"
 
 import {
   fetchApplicationDetail,
-  giveUpApplication,
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
@@ -16,14 +15,6 @@ export function fieldSet(entity, { field, value }) {
 
 export function withdrawAsk(entity) {
   entity.isConfirmingWithdraw = true
-}
-
-export function giveUpAsk(entity) {
-  entity.isConfirmingGiveUp = true
-}
-
-export function giveUpCancel(entity) {
-  entity.isConfirmingGiveUp = false
 }
 
 export function withdrawCancel(entity) {
@@ -86,24 +77,5 @@ export const withdraw = handleAsync("withdraw", {
   error(entity, err) {
     entity.status = "error"
     entity.error = err.message ?? "errors.withdraw"
-  },
-})
-
-export const giveUp = handleAsync("giveUp", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
-  },
-  run(application_id) {
-    return giveUpApplication(application_id)
-  },
-  success(entity, _, api) {
-    entity.status = "ready"
-    entity.isConfirmingGiveUp = false
-    api.notify("#router:navigate", paths.applications)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = err.message ?? "errors.giveUp"
   },
 })

@@ -83,35 +83,15 @@ export async function updateMotivation(application_id, motivation) {
   return true
 }
 
+// At any stage, the winner's too: the database then gives the sender back the
+// shortlist and reopens the event (reopen_on_winner_withdrawn).
 export async function withdrawApplication(application_id) {
-  const { data: current, error: readError } = await supabase
-    .from("applications")
-    .select("status")
-    .eq("id", application_id)
-    .single()
-  if (readError) throw readError
-  if (current.status === "selected") {
-    throw new Error("Selected applications cannot be withdrawn")
-  }
   const { error } = await supabase
     .from("applications")
     .delete()
     .eq("id", application_id)
   if (error) throw error
   return true
-}
-
-export async function giveUpApplication(application_id) {
-  const { data: current, error: readError } = await supabase
-    .from("applications")
-    .select("status")
-    .eq("id", application_id)
-    .single()
-  if (readError) throw readError
-  if (current.status !== "selected") {
-    throw new Error("Only selected applications can be given up")
-  }
-  return updateApplicationStatus(application_id, "shortlisted")
 }
 
 export async function updateApplicationStatus(application_id, status) {
