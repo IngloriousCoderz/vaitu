@@ -42,7 +42,7 @@ export const MyEvents = {
                 // A failed delete is the dialog's to show: the list stays.
                 isError: status === "error" && !isConfirmingDelete,
                 error,
-                isLoading: status === "loading",
+                isLoading: status === "loading" && !events.length,
                 isEmpty: !events.length,
                 emptyText: t("myEvents.none"),
               }) ??

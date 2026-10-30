@@ -55,7 +55,7 @@ export const ApplicationDetail = {
             PageStatus.render({
               isError: status !== "loading" && !application,
               error,
-              isLoading: status === "loading",
+              isLoading: status === "loading" && !application,
             }) ??
             html`
               <div class=${styles.stage}>

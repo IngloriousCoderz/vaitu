@@ -65,7 +65,8 @@ export const Notifications = {
               PageStatus.render({
                 isError: status === "error",
                 error,
-                isLoading: status === "loading" || status === "idle",
+                isLoading:
+                  (status === "loading" || status === "idle") && !items.length,
                 isEmpty: !items.length,
                 emptyText: t("notifications.empty"),
               }) ??
@@ -128,7 +129,8 @@ export const NotificationsPanel = {
             PageStatus.render({
               isError: status === "error",
               error,
-              isLoading: status === "loading" || status === "idle",
+              isLoading:
+                (status === "loading" || status === "idle") && !items.length,
               isEmpty: !items.length,
               emptyText: t("notifications.empty"),
             }) ??

@@ -147,7 +147,7 @@ export const ApplicationsReceived = {
               PageStatus.render({
                 isError: status === "error" && !items.length,
                 error,
-                isLoading: status === "loading",
+                isLoading: status === "loading" && !items.length,
                 isEmpty: !items.length,
                 emptyText:
                   entity.event_status === "open"

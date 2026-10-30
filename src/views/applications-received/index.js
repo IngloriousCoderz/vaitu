@@ -119,25 +119,21 @@ export const ApplicationsReceived = {
           api.notify(`#${id}:statusSet`, {
             application_id,
             status: "shortlisted",
-            event_id: entity.event_id,
           }),
         onReject: (application_id) =>
           api.notify(`#${id}:statusSet`, {
             application_id,
             status: "rejected",
-            event_id: entity.event_id,
           }),
         onUnshortlist: (application_id) =>
           api.notify(`#${id}:statusSet`, {
             application_id,
             status: "pending",
-            event_id: entity.event_id,
           }),
         onUnreject: (application_id) =>
           api.notify(`#${id}:statusSet`, {
             application_id,
             status: "pending",
-            event_id: entity.event_id,
           }),
         onAskAssign: (application_id) =>
           api.notify(`#${id}:assignAsk`, application_id),

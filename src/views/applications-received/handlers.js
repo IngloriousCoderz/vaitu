@@ -141,17 +141,21 @@ export const statusSet = handleAsync("statusSet", {
     entity.status = "saving"
     entity.error = null
   },
-  async run({ application_id, status, event_id }) {
+  async run({ application_id, status }) {
     const { error } = await supabase
       .from("applications")
       .update({ status })
       .eq("id", application_id)
     if (error) throw error
-    return event_id
+    return { application_id, status }
   },
-  success(entity) {
-    // List refreshes via realtime; a manual reload here double-fires.
+  // The change shows at once, from what was written: realtime reloads the
+  // list too, but it can lag or drop, as in the Android app's WebView.
+  success(entity, { application_id, status }) {
     entity.status = "ready"
+    entity.items = entity.items.map((item) =>
+      item.id === application_id ? { ...item, status } : item,
+    )
   },
   error(entity, err) {
     entity.status = "error"
@@ -172,9 +176,12 @@ export const winnerAssign = handleAsync("winnerAssign", {
     if (error) throw error
     return event_id
   },
-  success(entity) {
+  // Assigning rejects the others and closes the event, so the page reloads
+  // rather than wait for realtime.
+  success(entity, event_id, api) {
     entity.status = "ready"
     entity.confirming_assign = null
+    api.notify(`#${entity.id}:load`, event_id)
   },
   error(entity, err) {
     entity.status = "error"
@@ -206,10 +213,11 @@ export const eventReopen = handleAsync("eventReopen", {
     if (error) throw error
     return event_id
   },
-  success(entity) {
+  success(entity, event_id, api) {
     entity.status = "ready"
     entity.confirming_reopen = false
     entity.reopen_deadline = ""
+    api.notify(`#${entity.id}:load`, event_id)
   },
   error(entity, err) {
     entity.status = "error"

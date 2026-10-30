@@ -196,7 +196,7 @@ export const EventList = {
               PageStatus.render({
                 isError: status === "error",
                 error,
-                isLoading: status === "loading",
+                isLoading: status === "loading" && !events.length,
                 isEmpty: !events.length,
                 emptyText: t("events.noneMatch"),
               }) ??

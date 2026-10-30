@@ -68,7 +68,7 @@ export const Profile = {
             PageStatus.render({
               isError: status === "error" && !profile,
               error,
-              isLoading: status === "loading" || !profile,
+              isLoading: !profile,
             }) ??
             html`
               ${Flex.render({

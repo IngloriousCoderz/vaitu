@@ -64,7 +64,7 @@ export const ApplicationList = {
               PageStatus.render({
                 isError: status === "error",
                 error,
-                isLoading: status === "loading",
+                isLoading: status === "loading" && !applications.length,
                 isEmpty: !shown.length,
                 emptyText: !applications.length
                   ? t("applications.none")
