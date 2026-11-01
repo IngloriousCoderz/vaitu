@@ -169,6 +169,9 @@ importers:
       '@inglorious/ssx':
         specifier: ^2.3.2
         version: 2.3.2
+      '@inglorious/store':
+        specifier: ^12.1.1
+        version: 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/web':
         specifier: ^6.13.1
         version: 6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
