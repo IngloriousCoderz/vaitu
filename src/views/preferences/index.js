@@ -18,7 +18,6 @@ export const Preferences = {
     entity.professions ??= []
     entity.favorite_regions ??= []
     entity.is_email_opted_out ??= false
-    entity.favoriteInput ??= ""
     entity.status ??= "idle"
     entity.error ??= null
     entity.saveError ??= null
@@ -37,10 +36,6 @@ export const Preferences = {
         entity,
         onToggleProfession: (professionId) =>
           api.notify(`#${id}:professionToggle`, professionId),
-        onFavoriteInput: (value) =>
-          api.notify(`#${id}:favoriteInputSet`, value),
-        onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),
-        onFavoriteRemove: (value) => api.notify(`#${id}:favoriteRemove`, value),
         onEmails: (isReceiving) => api.notify(`#${id}:emailsSet`, isReceiving),
       },
       api,
@@ -54,6 +49,5 @@ function open(entity, _, api) {
 
 function close(entity) {
   entity.status = "idle"
-  entity.favoriteInput = ""
   entity.saveError = null
 }

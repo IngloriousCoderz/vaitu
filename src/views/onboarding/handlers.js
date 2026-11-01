@@ -3,22 +3,32 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
-import { regionAfterCountryChange } from "../../data/regions/resolve.js"
+import {
+  favoriteRegionOptions,
+  uniqueRegions,
+} from "../../data/regions/resolve.js"
 
-export function fieldSet(entity, { field, value }, api) {
-  if (field === "country") {
-    const previous = getFieldValue(entity, "country", "")
-    const region = getFieldValue(entity, "region", "")
-    Form.fieldChange(entity, { path: "country", value })
-    Form.fieldChange(entity, {
-      path: "region",
-      value: regionAfterCountryChange(previous, value, region),
-    })
-    api?.notify("#regionOnboarding:sync", getFieldValue(entity, "region", ""))
-  } else {
-    Form.fieldChange(entity, { path: field, value })
-  }
+export function fieldSet(entity, { field, value }) {
+  Form.fieldChange(entity, { path: field, value })
   entity.error = null
+}
+
+export function favoriteRegionsSet(entity, { value }, api) {
+  Form.fieldChange(entity, {
+    path: "favorite_regions",
+    value: uniqueRegions(value),
+  })
+  favoriteOptionsSync(entity, null, api)
+}
+
+export function favoriteOptionsSync(entity, _, api) {
+  const favorites = [...getFieldValue(entity, "favorite_regions", [])]
+  const regions = api.getEntity("eventList")?.regions ?? []
+  api.notify("#favoriteRegionOnboarding:sync", favorites)
+  api.notify(
+    "#favoriteRegionOnboarding:optionsSet",
+    favoriteRegionOptions(regions, favorites),
+  )
 }
 
 export function jobTypesSet(entity, { value }) {
@@ -76,6 +86,7 @@ export function saveSubmit(entity, _, api) {
     ...entity.values,
     interested_job_types: [...entity.values.interested_job_types],
     professions: [...entity.values.professions],
+    favorite_regions: [...entity.values.favorite_regions],
   })
 }
 
@@ -86,11 +97,11 @@ export const save = handleAsync("save", {
   },
   async run({
     country,
-    region,
     website,
     phone,
     interested_job_types,
     professions,
+    favorite_regions,
   }) {
     const {
       data: { user },
@@ -101,7 +112,6 @@ export const save = handleAsync("save", {
       .from("profiles")
       .update({
         country: country.trim(),
-        region: region.trim(),
         website:
           site === ""
             ? ""
@@ -111,6 +121,7 @@ export const save = handleAsync("save", {
         phone: (phone ?? "").trim(),
         interested_job_types,
         professions,
+        favorite_regions,
         onboarded_at: new Date().toISOString(),
       })
       .eq("id", user.id)

@@ -175,6 +175,7 @@ export const regionsFetch = handleAsync("regionsFetch", {
       refetch(entity, api)
     }
     api.notify("#preferences:favoriteOptionsSync")
+    api.notify("#onboarding:favoriteOptionsSync")
   },
 })
 

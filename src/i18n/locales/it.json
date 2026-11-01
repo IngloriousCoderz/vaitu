@@ -24,7 +24,6 @@
   "common": {
     "back": "Indietro",
     "keepIt": "Annulla",
-    "add": "Aggiungi",
     "saving": "Salvataggio…",
     "loading": "Caricamento…",
     "cancel": "Annulla",
@@ -33,9 +32,6 @@
     "photoNext": "Foto successiva",
     "photoClose": "Chiudi foto",
     "close": "Chiudi"
-  },
-  "favorites": {
-    "typeRegion": "Oppure scrivi una regione"
   },
   "status": {
     "pending": "In attesa",
@@ -123,8 +119,6 @@
     "genre": "Genere",
     "country": "Paese",
     "region": "Regione",
-    "regionOptional": "Regione (facoltativo)",
-    "regionExample": "Toscana",
     "websiteOptional": "Sito web o pagina social (facoltativo)",
     "websiteExample": "tuo-sito.it",
     "website": "Sito web o pagina social",
@@ -145,7 +139,8 @@
     "jobTypesHint": "Il tuo feed mostra questi di default. Lascia vuoto per vederli tutti.",
     "jobTypeRequest": "Manca un tipo di lavoro? Chiedici di aggiungerlo",
     "jobTypeRequestSubject": "Nuovo tipo di lavoro per Vaitu",
-    "jobTypeRequestBody": "Tipo di lavoro da aggiungere:\n\nDi cosa mi occupo:\n"
+    "jobTypeRequestBody": "Tipo di lavoro da aggiungere:\n\nDi cosa mi occupo:\n",
+    "favoriteRegionsHint": "Il tuo feed mostra questi di default. Lascia vuoto per vederli tutti."
   },
   "periods": {
     "all": "Tutte le date",
@@ -168,7 +163,9 @@
     "noOptions": "Nessuna opzione",
     "noCountries": "Nessun paese trovato",
     "noRegions": "Nessuna regione trovata",
-    "allJobTypes": "Tutti i tipi di lavoro"
+    "allJobTypes": "Tutti i tipi di lavoro",
+    "addValue": "Aggiungi \"{{term}}\"",
+    "searchOrAddRegion": "Cerca o aggiungi una regione"
   },
   "pwa": {
     "updateReady": "Nuova versione disponibile",

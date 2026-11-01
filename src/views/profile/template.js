@@ -19,7 +19,6 @@ import { PageStatus } from "../../common/page-status/index.js"
 import { telUrl } from "../../common/profile.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
-import { canonicalRegion, ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 import { displayWebsite, initials } from "./helpers.js"
@@ -184,23 +183,6 @@ export const Profile = {
                         className: styles.field,
                         children: api.render("countryProfile"),
                       })}
-                      ${when(
-                        shown.country === ITALY,
-                        () =>
-                          Flex.render({
-                            direction: "column",
-                            className: styles.field,
-                            children: api.render("regionProfile"),
-                          }),
-                        () =>
-                          this.renderEditField({
-                            label: t("fields.region"),
-                            field: "region",
-                            value: shown.region,
-                            placeholder: t("fields.regionOptional"),
-                            onField,
-                          }),
-                      )}
                       ${ErrorAlert.render({
                         error: status === "error" && error ? error : null,
                       })}
@@ -239,7 +221,6 @@ export const Profile = {
                       telUrl(profile.phone),
                     )}
                     ${this.renderRow(t("fields.country"), profile.country)}
-                    ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
                   </dl>
                   ${this.renderAccountActions({
                     onEdit,

@@ -45,7 +45,6 @@ begin
   update public.profiles
   set full_name = 'Test Sender',
       country = 'Italy',
-      region = 'Tuscany',
       website = 'https://example.com',
       phone = '+39 333 000 0001',
       onboarded_at = now()
@@ -90,7 +89,6 @@ begin
   update public.profiles
   set full_name = 'Test Seeker',
       country = 'Italy',
-      region = 'Lombardy',
       website = 'https://seeker.example.com',
       phone = '+39 333 000 0002',
       onboarded_at = now()

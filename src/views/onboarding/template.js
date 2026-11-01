@@ -1,7 +1,6 @@
 import { Button } from "@inglorious/ui/button"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
-import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ChipPicker } from "../../common/chip-picker/index.js"
@@ -11,7 +10,6 @@ import { FormActions } from "../../common/form-actions/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
 import { professions } from "../../data/event-taxonomy.js"
-import { ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
@@ -63,28 +61,10 @@ export const Onboarding = {
             ${api.render("countryOnboarding")}
             ${ErrorLabel.render({ error: countryError })}
           </div>
-          ${when(
-            getFieldValue(entity, "country", "") === ITALY,
-            () => html`
-              <div class=${styles.field}>
-                <span>${t("fields.regionOptional")}</span>
-                ${api.render("regionOnboarding")}
-              </div>
-            `,
-            () => html`
-              <div class=${styles.field}>
-                ${Input.render({
-                  id: "onboarding-region",
-                  label: t("fields.regionOptional"),
-                  inputType: "text",
-                  value: getFieldValue(entity, "region", ""),
-                  placeholder: t("fields.regionExample"),
-                  isFullWidth: true,
-                  onChange: (value) => onField({ field: "region", value }),
-                })}
-              </div>
-            `,
-          )}
+          <div class=${styles.field}>
+            ${api.render("favoriteRegionOnboarding")}
+            <p class=${styles.hint}>${t("fields.favoriteRegionsHint")}</p>
+          </div>
           <div class=${styles.field}>
             ${Input.render({
               id: "onboarding-website",

@@ -24,7 +24,6 @@
   "common": {
     "back": "Back",
     "keepIt": "Keep it",
-    "add": "Add",
     "saving": "Saving…",
     "loading": "Loading…",
     "cancel": "Cancel",
@@ -33,9 +32,6 @@
     "photoNext": "Next photo",
     "photoClose": "Close photos",
     "close": "Close"
-  },
-  "favorites": {
-    "typeRegion": "Or type a region"
   },
   "status": {
     "pending": "Pending",
@@ -121,8 +117,6 @@
     "genre": "Genre",
     "country": "Country",
     "region": "Region",
-    "regionOptional": "Region (optional)",
-    "regionExample": "Tuscany",
     "websiteOptional": "Website or social page (optional)",
     "websiteExample": "your-site.com",
     "website": "Website or social page",
@@ -143,7 +137,8 @@
     "jobTypesHint": "Your feed shows these by default. Leave it empty to see all of them.",
     "jobTypeRequest": "Job type missing? Ask us to add it",
     "jobTypeRequestSubject": "New job type for Vaitu",
-    "jobTypeRequestBody": "Job type I'd like added:\n\nMy trade:\n"
+    "jobTypeRequestBody": "Job type I'd like added:\n\nMy trade:\n",
+    "favoriteRegionsHint": "Your feed shows these by default. Leave it empty to see all of them."
   },
   "periods": {
     "all": "All dates",
@@ -166,7 +161,9 @@
     "noOptions": "No options",
     "noCountries": "No countries found",
     "noRegions": "No regions found",
-    "allJobTypes": "All job types"
+    "allJobTypes": "All job types",
+    "addValue": "Add \"{{term}}\"",
+    "searchOrAddRegion": "Search or add a region"
   },
   "pwa": {
     "updateReady": "New version available",

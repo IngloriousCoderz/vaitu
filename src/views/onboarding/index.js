@@ -15,11 +15,11 @@ export const Onboarding = {
   create(entity) {
     entity.initialValues = {
       country: "",
-      region: "",
       website: "",
       phone: "",
       interested_job_types: [],
       professions: [],
+      favorite_regions: [],
     }
     Form.create(entity)
     entity.status ??= "idle"

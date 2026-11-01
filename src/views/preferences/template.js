@@ -4,7 +4,6 @@ import { html } from "@inglorious/web"
 
 import { ChipPicker } from "../../common/chip-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
-import { FavoriteRegions } from "../../common/favorite-regions/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
@@ -17,17 +16,7 @@ export const Preferences = {
     return this.renderPreferences(props, api)
   },
 
-  renderPreferences(
-    {
-      entity,
-      onToggleProfession,
-      onFavoriteInput,
-      onFavoriteAdd,
-      onFavoriteRemove,
-      onEmails,
-    },
-    api,
-  ) {
+  renderPreferences({ entity, onToggleProfession, onEmails }, api) {
     return Page.render({
       variant: "document",
       read: true,
@@ -57,23 +46,12 @@ export const Preferences = {
                     ${t("fields.jobTypesHint")} ${JobTypeRequest.render()}
                   </p>
                 </div>`,
-                html`<fieldset class=${styles.group}>
-                  <legend class=${styles.legend}>
-                    ${t("preferences.favoriteRegions")}
-                  </legend>
-                  ${FavoriteRegions.render(
-                    {
-                      regions: entity.favorite_regions,
-                      input: entity.favoriteInput,
-                      inputId: "preferences-favorite-region",
-                      onInput: onFavoriteInput,
-                      onAdd: onFavoriteAdd,
-                      onRemove: onFavoriteRemove,
-                      choiceId: "favoriteRegionPreferences",
-                    },
-                    api,
-                  )}
-                </fieldset>`,
+                html`<div>
+                  ${api.render("favoriteRegionPreferences")}
+                  <p class=${styles.sectionHint}>
+                    ${t("fields.favoriteRegionsHint")}
+                  </p>
+                </div>`,
               ],
             })}
 

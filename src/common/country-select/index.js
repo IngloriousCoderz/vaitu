@@ -19,6 +19,7 @@ export const CountrySelect = {
           searchPlaceholder: t(entity.searchPlaceholder),
           noOptionsMessage: t(entity.noOptionsMessage),
           loadingMessage: t(entity.loadingMessage),
+          formatCreateLabel: (term) => t("combobox.addValue", { term }),
           error: translated(entity.error),
           options: entity.options.map((option) => ({
             ...option,

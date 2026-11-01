@@ -14,10 +14,6 @@ import { endSession, setOnboardingDue } from "../../api/session.js"
 import { createImageFile } from "../../common/image.js"
 import { defaultTiers } from "../../common/tiers.js"
 import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
-import {
-  regionAfterCountryChange,
-  regionForCountry,
-} from "../../data/regions/resolve.js"
 import { paths } from "../../routes.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 
@@ -26,18 +22,15 @@ let avatarFile = null
 
 export function editStart(entity, _, api) {
   entity.isEditing = true
-  const country = entity.profile?.country ?? ""
   entity.initialValues = {
     full_name: entity.profile?.full_name ?? "",
     website: entity.profile?.website ?? "",
     phone: entity.profile?.phone ?? "",
-    country,
-    region: regionForCountry(country, entity.profile?.region ?? ""),
+    country: entity.profile?.country ?? "",
   }
   Form.reset(entity)
   entity.error = null
   api.notify("#countryProfile:sync", entity.values.country ?? "")
-  api.notify("#regionProfile:sync", entity.values.region ?? "")
 }
 
 export function editCancel(entity) {
@@ -45,19 +38,8 @@ export function editCancel(entity) {
   entity.error = null
 }
 
-export function fieldSet(entity, { field, value }, api) {
+export function fieldSet(entity, { field, value }) {
   if (!entity.isEditing) return
-  if (field === "country") {
-    const previous = entity.values.country ?? ""
-    const region = entity.values.region ?? ""
-    Form.fieldChange(entity, { path: "country", value })
-    Form.fieldChange(entity, {
-      path: "region",
-      value: regionAfterCountryChange(previous, value, region),
-    })
-    api?.notify("#regionProfile:sync", entity.values.region ?? "")
-    return
-  }
   Form.fieldChange(entity, { path: field, value })
 }
 
@@ -74,7 +56,7 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, country, region, website, phone, locale, avatar_url, onboarded_at",
+        "id, full_name, country, website, phone, locale, avatar_url, onboarded_at",
       )
       .eq("id", user.id)
       .single()
@@ -160,7 +142,6 @@ export const save = handleAsync("save", {
               : `https://${website}`,
         phone: (profile.phone ?? "").trim(),
         country: (profile.country ?? "").trim(),
-        region: (profile.region ?? "").trim(),
       })
       .eq("id", user.id)
     if (error) throw error

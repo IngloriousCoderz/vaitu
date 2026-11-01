@@ -91,25 +91,19 @@ export function regionFilterItems(eventRegions, favoriteRegions) {
 }
 
 /**
- * Favorite combobox: Italian regions, then the other names already on events.
- * Group labels are not selectable.
+ * Favorite combobox: Italian regions, then the favorites and other names already
+ * on events. Group labels are not selectable.
  */
-export function favoriteRegionOptions(eventRegions, taken = []) {
-  const chosen = taken ?? []
-  const italian = availableRegions(italianRegions, chosen)
-  const others = availableRegions(eventRegions, chosen).filter(
+export function favoriteRegionOptions(eventRegions, favorites = []) {
+  const others = sortedRegions([...favorites, ...eventRegions]).filter(
     (region) => !isItalianRegion(region),
   )
   return [
-    ...(italian.length
-      ? [
-          labelled("filters.italianRegions", {
-            value: ITALIAN_GROUP,
-            isDisabled: true,
-          }),
-          ...italian.map(regionOption),
-        ]
-      : []),
+    labelled("filters.italianRegions", {
+      value: ITALIAN_GROUP,
+      isDisabled: true,
+    }),
+    ...sortedRegions(italianRegions).map(regionOption),
     ...(others.length
       ? [
           labelled("filters.otherRegions", {
@@ -137,12 +131,18 @@ function regionKey(value) {
     .replace(/\s+/g, " ")
 }
 
-function regionOption(region) {
-  return { value: region, label: region }
+/** A region option, found by search under any of its spellings. */
+export function regionOption(region) {
+  const spellings = regionSpellings
+    .filter(({ canonical }) => canonical === region)
+    .flatMap(({ name }) => [name, regionKey(name)])
+  return {
+    value: region,
+    label: region,
+    ...(spellings.length ? { keywords: spellings } : {}),
+  }
 }
 
-function availableRegions(regions, taken) {
-  return uniqueRegions(regions)
-    .filter((region) => !taken.some((name) => sameRegion(name, region)))
-    .sort((left, right) => left.localeCompare(right))
+function sortedRegions(regions) {
+  return uniqueRegions(regions).sort((left, right) => left.localeCompare(right))
 }

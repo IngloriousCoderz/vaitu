@@ -4,9 +4,8 @@ import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { readUserId } from "../../api/session.js"
 import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
 import {
-  canonicalRegion,
   favoriteRegionOptions,
-  sameRegion,
+  uniqueRegions,
 } from "../../data/regions/resolve.js"
 
 // The new list itself: the save runs after this draft is revoked.
@@ -29,32 +28,8 @@ export function professionToggle(entity, professionId, api) {
   api.notify(`#${entity.id}:save`, { professions, interested_job_types })
 }
 
-export function favoriteInputSet(entity, value) {
-  entity.favoriteInput = value ?? ""
-}
-
-export function favoriteAdd(entity, value, api) {
-  const clean = canonicalRegion(value)
-  if (!clean) return
-  entity.favoriteInput = ""
-  if (entity.favorite_regions.some((region) => sameRegion(region, clean))) {
-    favoriteOptionsSync(entity, null, api)
-    return
-  }
-  const favorite_regions = [...entity.favorite_regions, clean]
-  entity.favorite_regions = favorite_regions
-  favoriteOptionsSync(entity, null, api)
-  api.notify(`#${entity.id}:save`, { favorite_regions })
-}
-
-export function favoriteChoiceSelect(entity, { value }, api) {
-  favoriteAdd(entity, value, api)
-}
-
-export function favoriteRemove(entity, value, api) {
-  const favorite_regions = entity.favorite_regions.filter(
-    (region) => !sameRegion(region, value),
-  )
+export function favoriteRegionsSet(entity, { value }, api) {
+  const favorite_regions = uniqueRegions(value)
   entity.favorite_regions = favorite_regions
   favoriteOptionsSync(entity, null, api)
   api.notify(`#${entity.id}:save`, { favorite_regions })
@@ -70,7 +45,7 @@ export function emailsSet(entity, isReceiving, api) {
 
 export function favoriteOptionsSync(entity, _, api) {
   const regions = api.getEntity("eventList")?.regions ?? []
-  api.notify("#favoriteRegionPreferences:sync", "")
+  api.notify("#favoriteRegionPreferences:sync", [...entity.favorite_regions])
   api.notify(
     "#favoriteRegionPreferences:optionsSet",
     favoriteRegionOptions(regions, entity.favorite_regions),

@@ -24,6 +24,10 @@
   .iw-combobox-dropdown-options .iw-combobox-dropdown-options-option {
     font-size: var(--vinput-font-size);
 
+    &.iw-combobox-dropdown-options-option-disabled input {
+      display: none;
+    }
+
     &.iw-combobox-dropdown-options-option-focused,
     &.iw-combobox-dropdown-options-option-selected {
       background: var(--vbadge-bg);

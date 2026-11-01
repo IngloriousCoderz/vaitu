@@ -1,7 +1,7 @@
 import {
-  filterOptions,
   formatOption,
   getOptionValue,
+  visibleOptions,
 } from "@inglorious/ui/combobox"
 
 import { FIRST_INDEX } from "../../constants/index.js"
@@ -62,6 +62,11 @@ export function optionSelect(entity, option, api) {
   if (normalizedOption.isDisabled) return
   const optionValue = getOptionValue(normalizedOption)
 
+  if (normalizedOption.isCreated) {
+    entity.searchTerm = ""
+    entity.focusedIndex = NO_FOCUSED_INDEX
+  }
+
   if (entity.isMulti) {
     const values = Array.isArray(entity.selectedValue)
       ? entity.selectedValue
@@ -102,12 +107,12 @@ export function clear(entity, _payload, api) {
  */
 export function searchChange(entity, searchTerm) {
   entity.searchTerm = searchTerm
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
 }
 
 export function focusNext(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   const next = enabledIndex(
     filtered,
     entity.focusedIndex + NEXT_STEP,
@@ -117,7 +122,7 @@ export function focusNext(entity) {
 }
 
 export function focusPrev(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   if (entity.focusedIndex <= FIRST_INDEX) {
     entity.focusedIndex = NO_FOCUSED_INDEX
     return
@@ -130,12 +135,12 @@ export function focusPrev(entity) {
 }
 
 export function focusFirst(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
 }
 
 export function focusLast(entity) {
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   entity.focusedIndex = enabledIndex(
     filtered,
     filtered.length - NEXT_STEP,
@@ -208,7 +213,7 @@ function doOpen(entity) {
   if (entity.isDisabled) return
   entity.isOpen = true
 
-  const filtered = filterOptions(entity.options, entity.searchTerm)
+  const filtered = visibleOptions(entity)
   entity.focusedIndex = enabledIndex(filtered, FIRST_INDEX, NEXT_STEP)
 }
 

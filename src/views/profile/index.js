@@ -33,7 +33,6 @@ export const Profile = {
       website: "",
       phone: "",
       country: "",
-      region: "",
     }
     Form.create(entity)
     entity.isConfirmingDeactivate ??= false

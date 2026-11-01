@@ -24,7 +24,6 @@
   "common": {
     "back": "Retour",
     "keepIt": "Annuler",
-    "add": "Ajouter",
     "saving": "Enregistrement…",
     "loading": "Chargement…",
     "cancel": "Annuler",
@@ -33,9 +32,6 @@
     "photoNext": "Photo suivante",
     "photoClose": "Fermer les photos",
     "close": "Fermer"
-  },
-  "favorites": {
-    "typeRegion": "Ou saisissez une région"
   },
   "status": {
     "pending": "En attente",
@@ -123,8 +119,6 @@
     "genre": "Genre",
     "country": "Pays",
     "region": "Région",
-    "regionOptional": "Région (facultatif)",
-    "regionExample": "Toscane",
     "websiteOptional": "Site web ou page sociale (facultatif)",
     "websiteExample": "votre-site.fr",
     "website": "Site web ou page sociale",
@@ -145,7 +139,8 @@
     "jobTypesHint": "Votre fil les affiche par défaut. Laissez vide pour tous les voir.",
     "jobTypeRequest": "Un type de mission manque ? Demandez-nous de l'ajouter",
     "jobTypeRequestSubject": "Nouveau type de mission pour Vaitu",
-    "jobTypeRequestBody": "Type de mission à ajouter :\n\nMon métier :\n"
+    "jobTypeRequestBody": "Type de mission à ajouter :\n\nMon métier :\n",
+    "favoriteRegionsHint": "Votre fil les affiche par défaut. Laissez vide pour tous les voir."
   },
   "periods": {
     "all": "Toutes les dates",
@@ -168,7 +163,9 @@
     "noOptions": "Aucune option",
     "noCountries": "Aucun pays trouvé",
     "noRegions": "Aucune région trouvée",
-    "allJobTypes": "Tous les types de mission"
+    "allJobTypes": "Tous les types de mission",
+    "addValue": "Ajouter « {{term}} »",
+    "searchOrAddRegion": "Chercher ou ajouter une région"
   },
   "pwa": {
     "updateReady": "Nouvelle version disponible",

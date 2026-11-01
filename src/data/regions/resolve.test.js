@@ -8,6 +8,7 @@ import {
   regionAfterCountryChange,
   regionFilterItems,
   regionForCountry,
+  regionOption,
   sameRegion,
   uniqueRegions,
 } from "./resolve.js"
@@ -103,6 +104,17 @@ describe("regionFilterItems", () => {
   })
 })
 
+describe("regionOption", () => {
+  it("is found under its spellings, typed with or without punctuation", () => {
+    expect(regionOption("Tuscany").keywords).toContain("Toscana")
+    expect(regionOption("Emilia-Romagna").keywords).toContain("emilia romagna")
+    expect(regionOption("Provence")).toEqual({
+      value: "Provence",
+      label: "Provence",
+    })
+  })
+})
+
 describe("favoriteRegionOptions", () => {
   it("groups the Italian list, then names already used on events", () => {
     const options = favoriteRegionOptions(["Provence", "Toscana"])
@@ -121,10 +133,15 @@ describe("favoriteRegionOptions", () => {
     expect(options.at(-1)).toEqual({ value: "Provence", label: "Provence" })
   })
 
-  it("hides a region that is already chosen, including under another spelling", () => {
-    const options = favoriteRegionOptions(["Provence"], ["Toscana"])
-    expect(options.some((option) => option.value === "Tuscany")).toBe(false)
-    expect(options.some((option) => option.value === "Provence")).toBe(true)
+  it("lists a favorite no event uses, in the spelling it was saved with", () => {
+    const options = favoriteRegionOptions(["Provence"], ["bavaria", "provence"])
+    const others = options.slice(
+      options.findIndex((option) => option.value === "__group_other") + 1,
+    )
+    expect(others.map((option) => option.value)).toEqual([
+      "bavaria",
+      "provence",
+    ])
   })
 })
 

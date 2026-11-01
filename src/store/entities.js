@@ -5,6 +5,7 @@ import {
   weddingStyles,
 } from "../data/event-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
+import { favoriteRegionOptions, regionOption } from "../data/regions/resolve.js"
 import { languages } from "../i18n/index.js"
 import { DEFAULT_SORT, sorts } from "../views/event-list/helpers.js"
 
@@ -13,10 +14,7 @@ const countryOptions = countries.map((country) => ({
   label: country,
 }))
 
-const regionOptions = italianRegions.map((region) => ({
-  value: region,
-  label: region,
-}))
+const regionOptions = italianRegions.map(regionOption)
 
 export const entities = {
   analytics: { type: "AnalyticsConsent" },
@@ -50,10 +48,6 @@ export const entities = {
     label: "fields.country",
     isRequired: true,
   }),
-  regionOnboarding: regionSelect("onboarding", "fieldSet"),
-  regionProfile: regionSelect("profile", "fieldSet", {
-    label: "fields.region",
-  }),
   regionCreate: regionSelect("eventCreate", "fieldSet", {
     label: "fields.region",
     isRequired: true,
@@ -68,9 +62,15 @@ export const entities = {
   jobTypesFilter: jobTypesSelect("eventList"),
   styleCreate: detailSelect("style", weddingStyles, "fields.style"),
   genreCreate: detailSelect("genre", festivalGenres, "fields.genre"),
-  favoriteRegionPreferences: favoriteRegionSelect(
+  favoriteRegionOnboarding: favoriteRegionsSelect(
+    "onboarding",
+    "favoriteRegionsSet",
+    "preferences.favoriteRegions",
+  ),
+  favoriteRegionPreferences: favoriteRegionsSelect(
     "preferences",
-    "favoriteChoiceSelect",
+    "favoriteRegionsSet",
+    "preferences.favoriteRegions",
   ),
   eventsOrderBy: {
     type: "CountrySelect",
@@ -207,11 +207,15 @@ function detailSelect(targetField, options, label) {
   }
 }
 
-function favoriteRegionSelect(targetId, targetEvent, overrides = {}) {
+function favoriteRegionsSelect(targetId, targetEvent, label) {
   return {
-    ...regionSelect(targetId, targetEvent, overrides),
+    ...regionSelect(targetId, targetEvent, { label }),
+    options: favoriteRegionOptions([]),
+    selectedValue: [],
+    isMulti: true,
+    isCreatable: true,
     isClearable: false,
-    placeholder: "combobox.select",
+    searchPlaceholder: "combobox.searchOrAddRegion",
     targetField: "favorite",
   }
 }
