@@ -21,6 +21,7 @@
     "vault:push": "node scripts/push-vault-secrets.mjs",
     "secrets:push": "node scripts/push-function-secrets.mjs",
     "build": "vite build",
+    "landing": "pnpm --dir landing dev",
     "preview": "vite preview",
     "cap": "cap",
     "mobile:init:ios": "cap add ios",

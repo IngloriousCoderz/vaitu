@@ -1,0 +1,8 @@
+# Its own root, so that deploying the landing page doesn't install the app.
+allowBuilds:
+  esbuild: true
+  sharp: true
+
+# Our own packages are used the day they are published.
+minimumReleaseAgeExclude:
+  - "@inglorious/*"

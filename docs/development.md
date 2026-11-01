@@ -12,6 +12,8 @@ This picks up where [Getting started](../README.md#getting-started) leaves off: 
 - `vite.config.js`: Vite configuration.
 - `capacitor.config.ts`: Capacitor (mobile) configuration.
 - `docs/`: these guides.
+- `landing/`: the public site, a separate project (see
+  [Deploying](deploying.md#landing-page)).
 
 ## Local backend (Supabase)
 

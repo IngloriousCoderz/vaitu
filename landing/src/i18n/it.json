@@ -1,0 +1,100 @@
+{
+  "title": "Vaitu: passa a un collega il lavoro che non puoi fare",
+  "description": "Hai un lavoro ma non puoi farlo? Pubblicalo su Vaitu: i colleghi del tuo settore si candidano e scegli tu chi ci va.",
+  "languageLabel": "Lingua",
+  "eyebrow": "Per chi lavora a eventi, case e uffici",
+  "headline": "Non puoi esserci? Di' a un collega: “vai tu”.",
+  "lede": "Vaitu è il posto in cui i professionisti passano ai colleghi i lavori che non possono fare. Pubblichi il lavoro, i colleghi si candidano e scegli tu a chi affidarlo.",
+  "cta": "Apri Vaitu",
+  "ctaNote": "Pubblicare, candidarsi e scegliere è gratis, per sempre.",
+  "nameOrigin": "Il nome viene da “vai tu”, ovvero quello che dici a un collega quando gli passi un lavoro.",
+  "howTitle": "Come funziona",
+  "steps": [
+    {
+      "title": "Pubblica il lavoro",
+      "body": "Scrivi i dettagli o descrivilo a voce: i campi si compilano da soli."
+    },
+    {
+      "title": "I colleghi si candidano",
+      "body": "Chi fa il tuo mestiere nella zona riceve un avviso e ti dice perché è la persona giusta."
+    },
+    {
+      "title": "Scegli chi ci va",
+      "body": "Confronta i candidati, contatta chi preferisci e accordatevi direttamente."
+    }
+  ],
+  "sidesTitle": "Utile da entrambe le parti",
+  "sides": [
+    {
+      "title": "Quando non puoi esserci",
+      "points": [
+        "Non deludi il cliente e non perdi la sua fiducia",
+        "Scegli tu a chi affidare il lavoro",
+        "Vedi livello e recensioni di chi si candida"
+      ]
+    },
+    {
+      "title": "Quando cerchi lavoro",
+      "points": [
+        "Scegli mestieri e regioni e ricevi un avviso quando c'è un lavoro adatto",
+        "Candidati con un profilo già compilato",
+        "Costruisci una reputazione fatta di lavori veri"
+      ]
+    }
+  ],
+  "trustTitle": "Pensato per fidarsi",
+  "trust": [
+    {
+      "title": "Reputazione guadagnata sul campo",
+      "body": "I punti arrivano dai lavori svolti e dalle recensioni degli organizzatori, non dal numero di candidature."
+    },
+    {
+      "title": "Accordi tra voi",
+      "body": "Vaitu non gestisce pagamenti e non prende commissioni: compenso e condizioni li decidete voi."
+    },
+    {
+      "title": "Contatti protetti",
+      "body": "I tuoi contatti li vede solo chi organizza gli eventi a cui ti candidi."
+    },
+    {
+      "title": "Segnala e blocca",
+      "body": "Puoi segnalare contenuti e bloccare chi non vuoi incontrare."
+    }
+  ],
+  "tradesTitle": "Per quali mestieri",
+  "trades": [
+    "Fotografia",
+    "Video",
+    "Musica",
+    "DJ",
+    "Audio",
+    "Pulizie",
+    "Impianti elettrici"
+  ],
+  "earlyTitle": "Siamo all'inizio.",
+  "earlyBody": "All'inizio i lavori saranno pochi. Scegli mestieri e regioni e ti avviseremo quando ne arriva uno adatto a te.",
+  "faqTitle": "Domande frequenti",
+  "faq": [
+    {
+      "question": "Quanto costa?",
+      "answer": "Pubblicare un lavoro, candidarsi e scegliere chi ci va è gratis, e lo resterà sempre. Più avanti potremmo aggiungere extra facoltativi a pagamento."
+    },
+    {
+      "question": "Come ci mettiamo in contatto?",
+      "answer": "Chi organizza vede sito e telefono dei candidati e contatta direttamente chi sceglie. Vaitu non ha una chat."
+    },
+    {
+      "question": "Vaitu gestisce pagamenti o contratti?",
+      "answer": "No: compenso e condizioni li concordate tra voi."
+    },
+    {
+      "question": "Il mio mestiere non c'è. Che faccio?",
+      "answer": "Scrivici: stiamo aggiungendo nuovi mestieri."
+    }
+  ],
+  "closing": "Il prossimo lavoro che non puoi fare, passalo a un collega.",
+  "credits": "Idea di Giada Joey Cazzola. Sviluppo di Matteo Antony Mistretta.",
+  "privacy": "Privacy",
+  "terms": "Termini",
+  "contact": "Contatti"
+}

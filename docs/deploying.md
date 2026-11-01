@@ -125,4 +125,24 @@ Traps worth knowing:
   is not a file with `index.html`, or deep links and email confirmation links
   hit the host's 404. `vercel.json` rewrites them.
 
+## Landing page
+
+`landing/` is the public site at `https://www.vaitu.net`, built with
+[SSX](https://www.npmjs.com/package/@inglorious/ssx). It has its own
+`package.json`, lockfile and `pnpm-workspace.yaml`, so deploying it doesn't
+install the app. `pnpm landing` runs it locally. Its wording lives in
+`landing/src/i18n/`; Italian is served at `/`, the others at `/en`, `/fr`, `/ja`
+and `/ar`.
+
+It is a second Vercel project on the same repository:
+
+1. Add a project from this repository, with **Root Directory** set to `landing`.
+   `landing/vercel.json` holds the build settings.
+2. Set `VITE_SITE_URL`, `VITE_APP_URL`, `VITE_LEGAL_NAME` and
+   `VITE_CONTACT_EMAIL`, as in `landing/.env.example`.
+3. Add the domain `www.vaitu.net`, and `vaitu.net` redirecting to it.
+4. So each push only rebuilds what changed, set **Ignored Build Step** on both
+   projects: `git diff --quiet HEAD^ HEAD -- .` on the landing project, and
+   `git diff --quiet HEAD^ HEAD -- . ':!landing'` on the app's.
+
 Next: [Releasing updates](releasing-updates.md).

@@ -1,0 +1,100 @@
+{
+  "title": "Vaitu : confiez à un collègue la mission que vous ne pouvez pas assurer",
+  "description": "Vous avez une mission mais ne pouvez pas l'assurer ? Publiez-la sur Vaitu : des collègues de votre métier candidatent et vous choisissez qui y va.",
+  "languageLabel": "Langue",
+  "eyebrow": "Pour ceux qui travaillent sur des événements, chez des particuliers et en entreprise",
+  "headline": "Vous ne pouvez pas y être ? Dites à un collègue : « vai tu ».",
+  "lede": "Vaitu permet aux professionnels de transmettre à des collègues les missions qu'ils ne peuvent pas assurer. Vous publiez la mission, des collègues candidatent, et vous choisissez à qui la confier.",
+  "cta": "Ouvrir Vaitu",
+  "ctaNote": "Publier, candidater et choisir : c'est gratuit, pour toujours.",
+  "nameOrigin": "Le nom vient de l'italien « vai tu », « vas-y toi » : ce qu'on dit à un collègue en lui passant une mission.",
+  "howTitle": "Comment ça marche",
+  "steps": [
+    {
+      "title": "Publiez la mission",
+      "body": "Saisissez les détails, ou décrivez-la à la voix et les champs se remplissent."
+    },
+    {
+      "title": "Des collègues candidatent",
+      "body": "Les personnes de votre métier et de votre région reçoivent une alerte et vous disent pourquoi elles conviennent."
+    },
+    {
+      "title": "Choisissez qui y va",
+      "body": "Comparez les candidats, contactez celui que vous préférez et mettez-vous d'accord directement."
+    }
+  ],
+  "sidesTitle": "Utile des deux côtés",
+  "sides": [
+    {
+      "title": "Quand vous ne pouvez pas y être",
+      "points": [
+        "Ne décevez pas votre client et gardez sa confiance",
+        "C'est vous qui choisissez à qui confier la mission",
+        "Voyez le niveau et les avis de chaque candidat"
+      ]
+    },
+    {
+      "title": "Quand vous cherchez du travail",
+      "points": [
+        "Choisissez vos métiers et régions, et recevez une alerte quand une mission convient",
+        "Candidatez avec un profil déjà rempli",
+        "Bâtissez une réputation faite de vraies missions"
+      ]
+    }
+  ],
+  "trustTitle": "Pensé pour la confiance",
+  "trust": [
+    {
+      "title": "Une réputation gagnée sur le terrain",
+      "body": "Les points viennent des missions réalisées et des avis des organisateurs, pas du nombre de candidatures."
+    },
+    {
+      "title": "Vos accords, vos conditions",
+      "body": "Vaitu ne gère aucun paiement et ne prend aucune commission : vous convenez entre vous de la rémunération et des conditions."
+    },
+    {
+      "title": "Coordonnées protégées",
+      "body": "Vos coordonnées ne sont visibles que par les organisateurs des événements auxquels vous candidatez."
+    },
+    {
+      "title": "Signaler et bloquer",
+      "body": "Vous pouvez signaler des contenus et bloquer les personnes de votre choix."
+    }
+  ],
+  "tradesTitle": "Quels métiers",
+  "trades": [
+    "Photographie",
+    "Vidéo",
+    "Musique",
+    "DJ",
+    "Son",
+    "Nettoyage",
+    "Électricité"
+  ],
+  "earlyTitle": "Nous débutons.",
+  "earlyBody": "Les missions seront peu nombreuses au début. Choisissez vos métiers et régions, et nous vous préviendrons lorsqu'une mission convient.",
+  "faqTitle": "Questions",
+  "faq": [
+    {
+      "question": "Combien ça coûte ?",
+      "answer": "Publier une mission, candidater et choisir qui y va est gratuit, et le restera toujours. Plus tard, nous pourrons ajouter des options payantes facultatives."
+    },
+    {
+      "question": "Comment se contacter ?",
+      "answer": "Les organisateurs voient le site et le téléphone des candidats, et contactent directement la personne choisie. Vaitu n'a pas de messagerie."
+    },
+    {
+      "question": "Vaitu gère-t-il les paiements ou les contrats ?",
+      "answer": "Non : vous convenez entre vous de la rémunération et des conditions."
+    },
+    {
+      "question": "Mon métier n'y est pas. Que faire ?",
+      "answer": "Écrivez-nous : nous ajoutons de nouveaux métiers."
+    }
+  ],
+  "closing": "La prochaine mission que vous ne pouvez pas assurer, confiez-la à un collègue.",
+  "credits": "Idée de Giada Joey Cazzola. Développé par Matteo Antony Mistretta.",
+  "privacy": "Confidentialité",
+  "terms": "Conditions",
+  "contact": "Contact"
+}

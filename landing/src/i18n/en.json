@@ -1,0 +1,100 @@
+{
+  "title": "Vaitu: pass on the jobs you can't take to a colleague",
+  "description": "Booked for a job you can't do? Publish it on Vaitu: colleagues in your trade apply, and you choose who goes.",
+  "languageLabel": "Language",
+  "eyebrow": "For people who work at events, homes and offices",
+  "headline": "Can't make it? Tell a colleague: “vai tu”.",
+  "lede": "Vaitu is where professionals hand off jobs they can't take. You publish the job, colleagues apply, and you choose who to pass it to.",
+  "cta": "Open Vaitu",
+  "ctaNote": "Publishing, applying and choosing are free, always.",
+  "nameOrigin": "The name comes from the Italian “vai tu”, “you go”: what you tell a colleague when you pass them a job.",
+  "howTitle": "How it works",
+  "steps": [
+    {
+      "title": "Publish the job",
+      "body": "Type the details, or describe it by voice and the fields fill in."
+    },
+    {
+      "title": "Colleagues apply",
+      "body": "People in your trade and area get an alert, and tell you why they're right for it."
+    },
+    {
+      "title": "Choose who goes",
+      "body": "Compare applicants, contact the one you prefer and agree the details directly."
+    }
+  ],
+  "sidesTitle": "Useful on both sides",
+  "sides": [
+    {
+      "title": "When you can't make it",
+      "points": [
+        "Don't let your client down or lose their trust",
+        "You decide who gets the job",
+        "See each applicant's rank and reviews"
+      ]
+    },
+    {
+      "title": "When you're looking for work",
+      "points": [
+        "Choose your trades and regions, and get an alert when a job fits",
+        "Apply with a profile that's already filled in",
+        "Build a reputation made of real jobs"
+      ]
+    }
+  ],
+  "trustTitle": "Built for trust",
+  "trust": [
+    {
+      "title": "Reputation earned on the job",
+      "body": "Points come from jobs done and organizers' reviews, not from how many times you apply."
+    },
+    {
+      "title": "Your deal, your terms",
+      "body": "Vaitu handles no payments and takes no commission: you agree the fee and terms between yourselves."
+    },
+    {
+      "title": "Contacts kept private",
+      "body": "Your contact details are only seen by organizers of the events you apply to."
+    },
+    {
+      "title": "Report and block",
+      "body": "You can report content and block anyone you don't want to deal with."
+    }
+  ],
+  "tradesTitle": "Which trades",
+  "trades": [
+    "Photography",
+    "Video",
+    "Music",
+    "DJ",
+    "Sound",
+    "Cleaning",
+    "Electrical work"
+  ],
+  "earlyTitle": "We're just getting started.",
+  "earlyBody": "There won't be many jobs at first. Choose your trades and regions, and we'll let you know when one fits.",
+  "faqTitle": "Questions",
+  "faq": [
+    {
+      "question": "How much does it cost?",
+      "answer": "Publishing a job, applying and choosing who goes are free, and always will be. Later we may add optional paid extras."
+    },
+    {
+      "question": "How do we get in touch?",
+      "answer": "Organizers see applicants' websites and phone numbers, and contact the person they choose directly. Vaitu has no chat."
+    },
+    {
+      "question": "Does Vaitu handle payments or contracts?",
+      "answer": "No: you agree the fee and terms between yourselves."
+    },
+    {
+      "question": "My trade isn't listed. What now?",
+      "answer": "Write to us: we're adding new trades."
+    }
+  ],
+  "closing": "The next job you can't take, pass it to a colleague.",
+  "credits": "Idea by Giada Joey Cazzola. Built by Matteo Antony Mistretta.",
+  "privacy": "Privacy",
+  "terms": "Terms",
+  "contact": "Contact"
+}

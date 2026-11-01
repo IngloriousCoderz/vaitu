@@ -6,4 +6,5 @@ ios/
 
 # Build output and the lockfile.
 dist/
+landing/dist/
 pnpm-lock.yaml
