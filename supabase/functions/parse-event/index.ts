@@ -2,6 +2,11 @@ import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 import { alertProviderLimit } from "../_shared/alerts.ts"
 import { json, serve, STATUS_CODE, upstreamError } from "../_shared/http.ts"
 import { currentUser, env } from "../_shared/supabase.ts"
+import {
+  claimVoiceUse,
+  releaseVoiceUse,
+  voiceLimitReached,
+} from "../_shared/voice-limit.ts"
 import { offeredJobTypes, systemPrompt, toEventFields } from "./schema.ts"
 
 // Free models get withdrawn or rate-limited without notice: OpenRouter moves
@@ -13,6 +18,7 @@ const MODELS = [
 ]
 
 const JSON_OBJECT = /\{[\s\S]*\}/
+const MAX_TRANSCRIPT_LENGTH = 5000
 
 serve(async (req) => {
   const { transcript, job_type, job_types } = await req.json()
@@ -20,8 +26,14 @@ serve(async (req) => {
     return json({ error: "transcript is required" }, STATUS_CODE.BadRequest)
   }
 
+  if (transcript.length > MAX_TRANSCRIPT_LENGTH) {
+    return json({ error: "transcript is too long" }, STATUS_CODE.BadRequest)
+  }
+
   const user = await currentUser(req)
   if (!user) return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
+
+  if (!(await claimVoiceUse(user.id, "parse"))) return voiceLimitReached()
 
   const offered = offeredJobTypes(job_types)
   const current = offered.includes(job_type) ? job_type : null
@@ -42,6 +54,7 @@ serve(async (req) => {
     }),
   })
   if (!res.ok) {
+    await releaseVoiceUse(user.id, "parse")
     await alertProviderLimit("openrouter", res.status)
     throw await upstreamError("OpenRouter", res)
   }
@@ -49,6 +62,7 @@ serve(async (req) => {
   const body = await res.json()
   // OpenRouter can answer 200 and still report that every model failed.
   if (body?.error) {
+    await releaseVoiceUse(user.id, "parse")
     await alertProviderLimit("openrouter", body.error.code)
     throw new Error(`OpenRouter ${body.error.code}: ${body.error.message}`)
   }

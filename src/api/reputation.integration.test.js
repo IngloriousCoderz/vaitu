@@ -218,8 +218,6 @@ describe("reputation", () => {
         title: "",
         location: "",
         details: {},
-        transcript: null,
-        audio_url: null,
         image_urls: [],
       })
 

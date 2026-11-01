@@ -9,6 +9,7 @@ import { CountrySelect } from "../common/country-select/index.js"
 import { LanguageSelect } from "../common/language-select/index.js"
 import { Notifications } from "../common/notifications/index.js"
 import { PushPrompt } from "../common/push-prompt/index.js"
+import { Safety } from "../common/safety/index.js"
 import { AppVersion } from "../common/update-required/index.js"
 import { I18n } from "../i18n/index.js"
 import { routes } from "../routes"
@@ -17,10 +18,12 @@ import { ApplicationDetail } from "../views/application-detail/index.js"
 import { ApplicationList } from "../views/application-list/index.js"
 import { ApplicationsReceived } from "../views/applications-received/index.js"
 import { Authentication } from "../views/authentication/index.js"
+import { EraseAccount } from "../views/erase-account/index.js"
 import { CoverCropper } from "../views/event-create/cover-cropper.js"
 import { EventCreate } from "../views/event-create/index.js"
 import { EventDetail } from "../views/event-detail/index.js"
 import { EventList } from "../views/event-list/index.js"
+import { Legal } from "../views/legal/index.js"
 import { MyEvents } from "../views/my-events/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
@@ -69,6 +72,9 @@ export const store = createStore({
     About,
     AvatarCropper,
     Ranks,
+    Safety,
+    Legal,
+    EraseAccount,
     ...guards,
   },
   entities,

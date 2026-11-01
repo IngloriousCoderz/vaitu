@@ -8,7 +8,8 @@
     "eventClosed": "أُغلق {{title}}",
     "newEvent": "عمل جديد يناسب مهنتك: {{title}}",
     "jobOutcomeDue": "كيف سار {{title}}؟ أخبرنا عن العمل",
-    "jobReviewed": "قدّم المنظم تقريره عن {{title}}"
+    "jobReviewed": "قدّم المنظم تقريره عن {{title}}",
+    "jobCancelled": "أُلغي {{title}}"
   },
   "en": {
     "applicationReceived": "{{name}} applied to {{title}}!",
@@ -19,7 +20,8 @@
     "eventClosed": "{{title}} was closed",
     "newEvent": "New job that matches your trade: {{title}}",
     "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
-    "jobReviewed": "The organizer reported on {{title}}"
+    "jobReviewed": "The organizer reported on {{title}}",
+    "jobCancelled": "{{title}} was cancelled"
   },
   "fr": {
     "applicationReceived": "{{name}} a postulé à {{title}} !",
@@ -30,7 +32,8 @@
     "eventClosed": "{{title}} a été clôturé",
     "newEvent": "Nouvelle mission pour votre métier : {{title}}",
     "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
-    "jobReviewed": "L'organisateur a donné son retour sur {{title}}"
+    "jobReviewed": "L'organisateur a donné son retour sur {{title}}",
+    "jobCancelled": "{{title}} a été annulé"
   },
   "it": {
     "applicationReceived": "{{name}} ha inviato una candidatura per {{title}}!",
@@ -41,7 +44,8 @@
     "eventClosed": "{{title}} è stato chiuso",
     "newEvent": "Nuovo lavoro per il tuo mestiere: {{title}}",
     "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
-    "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}"
+    "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}",
+    "jobCancelled": "{{title}} è stato annullato"
   },
   "ja": {
     "applicationReceived": "{{name}}さんが「{{title}}」に応募しました！",
@@ -52,6 +56,7 @@
     "eventClosed": "「{{title}}」は締め切られました",
     "newEvent": "あなたの職種に合う新しい仕事：「{{title}}」",
     "jobOutcomeDue": "「{{title}}」はいかがでしたか？仕事の結果を教えてください",
-    "jobReviewed": "主催者が「{{title}}」の結果を報告しました"
+    "jobReviewed": "主催者が「{{title}}」の結果を報告しました",
+    "jobCancelled": "「{{title}}」は中止になりました"
   }
 }

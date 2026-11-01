@@ -18,6 +18,7 @@ const TYPES = [
   "new_event",
   "job_outcome_due",
   "job_reviewed",
+  "job_cancelled",
 ]
 
 function notification(fields = {}) {

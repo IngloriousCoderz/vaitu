@@ -138,7 +138,13 @@ begin
   set is_active = true, deactivated_at = null
   where id = auth.uid() and not is_active;
 
-  return found;
+  if not found then
+    return false;
+  end if;
+
+  -- Back on the account, so the link in the deactivation email stops working.
+  delete from public.account_erasures where user_id = auth.uid();
+  return true;
 end;
 $$;
 
@@ -147,7 +153,8 @@ grant execute on function public.touch_login() to authenticated;
 
 create table public.events (
   id uuid primary key default gen_random_uuid(),
-  sender_id uuid not null references public.profiles (id) on delete cascade,
+  -- Null once the sender erased their account: the row is anonymous history.
+  sender_id uuid references public.profiles (id) on delete set null,
   category text not null default 'wedding',
   profession text not null,
   job_type text generated always as (category || '_' || profession) stored,
@@ -162,10 +169,6 @@ create table public.events (
   details jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  audio_url text,
-  transcript text,
-  transcript_status text not null default 'none'
-    check (transcript_status in ('none', 'pending', 'done', 'error')),
   image_urls text[] not null default '{}',
   deleted_at timestamptz,
   outcome_requested_at timestamptz,
@@ -193,7 +196,8 @@ create index events_details_genre_idx on public.events ((details ->> 'genre'));
 create table public.applications (
   id uuid primary key default gen_random_uuid(),
   event_id uuid not null references public.events (id) on delete cascade,
-  applicant_id uuid not null references public.profiles (id) on delete cascade,
+  -- Null once the applicant erased their account: [Deleted User] in the app.
+  applicant_id uuid references public.profiles (id) on delete set null,
   motivation text not null,
   status text not null default 'pending'
     check (status in ('pending', 'shortlisted', 'selected', 'rejected', 'withdrawn')),
@@ -245,8 +249,39 @@ insert into public.app_config (key, value, description) values
   ('badge_reliable_min_jobs', 3, 'Completed jobs, with no failures, for the Reliable badge.'),
   ('badge_top_rated_min_reviews', 3, 'Reviews for the Top Rated badge.'),
   ('badge_top_rated_min_tenths', 45, 'Average rating, in tenths of a star, for the Top Rated badge.'),
-  ('badge_generous_min_handoffs', 3, 'Jobs handed off for the Generous Colleague badge.');
+  ('badge_generous_min_handoffs', 3, 'Jobs handed off for the Generous Colleague badge.'),
+  ('voice_daily_limit', 3, 'Voice messages a user can transcribe, and parse, per day.'),
+  ('reports_daily_limit', 5, 'Reports a user can send per day.');
 
+
+create table public.blocks (
+  blocker_id uuid not null references public.profiles (id) on delete cascade,
+  blocked_id uuid not null references public.profiles (id) on delete cascade,
+  -- The blocker may no longer be allowed to read the blocked person's profile.
+  blocked_name text,
+  created_at timestamptz not null default now(),
+  primary key (blocker_id, blocked_id),
+  check (blocker_id <> blocked_id)
+);
+
+create index blocks_blocked_idx on public.blocks (blocked_id);
+
+-- Either way round: a block keeps both people apart.
+create or replace function public.are_blocked(p_first uuid, p_second uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.blocks
+    where (blocker_id = p_first and blocked_id = p_second)
+       or (blocker_id = p_second and blocked_id = p_first)
+  );
+$$;
+
+grant execute on function public.are_blocked(uuid, uuid) to anon, authenticated;
 
 create or replace function public.enforce_application_rules()
 returns trigger
@@ -271,6 +306,10 @@ begin
 
   if v_event.deleted_at is not null then
     raise exception 'Event does not exist.';
+  end if;
+
+  if public.are_blocked(v_event.sender_id, new.applicant_id) then
+    raise exception 'You cannot apply to this event.';
   end if;
 
   if v_event.status <> 'open' then
@@ -405,7 +444,8 @@ security definer
 set search_path = public
 as $$
 begin
-  if new.motivation is not distinct from old.motivation then
+  if new.motivation is not distinct from old.motivation
+    or current_setting('vaitu.withdrawing', true) = 'on' then
     return new;
   end if;
 
@@ -657,6 +697,7 @@ create policy "Anyone can view open events"
     status = 'open'
     and deleted_at is null
     and public.is_active_profile(sender_id)
+    and not public.are_blocked(auth.uid(), sender_id)
   );
 
 create policy "Anyone can view closed events"
@@ -759,9 +800,6 @@ grant update (
   status,
   details,
   updated_at,
-  audio_url,
-  transcript,
-  transcript_status,
   image_urls
 ) on public.events to authenticated;
 
@@ -802,12 +840,15 @@ create table public.notifications (
       'event_closed',
       'new_event',
       'job_outcome_due',
-      'job_reviewed'
+      'job_reviewed',
+      'job_cancelled'
     )
   ),
   event_id uuid references public.events (id) on delete cascade,
   application_id uuid references public.applications (id) on delete cascade,
   applicant_name text,
+  -- Only when the event is gone, so its title cannot come from the event.
+  event_title text,
   is_read boolean not null default false,
   created_at timestamptz not null default now(),
   -- Exactly-once claim for push-notify: null -> now() under READ COMMITTED.
@@ -842,7 +883,8 @@ create or replace function public.notify_user(
   p_type text,
   p_event uuid default null,
   p_application uuid default null,
-  p_applicant_name text default null
+  p_applicant_name text default null,
+  p_event_title text default null
 )
 returns void
 language plpgsql
@@ -857,8 +899,8 @@ begin
     where id = p_user and is_active
   ) then return; end if;
   insert into public.notifications
-    (user_id, type, event_id, application_id, applicant_name)
-  values (p_user, p_type, p_event, p_application, p_applicant_name);
+    (user_id, type, event_id, application_id, applicant_name, event_title)
+  values (p_user, p_type, p_event, p_application, p_applicant_name, p_event_title);
 end;
 $$;
 
@@ -977,6 +1019,7 @@ begin
   where p.id <> new.sender_id
     and p.is_active
     and p.has_new_event_alerts
+    and not public.are_blocked(p.id, new.sender_id)
     and new.profession = any (p.professions)
     and (
       cardinality(p.interested_job_types) = 0
@@ -1003,6 +1046,8 @@ create table public.job_reviews (
   outcome text not null check (outcome in ('completed', 'no_show', 'cancelled')),
   rating smallint check (rating between 1 and 5),
   comment text check (char_length(comment) <= 1000),
+  -- Set by moderation: the comment stops showing, the rating still counts.
+  hidden_at timestamptz,
   created_at timestamptz not null default now(),
   check ((outcome = 'completed') = (rating is not null)),
   check (outcome = 'completed' or comment is null)
@@ -1258,6 +1303,7 @@ grant execute on function public.profile_stats(uuid[]) to authenticated;
 create or replace function public.profile_reviews(p_profile_ids uuid[])
 returns table (
   profile_id uuid,
+  application_id uuid,
   rating smallint,
   comment text,
   created_at timestamptz
@@ -1267,10 +1313,16 @@ stable
 security definer
 set search_path = public
 as $$
-  select ranked.profile_id, ranked.rating, ranked.comment, ranked.created_at
+  select
+    ranked.profile_id,
+    ranked.application_id,
+    ranked.rating,
+    ranked.comment,
+    ranked.created_at
   from (
     select
       a.applicant_id as profile_id,
+      r.application_id,
       r.rating,
       r.comment,
       r.created_at,
@@ -1282,6 +1334,7 @@ as $$
     join public.job_reviews r on r.application_id = a.id
     where r.outcome = 'completed'
       and r.comment is not null
+      and r.hidden_at is null
       and public.can_read_reputation(requested.id)
   ) ranked
   where ranked.position <= 5
@@ -1291,13 +1344,16 @@ $$;
 grant execute on function public.profile_reviews(uuid[]) to authenticated;
 
 -- Deleting removes what the event says, not that it happened. With nobody
--- involved there is no history to keep, so the row goes.
+-- involved there is no history to keep, so the row goes. Whoever is still
+-- counting on an upcoming event hears it is off.
 create or replace function public.retire_event(p_event_id uuid)
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  v_title text;
 begin
   if not exists (
     select 1 from public.applications where event_id = p_event_id
@@ -1308,13 +1364,27 @@ begin
 
   delete from public.notifications where event_id = p_event_id;
 
+  select title into v_title from public.events where id = p_event_id;
+
+  perform public.notify_user(
+    a.applicant_id,
+    'job_cancelled',
+    null,
+    null,
+    null,
+    v_title
+  )
+  from public.applications a
+  join public.events e on e.id = a.event_id
+  where a.event_id = p_event_id
+    and a.status in ('pending', 'shortlisted', 'selected')
+    and e.event_date >= current_date;
+
   update public.events
   set deleted_at = now(),
       title = '',
       location = '',
       details = '{}'::jsonb,
-      transcript = null,
-      audio_url = null,
       image_urls = '{}'
   where id = p_event_id;
 end;
@@ -1582,6 +1652,178 @@ end;
 $$;
 
 
+-- What the owner receives by email, and acts on: see docs/moderation.md.
+create table public.reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid references public.profiles (id) on delete set null,
+  target_type text not null check (target_type in ('event', 'user', 'review')),
+  event_id uuid references public.events (id) on delete set null,
+  reported_user_id uuid references public.profiles (id) on delete set null,
+  application_id uuid references public.applications (id) on delete set null,
+  reason text not null
+    check (reason in ('spam', 'inappropriate', 'fake', 'harassment', 'other')),
+  details text check (char_length(details) <= 1000),
+  status text not null default 'open' check (status in ('open', 'resolved')),
+  created_at timestamptz not null default now()
+);
+
+create index reports_reporter_idx on public.reports (reporter_id, created_at);
+
+alter table public.reports enable row level security;
+
+revoke all on table public.reports from anon, authenticated;
+
+alter table public.blocks enable row level security;
+
+create policy "Users can read their own blocks"
+  on public.blocks for select to authenticated
+  using (blocker_id = auth.uid());
+
+create policy "Users can remove their own blocks"
+  on public.blocks for delete to authenticated
+  using (blocker_id = auth.uid());
+
+revoke all on table public.blocks from anon, authenticated;
+grant select, delete on public.blocks to authenticated;
+
+-- Withdrawn with no withdrawn_from, like deactivation: not the applicant's
+-- doing, so it does not count against them.
+create or replace function public.block_user(p_user_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null or p_user_id is null or p_user_id = auth.uid() then
+    raise exception 'You cannot block this user.';
+  end if;
+
+  insert into public.blocks (blocker_id, blocked_id, blocked_name)
+  values (
+    auth.uid(),
+    p_user_id,
+    (select full_name from public.profiles where id = p_user_id)
+  )
+  on conflict do nothing;
+
+  perform set_config('vaitu.withdrawing', 'on', true);
+  update public.applications a
+  set status = 'withdrawn',
+      withdrawn_at = now(),
+      status_before_assign = null
+  from public.events e
+  where e.id = a.event_id
+    and e.status = 'open'
+    and a.status in ('pending', 'shortlisted')
+    and (
+      (e.sender_id = auth.uid() and a.applicant_id = p_user_id)
+      or (e.sender_id = p_user_id and a.applicant_id = auth.uid())
+    );
+  perform set_config('vaitu.withdrawing', 'off', true);
+end;
+$$;
+
+grant execute on function public.block_user(uuid) to authenticated;
+
+-- Single-use links from the deactivation email. Only the hash is kept, so the
+-- table cannot be used to erase anyone.
+create table public.account_erasures (
+  token_hash text primary key,
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  expires_at timestamptz not null default now() + interval '30 days'
+);
+
+alter table public.account_erasures enable row level security;
+
+revoke all on table public.account_erasures from anon, authenticated;
+
+-- Runs however the account goes, so the app, the dashboard and any later tool
+-- all leave the same anonymous history behind.
+create or replace function public.erase_profile_activity()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  perform public.retire_profile_activity(old.id);
+
+  perform set_config('vaitu.withdrawing', 'on', true);
+  update public.applications
+  set motivation = ''
+  where applicant_id = old.id;
+  perform set_config('vaitu.withdrawing', 'off', true);
+
+  perform public.retire_event(id)
+  from public.events
+  where sender_id = old.id
+    and deleted_at is null;
+
+  update public.notifications
+  set applicant_name = null
+  where applicant_name = old.full_name;
+
+  return old;
+end;
+$$;
+
+create trigger trg_profile_erased
+  before delete on public.profiles
+  for each row execute function public.erase_profile_activity();
+
+-- The free allowance of voice messages. Failed attempts are given back.
+create table public.voice_usage (
+  user_id uuid not null references public.profiles (id) on delete cascade,
+  day date not null default current_date,
+  kind text not null check (kind in ('transcribe', 'parse')),
+  uses integer not null default 1,
+  primary key (user_id, day, kind)
+);
+
+alter table public.voice_usage enable row level security;
+
+revoke all on table public.voice_usage from anon, authenticated;
+
+create or replace function public.claim_voice_use(p_user_id uuid, p_kind text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_limit integer;
+begin
+  select value into v_limit from public.app_config where key = 'voice_daily_limit';
+
+  insert into public.voice_usage (user_id, kind)
+  select p_user_id, p_kind
+  where v_limit > 0
+  on conflict (user_id, day, kind) do update
+    set uses = public.voice_usage.uses + 1
+    where public.voice_usage.uses < v_limit;
+  return found;
+end;
+$$;
+
+create or replace function public.release_voice_use(p_user_id uuid, p_kind text)
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.voice_usage
+  set uses = greatest(uses - 1, 0)
+  where user_id = p_user_id and day = current_date and kind = p_kind;
+$$;
+
+select cron.schedule(
+  'purge-voice-usage',
+  '23 3 * * *',
+  $$delete from public.voice_usage where day < current_date - 1$$
+);
+
+
 -- Raising min_build makes a release mandatory: the native apps carry their web
 -- code, so the service worker never updates them.
 create table public.app_versions (
@@ -1603,7 +1845,6 @@ insert into public.app_versions (platform, min_build, store_url) values
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
-  ('event-audio', 'event-audio', true, null, null),
   ('event-ics', 'event-ics', true, null, null),
   ('event-images', 'event-images', true, 5 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
   ('avatars', 'avatars', true, 2 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp'])
@@ -1611,35 +1852,6 @@ on conflict (id) do update
 set public = excluded.public,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
-
-create policy "Anyone can read event audio"
-  on storage.objects for select to anon, authenticated
-  using (bucket_id = 'event-audio');
-
-create policy "Senders can upload event audio"
-  on storage.objects for insert to authenticated
-  with check (
-    bucket_id = 'event-audio'
-    and split_part(name, '/', 1) = auth.uid()::text
-  );
-
-create policy "Senders can update own event audio"
-  on storage.objects for update to authenticated
-  using (
-    bucket_id = 'event-audio'
-    and split_part(name, '/', 1) = auth.uid()::text
-  )
-  with check (
-    bucket_id = 'event-audio'
-    and split_part(name, '/', 1) = auth.uid()::text
-  );
-
-create policy "Senders can delete own event audio"
-  on storage.objects for delete to authenticated
-  using (
-    bucket_id = 'event-audio'
-    and split_part(name, '/', 1) = auth.uid()::text
-  );
 
 create policy "Anyone can read event ics"
   on storage.objects for select to anon, authenticated

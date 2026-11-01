@@ -129,7 +129,7 @@ export const load = handleAsync("load", {
       .order("created_at", { ascending: true })
       .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
     if (error) throw error
-    const applicantIds = items.map((item) => item.applicant_id)
+    const applicantIds = items.map((item) => item.applicant_id).filter(Boolean)
     const [stats, reviews] = await Promise.all([
       fetchProfileStats(applicantIds),
       fetchProfileReviews(applicantIds),

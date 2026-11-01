@@ -16,7 +16,6 @@ const MIN_PLACES = 1
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 const INSTANT =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?$/
-const TRANSCRIPT_STATUSES = ["none", "pending", "done", "error"]
 
 const DETAIL_VALIDATORS = {
   wedding: validateWeddingDetails,
@@ -27,9 +26,8 @@ const DETAIL_VALIDATORS = {
 }
 
 // Kept apart from validation on purpose: validation says what is allowed, this
-// says what gets written. Nullable fields only when mentioned: `audio_url:
-// null` clears an upload, an absent one leaves it. Nothing returned may alias
-// the payload, which may be a revoked draft by the time it is awaited.
+// says what gets written. Nothing returned may alias the payload, which may be
+// a revoked draft by the time it is awaited.
 /** @param {Record<string, any>} [payload] */
 export function normalizeEvent(payload = {}) {
   return {
@@ -43,13 +41,6 @@ export function normalizeEvent(payload = {}) {
     application_deadline: payload.application_deadline,
     max_applicants: payload.max_applicants ?? DEFAULT_MAX_APPLICANTS,
     details: { ...(payload.details ?? {}) },
-    ...("audio_url" in payload && { audio_url: payload.audio_url }),
-    ...("transcript" in payload && { transcript: payload.transcript }),
-    // Not defaulted here: a default would also land on updates and reset a
-    // finished transcript.
-    ...("transcript_status" in payload && {
-      transcript_status: payload.transcript_status,
-    }),
     ...("image_urls" in payload && {
       image_urls: [...(payload.image_urls ?? [])],
     }),
@@ -100,15 +91,6 @@ export function validateEvent(values = {}) {
     )
   ) {
     fail(errors, "max_applicants", "validation.pickPlaces")
-  }
-  if (values.audio_url && !isWebUrl(values.audio_url)) {
-    fail(errors, "audio_url", "validation.checkAudioLink")
-  }
-  if (
-    values.transcript_status !== undefined &&
-    !TRANSCRIPT_STATUSES.includes(values.transcript_status)
-  ) {
-    fail(errors, "transcript_status", "validation.unknownTranscript")
   }
 
   const validateDetails = DETAIL_VALIDATORS[category]
@@ -182,12 +164,4 @@ function validateFestivalDetails(details) {
 
 function validatePropertyDetails() {
   return {}
-}
-
-function isWebUrl(value) {
-  try {
-    return ["http:", "https:"].includes(new URL(value).protocol)
-  } catch {
-    return false
-  }
 }

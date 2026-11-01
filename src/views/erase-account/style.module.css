@@ -1,0 +1,11 @@
+.title {
+  margin: 0 0 var(--iw-space-3);
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: var(--iw-font-size-2xl);
+}
+
+.warning {
+  margin: 0 0 var(--iw-space-4);
+  line-height: var(--iw-line-height-normal);
+}

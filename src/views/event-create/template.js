@@ -259,7 +259,7 @@ export const EventCreate = {
     onCancelAudio,
     onRemoveAudio,
   }) {
-    const src = entity.audio_preview_url ?? entity.audio_url
+    const src = entity.audio_preview_url
     if (
       !entity.is_audio_open &&
       !entity.is_recording &&

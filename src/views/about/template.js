@@ -1,8 +1,11 @@
 import { Accordion } from "@inglorious/ui/accordion"
+import { Button } from "@inglorious/ui/button"
+import { Flex } from "@inglorious/ui/flex"
 import { html } from "@inglorious/web"
 
 import { Page } from "../../common/page/index.js"
 import { t } from "../../i18n/index.js"
+import { paths } from "../../routes.js"
 import styles from "./style.module.css"
 
 const FAQ = [
@@ -16,6 +19,7 @@ const FAQ = [
   "payments",
   "changeMind",
   "ranks",
+  "report",
   "notifications",
   "leave",
 ]
@@ -58,7 +62,7 @@ export const About = {
     return this.renderAbout()
   },
 
-  renderAbout() {
+  renderAbout({ onOpen }) {
     return Page.render({
       variant: "document",
       read: true,
@@ -76,6 +80,30 @@ export const About = {
 
           <h2 class=${styles.sectionTitle}>${t("about.creditsTitle")}</h2>
           <dl class=${styles.credits}>${CREDITS.map(this.renderCredit)}</dl>
+
+          <h2 class=${styles.sectionTitle}>${t("about.legalTitle")}</h2>
+          ${Flex.render({
+            direction: "column",
+            gap: "sm",
+            children: [
+              Button.render({
+                children: t("legal.privacy.title"),
+                variant: "outline",
+                shape: "pill",
+                size: "md",
+                isFullWidth: true,
+                onClick: () => onOpen(paths.privacy),
+              }),
+              Button.render({
+                children: t("legal.terms.title"),
+                variant: "outline",
+                shape: "pill",
+                size: "md",
+                isFullWidth: true,
+                onClick: () => onOpen(paths.terms),
+              }),
+            ],
+          })}
         `,
       ],
     })

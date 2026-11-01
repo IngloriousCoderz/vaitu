@@ -22,6 +22,7 @@ import {
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
+import { SafetyButton } from "../../common/safety/index.js"
 import {
   COVER_IMAGES,
   COVER_INDEX,
@@ -53,6 +54,7 @@ export const EventDetail = {
     onSubmit,
     onCompleteProfile,
     onOpenApplications,
+    onReport,
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
@@ -129,6 +131,7 @@ export const EventDetail = {
                     <p class=${styles.sender}>
                       ${t("detail.organizedBy", { name: entity.senderName })}
                     </p>
+                    ${when(onReport, () => SafetyButton.render({ onClick: onReport }))}
                     <p class=${styles.countdown}>
                       ${
                         showClock

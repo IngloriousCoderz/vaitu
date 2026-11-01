@@ -88,8 +88,12 @@ set `ALERT_FROM`, such as `Vaitu <alerts@vaitu.net>`.
 
 - On iOS, the microphone needs `NSMicrophoneUsageDescription` in
   `ios/App/App/Info.plist`. Android needs `RECORD_AUDIO` in its manifest.
-- Audio stays in the `event-audio` bucket (one file per event, replaced
-  or deleted with the event); only the transcript fills the form.
+- Recordings are never stored: the app sends them in the request and the
+  function only holds them in memory. Nor is the transcript kept: it only fills
+  the form.
+- Each user has `voice_daily_limit` transcriptions and parses a day, in
+  `app_config`. A failed attempt is given back. Above the limit the functions
+  answer `429 voice_limit` without calling a provider.
 - Local Whisper was evaluated and dropped: worse on Italian proper nouns
   plus a ~150MB model download per device.
 

@@ -21,6 +21,9 @@ export const routes = {
   "/ranks": "ranks",
   "/preferences": "preferences",
   "/about": "about",
+  "/privacy": "privacy",
+  "/terms": "terms",
+  "/erase-account": "eraseAccount",
 
   "*": "notFound",
 }
@@ -40,6 +43,9 @@ export const paths = {
   ranks: "/ranks",
   preferences: "/preferences",
   about: "/about",
+  privacy: "/privacy",
+  terms: "/terms",
+  eraseAccount: "/erase-account",
   login: "/login",
   onboarding: "/onboarding",
 }

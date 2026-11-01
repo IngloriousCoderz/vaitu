@@ -47,17 +47,15 @@ and `supabase-js` reports it as `TypeError: Failed to fetch`.
 ### Resetting before launch
 
 Until launch, production holds nothing worth keeping, so a schema change goes
-in the initial migration and production starts over from it, test accounts
-and events included:
+in the initial migration and production starts over from it, with no data:
 
 ```bash
-supabase db reset --linked --sql-paths ./seed.sql
+supabase db reset --linked --no-seed
 pnpm vault:push
 ```
 
-`--sql-paths ./seed.sql` leaves out `seed-local.sql`, which holds the local
-stack's Vault values (its gateway, `http://kong:8000`, and its demo key);
-forgetting it does no harm, since `vault:push` overwrites them.
+`--no-seed` keeps out `seed.sql`, whose test accounts have a password written in
+the README, and `seed-local.sql`, which holds the local stack's Vault values.
 
 ### Push wake-up
 
@@ -97,13 +95,19 @@ same goes for the `VITE_FIREBASE_*` values (see
 [Analytics](analytics.md#setting-it-up)): without them, allowing
 notifications in the PWA files no token, and the PWA measures nothing.
 
-`VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
+`VITE_LEGAL_NAME` is who the privacy policy and terms say runs Vaitu, and
+`VITE_PUBLIC_APP_URL` is where signup links to them: the native apps have no
+public address of their own. Both are required.
+
+`VITE_CONTACT_EMAIL` is where the privacy policy and terms send people, so it must
+reach someone. It also receives the requests for new job types. Without it, the
 "Job type missing?" link is hidden. To add a job type, extend
 `SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and translate its
 `taxonomy.jobType` label in every locale.
 
 ```bash
-# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL and the
+# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL,
+# VITE_LEGAL_NAME, VITE_PUBLIC_APP_URL and the
 # six VITE_FIREBASE_*
 # set in Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/

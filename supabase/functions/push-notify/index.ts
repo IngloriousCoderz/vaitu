@@ -25,7 +25,7 @@ serve(async (req) => {
     .eq("id", id)
     .is("pushed_at", null)
     .select(
-      "user_id, type, event_id, application_id, applicant_name, events(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale)",
+      "user_id, type, event_id, application_id, applicant_name, event_title, events(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale)",
     )
     .maybeSingle()
   if (error) throw error
@@ -43,7 +43,7 @@ serve(async (req) => {
       type: data.type,
       event_id: data.event_id,
       application_id: data.application_id,
-      event_title: event?.title ?? null,
+      event_title: event?.title ?? data.event_title ?? null,
       event_status: event?.status ?? null,
       applicant_name:
         one(one(data.applications)?.applicant)?.full_name ??

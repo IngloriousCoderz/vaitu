@@ -15,13 +15,26 @@ track record:
   its undecided applications with `withdrawn_from` left null, so they don't count
   against anyone, and its upcoming wins as `selected`, so those do.
 - **Deleting an event**, through `delete_event()`, wipes everything it says
-  (title, location, details, transcript, audio, photos) and sets `deleted_at`,
+  (title, location, details, photos) and sets `deleted_at`,
   and RLS hides it from then on. An event nobody ever applied to has no history
   to keep, so its row goes.
 
 So clients can't delete either of them, and every query that shows applications
-filters out `withdrawn`. Deleting an account still removes everything by
-cascade.
+filters out `withdrawn`.
+
+## Deleting an account
+
+Deleting an account, from the profile or the link in the deactivation email,
+goes through `erase-account`, which removes the person's files and then the
+auth user. `erase_profile_activity()` runs on the way, however the account goes:
+it withdraws what is undecided, wipes their motivations and every event they
+posted, and tells whoever was counting on an upcoming one. Their rows stay with
+the owner set to null, which the app shows as `[Deleted User]`, so nobody else
+loses a review or a job from their record. Reviews they wrote stay, since they
+never showed an author, and so do reviews about them.
+
+The email's link points at `APP_URL`, a function secret. It lasts 30 days, is
+stored only as a hash, and stops working when they sign back in. Functions skip sending email on the local stack.
 
 ## Job reports and reviews
 
@@ -70,4 +83,4 @@ release: the Ranks page reads them too, and fills them into its descriptions.
 The fallbacks in `src/constants/index.js` should follow, and a test fails when
 they don't.
 
-Next: [Analytics](analytics.md).
+Next: [Moderation](moderation.md).

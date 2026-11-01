@@ -73,6 +73,11 @@ export const ApplicationDetail = {
         },
         onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
         onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
+        onReportReview: () =>
+          api.notify("#safety:safetyOpen", {
+            type: "review",
+            id: entity.application_id,
+          }),
       },
       api,
     )

@@ -44,6 +44,9 @@ export const Profile = {
       onDeactivateAsk,
       onDeactivateCancel,
       onDeactivate,
+      onDeleteAsk,
+      onDeleteCancel,
+      onDelete,
       onOpenApplications,
       onOpenRanks,
       onOpenPreferences,
@@ -249,6 +252,12 @@ export const Profile = {
                     onOpenAbout,
                     onLogout,
                     onDeactivateAsk,
+                    onDeleteAsk,
+                  })}
+                  ${this.renderDeleteAccount({
+                    entity,
+                    onDeleteCancel,
+                    onDelete,
                   })}
                   ${this.renderDeactivateAccount({
                     entity,
@@ -359,6 +368,7 @@ export const Profile = {
     onOpenAbout,
     onLogout,
     onDeactivateAsk,
+    onDeleteAsk,
   }) {
     return Flex.render({
       direction: "column",
@@ -407,6 +417,15 @@ export const Profile = {
           isFullWidth: true,
           onClick: onDeactivateAsk,
         }),
+        Button.render({
+          children: t("profile.deleteAccount"),
+          variant: "ghost",
+          color: "error",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          onClick: onDeleteAsk,
+        }),
       ],
     })
   },
@@ -422,6 +441,20 @@ export const Profile = {
       isBusy: entity.deactivateStatus === "deactivating",
       onConfirm: onDeactivate,
       onCancel: onDeactivateCancel,
+    })
+  },
+
+  renderDeleteAccount({ entity, onDeleteCancel, onDelete }) {
+    return ConfirmDialog.render({
+      id: "delete-account-confirm",
+      isOpen: entity.isConfirmingDelete,
+      message: t("eraseAccount.warning"),
+      error: entity.deleteError,
+      confirmLabel: t("eraseAccount.confirm"),
+      busyLabel: t("eraseAccount.erasing"),
+      isBusy: entity.deleteStatus === "deleting",
+      onConfirm: onDelete,
+      onCancel: onDeleteCancel,
     })
   },
 

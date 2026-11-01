@@ -31,7 +31,8 @@
     "photoPrevious": "Previous photo",
     "photoNext": "Next photo",
     "photoClose": "Close photos",
-    "close": "Close"
+    "close": "Close",
+    "deletedUser": "[Deleted User]"
   },
   "status": {
     "pending": "Pending",
@@ -192,8 +193,6 @@
     "pickDate": "Pick a date",
     "pickDeadline": "Pick a deadline",
     "pickPlaces": "Pick how many places",
-    "checkAudioLink": "Check the audio link",
-    "unknownTranscript": "Unrecognised transcript status",
     "motivationRequired": "Motivation is required",
     "validEmail": "Enter a valid email",
     "passwordRequired": "Password is required",
@@ -212,7 +211,7 @@
     "micUnavailable": "Microphone unavailable",
     "emptyRecording": "Recording came out empty — try again",
     "noAudio": "No audio to process",
-    "transcriptionFailed": "Transcription failed — will retry on save",
+    "transcriptionFailed": "We couldn't transcribe your message. Please fill in the fields yourself.",
     "saveEvent": "Failed to save event",
     "imageType": "Use a JPEG, PNG, or WebP image",
     "imageSize": "Each image must be under 5 MB",
@@ -242,7 +241,9 @@
     "loadPreferences": "Failed to load preferences",
     "savePreferences": "Failed to save preferences",
     "saveReview": "Failed to save the review",
-    "parseFailed": "We couldn't fill in the fields from your message. Please fill them in yourself."
+    "parseFailed": "We couldn't fill in the fields from your message. Please fill them in yourself.",
+    "voiceLimit": "You've used today's free voice messages. Fill in the event yourself, or try again tomorrow.",
+    "eraseAccount": "We couldn't delete the account. Please try again."
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -266,7 +267,8 @@
     "checkInbox": "Check your inbox",
     "confirmationSent": "We sent a confirmation link to <strong>{{email}}</strong>. Open it to activate your account.",
     "confirmationResent": "Sent again. It may take a minute to arrive.",
-    "resendConfirmation": "Resend email"
+    "resendConfirmation": "Resend email",
+    "acceptLegal": "By continuing, you accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>."
   },
   "onboarding": {
     "title": "Complete your profile",
@@ -404,9 +406,10 @@
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
     "deactivateAccount": "Deactivate account",
-    "deactivateConfirm": "Deactivate your account? Your open events are deleted and your applications are withdrawn, including wins for jobs still to come, which count as dropouts. Past events with winners and your stats stay. To come back, sign in again.",
+    "deactivateConfirm": "Deactivate your account? Your open events are deleted and your applications are withdrawn, including wins for jobs still to come, which count as dropouts. Past events with winners and your stats stay. To come back, sign in again. We'll also email you a link to erase your account for good.",
     "yesDeactivate": "Yes, deactivate",
-    "deactivating": "Deactivating…"
+    "deactivating": "Deactivating…",
+    "deleteAccount": "Delete account"
   },
   "preferences": {
     "title": "Preferences",
@@ -478,9 +481,14 @@
       },
       "leave": {
         "question": "How do I leave?",
-        "answer": "Deactivate your account from your profile. Your open events and all your applications, sent and received, are permanently deleted, while past events with winners and your stats stay. To come back, sign in again."
+        "answer": "You have two options in your profile. Deactivating hides you and can be undone by signing in again: your open events are deleted and your applications withdrawn, and we email you a link to erase the account for good. Deleting erases your account straight away. Reviews and past job records stay, without your name, as [Deleted User]."
+      },
+      "report": {
+        "question": "How do I report someone or something?",
+        "answer": "Use the report button on an event, an applicant or a review. You can also block someone: you stop seeing each other's open events and can no longer apply to them. You can undo a block in Preferences."
       }
-    }
+    },
+    "legalTitle": "Legal"
   },
   "facts": {
     "spouses": "Spouses"
@@ -543,7 +551,8 @@
       "eventClosed": "{{title}} was closed",
       "newEvent": "New job that matches your trade: {{title}}",
       "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
-      "jobReviewed": "The organizer reported on {{title}}"
+      "jobReviewed": "The organizer reported on {{title}}",
+      "jobCancelled": "{{title}} was cancelled"
     }
   },
   "push": {
@@ -596,6 +605,113 @@
       "unreliable": {
         "label": "Unreliable",
         "description": "{{failures}}+ dropouts or no-shows."
+      }
+    }
+  },
+  "safety": {
+    "open": "Report or block",
+    "title": "Report or block",
+    "reasonLabel": "What's wrong?",
+    "detailsLabel": "Anything else we should know? (optional)",
+    "send": "Send report",
+    "block": "Block this person",
+    "blockConfirm": "Block this person? You'll stop seeing each other's open events, neither of you can apply to the other's, and any undecided applications between you are withdrawn. You can undo this in Preferences.",
+    "yesBlock": "Yes, block",
+    "thanks": "Thanks. We've received your report and will look into it.",
+    "reportReview": "Report review",
+    "reportLimit": "You've sent the most reports allowed for today. Please try again tomorrow.",
+    "reportFailed": "We couldn't send your report. Please try again.",
+    "blockFailed": "We couldn't block this person. Please try again.",
+    "unblockFailed": "We couldn't unblock this person. Please try again.",
+    "blockedTitle": "Blocked people",
+    "blockedNone": "You haven't blocked anyone.",
+    "unblock": "Unblock",
+    "reasons": {
+      "spam": "Spam or advertising",
+      "inappropriate": "Offensive or inappropriate",
+      "fake": "Fake or misleading",
+      "harassment": "Harassment",
+      "other": "Something else"
+    }
+  },
+  "eraseAccount": {
+    "title": "Delete account",
+    "warning": "This permanently deletes your account, your profile, your photos and your events. Reviews and past job records stay, without your name, as [Deleted User]. This can't be undone.",
+    "confirm": "Delete my account",
+    "erasing": "Deleting…",
+    "done": "Your account has been deleted.",
+    "linkExpired": "This link is no longer valid. Sign in and delete your account from your profile."
+  },
+  "accountEmail": {
+    "subject": "Your Vaitu account is deactivated",
+    "body": "Your Vaitu account has been deactivated. To come back, just sign in again.\n\nIf you want to erase it for good, use this link within 30 days:\n{{link}}\n\nIf you didn't ask for this, sign in and change your password."
+  },
+  "legal": {
+    "updated": "Last updated: {{date}}",
+    "privacy": {
+      "title": "Privacy Policy",
+      "who": {
+        "title": "Who we are",
+        "body": "Vaitu is run by {{owner}}, which decides how your data is used. For anything about your data, write to {{email}}."
+      },
+      "data": {
+        "title": "What we collect",
+        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: events and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them."
+      },
+      "voice": {
+        "title": "Voice messages",
+        "body": "If you describe an event by voice, the recording is sent to our speech provider to be turned into text, and that text to an AI provider to fill in the form. We never store the recording or the text. Please avoid saying more about your clients than the job needs."
+      },
+      "visible": {
+        "title": "Who sees what",
+        "body": "Open events are public, even to people without an account. When you apply, the organizer sees your name, contact details, message, rank, badges and reviews. Reviews are shown without the name of whoever wrote them."
+      },
+      "providers": {
+        "title": "Who helps us",
+        "body": "Supabase and Vercel (hosting and database), Firebase by Google (push notifications and, with your consent, Google Analytics), Deepgram (speech to text), OpenRouter and the free AI models it reaches (filling in the form; these providers may keep or use what they receive), and Resend (email). Some are outside the EU, where we rely on the safeguards the law requires."
+      },
+      "keeping": {
+        "title": "Why, and for how long",
+        "body": "We use your data to run the service you signed up for, to keep it safe, and for statistics only with your consent. We keep it until you delete your account. Deactivating keeps it, so you can come back. Deleting removes your account, profile, files and events, while reviews and past job records stay without your name, as [Deleted User], because they are part of other people's history."
+      },
+      "rights": {
+        "title": "Your rights",
+        "body": "You can access, correct, export or erase your data, object to its use, and withdraw consent at any time. Most of this is in the app: statistics in Preferences, deletion in your profile. For the rest, write to {{email}}. You can also complain to your data protection authority. Vaitu is for people aged 18 or over."
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "what": {
+        "title": "What Vaitu is",
+        "body": "Vaitu, run by {{owner}}, lets professionals pass on jobs they can't take to colleagues. It only connects people: it is not an employer, agent or party to any job."
+      },
+      "account": {
+        "title": "Your account",
+        "body": "You must be at least 18 and working in a professional capacity. Keep your details accurate and your password safe. You are responsible for what happens under your account."
+      },
+      "handoff": {
+        "title": "Handing off a job",
+        "body": "You agree on the fee, terms and any contract between yourselves, and each of you is responsible for your own taxes, insurance and permits. Make sure you may pass on a job, and that your client agrees where needed. Vaitu handles no payments and guarantees no job, applicant or outcome."
+      },
+      "content": {
+        "title": "What you publish",
+        "body": "You keep your content, and allow us to host and show it to run the service. Only publish what is true and what you have the right to share. Don't post a home's street address or more about clients than the job needs. Reviews must be honest and about the job."
+      },
+      "moderation": {
+        "title": "Reports and removal",
+        "body": "You can report content and block people. We may remove content or suspend accounts that break these terms or the law."
+      },
+      "price": {
+        "title": "Price and limits",
+        "body": "Vaitu is free for now, with limits on some features, such as a daily number of voice messages. We may introduce paid features, and will tell you first. Nothing you already agreed to pay for will change without notice."
+      },
+      "liability": {
+        "title": "Responsibility",
+        "body": "The service is provided as it is, and may be interrupted or change. Within the limits of the law, we are not responsible for what happens between users, or for lost work or income. Nothing here limits rights you have by law that can't be waived."
+      },
+      "ending": {
+        "title": "Ending and changes",
+        "body": "You can delete your account at any time from your profile. We'll tell you about important changes to these terms. These terms follow Italian law. For questions, write to {{email}}."
       }
     }
   }

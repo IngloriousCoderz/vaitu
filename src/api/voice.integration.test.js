@@ -1,6 +1,6 @@
 import { afterAll, expect, test } from "vitest"
 
-import { SEEKER, SENDER, signIn, signOut } from "../testing/index.js"
+import { SEEKER, signIn, signOut } from "../testing/index.js"
 import { supabase } from "./client.js"
 
 const TEST_TIMEOUT_MS = 60000
@@ -10,25 +10,12 @@ afterAll(async () => {
 }, TEST_TIMEOUT_MS)
 
 test(
-  "transcription refuses a missing file and a file that belongs to someone else",
+  "transcription refuses an empty recording",
   async () => {
-    await signIn(SENDER)
-    const {
-      data: { user: sender },
-    } = await supabase.auth.getUser()
-
     await signIn(SEEKER)
-    expect(await invoke("transcribe-audio", {})).toEqual({
+    expect(await invoke("transcribe-audio", new Blob([]))).toEqual({
       status: 400,
-      payload: { error: "audio_path is required" },
-    })
-    expect(
-      await invoke("transcribe-audio", {
-        audio_path: `${sender.id}/clip.webm`,
-      }),
-    ).toEqual({
-      status: 403,
-      payload: { error: "Not your audio" },
+      payload: { error: "audio is required" },
     })
   },
   TEST_TIMEOUT_MS,
@@ -50,9 +37,7 @@ test(
   "transcription and parsing refuse a signed-out visitor",
   async () => {
     await signOut()
-    expect(
-      await invoke("transcribe-audio", { audio_path: "clip.webm" }),
-    ).toEqual({
+    expect(await invoke("transcribe-audio", new Blob(["clip"]))).toEqual({
       status: 401,
       payload: { error: "Not logged in" },
     })

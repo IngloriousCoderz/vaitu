@@ -61,6 +61,8 @@ function line(item: FeedItem, locale: Locale) {
       return fill(lines.jobOutcomeDue, { title })
     case "job_reviewed":
       return fill(lines.jobReviewed, { title })
+    case "job_cancelled":
+      return fill(lines.jobCancelled, { title })
     default:
       return fill(lines.eventUpdated, { title })
   }
@@ -80,6 +82,7 @@ function destination(item: FeedItem) {
       ? `/events/${item.event_id}/applications`
       : `/events/${item.event_id}`
   }
+  if (item.type === "job_cancelled") return "/applications"
   if (item.type === "job_outcome_due") {
     return item.event_id ? `/events/${item.event_id}/applications` : "/events"
   }

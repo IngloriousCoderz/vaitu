@@ -5,12 +5,10 @@ import fixWebmDuration from "fix-webm-duration"
 
 import {
   createEvent,
-  deleteEventAudio,
   fetchEventForEdit,
   parseEvent,
   transcribeAudio,
   updateEvent,
-  uploadEventAudio,
 } from "../../api/events.js"
 import {
   deleteEventImage,
@@ -65,9 +63,6 @@ let mediaStream = null
 let audioChunks = []
 let pendingBlob = null
 let previewUrl = null
-let pendingPath = null
-let pendingUrl = null
-let removedPath = null
 let recordStartedAt = null
 
 /** @type {Map<string, { file: File | null, sourceFile: File | null }>} */
@@ -91,9 +86,6 @@ export function releaseRecorder() {
 
 export function clearPendingAudio() {
   pendingBlob = null
-  pendingPath = null
-  pendingUrl = null
-  removedPath = null
   if (previewUrl) {
     URL.revokeObjectURL(previewUrl)
     previewUrl = null
@@ -296,23 +288,12 @@ export const audioProcess = handleAsync("audioProcess", {
     entity.is_voice_wait_dismissed = false
     entity.audio_error = null
   },
-  async run() {
+  run() {
     if (!pendingBlob) throw new Error("errors.noAudio")
-    const blob = pendingBlob
-    await dropPendingAudio(true, true)
-    pendingBlob = blob
-    const uploaded = await uploadEventAudio(blob)
-    pendingPath = uploaded.path
-    pendingUrl = uploaded.url
-    return { transcript: await transcribeAudio(pendingPath), url: pendingUrl }
+    return transcribeAudio(pendingBlob)
   },
-  success(entity, { transcript, url }, api) {
+  success(entity, transcript, api) {
     entity.is_transcribing = false
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      previewUrl = null
-    }
-    entity.audio_preview_url = url
     entity.audio_transcript = transcript || null
     if (transcript && !entity.is_voice_wait_dismissed) {
       const job_type = jobTypeId(
@@ -336,7 +317,10 @@ export const audioProcess = handleAsync("audioProcess", {
   error(entity, err) {
     entity.is_transcribing = false
     entity.audio_transcript = null
-    entity.audio_error = err?.message ?? "errors.transcriptionFailed"
+    entity.audio_error =
+      err?.message === "errors.voiceLimit" || err?.message === "errors.noAudio"
+        ? err.message
+        : "errors.transcriptionFailed"
   },
 })
 
@@ -406,10 +390,13 @@ export const audioParse = handleAsync("audioParse", {
       autofillDeadline(entity)
     }
   },
-  error(entity) {
+  error(entity, err) {
     entity.is_parsing = false
-    if (!entity.is_voice_wait_dismissed)
-      entity.audio_error = "errors.parseFailed"
+    if (entity.is_voice_wait_dismissed) return
+    entity.audio_error =
+      err?.message === "errors.voiceLimit"
+        ? "errors.voiceLimit"
+        : "errors.parseFailed"
   },
 })
 
@@ -577,16 +564,14 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
 
 export function audioRemove(entity) {
   releaseRecorder()
-  if (entity.audio_url) removedPath = audioPathFromUrl(entity.audio_url)
+  clearPendingAudio()
   entity.is_recording = false
   entity.is_audio_open = false
   entity.is_transcribing = false
   entity.is_parsing = false
   entity.audio_preview_url = null
-  entity.audio_url = null
   entity.audio_transcript = null
   entity.audio_error = null
-  void dropPendingAudio(true)
 }
 
 export const save = handleAsync("save", {
@@ -595,26 +580,6 @@ export const save = handleAsync("save", {
     entity.error = null
   },
   async run(event) {
-    let audio_url
-    let transcript = null
-    let transcript_status = "none"
-    if (pendingBlob) {
-      if (!pendingUrl || !pendingPath) {
-        const uploaded = await uploadEventAudio(pendingBlob)
-        pendingPath = uploaded.path
-        pendingUrl = uploaded.url
-      }
-      audio_url = pendingUrl
-      try {
-        transcript =
-          event.audio_transcript ?? (await transcribeAudio(pendingPath))
-        transcript_status = transcript ? "done" : "error"
-      } catch {
-        transcript_status = "error"
-      }
-    } else if ("audio_url" in event) {
-      audio_url = event.audio_url ?? null
-    }
     const photos = await savedImageUrls(event)
     const deadlineIso =
       event.application_deadline.length === DATETIME_LOCAL_LENGTH
@@ -630,14 +595,12 @@ export const save = handleAsync("save", {
       event_date: event.event_date,
       application_deadline: deadlineIso,
       max_applicants: Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
-      audio_url,
       image_urls: photos.image_urls,
-      ...(pendingBlob ? { transcript, transcript_status } : {}),
       details: event.details,
     }
     let saved
     try {
-      saved = await writeEvent(event, payload, audio_url)
+      saved = await writeEvent(event, payload)
     } catch (err) {
       await forgetImages(photos.uploadedPaths)
       throw err
@@ -690,7 +653,6 @@ export const editLoad = handleAsync("editLoad", {
     }
     entity.errors = {}
     entity.isValid = true
-    entity.audio_url = row.audio_url ?? null
     const photos = [...(row.image_urls ?? [])]
     entity.cover_url = photos[COVER_INDEX] ?? null
     entity.gallery_urls = photos.slice(COVER_IMAGES)
@@ -701,7 +663,7 @@ export const editLoad = handleAsync("editLoad", {
     entity.audio_preview_url = null
     entity.is_recording = false
     entity.is_audio_open = false
-    entity.audio_transcript = row.transcript ?? null
+    entity.audio_transcript = null
     entity.audio_error = null
     api.notify("#countryCreate:sync", country)
     api.notify("#regionCreate:sync", region)
@@ -714,30 +676,6 @@ export const editLoad = handleAsync("editLoad", {
     entity.error = err.message ?? "errors.loadEvent"
   },
 })
-
-function audioPathFromUrl(url) {
-  if (typeof url !== "string") return null
-  const [, path] = url.split("/event-audio/")
-  return path ?? null
-}
-
-async function dropPendingAudio(deleteFile, keepPreview = false) {
-  const path = pendingPath
-  pendingBlob = null
-  pendingPath = null
-  pendingUrl = null
-  if (!keepPreview && previewUrl) {
-    URL.revokeObjectURL(previewUrl)
-    previewUrl = null
-  }
-  if (deleteFile && path) {
-    try {
-      await deleteEventAudio(path)
-    } catch {
-      // Orphan file stays in the bucket; harmless for the spike.
-    }
-  }
-}
 
 function shiftDate(dateStr, days) {
   const [year, month, day] = dateStr.split("-").map(Number)
@@ -879,26 +817,8 @@ async function savedImageUrls(event) {
   }
 }
 
-async function writeEvent(event, payload, audio_url) {
-  if (!event.editing_event_id) return createEvent(payload)
-  const previous = typeof event.audio_url === "string" ? event.audio_url : null
-  const result = await updateEvent(event.editing_event_id, payload)
-  const replaced = pendingBlob && previous && previous !== audio_url
-  if (replaced) {
-    const oldPath = audioPathFromUrl(previous)
-    if (oldPath) {
-      try {
-        await deleteEventAudio(oldPath)
-      } catch {
-        // Orphan file stays in the bucket; harmless for the spike.
-      }
-    }
-  } else if (!pendingBlob && !previous && removedPath) {
-    try {
-      await deleteEventAudio(removedPath)
-    } catch {
-      // Orphan file stays in the bucket; harmless for the spike.
-    }
-  }
-  return result
+function writeEvent(event, payload) {
+  return event.editing_event_id
+    ? updateEvent(event.editing_event_id, payload)
+    : createEvent(payload)
 }

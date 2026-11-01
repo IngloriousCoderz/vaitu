@@ -6,6 +6,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
 import { t, trans, translated } from "../../i18n/index.js"
+import { paths } from "../../routes.js"
 import { PasswordField } from "./password-field.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
@@ -93,6 +94,26 @@ export const SignupStep = {
               onToggle: onToggleConfirmPassword,
             })}
           </div>
+          <p class=${styles.subtitle}>
+            ${trans("auth.acceptLegal", {
+              components: {
+                terms: (children) =>
+                  html`<a
+                    href=${`${import.meta.env.VITE_PUBLIC_APP_URL}${paths.terms}`}
+                    target="_blank"
+                    rel="noopener"
+                    >${children}</a
+                  >`,
+                privacy: (children) =>
+                  html`<a
+                    href=${`${import.meta.env.VITE_PUBLIC_APP_URL}${paths.privacy}`}
+                    target="_blank"
+                    rel="noopener"
+                    >${children}</a
+                  >`,
+              },
+            })}
+          </p>
           ${ErrorAlert.render({ error: entity.error, className: styles.error })}
           ${FormActions.render({
             children: SubmitButton.render({

@@ -7,8 +7,15 @@ import * as handlers from "./handlers.js"
 import { closeAvatarCrop } from "./handlers.js"
 import { Profile as renderers } from "./template.js"
 
-const { load, save, accountDeactivate, logout, avatarSave, ...syncHandlers } =
-  handlers
+const {
+  load,
+  save,
+  accountDeactivate,
+  accountDelete,
+  logout,
+  avatarSave,
+  ...syncHandlers
+} = handlers
 
 export const Profile = {
   ...Form,
@@ -16,6 +23,7 @@ export const Profile = {
   ...load,
   ...save,
   ...accountDeactivate,
+  ...accountDelete,
   ...logout,
   ...avatarSave,
   ...renderers,
@@ -38,6 +46,9 @@ export const Profile = {
     entity.isConfirmingDeactivate ??= false
     entity.deactivateStatus ??= "idle"
     entity.deactivateError ??= null
+    entity.isConfirmingDelete ??= false
+    entity.deleteStatus ??= "idle"
+    entity.deleteError ??= null
     entity.avatarStatus ??= "idle"
     entity.avatarError ??= null
     entity.avatarPreviewUrl ??= null
@@ -69,6 +80,9 @@ export const Profile = {
         onDeactivateAsk: () => api.notify(`#${id}:accountDeactivateAsk`),
         onDeactivateCancel: () => api.notify(`#${id}:accountDeactivateCancel`),
         onDeactivate: () => api.notify(`#${id}:accountDeactivate`),
+        onDeleteAsk: () => api.notify(`#${id}:accountDeleteAsk`),
+        onDeleteCancel: () => api.notify(`#${id}:accountDeleteCancel`),
+        onDelete: () => api.notify(`#${id}:accountDelete`),
         onOpenRanks: () => api.notify("#router:navigate", paths.ranks),
         onOpenApplications: (status) =>
           api.notify("#router:navigate", paths.applicationsByStatus(status)),

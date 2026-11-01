@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process"
+import { createHash } from "node:crypto"
 
 import { createClient } from "@supabase/supabase-js"
 
@@ -86,6 +87,32 @@ export async function readEventAsService(eventId) {
     .maybeSingle()
   if (error) throw error
   return data
+}
+
+export async function issueErasureLink(user_id) {
+  const token = crypto.randomUUID()
+  const { error } = await serviceRoleClient()
+    .from("account_erasures")
+    .insert({
+      token_hash: createHash("sha256").update(token).digest("hex"),
+      user_id,
+    })
+  if (error) throw error
+  return token
+}
+
+export async function readAsService(table, column, value) {
+  const { data, error } = await serviceRoleClient()
+    .from(table)
+    .select("*")
+    .eq(column, value)
+  if (error) throw error
+  return data
+}
+
+export async function userExists(userId) {
+  const { data } = await serviceRoleClient().auth.admin.getUserById(userId)
+  return Boolean(data?.user)
 }
 
 export async function runAsService(fn, params) {

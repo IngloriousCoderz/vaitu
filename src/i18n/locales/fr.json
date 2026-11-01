@@ -31,7 +31,8 @@
     "photoPrevious": "Photo précédente",
     "photoNext": "Photo suivante",
     "photoClose": "Fermer les photos",
-    "close": "Fermer"
+    "close": "Fermer",
+    "deletedUser": "[Utilisateur supprimé]"
   },
   "status": {
     "pending": "En attente",
@@ -194,8 +195,6 @@
     "pickDate": "Choisissez une date",
     "pickDeadline": "Choisissez une date limite",
     "pickPlaces": "Choisissez le nombre de places",
-    "checkAudioLink": "Vérifiez le lien audio",
-    "unknownTranscript": "Statut de transcription inconnu",
     "motivationRequired": "La motivation est obligatoire",
     "validEmail": "Saisissez une adresse e-mail valide",
     "passwordRequired": "Le mot de passe est obligatoire",
@@ -215,7 +214,7 @@
     "micUnavailable": "Microphone indisponible",
     "emptyRecording": "L'enregistrement est vide : réessayez",
     "noAudio": "Aucun audio à traiter",
-    "transcriptionFailed": "La transcription a échoué : nouvel essai à l'enregistrement",
+    "transcriptionFailed": "Nous n'avons pas pu transcrire votre message. Veuillez remplir les champs vous-même.",
     "saveEvent": "Impossible d'enregistrer l'événement",
     "imageType": "Utilisez une image JPEG, PNG ou WebP",
     "imageSize": "Chaque image doit faire moins de 5 Mo",
@@ -246,7 +245,9 @@
     "loadPreferences": "Impossible de charger les préférences",
     "savePreferences": "Impossible d'enregistrer les préférences",
     "saveReview": "Impossible d'enregistrer l'avis",
-    "parseFailed": "Nous n'avons pas pu remplir les champs à partir de votre message. Veuillez les remplir vous-même."
+    "parseFailed": "Nous n'avons pas pu remplir les champs à partir de votre message. Veuillez les remplir vous-même.",
+    "voiceLimit": "Vous avez utilisé vos messages vocaux gratuits du jour. Remplissez l'événement vous-même ou réessayez demain.",
+    "eraseAccount": "Nous n'avons pas pu supprimer le compte. Veuillez réessayer."
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -270,7 +271,8 @@
     "checkInbox": "Consultez votre boîte mail",
     "confirmationSent": "Nous avons envoyé un lien de confirmation à <strong>{{email}}</strong>. Ouvrez-le pour activer votre compte.",
     "confirmationResent": "Renvoyé. Cela peut prendre une minute.",
-    "resendConfirmation": "Renvoyer l'e-mail"
+    "resendConfirmation": "Renvoyer l'e-mail",
+    "acceptLegal": "En continuant, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>."
   },
   "onboarding": {
     "title": "Complétez votre profil",
@@ -412,9 +414,10 @@
     "logOut": "Se déconnecter",
     "howRanksWork": "Comment fonctionnent les niveaux",
     "deactivateAccount": "Désactiver le compte",
-    "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts seront supprimés et vos candidatures retirées, y compris les missions obtenues encore à venir, qui comptent comme des abandons. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous.",
+    "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts seront supprimés et vos candidatures retirées, y compris les missions obtenues encore à venir, qui comptent comme des abandons. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous. Nous vous enverrons aussi par e-mail un lien pour effacer définitivement votre compte.",
     "yesDeactivate": "Oui, désactiver",
-    "deactivating": "Désactivation…"
+    "deactivating": "Désactivation…",
+    "deleteAccount": "Supprimer le compte"
   },
   "preferences": {
     "title": "Préférences",
@@ -486,9 +489,14 @@
       },
       "leave": {
         "question": "Comment quitter Vaitu ?",
-        "answer": "Désactivez votre compte depuis votre profil. Vos événements ouverts et toutes vos candidatures, envoyées et reçues, sont définitivement supprimés, tandis que les événements passés avec un gagnant et vos statistiques restent. Pour revenir, reconnectez-vous."
+        "answer": "Votre profil propose deux options. La désactivation vous masque et s'annule en vous reconnectant : vos événements ouverts sont supprimés, vos candidatures retirées, et nous vous envoyons par e-mail un lien pour effacer définitivement le compte. La suppression efface le compte immédiatement. Les avis et l'historique des missions restent, sans votre nom, sous [Utilisateur supprimé]."
+      },
+      "report": {
+        "question": "Comment signaler quelqu'un ou quelque chose ?",
+        "answer": "Utilisez le bouton de signalement sur un événement, un candidat ou un avis. Vous pouvez aussi bloquer quelqu'un : vous ne verrez plus vos événements ouverts respectifs et ne pourrez plus y candidater. Vous pouvez annuler un blocage dans les Préférences."
       }
-    }
+    },
+    "legalTitle": "Mentions légales"
   },
   "facts": {
     "spouses": "Mariés"
@@ -555,7 +563,8 @@
       "eventClosed": "{{title}} a été clôturé",
       "newEvent": "Nouvelle mission pour votre métier : {{title}}",
       "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
-      "jobReviewed": "L'organisateur a donné son retour sur {{title}}"
+      "jobReviewed": "L'organisateur a donné son retour sur {{title}}",
+      "jobCancelled": "{{title}} a été annulé"
     }
   },
   "push": {
@@ -609,6 +618,113 @@
       "unreliable": {
         "label": "Peu fiable",
         "description": "{{failures}}+ abandons ou absences."
+      }
+    }
+  },
+  "safety": {
+    "open": "Signaler ou bloquer",
+    "title": "Signaler ou bloquer",
+    "reasonLabel": "Quel est le problème ?",
+    "detailsLabel": "Autre chose à nous dire ? (facultatif)",
+    "send": "Envoyer le signalement",
+    "block": "Bloquer cette personne",
+    "blockConfirm": "Bloquer cette personne ? Vous ne verrez plus vos événements ouverts respectifs, aucun de vous ne pourra candidater à ceux de l'autre, et les candidatures non décidées entre vous seront retirées. Vous pouvez annuler dans les Préférences.",
+    "yesBlock": "Oui, bloquer",
+    "thanks": "Merci. Nous avons bien reçu votre signalement et allons l'examiner.",
+    "reportReview": "Signaler l'avis",
+    "reportLimit": "Vous avez atteint le nombre maximal de signalements pour aujourd'hui. Réessayez demain.",
+    "reportFailed": "Nous n'avons pas pu envoyer votre signalement. Veuillez réessayer.",
+    "blockFailed": "Nous n'avons pas pu bloquer cette personne. Veuillez réessayer.",
+    "unblockFailed": "Nous n'avons pas pu débloquer cette personne. Veuillez réessayer.",
+    "blockedTitle": "Personnes bloquées",
+    "blockedNone": "Vous n'avez bloqué personne.",
+    "unblock": "Débloquer",
+    "reasons": {
+      "spam": "Spam ou publicité",
+      "inappropriate": "Offensant ou inapproprié",
+      "fake": "Faux ou trompeur",
+      "harassment": "Harcèlement",
+      "other": "Autre chose"
+    }
+  },
+  "eraseAccount": {
+    "title": "Supprimer le compte",
+    "warning": "Cette action supprime définitivement votre compte, votre profil, vos photos et vos événements. Les avis et l'historique des missions restent, sans votre nom, sous [Utilisateur supprimé]. C'est irréversible.",
+    "confirm": "Supprimer mon compte",
+    "erasing": "Suppression…",
+    "done": "Votre compte a été supprimé.",
+    "linkExpired": "Ce lien n'est plus valide. Connectez-vous et supprimez votre compte depuis votre profil."
+  },
+  "accountEmail": {
+    "subject": "Votre compte Vaitu est désactivé",
+    "body": "Votre compte Vaitu a été désactivé. Pour revenir, il suffit de vous reconnecter.\n\nPour l'effacer définitivement, utilisez ce lien dans les 30 jours :\n{{link}}\n\nSi vous n'êtes pas à l'origine de cette demande, connectez-vous et changez votre mot de passe."
+  },
+  "legal": {
+    "updated": "Dernière mise à jour : {{date}}",
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "who": {
+        "title": "Qui sommes-nous",
+        "body": "Vaitu est exploité par {{owner}}, responsable du traitement de vos données. Pour toute question sur vos données, écrivez à {{email}}."
+      },
+      "data": {
+        "title": "Ce que nous collectons",
+        "body": "Votre e-mail, votre nom et votre mot de passe (conservé chiffré). Ce que vous ajoutez au profil : téléphone, site web, pays, photo, métiers, régions et langue. Ce que vous publiez : les événements et leurs photos, y compris les noms de clients saisis. Vos candidatures, avis, statistiques, signalements et blocages. Un identifiant d'appareil pour les notifications push, et des statistiques d'utilisation uniquement si vous les autorisez."
+      },
+      "voice": {
+        "title": "Messages vocaux",
+        "body": "Si vous décrivez un événement à la voix, l'enregistrement est envoyé à notre prestataire de transcription, puis le texte à un prestataire d'IA pour remplir le formulaire. Nous ne conservons jamais ni l'enregistrement ni le texte. Évitez d'en dire plus sur vos clients que ce que la mission exige."
+      },
+      "visible": {
+        "title": "Qui voit quoi",
+        "body": "Les événements ouverts sont publics, même pour les personnes sans compte. Quand vous candidatez, l'organisateur voit votre nom, vos coordonnées, votre message, votre niveau, vos badges et vos avis. Les avis n'indiquent pas le nom de leur auteur."
+      },
+      "providers": {
+        "title": "Nos prestataires",
+        "body": "Supabase et Vercel (hébergement et base de données), Firebase de Google (notifications push et, avec votre accord, Google Analytics), Deepgram (transcription), OpenRouter et les modèles d'IA gratuits qu'il utilise (remplissage du formulaire ; ces prestataires peuvent conserver ou utiliser ce qu'ils reçoivent) et Resend (e-mail). Certains sont hors de l'UE ; nous nous appuyons alors sur les garanties prévues par la loi."
+      },
+      "keeping": {
+        "title": "Pourquoi et combien de temps",
+        "body": "Nous utilisons vos données pour fournir le service auquel vous vous êtes inscrit, pour le sécuriser et, avec votre accord uniquement, pour des statistiques. Nous les conservons jusqu'à la suppression de votre compte. La désactivation les conserve, pour que vous puissiez revenir. La suppression retire le compte, le profil, les fichiers et les événements, tandis que les avis et l'historique des missions restent sans votre nom, sous [Utilisateur supprimé], car ils font partie de l'historique d'autres personnes."
+      },
+      "rights": {
+        "title": "Vos droits",
+        "body": "Vous pouvez accéder à vos données, les corriger, les exporter ou les effacer, vous opposer à leur utilisation et retirer votre consentement à tout moment. L'essentiel se trouve dans l'application : statistiques dans les Préférences, suppression dans le profil. Pour le reste, écrivez à {{email}}. Vous pouvez aussi saisir votre autorité de protection des données. Vaitu est réservé aux personnes de 18 ans ou plus."
+      }
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "what": {
+        "title": "Ce qu'est Vaitu",
+        "body": "Vaitu, exploité par {{owner}}, permet aux professionnels de transmettre à des collègues les missions qu'ils ne peuvent pas assurer. Il met simplement les personnes en relation : il n'est ni employeur, ni agent, ni partie à une mission."
+      },
+      "account": {
+        "title": "Votre compte",
+        "body": "Vous devez avoir au moins 18 ans et agir à titre professionnel. Gardez vos informations exactes et votre mot de passe en sécurité. Vous êtes responsable de ce qui se passe avec votre compte."
+      },
+      "handoff": {
+        "title": "Transmettre une mission",
+        "body": "Vous convenez entre vous de la rémunération, des conditions et d'un éventuel contrat, et chacun reste responsable de ses impôts, assurances et autorisations. Assurez-vous de pouvoir transmettre la mission et de l'accord de votre client si nécessaire. Vaitu ne gère aucun paiement et ne garantit ni mission, ni candidat, ni résultat."
+      },
+      "content": {
+        "title": "Ce que vous publiez",
+        "body": "Vos contenus restent les vôtres, et vous nous autorisez à les héberger et les afficher pour fournir le service. Ne publiez que ce qui est vrai et que vous avez le droit de partager. Ne publiez pas l'adresse d'un logement ni plus d'informations sur les clients que nécessaire. Les avis doivent être honnêtes et porter sur la mission."
+      },
+      "moderation": {
+        "title": "Signalements et retraits",
+        "body": "Vous pouvez signaler des contenus et bloquer des personnes. Nous pouvons retirer des contenus ou suspendre des comptes qui enfreignent ces conditions ou la loi."
+      },
+      "price": {
+        "title": "Prix et limites",
+        "body": "Vaitu est gratuit pour l'instant, avec des limites sur certaines fonctions, comme un nombre quotidien de messages vocaux. Nous pourrons introduire des fonctions payantes et vous en informerons d'abord. Rien de ce que vous aurez déjà accepté de payer ne changera sans préavis."
+      },
+      "liability": {
+        "title": "Responsabilité",
+        "body": "Le service est fourni tel quel et peut être interrompu ou modifié. Dans les limites de la loi, nous ne sommes pas responsables de ce qui se passe entre utilisateurs, ni des missions ou revenus perdus. Rien ici ne limite les droits auxquels la loi interdit de renoncer."
+      },
+      "ending": {
+        "title": "Fin et modifications",
+        "body": "Vous pouvez supprimer votre compte à tout moment depuis votre profil. Nous vous informerons des modifications importantes de ces conditions. Ces conditions sont régies par le droit italien. Pour toute question, écrivez à {{email}}."
       }
     }
   }

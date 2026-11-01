@@ -21,6 +21,7 @@ import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { telUrl } from "../../common/profile.js"
+import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import {
   COVER_IMAGES,
@@ -56,6 +57,7 @@ export const ApplicationsReceived = {
     onCancelReopen,
     onReviewField,
     onReviewSubmit,
+    onReport,
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
@@ -177,6 +179,7 @@ export const ApplicationsReceived = {
                   review: entity.review,
                   onReviewField,
                   onReviewSubmit,
+                  onReport,
                   onToggle,
                   onSelect,
                   onReject,
@@ -284,6 +287,7 @@ export const ApplicationsReceived = {
     review,
     onReviewField,
     onReviewSubmit,
+    onReport,
     onToggle,
     onSelect,
     onReject,
@@ -302,7 +306,9 @@ export const ApplicationsReceived = {
           @click=${() => onToggle(item.id)}
           aria-expanded=${expanded}
         >
-          <span class=${styles.name}>${applicant.full_name ?? "—"}</span>
+          <span class=${styles.name}
+            >${applicant.full_name ?? t("common.deletedUser")}</span
+          >
           ${StatusChip.render({ status: item.status })}
           <span
             class=${expanded ? `${styles.chevron} ${styles.chevronOpen}` : styles.chevron}
@@ -348,7 +354,17 @@ export const ApplicationsReceived = {
                   `,
                 )}
               </div>
-              ${this.renderReputation(item)}
+              ${this.renderReputation(item, onReport)}
+              ${when(item.applicant_id, () =>
+                SafetyButton.render({
+                  onClick: () =>
+                    onReport({
+                      type: "user",
+                      id: item.applicant_id,
+                      block_user_id: item.applicant_id,
+                    }),
+                }),
+              )}
               <p class=${styles.motivation}>${item.motivation}</p>
               ${when(item.job_reviews, () =>
                 this.renderGivenReview(item.job_reviews),
@@ -441,7 +457,7 @@ export const ApplicationsReceived = {
     `
   },
 
-  renderReputation({ stats, reviews }) {
+  renderReputation({ stats, reviews }, onReport) {
     if (!stats) return nothing
     return html`
       <div class=${styles.reputation}>
@@ -471,6 +487,11 @@ export const ApplicationsReceived = {
                 ariaLabel: t("reputation.ratingLabel"),
               })}
               <p>${written.comment}</p>
+              ${SafetyButton.render({
+                label: t("safety.reportReview"),
+                onClick: () =>
+                  onReport({ type: "review", id: written.application_id }),
+              })}
             </blockquote>
           `,
         )}

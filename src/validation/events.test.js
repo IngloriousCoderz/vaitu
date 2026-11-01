@@ -93,27 +93,6 @@ describe("normalizeEvent", () => {
     source.details.spouse_first_name_1 = "Changed"
     expect(row.details.spouse_first_name_1).toBe("Ada")
   })
-
-  it("distinguishes an explicit null from an absent audio_url", () => {
-    expect(normalizeEvent({ ...validWedding, audio_url: null })).toHaveProperty(
-      "audio_url",
-      null,
-    )
-    expect(normalizeEvent(validWedding)).not.toHaveProperty("audio_url")
-  })
-
-  it("forwards a transcript instead of dropping it", () => {
-    const row = normalizeEvent({ ...validWedding, transcript: "Welcome" })
-    expect(row.transcript).toBe("Welcome")
-  })
-
-  it("leaves transcript_status out when the caller omits it", () => {
-    expect(normalizeEvent(validWedding)).not.toHaveProperty("transcript_status")
-    expect(
-      normalizeEvent({ ...validWedding, transcript_status: "done" })
-        .transcript_status,
-    ).toBe("done")
-  })
 })
 
 describe("validateEvent", () => {
@@ -157,8 +136,6 @@ describe("validateEvent", () => {
     ["max_applicants", 0],
     ["max_applicants", 2.5],
     ["max_applicants", -3],
-    ["audio_url", "not a url"],
-    ["transcript_status", "queued"],
   ])("flags a bad %s", (field, value) => {
     expect(validateEvent({ ...validWedding, [field]: value })).toHaveProperty(
       field,

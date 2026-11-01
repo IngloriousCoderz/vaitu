@@ -104,6 +104,7 @@ export const ApplicationsReceived = {
             application_id,
           }),
         onCancelAssign: () => api.notify(`#${id}:assignCancel`),
+        onReport: (target) => api.notify("#safety:safetyOpen", target),
         onReviewField: (field, value) =>
           api.notify(`#${id}:reviewFieldSet`, { field, value }),
         onReviewSubmit: (application_id) =>

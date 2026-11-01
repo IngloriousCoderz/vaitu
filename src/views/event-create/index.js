@@ -55,7 +55,6 @@ export const EventCreate = {
       details: {},
     }
     Form.create(entity)
-    entity.audio_url ??= null
     entity.cover_url ??= null
     entity.gallery_urls ??= []
     entity.loaded_image_urls ??= []
@@ -103,8 +102,6 @@ export const EventCreate = {
       event_date: values.event_date,
       application_deadline: values.application_deadline,
       max_applicants: values.max_applicants,
-      audio_url: entity.audio_url,
-      audio_transcript: entity.audio_transcript,
       cover_url: entity.cover_url,
       gallery_urls: [...(entity.gallery_urls ?? [])],
       loaded_image_urls: [...(entity.loaded_image_urls ?? [])],
@@ -197,7 +194,6 @@ function open(entity, { event_id } = {}, api) {
   entity.error = null
   entity.editing_event_id = event_id ?? null
   Form.reset(entity)
-  entity.audio_url = null
   entity.audio_preview_url = null
   entity.is_recording = false
   entity.is_audio_open = false

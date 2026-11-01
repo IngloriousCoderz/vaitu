@@ -258,6 +258,40 @@ export const accountDeactivate = handleAsync("accountDeactivate", {
   },
 })
 
+export function accountDeleteAsk(entity) {
+  entity.isConfirmingDelete = true
+  entity.deleteError = null
+}
+
+export function accountDeleteCancel(entity) {
+  entity.isConfirmingDelete = false
+  entity.deleteError = null
+}
+
+export const accountDelete = handleAsync("accountDelete", {
+  start(entity) {
+    entity.deleteStatus = "deleting"
+    entity.deleteError = null
+  },
+  async run() {
+    const { error } = await supabase.functions.invoke("erase-account", {
+      body: {},
+    })
+    if (error) throw error
+    await endSession()
+    return true
+  },
+  success(entity) {
+    entity.deleteStatus = "idle"
+    entity.isConfirmingDelete = false
+    entity.profile = null
+  },
+  error(entity) {
+    entity.deleteStatus = "idle"
+    entity.deleteError = "errors.eraseAccount"
+  },
+})
+
 export const logout = handleAsync("logout", {
   async run() {
     await endSession()

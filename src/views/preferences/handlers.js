@@ -1,6 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
+import { fetchMyBlocks, unblockUser } from "../../api/safety.js"
 import { readUserId } from "../../api/session.js"
 import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
 import {
@@ -62,11 +63,16 @@ export const load = handleAsync("load", {
     entity.status = "loading"
     entity.error = null
   },
-  run() {
-    return fetchMyPreferences()
+  async run() {
+    const [preferences, blocks] = await Promise.all([
+      fetchMyPreferences(),
+      fetchMyBlocks(),
+    ])
+    return { ...preferences, blocks }
   },
   success(entity, preferences, api) {
     entity.status = "ready"
+    entity.blocks = preferences.blocks
     entity.interested_job_types = preferences.interested_job_types ?? []
     entity.professions = preferences.professions ?? []
     jobTypesSync(
@@ -105,6 +111,25 @@ export const save = handleAsync("save", {
   error(entity, err, api) {
     entity.saveError = err.message ?? "errors.savePreferences"
     api.notify(`#${entity.id}:load`)
+  },
+})
+
+export const unblock = handleAsync("unblock", {
+  start(entity) {
+    entity.saveError = null
+  },
+  async run(user_id) {
+    await unblockUser(user_id)
+    return user_id
+  },
+  success(entity, user_id, api) {
+    entity.blocks = entity.blocks.filter(
+      (block) => block.blocked_id !== user_id,
+    )
+    api.notify("#eventList:load")
+  },
+  error(entity) {
+    entity.saveError = "safety.unblockFailed"
   },
 })
 

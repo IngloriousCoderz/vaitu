@@ -8,6 +8,9 @@ import { paths } from "../routes"
 // session unless opted out.
 
 const PRE_LOGIN_ROUTES = new Set(["authentication", "onboarding"])
+// Store listings link to the first two, and the email link works signed out.
+const PUBLIC_ROUTES = new Set(["privacy", "terms", "eraseAccount"])
+const PUBLIC_PATHS = new Set([paths.privacy, paths.terms, paths.eraseAccount])
 
 /**
  * Where a signed-out visitor goes, carrying where they were headed.
@@ -49,7 +52,11 @@ export function isPreLoginRoute(router) {
  * @returns {boolean}
  */
 export function isPreLoginPath(pathname) {
-  return pathname === paths.login || pathname === paths.onboarding
+  return (
+    pathname === paths.login ||
+    pathname === paths.onboarding ||
+    PUBLIC_PATHS.has(pathname)
+  )
 }
 
 /**
@@ -62,6 +69,8 @@ export function isPreLoginPath(pathname) {
  */
 export function routeGuard(entity, payload, api) {
   const user = readUser()
+
+  if (PUBLIC_ROUTES.has(payload.route)) return
 
   if (!user) {
     if (payload.route === "authentication") return

@@ -1,6 +1,8 @@
+import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
+import { when } from "@inglorious/web/directives/when"
 
 import { ChipPicker } from "../../common/chip-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
@@ -17,7 +19,7 @@ export const Preferences = {
   },
 
   renderPreferences(
-    { entity, onToggleProfession, onEmails, onNewEventAlerts },
+    { entity, onToggleProfession, onEmails, onNewEventAlerts, onUnblock },
     api,
   ) {
     return Page.render({
@@ -90,6 +92,38 @@ export const Preferences = {
                 }),
               ],
             })}
+            <h2 class=${styles.sectionTitle}>${t("safety.blockedTitle")}</h2>
+            ${when(
+              entity.blocks.length,
+              () =>
+                Flex.render({
+                  direction: "column",
+                  gap: "sm",
+                  children: entity.blocks.map((block) =>
+                    Flex.render({
+                      align: "center",
+                      justify: "between",
+                      gap: "sm",
+                      children: [
+                        html`<span
+                          >${block.blocked_name ?? t("common.deletedUser")}</span
+                        >`,
+                        Button.render({
+                          children: t("safety.unblock"),
+                          variant: "outline",
+                          shape: "pill",
+                          size: "sm",
+                          onClick: () => onUnblock(block.blocked_id),
+                        }),
+                      ],
+                    }),
+                  ),
+                }),
+              () =>
+                html`<p class=${styles.sectionHint}>
+                  ${t("safety.blockedNone")}
+                </p>`,
+            )}
             ${ErrorAlert.render({
               error: entity.saveError,
               className: styles.error,

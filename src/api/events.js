@@ -1,6 +1,5 @@
 import {
   DAY_MS,
-  DEFAULT_TRANSCRIPT_STATUS,
   FIRST_INDEX,
   HASH_MULTIPLIER,
   HASH_SEED,
@@ -10,7 +9,6 @@ import {
   MINUTES_PER_HOUR,
   NO_DAYS_LEFT,
   NO_TIME_LEFT,
-  NOT_FOUND,
   ONE_DAY,
   ONE_HOUR,
   ONE_MINUTE,
@@ -18,7 +16,6 @@ import {
 } from "../constants/index.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
 import { currentLocale, t } from "../i18n/index.js"
-import { randomId } from "../text/index.js"
 import {
   firstError,
   normalizeEvent,
@@ -32,10 +29,10 @@ const NO_APPLICATIONS = 0
 const NO_ROWS = 0
 const ONE_APPLICATION = 1
 
+const STATUS_TOO_MANY_REQUESTS = 429
+
 const NEW_THRESHOLD_DAYS = 3
 const NEW_THRESHOLD_MS = NEW_THRESHOLD_DAYS * DAY_MS
-
-const AUDIO_BUCKET = "event-audio"
 
 export function toViewModel(row) {
   const [year] = row.event_date.split("-").map(Number)
@@ -53,10 +50,7 @@ export function toViewModel(row) {
       (new Date(row.event_date).getTime() - Date.now()) / DAY_MS,
     ),
     place: [row.location, region].filter(Boolean).join(" • "),
-    audio_url: row.audio_url ?? null,
     imageUrls: row.image_urls ?? [],
-    transcript: row.transcript ?? null,
-    transcript_status: row.transcript_status ?? "none",
     daysLeft: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
     ),
@@ -126,7 +120,7 @@ export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, category, profession, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, image_urls, transcript, transcript_status, details",
+      "id, category, profession, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, image_urls, details",
     )
     .eq("id", id)
     .single()
@@ -276,7 +270,6 @@ export async function createEvent(payload) {
     ...row,
     sender_id: user.id,
     status: "open",
-    transcript_status: row.transcript_status ?? DEFAULT_TRANSCRIPT_STATUS,
   })
   if (error) throw error
   return true
@@ -290,7 +283,7 @@ export async function fetchEventForEdit(event_id) {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, profession, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, image_urls, transcript, details",
+      "id, category, profession, title, location, country, region, event_date, application_deadline, max_applicants, image_urls, details",
     )
     .eq("id", event_id)
     .eq("sender_id", user.id)
@@ -312,7 +305,7 @@ export async function updateEvent(event_id, payload) {
 export async function deleteEvent(event_id) {
   const { data, error } = await supabase
     .from("events")
-    .select("image_urls, audio_url")
+    .select("image_urls")
     .eq("id", event_id)
     .maybeSingle()
   if (error) throw error
@@ -328,34 +321,24 @@ export async function deleteEvent(event_id) {
   return true
 }
 
-export async function uploadEventAudio(blob) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
-  const ext = blob.type.includes("mp4") ? "m4a" : "webm"
-  const path = `${user.id}/${randomId()}.${ext}`
-  const { error } = await supabase.storage
-    .from(AUDIO_BUCKET)
-    .upload(path, blob, { contentType: blob.type || "audio/webm" })
-  if (error) throw error
-  return {
-    path,
-    url: supabase.storage.from(AUDIO_BUCKET).getPublicUrl(path).data.publicUrl,
-  }
-}
-
-export async function transcribeAudio(path) {
-  const { data, error } = await supabase.functions.invoke("transcribe-audio", {
-    body: { audio_path: path, locale: currentLocale() },
-  })
-  if (error) throw error
+/**
+ * The recording goes to the function in the request and is never stored.
+ * @param {Blob} blob
+ */
+export async function transcribeAudio(blob) {
+  const { data, error } = await supabase.functions.invoke(
+    `transcribe-audio?locale=${currentLocale()}`,
+    { body: blob, headers: { "Content-Type": blob.type || "audio/webm" } },
+  )
+  if (error) throw voiceError(error)
   return data?.transcript ?? null
 }
 
-export async function deleteEventAudio(path) {
-  const { error } = await supabase.storage.from(AUDIO_BUCKET).remove([path])
-  if (error) throw error
+// The daily allowance is the one failure people can do something about.
+function voiceError(error) {
+  return error.context?.status === STATUS_TOO_MANY_REQUESTS
+    ? new Error("errors.voiceLimit")
+    : error
 }
 
 export async function fetchMyFeedDefaults() {
@@ -390,7 +373,7 @@ export async function parseEvent(transcript, { job_type, job_types }) {
   const { data, error } = await supabase.functions.invoke("parse-event", {
     body: { transcript, job_type, job_types },
   })
-  if (error) throw error
+  if (error) throw voiceError(error)
   return data?.fields ?? {}
 }
 
@@ -402,20 +385,10 @@ function prepareEvent(payload) {
 }
 
 async function removeEventAssets(event) {
-  const jobs = (event?.image_urls ?? []).map((url) => {
-    const ref = imageRefFromUrl(url)
-    return ref ? deleteImage(ref.path, ref.bucket) : Promise.resolve()
-  })
-  const audioPath = audioPathFromUrl(event?.audio_url)
-  if (audioPath) jobs.push(deleteEventAudio(audioPath))
-  await Promise.all(jobs)
-}
-
-function audioPathFromUrl(url) {
-  if (typeof url !== "string") return null
-  const marker = `/${AUDIO_BUCKET}/`
-  const index = url.indexOf(marker)
-  if (index === NOT_FOUND) return null
-  const [path] = url.slice(index + marker.length).split(/[?#]/)
-  return path ? decodeURIComponent(path) : null
+  await Promise.all(
+    (event?.image_urls ?? []).map((url) => {
+      const ref = imageRefFromUrl(url)
+      return ref ? deleteImage(ref.path, ref.bucket) : Promise.resolve()
+    }),
+  )
 }

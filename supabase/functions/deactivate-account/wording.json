@@ -1,0 +1,22 @@
+{
+  "en": {
+    "subject": "Your Vaitu account is deactivated",
+    "body": "Your Vaitu account has been deactivated. To come back, just sign in again.\n\nIf you want to erase it for good, use this link within 30 days:\n{{link}}\n\nIf you didn't ask for this, sign in and change your password."
+  },
+  "it": {
+    "subject": "Il tuo account Vaitu è disattivato",
+    "body": "Il tuo account Vaitu è stato disattivato. Per tornare, ti basta accedere di nuovo.\n\nSe vuoi cancellarlo definitivamente, usa questo link entro 30 giorni:\n{{link}}\n\nSe non l'hai chiesto tu, accedi e cambia la password."
+  },
+  "fr": {
+    "subject": "Votre compte Vaitu est désactivé",
+    "body": "Votre compte Vaitu a été désactivé. Pour revenir, il suffit de vous reconnecter.\n\nPour l'effacer définitivement, utilisez ce lien dans les 30 jours :\n{{link}}\n\nSi vous n'êtes pas à l'origine de cette demande, connectez-vous et changez votre mot de passe."
+  },
+  "ja": {
+    "subject": "Vaituアカウントが無効化されました",
+    "body": "Vaituアカウントは無効化されました。戻るには再度サインインするだけです。\n\n完全に消去する場合は、30日以内にこのリンクを使ってください：\n{{link}}\n\n心当たりがない場合は、サインインしてパスワードを変更してください。"
+  },
+  "ar": {
+    "subject": "تم إلغاء تفعيل حسابك في Vaitu",
+    "body": "تم إلغاء تفعيل حسابك في Vaitu. للعودة، ما عليك سوى تسجيل الدخول مرة أخرى.\n\nإذا أردت محوه نهائيًا، فاستخدم هذا الرابط خلال 30 يومًا:\n{{link}}\n\nإذا لم تطلب ذلك، فسجّل الدخول وغيّر كلمة المرور."
+  }
+}

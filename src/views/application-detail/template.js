@@ -10,6 +10,7 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { t, translated } from "../../i18n/index.js"
 import { calendarLinks } from "./helpers.js"
@@ -29,6 +30,7 @@ export const ApplicationDetail = {
     onCancelWithdraw,
     onGoogleCalendar,
     onDownloadIcs,
+    onReportReview,
   }) {
     const { application, status, error } = entity
     const isBusy = status === "saving" || status === "withdrawing"
@@ -69,7 +71,7 @@ export const ApplicationDetail = {
                     ${StatusChip.render({ status: application.applicationStatus })}
                   </div>
                   ${when(application.review, () =>
-                    this.renderReview(application.review),
+                    this.renderReview(application.review, onReportReview),
                   )}
                   ${when(
                     links,
@@ -174,7 +176,7 @@ export const ApplicationDetail = {
     })
   },
 
-  renderReview(review) {
+  renderReview(review, onReportReview) {
     return html`
       <h3 class=${styles.sectionTitle}>${t("reputation.yourReview")}</h3>
       <p>${t(`reputation.outcome.${review.outcome}`)}</p>
@@ -186,6 +188,12 @@ export const ApplicationDetail = {
         }),
       )}
       ${when(review.comment, () => html`<p>${review.comment}</p>`)}
+      ${when(review.comment, () =>
+        SafetyButton.render({
+          onClick: onReportReview,
+          label: t("safety.reportReview"),
+        }),
+      )}
     `
   },
 }

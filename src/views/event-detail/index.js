@@ -74,6 +74,15 @@ export const EventDetail = {
         onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
         dir: api.getEntity("i18n").dir,
         onPhotoSwipeStart: (x) => api.notify(`#${id}:photoSwipeStart`, x),
+        onReport:
+          entity.event && entity.event.senderId !== readUserId()
+            ? () =>
+                api.notify("#safety:safetyOpen", {
+                  type: "event",
+                  id: entity.event.id,
+                  block_user_id: entity.event.senderId,
+                })
+            : undefined,
         onOpenApplications:
           entity.event?.senderId === readUserId()
             ? () =>

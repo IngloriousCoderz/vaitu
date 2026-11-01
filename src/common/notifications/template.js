@@ -28,6 +28,7 @@ const INBOX_ICONS = {
   new_event: fiberNewOutline,
   job_outcome_due: reviewsOutline,
   job_reviewed: reviewsOutline,
+  job_cancelled: eventOutline,
 }
 
 export const Notifications = {
@@ -186,7 +187,7 @@ function feedLine(item) {
   switch (item.type) {
     case "application_received":
       return t("notifications.types.applicationReceived", {
-        name: item.applicant_name ?? "",
+        name: item.applicant_name ?? t("common.deletedUser"),
         title,
       })
     case "application_selected":
@@ -195,7 +196,7 @@ function feedLine(item) {
       return t("notifications.types.applicationRejected", { title })
     case "application_withdrawn":
       return t("notifications.types.applicationWithdrawn", {
-        name: item.applicant_name ?? "",
+        name: item.applicant_name ?? t("common.deletedUser"),
         title,
       })
     case "event_closed":
@@ -206,6 +207,8 @@ function feedLine(item) {
       return t("notifications.types.jobOutcomeDue", { title })
     case "job_reviewed":
       return t("notifications.types.jobReviewed", { title })
+    case "job_cancelled":
+      return t("notifications.types.jobCancelled", { title })
     default:
       return t("notifications.types.eventUpdated", { title })
   }
