@@ -30,7 +30,7 @@ export function editStart(entity, _, api) {
   entity.initialValues = {
     full_name: entity.profile?.full_name ?? "",
     website: entity.profile?.website ?? "",
-    instagram_handle: entity.profile?.instagram_handle ?? "",
+    phone: entity.profile?.phone ?? "",
     country,
     region: regionForCountry(country, entity.profile?.region ?? ""),
   }
@@ -74,7 +74,7 @@ export const load = handleAsync("load", {
     const { data: profile, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, country, region, website, instagram_handle, locale, avatar_url, onboarded_at",
+        "id, full_name, country, region, website, phone, locale, avatar_url, onboarded_at",
       )
       .eq("id", user.id)
       .single()
@@ -148,10 +148,6 @@ export const save = handleAsync("save", {
     } = await supabase.auth.getUser()
     if (!user) throw new Error("errors.notLoggedIn")
     const website = (profile.website ?? "").trim().toLowerCase()
-    const instagram = (profile.instagram_handle ?? "")
-      .trim()
-      .toLowerCase()
-      .replace(/^@+/, "")
     const { error } = await supabase
       .from("profiles")
       .update({
@@ -162,7 +158,7 @@ export const save = handleAsync("save", {
             : /^https?:\/\//i.test(website)
               ? website
               : `https://${website}`,
-        instagram_handle: instagram === "" ? "" : `@${instagram}`,
+        phone: (profile.phone ?? "").trim(),
         country: (profile.country ?? "").trim(),
         region: (profile.region ?? "").trim(),
       })

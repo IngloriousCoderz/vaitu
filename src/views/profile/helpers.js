@@ -14,15 +14,3 @@ export function displayWebsite(value) {
   if (clean === "") return ""
   return /^https?:\/\//i.test(clean) ? clean : `https://${clean}`
 }
-
-export function displayInstagram(value) {
-  const clean = (value ?? "").trim().replace(/^@+/, "")
-  if (clean === "") return ""
-  return `@${clean}`
-}
-
-export function instagramUrl(value) {
-  const clean = (value ?? "").trim().replace(/^@+/, "")
-  if (clean === "") return null
-  return `https://instagram.com/${clean}`
-}

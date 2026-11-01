@@ -50,8 +50,8 @@ export function prefill(entity, profile) {
   if (!getFieldValue(entity, "website", "")) {
     entity.values.website = profile.website ?? ""
   }
-  if (!getFieldValue(entity, "instagram", "")) {
-    entity.values.instagram = profile.instagram_handle ?? ""
+  if (!getFieldValue(entity, "phone", "")) {
+    entity.values.phone = profile.phone ?? ""
   }
 }
 
@@ -64,7 +64,7 @@ export function applicationSubmit(entity, _, api) {
     event_id: entity.event_id,
     full_name: entity.values.full_name,
     website: entity.values.website,
-    instagram: entity.values.instagram,
+    phone: entity.values.phone,
     motivation: entity.values.motivation,
   })
 }
@@ -74,7 +74,7 @@ export const apply = handleAsync("apply", {
     entity.applyStatus = "sending"
     entity.applyError = null
   },
-  async run({ event_id, full_name, website, instagram, motivation }) {
+  async run({ event_id, full_name, website, phone, motivation }) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -84,7 +84,7 @@ export const apply = handleAsync("apply", {
       .update({
         full_name: full_name.trim(),
         website: website.trim().toLowerCase(),
-        instagram_handle: instagram.trim().toLowerCase(),
+        phone: phone.trim(),
       })
       .eq("id", user.id)
     if (profileError) throw profileError

@@ -12,7 +12,7 @@ export async function fetchMyApplications() {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, created_at, events(id, category, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
+      "id, status, created_at, events(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
     )
     .eq("applicant_id", user.id)
     .order("created_at", { ascending: false })
@@ -47,7 +47,7 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, events(id, category, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
+      "id, status, motivation, created_at, events(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
@@ -103,7 +103,7 @@ export async function fetchReceivedDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, event_id, applicant:profiles!applications_applicant_id_fkey(full_name, website, instagram_handle, country)",
+      "id, status, motivation, created_at, event_id, applicant:profiles!applications_applicant_id_fkey(full_name, website, phone, country)",
     )
     .eq("id", application_id)
     .single()

@@ -4,11 +4,13 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { CategoryPicker } from "../../common/category-picker/index.js"
+import { ChipPicker } from "../../common/chip-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
+import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
+import { professions } from "../../data/event-taxonomy.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
@@ -18,7 +20,10 @@ export const Onboarding = {
     return this.renderOnboarding(props, api)
   },
 
-  renderOnboarding({ entity, onField, onToggleInterest, onSave, onSkip }, api) {
+  renderOnboarding(
+    { entity, onField, onToggleProfession, onSave, onSkip },
+    api,
+  ) {
     const saving = entity.status === "saving"
     const countryError = getFieldError(entity, "country")
 
@@ -30,13 +35,21 @@ export const Onboarding = {
           <p class=${styles.subtitle}>${t("onboarding.subtitle")}</p>
 
           <div class=${styles.field}>
-            ${CategoryPicker.render({
-              label: t("fields.interestedCategories"),
-              hint: t("fields.interestedCategoriesHint"),
-              value: getFieldValue(entity, "interested_categories", []),
+            ${ChipPicker.render({
+              label: t("fields.professions"),
+              hint: t("fields.professionsHint"),
+              options: professions,
+              value: getFieldValue(entity, "professions", []),
               isDisabled: saving,
-              onToggle: onToggleInterest,
+              onToggle: onToggleProfession,
             })}
+          </div>
+
+          <div class=${styles.field}>
+            ${api.render("jobTypesOnboarding")}
+            <p class=${styles.hint}>
+              ${t("fields.jobTypesHint")} ${JobTypeRequest.render()}
+            </p>
           </div>
 
           <div
@@ -91,18 +104,16 @@ export const Onboarding = {
           </div>
           <div class=${styles.field}>
             ${Input.render({
-              id: "onboarding-instagram",
-              label: t("fields.instagramOptional"),
-              icon: "@",
-              value: getFieldValue(entity, "instagram", ""),
-              placeholder: t("fields.instagramExample"),
+              id: "onboarding-phone",
+              label: t("fields.phoneOptional"),
+              inputType: "tel",
+              value: getFieldValue(entity, "phone", ""),
+              placeholder: t("fields.phoneExample"),
+              hint: t("fields.phoneHint"),
               isFullWidth: true,
-              onChange: (value) =>
-                onField({ field: "instagram", value: value.toLowerCase() }),
-              autocapitalize: "none",
-              autocorrect: "off",
-              autocomplete: "off",
-              spellcheck: "false",
+              onChange: (value) => onField({ field: "phone", value }),
+              autocomplete: "tel",
+              inputmode: "tel",
             })}
           </div>
 

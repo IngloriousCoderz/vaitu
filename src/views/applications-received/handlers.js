@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { eventJobType } from "../../common/event-card/index.js"
 import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
@@ -87,7 +88,7 @@ export const load = handleAsync("load", {
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select(
-        "id, title, status, max_applicants, application_deadline, location, country, region, event_date, created_at, image_urls, details",
+        "id, category, title, profession, status, max_applicants, application_deadline, location, country, region, event_date, created_at, image_urls, details",
       )
       .eq("id", event_id)
       .single()
@@ -95,7 +96,7 @@ export const load = handleAsync("load", {
     const { data: items, error } = await supabase
       .from("applications")
       .select(
-        "id, status, motivation, created_at, applicant:profiles!applications_applicant_id_fkey(full_name, website, instagram_handle, country)",
+        "id, status, motivation, created_at, applicant:profiles!applications_applicant_id_fkey(full_name, website, phone, country)",
       )
       .eq("event_id", event_id)
       .order("created_at", { ascending: true })
@@ -111,6 +112,7 @@ export const load = handleAsync("load", {
     entity.max_applicants = event.max_applicants
     entity.event_recap = {
       status: event.status,
+      jobType: eventJobType(event),
       location: [event.location, canonicalRegion(event.region), event.country]
         .filter(Boolean)
         .join(", "),

@@ -46,13 +46,14 @@ create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   full_name text,
   website text,
-  instagram_handle text,
+  phone text,
   country text,
   region text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   favorite_regions text[] not null default '{}',
-  interested_categories text[] not null default '{}',
+  interested_job_types text[] not null default '{}',
+  professions text[] not null default '{}',
   locale text,
   avatar_url text,
   is_active boolean not null default true,
@@ -62,8 +63,10 @@ create table public.profiles (
   onboarded_at timestamptz
 );
 
-comment on column public.profiles.interested_categories is
-  'Event categories the feed shows by default. Empty means every category.';
+comment on column public.profiles.interested_job_types is
+  'Job types the feed shows by default. Empty means all of them.';
+comment on column public.profiles.professions is
+  'Trades the feed shows by default. Empty means every trade.';
 comment on column public.profiles.is_active is
   'False after the user deactivates; true again on the next successful login.';
 comment on column public.profiles.last_login_at is
@@ -141,6 +144,8 @@ create table public.events (
   id uuid primary key default gen_random_uuid(),
   sender_id uuid not null references public.profiles (id) on delete cascade,
   category text not null default 'wedding',
+  profession text not null,
+  job_type text generated always as (category || '_' || profession) stored,
   title text not null,
   location text not null,
   country text not null,
@@ -170,6 +175,7 @@ create table public.events (
 create index events_sender_id_idx on public.events (sender_id);
 create index events_browse_idx on public.events (status, region, event_date);
 create index events_category_idx on public.events (category);
+create index events_job_type_idx on public.events (job_type);
 create index events_search_idx on public.events
   using gin (search_text extensions.gin_trgm_ops);
 create index events_details_gin_idx on public.events using gin (details);
@@ -699,7 +705,7 @@ grant select on public.app_config to anon, authenticated;
 grant select on public.events to anon, authenticated;
 
 create or replace function public.open_event_regions(
-  categories text[] default '{}'
+  job_types text[] default '{}'
 )
 returns setof text
 language sql
@@ -711,7 +717,7 @@ as $$
   from public.events e
   where e.status = 'open'
     and (auth.uid() is null or e.sender_id <> auth.uid())
-    and (cardinality(categories) = 0 or e.category = any (categories))
+    and (cardinality(job_types) = 0 or e.job_type = any (job_types))
 $$;
 
 grant execute on function public.open_event_regions(text[])
@@ -723,11 +729,12 @@ grant select on public.profiles to authenticated;
 grant update (
   full_name,
   website,
-  instagram_handle,
+  phone,
   country,
   region,
   favorite_regions,
-  interested_categories,
+  interested_job_types,
+  professions,
   locale,
   avatar_url,
   onboarded_at,

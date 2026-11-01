@@ -3,7 +3,12 @@ import {
   DEFAULT_MAX_APPLICANTS,
   MIN_TEXT_LENGTH,
 } from "../constants/index.js"
-import { festivalGenres, weddingStyles } from "../data/event-taxonomy.js"
+import {
+  festivalGenres,
+  jobTypeById,
+  jobTypeId,
+  weddingStyles,
+} from "../data/event-taxonomy.js"
 
 const MIN_PLACES = 1
 
@@ -15,6 +20,9 @@ const TRANSCRIPT_STATUSES = ["none", "pending", "done", "error"]
 const DETAIL_VALIDATORS = {
   wedding: validateWeddingDetails,
   festival: validateFestivalDetails,
+  apartment: validatePropertyDetails,
+  house: validatePropertyDetails,
+  office: validatePropertyDetails,
 }
 
 // Kept apart from validation on purpose: validation says what is allowed, this
@@ -25,6 +33,7 @@ const DETAIL_VALIDATORS = {
 export function normalizeEvent(payload = {}) {
   return {
     category: payload.category ?? DEFAULT_EVENT_CATEGORY,
+    profession: payload.profession,
     title: payload.title?.trim(),
     location: payload.location?.trim(),
     country: payload.country?.trim(),
@@ -56,6 +65,12 @@ export function validateEvent(values = {}) {
     "category",
     DETAIL_VALIDATORS[category] ? undefined : "validation.pickCategory",
   )
+  if (
+    DETAIL_VALIDATORS[category] &&
+    !jobTypeById(jobTypeId(category, values.profession))
+  ) {
+    fail(errors, "profession", "validation.pickJobType")
+  }
   fail(errors, "title", requiredText(values.title, "validation.addTitle"))
   fail(
     errors,
@@ -162,6 +177,10 @@ function validateFestivalDetails(details) {
     fail(errors, "genre", "validation.pickGenre")
   }
   return errors
+}
+
+function validatePropertyDetails() {
+  return {}
 }
 
 function isWebUrl(value) {

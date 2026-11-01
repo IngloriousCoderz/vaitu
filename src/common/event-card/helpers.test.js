@@ -5,6 +5,7 @@ import { ready } from "../../i18n/index.js"
 import {
   deadlineBadge,
   deadlineTone,
+  eventMonogram,
   eventSubtitle,
   monogram,
 } from "./helpers.js"
@@ -41,6 +42,17 @@ describe("monogram", () => {
     expect(monogram("Ada & Grace")).toBe("A&G")
     expect(monogram("Ada Grace Hopper")).toBe("A&H")
     expect(monogram("Ada")).toBe("A")
+  })
+})
+
+describe("eventMonogram", () => {
+  it("pairs a couple's initials, and takes one letter from any other title", () => {
+    expect(eventMonogram({ category: "wedding", title: "Ada & Grace" })).toBe(
+      "A&G",
+    )
+    expect(
+      eventMonogram({ category: "apartment", title: "deep clean, bilocale" }),
+    ).toBe("D")
   })
 })
 

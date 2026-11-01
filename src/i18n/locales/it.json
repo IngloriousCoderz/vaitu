@@ -78,11 +78,34 @@
       "indie": "Indie",
       "jazz": "Jazz",
       "electronic": "Elettronica"
+    },
+    "profession": {
+      "photographer": "Fotografia",
+      "videographer": "Video",
+      "musician": "Musica",
+      "dj": "DJ",
+      "sound_technician": "Audio",
+      "cleaner": "Pulizie",
+      "electrician": "Impianti elettrici"
+    },
+    "jobType": {
+      "wedding_photographer": "Fotografia di matrimonio",
+      "festival_photographer": "Fotografia di festival",
+      "office_photographer": "Fotografia di uffici",
+      "wedding_videographer": "Video di matrimonio",
+      "festival_videographer": "Video di festival",
+      "wedding_musician": "Musica per matrimoni",
+      "festival_musician": "Musica per festival",
+      "wedding_dj": "DJ per matrimoni",
+      "festival_dj": "DJ per festival",
+      "festival_sound_technician": "Audio per festival",
+      "apartment_cleaner": "Pulizia appartamenti",
+      "house_cleaner": "Pulizia case",
+      "office_cleaner": "Pulizia uffici",
+      "apartment_electrician": "Impianti elettrici in appartamento",
+      "house_electrician": "Impianti elettrici in casa",
+      "office_electrician": "Impianti elettrici in ufficio"
     }
-  },
-  "category": {
-    "wedding": "Matrimoni",
-    "festival": "Festival"
   },
   "filters": {
     "weddingStyle": "Stile del matrimonio",
@@ -102,19 +125,27 @@
     "region": "Regione",
     "regionOptional": "Regione (facoltativo)",
     "regionExample": "Toscana",
-    "websiteOptional": "Sito web (facoltativo)",
+    "websiteOptional": "Sito web o pagina social (facoltativo)",
     "websiteExample": "tuo-sito.it",
-    "instagramOptional": "Instagram (facoltativo)",
-    "instagramExample": "nomeutente",
-    "website": "Sito web",
-    "instagram": "Instagram",
+    "website": "Sito web o pagina social",
     "title": "Titolo",
     "location": "Luogo",
-    "eventDate": "Data dell'evento",
+    "eventDate": "Data",
     "deadline": "Scadenza candidature",
     "maxShortlist": "Posti in shortlist",
-    "interestedCategories": "Eventi che ti interessano",
-    "interestedCategoriesHint": "Il tuo feed mostra questi di default. Non sceglierne nessuno per vedere tutti gli eventi."
+    "professions": "Di cosa ti occupi",
+    "professionsHint": "Il tuo feed mostra di default i lavori di questi settori. Non sceglierne nessuno per vederli tutti.",
+    "jobTitle": "Cosa c'è da fare",
+    "phone": "Telefono",
+    "phoneOptional": "Telefono (facoltativo)",
+    "phoneExample": "+39 333 123 4567",
+    "phoneHint": "Lo vede solo chi ha pubblicato i lavori a cui ti candidi.",
+    "jobType": "Tipo di lavoro",
+    "jobTypes": "Tipi di lavoro che ti interessano",
+    "jobTypesHint": "Il tuo feed mostra questi di default. Lascia vuoto per vederli tutti.",
+    "jobTypeRequest": "Manca un tipo di lavoro? Chiedici di aggiungerlo",
+    "jobTypeRequestSubject": "Nuovo tipo di lavoro per Vaitu",
+    "jobTypeRequestBody": "Tipo di lavoro da aggiungere:\n\nDi cosa mi occupo:\n"
   },
   "periods": {
     "all": "Tutte le date",
@@ -136,7 +167,8 @@
     "loading": "Caricamento…",
     "noOptions": "Nessuna opzione",
     "noCountries": "Nessun paese trovato",
-    "noRegions": "Nessuna regione trovata"
+    "noRegions": "Nessuna regione trovata",
+    "allJobTypes": "Tutti i tipi di lavoro"
   },
   "pwa": {
     "updateReady": "Nuova versione disponibile",
@@ -175,7 +207,8 @@
     "futureDeadline": "Scegli una scadenza futura",
     "passwordLength_one": "La password deve avere almeno {{count}} carattere",
     "passwordLength_other": "La password deve avere almeno {{count}} caratteri",
-    "passwordLength_many": "La password deve avere almeno {{count}} caratteri"
+    "passwordLength_many": "La password deve avere almeno {{count}} caratteri",
+    "pickJobType": "Scegli un tipo di lavoro"
   },
   "errors": {
     "notLoggedIn": "Non hai effettuato l'accesso",
@@ -253,7 +286,7 @@
     "period": "Periodo",
     "clearAll": "Azzera tutto",
     "filters": "Filtri",
-    "type": "Tipo di evento",
+    "type": "Tipo di lavoro",
     "removeFilter": "Rimuovi filtro: {{label}}",
     "filtersOn_one": "Filtri, {{count}} attivo",
     "filtersOn_other": "Filtri, {{count}} attivi",
@@ -262,7 +295,8 @@
     "orderBy": "Ordina per",
     "results_one": "{{count}} evento",
     "results_other": "{{count}} eventi",
-    "results_many": "{{count}} eventi"
+    "results_many": "{{count}} eventi",
+    "profession": "Settore"
   },
   "myEvents": {
     "title": "I miei eventi",
@@ -296,7 +330,7 @@
     "names": "Nomi",
     "style": "Stile",
     "location": "Luogo",
-    "eventDate": "Data dell'evento",
+    "eventDate": "Data",
     "deadline": "Scadenza candidature",
     "shortlist": "Shortlist",
     "created": "Creato",
@@ -337,7 +371,9 @@
     "cropApply": "Ritaglia e usa",
     "gallery": "Altre foto",
     "galleryHint": "Mini galleria dentro l'evento. Fino a {{count}}.",
-    "addGalleryPhotos": "Aggiungi foto"
+    "addGalleryPhotos": "Aggiungi foto",
+    "jobTitleExample": "Es. Pulizia a fondo, bilocale",
+    "propertyLocationExample": "Quartiere o paese, non la via"
   },
   "ranks": {
     "title": "Livelli",
@@ -409,7 +445,7 @@
       },
       "audience": {
         "question": "A chi è rivolta?",
-        "answer": "A chi lavora agli eventi. È nata per i fotografi di matrimonio e si sta allargando ad altri mestieri ed eventi, come i tecnici del suono ai festival."
+        "answer": "Professionisti che devono passare un lavoro che non possono accettare. È nato per i fotografi di matrimoni e si sta allargando ad altri settori, come i tecnici del suono ai festival o chi fa pulizie in appartamenti, case e uffici."
       },
       "publish": {
         "question": "Come pubblico un evento?",
@@ -417,7 +453,7 @@
       },
       "apply": {
         "question": "Come mi candido?",
-        "answer": "Apri un evento e spiega all'organizzatore perché sei la persona giusta. Sul tuo profilo servono nome, sito web e Instagram, e puoi candidarti fino alla scadenza."
+        "answer": "Apri un evento e spiega all'organizzatore perché sei la persona giusta. Sul tuo profilo servono il nome e un sito web, una pagina social o un numero di telefono, e puoi candidarti fino alla scadenza."
       },
       "choose": {
         "question": "Come scelgo un candidato?",
@@ -425,7 +461,7 @@
       },
       "contact": {
         "question": "Come ci mettiamo in contatto?",
-        "answer": "L'organizzatore vede il sito web e l'Instagram di ogni candidato e contatta lì la persona scelta. Vaitu non ha una chat."
+        "answer": "L'organizzatore vede il sito web o la pagina social e il numero di telefono di ogni candidato, e contatta lì la persona scelta. Vaitu non ha una chat."
       },
       "payments": {
         "question": "Vaitu gestisce pagamenti o contratti?",
@@ -477,7 +513,7 @@
     "feedback": "Riceverai una risposta entro pochi giorni.",
     "backToEvents": "Torna agli eventi",
     "applyTitle": "Candidati per questo evento",
-    "completeFirst": "Completa il tuo profilo (nome, sito web e Instagram) prima di candidarti.",
+    "completeFirst": "Completa il tuo profilo (nome, più un sito web, una pagina social o un numero di telefono) prima di candidarti.",
     "completeProfile": "Completa il profilo",
     "forwarded_one": "Solo {{count}} nome sarà inoltrato all'organizzatore.",
     "forwarded_other": "Solo {{count}} nomi saranno inoltrati all'organizzatore.",

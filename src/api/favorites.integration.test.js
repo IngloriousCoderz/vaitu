@@ -33,20 +33,23 @@ test(
     await signIn({ email, password: SEEKER.password })
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: [],
-      interested_categories: [],
+      interested_job_types: [],
+      professions: [],
     })
 
     const { error } = await supabase
       .from("profiles")
       .update({
         favorite_regions: ["Tuscany", "Provence"],
-        interested_categories: ["wedding"],
+        interested_job_types: ["wedding_photographer"],
+        professions: ["cleaner"],
       })
       .eq("id", userId)
     expect(error).toBeNull()
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: ["Tuscany", "Provence"],
-      interested_categories: ["wedding"],
+      interested_job_types: ["wedding_photographer"],
+      professions: ["cleaner"],
     })
   },
   TEST_TIMEOUT_MS,
@@ -58,7 +61,8 @@ test(
     await signOut()
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: [],
-      interested_categories: [],
+      interested_job_types: [],
+      professions: [],
     })
   },
   TEST_TIMEOUT_MS,

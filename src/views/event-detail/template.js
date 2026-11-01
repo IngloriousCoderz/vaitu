@@ -13,9 +13,10 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import {
   deadlineBadge,
   deadlineTone,
+  eventJobType,
+  eventMonogram,
   eventSubtitle,
   eventTag,
-  monogram,
   thumbGradient,
 } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
@@ -113,7 +114,16 @@ export const EventDetail = {
                       ],
                     })}
                     <p class=${styles.meta}>${eventSubtitle(event)}</p>
-                    ${Chip.render({ children: eventTag(event) })}
+                    ${Flex.render({
+                      gap: "sm",
+                      wrap: "wrap",
+                      children: [
+                        Chip.render({ children: eventJobType(event) }),
+                        when(event.filterValue, () =>
+                          Chip.render({ children: eventTag(event) }),
+                        ),
+                      ],
+                    })}
                     ${this.renderGallery(event, onPhotoOpen)}
                     ${this.renderFacts(event)}
                     <p class=${styles.sender}>
@@ -192,7 +202,7 @@ export const EventDetail = {
           </button>`,
         () =>
           html`<span class=${styles.bannerMonogram}
-            >${monogram(event.title)}</span
+            >${eventMonogram(event)}</span
           >`,
       ),
     })
@@ -307,26 +317,36 @@ export const EventDetail = {
             isReadOnly: true,
           })}
         </div>
-        <div class=${styles.field}>
-          ${Input.render({
-            id: "apply-website",
-            label: t("fields.website"),
-            inputType: "url",
-            value: getFieldValue(entity, "website", ""),
-            isFullWidth: true,
-            isReadOnly: true,
-          })}
-        </div>
-        <div class=${styles.field}>
-          ${Input.render({
-            id: "apply-instagram",
-            label: t("fields.instagram"),
-            inputType: "text",
-            value: getFieldValue(entity, "instagram", ""),
-            isFullWidth: true,
-            isReadOnly: true,
-          })}
-        </div>
+        ${when(
+          getFieldValue(entity, "website", ""),
+          () => html`
+            <div class=${styles.field}>
+              ${Input.render({
+                id: "apply-website",
+                label: t("fields.website"),
+                inputType: "url",
+                value: getFieldValue(entity, "website", ""),
+                isFullWidth: true,
+                isReadOnly: true,
+              })}
+            </div>
+          `,
+        )}
+        ${when(
+          getFieldValue(entity, "phone", ""),
+          () => html`
+            <div class=${styles.field}>
+              ${Input.render({
+                id: "apply-phone",
+                label: t("fields.phone"),
+                inputType: "tel",
+                value: getFieldValue(entity, "phone", ""),
+                isFullWidth: true,
+                isReadOnly: true,
+              })}
+            </div>
+          `,
+        )}
         <p class=${styles.disclaimer}>
           ${t("detail.forwarded", { count: entity.event.max_applicants })}
         </p>

@@ -17,6 +17,17 @@
   --vaccent: #6d28d9;
 }
 
+[data-category="apartment"],
+[data-category="house"],
+[data-category="office"] {
+  --vbg: #e6efec;
+  --vsurface: #f8fbfa;
+  --vink: #17302c;
+  --vmuted: #6e807c;
+  --vline: #cfdcd8;
+  --vaccent: #0f766e;
+}
+
 .iw-theme-vaitu {
   font-family: var(--iw-font-family-sans);
 

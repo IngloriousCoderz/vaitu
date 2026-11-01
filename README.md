@@ -1,6 +1,6 @@
 # Vaitu
 
-**Vaitu** is an app for handing off jobs you can't take. Say you're a wedding photographer and you can't attend a wedding you've been booked for: you publish the event on Vaitu, other photographers apply, and you pick the best candidate and pass the job on to them.
+**Vaitu** is an app for handing off jobs you can't take. Say you're a wedding photographer and you can't attend a wedding you've been booked for, or a cleaner who can't make Thursday's apartment: you publish the job on Vaitu, colleagues in your trade apply, and you pick the best candidate and pass the job on to them.
 
 The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pronounce and sounds good in other languages too.
 
@@ -13,7 +13,7 @@ The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pro
 - **PWA and native apps**: runs in the browser as a PWA and as a hybrid Android/iOS app via Capacitor.
 - **Notifications**: a bell in the app, and pushes to the browser and the phone even when the app is closed, for applications, decisions and changes to events. See [Notifications](docs/notifications.md).
 
-Vaitu started with wedding photographers in mind, and is expanding to other kinds of professionals and events, such as sound technicians at a festival.
+Vaitu started with wedding photographers in mind, and is expanding to other trades and kinds of job, such as sound technicians at a festival or cleaners looking after apartments, houses and offices.
 
 ## Tech stack
 
@@ -42,7 +42,7 @@ You need [pnpm](https://pnpm.io/), Docker Desktop (running) and the Supabase CLI
 
    ```sh
    supabase start            # first run pulls images, takes a few minutes
-   supabase db reset --yes   # applies migrations + seed (sender + 8 events)
+   supabase db reset --yes   # applies migrations + seed (sender + 11 events)
    ```
 
 3. **Configure the frontend env**: copy the API URL and publishable key from `supabase status` into `.env.local` (not committed):

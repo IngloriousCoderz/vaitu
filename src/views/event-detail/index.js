@@ -26,7 +26,7 @@ export const EventDetail = {
     entity.initialValues = {
       full_name: "",
       website: "",
-      instagram: "",
+      phone: "",
       motivation: "",
     }
     Form.create(entity)
@@ -112,7 +112,7 @@ function open(entity, event_id, api) {
   const profile = api.getEntity("profile").profile
   entity.values.full_name = profile?.full_name ?? ""
   entity.values.website = profile?.website ?? ""
-  entity.values.instagram = profile?.instagram_handle ?? ""
+  entity.values.phone = profile?.phone ?? ""
   api.notify(`#${entity.id}:load`, event_id)
 }
 

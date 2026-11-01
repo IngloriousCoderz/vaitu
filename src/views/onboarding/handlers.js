@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
 import { regionAfterCountryChange } from "../../data/regions/resolve.js"
 
 export function fieldSet(entity, { field, value }, api) {
@@ -20,14 +21,23 @@ export function fieldSet(entity, { field, value }, api) {
   entity.error = null
 }
 
-export function interestToggle(entity, categoryId) {
-  const current = getFieldValue(entity, "interested_categories", [])
-  Form.fieldChange(entity, {
-    path: "interested_categories",
-    value: current.includes(categoryId)
-      ? current.filter((id) => id !== categoryId)
-      : [...current, categoryId],
-  })
+export function jobTypesSet(entity, { value }) {
+  Form.fieldChange(entity, { path: "interested_job_types", value })
+}
+
+export function professionToggle(entity, professionId, api) {
+  const current = getFieldValue(entity, "professions", [])
+  const professions = current.includes(professionId)
+    ? current.filter((id) => id !== professionId)
+    : [...current, professionId]
+  const interests = interestsFor(
+    getFieldValue(entity, "interested_job_types", []),
+    professions,
+  )
+  Form.fieldChange(entity, { path: "professions", value: professions })
+  Form.fieldChange(entity, { path: "interested_job_types", value: interests })
+  api.notify("#jobTypesOnboarding:optionsSet", jobTypesFor(professions))
+  api.notify("#jobTypesOnboarding:sync", interests)
 }
 
 export const skip = handleAsync("skip", {
@@ -64,7 +74,8 @@ export function saveSubmit(entity, _, api) {
   // Copied: the save runs after this draft is revoked.
   api.notify(`#${entity.id}:save`, {
     ...entity.values,
-    interested_categories: [...entity.values.interested_categories],
+    interested_job_types: [...entity.values.interested_job_types],
+    professions: [...entity.values.professions],
   })
 }
 
@@ -73,13 +84,19 @@ export const save = handleAsync("save", {
     entity.status = "saving"
     entity.error = null
   },
-  async run({ country, region, website, instagram, interested_categories }) {
+  async run({
+    country,
+    region,
+    website,
+    phone,
+    interested_job_types,
+    professions,
+  }) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
     if (!user) throw new Error("Not logged in")
     const site = (website ?? "").trim().toLowerCase()
-    const handle = (instagram ?? "").trim().toLowerCase().replace(/^@+/, "")
     const { error } = await supabase
       .from("profiles")
       .update({
@@ -91,8 +108,9 @@ export const save = handleAsync("save", {
             : /^https?:\/\//i.test(site)
               ? site
               : `https://${site}`,
-        instagram_handle: handle === "" ? "" : `@${handle}`,
-        interested_categories,
+        phone: (phone ?? "").trim(),
+        interested_job_types,
+        professions,
         onboarded_at: new Date().toISOString(),
       })
       .eq("id", user.id)

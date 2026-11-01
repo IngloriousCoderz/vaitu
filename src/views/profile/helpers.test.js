@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  displayInstagram,
-  displayWebsite,
-  initials,
-  instagramUrl,
-} from "./helpers.js"
+import { displayWebsite, initials } from "./helpers.js"
 
 describe("initials", () => {
   it("uses the first and last words, and a question mark when the name is empty", () => {
@@ -22,14 +17,5 @@ describe("displayWebsite", () => {
     expect(displayWebsite("  example.com ")).toBe("https://example.com")
     expect(displayWebsite("HTTP://example.com")).toBe("HTTP://example.com")
     expect(displayWebsite("")).toBe("")
-  })
-})
-
-describe("instagram", () => {
-  it("shows a single @ and builds the profile url", () => {
-    expect(displayInstagram("  @@ada ")).toBe("@ada")
-    expect(displayInstagram("")).toBe("")
-    expect(instagramUrl("@ada")).toBe("https://instagram.com/ada")
-    expect(instagramUrl("")).toBe(null)
   })
 })

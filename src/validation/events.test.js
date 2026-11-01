@@ -5,6 +5,7 @@ import { firstError, normalizeEvent, validateEvent } from "./events.js"
 
 const validWedding = {
   category: "wedding",
+  profession: "photographer",
   title: "Ada & Grace",
   location: "Villa",
   country: "Italy",
@@ -18,6 +19,14 @@ const validFestival = {
   ...validWedding,
   category: "festival",
   details: { headliner: "Nina" },
+}
+
+const validApartment = {
+  ...validWedding,
+  category: "apartment",
+  profession: "cleaner",
+  title: "Deep clean",
+  details: {},
 }
 
 describe("normalizeEvent", () => {
@@ -110,6 +119,26 @@ describe("normalizeEvent", () => {
 describe("validateEvent", () => {
   it("accepts a complete wedding", () => {
     expect(validateEvent(validWedding)).toEqual({})
+  })
+
+  it("accepts a complete apartment job", () => {
+    expect(validateEvent(validApartment)).toEqual({})
+  })
+
+  it("needs a trade that works on this kind of job", () => {
+    expect(
+      validateEvent({ ...validApartment, profession: "photographer" })
+        .profession,
+    ).toBe("validation.pickJobType")
+  })
+
+  it("needs a known trade", () => {
+    expect(validateEvent({ ...validWedding, profession: "" }).profession).toBe(
+      "validation.pickJobType",
+    )
+    expect(
+      validateEvent({ ...validWedding, profession: "wizard" }).profession,
+    ).toBe("validation.pickJobType")
   })
 
   it("accepts a complete festival", () => {

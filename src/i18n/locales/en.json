@@ -76,11 +76,34 @@
       "indie": "Indie",
       "jazz": "Jazz",
       "electronic": "Electronic"
+    },
+    "profession": {
+      "photographer": "Photography",
+      "videographer": "Video",
+      "musician": "Music",
+      "dj": "DJ",
+      "sound_technician": "Sound",
+      "cleaner": "Cleaning",
+      "electrician": "Electrical work"
+    },
+    "jobType": {
+      "wedding_photographer": "Wedding photography",
+      "festival_photographer": "Festival photography",
+      "office_photographer": "Office photography",
+      "wedding_videographer": "Wedding video",
+      "festival_videographer": "Festival video",
+      "wedding_musician": "Wedding music",
+      "festival_musician": "Festival music",
+      "wedding_dj": "Wedding DJ",
+      "festival_dj": "Festival DJ",
+      "festival_sound_technician": "Festival sound",
+      "apartment_cleaner": "Apartment cleaning",
+      "house_cleaner": "House cleaning",
+      "office_cleaner": "Office cleaning",
+      "apartment_electrician": "Apartment electrical work",
+      "house_electrician": "House electrical work",
+      "office_electrician": "Office electrical work"
     }
-  },
-  "category": {
-    "wedding": "Weddings",
-    "festival": "Festivals"
   },
   "filters": {
     "weddingStyle": "Wedding style",
@@ -100,19 +123,27 @@
     "region": "Region",
     "regionOptional": "Region (optional)",
     "regionExample": "Tuscany",
-    "websiteOptional": "Website (optional)",
+    "websiteOptional": "Website or social page (optional)",
     "websiteExample": "your-site.com",
-    "instagramOptional": "Instagram (optional)",
-    "instagramExample": "handle",
-    "website": "Website",
-    "instagram": "Instagram",
+    "website": "Website or social page",
     "title": "Title",
     "location": "Location",
-    "eventDate": "Event date",
+    "eventDate": "Date",
     "deadline": "Application deadline",
     "maxShortlist": "Max shortlist",
-    "interestedCategories": "Events you are interested in",
-    "interestedCategoriesHint": "Your feed shows these by default. Pick none to see every event."
+    "professions": "What you do",
+    "professionsHint": "Your feed shows jobs in these trades by default. Pick none to see all of them.",
+    "jobTitle": "What needs doing",
+    "phone": "Phone",
+    "phoneOptional": "Phone (optional)",
+    "phoneExample": "+39 333 123 4567",
+    "phoneHint": "Only shown to the people whose jobs you apply for.",
+    "jobType": "Job type",
+    "jobTypes": "Job types you're interested in",
+    "jobTypesHint": "Your feed shows these by default. Leave it empty to see all of them.",
+    "jobTypeRequest": "Job type missing? Ask us to add it",
+    "jobTypeRequestSubject": "New job type for Vaitu",
+    "jobTypeRequestBody": "Job type I'd like added:\n\nMy trade:\n"
   },
   "periods": {
     "all": "All dates",
@@ -134,7 +165,8 @@
     "loading": "Loading…",
     "noOptions": "No options",
     "noCountries": "No countries found",
-    "noRegions": "No regions found"
+    "noRegions": "No regions found",
+    "allJobTypes": "All job types"
   },
   "pwa": {
     "updateReady": "New version available",
@@ -172,7 +204,8 @@
     "passwordsMismatch": "Passwords do not match",
     "futureDeadline": "Pick a future deadline",
     "passwordLength_one": "Password must be at least {{count}} character",
-    "passwordLength_other": "Password must be at least {{count}} characters"
+    "passwordLength_other": "Password must be at least {{count}} characters",
+    "pickJobType": "Pick a job type"
   },
   "errors": {
     "notLoggedIn": "Not logged in",
@@ -249,14 +282,15 @@
     "period": "Period",
     "clearAll": "Clear all",
     "filters": "Filters",
-    "type": "Event type",
+    "type": "Job type",
     "removeFilter": "Remove filter: {{label}}",
     "filtersOn_one": "Filters, {{count}} on",
     "filtersOn_other": "Filters, {{count}} on",
     "noneMatch": "No events match your search yet.",
     "orderBy": "Order by",
     "results_one": "{{count}} event",
-    "results_other": "{{count}} events"
+    "results_other": "{{count}} events",
+    "profession": "Trade"
   },
   "myEvents": {
     "title": "My events",
@@ -289,7 +323,7 @@
     "names": "Names",
     "style": "Style",
     "location": "Location",
-    "eventDate": "Event date",
+    "eventDate": "Date",
     "deadline": "Application deadline",
     "shortlist": "Shortlist",
     "created": "Created",
@@ -330,7 +364,9 @@
     "cropApply": "Crop and use",
     "gallery": "More photos",
     "galleryHint": "Mini gallery inside the event. Up to {{count}}.",
-    "addGalleryPhotos": "Add photos"
+    "addGalleryPhotos": "Add photos",
+    "jobTitleExample": "E.g. Deep clean, two-bedroom apartment",
+    "propertyLocationExample": "Neighborhood or town, not the street address"
   },
   "ranks": {
     "title": "Ranks",
@@ -401,7 +437,7 @@
       },
       "audience": {
         "question": "Who is it for?",
-        "answer": "Professionals who work at events. It started with wedding photographers and is expanding to other jobs and events, such as sound technicians at a festival."
+        "answer": "Professionals who need to pass on a job they can't take. It started with wedding photographers and is expanding to other trades, such as sound technicians at a festival or cleaners looking after apartments, houses and offices."
       },
       "publish": {
         "question": "How do I publish an event?",
@@ -409,7 +445,7 @@
       },
       "apply": {
         "question": "How do I apply?",
-        "answer": "Open an event and tell the organizer why you're the right person for it. You need a name, a website and an Instagram account on your profile, and you can apply until the deadline."
+        "answer": "Open an event and tell the organizer why you're the right person for it. You need a name on your profile, plus a website, social page or phone number, and you can apply until the deadline."
       },
       "choose": {
         "question": "How do I choose a candidate?",
@@ -417,7 +453,7 @@
       },
       "contact": {
         "question": "How do we get in touch?",
-        "answer": "The organizer sees each applicant's website and Instagram, and contacts the winner there. Vaitu has no chat."
+        "answer": "The organizer sees each applicant's website or social page and phone number, and contacts the winner there. Vaitu has no chat."
       },
       "payments": {
         "question": "Does Vaitu handle payments or contracts?",
@@ -466,7 +502,7 @@
     "feedback": "You will receive feedback within a few days.",
     "backToEvents": "Back to events",
     "applyTitle": "Apply for this event",
-    "completeFirst": "Complete your profile (name, website and Instagram) before applying.",
+    "completeFirst": "Complete your profile (your name, plus a website, social page or phone number) before applying.",
     "completeProfile": "Complete profile",
     "forwarded_one": "Only {{count}} name will be forwarded to the organizer.",
     "forwarded_other": "Only {{count}} names will be forwarded to the organizer.",

@@ -8,9 +8,10 @@ import { sameRegion } from "../../data/regions/resolve.js"
 import { filterSections } from "./categories.js"
 import {
   DEFAULT_SORT,
+  jobTypesInScope,
   periods,
+  professionsInScope,
   regionInEffect,
-  typesInScope,
 } from "./helpers.js"
 
 const SORT_ORDERS = {
@@ -30,21 +31,22 @@ const SORT_ORDERS = {
  * `regions` are the regions on open events as stored, so a region chip can
  * ask for every spelling of its region.
  * @returns {{
- *   categories: string[],
+ *   jobTypes: string[],
  *   details: { key: string, category: string, values: string[] }[],
  *   regions: string[] | null,
  *   dateFrom: string | null,
  *   dateTo: string | null,
  *   search: string,
  *   order: [string, boolean][],
- * }} Empty categories mean every category, null regions every region, and an
- *   empty list of regions none.
+ * }} Empty job types mean all of them, null regions every region, and an empty list of regions none.
  */
 export function feedQuery({
   query,
   types,
   details,
   interests,
+  activeProfessions,
+  myProfessions,
   region,
   period,
   favoriteRegions,
@@ -54,7 +56,12 @@ export function feedQuery({
 }) {
   const days = periods.find((item) => item.id === period)?.days ?? null
   return {
-    categories: typesInScope(types, details, interests),
+    jobTypes: jobTypesInScope(
+      types,
+      details,
+      interests,
+      professionsInScope(activeProfessions, myProfessions),
+    ),
     details: filterSections([])
       .map((section) => ({
         key: section.id,

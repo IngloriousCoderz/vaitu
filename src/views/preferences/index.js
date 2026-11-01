@@ -14,7 +14,8 @@ export const Preferences = {
   ...renderers,
 
   create(entity) {
-    entity.interested_categories ??= []
+    entity.interested_job_types ??= []
+    entity.professions ??= []
     entity.favorite_regions ??= []
     entity.is_email_opted_out ??= false
     entity.favoriteInput ??= ""
@@ -34,8 +35,8 @@ export const Preferences = {
     return this.renderPreferences(
       {
         entity,
-        onToggleInterest: (categoryId) =>
-          api.notify(`#${id}:interestToggle`, categoryId),
+        onToggleProfession: (professionId) =>
+          api.notify(`#${id}:professionToggle`, professionId),
         onFavoriteInput: (value) =>
           api.notify(`#${id}:favoriteInputSet`, value),
         onFavoriteAdd: (value) => api.notify(`#${id}:favoriteAdd`, value),

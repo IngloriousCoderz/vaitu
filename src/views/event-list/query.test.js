@@ -7,6 +7,8 @@ const defaults = {
   types: [],
   details: [],
   interests: [],
+  activeProfessions: [],
+  myProfessions: [],
   region: null,
   period: "all",
   favoriteRegions: [],
@@ -22,7 +24,7 @@ function query(fields = {}) {
 describe("feedQuery", () => {
   it("asks for everything, newest first, when nothing is picked", () => {
     expect(query()).toEqual({
-      categories: [],
+      jobTypes: [],
       details: [],
       regions: null,
       dateFrom: null,
@@ -32,10 +34,35 @@ describe("feedQuery", () => {
     })
   })
 
-  it("scopes the categories to the picked ones, a picked genre's, or the interests", () => {
-    expect(query({ interests: ["wedding"] }).categories).toEqual(["wedding"])
-    expect(query({ types: ["festival"] }).categories).toEqual(["festival"])
-    expect(query({ details: ["techno"] }).categories).toEqual(["festival"])
+  it("scopes the job types to the picked ones, a genre's, or the interests", () => {
+    expect(query({ interests: ["wedding_dj"] }).jobTypes).toEqual([
+      "wedding_dj",
+    ])
+    expect(query({ types: ["festival_dj"] }).jobTypes).toEqual(["festival_dj"])
+    expect(query({ details: ["techno"] }).jobTypes).toContain("festival_dj")
+  })
+
+  it("scopes the job types to the picked trades, or else your own", () => {
+    expect(query({ myProfessions: ["sound_technician"] }).jobTypes).toEqual([
+      "festival_sound_technician",
+    ])
+    expect(
+      query({
+        myProfessions: ["cleaner"],
+        activeProfessions: ["sound_technician"],
+      }).jobTypes,
+    ).toEqual(["festival_sound_technician"])
+  })
+
+  it("ignores the interests the trades in scope don't work on", () => {
+    const picked = {
+      interests: ["apartment_cleaner"],
+      myProfessions: ["cleaner"],
+    }
+    expect(query(picked).jobTypes).toEqual(["apartment_cleaner"])
+    expect(
+      query({ ...picked, activeProfessions: ["sound_technician"] }).jobTypes,
+    ).toEqual(["festival_sound_technician"])
   })
 
   it("groups the picked styles and genres by the detail they filter", () => {

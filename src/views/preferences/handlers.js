@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { readUserId } from "../../api/session.js"
+import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
 import {
   canonicalRegion,
   favoriteRegionOptions,
@@ -9,14 +10,23 @@ import {
 } from "../../data/regions/resolve.js"
 
 // The new list itself: the save runs after this draft is revoked.
-export function interestToggle(entity, categoryId, api) {
-  const interested_categories = entity.interested_categories.includes(
-    categoryId,
+export function jobTypesSet(entity, { value }, api) {
+  entity.interested_job_types = value
+  api.notify(`#${entity.id}:save`, { interested_job_types: value })
+}
+
+export function professionToggle(entity, professionId, api) {
+  const professions = entity.professions.includes(professionId)
+    ? entity.professions.filter((id) => id !== professionId)
+    : [...entity.professions, professionId]
+  const interested_job_types = interestsFor(
+    entity.interested_job_types,
+    professions,
   )
-    ? entity.interested_categories.filter((id) => id !== categoryId)
-    : [...entity.interested_categories, categoryId]
-  entity.interested_categories = interested_categories
-  api.notify(`#${entity.id}:save`, { interested_categories })
+  entity.professions = professions
+  entity.interested_job_types = interested_job_types
+  jobTypesSync(entity, professions, interested_job_types, api)
+  api.notify(`#${entity.id}:save`, { professions, interested_job_types })
 }
 
 export function favoriteInputSet(entity, value) {
@@ -77,7 +87,14 @@ export const load = handleAsync("load", {
   },
   success(entity, preferences, api) {
     entity.status = "ready"
-    entity.interested_categories = preferences.interested_categories ?? []
+    entity.interested_job_types = preferences.interested_job_types ?? []
+    entity.professions = preferences.professions ?? []
+    jobTypesSync(
+      entity,
+      [...entity.professions],
+      [...entity.interested_job_types],
+      api,
+    )
     entity.favorite_regions = preferences.favorite_regions ?? []
     entity.is_email_opted_out = preferences.is_email_opted_out ?? false
     favoriteOptionsSync(entity, null, api)
@@ -96,7 +113,11 @@ export const save = handleAsync("save", {
     return savePreferences(fields)
   },
   success(entity, fields, api) {
-    if (fields.interested_categories || fields.favorite_regions) {
+    if (
+      fields.interested_job_types ||
+      fields.professions ||
+      fields.favorite_regions
+    ) {
       api.notify("#eventList:load")
     }
   },
@@ -114,3 +135,8 @@ export const localeSave = handleAsync("localeSave", {
     console.warn("[preferences] language not saved:", err)
   },
 })
+
+function jobTypesSync(entity, professions, interests, api) {
+  api.notify("#jobTypesPreferences:optionsSet", jobTypesFor(professions))
+  api.notify("#jobTypesPreferences:sync", interests)
+}

@@ -7,6 +7,7 @@ import {
   NO_DAYS_LEFT,
   WEEK_DAYS,
 } from "../../constants/index.js"
+import { jobTypeId } from "../../data/event-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
@@ -17,6 +18,11 @@ export function monogram(title) {
       ? (parts.at(parts.length - LAST_INDEX_OFFSET)?.at(FIRST_INDEX) ?? "")
       : ""
   return last === "" ? first : `${first}&${last}`
+}
+
+export function eventMonogram(event) {
+  if (event.category === "wedding") return monogram(event.title)
+  return event.title.at(FIRST_INDEX)?.toUpperCase() ?? ""
 }
 
 export function deadlineBadge(event) {
@@ -52,4 +58,8 @@ export function eventTag(event) {
   return t(`taxonomy.${kind}.${event.filterValue}`, {
     defaultValue: event.filterValue,
   })
+}
+
+export function eventJobType(event) {
+  return t(`taxonomy.jobType.${jobTypeId(event.category, event.profession)}`)
 }

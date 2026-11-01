@@ -4,21 +4,34 @@ import {
   activeFilters,
   defaultRegion,
   distinctRegions,
+  jobTypesInScope,
   regionInEffect,
-  typesInScope,
 } from "./helpers.js"
 
-describe("typesInScope", () => {
-  it("adds the category of each picked style or genre, once", () => {
-    expect(typesInScope([], [])).toEqual([])
-    expect(typesInScope([], ["techno", "jazz"])).toEqual(["festival"])
-    expect(typesInScope(["wedding"], ["editorial"])).toEqual(["wedding"])
+describe("jobTypesInScope", () => {
+  it("adds the job types of each picked style or genre", () => {
+    expect(jobTypesInScope([], [], [], [])).toEqual([])
+    expect(jobTypesInScope([], ["techno"], [], ["sound_technician"])).toEqual([
+      "festival_sound_technician",
+    ])
+    expect(jobTypesInScope([], ["techno"], [], [])).toContain("festival_dj")
+    expect(jobTypesInScope([], ["techno"], [], [])).not.toContain("wedding_dj")
   })
 
-  it("falls back to the profile's interests only while nothing is picked", () => {
-    expect(typesInScope([], [], ["wedding"])).toEqual(["wedding"])
-    expect(typesInScope(["festival"], [], ["wedding"])).toEqual(["festival"])
-    expect(typesInScope([], ["techno"], ["wedding"])).toEqual(["festival"])
+  it("falls back to the interests only while nothing is picked", () => {
+    const interests = ["wedding_dj"]
+    expect(jobTypesInScope([], [], interests, [])).toEqual(interests)
+    expect(jobTypesInScope(["festival_dj"], [], interests, [])).toEqual([
+      "festival_dj",
+    ])
+  })
+
+  it("falls back to the trades when no interest applies to them", () => {
+    expect(jobTypesInScope([], [], ["wedding_dj"], ["cleaner"])).toEqual([
+      "apartment_cleaner",
+      "house_cleaner",
+      "office_cleaner",
+    ])
   })
 })
 
@@ -32,7 +45,13 @@ describe("the default region", () => {
 })
 
 describe("activeFilters", () => {
-  const base = { types: [], details: [], region: null, period: "all" }
+  const base = {
+    types: [],
+    professions: [],
+    details: [],
+    region: null,
+    period: "all",
+  }
   const regions = [
     { id: "all", label: "All regions" },
     { id: "Sicily", label: "Sicily" },
@@ -44,14 +63,16 @@ describe("activeFilters", () => {
 
   it("lists what is on, in the sheet's order", () => {
     const active = activeFilters({
-      types: ["festival"],
+      types: ["festival_dj"],
+      professions: ["cleaner"],
       details: ["techno"],
       region: "Sicily",
       period: "week",
       regions,
     })
     expect(active.map(({ kind, id }) => `${kind}:${id}`)).toEqual([
-      "type:festival",
+      "type:festival_dj",
+      "profession:cleaner",
       "detail:techno",
       "region:Sicily",
       "period:week",

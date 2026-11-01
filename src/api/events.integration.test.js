@@ -153,7 +153,7 @@ describe("the feed", () => {
       await signIn(SENDER)
 
       const feed = {
-        categories: ["wedding"],
+        jobTypes: ["wedding_photographer"],
         details: [{ key: "style", category: "wedding", values: ["editorial"] }],
         regions: [region],
         dateFrom: null,
@@ -171,9 +171,19 @@ describe("the feed", () => {
       )
       expect(otherStyle.total).toBe(0)
 
+      const otherTrade = await fetchOpenEventsPage(
+        { ...feed, jobTypes: ["office_cleaner"] },
+        { from: 0, to: 23 },
+      )
+      expect(otherTrade.total).toBe(0)
+
       expect(await fetchOpenEventRegions()).toContain(region)
-      expect(await fetchOpenEventRegions(["wedding"])).toContain(region)
-      expect(await fetchOpenEventRegions(["festival"])).not.toContain(region)
+      expect(await fetchOpenEventRegions(["wedding_photographer"])).toContain(
+        region,
+      )
+      expect(await fetchOpenEventRegions(["office_cleaner"])).not.toContain(
+        region,
+      )
 
       await signIn(SEEKER)
       expect(await fetchOpenEventRegions()).not.toContain(region)

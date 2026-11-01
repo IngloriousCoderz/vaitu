@@ -1,7 +1,6 @@
 import closeIcon from "@iconify-icons/material-symbols/close"
 import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
-import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -13,6 +12,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
+import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
 import {
   AUDIO_MAX_SECONDS,
@@ -24,7 +24,7 @@ import {
 } from "../../constants/index.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { t, translated } from "../../i18n/index.js"
-import { categories, categoryById } from "../event-list/categories.js"
+import { categoryById } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
@@ -38,7 +38,6 @@ export const EventCreate = {
       entity,
       onField,
       onDetailField,
-      onCategory,
       onSave,
       onRecordStart,
       onRecordStop,
@@ -76,23 +75,9 @@ export const EventCreate = {
             onCancelAudio,
             onRemoveAudio,
           })}
-          ${Flex.render({
-            className: styles.chips,
-            children: categories.map(
-              (category) => html`
-                <button
-                  type="button"
-                  class=${styles.chipButton}
-                  @click=${() => onCategory(category.id)}
-                >
-                  ${Chip.render({
-                    children: category.label,
-                    color: category.id === categoryId ? "primary" : "default",
-                  })}
-                </button>
-              `,
-            ),
-          })}
+          <div class=${styles.field}>
+            ${api.render("jobTypeCreate")} ${JobTypeRequest.render()}
+          </div>
           ${identityFields.map((spec) =>
             this.renderDetailField({
               spec,
@@ -103,10 +88,11 @@ export const EventCreate = {
           )}
           ${when(!title_is_derived, () =>
             this.renderTextField({
-              label: t("fields.title"),
+              label: category.titleLabel ?? t("fields.title"),
               field: "title",
               value: getFieldValue(entity, "title", ""),
-              placeholder: t("create.titleExample"),
+              placeholder:
+                category.titlePlaceholder ?? t("create.titleExample"),
               error: translated(getFieldError(entity, "title")),
               isRequired: true,
               onField,
@@ -116,7 +102,8 @@ export const EventCreate = {
             label: t("fields.location"),
             field: "location",
             value: getFieldValue(entity, "location", ""),
-            placeholder: t("create.locationExample"),
+            placeholder:
+              category.locationPlaceholder ?? t("create.locationExample"),
             error: translated(getFieldError(entity, "location")),
             isRequired: true,
             onField,
@@ -138,11 +125,14 @@ export const EventCreate = {
                 onField,
               }),
           )}
-          <div class=${styles.field}>
-            ${api.render(
-              categoryId === "festival" ? "genreCreate" : "styleCreate",
-            )}
-          </div>
+          ${when(
+            category.detailSelect,
+            () => html`
+              <div class=${styles.field}>
+                ${api.render(category.detailSelect)}
+              </div>
+            `,
+          )}
           ${this.renderTextField({
             label: t("fields.eventDate"),
             field: "event_date",

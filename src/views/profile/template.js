@@ -16,17 +16,13 @@ import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { telUrl } from "../../common/profile.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
 import { canonicalRegion, ITALY } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
-import {
-  displayInstagram,
-  displayWebsite,
-  initials,
-  instagramUrl,
-} from "./helpers.js"
+import { displayWebsite, initials } from "./helpers.js"
 import styles from "./style.module.css"
 
 export const Profile = {
@@ -175,15 +171,12 @@ export const Profile = {
                         onField,
                       })}
                       ${this.renderEditField({
-                        label: t("fields.instagram"),
-                        field: "instagram_handle",
-                        icon: "@",
-                        value: (shown.instagram_handle ?? "").replace(
-                          /^@+/,
-                          "",
-                        ),
-                        placeholder: t("fields.instagramExample"),
-                        lowercase: true,
+                        label: t("fields.phone"),
+                        field: "phone",
+                        value: shown.phone,
+                        placeholder: t("fields.phoneExample"),
+                        hint: t("fields.phoneHint"),
+                        inputmode: "tel",
                         onField,
                       })}
                       ${Flex.render({
@@ -241,9 +234,9 @@ export const Profile = {
                       displayWebsite(profile.website) || null,
                     )}
                     ${this.renderRow(
-                      t("fields.instagram"),
-                      displayInstagram(profile.instagram_handle),
-                      instagramUrl(profile.instagram_handle),
+                      t("fields.phone"),
+                      profile.phone,
+                      telUrl(profile.phone),
                     )}
                     ${this.renderRow(t("fields.country"), profile.country)}
                     ${this.renderRow(t("fields.region"), canonicalRegion(profile.region))}
@@ -334,6 +327,7 @@ export const Profile = {
     icon,
     value,
     placeholder,
+    hint,
     lowercase,
     inputmode,
     onField,
@@ -345,6 +339,7 @@ export const Profile = {
       inputType: "text",
       value: value ?? "",
       placeholder,
+      hint,
       isFullWidth: true,
       onChange: (raw) =>
         onField({ field, value: lowercase ? raw.toLowerCase() : raw }),

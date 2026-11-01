@@ -22,6 +22,11 @@
   margin-bottom: var(--iw-space-3);
 }
 
+.hint {
+  margin: 0;
+  font-size: var(--iw-font-size-xs);
+}
+
 .fieldError select {
   border-color: var(--verror);
 }

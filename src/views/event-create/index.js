@@ -44,6 +44,7 @@ export const EventCreate = {
     entity.editing_event_id ??= null
     entity.initialValues = {
       category: "wedding",
+      profession: "photographer",
       title: "",
       location: "",
       country: "",
@@ -93,6 +94,7 @@ export const EventCreate = {
     api.notify(`#${entity.id}:save`, {
       editing_event_id: entity.editing_event_id,
       category: values.category,
+      profession: values.profession,
       title,
       location: values.location,
       country: values.country,
@@ -149,7 +151,6 @@ export const EventCreate = {
           ),
         onDetailField: ({ field, value }) =>
           api.notify(`#${id}:detailFieldSet`, { field, value }),
-        onCategory: (category) => api.notify(`#${id}:categorySelect`, category),
         onRecordStart: () => api.notify(`#${id}:audioRecord`),
         onRecordStop: () => api.notify(`#${id}:audioRecordStop`),
         onCancelAudio: () => api.notify(`#${id}:audioCancel`),
@@ -210,6 +211,7 @@ function open(entity, { event_id } = {}, api) {
   api.notify("#regionCreate:sync", "")
   api.notify("#styleCreate:sync", "")
   api.notify("#genreCreate:sync", "")
+  if (!event_id) handlers.jobTypeOptionsSync(entity, null, api)
   if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
 }
 

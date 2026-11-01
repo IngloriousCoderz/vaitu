@@ -43,6 +43,7 @@ export function toViewModel(row) {
   const base = {
     id: row.id,
     category: row.category,
+    profession: row.profession,
     status: row.status,
     region,
     event_date: row.event_date,
@@ -77,6 +78,15 @@ export function toViewModel(row) {
         { labelKey: "fields.headliner", value: row.details.headliner },
         ...(region ? [{ labelKey: "fields.region", value: region }] : []),
       ],
+    }
+  }
+
+  if (row.category !== "wedding") {
+    return {
+      ...base,
+      title: row.title,
+      filterValue: null,
+      facts: region ? [{ labelKey: "fields.region", value: region }] : [],
     }
   }
 
@@ -116,7 +126,7 @@ export async function fetchEventDetail(id) {
   const { data: event, error } = await supabase
     .from("events")
     .select(
-      "id, category, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, image_urls, transcript, transcript_status, details",
+      "id, category, profession, status, sender_id, title, location, region, event_date, application_deadline, max_applicants, created_at, audio_url, image_urls, transcript, transcript_status, details",
     )
     .eq("id", id)
     .single()
@@ -162,7 +172,7 @@ export async function fetchMyEvents() {
   const { data: events, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, region, event_date, application_deadline, status, created_at, image_urls, details",
+      "id, category, profession, title, location, region, event_date, application_deadline, status, created_at, image_urls, details",
     )
     .eq("sender_id", user.id)
     .order("event_date", { ascending: true })
@@ -190,7 +200,7 @@ export async function fetchMyEvents() {
 }
 
 const OPEN_EVENT_COLUMNS =
-  "id, category, title, location, region, event_date, application_deadline, created_at, image_urls, details"
+  "id, category, profession, title, location, region, event_date, application_deadline, created_at, image_urls, details"
 
 /**
  * One page of the open events a feed query matches (see feedQuery in
@@ -207,7 +217,7 @@ export async function fetchOpenEventsPage(feed, { from, to }) {
     .select(OPEN_EVENT_COLUMNS, { count: "exact" })
     .eq("status", "open")
   if (userId) query = query.neq("sender_id", userId)
-  if (feed.categories.length) query = query.in("category", feed.categories)
+  if (feed.jobTypes.length) query = query.in("job_type", feed.jobTypes)
   if (feed.details.length) {
     query = query.or(
       [
@@ -240,12 +250,12 @@ export async function fetchOpenEventsPage(feed, { from, to }) {
 
 /**
  * Every region the feed could show an event in, as stored: open events other
- * than your own, in these categories (every category when empty).
- * @param {string[]} categories
+ * than your own, of these job types (all of them when empty).
+ * @param {string[]} jobTypes
  */
-export async function fetchOpenEventRegions(categories = []) {
+export async function fetchOpenEventRegions(jobTypes = []) {
   const { data, error } = await supabase
-    .rpc("open_event_regions", { categories })
+    .rpc("open_event_regions", { job_types: jobTypes })
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return data
@@ -279,7 +289,7 @@ export async function fetchEventForEdit(event_id) {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, image_urls, transcript, details",
+      "id, category, profession, title, location, country, region, event_date, application_deadline, max_applicants, audio_url, image_urls, transcript, details",
     )
     .eq("id", event_id)
     .eq("sender_id", user.id)
@@ -349,20 +359,25 @@ export async function deleteEventAudio(path) {
 }
 
 export async function fetchMyFeedDefaults() {
-  const none = { favorite_regions: [], interested_categories: [] }
+  const none = {
+    favorite_regions: [],
+    interested_job_types: [],
+    professions: [],
+  }
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return none
   const { data, error } = await supabase
     .from("profiles")
-    .select("favorite_regions, interested_categories")
+    .select("favorite_regions, interested_job_types, professions")
     .eq("id", user.id)
     .single()
   if (error) return none
   return {
     favorite_regions: data?.favorite_regions ?? [],
-    interested_categories: data?.interested_categories ?? [],
+    interested_job_types: data?.interested_job_types ?? [],
+    professions: data?.professions ?? [],
   }
 }
 

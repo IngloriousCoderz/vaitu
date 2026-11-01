@@ -31,7 +31,7 @@ export const Profile = {
     entity.initialValues = {
       full_name: "",
       website: "",
-      instagram_handle: "",
+      phone: "",
       country: "",
       region: "",
     }

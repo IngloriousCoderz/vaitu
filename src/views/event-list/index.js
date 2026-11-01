@@ -1,18 +1,25 @@
 import { debounce } from "@inglorious/utils/function"
 
+import {
+  interestsFor,
+  jobTypeById,
+  professions,
+} from "../../data/event-taxonomy.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { categories, filterSections } from "./categories.js"
+import { filterSections } from "./categories.js"
 import {
   detailToggle,
   filtersClear,
   filtersClose,
   filtersToggle,
+  jobTypesSet,
   load,
   pageFetch,
   pageMore,
   periodSelect,
+  professionToggle,
   regionSelect,
   regionsFetch,
   search,
@@ -23,9 +30,10 @@ import {
 import {
   activeFilters,
   distinctRegions,
+  jobTypesInScope,
   periods,
+  professionsInScope,
   regionInEffect,
-  typesInScope,
 } from "./helpers.js"
 import { EventList as renderers } from "./template.js"
 
@@ -41,6 +49,8 @@ export const EventList = {
   search,
   searchRun,
   typeToggle,
+  jobTypesSet,
+  professionToggle,
   detailToggle,
   periodSelect,
   regionSelect,
@@ -75,12 +85,21 @@ export const EventList = {
 
   render(entity, api) {
     const id = entity.id
-    const scope = typesInScope(
+    const inScope = professionsInScope(
+      entity.activeProfessions,
+      entity.professions,
+    )
+    const interests = interestsFor(entity.interests, inScope)
+    const scope = jobTypesInScope(
       entity.activeTypes,
       entity.activeDetails,
       entity.interests,
+      inScope,
     )
-    const [onlyType, ...otherTypes] = scope
+    const settings = [
+      ...new Set(scope.map((id) => jobTypeById(id)?.category).filter(Boolean)),
+    ]
+    const [onlySetting, ...otherSettings] = settings
     return this.renderEventList(
       {
         events: entity.events,
@@ -89,15 +108,15 @@ export const EventList = {
         appliedMap: entity.appliedMap,
         status: entity.status,
         error: entity.error,
-        category: otherTypes.length ? undefined : onlyType,
-        types: categories,
-        showTypes: entity.interests.length !== ONE_INTEREST,
-        sections: filterSections(scope),
+        category: otherSettings.length ? undefined : onlySetting,
+        showTypes: interests.length !== ONE_INTEREST,
+        professions,
+        activeProfessions: entity.activeProfessions,
+        sections: filterSections(settings),
         active: filtersOn(entity),
         regions: regionsOf(entity),
         periods,
         query: entity.query,
-        activeTypes: entity.activeTypes,
         activeDetails: entity.activeDetails,
         activeRegion: regionInEffect(
           entity.activeRegion,
@@ -109,11 +128,14 @@ export const EventList = {
           api.notify(`#${id}:search`, value)
           searchSoon(api, id)
         },
-        onToggleType: (categoryId) =>
-          api.notify(`#${id}:typeToggle`, categoryId),
+        onToggleProfession: (professionId) =>
+          api.notify(`#${id}:professionToggle`, professionId),
         onToggleDetail: (value) => api.notify(`#${id}:detailToggle`, value),
         onRemoveFilter: ({ kind, id: value }) => {
           if (kind === "type") api.notify(`#${id}:typeToggle`, value)
+          if (kind === "profession") {
+            api.notify(`#${id}:professionToggle`, value)
+          }
           if (kind === "detail") api.notify(`#${id}:detailToggle`, value)
           if (kind === "region") api.notify(`#${id}:regionSelect`, null)
           if (kind === "period") api.notify(`#${id}:periodSelect`, "all")
@@ -152,6 +174,7 @@ function regionsOf(entity) {
 function filtersOn(entity) {
   return activeFilters({
     types: entity.activeTypes,
+    professions: entity.activeProfessions,
     details: entity.activeDetails,
     region: entity.activeRegion,
     period: entity.activePeriod,

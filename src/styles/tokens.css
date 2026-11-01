@@ -64,3 +64,18 @@
   --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
   --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
 }
+
+[data-category="apartment"],
+[data-category="house"],
+[data-category="office"] {
+  --vchip-border: #b8cbc6;
+  --vchip-active-bg: #0f766e;
+  --vchip-active-text: #f4f8f7;
+  --vbadge-bg: #cfe3de;
+  --vbadge-text: #115e56;
+  --vtag-text: #0f766e;
+  --vtag-border: #b8cbc6;
+  --iw-color-primary: var(--vaccent);
+  --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
+  --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
+}

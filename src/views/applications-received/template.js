@@ -1,7 +1,7 @@
+import callOutline from "@iconify-icons/material-symbols/call-outline"
 import globeOutline from "@iconify-icons/material-symbols/globe-outline"
 import keyboardArrowDownOutline from "@iconify-icons/material-symbols/keyboard-arrow-down-outline"
 import locationOnOutline from "@iconify-icons/material-symbols/location-on-outline"
-import photoCameraOutline from "@iconify-icons/material-symbols/photo-camera-outline"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
@@ -16,6 +16,7 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
+import { telUrl } from "../../common/profile.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import {
   COVER_IMAGES,
@@ -188,11 +189,19 @@ export const ApplicationsReceived = {
     const photos = recap.image_urls ?? []
     const rows = [
       [t("received.status"), translatedValue("status.", recap.status)],
-      [t("received.names"), recap.names || "—"],
-      [
-        t("received.style"),
-        translatedValue(["taxonomy.style.", "taxonomy.genre."], recap.style),
-      ],
+      [t("fields.jobType"), recap.jobType],
+      ...(recap.names ? [[t("received.names"), recap.names]] : []),
+      ...(recap.style
+        ? [
+            [
+              t("received.style"),
+              translatedValue(
+                ["taxonomy.style.", "taxonomy.genre."],
+                recap.style,
+              ),
+            ],
+          ]
+        : []),
       [t("received.location"), recap.location || "—"],
       [t("received.eventDate"), formatDay(recap.event_date)],
       [t("received.deadline"), formatDeadline(recap.application_deadline)],
@@ -268,9 +277,6 @@ export const ApplicationsReceived = {
     onCancelAssign,
   }) {
     const applicant = item.applicant ?? {}
-    const instagram = (applicant.instagram_handle ?? "")
-      .trim()
-      .replace(/^@+/, "")
     return html`
       <article class=${styles.card}>
         <button
@@ -307,16 +313,11 @@ export const ApplicationsReceived = {
                   `,
                 )}
                 ${when(
-                  instagram,
+                  applicant.phone,
                   () => html`
-                    <a
-                      class=${styles.metaLink}
-                      href=${`https://instagram.com/${instagram}`}
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      ${Icon.render({ icon: photoCameraOutline, size: "lg" })}
-                      <span>@${instagram}</span>
+                    <a class=${styles.metaLink} href=${telUrl(applicant.phone)}>
+                      ${Icon.render({ icon: callOutline, size: "lg" })}
+                      <span>${applicant.phone}</span>
                     </a>
                   `,
                 )}

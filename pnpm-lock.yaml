@@ -200,8 +200,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(@supabase/supabase-js@2.118.0)
       '@inglorious/ui':
-        specifier: ^9.8.1
-        version: 9.8.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
+        specifier: ^9.8.2
+        version: 9.8.2(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
       '@inglorious/utils':
         specifier: ^5.1.0
         version: 5.1.0
@@ -1393,8 +1393,8 @@ packages:
     peerDependencies:
       '@supabase/supabase-js': ^2.118.0
 
-  '@inglorious/ui@9.8.1':
-    resolution: {integrity: sha512-WLsAXL6pOloR4Qg8e11uQs0emi8cViX8zORi+kVIKHEbKcDU8vWHhukfJsmqo/FNpGtlMyW+J2oGkMst4rQ4UQ==}
+  '@inglorious/ui@9.8.2':
+    resolution: {integrity: sha512-tHc+OTfUMv5REuD2SQOcsU9P2O336yziSKTcECgubcTA3dQTbzbwzqjAvl/k8gP69PuUv1xpCcqELUc8/Ar2kA==}
     engines: {node: '>= 26'}
     peerDependencies:
       '@inglorious/store': ^12.1.1
@@ -5523,7 +5523,7 @@ snapshots:
     dependencies:
       '@supabase/supabase-js': 2.118.0
 
-  '@inglorious/ui@9.8.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
+  '@inglorious/ui@9.8.2(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0

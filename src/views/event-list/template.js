@@ -24,6 +24,7 @@ export const EventList = {
   create(entity) {
     entity.query ??= ""
     entity.activeTypes ??= []
+    entity.activeProfessions ??= []
     entity.activeDetails ??= []
     entity.activeRegion ??= null
     entity.activePeriod ??= "all"
@@ -38,6 +39,7 @@ export const EventList = {
     entity.appliedMap ??= {}
     entity.favoriteRegions ??= []
     entity.interests ??= []
+    entity.professions ??= []
     entity.status ??= "loading"
     entity.error ??= null
   },
@@ -55,20 +57,20 @@ export const EventList = {
       status,
       error,
       category,
-      types,
       showTypes,
+      professions,
+      activeProfessions,
       sections,
       active,
       regions,
       periods,
       query,
-      activeTypes,
       activeDetails,
       activeRegion,
       activePeriod,
       isFiltersVisible,
       onSearch,
-      onToggleType,
+      onToggleProfession,
       onToggleDetail,
       onRemoveFilter,
       onCloseFilters,
@@ -128,14 +130,17 @@ export const EventList = {
                 showTypes,
                 () => html`
                   <h3 class=${styles.filterTitle}>${t("events.type")}</h3>
-                  ${this.renderChipRow({
-                    items: types,
-                    isActive: (type) => activeTypes.includes(type.id),
-                    onSelect: onToggleType,
-                    getLabel: (type) => type.label,
-                  })}
+                  ${api.render("jobTypesFilter")}
                 `,
               )}
+              <h3 class=${styles.filterTitle}>${t("events.profession")}</h3>
+              ${this.renderChipRow({
+                items: professions,
+                isActive: (profession) =>
+                  activeProfessions.includes(profession.id),
+                onSelect: onToggleProfession,
+                getLabel: (profession) => profession.label,
+              })}
               ${sections.map(
                 (section) => html`
                   <h3 class=${styles.filterTitle}>${section.title}</h3>

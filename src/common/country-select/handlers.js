@@ -75,18 +75,14 @@ export function optionSelect(entity, option, api) {
     }
 
     entity.selectedValue = values
+    notifyTarget(entity, api, [...values])
     return
   }
 
   entity.selectedValue = optionValue
   doClose(entity)
 
-  if (entity.targetId && entity.targetEvent && entity.targetField) {
-    api.notify(`#${entity.targetId}:${entity.targetEvent}`, {
-      field: entity.targetField,
-      value: entity.selectedValue ?? "",
-    })
-  }
+  notifyTarget(entity, api, entity.selectedValue ?? "")
 }
 
 /**
@@ -97,13 +93,7 @@ export function optionSelect(entity, option, api) {
 export function clear(entity, _payload, api) {
   if (entity.isDisabled) return
   entity.selectedValue = entity.isMulti ? [] : null
-
-  if (entity.targetId && entity.targetEvent && entity.targetField) {
-    api.notify(`#${entity.targetId}:${entity.targetEvent}`, {
-      field: entity.targetField,
-      value: "",
-    })
-  }
+  notifyTarget(entity, api, entity.isMulti ? [] : "")
 }
 
 /**
@@ -178,7 +168,7 @@ export function errorSet(entity, error) {
 }
 
 export function sync(entity, value) {
-  entity.selectedValue = value || null
+  entity.selectedValue = entity.isMulti ? (value ?? []) : value || null
   entity.searchTerm = ""
   entity.focusedIndex = NO_FOCUSED_INDEX
 }
@@ -188,6 +178,15 @@ export function optionsSet(entity, options) {
   entity.options = (options ?? []).map(formatOption)
   entity.searchTerm = ""
   entity.focusedIndex = NO_FOCUSED_INDEX
+}
+
+function notifyTarget(entity, api, value) {
+  if (entity.targetId && entity.targetEvent && entity.targetField) {
+    api.notify(`#${entity.targetId}:${entity.targetEvent}`, {
+      field: entity.targetField,
+      value,
+    })
+  }
 }
 
 function isHeading(option) {

@@ -93,8 +93,14 @@ same goes for the `VITE_FIREBASE_*` values (see
 [Analytics](analytics.md#setting-it-up)): without them, allowing
 notifications in the PWA files no token, and the PWA measures nothing.
 
+`VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
+"Job type missing?" link is hidden. To add a job type, extend
+`SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and translate its
+`taxonomy.jobType` label in every locale.
+
 ```bash
-# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY and the six VITE_FIREBASE_*
+# Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL and the
+# six VITE_FIREBASE_*
 # set in Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/
 ```

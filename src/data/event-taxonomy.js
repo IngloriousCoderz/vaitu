@@ -16,3 +16,50 @@ export const festivalGenres = [
   labelled("taxonomy.genre.jazz", { value: "jazz" }),
   labelled("taxonomy.genre.electronic", { value: "electronic" }),
 ]
+
+const SETTINGS_BY_PROFESSION = {
+  photographer: ["wedding", "festival", "office"],
+  videographer: ["wedding", "festival"],
+  musician: ["wedding", "festival"],
+  dj: ["wedding", "festival"],
+  sound_technician: ["festival"],
+  cleaner: ["apartment", "house", "office"],
+  electrician: ["apartment", "house", "office"],
+}
+
+export const professions = Object.keys(SETTINGS_BY_PROFESSION).map((id) =>
+  labelled(`taxonomy.profession.${id}`, { id }),
+)
+
+export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
+  ([profession, settings]) =>
+    settings.map((category) => {
+      const id = jobTypeId(category, profession)
+      return labelled(`taxonomy.jobType.${id}`, {
+        id,
+        value: id,
+        category,
+        profession,
+      })
+    }),
+)
+
+export function jobTypeId(category, profession) {
+  return `${category}_${profession}`
+}
+
+export function jobTypeById(id) {
+  return jobTypes.find((jobType) => jobType.id === id)
+}
+
+export function jobTypesFor(professionIds) {
+  if (!professionIds.length) return jobTypes
+  return jobTypes.filter((jobType) =>
+    professionIds.includes(jobType.profession),
+  )
+}
+
+export function interestsFor(interests, professionIds) {
+  const available = jobTypesFor(professionIds).map((jobType) => jobType.id)
+  return interests.filter((id) => available.includes(id))
+}

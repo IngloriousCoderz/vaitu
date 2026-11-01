@@ -17,8 +17,9 @@ export const Onboarding = {
       country: "",
       region: "",
       website: "",
-      instagram: "",
-      interested_categories: [],
+      phone: "",
+      interested_job_types: [],
+      professions: [],
     }
     Form.create(entity)
     entity.status ??= "idle"
@@ -33,8 +34,8 @@ export const Onboarding = {
         entity,
         onField: ({ field, value }) =>
           api.notify(`#${id}:fieldSet`, { field, value }),
-        onToggleInterest: (categoryId) =>
-          api.notify(`#${id}:interestToggle`, categoryId),
+        onToggleProfession: (professionId) =>
+          api.notify(`#${id}:professionToggle`, professionId),
         onSave: () => api.notify(`#${id}:saveSubmit`),
         onSkip: () => api.notify(`#${id}:skip`),
       },

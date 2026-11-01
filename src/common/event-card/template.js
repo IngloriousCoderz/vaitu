@@ -9,9 +9,10 @@ import { t } from "../../i18n/index.js"
 import {
   deadlineBadge,
   deadlineTone,
+  eventJobType,
+  eventMonogram,
   eventSubtitle,
   eventTag,
-  monogram,
   thumbGradient,
 } from "./helpers.js"
 import styles from "./style.module.css"
@@ -56,7 +57,10 @@ export const Card = {
         </div>
         <p class=${styles.meta}>${eventSubtitle(event)}</p>
         <div class=${styles.tagRow}>
-          ${Chip.render({ children: eventTag(event) })}
+          ${Chip.render({ children: eventJobType(event) })}
+          ${when(event.filterValue, () =>
+            Chip.render({ children: eventTag(event) }),
+          )}
           ${when(isApplied, () =>
             Chip.render({ children: t("card.applied"), color: "success" }),
           )}
@@ -80,7 +84,7 @@ export const Card = {
             () => html`<img class=${styles.thumbImage} src=${photo} alt="" />`,
             () =>
               html`<span class=${styles.monogram}
-                >${monogram(event.title)}</span
+                >${eventMonogram(event)}</span
               >`,
           )}
         </div>

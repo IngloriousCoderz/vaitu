@@ -78,11 +78,34 @@
       "indie": "Indie",
       "jazz": "Jazz",
       "electronic": "Électronique"
+    },
+    "profession": {
+      "photographer": "Photographie",
+      "videographer": "Vidéo",
+      "musician": "Musique",
+      "dj": "DJ",
+      "sound_technician": "Son",
+      "cleaner": "Ménage",
+      "electrician": "Électricité"
+    },
+    "jobType": {
+      "wedding_photographer": "Photographie de mariage",
+      "festival_photographer": "Photographie de festival",
+      "office_photographer": "Photographie de bureaux",
+      "wedding_videographer": "Vidéo de mariage",
+      "festival_videographer": "Vidéo de festival",
+      "wedding_musician": "Musique de mariage",
+      "festival_musician": "Musique de festival",
+      "wedding_dj": "DJ de mariage",
+      "festival_dj": "DJ de festival",
+      "festival_sound_technician": "Son de festival",
+      "apartment_cleaner": "Ménage d'appartements",
+      "house_cleaner": "Ménage de maisons",
+      "office_cleaner": "Ménage de bureaux",
+      "apartment_electrician": "Électricité en appartement",
+      "house_electrician": "Électricité en maison",
+      "office_electrician": "Électricité de bureaux"
     }
-  },
-  "category": {
-    "wedding": "Mariages",
-    "festival": "Festivals"
   },
   "filters": {
     "weddingStyle": "Style de mariage",
@@ -102,19 +125,27 @@
     "region": "Région",
     "regionOptional": "Région (facultatif)",
     "regionExample": "Toscane",
-    "websiteOptional": "Site web (facultatif)",
+    "websiteOptional": "Site web ou page sociale (facultatif)",
     "websiteExample": "votre-site.fr",
-    "instagramOptional": "Instagram (facultatif)",
-    "instagramExample": "identifiant",
-    "website": "Site web",
-    "instagram": "Instagram",
+    "website": "Site web ou page sociale",
     "title": "Titre",
     "location": "Lieu",
-    "eventDate": "Date de l'événement",
+    "eventDate": "Date",
     "deadline": "Date limite de candidature",
     "maxShortlist": "Places en présélection",
-    "interestedCategories": "Événements qui vous intéressent",
-    "interestedCategoriesHint": "Votre fil les affiche par défaut. N'en choisissez aucun pour voir tous les événements."
+    "professions": "Votre métier",
+    "professionsHint": "Votre fil affiche par défaut les missions de ces métiers. N'en choisissez aucun pour toutes les voir.",
+    "jobTitle": "Ce qu'il y a à faire",
+    "phone": "Téléphone",
+    "phoneOptional": "Téléphone (facultatif)",
+    "phoneExample": "+33 6 12 34 56 78",
+    "phoneHint": "Visible uniquement par les personnes dont vous postulez aux missions.",
+    "jobType": "Type de mission",
+    "jobTypes": "Types de mission qui vous intéressent",
+    "jobTypesHint": "Votre fil les affiche par défaut. Laissez vide pour tous les voir.",
+    "jobTypeRequest": "Un type de mission manque ? Demandez-nous de l'ajouter",
+    "jobTypeRequestSubject": "Nouveau type de mission pour Vaitu",
+    "jobTypeRequestBody": "Type de mission à ajouter :\n\nMon métier :\n"
   },
   "periods": {
     "all": "Toutes les dates",
@@ -136,7 +167,8 @@
     "loading": "Chargement…",
     "noOptions": "Aucune option",
     "noCountries": "Aucun pays trouvé",
-    "noRegions": "Aucune région trouvée"
+    "noRegions": "Aucune région trouvée",
+    "allJobTypes": "Tous les types de mission"
   },
   "pwa": {
     "updateReady": "Nouvelle version disponible",
@@ -175,7 +207,8 @@
     "futureDeadline": "Choisissez une date limite future",
     "passwordLength_one": "Le mot de passe doit contenir au moins {{count}} caractère",
     "passwordLength_other": "Le mot de passe doit contenir au moins {{count}} caractères",
-    "passwordLength_many": "Le mot de passe doit contenir au moins {{count}} caractères"
+    "passwordLength_many": "Le mot de passe doit contenir au moins {{count}} caractères",
+    "pickJobType": "Choisissez un type de mission"
   },
   "errors": {
     "notLoggedIn": "Vous n'êtes pas connecté",
@@ -253,7 +286,7 @@
     "period": "Période",
     "clearAll": "Tout effacer",
     "filters": "Filtres",
-    "type": "Type d'événement",
+    "type": "Type de mission",
     "removeFilter": "Retirer le filtre : {{label}}",
     "filtersOn_one": "Filtres, {{count}} actif",
     "filtersOn_other": "Filtres, {{count}} actifs",
@@ -262,7 +295,8 @@
     "orderBy": "Trier par",
     "results_one": "{{count}} événement",
     "results_other": "{{count}} événements",
-    "results_many": "{{count}} événements"
+    "results_many": "{{count}} événements",
+    "profession": "Métier"
   },
   "myEvents": {
     "title": "Mes événements",
@@ -296,7 +330,7 @@
     "names": "Noms",
     "style": "Style",
     "location": "Lieu",
-    "eventDate": "Date de l'événement",
+    "eventDate": "Date",
     "deadline": "Date limite de candidature",
     "shortlist": "Présélection",
     "created": "Créé le",
@@ -337,7 +371,9 @@
     "cropApply": "Recadrer et utiliser",
     "gallery": "Autres photos",
     "galleryHint": "Mini galerie dans l'événement. Jusqu'à {{count}}.",
-    "addGalleryPhotos": "Ajouter des photos"
+    "addGalleryPhotos": "Ajouter des photos",
+    "jobTitleExample": "Ex. Grand ménage, appartement deux pièces",
+    "propertyLocationExample": "Quartier ou commune, pas la rue"
   },
   "ranks": {
     "title": "Niveaux",
@@ -409,7 +445,7 @@
       },
       "audience": {
         "question": "À qui s'adresse-t-elle ?",
-        "answer": "Aux professionnels de l'événementiel. Elle a commencé avec les photographes de mariage et s'ouvre à d'autres métiers et événements, comme les techniciens du son en festival."
+        "answer": "Les professionnels qui doivent transmettre une mission qu'ils ne peuvent pas assurer. L'app a commencé avec les photographes de mariage et s'ouvre à d'autres métiers, comme les techniciens du son en festival ou le ménage dans les appartements, maisons et bureaux."
       },
       "publish": {
         "question": "Comment publier un événement ?",
@@ -417,7 +453,7 @@
       },
       "apply": {
         "question": "Comment candidater ?",
-        "answer": "Ouvrez un événement et expliquez à l'organisateur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom, votre site web et votre Instagram, et vous pouvez candidater jusqu'à la date limite."
+        "answer": "Ouvrez un événement et expliquez à l'organisateur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom et un site web, une page sociale ou un numéro de téléphone, et vous pouvez candidater jusqu'à la date limite."
       },
       "choose": {
         "question": "Comment choisir un candidat ?",
@@ -425,7 +461,7 @@
       },
       "contact": {
         "question": "Comment se contacter ?",
-        "answer": "L'organisateur voit le site web et l'Instagram de chaque candidat et contacte la personne retenue par ce biais. Vaitu n'a pas de messagerie."
+        "answer": "L'organisateur voit le site web ou la page sociale et le numéro de téléphone de chaque candidat, et contacte la personne retenue par ce biais. Vaitu n'a pas de messagerie."
       },
       "payments": {
         "question": "Vaitu gère-t-il les paiements ou les contrats ?",
@@ -477,7 +513,7 @@
     "feedback": "Vous recevrez une réponse d'ici quelques jours.",
     "backToEvents": "Retour aux événements",
     "applyTitle": "Candidater à cet événement",
-    "completeFirst": "Complétez votre profil (nom, site web et Instagram) avant de candidater.",
+    "completeFirst": "Complétez votre profil (votre nom, plus un site web, une page sociale ou un numéro de téléphone) avant de candidater.",
     "completeProfile": "Compléter le profil",
     "forwarded_one": "Seul {{count}} nom sera transmis à l'organisateur.",
     "forwarded_other": "Seuls {{count}} noms seront transmis à l'organisateur.",

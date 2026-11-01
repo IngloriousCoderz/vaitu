@@ -42,7 +42,12 @@ import {
   ONE_SECOND,
   PAD_LENGTH,
 } from "../../constants/index.js"
-import { weddingStyles } from "../../data/event-taxonomy.js"
+import {
+  jobTypeById,
+  jobTypeId,
+  jobTypesFor,
+  weddingStyles,
+} from "../../data/event-taxonomy.js"
 import {
   regionAfterCountryChange,
   regionForCountry,
@@ -108,8 +113,11 @@ export function fieldSet(entity, { field, value }, api) {
     Form.fieldChange(entity, { path: "country", value })
     Form.fieldChange(entity, { path: "region", value: region })
     api?.notify("#regionCreate:sync", region)
+    api?.notify("#countryCreate:errorSet", null)
+    api?.notify("#regionCreate:errorSet", null)
   } else {
     Form.fieldChange(entity, { path: field, value })
+    if (field === "region") api?.notify("#regionCreate:errorSet", null)
   }
   entity.error = null
 }
@@ -125,16 +133,49 @@ export function detailFieldSet(entity, { field, value }) {
   entity.error = null
 }
 
-export function categorySelect(entity, category, api) {
+export function jobTypeSelect(entity, { value }, api) {
+  const { category, profession } = jobTypeById(value)
+  const isSameCategory = getFieldValue(entity, "category", "") === category
   Form.fieldChange(entity, { path: "category", value: category })
+  Form.fieldChange(entity, { path: "profession", value: profession })
+  entity.error = null
+  if (isSameCategory) return
   Form.fieldChange(entity, { path: "details", value: {} })
   entity.errors = {}
   entity.isValid = true
-  entity.error = null
   api.notify("#countryCreate:errorSet", null)
   api.notify("#regionCreate:errorSet", null)
   api.notify("#styleCreate:sync", "")
   api.notify("#genreCreate:sync", "")
+}
+
+// New jobs start on the poster's first job type. An edit keeps its own, even if
+// the poster has since changed trade.
+export function jobTypeOptionsSync(entity, _, api) {
+  const mine = api.getEntity("eventList")?.professions ?? []
+  const options = jobTypesFor([...mine])
+  const current = jobTypeId(
+    getFieldValue(entity, "category", ""),
+    getFieldValue(entity, "profession", ""),
+  )
+  const isOffered = options.some((option) => option.id === current)
+  if (entity.editing_event_id) {
+    const own = jobTypeById(current)
+    api.notify(
+      "#jobTypeCreate:optionsSet",
+      isOffered || !own ? options : [own, ...options],
+    )
+    api.notify("#jobTypeCreate:sync", current)
+    return
+  }
+  api.notify("#jobTypeCreate:optionsSet", options)
+  if (isOffered) {
+    api.notify("#jobTypeCreate:sync", current)
+    return
+  }
+  const [first] = options
+  jobTypeSelect(entity, { value: first.id }, api)
+  api.notify("#jobTypeCreate:sync", first.id)
 }
 
 export const audioRecord = handleAsync("audioRecord", {
@@ -289,7 +330,11 @@ export const audioParse = handleAsync("audioParse", {
     entity.is_parsing = false
     if (!fields || typeof fields !== "object") return
     const details = { ...getFieldValue(entity, "details", {}) }
-    for (const field of FILLABLE_DETAILS) {
+    const fillable =
+      getFieldValue(entity, "category", "") === "wedding"
+        ? FILLABLE_DETAILS
+        : []
+    for (const field of fillable) {
       const value = fields[field]
       if (typeof value !== "string" || !value.trim()) continue
       if (field === "style" && !weddingStyles.some((s) => s.value === value)) {
@@ -553,6 +598,7 @@ export const save = handleAsync("save", {
         : event.application_deadline
     const payload = {
       category: event.category,
+      profession: event.profession,
       title: event.title,
       location: event.location,
       country: event.country,
@@ -608,6 +654,7 @@ export const editLoad = handleAsync("editLoad", {
     const region = regionForCountry(row.country, row.region)
     entity.values = {
       category: row.category ?? "wedding",
+      profession: row.profession ?? "",
       title: row.title ?? "",
       location: row.location ?? "",
       country,
@@ -636,6 +683,7 @@ export const editLoad = handleAsync("editLoad", {
     api.notify("#regionCreate:sync", region)
     api.notify("#styleCreate:sync", row.details?.style ?? "")
     api.notify("#genreCreate:sync", row.details?.genre ?? "")
+    jobTypeOptionsSync(entity, null, api)
   },
   error(entity, err) {
     entity.status = "error"

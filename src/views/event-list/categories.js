@@ -5,9 +5,7 @@ import { t } from "../../i18n/index.js"
 export const categories = [
   {
     id: "wedding",
-    get label() {
-      return t("category.wedding")
-    },
+    detailSelect: "styleCreate",
     filters: [
       {
         id: "style",
@@ -53,9 +51,7 @@ export const categories = [
   },
   {
     id: "festival",
-    get label() {
-      return t("category.festival")
-    },
+    detailSelect: "genreCreate",
     filters: [
       {
         id: "genre",
@@ -87,7 +83,29 @@ export const categories = [
       },
     ],
   },
+  propertyCategory("apartment"),
+  propertyCategory("house"),
+  propertyCategory("office"),
 ]
+
+function propertyCategory(id) {
+  return {
+    id,
+    filters: [],
+    title_from: { input: true },
+    get titleLabel() {
+      return t("fields.jobTitle")
+    },
+    get titlePlaceholder() {
+      return t("create.jobTitleExample")
+    },
+    // Events are public, and this is someone's home.
+    get locationPlaceholder() {
+      return t("create.propertyLocationExample")
+    },
+    createFields: [],
+  }
+}
 
 export function categoryById(id) {
   return categories.find((c) => c.id === id) ?? categories[FIRST_INDEX]

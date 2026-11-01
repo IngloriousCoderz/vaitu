@@ -74,11 +74,34 @@
       "indie": "インディー",
       "jazz": "ジャズ",
       "electronic": "エレクトロニック"
+    },
+    "profession": {
+      "photographer": "写真",
+      "videographer": "映像",
+      "musician": "音楽",
+      "dj": "DJ",
+      "sound_technician": "音響",
+      "cleaner": "清掃",
+      "electrician": "電気工事"
+    },
+    "jobType": {
+      "wedding_photographer": "結婚式の写真撮影",
+      "festival_photographer": "フェスティバルの写真撮影",
+      "office_photographer": "オフィスの写真撮影",
+      "wedding_videographer": "結婚式の映像撮影",
+      "festival_videographer": "フェスティバルの映像撮影",
+      "wedding_musician": "結婚式の音楽",
+      "festival_musician": "フェスティバルの音楽",
+      "wedding_dj": "結婚式のDJ",
+      "festival_dj": "フェスティバルのDJ",
+      "festival_sound_technician": "フェスティバルの音響",
+      "apartment_cleaner": "アパート・マンションの清掃",
+      "house_cleaner": "一戸建ての清掃",
+      "office_cleaner": "オフィスの清掃",
+      "apartment_electrician": "アパート・マンションの電気工事",
+      "house_electrician": "一戸建ての電気工事",
+      "office_electrician": "オフィスの電気工事"
     }
-  },
-  "category": {
-    "wedding": "ウェディング",
-    "festival": "フェスティバル"
   },
   "filters": {
     "weddingStyle": "結婚式のスタイル",
@@ -98,19 +121,27 @@
     "region": "地域",
     "regionOptional": "地域（任意）",
     "regionExample": "トスカーナ",
-    "websiteOptional": "ウェブサイト（任意）",
+    "websiteOptional": "ウェブサイトまたはSNSページ（任意）",
     "websiteExample": "your-site.com",
-    "instagramOptional": "Instagram（任意）",
-    "instagramExample": "ユーザー名",
-    "website": "ウェブサイト",
-    "instagram": "Instagram",
+    "website": "ウェブサイトまたはSNSページ",
     "title": "タイトル",
     "location": "会場",
-    "eventDate": "開催日",
+    "eventDate": "日付",
     "deadline": "応募締切",
     "maxShortlist": "候補の上限",
-    "interestedCategories": "興味のあるイベント",
-    "interestedCategoriesHint": "フィードには最初にこれらが表示されます。何も選ばなければすべてのイベントが表示されます。"
+    "professions": "あなたの職種",
+    "professionsHint": "フィードには最初にこれらの職種の仕事が表示されます。何も選ばなければすべて表示されます。",
+    "jobTitle": "作業内容",
+    "phone": "電話番号",
+    "phoneOptional": "電話番号（任意）",
+    "phoneExample": "090-1234-5678",
+    "phoneHint": "応募先の仕事を投稿した人にのみ表示されます。",
+    "jobType": "仕事の種類",
+    "jobTypes": "興味のある仕事の種類",
+    "jobTypesHint": "フィードには最初にこれらが表示されます。空欄のままにするとすべて表示されます。",
+    "jobTypeRequest": "仕事の種類が見つかりませんか?追加をご依頼ください",
+    "jobTypeRequestSubject": "Vaituへの仕事の種類の追加依頼",
+    "jobTypeRequestBody": "追加してほしい仕事の種類:\n\n私の職種:\n"
   },
   "periods": {
     "all": "すべての日程",
@@ -132,7 +163,8 @@
     "loading": "読み込み中…",
     "noOptions": "選択肢がありません",
     "noCountries": "国が見つかりません",
-    "noRegions": "地域が見つかりません"
+    "noRegions": "地域が見つかりません",
+    "allJobTypes": "すべての仕事の種類"
   },
   "pwa": {
     "updateReady": "新しいバージョンがあります",
@@ -169,7 +201,8 @@
     "nameRequired": "名前を入力してください",
     "passwordsMismatch": "パスワードが一致しません",
     "futureDeadline": "今日より後の締切を選んでください",
-    "passwordLength_other": "パスワードは{{count}}文字以上にしてください"
+    "passwordLength_other": "パスワードは{{count}}文字以上にしてください",
+    "pickJobType": "仕事の種類を選択してください"
   },
   "errors": {
     "notLoggedIn": "ログインしていません",
@@ -246,12 +279,13 @@
     "period": "期間",
     "clearAll": "すべてクリア",
     "filters": "フィルター",
-    "type": "イベントの種類",
+    "type": "仕事の種類",
     "removeFilter": "フィルターを解除：{{label}}",
     "filtersOn_other": "フィルター（{{count}}件適用中）",
     "noneMatch": "検索に一致するイベントはまだありません。",
     "orderBy": "並べ替え",
-    "results_other": "イベント{{count}}件"
+    "results_other": "イベント{{count}}件",
+    "profession": "職種"
   },
   "myEvents": {
     "title": "自分のイベント",
@@ -283,7 +317,7 @@
     "names": "名前",
     "style": "スタイル",
     "location": "会場",
-    "eventDate": "開催日",
+    "eventDate": "日付",
     "deadline": "応募締切",
     "shortlist": "候補",
     "created": "作成日",
@@ -324,7 +358,9 @@
     "cropApply": "切り抜いて使う",
     "gallery": "その他の写真",
     "galleryHint": "イベント内のミニギャラリー。最大 {{count}} 枚。",
-    "addGalleryPhotos": "写真を追加"
+    "addGalleryPhotos": "写真を追加",
+    "jobTitleExample": "例：2LDKの徹底清掃",
+    "propertyLocationExample": "番地ではなく地区名や市区町村名"
   },
   "ranks": {
     "title": "ランク",
@@ -394,7 +430,7 @@
       },
       "audience": {
         "question": "どんな人向けですか？",
-        "answer": "イベントで働くプロの方向けです。ウェディングフォトグラファーから始まり、フェスティバルの音響技術者など、他の職種やイベントにも広がっています。"
+        "answer": "引き受けられない仕事を他の人に引き継ぎたいプロフェッショナルのためのアプリです。結婚式の写真家から始まり、フェスティバルの音響技術者や、アパート・一戸建て・オフィスの清掃など、他の職種にも広がっています。"
       },
       "publish": {
         "question": "イベントを投稿するには？",
@@ -402,7 +438,7 @@
       },
       "apply": {
         "question": "応募するには？",
-        "answer": "イベントを開き、自分が適任である理由を主催者に伝えてください。プロフィールには名前、ウェブサイト、Instagramが必要で、締切まで応募できます。"
+        "answer": "イベントを開き、自分が適任である理由を主催者に伝えてください。プロフィールには名前と、ウェブサイト・SNSページ・電話番号のいずれかが必要で、締切まで応募できます。"
       },
       "choose": {
         "question": "応募者を選ぶには？",
@@ -410,7 +446,7 @@
       },
       "contact": {
         "question": "連絡はどう取りますか？",
-        "answer": "主催者は各応募者のウェブサイトとInstagramを確認でき、そこから当選者に連絡します。Vaituにチャット機能はありません。"
+        "answer": "主催者は各応募者のウェブサイトまたはSNSページと電話番号を確認でき、そこから当選者に連絡します。Vaituにチャット機能はありません。"
       },
       "payments": {
         "question": "Vaituは支払いや契約を扱いますか？",
@@ -456,7 +492,7 @@
     "feedback": "数日以内に結果をお知らせします。",
     "backToEvents": "イベントに戻る",
     "applyTitle": "このイベントに応募",
-    "completeFirst": "応募する前にプロフィール（名前・ウェブサイト・Instagram）を完成させてください。",
+    "completeFirst": "応募する前にプロフィール（名前と、ウェブサイト・SNSページ・電話番号のいずれか）を完成させてください。",
     "completeProfile": "プロフィールを完成させる",
     "forwarded_other": "主催者に送られるのは{{count}}名だけです。",
     "motivation": "あなたがこのイベントに最適な理由は？",

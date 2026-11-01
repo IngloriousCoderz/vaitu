@@ -2,11 +2,13 @@ import { Flex } from "@inglorious/ui/flex"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 
-import { CategoryPicker } from "../../common/category-picker/index.js"
+import { ChipPicker } from "../../common/chip-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FavoriteRegions } from "../../common/favorite-regions/index.js"
+import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { professions } from "../../data/event-taxonomy.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
@@ -18,7 +20,7 @@ export const Preferences = {
   renderPreferences(
     {
       entity,
-      onToggleInterest,
+      onToggleProfession,
       onFavoriteInput,
       onFavoriteAdd,
       onFavoriteRemove,
@@ -42,12 +44,19 @@ export const Preferences = {
               direction: "column",
               gap: "lg",
               children: [
-                CategoryPicker.render({
-                  label: t("fields.interestedCategories"),
-                  hint: t("fields.interestedCategoriesHint"),
-                  value: entity.interested_categories,
-                  onToggle: onToggleInterest,
+                ChipPicker.render({
+                  label: t("fields.professions"),
+                  hint: t("fields.professionsHint"),
+                  options: professions,
+                  value: entity.professions,
+                  onToggle: onToggleProfession,
                 }),
+                html`<div>
+                  ${api.render("jobTypesPreferences")}
+                  <p class=${styles.sectionHint}>
+                    ${t("fields.jobTypesHint")} ${JobTypeRequest.render()}
+                  </p>
+                </div>`,
                 html`<fieldset class=${styles.group}>
                   <legend class=${styles.legend}>
                     ${t("preferences.favoriteRegions")}

@@ -1,0 +1,6 @@
+.link {
+  display: inline-block;
+  margin-top: var(--iw-space-2);
+  font-size: var(--iw-font-size-xs);
+  color: var(--vaccent);
+}

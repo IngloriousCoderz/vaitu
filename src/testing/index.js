@@ -28,6 +28,7 @@ export function pastDeadline() {
 export function eventPayload(id, deadline) {
   return {
     category: "wedding",
+    profession: "photographer",
     title: `Vitest ${id}`,
     location: "Florence",
     country: "Italy",

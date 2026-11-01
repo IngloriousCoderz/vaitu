@@ -1,9 +1,10 @@
 export {
   deadlineBadge,
   deadlineTone,
+  eventJobType,
+  eventMonogram,
   eventSubtitle,
   eventTag,
-  monogram,
   thumbGradient,
 } from "./helpers.js"
 export { Card } from "./template.js"
