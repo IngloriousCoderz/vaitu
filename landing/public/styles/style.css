@@ -294,6 +294,25 @@ details p {
   gap: 0.5rem 1.25rem;
 }
 
+.document {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2rem var(--gutter) 4rem;
+}
+
+.document h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+.document .note {
+  margin-bottom: 2rem;
+}
+
+.document h2 {
+  margin: 2rem 0 0.5rem;
+  font-size: 1.375rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

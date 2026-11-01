@@ -64,7 +64,7 @@ async function emailErasureLink(
     .maybeSingle()
   const locale = profile?.locale
   const lines = wording[locale as Locale] ?? wording[FALLBACK_LOCALE]
-  const link = `${env("APP_URL")}/erase-account?token=${token}`
+  const link = `${env("APP_URL")}/erase-account?token=${token}&lang=${locale ?? FALLBACK_LOCALE}`
 
   await sendEmail(email, lines.subject, lines.body.replace("{{link}}", link))
 }

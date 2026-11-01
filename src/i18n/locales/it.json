@@ -500,7 +500,9 @@
         "answer": "Usa il pulsante di segnalazione su un evento, un candidato o una recensione. Puoi anche bloccare una persona: non vedrete più i rispettivi eventi aperti e non potrete candidarvi. Puoi annullare il blocco nelle Preferenze."
       }
     },
-    "legalTitle": "Informazioni legali"
+    "legalTitle": "Informazioni legali",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini di servizio"
   },
   "facts": {
     "spouses": "Sposi"
@@ -671,75 +673,6 @@
   "accountEmail": {
     "subject": "Il tuo account Vaitu è disattivato",
     "body": "Il tuo account Vaitu è stato disattivato. Per tornare, ti basta accedere di nuovo.\n\nSe vuoi cancellarlo definitivamente, usa questo link entro 30 giorni:\n{{link}}\n\nSe non l'hai chiesto tu, accedi e cambia la password."
-  },
-  "legal": {
-    "updated": "Ultimo aggiornamento: {{date}}",
-    "privacy": {
-      "title": "Informativa sulla privacy",
-      "who": {
-        "title": "Chi siamo",
-        "body": "Vaitu è gestita da {{owner}}, titolare del trattamento dei dati. Per qualsiasi domanda sui tuoi dati, scrivi a {{email}}."
-      },
-      "data": {
-        "title": "Quali dati raccogliamo",
-        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, mestieri, regioni e lingua. Ciò che pubblichi: eventi e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti. Il compenso che offri, gli importi che confermi e se sono stati regolati."
-      },
-      "voice": {
-        "title": "Messaggi vocali",
-        "body": "Se descrivi un evento a voce, la registrazione viene inviata al nostro fornitore di trascrizione per ottenere il testo, e il testo a un fornitore di IA per compilare il modulo. Non conserviamo mai né la registrazione né il testo. Evita di dire sui clienti più di quanto serva al lavoro."
-      },
-      "visible": {
-        "title": "Chi vede cosa",
-        "body": "Gli eventi aperti sono pubblici, anche per chi non ha un account. Quando ti candidi, l'organizzatore vede nome, contatti, messaggio, livello, distintivi e recensioni. Le recensioni non mostrano il nome di chi le ha scritte."
-      },
-      "providers": {
-        "title": "Chi ci aiuta",
-        "body": "Supabase e Vercel (hosting e database), Firebase di Google (notifiche push e, con il tuo consenso, Google Analytics), Deepgram (trascrizione), OpenRouter e i modelli di IA gratuiti a cui accede (compilazione del modulo; questi fornitori possono conservare o usare ciò che ricevono) e Resend (email). Alcuni si trovano fuori dall'UE, e in quel caso ci affidiamo alle garanzie previste dalla legge."
-      },
-      "keeping": {
-        "title": "Perché e per quanto tempo",
-        "body": "Usiamo i tuoi dati per fornire il servizio a cui ti sei iscritto, per mantenerlo sicuro e, solo con il tuo consenso, per le statistiche. Li conserviamo finché non elimini l'account. La disattivazione li conserva, così puoi tornare. L'eliminazione rimuove account, profilo, file ed eventi, mentre recensioni e storico dei lavori restano senza il tuo nome, come [Utente eliminato], perché fanno parte della storia di altre persone."
-      },
-      "rights": {
-        "title": "I tuoi diritti",
-        "body": "Puoi accedere ai tuoi dati, correggerli, esportarli o cancellarli, opporti al loro uso e revocare il consenso in qualsiasi momento. Gran parte di questo è nell'app: statistiche nelle Preferenze, eliminazione nel profilo. Per il resto, scrivi a {{email}}. Puoi anche presentare reclamo all'autorità per la protezione dei dati. Vaitu è per chi ha almeno 18 anni."
-      }
-    },
-    "terms": {
-      "title": "Termini di servizio",
-      "what": {
-        "title": "Cos'è Vaitu",
-        "body": "Vaitu, gestita da {{owner}}, permette ai professionisti di passare ai colleghi i lavori che non possono svolgere. Si limita a mettere in contatto le persone: non è datore di lavoro, agente né parte di alcun lavoro."
-      },
-      "account": {
-        "title": "Il tuo account",
-        "body": "Devi avere almeno 18 anni e agire in ambito professionale. Mantieni corretti i tuoi dati e al sicuro la password. Sei responsabile di ciò che avviene con il tuo account."
-      },
-      "handoff": {
-        "title": "Passare un lavoro",
-        "body": "Compenso, condizioni ed eventuale contratto li concordate tra voi, e ciascuno è responsabile di tasse, assicurazioni e permessi propri. Assicurati di poter passare il lavoro e che il cliente sia d'accordo, dove serve. Vaitu non gestisce pagamenti e non garantisce lavori, candidati o risultati. Vaitu può registrare un importo confermato da entrambi, ma non ne impone il rispetto."
-      },
-      "content": {
-        "title": "Ciò che pubblichi",
-        "body": "I contenuti restano tuoi e ci autorizzi a ospitarli e mostrarli per fornire il servizio. Pubblica solo ciò che è vero e che hai il diritto di condividere. Non pubblicare l'indirizzo di un'abitazione né più informazioni sui clienti di quanto serva. Le recensioni devono essere oneste e riguardare il lavoro."
-      },
-      "moderation": {
-        "title": "Segnalazioni e rimozioni",
-        "body": "Puoi segnalare contenuti e bloccare persone. Possiamo rimuovere contenuti o sospendere account che violano questi termini o la legge."
-      },
-      "price": {
-        "title": "Prezzo e limiti",
-        "body": "Pubblicare un lavoro, candidarsi e scegliere un candidato è gratis, e lo resterà sempre. Alcuni extra hanno dei limiti, come un numero giornaliero di messaggi vocali, e potremo offrire extra facoltativi a pagamento. Te lo diremo prima, e non dovrai mai pagare per le funzioni di base."
-      },
-      "liability": {
-        "title": "Responsabilità",
-        "body": "Il servizio è fornito così com'è e può interrompersi o cambiare. Nei limiti di legge, non rispondiamo di ciò che accade tra utenti, né di lavori o guadagni persi. Nulla qui limita i diritti che la legge non consente di derogare."
-      },
-      "ending": {
-        "title": "Fine e modifiche",
-        "body": "Puoi eliminare l'account in qualsiasi momento dal tuo profilo. Ti informeremo delle modifiche importanti a questi termini. Questi termini sono regolati dalla legge italiana. Per domande, scrivi a {{email}}."
-      }
-    }
   },
   "pay": {
     "title": "Quanto guadagna il collega",

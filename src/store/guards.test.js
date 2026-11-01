@@ -91,19 +91,11 @@ describe("routeGuard, signed out", () => {
   })
 })
 
-describe("the public pages", () => {
-  it.each(["privacy", "terms", "eraseAccount"])(
-    "leaves a signed-out visitor on %s",
-    (route) => {
-      const api = { notify: vi.fn(), getEntity: vi.fn() }
-      routeGuard({}, { route, path: `/${route}` }, api)
-      expect(api.notify).not.toHaveBeenCalled()
-    },
-  )
-
-  it("counts as somewhere a sign-out can stay", () => {
-    expect(isPreLoginPath(paths.privacy)).toBe(true)
-    expect(isPreLoginPath(paths.terms)).toBe(true)
+describe("the public page", () => {
+  it("leaves a signed-out visitor on the account erasure link", () => {
+    const api = { notify: vi.fn(), getEntity: vi.fn() }
+    routeGuard({}, { route: "eraseAccount", path: "/erase-account" }, api)
+    expect(api.notify).not.toHaveBeenCalled()
     expect(isPreLoginPath(paths.eraseAccount)).toBe(true)
   })
 })

@@ -18,8 +18,6 @@ const regionOptions = italianRegions.map(regionOption)
 
 export const entities = {
   safety: { type: "Safety" },
-  privacy: { type: "Legal", doc: "privacy" },
-  terms: { type: "Legal", doc: "terms" },
   analytics: { type: "AnalyticsConsent" },
   i18n: { type: "I18n" },
   language: {

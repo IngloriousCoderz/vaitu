@@ -51,8 +51,6 @@ const CHROME = {
   ranks: { isHidden: true },
   preferences: { tab: "preferences", isHidden: true },
   about: { tab: "about", isHidden: true },
-  privacy: { isTabbarRendered: false },
-  terms: { isTabbarRendered: false },
   eraseAccount: { isTabbarRendered: false },
   authentication: { isTabbarRendered: false },
   onboarding: { isTabbarRendered: false },
@@ -62,7 +60,6 @@ const CHROME = {
 const DEFAULT_CHROME = { tab: "events" }
 
 const NO_WIDE_CHROME = new Set(["authentication", "onboarding", "eraseAccount"])
-const LEGAL_ROUTES = new Set(["privacy", "terms"])
 
 const DRAWER_PATHS = {
   events: paths.events,
@@ -92,9 +89,7 @@ export const App = {
       })
     }
 
-    const showWide =
-      !NO_WIDE_CHROME.has(router.route) &&
-      !(LEGAL_ROUTES.has(router.route) && !readUser())
+    const showWide = !NO_WIDE_CHROME.has(router.route)
 
     const updatebar =
       this.renderUpdateBar(api, pwaUpdate) ||

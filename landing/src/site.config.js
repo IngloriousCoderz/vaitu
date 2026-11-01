@@ -5,21 +5,9 @@ try {
 }
 
 const SITE_URL = process.env.VITE_SITE_URL
-const ALTERNATES = [
-  ["x-default", ""],
-  ["it", ""],
-  ["en", "/en"],
-  ["fr", "/fr"],
-  ["ja", "/ja"],
-  ["ar", "/ar"],
-]
 
 export default {
   title: "Vaitu",
-  head: ALTERNATES.map(
-    ([lang, path]) =>
-      `<link rel="alternate" hreflang="${lang}" href="${SITE_URL}${path}">`,
-  ).join(""),
   favicon: "/logo.svg",
   i18n: {
     defaultLocale: "it",

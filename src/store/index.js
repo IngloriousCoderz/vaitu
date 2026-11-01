@@ -23,7 +23,6 @@ import { CoverCropper } from "../views/event-create/cover-cropper.js"
 import { EventCreate } from "../views/event-create/index.js"
 import { EventDetail } from "../views/event-detail/index.js"
 import { EventList } from "../views/event-list/index.js"
-import { Legal } from "../views/legal/index.js"
 import { MyEvents } from "../views/my-events/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
@@ -73,7 +72,6 @@ export const store = createStore({
     AvatarCropper,
     Ranks,
     Safety,
-    Legal,
     EraseAccount,
     ...guards,
   },

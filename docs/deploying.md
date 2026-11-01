@@ -95,19 +95,17 @@ same goes for the `VITE_FIREBASE_*` values (see
 [Analytics](analytics.md#setting-it-up)): without them, allowing
 notifications in the PWA files no token, and the PWA measures nothing.
 
-`VITE_LEGAL_NAME` is who the privacy policy and terms say runs Vaitu, and
-`VITE_PUBLIC_APP_URL` is where signup links to them: the native apps have no
-public address of their own. Both are required.
+`VITE_SITE_URL` is the landing site, where the app links to the privacy policy
+and terms. It is required.
 
-`VITE_CONTACT_EMAIL` is where the privacy policy and terms send people, so it must
-reach someone. It also receives the requests for new job types. Without it, the
+`VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
 "Job type missing?" link is hidden. To add a job type, extend
 `SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and translate its
 `taxonomy.jobType` label in every locale.
 
 ```bash
 # Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL,
-# VITE_LEGAL_NAME, VITE_PUBLIC_APP_URL and the
+# VITE_SITE_URL and the
 # six VITE_FIREBASE_*
 # set in Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/
@@ -128,10 +126,12 @@ Traps worth knowing:
 ## Landing page
 
 `landing/` is the public site at `https://www.vaitu.net`, built with
-[SSX](https://www.npmjs.com/package/@inglorious/ssx). It has its own
+[SSX](https://www.npmjs.com/package/@inglorious/ssx). It also holds the privacy
+policy and the terms, which store listings can link to: `/privacy`, `/en/privacy`
+and so on. It has its own
 `package.json`, lockfile and `pnpm-workspace.yaml`, so deploying it doesn't
-install the app. `pnpm landing` runs it locally. Its wording lives in
-`landing/src/i18n/`; Italian is served at `/`, the others at `/en`, `/fr`, `/ja`
+install the app. `pnpm landing` runs it locally. Its wording, the legal text
+included, lives in `landing/src/i18n/`; Italian is served at `/`, the others at `/en`, `/fr`, `/ja`
 and `/ar`.
 
 It is a second Vercel project on the same repository:

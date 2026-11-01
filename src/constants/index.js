@@ -65,7 +65,6 @@ export const BADGE_TOP_RATED_MIN_TENTHS = 45
 export const BADGE_GENEROUS_MIN_HANDOFFS = 3
 export const TENTHS_PER_STAR = 10
 export const NO_RATING = 0
-export const LEGAL_UPDATED_ON = "2026-11-01"
 export const PERCENT_MAX = 100
 export const AUDIO_MAX_SECONDS = 120
 export const MAX_EVENT_IMAGES = 6

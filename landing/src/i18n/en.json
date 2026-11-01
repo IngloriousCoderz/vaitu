@@ -96,5 +96,74 @@
   "credits": "Idea by Giada Joey Cazzola. Built by Matteo Antony Mistretta.",
   "privacy": "Privacy",
   "terms": "Terms",
-  "contact": "Contact"
+  "contact": "Contact us",
+  "legal": {
+    "updated": "Last updated: {{date}}",
+    "privacy": {
+      "title": "Privacy Policy",
+      "who": {
+        "title": "Who we are",
+        "body": "Vaitu is run by {{owner}}, which decides how your data is used. For anything about your data, write to {{email}}."
+      },
+      "data": {
+        "title": "What we collect",
+        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: events and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them. The pay you offer, the amounts you confirm and whether they were settled."
+      },
+      "voice": {
+        "title": "Voice messages",
+        "body": "If you describe an event by voice, the recording is sent to our speech provider to be turned into text, and that text to an AI provider to fill in the form. We never store the recording or the text. Please avoid saying more about your clients than the job needs."
+      },
+      "visible": {
+        "title": "Who sees what",
+        "body": "Open events are public, even to people without an account. When you apply, the organizer sees your name, contact details, message, rank, badges and reviews. Reviews are shown without the name of whoever wrote them."
+      },
+      "providers": {
+        "title": "Who helps us",
+        "body": "Supabase and Vercel (hosting and database), Firebase by Google (push notifications and, with your consent, Google Analytics), Deepgram (speech to text), OpenRouter and the free AI models it reaches (filling in the form; these providers may keep or use what they receive), and Resend (email). Some are outside the EU, where we rely on the safeguards the law requires."
+      },
+      "keeping": {
+        "title": "Why, and for how long",
+        "body": "We use your data to run the service you signed up for, to keep it safe, and for statistics only with your consent. We keep it until you delete your account. Deactivating keeps it, so you can come back. Deleting removes your account, profile, files and events, while reviews and past job records stay without your name, as [Deleted User], because they are part of other people's history."
+      },
+      "rights": {
+        "title": "Your rights",
+        "body": "You can access, correct, export or erase your data, object to its use, and withdraw consent at any time. Most of this is in the app: statistics in Preferences, deletion in your profile. For the rest, write to {{email}}. You can also complain to your data protection authority. Vaitu is for people aged 18 or over."
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "what": {
+        "title": "What Vaitu is",
+        "body": "Vaitu, run by {{owner}}, lets professionals pass on jobs they can't take to colleagues. It only connects people: it is not an employer, agent or party to any job."
+      },
+      "account": {
+        "title": "Your account",
+        "body": "You must be at least 18 and working in a professional capacity. Keep your details accurate and your password safe. You are responsible for what happens under your account."
+      },
+      "handoff": {
+        "title": "Handing off a job",
+        "body": "You agree on the fee, terms and any contract between yourselves, and each of you is responsible for your own taxes, insurance and permits. Make sure you may pass on a job, and that your client agrees where needed. Vaitu handles no payments and guarantees no job, applicant or outcome. Vaitu can record an amount you both confirm, but it doesn't enforce it."
+      },
+      "content": {
+        "title": "What you publish",
+        "body": "You keep your content, and allow us to host and show it to run the service. Only publish what is true and what you have the right to share. Don't post a home's street address or more about clients than the job needs. Reviews must be honest and about the job."
+      },
+      "moderation": {
+        "title": "Reports and removal",
+        "body": "You can report content and block people. We may remove content or suspend accounts that break these terms or the law."
+      },
+      "price": {
+        "title": "Price and limits",
+        "body": "Publishing a job, applying and choosing a candidate are free, and always will be. Some extras have limits, such as a daily number of voice messages, and we may offer optional paid extras. We'll tell you before we do, and you'll never have to pay to use the basics."
+      },
+      "liability": {
+        "title": "Responsibility",
+        "body": "The service is provided as it is, and may be interrupted or change. Within the limits of the law, we are not responsible for what happens between users, or for lost work or income. Nothing here limits rights you have by law that can't be waived."
+      },
+      "ending": {
+        "title": "Ending and changes",
+        "body": "You can delete your account at any time from your profile. We'll tell you about important changes to these terms. These terms follow Italian law. For questions, write to {{email}}."
+      }
+    }
+  }
 }

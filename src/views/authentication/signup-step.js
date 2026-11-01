@@ -5,8 +5,8 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
+import { legalUrl } from "../../common/legal-links.js"
 import { t, trans, translated } from "../../i18n/index.js"
-import { paths } from "../../routes.js"
 import { PasswordField } from "./password-field.js"
 import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
@@ -99,14 +99,14 @@ export const SignupStep = {
               components: {
                 terms: (children) =>
                   html`<a
-                    href=${`${import.meta.env.VITE_PUBLIC_APP_URL}${paths.terms}`}
+                    href=${legalUrl("terms")}
                     target="_blank"
                     rel="noopener"
                     >${children}</a
                   >`,
                 privacy: (children) =>
                   html`<a
-                    href=${`${import.meta.env.VITE_PUBLIC_APP_URL}${paths.privacy}`}
+                    href=${legalUrl("privacy")}
                     target="_blank"
                     rel="noopener"
                     >${children}</a

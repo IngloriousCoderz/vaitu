@@ -1,31 +1,15 @@
 import { html } from "@inglorious/web"
 
-import ar from "../i18n/ar.json"
-import en from "../i18n/en.json"
-import fr from "../i18n/fr.json"
-import it from "../i18n/it.json"
-import ja from "../i18n/ja.json"
+import { Footer, Header } from "../components/layout.js"
+import { alternateLinks, copy, localeOf } from "../site.js"
 
-const catalogues = { it, en, fr, ja, ar }
-const LANGUAGES = [
-  { locale: "it", label: "Italiano", href: "/" },
-  { locale: "en", label: "English", href: "/en" },
-  { locale: "fr", label: "Français", href: "/fr" },
-  { locale: "ja", label: "日本語", href: "/ja" },
-  { locale: "ar", label: "العربية", href: "/ar" },
-]
 const APP_URL = import.meta.env.VITE_APP_URL
-const LEGAL_NAME = import.meta.env.VITE_LEGAL_NAME
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL
-
-function copy(entity) {
-  return catalogues[entity.locale] ?? it
-}
 
 export const metadata = (entity) => {
   const { title, description } = copy(entity)
   return {
     title,
+    head: alternateLinks("/"),
     meta: {
       description,
       "og:title": title,
@@ -39,33 +23,16 @@ export const metadata = (entity) => {
 export const landing = {
   render(entity) {
     const c = copy(entity)
+    const lang = `?lang=${localeOf(entity)}`
     return html`
-      <header class="top">
-        <a class="brand" href="/">
-          <img src="/logo.svg" alt="" width="40" height="27" />
-          <span>vaitu</span>
-        </a>
-        <nav class="languages" aria-label=${c.languageLabel}>
-          ${LANGUAGES.map(
-            ({ locale, label, href }) =>
-              html`<a
-                href=${href}
-                lang=${locale}
-                aria-current=${
-                  locale === (entity.locale ?? "it") ? "page" : "false"
-                }
-                >${label}</a
-              >`,
-          )}
-        </nav>
-      </header>
+      ${Header.render(entity, "/")}
 
       <main>
         <section class="hero">
           <p class="eyebrow">${c.eyebrow}</p>
           <h1>${c.headline}</h1>
           <p class="lede">${c.lede}</p>
-          <a class="cta" href=${APP_URL}>${c.cta}</a>
+          <a class="cta" href=${`${APP_URL}/${lang}`}>${c.cta}</a>
           <p class="note">${c.ctaNote}</p>
           <p class="name">${c.nameOrigin}</p>
         </section>
@@ -134,19 +101,11 @@ export const landing = {
 
         <section class="closing">
           <h2>${c.closing}</h2>
-          <a class="cta" href=${APP_URL}>${c.cta}</a>
+          <a class="cta" href=${`${APP_URL}/${lang}`}>${c.cta}</a>
         </section>
       </main>
 
-      <footer class="foot">
-        <p>${c.credits}</p>
-        <p>
-          <a href=${`${APP_URL}/privacy`}>${c.privacy}</a>
-          <a href=${`${APP_URL}/terms`}>${c.terms}</a>
-          <a href=${`mailto:${CONTACT_EMAIL}`}>${c.contact}</a>
-        </p>
-        <p>© ${LEGAL_NAME}</p>
-      </footer>
+      ${Footer.render(entity)}
     `
   },
 }

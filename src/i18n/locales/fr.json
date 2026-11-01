@@ -500,7 +500,9 @@
         "answer": "Utilisez le bouton de signalement sur un événement, un candidat ou un avis. Vous pouvez aussi bloquer quelqu'un : vous ne verrez plus vos événements ouverts respectifs et ne pourrez plus y candidater. Vous pouvez annuler un blocage dans les Préférences."
       }
     },
-    "legalTitle": "Mentions légales"
+    "legalTitle": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation"
   },
   "facts": {
     "spouses": "Mariés"
@@ -671,75 +673,6 @@
   "accountEmail": {
     "subject": "Votre compte Vaitu est désactivé",
     "body": "Votre compte Vaitu a été désactivé. Pour revenir, il suffit de vous reconnecter.\n\nPour l'effacer définitivement, utilisez ce lien dans les 30 jours :\n{{link}}\n\nSi vous n'êtes pas à l'origine de cette demande, connectez-vous et changez votre mot de passe."
-  },
-  "legal": {
-    "updated": "Dernière mise à jour : {{date}}",
-    "privacy": {
-      "title": "Politique de confidentialité",
-      "who": {
-        "title": "Qui sommes-nous",
-        "body": "Vaitu est exploité par {{owner}}, responsable du traitement de vos données. Pour toute question sur vos données, écrivez à {{email}}."
-      },
-      "data": {
-        "title": "Ce que nous collectons",
-        "body": "Votre e-mail, votre nom et votre mot de passe (conservé chiffré). Ce que vous ajoutez au profil : téléphone, site web, pays, photo, métiers, régions et langue. Ce que vous publiez : les événements et leurs photos, y compris les noms de clients saisis. Vos candidatures, avis, statistiques, signalements et blocages. Un identifiant d'appareil pour les notifications push, et des statistiques d'utilisation uniquement si vous les autorisez. La rémunération que vous proposez, les montants que vous confirmez et leur règlement."
-      },
-      "voice": {
-        "title": "Messages vocaux",
-        "body": "Si vous décrivez un événement à la voix, l'enregistrement est envoyé à notre prestataire de transcription, puis le texte à un prestataire d'IA pour remplir le formulaire. Nous ne conservons jamais ni l'enregistrement ni le texte. Évitez d'en dire plus sur vos clients que ce que la mission exige."
-      },
-      "visible": {
-        "title": "Qui voit quoi",
-        "body": "Les événements ouverts sont publics, même pour les personnes sans compte. Quand vous candidatez, l'organisateur voit votre nom, vos coordonnées, votre message, votre niveau, vos badges et vos avis. Les avis n'indiquent pas le nom de leur auteur."
-      },
-      "providers": {
-        "title": "Nos prestataires",
-        "body": "Supabase et Vercel (hébergement et base de données), Firebase de Google (notifications push et, avec votre accord, Google Analytics), Deepgram (transcription), OpenRouter et les modèles d'IA gratuits qu'il utilise (remplissage du formulaire ; ces prestataires peuvent conserver ou utiliser ce qu'ils reçoivent) et Resend (e-mail). Certains sont hors de l'UE ; nous nous appuyons alors sur les garanties prévues par la loi."
-      },
-      "keeping": {
-        "title": "Pourquoi et combien de temps",
-        "body": "Nous utilisons vos données pour fournir le service auquel vous vous êtes inscrit, pour le sécuriser et, avec votre accord uniquement, pour des statistiques. Nous les conservons jusqu'à la suppression de votre compte. La désactivation les conserve, pour que vous puissiez revenir. La suppression retire le compte, le profil, les fichiers et les événements, tandis que les avis et l'historique des missions restent sans votre nom, sous [Utilisateur supprimé], car ils font partie de l'historique d'autres personnes."
-      },
-      "rights": {
-        "title": "Vos droits",
-        "body": "Vous pouvez accéder à vos données, les corriger, les exporter ou les effacer, vous opposer à leur utilisation et retirer votre consentement à tout moment. L'essentiel se trouve dans l'application : statistiques dans les Préférences, suppression dans le profil. Pour le reste, écrivez à {{email}}. Vous pouvez aussi saisir votre autorité de protection des données. Vaitu est réservé aux personnes de 18 ans ou plus."
-      }
-    },
-    "terms": {
-      "title": "Conditions d'utilisation",
-      "what": {
-        "title": "Ce qu'est Vaitu",
-        "body": "Vaitu, exploité par {{owner}}, permet aux professionnels de transmettre à des collègues les missions qu'ils ne peuvent pas assurer. Il met simplement les personnes en relation : il n'est ni employeur, ni agent, ni partie à une mission."
-      },
-      "account": {
-        "title": "Votre compte",
-        "body": "Vous devez avoir au moins 18 ans et agir à titre professionnel. Gardez vos informations exactes et votre mot de passe en sécurité. Vous êtes responsable de ce qui se passe avec votre compte."
-      },
-      "handoff": {
-        "title": "Transmettre une mission",
-        "body": "Vous convenez entre vous de la rémunération, des conditions et d'un éventuel contrat, et chacun reste responsable de ses impôts, assurances et autorisations. Assurez-vous de pouvoir transmettre la mission et de l'accord de votre client si nécessaire. Vaitu ne gère aucun paiement et ne garantit ni mission, ni candidat, ni résultat. Vaitu peut enregistrer un montant confirmé par les deux, mais n'en impose pas le respect."
-      },
-      "content": {
-        "title": "Ce que vous publiez",
-        "body": "Vos contenus restent les vôtres, et vous nous autorisez à les héberger et les afficher pour fournir le service. Ne publiez que ce qui est vrai et que vous avez le droit de partager. Ne publiez pas l'adresse d'un logement ni plus d'informations sur les clients que nécessaire. Les avis doivent être honnêtes et porter sur la mission."
-      },
-      "moderation": {
-        "title": "Signalements et retraits",
-        "body": "Vous pouvez signaler des contenus et bloquer des personnes. Nous pouvons retirer des contenus ou suspendre des comptes qui enfreignent ces conditions ou la loi."
-      },
-      "price": {
-        "title": "Prix et limites",
-        "body": "Publier une mission, candidater et choisir un candidat est gratuit, et le restera toujours. Certains extras ont des limites, comme un nombre quotidien de messages vocaux, et nous pourrons proposer des options payantes facultatives. Nous vous en informerons d'abord, et vous n'aurez jamais à payer pour les fonctions de base."
-      },
-      "liability": {
-        "title": "Responsabilité",
-        "body": "Le service est fourni tel quel et peut être interrompu ou modifié. Dans les limites de la loi, nous ne sommes pas responsables de ce qui se passe entre utilisateurs, ni des missions ou revenus perdus. Rien ici ne limite les droits auxquels la loi interdit de renoncer."
-      },
-      "ending": {
-        "title": "Fin et modifications",
-        "body": "Vous pouvez supprimer votre compte à tout moment depuis votre profil. Nous vous informerons des modifications importantes de ces conditions. Ces conditions sont régies par le droit italien. Pour toute question, écrivez à {{email}}."
-      }
-    }
   },
   "pay": {
     "title": "Ce que gagne le collègue",
