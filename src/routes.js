@@ -20,6 +20,7 @@ export const routes = {
   "/notifications": "notifications",
   "/ranks": "ranks",
   "/preferences": "preferences",
+  "/about": "about",
 
   "*": "notFound",
 }
@@ -38,6 +39,7 @@ export const paths = {
   profile: "/profile",
   ranks: "/ranks",
   preferences: "/preferences",
+  about: "/about",
   login: "/login",
   onboarding: "/onboarding",
 }

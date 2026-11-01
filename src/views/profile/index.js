@@ -75,6 +75,7 @@ export const Profile = {
           api.notify("#router:navigate", paths.applicationsByStatus(status)),
         onOpenPreferences: () =>
           api.notify("#router:navigate", paths.preferences),
+        onOpenAbout: () => api.notify("#router:navigate", paths.about),
       },
       api,
     )

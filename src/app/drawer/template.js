@@ -1,6 +1,7 @@
 import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
 import editCalendarOutline from "@iconify-icons/material-symbols/edit-calendar-outline"
 import eventOutline from "@iconify-icons/material-symbols/event-outline"
+import helpOutline from "@iconify-icons/material-symbols/help-outline"
 import personOutline from "@iconify-icons/material-symbols/person-outline"
 import settingsOutline from "@iconify-icons/material-symbols/settings-outline"
 import { Drawer } from "@inglorious/ui/drawer"
@@ -32,6 +33,7 @@ const NAV = [
     icon: settingsOutline,
     tab: "preferences",
   }),
+  labelled("nav.about", { id: "about", icon: helpOutline, tab: "about" }),
 ]
 
 export const AppDrawer = {

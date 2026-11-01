@@ -5,6 +5,7 @@
     "applications": "Applications",
     "profile": "Profile",
     "preferences": "Preferences",
+    "about": "About",
     "newEvent": "New event",
     "toggle": "Toggle navigation",
     "collapse": "Collapse sidebar",
@@ -379,6 +380,66 @@
     "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent.",
     "analytics": "Usage statistics",
     "analyticsDescription": "Lets us measure how you use the app, through Google Analytics. No ads."
+  },
+  "about": {
+    "title": "About",
+    "faqTitle": "Frequently asked questions",
+    "creditsTitle": "Credits",
+    "credits": {
+      "idea": "Idea",
+      "development": "Concept development and app",
+      "technology": "Built with"
+    },
+    "faq": {
+      "whatIs": {
+        "question": "What is Vaitu?",
+        "answer": "An app for handing off jobs you can't take. If you've been booked for an event you can't attend, you publish it, colleagues apply, and you pass the job to the candidate you choose."
+      },
+      "name": {
+        "question": "Where does the name come from?",
+        "answer": "From the Italian \"vai tu\", which means \"you go\"."
+      },
+      "audience": {
+        "question": "Who is it for?",
+        "answer": "Professionals who work at events. It started with wedding photographers and is expanding to other jobs and events, such as sound technicians at a festival."
+      },
+      "publish": {
+        "question": "How do I publish an event?",
+        "answer": "Start a new event and fill in the details, or describe it by voice and let the app fill in the fields. You also set the application deadline and the maximum size of your shortlist."
+      },
+      "apply": {
+        "question": "How do I apply?",
+        "answer": "Open an event and tell the organizer why you're the right person for it. You need a name, a website and an Instagram account on your profile, and you can apply until the deadline."
+      },
+      "choose": {
+        "question": "How do I choose a candidate?",
+        "answer": "Open the applications you received, add the most promising ones to your shortlist, then assign the event to the winner. The event closes and the other applicants are rejected."
+      },
+      "contact": {
+        "question": "How do we get in touch?",
+        "answer": "The organizer sees each applicant's website and Instagram, and contacts the winner there. Vaitu has no chat."
+      },
+      "payments": {
+        "question": "Does Vaitu handle payments or contracts?",
+        "answer": "No. You agree on the fee and the terms between yourselves."
+      },
+      "changeMind": {
+        "question": "Can I change my mind?",
+        "answer": "Yes. Applicants can withdraw, even after winning, and the organizer then picks someone else. Organizers can edit their events, and reopen one that is closed or assigned."
+      },
+      "ranks": {
+        "question": "What are ranks?",
+        "answer": "You earn points for applying, being shortlisted and winning. They take you through the bronze, silver and gold ranks, which show on your profile."
+      },
+      "notifications": {
+        "question": "How do notifications work?",
+        "answer": "The app tells you about new applications, decisions and changes to events you applied to. You can also allow push notifications on your device, and turn emails on or off in Preferences."
+      },
+      "leave": {
+        "question": "How do I leave?",
+        "answer": "Deactivate your account from your profile. Your open events and all your applications, sent and received, are permanently deleted, while past events with winners and your stats stay. To come back, sign in again."
+      }
+    }
   },
   "facts": {
     "spouses": "Spouses"

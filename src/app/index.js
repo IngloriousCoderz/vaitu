@@ -50,6 +50,7 @@ const CHROME = {
   applicationsReceived: { isHidden: true },
   ranks: { isHidden: true },
   preferences: { tab: "preferences", isHidden: true },
+  about: { tab: "about", isHidden: true },
   authentication: { isTabbarRendered: false },
   onboarding: { isTabbarRendered: false },
   notFound: { isTabbarRendered: false },
@@ -65,6 +66,7 @@ const DRAWER_PATHS = {
   applications: paths.applications,
   profile: paths.profile,
   preferences: paths.preferences,
+  about: paths.about,
 }
 
 export const App = {

@@ -5,6 +5,7 @@
     "applications": "Candidature",
     "profile": "Profilo",
     "preferences": "Preferenze",
+    "about": "Informazioni",
     "newEvent": "Nuovo evento",
     "toggle": "Apri o chiudi la navigazione",
     "collapse": "Comprimi la barra laterale",
@@ -387,6 +388,66 @@
     "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate.",
     "analytics": "Statistiche di utilizzo",
     "analyticsDescription": "Ci permette di misurare come usi l'app, tramite Google Analytics. Niente pubblicità."
+  },
+  "about": {
+    "title": "Informazioni",
+    "faqTitle": "Domande frequenti",
+    "creditsTitle": "Riconoscimenti",
+    "credits": {
+      "idea": "Idea",
+      "development": "Sviluppo del concept e dell'app",
+      "technology": "Realizzata con"
+    },
+    "faq": {
+      "whatIs": {
+        "question": "Che cos'è Vaitu?",
+        "answer": "Un'app per passare a un collega i lavori che non puoi accettare. Se hai un evento in calendario ma non puoi esserci, lo pubblichi, i colleghi si candidano e affidi il lavoro alla persona che scegli."
+      },
+      "name": {
+        "question": "Da dove viene il nome?",
+        "answer": "Dall'italiano \"vai tu\"."
+      },
+      "audience": {
+        "question": "A chi è rivolta?",
+        "answer": "A chi lavora agli eventi. È nata per i fotografi di matrimonio e si sta allargando ad altri mestieri ed eventi, come i tecnici del suono ai festival."
+      },
+      "publish": {
+        "question": "Come pubblico un evento?",
+        "answer": "Crea un nuovo evento e inserisci i dettagli, oppure descrivilo a voce e lascia che l'app compili i campi. Imposti anche la scadenza delle candidature e la dimensione massima della shortlist."
+      },
+      "apply": {
+        "question": "Come mi candido?",
+        "answer": "Apri un evento e spiega all'organizzatore perché sei la persona giusta. Sul tuo profilo servono nome, sito web e Instagram, e puoi candidarti fino alla scadenza."
+      },
+      "choose": {
+        "question": "Come scelgo un candidato?",
+        "answer": "Apri le candidature ricevute, aggiungi le più promettenti alla shortlist, poi assegna l'evento a chi hai scelto. L'evento si chiude e le altre candidature vengono rifiutate."
+      },
+      "contact": {
+        "question": "Come ci mettiamo in contatto?",
+        "answer": "L'organizzatore vede il sito web e l'Instagram di ogni candidato e contatta lì la persona scelta. Vaitu non ha una chat."
+      },
+      "payments": {
+        "question": "Vaitu gestisce pagamenti o contratti?",
+        "answer": "No. Compenso e condizioni li concordate direttamente tra voi."
+      },
+      "changeMind": {
+        "question": "Posso cambiare idea?",
+        "answer": "Sì. Chi si candida può ritirarsi, anche dopo essere stato scelto, e l'organizzatore sceglie qualcun altro. Gli organizzatori possono modificare i propri eventi e riaprirne uno chiuso o assegnato."
+      },
+      "ranks": {
+        "question": "Cosa sono i livelli?",
+        "answer": "Guadagni punti candidandoti, entrando in shortlist e venendo scelto. Ti fanno salire ai livelli bronzo, argento e oro, che compaiono sul tuo profilo."
+      },
+      "notifications": {
+        "question": "Come funzionano le notifiche?",
+        "answer": "L'app ti avvisa di nuove candidature, decisioni e modifiche agli eventi a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e attivare o disattivare le email nelle Preferenze."
+      },
+      "leave": {
+        "question": "Come lascio Vaitu?",
+        "answer": "Disattiva l'account dal tuo profilo. I tuoi eventi aperti e tutte le tue candidature, inviate e ricevute, vengono eliminati definitivamente, mentre gli eventi passati con un vincitore e le tue statistiche restano. Per tornare, accedi di nuovo."
+      }
+    }
   },
   "facts": {
     "spouses": "Sposi"

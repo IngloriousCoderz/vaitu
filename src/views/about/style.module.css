@@ -1,0 +1,43 @@
+.sectionTitle {
+  font-family: var(--vtitle-font);
+  font-weight: var(--vtitle-weight);
+  font-size: var(--iw-font-size-xl);
+  margin: var(--iw-space-6) 0 var(--iw-space-3);
+}
+
+.sectionTitle:first-child {
+  margin-top: var(--iw-space-2);
+}
+
+.credits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-4);
+  margin: 0;
+}
+
+.role {
+  font-size: var(--iw-font-size-sm);
+  color: var(--vmuted);
+}
+
+.person {
+  margin: 0;
+}
+
+.name {
+  display: block;
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iw-space-1) var(--iw-space-3);
+  font-size: var(--iw-font-size-sm);
+}
+
+.link {
+  color: var(--vaccent);
+  text-decoration: none;
+}

@@ -12,6 +12,7 @@ import { PushPrompt } from "../common/push-prompt/index.js"
 import { AppVersion } from "../common/update-required/index.js"
 import { I18n } from "../i18n/index.js"
 import { routes } from "../routes"
+import { About } from "../views/about/index.js"
 import { ApplicationDetail } from "../views/application-detail/index.js"
 import { ApplicationList } from "../views/application-list/index.js"
 import { ApplicationsReceived } from "../views/applications-received/index.js"
@@ -65,6 +66,7 @@ export const store = createStore({
     NotFound,
     Onboarding,
     Preferences,
+    About,
     AvatarCropper,
     Ranks,
     ...guards,

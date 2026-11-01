@@ -51,6 +51,7 @@ export const Profile = {
       onOpenApplications,
       onOpenRanks,
       onOpenPreferences,
+      onOpenAbout,
     },
     api,
   ) {
@@ -250,6 +251,7 @@ export const Profile = {
                   ${this.renderAccountActions({
                     onEdit,
                     onOpenPreferences,
+                    onOpenAbout,
                     onLogout,
                     onDeactivateAsk,
                   })}
@@ -357,6 +359,7 @@ export const Profile = {
   renderAccountActions({
     onEdit,
     onOpenPreferences,
+    onOpenAbout,
     onLogout,
     onDeactivateAsk,
   }) {
@@ -380,6 +383,14 @@ export const Profile = {
           size: "md",
           isFullWidth: true,
           onClick: onOpenPreferences,
+        }),
+        Button.render({
+          children: t("nav.about"),
+          variant: "outline",
+          shape: "pill",
+          size: "md",
+          isFullWidth: true,
+          onClick: onOpenAbout,
         }),
         Button.render({
           children: t("profile.logOut"),

@@ -5,6 +5,7 @@
     "applications": "Candidatures",
     "profile": "Profil",
     "preferences": "Préférences",
+    "about": "À propos",
     "newEvent": "Nouvel événement",
     "toggle": "Ouvrir ou fermer la navigation",
     "collapse": "Réduire la barre latérale",
@@ -387,6 +388,66 @@
     "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés.",
     "analytics": "Statistiques d'utilisation",
     "analyticsDescription": "Nous permet de mesurer comment vous utilisez l'app, via Google Analytics. Sans publicité."
+  },
+  "about": {
+    "title": "À propos",
+    "faqTitle": "Questions fréquentes",
+    "creditsTitle": "Crédits",
+    "credits": {
+      "idea": "Idée",
+      "development": "Développement du concept et de l'application",
+      "technology": "Réalisée avec"
+    },
+    "faq": {
+      "whatIs": {
+        "question": "Qu'est-ce que Vaitu ?",
+        "answer": "Une application pour confier à un collègue les missions que vous ne pouvez pas assurer. Si vous êtes réservé pour un événement auquel vous ne pouvez pas assister, vous le publiez, des collègues candidatent et vous confiez la mission à la personne de votre choix."
+      },
+      "name": {
+        "question": "D'où vient le nom ?",
+        "answer": "De l'italien « vai tu », qui signifie « vas-y, toi »."
+      },
+      "audience": {
+        "question": "À qui s'adresse-t-elle ?",
+        "answer": "Aux professionnels de l'événementiel. Elle a commencé avec les photographes de mariage et s'ouvre à d'autres métiers et événements, comme les techniciens du son en festival."
+      },
+      "publish": {
+        "question": "Comment publier un événement ?",
+        "answer": "Créez un nouvel événement et renseignez les détails, ou décrivez-le à voix haute et laissez l'application remplir les champs. Vous fixez aussi la date limite de candidature et la taille maximale de votre présélection."
+      },
+      "apply": {
+        "question": "Comment candidater ?",
+        "answer": "Ouvrez un événement et expliquez à l'organisateur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom, votre site web et votre Instagram, et vous pouvez candidater jusqu'à la date limite."
+      },
+      "choose": {
+        "question": "Comment choisir un candidat ?",
+        "answer": "Ouvrez les candidatures reçues, ajoutez les plus prometteuses à votre présélection, puis attribuez l'événement à la personne retenue. L'événement se ferme et les autres candidatures sont refusées."
+      },
+      "contact": {
+        "question": "Comment se contacter ?",
+        "answer": "L'organisateur voit le site web et l'Instagram de chaque candidat et contacte la personne retenue par ce biais. Vaitu n'a pas de messagerie."
+      },
+      "payments": {
+        "question": "Vaitu gère-t-il les paiements ou les contrats ?",
+        "answer": "Non. Vous convenez du tarif et des conditions entre vous."
+      },
+      "changeMind": {
+        "question": "Puis-je changer d'avis ?",
+        "answer": "Oui. Les candidats peuvent se retirer, même après avoir été retenus, et l'organisateur choisit alors quelqu'un d'autre. Les organisateurs peuvent modifier leurs événements et rouvrir un événement fermé ou attribué."
+      },
+      "ranks": {
+        "question": "Que sont les niveaux ?",
+        "answer": "Vous gagnez des points en candidatant, en entrant en présélection et en étant retenu. Ils vous font passer par les niveaux bronze, argent et or, qui apparaissent sur votre profil."
+      },
+      "notifications": {
+        "question": "Comment fonctionnent les notifications ?",
+        "answer": "L'application vous informe des nouvelles candidatures, des décisions et des changements sur les événements auxquels vous avez candidaté. Vous pouvez aussi autoriser les notifications push sur votre appareil, et activer ou désactiver les e-mails dans les Préférences."
+      },
+      "leave": {
+        "question": "Comment quitter Vaitu ?",
+        "answer": "Désactivez votre compte depuis votre profil. Vos événements ouverts et toutes vos candidatures, envoyées et reçues, sont définitivement supprimés, tandis que les événements passés avec un gagnant et vos statistiques restent. Pour revenir, reconnectez-vous."
+      }
+    }
   },
   "facts": {
     "spouses": "Mariés"
