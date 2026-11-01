@@ -5,15 +5,24 @@ import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { clearReopenError } from "./handlers.js"
+import { emptyReview } from "./helpers.js"
 import { ApplicationsReceived as renderers } from "./template.js"
 
-const { load, statusSet, winnerAssign, eventReopen, ...syncHandlers } = handlers
+const {
+  load,
+  statusSet,
+  jobReview,
+  winnerAssign,
+  eventReopen,
+  ...syncHandlers
+} = handlers
 
 export const ApplicationsReceived = {
   ...Form,
   ...syncHandlers,
   ...load,
   ...statusSet,
+  ...jobReview,
   ...winnerAssign,
   ...eventReopen,
   ...renderers,
@@ -34,6 +43,7 @@ export const ApplicationsReceived = {
     entity.photoIndex ??= 0
     entity.isPhotoPreviewOpen ??= false
     entity.items ??= []
+    entity.review ??= emptyReview()
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -94,6 +104,10 @@ export const ApplicationsReceived = {
             application_id,
           }),
         onCancelAssign: () => api.notify(`#${id}:assignCancel`),
+        onReviewField: (field, value) =>
+          api.notify(`#${id}:reviewFieldSet`, { field, value }),
+        onReviewSubmit: (application_id) =>
+          api.notify(`#${id}:reviewSubmit`, application_id),
         onAskReopen: () => api.notify(`#${id}:reopenAsk`),
         onReopenDeadline: (value) =>
           api.notify(`#${id}:reopenDeadlineSet`, value),
@@ -120,6 +134,7 @@ function open(entity, event_id, api) {
   clearReopenError(entity)
   entity.max_applicants = 5
   entity.items = []
+  entity.review = emptyReview()
   entity.expanded_application_id = null
   entity.confirming_assign = null
   entity.photoIndex = 0

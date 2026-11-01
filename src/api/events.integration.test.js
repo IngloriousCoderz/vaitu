@@ -78,7 +78,9 @@ describe("deleting an event", () => {
       ownedEventId = await createEventAs(SEEKER, ownedUuid)
 
       await signIn(SENDER)
-      await deleteEvent(ownedEventId)
+      await expect(deleteEvent(ownedEventId)).rejects.toThrow(
+        "Only the event owner",
+      )
 
       await signIn(SEEKER)
       const mine = await fetchMyEvents()

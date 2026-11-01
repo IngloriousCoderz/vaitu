@@ -6,6 +6,9 @@
 -- - Event policies must NOT select profiles under RLS: it recurses through the
 -- applicants policy. is_active_profile() is security definer for this.
 -- - RLS picks the rows a client may update, column grants pick the columns.
+-- - Withdrawals and deleted events stay as rows: they are other people's
+-- history and a user's track record, which profile_stats() scores. Everything
+-- personal in a deleted event is wiped, and RLS hides it.
 -- - Functions are callable only where granted: by default anon could call
 -- security definer ones.
 
@@ -59,7 +62,8 @@ create table public.profiles (
   last_login_at timestamptz,
   deactivated_at timestamptz,
   is_email_opted_out boolean not null default false,
-  onboarded_at timestamptz
+  onboarded_at timestamptz,
+  has_new_event_alerts boolean not null default true
 );
 
 comment on column public.profiles.interested_job_types is
@@ -76,6 +80,8 @@ comment on column public.profiles.is_email_opted_out is
   'When true, do not send re-engagement (or other marketing) email.';
 comment on column public.profiles.onboarded_at is
   'When the user finished or skipped onboarding; null while it is still owed.';
+comment on column public.profiles.has_new_event_alerts is
+  'Whether a new event matching the user''s trades and regions notifies them.';
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -161,6 +167,8 @@ create table public.events (
   transcript_status text not null default 'none'
     check (transcript_status in ('none', 'pending', 'done', 'error')),
   image_urls text[] not null default '{}',
+  deleted_at timestamptz,
+  outcome_requested_at timestamptz,
   search_text text generated always as (
     public.immutable_unaccent(lower(
       title || ' ' || location || ' ' || region || ' ' ||
@@ -188,14 +196,20 @@ create table public.applications (
   applicant_id uuid not null references public.profiles (id) on delete cascade,
   motivation text not null,
   status text not null default 'pending'
-    check (status in ('pending', 'shortlisted', 'selected', 'rejected')),
+    check (status in ('pending', 'shortlisted', 'selected', 'rejected', 'withdrawn')),
   status_before_assign text
     check (status_before_assign in ('pending', 'shortlisted')),
+  -- Null on a withdrawn row means deactivation withdrew it, not the applicant.
+  withdrawn_from text
+    check (withdrawn_from in ('pending', 'shortlisted', 'selected', 'rejected')),
+  withdrawn_at timestamptz,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (event_id, applicant_id)
+  updated_at timestamptz not null default now()
 );
 
+create unique index applications_one_live_per_event
+  on public.applications (event_id, applicant_id)
+  where status <> 'withdrawn';
 create index applications_event_id_idx on public.applications (event_id);
 create index applications_applicant_id_idx on public.applications (applicant_id);
 create index applications_event_status_idx on public.applications (event_id, status);
@@ -214,12 +228,24 @@ create table public.app_config (
 );
 
 insert into public.app_config (key, value, description) values
-  ('points_per_application', 2, 'Points per application.'),
-  ('points_per_shortlist', 5, 'Points per shortlist (selections count too).'),
-  ('points_per_selection', 10, 'Points per win (selected).'),
-  ('tier_bronze_min_points', 75, 'Minimum points for bronze tier.'),
-  ('tier_silver_min_points', 125, 'Minimum points for silver tier.'),
-  ('tier_gold_min_points', 200, 'Minimum points for gold tier.');
+  ('points_per_completed_job', 20, 'Points per job the organizer confirmed as done.'),
+  ('review_good_min_stars', 4, 'Stars from which a review counts as good.'),
+  ('review_poor_max_stars', 2, 'Stars up to which a review counts as poor.'),
+  ('points_per_good_review', 5, 'Points per good review.'),
+  ('points_per_poor_review', -10, 'Points per poor review.'),
+  ('points_per_dropout', -15, 'Points per job withdrawn from after winning it.'),
+  ('points_per_no_show', -30, 'Points per job the organizer reported as a no-show.'),
+  ('tier_bronze_min_points', 25, 'Minimum points for bronze tier.'),
+  ('tier_silver_min_points', 100, 'Minimum points for silver tier.'),
+  ('tier_gold_min_points', 250, 'Minimum points for gold tier.'),
+  ('badge_serial_applicant_min_applications', 10, 'Applications for the Serial Applicant badge.'),
+  ('badge_serial_withdrawer_min_withdrawals', 3, 'Withdrawals for the Serial Withdrawer badge.'),
+  ('badge_serial_withdrawer_min_percent', 33, 'Share of applications withdrawn for the Serial Withdrawer badge.'),
+  ('badge_unreliable_min_failures', 2, 'Dropouts plus no-shows for the Unreliable badge.'),
+  ('badge_reliable_min_jobs', 3, 'Completed jobs, with no failures, for the Reliable badge.'),
+  ('badge_top_rated_min_reviews', 3, 'Reviews for the Top Rated badge.'),
+  ('badge_top_rated_min_tenths', 45, 'Average rating, in tenths of a star, for the Top Rated badge.'),
+  ('badge_generous_min_handoffs', 3, 'Jobs handed off for the Generous Colleague badge.');
 
 
 create or replace function public.enforce_application_rules()
@@ -241,6 +267,10 @@ begin
 
   if v_event.sender_id = new.applicant_id then
     raise exception 'You cannot apply to your own event.';
+  end if;
+
+  if v_event.deleted_at is not null then
+    raise exception 'Event does not exist.';
   end if;
 
   if v_event.status <> 'open' then
@@ -309,8 +339,8 @@ create trigger trg_applications_selection_cap
   for each row execute function public.enforce_selection_cap();
 
 -- Clients can update their own row, so status changes are guarded here.
--- assign_winner and reopen_on_winner_withdrawn pass by setting a transaction
--- flag.
+-- assign_winner, withdraw_application and retire_profile_activity pass by
+-- setting a transaction flag.
 create or replace function public.enforce_application_status_change()
 returns trigger
 language plpgsql
@@ -331,8 +361,13 @@ begin
     return new;
   end if;
 
-  if current_setting('vaitu.restoring', true) = 'on' then
+  if current_setting('vaitu.restoring', true) = 'on'
+    or current_setting('vaitu.withdrawing', true) = 'on' then
     return new;
+  end if;
+
+  if old.status = 'withdrawn' or new.status = 'withdrawn' then
+    raise exception 'You cannot change this application status.';
   end if;
 
   -- A decision taken after the assignment is the sender's: a withdrawing
@@ -399,7 +434,7 @@ declare
 begin
   select sender_id into v_sender_id
   from public.events
-  where id = p_event_id;
+  where id = p_event_id and deleted_at is null;
 
   if not found then
     raise exception 'Event does not exist.';
@@ -437,63 +472,93 @@ begin
       updated_at = now()
   where event_id = p_event_id
     and id <> p_application_id
-    and status <> 'rejected';
+    and status not in ('rejected', 'withdrawn');
 end;
 $$;
 
 grant execute on function public.assign_winner(uuid, uuid) to authenticated;
 
 -- Applicants cannot update events (RLS), so the reopen lives here. Only the
--- winner's own withdrawal: deleting the event or deactivating an account must
--- not reopen it.
-create or replace function public.reopen_on_winner_withdrawn()
-returns trigger
+-- winner's own withdrawal reopens: deleting the event or deactivating an
+-- account must not.
+create or replace function public.withdraw_application(p_application_id uuid)
+returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
+  v_application public.applications%rowtype;
   v_event public.events%rowtype;
 begin
-  if old.status <> 'selected'
-    or auth.uid() is distinct from old.applicant_id then
-    return old;
+  select * into v_application
+  from public.applications
+  where id = p_application_id
+  for update;
+
+  if not found
+    or v_application.applicant_id is distinct from auth.uid()
+    or v_application.status = 'withdrawn' then
+    raise exception 'Application does not exist.';
+  end if;
+
+  if exists (
+    select 1 from public.job_reviews where application_id = p_application_id
+  ) then
+    raise exception 'This job has already been reviewed.';
+  end if;
+
+  perform set_config('vaitu.withdrawing', 'on', true);
+  update public.applications
+  set status = 'withdrawn',
+      withdrawn_from = v_application.status,
+      withdrawn_at = now(),
+      status_before_assign = null
+  where id = p_application_id;
+  perform set_config('vaitu.withdrawing', 'off', true);
+
+  select * into v_event
+  from public.events
+  where id = v_application.event_id;
+
+  perform public.notify_user(
+    v_event.sender_id,
+    'application_withdrawn',
+    v_event.id,
+    null,
+    (select full_name from public.profiles where id = v_application.applicant_id)
+  );
+
+  if v_application.status <> 'selected' then
+    return;
   end if;
 
   perform set_config('vaitu.restoring', 'on', true);
   update public.applications
   set status = status_before_assign,
-      status_before_assign = null,
-      updated_at = now()
-  where event_id = old.event_id
+      status_before_assign = null
+  where event_id = v_event.id
     and status = 'rejected'
     and status_before_assign is not null;
   perform set_config('vaitu.restoring', 'off', true);
 
-  select * into v_event
-  from public.events
-  where id = old.event_id;
-
   if v_event.status <> 'assigned'
+    or v_event.deleted_at is not null
     or v_event.application_deadline <= now()
     or exists (
       select 1 from public.applications
-      where event_id = old.event_id and status = 'selected'
+      where event_id = v_event.id and status = 'selected'
     ) then
-    return old;
+    return;
   end if;
 
   update public.events
-  set status = 'open', updated_at = now()
-  where id = old.event_id;
-
-  return old;
+  set status = 'open'
+  where id = v_event.id;
 end;
 $$;
 
-create trigger trg_reopen_on_winner_withdrawn
-  after delete on public.applications
-  for each row execute function public.reopen_on_winner_withdrawn();
+grant execute on function public.withdraw_application(uuid) to authenticated;
 
 create or replace function public.close_expired_events()
 returns integer
@@ -507,6 +572,7 @@ begin
   update public.events
   set status = 'closed', updated_at = now()
   where status = 'open'
+    and deleted_at is null
     and application_deadline < now();
 
   get diagnostics v_closed = row_count;
@@ -547,46 +613,11 @@ as $$
   from public.events e
   join public.profiles p on p.id = e.sender_id
   where e.id = p_event_id
+    and e.deleted_at is null
     and (e.status <> 'open' or p.is_active or e.sender_id = auth.uid());
 $$;
 
 grant execute on function public.event_poster_name(uuid) to anon, authenticated;
-
-create view public.profile_stats
-with (security_invoker = true) as
-select
-  scored.profile_id,
-  scored.applications_count,
-  scored.shortlists_count,
-  scored.selections_count,
-  scored.points,
-  case
-    when scored.points >= (select value from public.app_config where key = 'tier_gold_min_points')
-      then 'gold'
-    when scored.points >= (select value from public.app_config where key = 'tier_silver_min_points')
-      then 'silver'
-    when scored.points >= (select value from public.app_config where key = 'tier_bronze_min_points')
-      then 'bronze'
-    else null
-  end as tier
-from (
-  select
-    p.id as profile_id,
-    count(a.id) as applications_count,
-    count(a.id) filter (where a.status = 'shortlisted') as shortlists_count,
-    count(a.id) filter (where a.status = 'selected') as selections_count,
-    (
-      count(a.id) * (select value from public.app_config where key = 'points_per_application')
-      + (count(a.id) filter (where a.status in ('shortlisted', 'selected')))
-        * (select value from public.app_config where key = 'points_per_shortlist')
-      + (count(a.id) filter (where a.status = 'selected'))
-        * (select value from public.app_config where key = 'points_per_selection')
-    ) as points
-  from public.profiles p
-  left join public.applications a on a.applicant_id = p.id
-  group by p.id
-) scored;
-
 
 alter table public.profiles enable row level security;
 alter table public.events enable row level security;
@@ -610,7 +641,9 @@ create policy "Senders can view applicants to their events"
       from public.applications a
       join public.events e on e.id = a.event_id
       where a.applicant_id = public.profiles.id
+        and a.status <> 'withdrawn'
         and e.sender_id = auth.uid()
+        and e.deleted_at is null
     )
   );
 
@@ -622,16 +655,17 @@ create policy "Anyone can view open events"
   on public.events for select to anon, authenticated
   using (
     status = 'open'
+    and deleted_at is null
     and public.is_active_profile(sender_id)
   );
 
 create policy "Anyone can view closed events"
   on public.events for select to anon, authenticated
-  using (status <> 'open');
+  using (status <> 'open' and deleted_at is null);
 
 create policy "Senders can view their own events"
   on public.events for select to authenticated
-  using (sender_id = auth.uid());
+  using (sender_id = auth.uid() and deleted_at is null);
 
 create policy "Users can create their own events"
   on public.events for insert to authenticated
@@ -644,16 +678,10 @@ create policy "Senders can update their own events"
   on public.events for update to authenticated
   using (
     sender_id = auth.uid()
+    and deleted_at is null
     and public.is_active_profile(auth.uid())
   )
   with check (
-    sender_id = auth.uid()
-    and public.is_active_profile(auth.uid())
-  );
-
-create policy "Senders can delete their own events"
-  on public.events for delete to authenticated
-  using (
     sender_id = auth.uid()
     and public.is_active_profile(auth.uid())
   );
@@ -691,14 +719,9 @@ create policy "Senders can update applications to their events"
     )
   );
 
-create policy "Applicants can withdraw their own applications"
-  on public.applications for delete to authenticated
-  using (applicant_id = auth.uid());
-
 
 -- Supabase grants every privilege by default and policies only pick rows:
 -- without these column grants an owner could rewrite any column.
-grant select on public.profile_stats to authenticated;
 grant select on public.app_config to anon, authenticated;
 
 grant select on public.events to anon, authenticated;
@@ -721,7 +744,26 @@ $$;
 
 grant execute on function public.open_event_regions(text[])
   to anon, authenticated;
-grant insert, update, delete on public.events to authenticated;
+revoke delete, update on public.events from anon, authenticated;
+grant insert on public.events to authenticated;
+grant update (
+  category,
+  profession,
+  title,
+  location,
+  country,
+  region,
+  event_date,
+  application_deadline,
+  max_applicants,
+  status,
+  details,
+  updated_at,
+  audio_url,
+  transcript,
+  transcript_status,
+  image_urls
+) on public.events to authenticated;
 
 revoke insert, update on public.profiles from anon, authenticated;
 grant select on public.profiles to authenticated;
@@ -736,11 +778,14 @@ grant update (
   locale,
   avatar_url,
   onboarded_at,
-  is_email_opted_out
+  is_email_opted_out,
+  has_new_event_alerts
 ) on public.profiles to authenticated;
 
-revoke update on public.applications from anon, authenticated;
-grant select, insert, delete on public.applications to authenticated;
+revoke insert, update, delete on public.applications from anon, authenticated;
+grant select on public.applications to authenticated;
+grant insert (event_id, applicant_id, motivation)
+  on public.applications to authenticated;
 grant update (status, motivation) on public.applications to authenticated;
 
 
@@ -754,7 +799,10 @@ create table public.notifications (
       'application_rejected',
       'application_withdrawn',
       'event_updated',
-      'event_closed'
+      'event_closed',
+      'new_event',
+      'job_outcome_due',
+      'job_reviewed'
     )
   ),
   event_id uuid references public.events (id) on delete cascade,
@@ -864,35 +912,6 @@ create trigger trg_application_decided
         and new.status in ('selected', 'rejected'))
   execute function public.vaitu_on_application_decided();
 
-create or replace function public.vaitu_on_application_withdrawn()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if auth.uid() is distinct from old.applicant_id then
-    return old;
-  end if;
-  perform public.notify_user(
-    (
-      select sender_id from public.events where id = old.event_id
-    ),
-    'application_withdrawn',
-    old.event_id,
-    null,
-    (
-      select full_name from public.profiles where id = old.applicant_id
-    )
-  );
-  return old;
-end;
-$$;
-
-create trigger trg_application_withdrawn
-  after delete on public.applications
-  for each row execute function public.vaitu_on_application_withdrawn();
-
 create or replace function public.vaitu_on_event_changed()
 returns trigger
 language plpgsql
@@ -924,6 +943,8 @@ create trigger trg_event_changed
   on public.events
   for each row
   when (
+    new.deleted_at is null
+    and (
     old.title is distinct from new.title
     or old.location is distinct from new.location
     or old.country is distinct from new.country
@@ -932,8 +953,453 @@ create trigger trg_event_changed
     or old.application_deadline is distinct from new.application_deadline
     or old.details is distinct from new.details
     or old.status is distinct from new.status
+    )
   )
   execute function public.vaitu_on_event_changed();
+
+-- Only someone who named their trades hears about new events: an empty list
+-- means "show me everything" in the feed, which is not a wish for a push per
+-- event. Regions are compared as written: normalizeEvent stores the canonical
+-- name, the one favorites use.
+create or replace function public.vaitu_on_event_created()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.status <> 'open' or new.application_deadline <= now() then
+    return new;
+  end if;
+
+  perform public.notify_user(p.id, 'new_event', new.id)
+  from public.profiles p
+  where p.id <> new.sender_id
+    and p.is_active
+    and p.has_new_event_alerts
+    and new.profession = any (p.professions)
+    and (
+      cardinality(p.interested_job_types) = 0
+      or new.job_type = any (p.interested_job_types)
+    )
+    and (
+      cardinality(p.favorite_regions) = 0
+      or new.region = any (p.favorite_regions)
+    );
+  return new;
+end;
+$$;
+
+create trigger trg_event_created
+  after insert on public.events
+  for each row execute function public.vaitu_on_event_created();
+
+
+-- What the organizer reports once the event date has come: whether the winner
+-- did the job, and how well. One review per job, written once, and only by the
+-- organizer: nothing in here is the winner's to change.
+create table public.job_reviews (
+  application_id uuid primary key references public.applications (id) on delete cascade,
+  outcome text not null check (outcome in ('completed', 'no_show', 'cancelled')),
+  rating smallint check (rating between 1 and 5),
+  comment text check (char_length(comment) <= 1000),
+  created_at timestamptz not null default now(),
+  check ((outcome = 'completed') = (rating is not null)),
+  check (outcome = 'completed' or comment is null)
+);
+
+alter table public.job_reviews enable row level security;
+
+create policy "Both sides of a job can read its review"
+  on public.job_reviews for select to authenticated
+  using (
+    exists (
+      select 1
+      from public.applications a
+      join public.events e on e.id = a.event_id
+      where a.id = job_reviews.application_id
+        and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
+    )
+  );
+
+revoke all on public.job_reviews from anon, authenticated;
+grant select on public.job_reviews to authenticated;
+
+create or replace function public.submit_job_review(
+  p_application_id uuid,
+  p_outcome text,
+  p_rating integer default null,
+  p_comment text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_application public.applications%rowtype;
+  v_event public.events%rowtype;
+begin
+  select * into v_application
+  from public.applications
+  where id = p_application_id;
+
+  if not found then
+    raise exception 'Application does not exist.';
+  end if;
+
+  select * into v_event
+  from public.events
+  where id = v_application.event_id and deleted_at is null;
+
+  if not found or v_event.sender_id is distinct from auth.uid() then
+    raise exception 'Only the event owner can review this job.';
+  end if;
+
+  if v_application.status <> 'selected' then
+    raise exception 'Only the winner can be reviewed.';
+  end if;
+
+  if v_event.event_date > current_date then
+    raise exception 'A job can be reviewed once its date has come.';
+  end if;
+
+  insert into public.job_reviews (application_id, outcome, rating, comment)
+  values (p_application_id, p_outcome, p_rating, nullif(trim(p_comment), ''));
+
+  if p_outcome <> 'cancelled' then
+    perform public.notify_user(
+      v_application.applicant_id,
+      'job_reviewed',
+      v_event.id,
+      p_application_id
+    );
+  end if;
+end;
+$$;
+
+grant execute on function public.submit_job_review(uuid, text, integer, text)
+  to authenticated;
+
+create or replace function public.request_job_outcomes()
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_due record;
+  v_requested integer := 0;
+begin
+  for v_due in
+    update public.events e
+    set outcome_requested_at = now()
+    where e.status = 'assigned'
+      and e.deleted_at is null
+      and e.outcome_requested_at is null
+      and e.event_date < current_date
+      and exists (
+        select 1
+        from public.applications a
+        where a.event_id = e.id
+          and a.status = 'selected'
+          and not exists (
+            select 1 from public.job_reviews r where r.application_id = a.id
+          )
+      )
+    returning e.id, e.sender_id
+  loop
+    perform public.notify_user(v_due.sender_id, 'job_outcome_due', v_due.id);
+    v_requested := v_requested + 1;
+  end loop;
+  return v_requested;
+end;
+$$;
+
+select cron.schedule(
+  'request-job-outcomes',
+  '7 * * * *',
+  $$select public.request_job_outcomes()$$
+);
+
+-- Security definer: your applicants' records must count all their history, not
+-- the part RLS shows you. You can read your own, and that of people applying
+-- to your events.
+create or replace function public.can_read_reputation(p_profile_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select p_profile_id = auth.uid()
+    or exists (
+      select 1
+      from public.applications a
+      join public.events e on e.id = a.event_id
+      where a.applicant_id = p_profile_id
+        and a.status <> 'withdrawn'
+        and e.sender_id = auth.uid()
+        and e.deleted_at is null
+    );
+$$;
+
+create or replace function public.profile_stats(p_profile_ids uuid[])
+returns table (
+  profile_id uuid,
+  applications_count bigint,
+  shortlists_count bigint,
+  selections_count bigint,
+  completed_count bigint,
+  review_count bigint,
+  average_rating numeric,
+  points bigint,
+  tier text,
+  badges text[]
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  with config as (
+    select jsonb_object_agg(key, value) as c from public.app_config
+  ),
+  counted as (
+    select
+      p.id as profile_id,
+      count(a.id) filter (
+        where a.status <> 'withdrawn' and e.deleted_at is null
+      ) as applications_count,
+      count(a.id) filter (
+        where a.status = 'shortlisted' and e.deleted_at is null
+      ) as shortlists_count,
+      count(a.id) filter (
+        where a.status = 'selected' and e.deleted_at is null
+      ) as selections_count,
+      count(a.id) filter (where a.withdrawn_from is not null or a.status <> 'withdrawn') as lifetime_applications,
+      count(a.id) filter (
+        where a.withdrawn_from in ('pending', 'shortlisted', 'selected')
+      ) as withdrawals,
+      count(a.id) filter (where a.withdrawn_from = 'selected') as dropouts,
+      count(r.application_id) filter (where r.outcome = 'completed') as completed_count,
+      count(r.application_id) filter (where r.outcome = 'no_show') as no_shows,
+      count(r.application_id) filter (
+        where r.rating >= (config.c ->> 'review_good_min_stars')::int
+      ) as good_reviews,
+      count(r.application_id) filter (
+        where r.rating <= (config.c ->> 'review_poor_max_stars')::int
+      ) as poor_reviews,
+      count(r.rating) as review_count,
+      round(avg(r.rating), 1) as average_rating
+    from config, unnest(p_profile_ids) as requested (id)
+    join public.profiles p on p.id = requested.id
+    left join public.applications a on a.applicant_id = p.id
+    left join public.events e on e.id = a.event_id
+    left join public.job_reviews r on r.application_id = a.id
+    where public.can_read_reputation(p.id)
+    group by p.id, config.c
+  ),
+  scored as (
+    select
+      counted.*,
+      (
+        select count(*)
+        from public.events handed
+        where handed.sender_id = counted.profile_id and handed.status = 'assigned'
+      ) as handoffs,
+      greatest(
+        0,
+        completed_count * (c ->> 'points_per_completed_job')::int
+          + good_reviews * (c ->> 'points_per_good_review')::int
+          + poor_reviews * (c ->> 'points_per_poor_review')::int
+          + dropouts * (c ->> 'points_per_dropout')::int
+          + no_shows * (c ->> 'points_per_no_show')::int
+      ) as points,
+      c
+    from counted, config
+  )
+  select
+    profile_id,
+    applications_count,
+    shortlists_count,
+    selections_count,
+    completed_count,
+    review_count,
+    average_rating,
+    points,
+    case
+      when points >= (c ->> 'tier_gold_min_points')::int then 'gold'
+      when points >= (c ->> 'tier_silver_min_points')::int then 'silver'
+      when points >= (c ->> 'tier_bronze_min_points')::int then 'bronze'
+    end as tier,
+    array_remove(array[
+      case when review_count >= (c ->> 'badge_top_rated_min_reviews')::int
+        and average_rating * 10 >= (c ->> 'badge_top_rated_min_tenths')::int
+        then 'top_rated' end,
+      case when completed_count >= (c ->> 'badge_reliable_min_jobs')::int
+        and dropouts + no_shows = 0
+        then 'reliable' end,
+      case when handoffs >= (c ->> 'badge_generous_min_handoffs')::int
+        then 'generous' end,
+      case when lifetime_applications >= (c ->> 'badge_serial_applicant_min_applications')::int
+        then 'serial_applicant' end,
+      case when withdrawals >= (c ->> 'badge_serial_withdrawer_min_withdrawals')::int
+        and withdrawals * 100 >= lifetime_applications * (c ->> 'badge_serial_withdrawer_min_percent')::int
+        then 'serial_withdrawer' end,
+      case when dropouts + no_shows >= (c ->> 'badge_unreliable_min_failures')::int
+        then 'unreliable' end
+    ], null) as badges
+  from scored;
+$$;
+
+grant execute on function public.profile_stats(uuid[]) to authenticated;
+
+create or replace function public.profile_reviews(p_profile_ids uuid[])
+returns table (
+  profile_id uuid,
+  rating smallint,
+  comment text,
+  created_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select ranked.profile_id, ranked.rating, ranked.comment, ranked.created_at
+  from (
+    select
+      a.applicant_id as profile_id,
+      r.rating,
+      r.comment,
+      r.created_at,
+      row_number() over (
+        partition by a.applicant_id order by r.created_at desc
+      ) as position
+    from unnest(p_profile_ids) as requested (id)
+    join public.applications a on a.applicant_id = requested.id
+    join public.job_reviews r on r.application_id = a.id
+    where r.outcome = 'completed'
+      and r.comment is not null
+      and public.can_read_reputation(requested.id)
+  ) ranked
+  where ranked.position <= 5
+  order by ranked.created_at desc;
+$$;
+
+grant execute on function public.profile_reviews(uuid[]) to authenticated;
+
+-- Deleting removes what the event says, not that it happened. With nobody
+-- involved there is no history to keep, so the row goes.
+create or replace function public.retire_event(p_event_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1 from public.applications where event_id = p_event_id
+  ) then
+    delete from public.events where id = p_event_id;
+    return;
+  end if;
+
+  delete from public.notifications where event_id = p_event_id;
+
+  update public.events
+  set deleted_at = now(),
+      title = '',
+      location = '',
+      details = '{}'::jsonb,
+      transcript = null,
+      audio_url = null,
+      image_urls = '{}'
+  where id = p_event_id;
+end;
+$$;
+
+create or replace function public.delete_event(p_event_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1 from public.events
+    where id = p_event_id
+      and sender_id = auth.uid()
+      and deleted_at is null
+      and public.is_active_profile(auth.uid())
+  ) then
+    raise exception 'Only the event owner can delete this event.';
+  end if;
+
+  perform public.retire_event(p_event_id);
+end;
+$$;
+
+grant execute on function public.delete_event(uuid) to authenticated;
+
+-- Deactivating takes a user out of what is still undecided or ahead. Only a
+-- winner abandoning a job counts against them: the other withdrawals were not
+-- their choice to make one by one, so they keep withdrawn_from null. Called by
+-- the deactivate-account edge function.
+create or replace function public.retire_profile_activity(p_user_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_abandoned record;
+begin
+  perform set_config('vaitu.withdrawing', 'on', true);
+
+  for v_abandoned in
+    update public.applications a
+    set status = 'withdrawn',
+        withdrawn_from = 'selected',
+        withdrawn_at = now(),
+        status_before_assign = null
+    from public.events e
+    where e.id = a.event_id
+      and a.applicant_id = p_user_id
+      and a.status = 'selected'
+      and e.deleted_at is null
+      and e.event_date >= current_date
+      and not exists (
+        select 1 from public.job_reviews r where r.application_id = a.id
+      )
+    returning e.id as event_id, e.sender_id
+  loop
+    perform public.notify_user(
+      v_abandoned.sender_id,
+      'application_withdrawn',
+      v_abandoned.event_id,
+      null,
+      (select full_name from public.profiles where id = p_user_id)
+    );
+  end loop;
+
+  update public.applications
+  set status = 'withdrawn',
+      withdrawn_at = now(),
+      status_before_assign = null
+  where applicant_id = p_user_id
+    and status in ('pending', 'shortlisted');
+
+  perform set_config('vaitu.withdrawing', 'off', true);
+
+  perform public.retire_event(id)
+  from public.events
+  where sender_id = p_user_id
+    and status = 'open'
+    and deleted_at is null;
+end;
+$$;
 
 
 create table public.push_tokens (

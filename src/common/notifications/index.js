@@ -63,9 +63,15 @@ export function pathFor(item) {
         ? paths.event(item.event_id)
         : paths.events
   }
+  if (item.type === "job_outcome_due") {
+    return item.event_id
+      ? paths.receivedApplications(item.event_id)
+      : paths.events
+  }
   if (
     item.type === "application_selected" ||
-    item.type === "application_rejected"
+    item.type === "application_rejected" ||
+    item.type === "job_reviewed"
   ) {
     return item.application_id
       ? paths.application(item.application_id)

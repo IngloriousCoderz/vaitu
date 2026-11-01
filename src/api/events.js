@@ -186,6 +186,7 @@ export async function fetchMyEvents() {
       "event_id",
       events.map((event) => event.id),
     )
+    .neq("status", "withdrawn")
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (applicationsError) throw applicationsError
   const counts = {}
@@ -316,10 +317,9 @@ export async function deleteEvent(event_id) {
     .maybeSingle()
   if (error) throw error
 
-  const { error: deleteError } = await supabase
-    .from("events")
-    .delete()
-    .eq("id", event_id)
+  const { error: deleteError } = await supabase.rpc("delete_event", {
+    p_event_id: event_id,
+  })
   if (deleteError) throw deleteError
 
   void removeEventAssets(data).catch((err) => {

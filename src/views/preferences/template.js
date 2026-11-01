@@ -16,7 +16,10 @@ export const Preferences = {
     return this.renderPreferences(props, api)
   },
 
-  renderPreferences({ entity, onToggleProfession, onEmails }, api) {
+  renderPreferences(
+    { entity, onToggleProfession, onEmails, onNewEventAlerts },
+    api,
+  ) {
     return Page.render({
       variant: "document",
       read: true,
@@ -66,6 +69,12 @@ export const Preferences = {
                   >
                   ${api.render("language")}
                 </div>`,
+                Switch.render({
+                  label: t("preferences.newEventAlerts"),
+                  description: t("preferences.newEventAlertsDescription"),
+                  isChecked: entity.has_new_event_alerts,
+                  onChange: onNewEventAlerts,
+                }),
                 Switch.render({
                   label: t("preferences.emails"),
                   description: t("preferences.emailsDescription"),

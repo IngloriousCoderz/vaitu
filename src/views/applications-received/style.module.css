@@ -296,3 +296,34 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.reputation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-2);
+  margin-bottom: var(--iw-space-3);
+}
+
+.reputationSummary {
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.quote {
+  margin: 0;
+  padding-inline-start: var(--iw-space-3);
+  border-inline-start: 2px solid var(--vline);
+  font-size: var(--iw-font-size-sm);
+}
+
+.quote p {
+  margin: var(--iw-space-1) 0 0;
+}
+
+.reviewForm {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--iw-space-3);
+  margin-top: var(--iw-space-3);
+}

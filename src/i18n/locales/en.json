@@ -240,7 +240,8 @@
     "deactivateAccount": "The account could not be deactivated. Try again.",
     "resend": "Could not resend the email",
     "loadPreferences": "Failed to load preferences",
-    "savePreferences": "Failed to save preferences"
+    "savePreferences": "Failed to save preferences",
+    "saveReview": "Failed to save the review"
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -378,11 +379,13 @@
     "minPoints": "{{count}}+ pts",
     "maxReached": "Max rank reached",
     "toNext": "{{points}} to {{tier}}",
-    "subtitle": "Earn points with every application. Higher ranks show on your profile.",
+    "subtitle": "Earn points by doing the jobs you win. Higher ranks show on your profile.",
     "howTitle": "How points work",
-    "perApplication": "per application",
-    "perShortlist": "per shortlist",
-    "perWin": "per win"
+    "perCompletedJob": "per job done",
+    "perGoodReview": "per review of {{stars}}★ or more",
+    "perPoorReview": "per review of {{stars}}★ or less",
+    "perDropout": "per job dropped after winning it",
+    "perNoShow": "per no-show"
   },
   "profile": {
     "title": "Profile",
@@ -398,7 +401,7 @@
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
     "deactivateAccount": "Deactivate account",
-    "deactivateConfirm": "Deactivate your account? Your open events and all your applications — sent and received — are permanently deleted. Past events with winners and your stats stay. To come back, sign in again.",
+    "deactivateConfirm": "Deactivate your account? Your open events are deleted and your applications are withdrawn, including wins for jobs still to come, which count as dropouts. Past events with winners and your stats stay. To come back, sign in again.",
     "yesDeactivate": "Yes, deactivate",
     "deactivating": "Deactivating…"
   },
@@ -412,7 +415,9 @@
     "emails": "Email notifications",
     "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent.",
     "analytics": "Usage statistics",
-    "analyticsDescription": "Lets us measure how you use the app, through Google Analytics. No ads."
+    "analyticsDescription": "Lets us measure how you use the app, through Google Analytics. No ads.",
+    "newEventAlerts": "New job alerts",
+    "newEventAlertsDescription": "Get notified when a job is posted for your trades and regions. Choose your trades above to start."
   },
   "about": {
     "title": "About",
@@ -462,11 +467,11 @@
       },
       "ranks": {
         "question": "What are ranks?",
-        "answer": "You earn points for applying, being shortlisted and winning. They take you through the bronze, silver and gold ranks, which show on your profile."
+        "answer": "You earn points for the jobs you do and the reviews organizers leave, and lose them by dropping a job you won or not showing up. They take you through the bronze, silver and gold ranks. Organizers see your rank, reviews and badges when you apply."
       },
       "notifications": {
         "question": "How do notifications work?",
-        "answer": "The app tells you about new applications, decisions and changes to events you applied to. You can also allow push notifications on your device, and turn emails on or off in Preferences."
+        "answer": "The app tells you about new jobs for your trades and regions, new applications, decisions and changes to events you applied to. You can also allow push notifications on your device, and manage alerts and emails in Preferences."
       },
       "leave": {
         "question": "How do I leave?",
@@ -513,7 +518,7 @@
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Download .ics",
     "yourMotivation": "Your motivation",
-    "withdrawWinnerConfirm": "Withdraw from this event? The organizer will need to pick another winner.",
+    "withdrawWinnerConfirm": "Withdraw from this event? The organizer will need to pick another winner, and dropping a job you won costs you rank points.",
     "withdrawConfirm": "Are you sure you want to withdraw your application? The organizer will no longer see it.",
     "yesWithdraw": "Yes, withdraw",
     "withdrawing": "Withdrawing…",
@@ -532,7 +537,10 @@
       "applicationRejected": "You were not selected for {{title}} this time",
       "applicationWithdrawn": "{{name}} withdrew their application to {{title}}",
       "eventUpdated": "{{title}} has updates!",
-      "eventClosed": "{{title}} was closed"
+      "eventClosed": "{{title}} was closed",
+      "newEvent": "New job that matches your trade: {{title}}",
+      "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
+      "jobReviewed": "The organizer reported on {{title}}"
     }
   },
   "push": {
@@ -544,5 +552,48 @@
     "prompt": "May we measure how you use Vaitu? It helps us make it better. No ads, and your data is not sold.",
     "accept": "Allow",
     "decline": "No thanks"
+  },
+  "reputation": {
+    "badgesTitle": "Badges",
+    "yourReview": "The organizer's report",
+    "ratingLabel": "Rating",
+    "rating": "★ {{rating}} ({{count}})",
+    "ratingRequired": "Choose a rating",
+    "howDidItGo": "How did the job go?",
+    "commentLabel": "Comment (optional): other organizers will read it",
+    "submit": "Send report",
+    "outcome": {
+      "completed": "The job was done",
+      "no_show": "They did not show up",
+      "cancelled": "The event was cancelled"
+    },
+    "completedJobs_one": "{{count}} job done",
+    "completedJobs_other": "{{count}} jobs done",
+    "badges": {
+      "top_rated": {
+        "label": "Top Rated",
+        "description": "{{stars}}★ or more on average, with {{reviews}}+ reviews."
+      },
+      "reliable": {
+        "label": "Reliable",
+        "description": "{{jobs}}+ jobs done, with no dropouts or no-shows."
+      },
+      "generous": {
+        "label": "Generous Colleague",
+        "description": "{{jobs}}+ jobs handed off to colleagues."
+      },
+      "serial_applicant": {
+        "label": "Serial Applicant",
+        "description": "{{applications}}+ applications sent."
+      },
+      "serial_withdrawer": {
+        "label": "Serial Withdrawer",
+        "description": "{{withdrawals}}+ applications withdrawn, and at least {{percent}}% of those sent."
+      },
+      "unreliable": {
+        "label": "Unreliable",
+        "description": "{{failures}}+ dropouts or no-shows."
+      }
+    }
   }
 }

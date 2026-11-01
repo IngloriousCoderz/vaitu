@@ -1,4 +1,5 @@
 import { Button } from "@inglorious/ui/button"
+import { Rating } from "@inglorious/ui/rating"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
@@ -67,6 +68,9 @@ export const ApplicationDetail = {
                   <div class=${styles.statusRow}>
                     ${StatusChip.render({ status: application.applicationStatus })}
                   </div>
+                  ${when(application.review, () =>
+                    this.renderReview(application.review),
+                  )}
                   ${when(
                     links,
                     () => html`
@@ -135,16 +139,18 @@ export const ApplicationDetail = {
                     error: error && status !== "loading" ? error : null,
                     className: styles.error,
                   })}
-                  ${Button.render({
-                    children: t("application.withdraw"),
-                    color: "error",
-                    variant: "outline",
-                    shape: "pill",
-                    size: "md",
-                    isFullWidth: true,
-                    className: styles.withdrawButton,
-                    onClick: onAskWithdraw,
-                  })}
+                  ${when(!application.review, () =>
+                    Button.render({
+                      children: t("application.withdraw"),
+                      color: "error",
+                      variant: "outline",
+                      shape: "pill",
+                      size: "md",
+                      isFullWidth: true,
+                      className: styles.withdrawButton,
+                      onClick: onAskWithdraw,
+                    }),
+                  )}
                   ${ConfirmDialog.render({
                     id: "withdraw-confirm",
                     isOpen: entity.isConfirmingWithdraw,
@@ -166,5 +172,20 @@ export const ApplicationDetail = {
         `,
       ],
     })
+  },
+
+  renderReview(review) {
+    return html`
+      <h3 class=${styles.sectionTitle}>${t("reputation.yourReview")}</h3>
+      <p>${t(`reputation.outcome.${review.outcome}`)}</p>
+      ${when(review.rating, () =>
+        Rating.render({
+          value: review.rating,
+          isReadOnly: true,
+          ariaLabel: t("reputation.ratingLabel"),
+        }),
+      )}
+      ${when(review.comment, () => html`<p>${review.comment}</p>`)}
+    `
   },
 }

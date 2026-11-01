@@ -7,10 +7,14 @@ import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { Input } from "@inglorious/ui/input"
-import { html } from "@inglorious/web"
+import { RadioGroup } from "@inglorious/ui/radio-group"
+import { Rating } from "@inglorious/ui/rating"
+import { Textarea } from "@inglorious/ui/textarea"
+import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError } from "@inglorious/web/form"
 
+import { Badges } from "../../common/badges/index.js"
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Page } from "../../common/page/index.js"
@@ -26,7 +30,10 @@ import {
   FIRST_INDEX,
 } from "../../constants/index.js"
 import { currentLocale, t, translated } from "../../i18n/index.js"
+import { isReviewDue } from "./helpers.js"
 import styles from "./style.module.css"
+
+const OUTCOMES = ["completed", "no_show", "cancelled"]
 
 export const ApplicationsReceived = {
   render(props, api) {
@@ -47,6 +54,8 @@ export const ApplicationsReceived = {
     onReopenDeadline,
     onReopen,
     onCancelReopen,
+    onReviewField,
+    onReviewSubmit,
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
@@ -164,6 +173,10 @@ export const ApplicationsReceived = {
                   status,
                   error,
                   event_assigned: entity.event_status === "assigned",
+                  event_date: entity.event_recap?.event_date,
+                  review: entity.review,
+                  onReviewField,
+                  onReviewSubmit,
                   onToggle,
                   onSelect,
                   onReject,
@@ -267,6 +280,10 @@ export const ApplicationsReceived = {
     status,
     error,
     event_assigned,
+    event_date,
+    review,
+    onReviewField,
+    onReviewSubmit,
     onToggle,
     onSelect,
     onReject,
@@ -331,7 +348,19 @@ export const ApplicationsReceived = {
                   `,
                 )}
               </div>
+              ${this.renderReputation(item)}
               <p class=${styles.motivation}>${item.motivation}</p>
+              ${when(item.job_reviews, () =>
+                this.renderGivenReview(item.job_reviews),
+              )}
+              ${when(isReviewDue(item, event_date), () =>
+                this.renderReviewForm({
+                  item,
+                  review,
+                  onReviewField,
+                  onReviewSubmit,
+                }),
+              )}
               ${when(
                 (item.status === "pending" || item.status === "rejected") &&
                   !event_assigned,
@@ -409,6 +438,108 @@ export const ApplicationsReceived = {
           `,
         )}
       </article>
+    `
+  },
+
+  renderReputation({ stats, reviews }) {
+    if (!stats) return nothing
+    return html`
+      <div class=${styles.reputation}>
+        <span class=${styles.reputationSummary}>
+          ${stats.tier ? t(`ranks.tier.${stats.tier}`) : t("ranks.noRank")} ·
+          ${t("reputation.completedJobs", { count: stats.completed_count })}
+          ${when(
+            stats.review_count,
+            () =>
+              html`·
+              ${t("reputation.rating", {
+                rating: stats.average_rating,
+                count: stats.review_count,
+              })}`,
+          )}
+        </span>
+        ${when(stats.badges.length, () =>
+          Badges.render({ badges: stats.badges }),
+        )}
+        ${reviews.map(
+          (written) => html`
+            <blockquote class=${styles.quote}>
+              ${Rating.render({
+                value: written.rating,
+                isReadOnly: true,
+                size: "sm",
+                ariaLabel: t("reputation.ratingLabel"),
+              })}
+              <p>${written.comment}</p>
+            </blockquote>
+          `,
+        )}
+      </div>
+    `
+  },
+
+  renderGivenReview(given) {
+    return html`
+      <div class=${styles.reviewForm}>
+        <strong>${t(`reputation.outcome.${given.outcome}`)}</strong>
+        ${when(given.rating, () =>
+          Rating.render({
+            value: given.rating,
+            isReadOnly: true,
+            ariaLabel: t("reputation.ratingLabel"),
+          }),
+        )}
+        ${when(given.comment, () => html`<p>${given.comment}</p>`)}
+      </div>
+    `
+  },
+
+  renderReviewForm({ item, review, onReviewField, onReviewSubmit }) {
+    const isCompleted = review.outcome === "completed"
+    return html`
+      <div class=${styles.reviewForm}>
+        ${RadioGroup.render({
+          id: `review-outcome-${item.id}`,
+          label: t("reputation.howDidItGo"),
+          value: review.outcome,
+          options: OUTCOMES.map((value) => ({
+            value,
+            label: t(`reputation.outcome.${value}`),
+          })),
+          onChange: (value) => onReviewField("outcome", value),
+        })}
+        ${when(
+          isCompleted,
+          () => html`
+            ${Rating.render({
+              id: `review-rating-${item.id}`,
+              value: review.rating,
+              ariaLabel: t("reputation.ratingLabel"),
+              onChange: (value) => onReviewField("rating", value),
+            })}
+            ${Textarea.render({
+              id: `review-comment-${item.id}`,
+              label: t("reputation.commentLabel"),
+              value: review.comment,
+              rows: 3,
+              isFullWidth: true,
+              onChange: (value) => onReviewField("comment", value),
+            })}
+          `,
+        )}
+        ${ErrorAlert.render({ error: review.error })}
+        ${Button.render({
+          children:
+            review.status === "saving"
+              ? t("common.saving")
+              : t("reputation.submit"),
+          color: "primary",
+          shape: "pill",
+          size: "md",
+          isDisabled: review.status === "saving",
+          onClick: () => onReviewSubmit(item.id),
+        })}
+      </div>
     `
   },
 }

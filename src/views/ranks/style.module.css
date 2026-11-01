@@ -158,3 +158,10 @@
     grid-column: 1 / -1;
   }
 }
+
+.badgeRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--iw-space-1);
+}

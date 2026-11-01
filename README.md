@@ -11,7 +11,8 @@ The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pro
 - **Choose the best candidate** and pass the job to them.
 - **Voice-to-form**: instead of filling in the whole event form by hand, record a voice message and the fields are filled in automatically. See [Voice AI](docs/voice-ai.md).
 - **PWA and native apps**: runs in the browser as a PWA and as a hybrid Android/iOS app via Capacitor.
-- **Notifications**: a bell in the app, and pushes to the browser and the phone even when the app is closed, for applications, decisions and changes to events. See [Notifications](docs/notifications.md).
+- **Notifications**: a bell in the app, and pushes to the browser and the phone even when the app is closed, for new jobs, applications, decisions and changes to events. See [Notifications](docs/notifications.md).
+- **Reputation**: organizers report how a job went and review the winner, which earns ranks and badges they see on applicants. See [Reputation](docs/reputation.md).
 
 Vaitu started with wedding photographers in mind, and is expanding to other trades and kinds of job, such as sound technicians at a festival or cleaners looking after apartments, houses and offices.
 
@@ -69,7 +70,8 @@ Read in this order: each guide assumes the ones before it.
 3. [Edge functions](docs/edge-functions.md): server-side code, secrets, and adding a function.
 4. [Voice AI](docs/voice-ai.md): the two providers behind voice-to-form.
 5. [Notifications](docs/notifications.md): the bell, pushes through Firebase, and setting Firebase up.
-6. [Analytics](docs/analytics.md): usage statistics, only with consent.
-7. [Mobile](docs/mobile.md): running the Android and iOS apps.
-8. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
-9. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.
+6. [Reputation](docs/reputation.md): job reports, reviews, ranks and badges, and the history they rest on.
+7. [Analytics](docs/analytics.md): usage statistics, only with consent.
+8. [Mobile](docs/mobile.md): running the Android and iOS apps.
+9. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
+10. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.

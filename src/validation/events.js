@@ -9,6 +9,7 @@ import {
   jobTypeId,
   weddingStyles,
 } from "../data/event-taxonomy.js"
+import { canonicalRegion } from "../data/regions/resolve.js"
 
 const MIN_PLACES = 1
 
@@ -37,7 +38,7 @@ export function normalizeEvent(payload = {}) {
     title: payload.title?.trim(),
     location: payload.location?.trim(),
     country: payload.country?.trim(),
-    region: payload.region?.trim(),
+    region: canonicalRegion(payload.region),
     event_date: payload.event_date,
     application_deadline: payload.application_deadline,
     max_applicants: payload.max_applicants ?? DEFAULT_MAX_APPLICANTS,

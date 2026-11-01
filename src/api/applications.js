@@ -12,9 +12,10 @@ export async function fetchMyApplications() {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, created_at, events(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
+      "id, status, created_at, events!inner(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
     )
     .eq("applicant_id", user.id)
+    .neq("status", "withdrawn")
     .order("created_at", { ascending: false })
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
@@ -34,6 +35,7 @@ export async function fetchMyApplicationMap() {
     .from("applications")
     .select("id,event_id")
     .eq("applicant_id", user.id)
+    .neq("status", "withdrawn")
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return Object.fromEntries(data.map((row) => [row.event_id, row.id]))
@@ -47,10 +49,11 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, events(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
+      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), events!inner(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
+    .neq("status", "withdrawn")
     .single()
   if (error) throw error
   return {
@@ -58,6 +61,7 @@ export async function fetchApplicationDetail(application_id) {
     application_id: data.id,
     applicationStatus: data.status,
     motivation: data.motivation,
+    review: data.job_reviews ?? null,
   }
 }
 
@@ -82,10 +86,9 @@ export async function updateMotivation(application_id, motivation) {
 }
 
 export async function withdrawApplication(application_id) {
-  const { error } = await supabase
-    .from("applications")
-    .delete()
-    .eq("id", application_id)
+  const { error } = await supabase.rpc("withdraw_application", {
+    p_application_id: application_id,
+  })
   if (error) throw error
   return true
 }

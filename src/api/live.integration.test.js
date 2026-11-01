@@ -4,13 +4,13 @@ import { afterAll, expect, test, vi } from "vitest"
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
   createEventAs,
-  deleteOwnedEvent,
   SEEKER,
   SENDER,
   signIn,
   signOut,
 } from "../testing/index.js"
 import { supabase } from "./client.js"
+import { deleteEvent } from "./events.js"
 import { liveAlways } from "./live.js"
 
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
@@ -18,8 +18,11 @@ const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 let eventId = null
 
 afterAll(async () => {
+  if (eventId) {
+    await signIn(SENDER)
+    await deleteEvent(eventId)
+  }
   await signOut()
-  if (eventId) await deleteOwnedEvent(eventId)
 })
 
 test(

@@ -118,10 +118,11 @@ describe("applying and choosing a winner", () => {
     const id = await applicationId(eventId)
     await withdrawApplication(id)
 
-    const { data: applications, error: applicationError } = await supabase
+    const { data: application, error: applicationError } = await supabase
       .from("applications")
-      .select("id")
+      .select("status, withdrawn_from")
       .eq("id", id)
+      .single()
     const { data: event, error: eventError } = await supabase
       .from("events")
       .select("status")
@@ -129,7 +130,10 @@ describe("applying and choosing a winner", () => {
       .single()
     expect(applicationError).toBeNull()
     expect(eventError).toBeNull()
-    expect(applications).toEqual([])
+    expect(application).toEqual({
+      status: "withdrawn",
+      withdrawn_from: "selected",
+    })
     expect(event.status).toBe("open")
   })
 })
@@ -271,8 +275,38 @@ describe("withdrawing an application", () => {
       .from("applications")
       .select("id")
       .eq("event_id", eventId)
+      .neq("status", "withdrawn")
     expect(error).toBeNull()
     expect(data).toEqual([])
+  })
+
+  test("a withdrawn application cannot come back or be withdrawn twice", async () => {
+    await signIn(SENDER)
+    const { data: withdrawn } = await supabase
+      .from("applications")
+      .select("id")
+      .eq("event_id", eventId)
+      .eq("status", "withdrawn")
+      .limit(1)
+      .single()
+
+    await expect(withdrawApplication(withdrawn.id)).rejects.toThrow()
+
+    await signIn(SEEKER)
+    const { error } = await supabase
+      .from("applications")
+      .update({ status: "shortlisted" })
+      .eq("id", withdrawn.id)
+    expect(error?.message).toContain("cannot change this application status")
+  })
+
+  test("applications cannot be deleted from the client", async () => {
+    await signIn(SENDER)
+    const { error } = await supabase
+      .from("applications")
+      .delete()
+      .eq("event_id", eventId)
+    expect(error?.message).toContain("permission denied")
   })
 
   test("a shortlisted application can be withdrawn", async () => {
@@ -287,6 +321,7 @@ describe("withdrawing an application", () => {
       .from("applications")
       .select("id")
       .eq("event_id", eventId)
+      .neq("status", "withdrawn")
     expect(error).toBeNull()
     expect(data).toEqual([])
   })
@@ -586,6 +621,7 @@ async function applicationId(eventId) {
     .from("applications")
     .select("id")
     .eq("event_id", eventId)
+    .neq("status", "withdrawn")
     .single()
   if (error) throw error
   return data.id
@@ -615,6 +651,7 @@ async function applicationIdFor(eventId, applicantId) {
     .select("id")
     .eq("event_id", eventId)
     .eq("applicant_id", applicantId)
+    .neq("status", "withdrawn")
     .single()
   if (error) throw error
   return data.id

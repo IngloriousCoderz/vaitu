@@ -127,6 +127,17 @@
   text-decoration: none;
 }
 
+.rating {
+  margin: var(--iw-space-3) 0 0;
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-semibold);
+  text-align: center;
+}
+
+.badges {
+  margin-top: var(--iw-space-3);
+}
+
 .stats {
   margin-top: var(--iw-space-3);
 }

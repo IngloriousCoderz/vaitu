@@ -1,13 +1,16 @@
-import assignmentOutline from "@iconify-icons/material-symbols/assignment-outline"
+import cancelOutline from "@iconify-icons/material-symbols/cancel-outline"
+import personCancelOutline from "@iconify-icons/material-symbols/person-cancel-outline"
 import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-leaderboard-outline"
+import starHalfOutline from "@iconify-icons/material-symbols/star-half-outline"
 import starOutline from "@iconify-icons/material-symbols/star-outline"
-import trophyOutline from "@iconify-icons/material-symbols/trophy-outline"
+import taskAltOutline from "@iconify-icons/material-symbols/task-alt-outline"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { Progress } from "@inglorious/ui/progress"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
+import { badgeDescription, BADGES, Badges } from "../../common/badges/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
@@ -119,20 +122,53 @@ export const Ranks = {
                         >${t("ranks.howTitle")}</span
                       >
                       ${this.renderHowRow({
-                        icon: assignmentOutline,
-                        points: tiers.perApplication,
-                        label: t("ranks.perApplication"),
+                        icon: taskAltOutline,
+                        points: tiers.perCompletedJob,
+                        label: t("ranks.perCompletedJob"),
                       })}
                       ${this.renderHowRow({
                         icon: starOutline,
-                        points: tiers.perShortlist,
-                        label: t("ranks.perShortlist"),
+                        points: tiers.perGoodReview,
+                        label: t("ranks.perGoodReview", {
+                          stars: tiers.goodReviewMinStars,
+                        }),
                       })}
                       ${this.renderHowRow({
-                        icon: trophyOutline,
-                        points: tiers.perSelection,
-                        label: t("ranks.perWin"),
+                        icon: starHalfOutline,
+                        points: tiers.perPoorReview,
+                        label: t("ranks.perPoorReview", {
+                          stars: tiers.poorReviewMaxStars,
+                        }),
                       })}
+                      ${this.renderHowRow({
+                        icon: personCancelOutline,
+                        points: tiers.perDropout,
+                        label: t("ranks.perDropout"),
+                      })}
+                      ${this.renderHowRow({
+                        icon: cancelOutline,
+                        points: tiers.perNoShow,
+                        label: t("ranks.perNoShow"),
+                      })}
+                    `,
+                  })}
+                  ${Flex.render({
+                    direction: "column",
+                    className: styles.howCard,
+                    children: html`
+                      <span class=${styles.howTitle}
+                        >${t("reputation.badgesTitle")}</span
+                      >
+                      ${BADGES.map(
+                        (badge) => html`
+                          <div class=${styles.badgeRow}>
+                            ${Badges.renderBadge(badge)}
+                            <span class=${styles.howText}>
+                              ${badgeDescription(badge, tiers)}
+                            </span>
+                          </div>
+                        `,
+                      )}
                     `,
                   })}
                 `,

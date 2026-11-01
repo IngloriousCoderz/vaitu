@@ -2,14 +2,21 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import {
+  fetchProfileReviews,
+  fetchProfileStats,
+  submitJobReview,
+} from "../../api/reputation.js"
 import { eventJobType } from "../../common/event-card/index.js"
 import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
   MIN_PHOTOS_TO_NAVIGATE,
+  NO_RATING,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
 import { canonicalRegion } from "../../data/regions/resolve.js"
+import { emptyReview, isReviewDue } from "./helpers.js"
 
 export function expandToggle(entity, application_id) {
   entity.expanded_application_id =
@@ -36,6 +43,25 @@ export function photoStep(entity, delta) {
   const n = urls.length
   if (n < MIN_PHOTOS_TO_NAVIGATE) return
   entity.photoIndex = ((entity.photoIndex ?? FIRST_INDEX) + delta + n) % n
+}
+
+export function reviewFieldSet(entity, { field, value }) {
+  entity.review[field] = value
+  entity.review.error = null
+}
+
+export function reviewSubmit(entity, application_id, api) {
+  const { outcome, rating, comment } = entity.review
+  if (outcome === "completed" && rating === NO_RATING) {
+    entity.review.error = "reputation.ratingRequired"
+    return
+  }
+  api.notify(`#${entity.id}:jobReview`, {
+    application_id,
+    outcome,
+    rating,
+    comment,
+  })
 }
 
 export function assignAsk(entity, application_id) {
@@ -96,13 +122,26 @@ export const load = handleAsync("load", {
     const { data: items, error } = await supabase
       .from("applications")
       .select(
-        "id, status, motivation, created_at, applicant:profiles!applications_applicant_id_fkey(full_name, website, phone, country)",
+        "id, status, motivation, created_at, applicant_id, job_reviews(outcome, rating, comment), applicant:profiles!applications_applicant_id_fkey(full_name, website, phone, country)",
       )
       .eq("event_id", event_id)
+      .neq("status", "withdrawn")
       .order("created_at", { ascending: true })
       .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
     if (error) throw error
-    return { event, items }
+    const applicantIds = items.map((item) => item.applicant_id)
+    const [stats, reviews] = await Promise.all([
+      fetchProfileStats(applicantIds),
+      fetchProfileReviews(applicantIds),
+    ])
+    return {
+      event,
+      items: items.map((item) => ({
+        ...item,
+        stats: stats[item.applicant_id] ?? null,
+        reviews: reviews[item.applicant_id] ?? [],
+      })),
+    }
   },
   success(entity, { event, items }) {
     entity.status = "ready"
@@ -127,6 +166,8 @@ export const load = handleAsync("load", {
       style: event.details?.style ?? event.details?.genre ?? null,
     }
     entity.items = items
+    const due = items.find((item) => isReviewDue(item, event.event_date))
+    if (due) entity.expanded_application_id ??= due.id
   },
   error(entity, err) {
     entity.status = "error"
@@ -158,6 +199,24 @@ export const statusSet = handleAsync("statusSet", {
   error(entity, err) {
     entity.status = "error"
     entity.error = err.message ?? "errors.update"
+  },
+})
+
+export const jobReview = handleAsync("jobReview", {
+  start(entity) {
+    entity.review.status = "saving"
+    entity.review.error = null
+  },
+  run(fields) {
+    return submitJobReview(fields)
+  },
+  success(entity, _, api) {
+    entity.review = emptyReview()
+    api.notify(`#${entity.id}:load`, entity.event_id)
+  },
+  error(entity, err) {
+    entity.review.status = "idle"
+    entity.review.error = err.message ?? "errors.saveReview"
   },
 })
 

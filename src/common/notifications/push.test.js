@@ -15,6 +15,9 @@ const TYPES = [
   "application_withdrawn",
   "event_updated",
   "event_closed",
+  "new_event",
+  "job_outcome_due",
+  "job_reviewed",
 ]
 
 function notification(fields = {}) {

@@ -259,10 +259,10 @@ describe("withdrawal notification", () => {
           .single()
       const { data: withdrawn, error: applyError } = await apply()
       if (applyError) throw applyError
-      const { error: withdrawError } = await supabase
-        .from("applications")
-        .delete()
-        .eq("id", withdrawn.id)
+      const { error: withdrawError } = await supabase.rpc(
+        "withdraw_application",
+        { p_application_id: withdrawn.id },
+      )
       if (withdrawError) throw withdrawError
       const { error: reapplyError } = await apply()
       if (reapplyError) throw reapplyError

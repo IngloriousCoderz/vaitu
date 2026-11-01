@@ -18,6 +18,7 @@ export const Preferences = {
     entity.professions ??= []
     entity.favorite_regions ??= []
     entity.is_email_opted_out ??= false
+    entity.has_new_event_alerts ??= true
     entity.status ??= "idle"
     entity.error ??= null
     entity.saveError ??= null
@@ -37,6 +38,8 @@ export const Preferences = {
         onToggleProfession: (professionId) =>
           api.notify(`#${id}:professionToggle`, professionId),
         onEmails: (isReceiving) => api.notify(`#${id}:emailsSet`, isReceiving),
+        onNewEventAlerts: (isReceiving) =>
+          api.notify(`#${id}:newEventAlertsSet`, isReceiving),
       },
       api,
     )

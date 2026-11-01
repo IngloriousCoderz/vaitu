@@ -1,9 +1,21 @@
 import {
+  BADGE_GENEROUS_MIN_HANDOFFS,
+  BADGE_RELIABLE_MIN_JOBS,
+  BADGE_SERIAL_APPLICANT_MIN_APPLICATIONS,
+  BADGE_SERIAL_WITHDRAWER_MIN_PERCENT,
+  BADGE_SERIAL_WITHDRAWER_MIN_WITHDRAWALS,
+  BADGE_TOP_RATED_MIN_REVIEWS,
+  BADGE_TOP_RATED_MIN_TENTHS,
+  BADGE_UNRELIABLE_MIN_FAILURES,
   NO_POINTS,
   PERCENT_MAX,
-  POINTS_PER_APPLICATION,
-  POINTS_PER_SELECTION,
-  POINTS_PER_SHORTLIST,
+  POINTS_PER_COMPLETED_JOB,
+  POINTS_PER_DROPOUT,
+  POINTS_PER_GOOD_REVIEW,
+  POINTS_PER_NO_SHOW,
+  POINTS_PER_POOR_REVIEW,
+  REVIEW_GOOD_MIN_STARS,
+  REVIEW_POOR_MAX_STARS,
   TIER_BRONZE_MIN_POINTS,
   TIER_GOLD_MIN_POINTS,
   TIER_SILVER_MIN_POINTS,
@@ -15,9 +27,60 @@ export function defaultTiers() {
     bronzeMin: TIER_BRONZE_MIN_POINTS,
     silverMin: TIER_SILVER_MIN_POINTS,
     goldMin: TIER_GOLD_MIN_POINTS,
-    perApplication: POINTS_PER_APPLICATION,
-    perShortlist: POINTS_PER_SHORTLIST,
-    perSelection: POINTS_PER_SELECTION,
+    perCompletedJob: POINTS_PER_COMPLETED_JOB,
+    perGoodReview: POINTS_PER_GOOD_REVIEW,
+    perPoorReview: POINTS_PER_POOR_REVIEW,
+    perDropout: POINTS_PER_DROPOUT,
+    perNoShow: POINTS_PER_NO_SHOW,
+    goodReviewMinStars: REVIEW_GOOD_MIN_STARS,
+    poorReviewMaxStars: REVIEW_POOR_MAX_STARS,
+    serialApplicantMinApplications: BADGE_SERIAL_APPLICANT_MIN_APPLICATIONS,
+    serialWithdrawerMinWithdrawals: BADGE_SERIAL_WITHDRAWER_MIN_WITHDRAWALS,
+    serialWithdrawerMinPercent: BADGE_SERIAL_WITHDRAWER_MIN_PERCENT,
+    unreliableMinFailures: BADGE_UNRELIABLE_MIN_FAILURES,
+    reliableMinJobs: BADGE_RELIABLE_MIN_JOBS,
+    topRatedMinReviews: BADGE_TOP_RATED_MIN_REVIEWS,
+    topRatedMinTenths: BADGE_TOP_RATED_MIN_TENTHS,
+    generousMinHandoffs: BADGE_GENEROUS_MIN_HANDOFFS,
+  }
+}
+
+export function tiersFromConfig(rows) {
+  const byKey = Object.fromEntries(
+    (rows ?? []).map((row) => [row.key, row.value]),
+  )
+  const defaults = defaultTiers()
+  return {
+    bronzeMin: byKey.tier_bronze_min_points ?? defaults.bronzeMin,
+    silverMin: byKey.tier_silver_min_points ?? defaults.silverMin,
+    goldMin: byKey.tier_gold_min_points ?? defaults.goldMin,
+    perCompletedJob: byKey.points_per_completed_job ?? defaults.perCompletedJob,
+    perGoodReview: byKey.points_per_good_review ?? defaults.perGoodReview,
+    perPoorReview: byKey.points_per_poor_review ?? defaults.perPoorReview,
+    perDropout: byKey.points_per_dropout ?? defaults.perDropout,
+    perNoShow: byKey.points_per_no_show ?? defaults.perNoShow,
+    goodReviewMinStars:
+      byKey.review_good_min_stars ?? defaults.goodReviewMinStars,
+    poorReviewMaxStars:
+      byKey.review_poor_max_stars ?? defaults.poorReviewMaxStars,
+    serialApplicantMinApplications:
+      byKey.badge_serial_applicant_min_applications ??
+      defaults.serialApplicantMinApplications,
+    serialWithdrawerMinWithdrawals:
+      byKey.badge_serial_withdrawer_min_withdrawals ??
+      defaults.serialWithdrawerMinWithdrawals,
+    serialWithdrawerMinPercent:
+      byKey.badge_serial_withdrawer_min_percent ??
+      defaults.serialWithdrawerMinPercent,
+    unreliableMinFailures:
+      byKey.badge_unreliable_min_failures ?? defaults.unreliableMinFailures,
+    reliableMinJobs: byKey.badge_reliable_min_jobs ?? defaults.reliableMinJobs,
+    topRatedMinReviews:
+      byKey.badge_top_rated_min_reviews ?? defaults.topRatedMinReviews,
+    topRatedMinTenths:
+      byKey.badge_top_rated_min_tenths ?? defaults.topRatedMinTenths,
+    generousMinHandoffs:
+      byKey.badge_generous_min_handoffs ?? defaults.generousMinHandoffs,
   }
 }
 

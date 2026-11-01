@@ -244,7 +244,8 @@
     "deactivateAccount": "Le compte n'a pas pu être désactivé. Réessayez.",
     "resend": "Impossible de renvoyer l'e-mail",
     "loadPreferences": "Impossible de charger les préférences",
-    "savePreferences": "Impossible d'enregistrer les préférences"
+    "savePreferences": "Impossible d'enregistrer les préférences",
+    "saveReview": "Impossible d'enregistrer l'avis"
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -386,11 +387,13 @@
     "minPoints": "{{count}}+ pts",
     "maxReached": "Niveau maximal atteint",
     "toNext": "{{points}} avant {{tier}}",
-    "subtitle": "Gagnez des points à chaque candidature. Les niveaux les plus élevés apparaissent sur votre profil.",
+    "subtitle": "Gagnez des points en réalisant les missions obtenues. Les niveaux les plus élevés apparaissent sur votre profil.",
     "howTitle": "Comment gagner des points",
-    "perApplication": "par candidature",
-    "perShortlist": "par présélection",
-    "perWin": "par événement remporté"
+    "perCompletedJob": "par mission réalisée",
+    "perGoodReview": "par avis de {{stars}}★ ou plus",
+    "perPoorReview": "par avis de {{stars}}★ ou moins",
+    "perDropout": "par mission abandonnée après l'avoir obtenue",
+    "perNoShow": "par absence"
   },
   "profile": {
     "title": "Profil",
@@ -406,7 +409,7 @@
     "logOut": "Se déconnecter",
     "howRanksWork": "Comment fonctionnent les niveaux",
     "deactivateAccount": "Désactiver le compte",
-    "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts et toutes vos candidatures — envoyées et reçues — seront supprimés définitivement. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous.",
+    "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts seront supprimés et vos candidatures retirées, y compris les missions obtenues encore à venir, qui comptent comme des abandons. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous.",
     "yesDeactivate": "Oui, désactiver",
     "deactivating": "Désactivation…"
   },
@@ -420,7 +423,9 @@
     "emails": "Notifications par email",
     "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés.",
     "analytics": "Statistiques d'utilisation",
-    "analyticsDescription": "Nous permet de mesurer comment vous utilisez l'app, via Google Analytics. Sans publicité."
+    "analyticsDescription": "Nous permet de mesurer comment vous utilisez l'app, via Google Analytics. Sans publicité.",
+    "newEventAlerts": "Alertes de nouvelles missions",
+    "newEventAlertsDescription": "Soyez averti lorsqu'une mission est publiée pour vos métiers et vos régions. Pour commencer, choisissez vos métiers ci-dessus."
   },
   "about": {
     "title": "À propos",
@@ -470,11 +475,11 @@
       },
       "ranks": {
         "question": "Que sont les niveaux ?",
-        "answer": "Vous gagnez des points en candidatant, en entrant en présélection et en étant retenu. Ils vous font passer par les niveaux bronze, argent et or, qui apparaissent sur votre profil."
+        "answer": "Vous gagnez des points avec les missions réalisées et les avis des organisateurs, et vous en perdez en abandonnant une mission obtenue ou en ne vous présentant pas. Ils vous font passer par les niveaux bronze, argent et or. Quand vous candidatez, les organisateurs voient votre niveau, vos avis et vos badges."
       },
       "notifications": {
         "question": "Comment fonctionnent les notifications ?",
-        "answer": "L'application vous informe des nouvelles candidatures, des décisions et des changements sur les événements auxquels vous avez candidaté. Vous pouvez aussi autoriser les notifications push sur votre appareil, et activer ou désactiver les e-mails dans les Préférences."
+        "answer": "L'application vous informe des nouvelles missions pour vos métiers et vos régions, des nouvelles candidatures, des décisions et des changements sur les événements auxquels vous avez candidaté. Vous pouvez aussi autoriser les notifications push sur votre appareil, et gérer les alertes et les e-mails dans les Préférences."
       },
       "leave": {
         "question": "Comment quitter Vaitu ?",
@@ -525,7 +530,7 @@
     "googleCalendar": "Google Agenda",
     "downloadIcs": "Télécharger le .ics",
     "yourMotivation": "Votre motivation",
-    "withdrawWinnerConfirm": "Vous retirer de cet événement ? L'organisateur devra choisir un autre gagnant.",
+    "withdrawWinnerConfirm": "Vous retirer de cet événement ? L'organisateur devra choisir un autre gagnant, et abandonner une mission obtenue vous coûte des points.",
     "withdrawConfirm": "Voulez-vous vraiment retirer votre candidature ? L'organisateur ne la verra plus.",
     "yesWithdraw": "Oui, retirer",
     "withdrawing": "Retrait…",
@@ -544,7 +549,10 @@
       "applicationRejected": "Cette fois, vous n'avez pas été retenu pour {{title}}",
       "applicationWithdrawn": "{{name}} a retiré sa candidature à {{title}}",
       "eventUpdated": "{{title}} a été mis à jour !",
-      "eventClosed": "{{title}} a été clôturé"
+      "eventClosed": "{{title}} a été clôturé",
+      "newEvent": "Nouvelle mission pour votre métier : {{title}}",
+      "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
+      "jobReviewed": "L'organisateur a donné son retour sur {{title}}"
     }
   },
   "push": {
@@ -556,5 +564,49 @@
     "prompt": "Pouvons-nous mesurer comment vous utilisez Vaitu ? Cela nous aide à l'améliorer. Pas de publicité, et vos données ne sont pas vendues.",
     "accept": "Autoriser",
     "decline": "Non merci"
+  },
+  "reputation": {
+    "badgesTitle": "Badges",
+    "yourReview": "Le retour de l'organisateur",
+    "ratingLabel": "Note",
+    "rating": "★ {{rating}} ({{count}})",
+    "ratingRequired": "Choisissez une note",
+    "howDidItGo": "Comment s'est passée la mission ?",
+    "commentLabel": "Commentaire (facultatif) : d'autres organisateurs le liront",
+    "submit": "Envoyer le retour",
+    "outcome": {
+      "completed": "La mission a été réalisée",
+      "no_show": "Personne ne s'est présenté",
+      "cancelled": "L'événement a été annulé"
+    },
+    "completedJobs_one": "{{count}} mission réalisée",
+    "completedJobs_many": "{{count}} missions réalisées",
+    "completedJobs_other": "{{count}} missions réalisées",
+    "badges": {
+      "top_rated": {
+        "label": "Très bien noté",
+        "description": "Moyenne d'au moins {{stars}}★, avec {{reviews}}+ avis."
+      },
+      "reliable": {
+        "label": "Fiable",
+        "description": "{{jobs}}+ missions réalisées, sans abandon ni absence."
+      },
+      "generous": {
+        "label": "Collègue généreux",
+        "description": "{{jobs}}+ missions transmises à des collègues."
+      },
+      "serial_applicant": {
+        "label": "Candidat en série",
+        "description": "{{applications}}+ candidatures envoyées."
+      },
+      "serial_withdrawer": {
+        "label": "Retraits en série",
+        "description": "{{withdrawals}}+ candidatures retirées, soit au moins {{percent}} % de celles envoyées."
+      },
+      "unreliable": {
+        "label": "Peu fiable",
+        "description": "{{failures}}+ abandons ou absences."
+      }
+    }
   }
 }

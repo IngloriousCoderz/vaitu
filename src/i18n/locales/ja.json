@@ -237,7 +237,8 @@
     "deactivateAccount": "アカウントを無効にできませんでした。もう一度お試しください。",
     "resend": "メールを再送信できませんでした",
     "loadPreferences": "設定を読み込めませんでした",
-    "savePreferences": "設定を保存できませんでした"
+    "savePreferences": "設定を保存できませんでした",
+    "saveReview": "レビューを保存できませんでした"
   },
   "auth": {
     "welcome": "Vaituへようこそ",
@@ -371,11 +372,13 @@
     "minPoints": "{{count}}pt以上",
     "maxReached": "最高ランクに到達",
     "toNext": "{{tier}}まであと{{points}}",
-    "subtitle": "応募するたびにポイントがたまります。上位のランクはプロフィールに表示されます。",
+    "subtitle": "獲得した仕事をやり遂げるとポイントがたまります。上位のランクはプロフィールに表示されます。",
     "howTitle": "ポイントのしくみ",
-    "perApplication": "応募1件ごと",
-    "perShortlist": "候補入り1回ごと",
-    "perWin": "当選1回ごと"
+    "perCompletedJob": "（仕事の完了ごと）",
+    "perGoodReview": "（★{{stars}}以上のレビューごと）",
+    "perPoorReview": "（★{{stars}}以下のレビューごと）",
+    "perDropout": "（当選後の辞退ごと）",
+    "perNoShow": "（無断欠席ごと）"
   },
   "profile": {
     "title": "プロフィール",
@@ -391,7 +394,7 @@
     "logOut": "ログアウト",
     "howRanksWork": "ランクのしくみ",
     "deactivateAccount": "アカウントを無効化",
-    "deactivateConfirm": "アカウントを無効化しますか？開催中のイベントと、送った・受け取ったすべての応募は完全に削除されます。優勝者の決まった過去のイベントと統計は残ります。戻るには再度サインインしてください。",
+    "deactivateConfirm": "アカウントを無効化しますか？開催中のイベントは削除され、応募は取り下げられます。これから行う当選済みの仕事も含まれ、辞退として記録されます。優勝者の決まった過去のイベントと統計は残ります。戻るには再度サインインしてください。",
     "yesDeactivate": "はい、無効化する",
     "deactivating": "無効化中…"
   },
@@ -405,7 +408,9 @@
     "emails": "メール通知",
     "emailsDescription": "新しいイベント、応募、アップデートについてメールを受け取ります。アカウント必須メール（セキュリティ、請求）は常に送信されます。",
     "analytics": "利用状況の計測",
-    "analyticsDescription": "Google アナリティクスでアプリの使われ方を計測します。広告には使いません。"
+    "analyticsDescription": "Google アナリティクスでアプリの使われ方を計測します。広告には使いません。",
+    "newEventAlerts": "新着の仕事のお知らせ",
+    "newEventAlertsDescription": "あなたの職種と地域の仕事が投稿されると通知します。まず上で職種を選んでください。"
   },
   "about": {
     "title": "Vaituについて",
@@ -455,11 +460,11 @@
       },
       "ranks": {
         "question": "ランクとは何ですか？",
-        "answer": "応募、候補入り、当選でポイントがたまり、ブロンズ、シルバー、ゴールドとランクが上がります。ランクはプロフィールに表示されます。"
+        "answer": "完了した仕事と主催者のレビューでポイントがたまり、当選後の辞退や欠席で減ります。ポイントに応じてブロンズ、シルバー、ゴールドとランクが上がります。応募すると、主催者にはランク、レビュー、バッジが表示されます。"
       },
       "notifications": {
         "question": "通知のしくみは？",
-        "answer": "新しい応募、選考結果、応募したイベントの変更をアプリでお知らせします。端末でプッシュ通知を許可することもでき、メールのオン・オフは設定で切り替えられます。"
+        "answer": "あなたの職種と地域の新しい仕事、新しい応募、選考結果、応募したイベントの変更をアプリでお知らせします。端末でプッシュ通知を許可することもでき、お知らせとメールは設定で管理できます。"
       },
       "leave": {
         "question": "退会するには？",
@@ -502,7 +507,7 @@
     "googleCalendar": "Google カレンダー",
     "downloadIcs": ".ics をダウンロード",
     "yourMotivation": "あなたの志望動機",
-    "withdrawWinnerConfirm": "このイベントへの応募を取り下げますか？主催者は別の当選者を選ぶ必要があります。",
+    "withdrawWinnerConfirm": "このイベントへの応募を取り下げますか？主催者は別の当選者を選ぶ必要があり、当選後の辞退はポイントの減少につながります。",
     "withdrawConfirm": "応募を取り下げますか？主催者には表示されなくなります。",
     "yesWithdraw": "取り下げる",
     "withdrawing": "取り下げ中…",
@@ -521,7 +526,10 @@
       "applicationRejected": "今回は「{{title}}」は選外となりました",
       "applicationWithdrawn": "{{name}}さんが「{{title}}」への応募を取り下げました",
       "eventUpdated": "「{{title}}」に更新があります！",
-      "eventClosed": "「{{title}}」は締め切られました"
+      "eventClosed": "「{{title}}」は締め切られました",
+      "newEvent": "あなたの職種に合う新しい仕事：「{{title}}」",
+      "jobOutcomeDue": "「{{title}}」はいかがでしたか？仕事の結果を教えてください",
+      "jobReviewed": "主催者が「{{title}}」の結果を報告しました"
     }
   },
   "push": {
@@ -533,5 +541,47 @@
     "prompt": "Vaituの使われ方を計測してもよいですか？改善に役立てます。広告には使わず、データを販売することもありません。",
     "accept": "許可する",
     "decline": "許可しない"
+  },
+  "reputation": {
+    "badgesTitle": "バッジ",
+    "yourReview": "主催者からの報告",
+    "ratingLabel": "評価",
+    "rating": "★ {{rating}}（{{count}}）",
+    "ratingRequired": "評価を選んでください",
+    "howDidItGo": "仕事はいかがでしたか？",
+    "commentLabel": "コメント（任意）：他の主催者にも表示されます",
+    "submit": "報告を送信",
+    "outcome": {
+      "completed": "仕事は完了しました",
+      "no_show": "来ませんでした",
+      "cancelled": "イベントは中止になりました"
+    },
+    "completedJobs_other": "完了した仕事 {{count}}件",
+    "badges": {
+      "top_rated": {
+        "label": "高評価",
+        "description": "{{reviews}}件以上のレビューで平均★{{stars}}以上。"
+      },
+      "reliable": {
+        "label": "信頼できる",
+        "description": "辞退や欠席なしで{{jobs}}件以上の仕事を完了。"
+      },
+      "generous": {
+        "label": "頼れる同業者",
+        "description": "{{jobs}}件以上の仕事を同業者に引き継ぎました。"
+      },
+      "serial_applicant": {
+        "label": "応募の常連",
+        "description": "{{applications}}件以上応募しました。"
+      },
+      "serial_withdrawer": {
+        "label": "取り下げの常連",
+        "description": "{{withdrawals}}件以上、かつ応募の{{percent}}%以上を取り下げました。"
+      },
+      "unreliable": {
+        "label": "信頼性に注意",
+        "description": "当選後の辞退や欠席が{{failures}}回以上あります。"
+      }
+    }
   }
 }

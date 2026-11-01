@@ -1,9 +1,11 @@
 import eventOutline from "@iconify-icons/material-symbols/event-outline"
+import fiberNewOutline from "@iconify-icons/material-symbols/fiber-new-outline"
 import markEmailReadOutline from "@iconify-icons/material-symbols/mark-email-read-outline"
 import notificationsActiveOutline from "@iconify-icons/material-symbols/notifications-active-outline"
 import personCancelOutline from "@iconify-icons/material-symbols/person-cancel-outline"
 import personCheckOutline from "@iconify-icons/material-symbols/person-check-outline"
 import personRemoveOutline from "@iconify-icons/material-symbols/person-remove-outline"
+import reviewsOutline from "@iconify-icons/material-symbols/reviews-outline"
 import { Drawer } from "@inglorious/ui/drawer"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
@@ -23,6 +25,9 @@ const INBOX_ICONS = {
   application_withdrawn: personCancelOutline,
   event_updated: eventOutline,
   event_closed: eventOutline,
+  new_event: fiberNewOutline,
+  job_outcome_due: reviewsOutline,
+  job_reviewed: reviewsOutline,
 }
 
 export const Notifications = {
@@ -195,6 +200,12 @@ function feedLine(item) {
       })
     case "event_closed":
       return t("notifications.types.eventClosed", { title })
+    case "new_event":
+      return t("notifications.types.newEvent", { title })
+    case "job_outcome_due":
+      return t("notifications.types.jobOutcomeDue", { title })
+    case "job_reviewed":
+      return t("notifications.types.jobReviewed", { title })
     default:
       return t("notifications.types.eventUpdated", { title })
   }

@@ -11,6 +11,7 @@ import { Progress } from "@inglorious/ui/progress"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
+import { Badges } from "../../common/badges/index.js"
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
@@ -112,6 +113,26 @@ export const Profile = {
                   tiers: entity.tierConfig,
                   onOpenRanks,
                 }),
+              )}
+              ${when(
+                entity.stats?.review_count,
+                () =>
+                  html`<p class=${styles.rating}>
+                    ${t("reputation.rating", {
+                      rating: entity.stats.average_rating,
+                      count: entity.stats.review_count,
+                    })}
+                  </p>`,
+              )}
+              ${when(
+                entity.stats?.badges?.length,
+                () =>
+                  html`<div class=${styles.badges}>
+                    ${Badges.render({
+                      badges: entity.stats.badges,
+                      justify: "center",
+                    })}
+                  </div>`,
               )}
               ${when(entity.stats, () =>
                 Flex.render({

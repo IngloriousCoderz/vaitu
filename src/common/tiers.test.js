@@ -1,16 +1,33 @@
 import { beforeAll, describe, expect, it } from "vitest"
 
 import {
+  BADGE_GENEROUS_MIN_HANDOFFS,
+  BADGE_RELIABLE_MIN_JOBS,
+  BADGE_SERIAL_APPLICANT_MIN_APPLICATIONS,
+  BADGE_SERIAL_WITHDRAWER_MIN_PERCENT,
+  BADGE_SERIAL_WITHDRAWER_MIN_WITHDRAWALS,
+  BADGE_TOP_RATED_MIN_REVIEWS,
+  BADGE_TOP_RATED_MIN_TENTHS,
+  BADGE_UNRELIABLE_MIN_FAILURES,
   PERCENT_MAX,
-  POINTS_PER_APPLICATION,
-  POINTS_PER_SELECTION,
-  POINTS_PER_SHORTLIST,
+  POINTS_PER_COMPLETED_JOB,
+  POINTS_PER_DROPOUT,
+  POINTS_PER_GOOD_REVIEW,
+  POINTS_PER_NO_SHOW,
+  POINTS_PER_POOR_REVIEW,
+  REVIEW_GOOD_MIN_STARS,
+  REVIEW_POOR_MAX_STARS,
   TIER_BRONZE_MIN_POINTS,
   TIER_GOLD_MIN_POINTS,
   TIER_SILVER_MIN_POINTS,
 } from "../constants/index.js"
 import { ready } from "../i18n/index.js"
-import { defaultTiers, progressLabel, tierProgress } from "./tiers.js"
+import {
+  defaultTiers,
+  progressLabel,
+  tierProgress,
+  tiersFromConfig,
+} from "./tiers.js"
 
 const TIERS = defaultTiers()
 
@@ -20,10 +37,31 @@ describe("defaultTiers", () => {
       bronzeMin: TIER_BRONZE_MIN_POINTS,
       silverMin: TIER_SILVER_MIN_POINTS,
       goldMin: TIER_GOLD_MIN_POINTS,
-      perApplication: POINTS_PER_APPLICATION,
-      perShortlist: POINTS_PER_SHORTLIST,
-      perSelection: POINTS_PER_SELECTION,
+      perCompletedJob: POINTS_PER_COMPLETED_JOB,
+      perGoodReview: POINTS_PER_GOOD_REVIEW,
+      perPoorReview: POINTS_PER_POOR_REVIEW,
+      perDropout: POINTS_PER_DROPOUT,
+      perNoShow: POINTS_PER_NO_SHOW,
+      goodReviewMinStars: REVIEW_GOOD_MIN_STARS,
+      poorReviewMaxStars: REVIEW_POOR_MAX_STARS,
+      serialApplicantMinApplications: BADGE_SERIAL_APPLICANT_MIN_APPLICATIONS,
+      serialWithdrawerMinWithdrawals: BADGE_SERIAL_WITHDRAWER_MIN_WITHDRAWALS,
+      serialWithdrawerMinPercent: BADGE_SERIAL_WITHDRAWER_MIN_PERCENT,
+      unreliableMinFailures: BADGE_UNRELIABLE_MIN_FAILURES,
+      reliableMinJobs: BADGE_RELIABLE_MIN_JOBS,
+      topRatedMinReviews: BADGE_TOP_RATED_MIN_REVIEWS,
+      topRatedMinTenths: BADGE_TOP_RATED_MIN_TENTHS,
+      generousMinHandoffs: BADGE_GENEROUS_MIN_HANDOFFS,
     })
+  })
+})
+
+describe("tiersFromConfig", () => {
+  it("reads the stored values and falls back on the rest", () => {
+    expect(
+      tiersFromConfig([{ key: "tier_gold_min_points", value: 999 }]),
+    ).toEqual({ ...TIERS, goldMin: 999 })
+    expect(tiersFromConfig(null)).toEqual(TIERS)
   })
 })
 
@@ -43,7 +81,7 @@ describe("tierProgress", () => {
     expect(tierProgress(TIERS.bronzeMin - 1, TIERS)).toMatchObject({
       current: null,
       next: "bronze",
-      percent: 99,
+      percent: 96,
     })
   })
 
@@ -75,7 +113,7 @@ describe("tierProgress", () => {
       percent: PERCENT_MAX,
     }
     expect(tierProgress(TIERS.goldMin, TIERS)).toEqual(gold)
-    expect(tierProgress(TIERS.goldMin + TIERS.perSelection, TIERS)).toEqual(
+    expect(tierProgress(TIERS.goldMin + TIERS.perCompletedJob, TIERS)).toEqual(
       gold,
     )
   })
@@ -95,9 +133,9 @@ describe("progressLabel", () => {
   beforeAll(() => ready)
 
   it("names the points still missing and the rank they reach", async () => {
-    expect(progressLabel(0, TIERS)).toBe("75 pts to Bronze")
+    expect(progressLabel(0, TIERS)).toBe("25 pts to Bronze")
     expect(progressLabel(TIERS.bronzeMin - 1, TIERS)).toBe("1 pt to Bronze")
-    expect(progressLabel(TIERS.silverMin, TIERS)).toBe("75 pts to Gold")
+    expect(progressLabel(TIERS.silverMin, TIERS)).toBe("150 pts to Gold")
   })
 
   it("stops counting once gold is reached", () => {

@@ -10,9 +10,10 @@ import {
   imageRefFromUrl,
   uploadAvatar,
 } from "../../api/images.js"
+import { fetchProfileStats } from "../../api/reputation.js"
 import { endSession, setOnboardingDue } from "../../api/session.js"
 import { createImageFile } from "../../common/image.js"
-import { defaultTiers } from "../../common/tiers.js"
+import { tiersFromConfig } from "../../common/tiers.js"
 import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
 import { paths } from "../../routes.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
@@ -61,20 +62,10 @@ export const load = handleAsync("load", {
       .eq("id", user.id)
       .single()
     if (error) throw error
-    const { data: stats } = await supabase
-      .from("profile_stats")
-      .select(
-        "applications_count, shortlists_count, selections_count, points, tier",
-      )
-      .eq("profile_id", user.id)
-      .maybeSingle()
+    const stats = (await fetchProfileStats([user.id]))[user.id]
     const { data: config } = await supabase
       .from("app_config")
       .select("key, value")
-    const byKey = Object.fromEntries(
-      (config ?? []).map((row) => [row.key, row.value]),
-    )
-    const defaults = defaultTiers()
     return {
       profile: { ...profile, email: user.email },
       stats: stats ?? {
@@ -83,15 +74,9 @@ export const load = handleAsync("load", {
         selections_count: 0,
         points: 0,
         tier: null,
+        badges: [],
       },
-      tiers: {
-        bronzeMin: byKey.tier_bronze_min_points ?? defaults.bronzeMin,
-        silverMin: byKey.tier_silver_min_points ?? defaults.silverMin,
-        goldMin: byKey.tier_gold_min_points ?? defaults.goldMin,
-        perApplication: byKey.points_per_application ?? defaults.perApplication,
-        perShortlist: byKey.points_per_shortlist ?? defaults.perShortlist,
-        perSelection: byKey.points_per_selection ?? defaults.perSelection,
-      },
+      tiers: tiersFromConfig(config),
     }
   },
   success(entity, { profile, stats, tiers }, api) {

@@ -244,7 +244,8 @@
     "deactivateAccount": "Non è stato possibile disattivare l'account. Riprova.",
     "resend": "Impossibile inviare di nuovo l'email",
     "loadPreferences": "Impossibile caricare le preferenze",
-    "savePreferences": "Impossibile salvare le preferenze"
+    "savePreferences": "Impossibile salvare le preferenze",
+    "saveReview": "Impossibile salvare la recensione"
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -386,11 +387,13 @@
     "minPoints": "{{count}}+ pt",
     "maxReached": "Livello massimo raggiunto",
     "toNext": "{{points}} per {{tier}}",
-    "subtitle": "Guadagna punti con ogni candidatura. I livelli più alti compaiono sul tuo profilo.",
+    "subtitle": "Guadagna punti svolgendo i lavori che ottieni. I livelli più alti compaiono sul tuo profilo.",
     "howTitle": "Come funzionano i punti",
-    "perApplication": "per candidatura",
-    "perShortlist": "per shortlist",
-    "perWin": "per evento vinto"
+    "perCompletedJob": "per lavoro svolto",
+    "perGoodReview": "per recensione da {{stars}}★ in su",
+    "perPoorReview": "per recensione fino a {{stars}}★",
+    "perDropout": "per lavoro abbandonato dopo averlo ottenuto",
+    "perNoShow": "per mancata presentazione"
   },
   "profile": {
     "title": "Profilo",
@@ -406,7 +409,7 @@
     "logOut": "Esci",
     "howRanksWork": "Come funzionano i livelli",
     "deactivateAccount": "Disattiva account",
-    "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti e tutte le tue candidature — inviate e ricevute — verranno eliminati definitivamente. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo.",
+    "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti verranno eliminati e le tue candidature ritirate, compresi i lavori ottenuti ancora da svolgere, che contano come abbandoni. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo.",
     "yesDeactivate": "Sì, disattiva",
     "deactivating": "Disattivazione…"
   },
@@ -420,7 +423,9 @@
     "emails": "Notifiche email",
     "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate.",
     "analytics": "Statistiche di utilizzo",
-    "analyticsDescription": "Ci permette di misurare come usi l'app, tramite Google Analytics. Niente pubblicità."
+    "analyticsDescription": "Ci permette di misurare come usi l'app, tramite Google Analytics. Niente pubblicità.",
+    "newEventAlerts": "Avvisi di nuovi lavori",
+    "newEventAlertsDescription": "Ricevi una notifica quando viene pubblicato un lavoro per i tuoi mestieri e le tue regioni. Per iniziare, scegli i mestieri qui sopra."
   },
   "about": {
     "title": "Informazioni",
@@ -470,11 +475,11 @@
       },
       "ranks": {
         "question": "Cosa sono i livelli?",
-        "answer": "Guadagni punti candidandoti, entrando in shortlist e venendo scelto. Ti fanno salire ai livelli bronzo, argento e oro, che compaiono sul tuo profilo."
+        "answer": "Guadagni punti con i lavori svolti e le recensioni degli organizzatori, e li perdi se abbandoni un lavoro ottenuto o non ti presenti. Ti fanno salire ai livelli bronzo, argento e oro. Quando ti candidi, gli organizzatori vedono livello, recensioni e distintivi."
       },
       "notifications": {
         "question": "Come funzionano le notifiche?",
-        "answer": "L'app ti avvisa di nuove candidature, decisioni e modifiche agli eventi a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e attivare o disattivare le email nelle Preferenze."
+        "answer": "L'app ti avvisa di nuovi lavori per i tuoi mestieri e le tue regioni, nuove candidature, decisioni e modifiche agli eventi a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e gestire avvisi ed email nelle Preferenze."
       },
       "leave": {
         "question": "Come lascio Vaitu?",
@@ -525,7 +530,7 @@
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Scarica .ics",
     "yourMotivation": "La tua motivazione",
-    "withdrawWinnerConfirm": "Ritirarti da questo evento? L'organizzatore dovrà scegliere un altro vincitore.",
+    "withdrawWinnerConfirm": "Ritirarti da questo evento? L'organizzatore dovrà scegliere un altro vincitore, e abbandonare un lavoro ottenuto ti costa punti.",
     "withdrawConfirm": "Vuoi davvero ritirare la candidatura? L'organizzatore non la vedrà più.",
     "yesWithdraw": "Sì, ritira",
     "withdrawing": "Ritiro in corso…",
@@ -544,7 +549,10 @@
       "applicationRejected": "Questa volta non sei stato selezionato per {{title}}",
       "applicationWithdrawn": "{{name}} ha ritirato la candidatura per {{title}}",
       "eventUpdated": "{{title}} è stato aggiornato!",
-      "eventClosed": "{{title}} è stato chiuso"
+      "eventClosed": "{{title}} è stato chiuso",
+      "newEvent": "Nuovo lavoro per il tuo mestiere: {{title}}",
+      "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
+      "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}"
     }
   },
   "push": {
@@ -556,5 +564,49 @@
     "prompt": "Possiamo misurare come usi Vaitu? Ci aiuta a migliorarla. Niente pubblicità, e i tuoi dati non vengono venduti.",
     "accept": "Consenti",
     "decline": "No, grazie"
+  },
+  "reputation": {
+    "badgesTitle": "Distintivi",
+    "yourReview": "Il riscontro dell'organizzatore",
+    "ratingLabel": "Valutazione",
+    "rating": "★ {{rating}} ({{count}})",
+    "ratingRequired": "Scegli una valutazione",
+    "howDidItGo": "Com'è andato il lavoro?",
+    "commentLabel": "Commento (facoltativo): lo leggeranno altri organizzatori",
+    "submit": "Invia riscontro",
+    "outcome": {
+      "completed": "Il lavoro è stato svolto",
+      "no_show": "Non si è presentato nessuno",
+      "cancelled": "L'evento è stato annullato"
+    },
+    "completedJobs_one": "{{count}} lavoro svolto",
+    "completedJobs_many": "{{count}} lavori svolti",
+    "completedJobs_other": "{{count}} lavori svolti",
+    "badges": {
+      "top_rated": {
+        "label": "Top Rated",
+        "description": "Media di almeno {{stars}}★, con {{reviews}}+ recensioni."
+      },
+      "reliable": {
+        "label": "Affidabile",
+        "description": "{{jobs}}+ lavori svolti, senza abbandoni né mancate presentazioni."
+      },
+      "generous": {
+        "label": "Collega generoso",
+        "description": "{{jobs}}+ lavori passati ai colleghi."
+      },
+      "serial_applicant": {
+        "label": "Candidato seriale",
+        "description": "{{applications}}+ candidature inviate."
+      },
+      "serial_withdrawer": {
+        "label": "Ritiratore seriale",
+        "description": "{{withdrawals}}+ candidature ritirate, almeno il {{percent}}% di quelle inviate."
+      },
+      "unreliable": {
+        "label": "Inaffidabile",
+        "description": "{{failures}}+ abbandoni o mancate presentazioni."
+      }
+    }
   }
 }

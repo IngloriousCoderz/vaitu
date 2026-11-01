@@ -43,6 +43,11 @@ export function emailsSet(entity, isReceiving, api) {
   })
 }
 
+export function newEventAlertsSet(entity, isReceiving, api) {
+  entity.has_new_event_alerts = isReceiving
+  api.notify(`#${entity.id}:save`, { has_new_event_alerts: isReceiving })
+}
+
 export function favoriteOptionsSync(entity, _, api) {
   const regions = api.getEntity("eventList")?.regions ?? []
   api.notify("#favoriteRegionPreferences:sync", [...entity.favorite_regions])
@@ -72,6 +77,7 @@ export const load = handleAsync("load", {
     )
     entity.favorite_regions = preferences.favorite_regions ?? []
     entity.is_email_opted_out = preferences.is_email_opted_out ?? false
+    entity.has_new_event_alerts = preferences.has_new_event_alerts ?? true
     favoriteOptionsSync(entity, null, api)
   },
   error(entity, err) {

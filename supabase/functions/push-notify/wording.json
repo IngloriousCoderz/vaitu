@@ -5,7 +5,10 @@
     "applicationRejected": "لم يتم اختيارك لـ {{title}} هذه المرة",
     "applicationWithdrawn": "سحب {{name}} ترشّحه من {{title}}",
     "eventUpdated": "طرأت تحديثات على {{title}}!",
-    "eventClosed": "أُغلق {{title}}"
+    "eventClosed": "أُغلق {{title}}",
+    "newEvent": "عمل جديد يناسب مهنتك: {{title}}",
+    "jobOutcomeDue": "كيف سار {{title}}؟ أخبرنا عن العمل",
+    "jobReviewed": "قدّم المنظم تقريره عن {{title}}"
   },
   "en": {
     "applicationReceived": "{{name}} applied to {{title}}!",
@@ -13,7 +16,10 @@
     "applicationRejected": "You were not selected for {{title}} this time",
     "applicationWithdrawn": "{{name}} withdrew their application to {{title}}",
     "eventUpdated": "{{title}} has updates!",
-    "eventClosed": "{{title}} was closed"
+    "eventClosed": "{{title}} was closed",
+    "newEvent": "New job that matches your trade: {{title}}",
+    "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
+    "jobReviewed": "The organizer reported on {{title}}"
   },
   "fr": {
     "applicationReceived": "{{name}} a postulé à {{title}} !",
@@ -21,7 +27,10 @@
     "applicationRejected": "Cette fois, vous n'avez pas été retenu pour {{title}}",
     "applicationWithdrawn": "{{name}} a retiré sa candidature à {{title}}",
     "eventUpdated": "{{title}} a été mis à jour !",
-    "eventClosed": "{{title}} a été clôturé"
+    "eventClosed": "{{title}} a été clôturé",
+    "newEvent": "Nouvelle mission pour votre métier : {{title}}",
+    "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
+    "jobReviewed": "L'organisateur a donné son retour sur {{title}}"
   },
   "it": {
     "applicationReceived": "{{name}} ha inviato una candidatura per {{title}}!",
@@ -29,7 +38,10 @@
     "applicationRejected": "Questa volta non sei stato selezionato per {{title}}",
     "applicationWithdrawn": "{{name}} ha ritirato la candidatura per {{title}}",
     "eventUpdated": "{{title}} è stato aggiornato!",
-    "eventClosed": "{{title}} è stato chiuso"
+    "eventClosed": "{{title}} è stato chiuso",
+    "newEvent": "Nuovo lavoro per il tuo mestiere: {{title}}",
+    "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
+    "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}"
   },
   "ja": {
     "applicationReceived": "{{name}}さんが「{{title}}」に応募しました！",
@@ -37,6 +49,9 @@
     "applicationRejected": "今回は「{{title}}」は選外となりました",
     "applicationWithdrawn": "{{name}}さんが「{{title}}」への応募を取り下げました",
     "eventUpdated": "「{{title}}」に更新があります！",
-    "eventClosed": "「{{title}}」は締め切られました"
+    "eventClosed": "「{{title}}」は締め切られました",
+    "newEvent": "あなたの職種に合う新しい仕事：「{{title}}」",
+    "jobOutcomeDue": "「{{title}}」はいかがでしたか？仕事の結果を教えてください",
+    "jobReviewed": "主催者が「{{title}}」の結果を報告しました"
   }
 }

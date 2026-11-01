@@ -1,8 +1,9 @@
 # Notifications
 
 When something happens that a user should hear about, the database writes a
-row in `notifications` for them: an application to their event, a decision on
-their application, a change to an event they applied to. Triggers write these
+row in `notifications` for them: a new job for their trades and regions, an
+application to their event, a decision on their application, a change to an
+event they applied to, a job waiting for their report. Triggers write these
 rows (the notifications section of `supabase/migrations/20261028120000_initial_schema.sql`), so no client
 can make one up, and a row is all the app needs to tell the user in two ways:
 
@@ -68,6 +69,15 @@ lines (`wording.json`) and destinations (`message.ts`).
 catalogues or from `pathFor`. After changing a line in
 `notifications.types`, copy it into `wording.json`.
 
+### New job alerts
+
+A new event notifies whoever chose its profession in Preferences, if its job
+type and region suit theirs too (an empty list of either means any). An empty
+list of professions gets no alerts: in the feed it means "show me everything",
+which is not a wish for a push per event. `has_new_event_alerts` turns them
+off. Regions are compared as stored, which works because `normalizeEvent`
+writes the canonical name, the one favorites use.
+
 ## Setting up Firebase
 
 Everything lives in the Firebase project `inglorious-vaitu`, which has a web,
@@ -130,4 +140,4 @@ notifications and close the tab. Then, as `seeker@vaitu.local` in another
 browser, apply to one of the sender's events. On Android, sign in as the
 sender with `pnpm mobile:android`, allow notifications and leave the app.
 
-Next: [Analytics](analytics.md).
+Next: [Reputation](reputation.md).

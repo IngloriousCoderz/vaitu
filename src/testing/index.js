@@ -70,6 +70,30 @@ export async function deleteOwnedEventByTitle(title) {
   await deleteEvent(eventId)
 }
 
+export async function setEventDate(eventId, event_date) {
+  const { error } = await serviceRoleClient()
+    .from("events")
+    .update({ event_date })
+    .eq("id", eventId)
+  if (error) throw error
+}
+
+export async function readEventAsService(eventId) {
+  const { data, error } = await serviceRoleClient()
+    .from("events")
+    .select("*")
+    .eq("id", eventId)
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
+export async function runAsService(fn, params) {
+  const { data, error } = await serviceRoleClient().rpc(fn, params)
+  if (error) throw error
+  return data
+}
+
 export async function signUp({ email, fullName }) {
   const { data, error } = await supabase.auth.signUp({
     email,
