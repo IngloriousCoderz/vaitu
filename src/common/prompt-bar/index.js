@@ -28,7 +28,7 @@ export const PromptBar = {
         children: [
           Button.render({
             children: askLabel,
-            variant: "primary",
+            color: "primary",
             shape: "pill",
             size: "sm",
             onClick: onAsk,
