@@ -8,7 +8,7 @@ import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
@@ -268,7 +268,7 @@ export const Profile = {
   },
 
   renderAvatarCrop({ entity, api, onPhotoCropCancel, onPhotoCropApply }) {
-    if (!entity.isAvatarCropOpen) return ""
+    if (!entity.isAvatarCropOpen) return nothing
     return CropDialog.render(
       {
         cropperId: AVATAR_CROPPER,

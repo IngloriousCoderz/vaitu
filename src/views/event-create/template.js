@@ -6,7 +6,7 @@ import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -235,7 +235,7 @@ export const EventCreate = {
       !entity.audio_preview_url &&
       !entity.audio_error
     )
-      return ""
+      return nothing
     return Flex.render({
       direction: "column",
       className: styles.audioBox,
@@ -470,7 +470,7 @@ export const EventCreate = {
   },
 
   renderCoverCrop({ entity, api, onCropCancel, onCropConfirm }) {
-    if (!entity.isCropOpen) return ""
+    if (!entity.isCropOpen) return nothing
     return CropDialog.render(
       {
         cropperId: COVER_CROPPER,

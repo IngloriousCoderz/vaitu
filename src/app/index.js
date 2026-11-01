@@ -162,7 +162,7 @@ export const App = {
 
   renderNotificationsPanel(api) {
     const notifications = api.getEntity("notifications")
-    if (!notifications) return ""
+    if (!notifications) return nothing
     return NotificationsPanel.render({
       isOpen: notifications.isPanelOpen ?? false,
       entity: notifications,

@@ -4,7 +4,7 @@ import closeIcon from "@iconify-icons/material-symbols/close"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { FIRST_INDEX, MIN_PHOTOS_TO_NAVIGATE } from "../../constants/index.js"
@@ -26,11 +26,12 @@ export const PhotoCarousel = {
     onSwipeStart,
     onClose,
   }) {
-    if (!isOpen || !urls?.length) return ""
+    if (!isOpen || !urls?.length) return nothing
     const total = urls.length
     const safe = ((index % total) + total) % total
     const multi = total >= MIN_PHOTOS_TO_NAVIGATE
     const forward = dir === "rtl" ? -NEXT_PHOTO : NEXT_PHOTO
+    const direction = /** @type {"ltr" | "rtl"} */ (dir)
 
     return Flex.render({
       align: "center",
@@ -77,7 +78,7 @@ export const PhotoCarousel = {
                 icon: Icon.render({
                   icon: chevronLeft,
                   size: "lg",
-                  direction: dir,
+                  direction,
                   color: "#fff",
                 }),
                 variant: "ghost",
@@ -92,7 +93,7 @@ export const PhotoCarousel = {
                 icon: Icon.render({
                   icon: chevronRight,
                   size: "lg",
-                  direction: dir,
+                  direction,
                   color: "#fff",
                 }),
                 variant: "ghost",

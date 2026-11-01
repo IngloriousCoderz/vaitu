@@ -196,7 +196,7 @@ const OPEN_EVENT_COLUMNS =
  * One page of the open events a feed query matches (see feedQuery in
  * views/event-list), with how many it matches in all. Your own are left out:
  * they live in My events.
- * @param {ReturnType<import("../views/event-list/query.js").feedQuery>} feed
+ * @param {ReturnType<typeof import("../views/event-list/query.js").feedQuery>} feed
  * @param {{ from: number, to: number }} range - Row indexes, both inclusive.
  */
 export async function fetchOpenEventsPage(feed, { from, to }) {

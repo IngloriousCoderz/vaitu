@@ -244,6 +244,7 @@ function validateLogin(values) {
   return errors
 }
 
+/** @returns {any} Its errors include translation keys with values. */
 function validateSignup(values) {
   const errors = {}
   if (!(values.full_name ?? "").trim())

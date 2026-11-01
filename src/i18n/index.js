@@ -38,7 +38,9 @@ export const I18n = [
  * @returns {string | null | undefined}
  */
 export function translated(message) {
-  if (message?.key) return t(message.key, message.values)
+  if (typeof message === "object") {
+    return message ? t(message.key, message.values) : null
+  }
   if (typeof message === "string" && i18next.exists(message)) return t(message)
   return message
 }

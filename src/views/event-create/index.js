@@ -152,7 +152,6 @@ export const EventCreate = {
         onCategory: (category) => api.notify(`#${id}:categorySelect`, category),
         onRecordStart: () => api.notify(`#${id}:audioRecord`),
         onRecordStop: () => api.notify(`#${id}:audioRecordStop`),
-        onOpenAudio: () => api.notify(`#${id}:audioOpen`),
         onCancelAudio: () => api.notify(`#${id}:audioCancel`),
         onRemoveAudio: () => api.notify(`#${id}:audioRemove`),
         onImagesAdd: (payload) => api.notify(`#${id}:imagesAdd`, payload),

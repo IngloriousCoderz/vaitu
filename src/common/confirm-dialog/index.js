@@ -11,7 +11,7 @@ export const ConfirmDialog = {
     id,
     isOpen,
     message,
-    children = "",
+    children,
     error = null,
     confirmLabel,
     busyLabel = confirmLabel,

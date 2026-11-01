@@ -442,7 +442,7 @@ export const coverCropEdit = handleAsync("coverCropEdit", {
   start(entity) {
     entity.image_error = null
   },
-  async run({ id, url, rect = null } = {}) {
+  async run({ id, url, rect = null }) {
     const sourceFile = pendingSourceFile(id)
     if (sourceFile instanceof File) return { file: sourceFile, rect }
     if (!url) throw new Error("errors.imageCrop")
@@ -471,7 +471,7 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
     entity.isCropSaving = true
     entity.cropError = null
   },
-  async run({ rect } = {}) {
+  async run({ rect }) {
     const file = cropSessionFile
     if (!file || !rect) throw new Error("errors.imageCrop")
     try {

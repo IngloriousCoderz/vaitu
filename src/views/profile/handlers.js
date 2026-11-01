@@ -216,7 +216,7 @@ export const avatarSave = handleAsync("avatarSave", {
     entity.avatarStatus = "saving"
     entity.avatarError = null
   },
-  async run({ rect } = {}) {
+  async run({ rect }) {
     const file = avatarFile
     if (!file || !rect) throw new Error("errors.imageCrop")
     const {

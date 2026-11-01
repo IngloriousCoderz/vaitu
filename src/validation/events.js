@@ -21,6 +21,7 @@ const DETAIL_VALIDATORS = {
 // says what gets written. Nullable fields only when mentioned: `audio_url:
 // null` clears an upload, an absent one leaves it. Nothing returned may alias
 // the payload, which may be a revoked draft by the time it is awaited.
+/** @param {Record<string, any>} [payload] */
 export function normalizeEvent(payload = {}) {
   return {
     category: payload.category ?? DEFAULT_EVENT_CATEGORY,

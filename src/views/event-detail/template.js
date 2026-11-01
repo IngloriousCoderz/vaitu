@@ -4,7 +4,7 @@ import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
 import { Textarea } from "@inglorious/ui/textarea"
-import { html } from "@inglorious/web"
+import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
@@ -200,7 +200,7 @@ export const EventDetail = {
 
   renderGallery(event, onPhotoOpen) {
     const photos = (event.imageUrls ?? []).slice(COVER_IMAGES)
-    if (!photos.length) return ""
+    if (!photos.length) return nothing
     return Flex.render({
       gap: "sm",
       wrap: "wrap",

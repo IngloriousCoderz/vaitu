@@ -36,7 +36,7 @@ You need [pnpm](https://pnpm.io/), Docker Desktop (running) and the Supabase CLI
    pnpm install
    ```
 
-   This also installs the git hooks: before a commit, ESLint and Prettier run on the staged files; before a push, the unit tests run.
+   This also installs the git hooks: before a commit, ESLint and Prettier run on the staged files; before a push, the type check and the unit tests run.
 
 2. **Start the local backend**:
 

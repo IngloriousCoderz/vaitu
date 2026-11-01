@@ -113,7 +113,9 @@ describe("notifications feed", () => {
     async () => {
       await signIn(SENDER)
       const before = await fetchMyNotifications()
-      const unreadRows = before.filter((item) => !item.is_read)
+      const unreadRows = before.filter(
+        (item) => !item.is_read && item.event_id === eventId,
+      )
       expect(unreadRows.length).toBeGreaterThan(0)
 
       const chosen = unreadRows[0]
