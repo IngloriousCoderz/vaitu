@@ -13,7 +13,7 @@ export const UpdateBar = {
       message: t("pwa.updateReady"),
       action: Button.render({
         children: t("pwa.refresh"),
-        variant: "primary",
+        color: "primary",
         shape: "pill",
         size: "sm",
         onClick: onRefresh,

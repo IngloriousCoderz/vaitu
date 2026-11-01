@@ -13,7 +13,7 @@ export const ReactivatedBar = {
       message: t("reactivated.message"),
       action: Button.render({
         children: t("reactivated.dismiss"),
-        variant: "primary",
+        color: "primary",
         shape: "pill",
         size: "sm",
         onClick: onDismiss,

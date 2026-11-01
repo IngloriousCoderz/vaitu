@@ -20,7 +20,7 @@ export const render = (entity, api) =>
       ${when(entity.storeUrl, () =>
         Button.render({
           children: t("appUpdate.update"),
-          variant: "primary",
+          color: "primary",
           shape: "pill",
           isFullWidth: true,
           onClick: () => api.notify(`#${entity.id}:storeOpen`),
