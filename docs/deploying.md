@@ -31,6 +31,13 @@ only covers SQL. `SUPABASE_URL` / `SUPABASE_ANON_KEY` /
 `SUPABASE_SERVICE_ROLE_KEY` are injected by the platform — never set them
 as secrets.
 
+Vaitu is live, so a schema change must leave the data in place: a new file in
+`supabase/migrations/`, which `supabase db push` applies on its own, or a
+[small change](#small-schema-changes). The free tier
+has no automatic backups, so take one first:
+`supabase db dump --linked --data-only -f backup.sql`. It holds personal data, so
+keep it out of the repository.
+
 Check what is actually live:
 
 ```bash
@@ -44,10 +51,28 @@ An empty function list with a working `db push` means every edge function is
 `/functions/v1/*` — a missing function 404s before CORS headers are applied,
 and `supabase-js` reports it as `TypeError: Failed to fetch`.
 
-### Resetting before launch
+### Small schema changes
 
-Until launch, production holds nothing worth keeping, so a schema change goes
-in the initial migration and production starts over from it, with no data:
+To keep the history short, a small change can go in the initial migration
+instead of a new file. `db push` skips that file, so run the equivalent SQL once
+on production, in the dashboard's SQL Editor:
+
+```sql
+alter table public.events drop constraint events_category_check;
+alter table public.events add constraint events_category_check
+  check (category in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office'));
+```
+
+That is the statement for adding a category; the first line is for a constraint
+that already exists. `supabase db diff --linked` then shows whether production
+matches the migrations. Data stays in place, unless the change itself removes it.
+
+### Starting over
+
+⚠️ This deletes every account and all data, so it is only for a project with
+nothing worth keeping: before a launch, or when starting a new app from this
+code. A schema change then goes in the initial migration, and production
+starts over from it:
 
 ```bash
 supabase db reset --linked --no-seed
@@ -100,8 +125,11 @@ and terms. It is required.
 
 `VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
 "Job type missing?" link is hidden. To add a job type, extend
-`SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and translate its
-`taxonomy.jobType` label in every locale.
+`SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and its copy in
+`supabase/functions/parse-event/schema.ts`, and translate its `taxonomy.jobType`
+label in every locale. No schema change is needed unless the job type brings a
+new category: `events_category_check` lists them all, as described in
+[Small schema changes](#small-schema-changes).
 
 ```bash
 # Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL,

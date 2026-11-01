@@ -7,7 +7,7 @@ import {
   NO_DAYS_LEFT,
   WEEK_DAYS,
 } from "../../constants/index.js"
-import { jobTypeId } from "../../data/event-taxonomy.js"
+import { GENRE_CATEGORIES, jobTypeId } from "../../data/event-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
@@ -54,7 +54,7 @@ export function eventSubtitle(event) {
 
 export function eventTag(event) {
   if (!event.filterValue) return ""
-  const kind = event.category === "festival" ? "genre" : "style"
+  const kind = GENRE_CATEGORIES.includes(event.category) ? "genre" : "style"
   return t(`taxonomy.${kind}.${event.filterValue}`, {
     defaultValue: event.filterValue,
   })

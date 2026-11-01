@@ -80,7 +80,10 @@
       "techno": "تكنو",
       "indie": "إندي",
       "jazz": "جاز",
-      "electronic": "إلكتروني"
+      "electronic": "إلكتروني",
+      "rock": "روك",
+      "pop": "بوب",
+      "classical": "كلاسيكية"
     },
     "profession": {
       "photographer": "تصوير فوتوغرافي",
@@ -89,7 +92,9 @@
       "dj": "دي جي",
       "sound_technician": "هندسة صوت",
       "cleaner": "تنظيف",
-      "electrician": "أعمال كهربائية"
+      "electrician": "أعمال كهربائية",
+      "planner": "تنظيم الفعاليات",
+      "makeup_artist": "مكياج"
     },
     "jobType": {
       "wedding_photographer": "تصوير حفلات الزفاف",
@@ -107,12 +112,18 @@
       "office_cleaner": "تنظيف المكاتب",
       "apartment_electrician": "أعمال كهربائية في الشقق",
       "house_electrician": "أعمال كهربائية في المنازل",
-      "office_electrician": "أعمال كهربائية في المكاتب"
+      "office_electrician": "أعمال كهربائية في المكاتب",
+      "concert_photographer": "تصوير الحفلات الموسيقية",
+      "concert_videographer": "فيديو الحفلات الموسيقية",
+      "concert_musician": "موسيقى الحفلات الموسيقية",
+      "concert_sound_technician": "هندسة صوت الحفلات الموسيقية",
+      "wedding_planner": "تنظيم حفلات الزفاف",
+      "wedding_makeup_artist": "مكياج حفلات الزفاف"
     }
   },
   "filters": {
     "weddingStyle": "أسلوب الزفاف",
-    "festivalGenre": "نوع المهرجان",
+    "musicGenre": "النوع الموسيقي",
     "allRegions": "كل المناطق",
     "myRegions": "مناطقي",
     "italianRegions": "المناطق الإيطالية",

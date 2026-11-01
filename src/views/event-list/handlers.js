@@ -16,7 +16,7 @@ import {
   activeRegionAfterChange,
   regionFilterItems,
 } from "../../data/regions/resolve.js"
-import { categoryOfDetail } from "./categories.js"
+import { detailAppliesTo } from "./categories.js"
 import {
   DEFAULT_SORT,
   defaultRegion,
@@ -52,7 +52,7 @@ export function professionToggle(entity, professionId, api) {
     available.some((jobType) => jobType.id === id),
   )
   entity.activeDetails = entity.activeDetails.filter((value) =>
-    available.some((jobType) => jobType.category === categoryOfDetail(value)),
+    available.some((jobType) => detailAppliesTo(value, jobType)),
   )
   jobTypesFilterSync(entity, api)
   fetchRegions(entity, api, "reset")

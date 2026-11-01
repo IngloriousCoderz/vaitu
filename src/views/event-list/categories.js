@@ -1,11 +1,20 @@
 import { FIRST_INDEX } from "../../constants/index.js"
-import { festivalGenres, weddingStyles } from "../../data/event-taxonomy.js"
+import { musicGenres, weddingStyles } from "../../data/event-taxonomy.js"
 import { t } from "../../i18n/index.js"
+
+const genreFilter = {
+  id: "genre",
+  get title() {
+    return t("filters.musicGenre")
+  },
+  options: musicGenres,
+}
 
 export const categories = [
   {
     id: "wedding",
     detailSelect: "styleCreate",
+    professionsWithoutDetail: ["planner", "makeup_artist"],
     filters: [
       {
         id: "style",
@@ -49,18 +58,18 @@ export const categories = [
       },
     ],
   },
-  {
-    id: "festival",
+  showCategory("festival"),
+  showCategory("concert"),
+  propertyCategory("apartment"),
+  propertyCategory("house"),
+  propertyCategory("office"),
+]
+
+function showCategory(id) {
+  return {
+    id,
     detailSelect: "genreCreate",
-    filters: [
-      {
-        id: "genre",
-        get title() {
-          return t("filters.festivalGenre")
-        },
-        options: festivalGenres,
-      },
-    ],
+    filters: [genreFilter],
     title_from: { input: true },
     createFields: [
       {
@@ -78,15 +87,12 @@ export const categories = [
           return t("fields.genre")
         },
         type: "select",
-        options: festivalGenres,
+        options: musicGenres,
         section: "style",
       },
     ],
-  },
-  propertyCategory("apartment"),
-  propertyCategory("house"),
-  propertyCategory("office"),
-]
+  }
+}
 
 function propertyCategory(id) {
   return {
@@ -115,25 +121,38 @@ export function filterSections(categoryIds) {
   const scoped = categoryIds.length
     ? categories.filter((category) => categoryIds.includes(category.id))
     : categories
-  return scoped.flatMap((category) =>
-    category.filters.map((dimension) => ({
-      id: dimension.id,
-      category: category.id,
-      title: dimension.title,
-      options: dimension.options.map((option) => ({
-        id: option.value,
-        label: option.label,
-      })),
+  const dimensions = new Set(scoped.flatMap((category) => category.filters))
+  return [...dimensions].map((dimension) => ({
+    id: dimension.id,
+    categories: categories
+      .filter((category) => category.filters.includes(dimension))
+      .map((category) => category.id),
+    title: dimension.title,
+    options: dimension.options.map((option) => ({
+      id: option.value,
+      label: option.label,
     })),
+  }))
+}
+
+export function filterSectionsFor(jobTypes) {
+  const detailed = jobTypes.filter(hasDetail)
+  if (jobTypes.length && !detailed.length) return []
+  return filterSections(detailed.map((jobType) => jobType.category))
+}
+
+export function hasDetail({ category, profession }) {
+  const { detailSelect, professionsWithoutDetail } = categoryById(category)
+  return (
+    Boolean(detailSelect) && !professionsWithoutDetail?.includes(profession)
   )
 }
 
-export function categoryOfDetail(value) {
+export function detailAppliesTo(value, jobType) {
   return (
-    categories.find((category) =>
-      category.filters.some((dimension) =>
-        dimension.options.some((option) => option.value === value),
-      ),
-    )?.id ?? null
+    hasDetail(jobType) &&
+    categoryById(jobType.category).filters.some((dimension) =>
+      dimension.options.some((option) => option.value === value),
+    )
   )
 }

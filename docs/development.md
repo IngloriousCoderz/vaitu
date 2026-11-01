@@ -60,11 +60,17 @@ There is one kind of account: it can post events and apply to other people's.
 ### Migrations
 
 ⚠️ `db reset` deletes everything not in the seeds (`seed.sql`,
-`seed-local.sql`). Until launch the schema is the one initial migration: a
-change goes into it, and the databases are reset from it, production
-included (see [Deploying](deploying.md#resetting-before-launch)). After
-launch, migrations become append-only history: never edit an applied one,
-add a new file in `supabase/migrations/`.
+`seed-local.sql`). Production keeps its data, and it never re-runs a migration
+it has applied, so a schema change takes one of two paths:
+
+- **A big change**, or one that moves data, is a new file in
+  `supabase/migrations/`, which `supabase db push` applies.
+- **A small one**, like a constraint, can go in the initial migration to keep
+  the history short, with the equivalent SQL run once on production (see
+  [Deploying](deploying.md#small-schema-changes)).
+
+A project with nothing worth keeping can instead change the initial migration
+and reset from it (see [Deploying](deploying.md#starting-over)).
 
 Older native builds keep running against the new schema until they are
 updated, so a migration that removes or renames something they use needs the

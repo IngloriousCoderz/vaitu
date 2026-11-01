@@ -70,7 +70,10 @@
       "techno": "テクノ",
       "indie": "インディー",
       "jazz": "ジャズ",
-      "electronic": "エレクトロニック"
+      "electronic": "エレクトロニック",
+      "rock": "ロック",
+      "pop": "ポップ",
+      "classical": "クラシック"
     },
     "profession": {
       "photographer": "写真",
@@ -79,7 +82,9 @@
       "dj": "DJ",
       "sound_technician": "音響",
       "cleaner": "清掃",
-      "electrician": "電気工事"
+      "electrician": "電気工事",
+      "planner": "イベント企画",
+      "makeup_artist": "メイク"
     },
     "jobType": {
       "wedding_photographer": "結婚式の写真撮影",
@@ -97,12 +102,18 @@
       "office_cleaner": "オフィスの清掃",
       "apartment_electrician": "アパート・マンションの電気工事",
       "house_electrician": "一戸建ての電気工事",
-      "office_electrician": "オフィスの電気工事"
+      "office_electrician": "オフィスの電気工事",
+      "concert_photographer": "コンサートの写真撮影",
+      "concert_videographer": "コンサートの映像撮影",
+      "concert_musician": "コンサートの音楽",
+      "concert_sound_technician": "コンサートの音響",
+      "wedding_planner": "ウェディングプランニング",
+      "wedding_makeup_artist": "ブライダルメイク"
     }
   },
   "filters": {
     "weddingStyle": "結婚式のスタイル",
-    "festivalGenre": "フェスのジャンル",
+    "musicGenre": "音楽のジャンル",
     "allRegions": "すべての地域",
     "myRegions": "お気に入りの地域",
     "italianRegions": "イタリアの州",

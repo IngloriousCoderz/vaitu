@@ -1,9 +1,5 @@
 import { countries } from "../data/countries.js"
-import {
-  festivalGenres,
-  jobTypes,
-  weddingStyles,
-} from "../data/event-taxonomy.js"
+import { jobTypes, musicGenres, weddingStyles } from "../data/event-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 import { favoriteRegionOptions, regionOption } from "../data/regions/resolve.js"
 import { languages } from "../i18n/index.js"
@@ -62,7 +58,7 @@ export const entities = {
   jobTypesPreferences: jobTypesSelect("preferences", "fields.jobTypes"),
   jobTypesFilter: jobTypesSelect("eventList"),
   styleCreate: detailSelect("style", weddingStyles, "fields.style"),
-  genreCreate: detailSelect("genre", festivalGenres, "fields.genre"),
+  genreCreate: detailSelect("genre", musicGenres, "fields.genre"),
   favoriteRegionOnboarding: favoriteRegionsSelect(
     "onboarding",
     "favoriteRegionsSet",

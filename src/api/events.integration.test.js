@@ -12,6 +12,8 @@ import {
   signIn,
   signOut,
 } from "../testing/index.js"
+import { categories } from "../views/event-list/categories.js"
+import { supabase } from "./client.js"
 import {
   createEvent,
   deleteEvent,
@@ -23,6 +25,7 @@ import {
 } from "./events.js"
 
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
+const CHECK_VIOLATION = "23514"
 
 let eventId = null
 let testUuid = null
@@ -129,6 +132,37 @@ describe("editing an event", () => {
   )
 })
 
+describe("an event's category", () => {
+  const insert = async (id, category) => {
+    await signIn(SEEKER)
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    return supabase
+      .from("events")
+      .insert({ ...eventPayload(id), category, sender_id: user.id })
+      .select("id")
+      .single()
+  }
+
+  afterAll(signOut, TEST_TIMEOUT_MS)
+
+  test(
+    "can be any the app offers, and nothing else",
+    async () => {
+      for (const { id: category } of categories) {
+        const { data, error } = await insert(crypto.randomUUID(), category)
+        expect(error).toBeNull()
+        await deleteOwnedEvent(data.id)
+      }
+
+      const { error } = await insert(crypto.randomUUID(), "polka")
+      expect(error?.code).toBe(CHECK_VIOLATION)
+    },
+    TEST_TIMEOUT_MS,
+  )
+})
+
 describe("the feed", () => {
   let ownedEventId = null
   let ownedUuid = null
@@ -156,7 +190,9 @@ describe("the feed", () => {
 
       const feed = {
         jobTypes: ["wedding_photographer"],
-        details: [{ key: "style", category: "wedding", values: ["editorial"] }],
+        details: [
+          { key: "style", categories: ["wedding"], values: ["editorial"] },
+        ],
         regions: [region],
         dateFrom: null,
         dateTo: null,

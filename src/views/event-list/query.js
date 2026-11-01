@@ -32,7 +32,7 @@ const SORT_ORDERS = {
  * ask for every spelling of its region.
  * @returns {{
  *   jobTypes: string[],
- *   details: { key: string, category: string, values: string[] }[],
+ *   details: { key: string, categories: string[], values: string[] }[],
  *   regions: string[] | null,
  *   dateFrom: string | null,
  *   dateTo: string | null,
@@ -65,7 +65,7 @@ export function feedQuery({
     details: filterSections([])
       .map((section) => ({
         key: section.id,
-        category: section.category,
+        categories: section.categories,
         values: details.filter((value) =>
           section.options.some((option) => option.id === value),
         ),

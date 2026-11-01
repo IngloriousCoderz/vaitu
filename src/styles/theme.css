@@ -8,7 +8,8 @@
   --vaccent: #6b7a5e;
 }
 
-[data-category="festival"] {
+[data-category="festival"],
+[data-category="concert"] {
   --vbg: #e8dfc7;
   --vsurface: #faf8f2;
   --vink: #262233;

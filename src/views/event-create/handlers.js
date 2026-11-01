@@ -51,7 +51,7 @@ import {
 } from "../../data/regions/resolve.js"
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
-import { categoryById } from "../event-list/categories.js"
+import { categoryById, hasDetail } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
 
@@ -129,7 +129,13 @@ export function jobTypeSelect(entity, { value }, api) {
   Form.fieldChange(entity, { path: "category", value: category })
   Form.fieldChange(entity, { path: "profession", value: profession })
   entity.error = null
-  if (isSameCategory) return
+  if (isSameCategory) {
+    if (category === "wedding" && !hasDetail({ category, profession })) {
+      Form.fieldChange(entity, { path: "details.style", value: undefined })
+      api.notify("#styleCreate:sync", "")
+    }
+    return
+  }
   Form.fieldChange(entity, { path: "details", value: {} })
   entity.errors = {}
   entity.isValid = true

@@ -185,6 +185,35 @@ describe("validateEvent", () => {
     })
   })
 
+  it("accepts a concert musician with a genre", () => {
+    expect(
+      validateEvent({
+        ...validFestival,
+        category: "concert",
+        profession: "musician",
+        details: { headliner: "Nina", genre: "classical" },
+      }),
+    ).toEqual({})
+  })
+
+  it("accepts a wedding planner and a make-up artist", () => {
+    for (const profession of ["planner", "makeup_artist"]) {
+      expect(validateEvent({ ...validWedding, profession })).toEqual({})
+    }
+  })
+
+  it("has no concert DJ", () => {
+    expect(
+      Object.keys(
+        validateEvent({
+          ...validFestival,
+          category: "concert",
+          profession: "dj",
+        }),
+      ),
+    ).toEqual(["profession"])
+  })
+
   it("knows a festival by its headliner", () => {
     expect(
       inWords(validateEvent({ ...validFestival, details: {} }).details),

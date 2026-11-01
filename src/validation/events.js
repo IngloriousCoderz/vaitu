@@ -5,9 +5,9 @@ import {
 } from "../constants/index.js"
 import { CURRENCIES, DEFAULT_CURRENCY } from "../data/currencies.js"
 import {
-  festivalGenres,
   jobTypeById,
   jobTypeId,
+  musicGenres,
   weddingStyles,
 } from "../data/event-taxonomy.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
@@ -21,7 +21,8 @@ const INSTANT =
 
 const DETAIL_VALIDATORS = {
   wedding: validateWeddingDetails,
-  festival: validateFestivalDetails,
+  festival: validateShowDetails,
+  concert: validateShowDetails,
   apartment: validatePropertyDetails,
   house: validatePropertyDetails,
   office: validatePropertyDetails,
@@ -174,14 +175,14 @@ function validateWeddingDetails(details) {
   return errors
 }
 
-function validateFestivalDetails(details) {
+function validateShowDetails(details) {
   const errors = {}
   fail(
     errors,
     "headliner",
     requiredText(details.headliner, "validation.addHeadliner"),
   )
-  if (details.genre && !oneOf(festivalGenres, details.genre)) {
+  if (details.genre && !oneOf(musicGenres, details.genre)) {
     fail(errors, "genre", "validation.pickGenre")
   }
   return errors

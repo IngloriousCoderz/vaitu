@@ -2,11 +2,13 @@
 // source. src/views/event-create/parse-event.test.js fails when they drift.
 
 const SETTINGS_BY_PROFESSION = {
-  photographer: ["wedding", "festival", "office"],
-  videographer: ["wedding", "festival"],
-  musician: ["wedding", "festival"],
+  photographer: ["wedding", "festival", "concert", "office"],
+  videographer: ["wedding", "festival", "concert"],
+  musician: ["wedding", "festival", "concert"],
   dj: ["wedding", "festival"],
-  sound_technician: ["festival"],
+  sound_technician: ["festival", "concert"],
+  planner: ["wedding"],
+  makeup_artist: ["wedding"],
   cleaner: ["apartment", "house", "office"],
   electrician: ["apartment", "house", "office"],
 }
@@ -20,12 +22,20 @@ export const WEDDING_STYLES = [
   "fine_art",
 ]
 
-export const FESTIVAL_GENRES = [
+export const MUSIC_GENRES = [
   "house",
   "techno",
   "indie",
   "jazz",
   "electronic",
+  "rock",
+  "pop",
+  "classical",
+]
+
+export const JOB_TYPES_WITHOUT_STYLE = [
+  "wedding_planner",
+  "wedding_makeup_artist",
 ]
 
 // null means free text, a list the only values allowed.
@@ -38,7 +48,8 @@ export const DETAILS_BY_CATEGORY: Record<
     spouse_first_name_2: null,
     style: WEDDING_STYLES,
   },
-  festival: { headliner: null, genre: FESTIVAL_GENRES },
+  festival: { headliner: null, genre: MUSIC_GENRES },
+  concert: { headliner: null, genre: MUSIC_GENRES },
   apartment: {},
   house: {},
   office: {},
@@ -51,7 +62,13 @@ export const JOB_TYPES = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
 
 export const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "AED"]
 
-export const TITLED_CATEGORIES = ["festival", "apartment", "house", "office"]
+export const TITLED_CATEGORIES = [
+  "festival",
+  "concert",
+  "apartment",
+  "house",
+  "office",
+]
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 const DEFAULT_CURRENCY = "EUR"
@@ -87,11 +104,12 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
 }
 A job type is its category, an underscore and the profession. "details" depends on the category:
 - wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "style": ${oneOf(WEDDING_STYLES)} | null }
-- festival: { "headliner": string | null, "genre": ${oneOf(FESTIVAL_GENRES)} | null }
+- festival, concert: { "headliner": string | null, "genre": ${oneOf(MUSIC_GENRES)} | null }
 - apartment, house, office: {}
 Rules:
 - ${keep}
-- title: null for a wedding; the festival's name for a festival; for apartment, house and office, a short description of the work, in the transcript's language.
+- title: null for a wedding; the festival's or concert's name for a festival or concert; for apartment, house and office, a short description of the work, in the transcript's language.
+- style: null for ${oneOf(JOB_TYPES_WITHOUT_STYLE)}.
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
 - pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max. null when no amount is said.
@@ -121,7 +139,7 @@ export function toEventFields(
     country: text(answer?.country),
     region: text(answer?.region),
     event_date: date(answer?.event_date),
-    details: details(category, answer?.details),
+    details: withoutStyle(job_type, details(category, answer?.details)),
     pay: pay(answer?.pay),
   }
 }
@@ -156,6 +174,15 @@ function details(category: string, answer: unknown) {
       return [field, !allowed || allowed.includes(value ?? "") ? value : null]
     }),
   )
+}
+
+function withoutStyle(
+  job_type: string | null,
+  fields: Record<string, string | null>,
+) {
+  return JOB_TYPES_WITHOUT_STYLE.includes(job_type ?? "")
+    ? { ...fields, style: null }
+    : fields
 }
 
 function text(value: unknown) {

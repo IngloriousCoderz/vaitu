@@ -28,7 +28,7 @@ import {
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { t, translated } from "../../i18n/index.js"
-import { categoryById } from "../event-list/categories.js"
+import { categoryById, hasDetail } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
@@ -61,6 +61,7 @@ export const EventCreate = {
   ) {
     const busy = entity.status === "saving"
     const categoryId = getFieldValue(entity, "category", "wedding")
+    const profession = getFieldValue(entity, "profession", "")
     const details = getFieldValue(entity, "details", {})
     const country = getFieldValue(entity, "country", "")
     const category = categoryById(categoryId)
@@ -134,7 +135,7 @@ export const EventCreate = {
               }),
           )}
           ${when(
-            category.detailSelect,
+            hasDetail({ category: categoryId, profession }),
             () => html`
               <div class=${styles.field}>
                 ${api.render(category.detailSelect)}

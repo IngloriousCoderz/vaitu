@@ -48,7 +48,8 @@
   --vinput-font-size: var(--iw-font-size-base);
 }
 
-[data-category="festival"] {
+[data-category="festival"],
+[data-category="concert"] {
   --vchip-border: #c3bccd;
   --vchip-active-bg: #6d28d9;
   --vchip-active-text: #f4f1ea;

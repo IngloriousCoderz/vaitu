@@ -13,9 +13,13 @@ describe("jobTypesInScope", () => {
     expect(jobTypesInScope([], [], [], [])).toEqual([])
     expect(jobTypesInScope([], ["techno"], [], ["sound_technician"])).toEqual([
       "festival_sound_technician",
+      "concert_sound_technician",
     ])
     expect(jobTypesInScope([], ["techno"], [], [])).toContain("festival_dj")
     expect(jobTypesInScope([], ["techno"], [], [])).not.toContain("wedding_dj")
+    expect(jobTypesInScope([], ["editorial"], [], [])).not.toContain(
+      "wedding_planner",
+    )
   })
 
   it("falls back to the interests only while nothing is picked", () => {

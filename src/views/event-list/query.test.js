@@ -45,13 +45,14 @@ describe("feedQuery", () => {
   it("scopes the job types to the picked trades, or else your own", () => {
     expect(query({ myProfessions: ["sound_technician"] }).jobTypes).toEqual([
       "festival_sound_technician",
+      "concert_sound_technician",
     ])
     expect(
       query({
         myProfessions: ["cleaner"],
         activeProfessions: ["sound_technician"],
       }).jobTypes,
-    ).toEqual(["festival_sound_technician"])
+    ).toEqual(["festival_sound_technician", "concert_sound_technician"])
   })
 
   it("ignores the interests the trades in scope don't work on", () => {
@@ -62,14 +63,18 @@ describe("feedQuery", () => {
     expect(query(picked).jobTypes).toEqual(["apartment_cleaner"])
     expect(
       query({ ...picked, activeProfessions: ["sound_technician"] }).jobTypes,
-    ).toEqual(["festival_sound_technician"])
+    ).toEqual(["festival_sound_technician", "concert_sound_technician"])
   })
 
   it("groups the picked styles and genres by the detail they filter", () => {
     expect(query({ details: ["editorial", "techno", "jazz"] }).details).toEqual(
       [
-        { key: "style", category: "wedding", values: ["editorial"] },
-        { key: "genre", category: "festival", values: ["techno", "jazz"] },
+        { key: "style", categories: ["wedding"], values: ["editorial"] },
+        {
+          key: "genre",
+          categories: ["festival", "concert"],
+          values: ["techno", "jazz"],
+        },
       ],
     )
   })

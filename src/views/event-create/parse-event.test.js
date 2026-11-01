@@ -3,8 +3,9 @@ import { describe, expect, it } from "vitest"
 import {
   CURRENCIES,
   DETAILS_BY_CATEGORY,
-  FESTIVAL_GENRES,
   JOB_TYPES,
+  JOB_TYPES_WITHOUT_STYLE,
+  MUSIC_GENRES,
   offeredJobTypes,
   systemPrompt,
   TITLED_CATEGORIES,
@@ -13,18 +14,28 @@ import {
 } from "../../../supabase/functions/parse-event/schema.ts"
 import { CURRENCIES as APP_CURRENCIES } from "../../data/currencies.js"
 import {
-  festivalGenres,
   jobTypes,
+  musicGenres,
   weddingStyles,
 } from "../../data/event-taxonomy.js"
-import { categories } from "../event-list/categories.js"
+import { categories, hasDetail } from "../event-list/categories.js"
 
 describe("parse-event's copies", () => {
   it("knows every job type, style and genre", () => {
     expect(JOB_TYPES).toEqual(jobTypes.map((jobType) => jobType.id))
     expect(WEDDING_STYLES).toEqual(weddingStyles.map((o) => o.value))
-    expect(FESTIVAL_GENRES).toEqual(festivalGenres.map((o) => o.value))
+    expect(MUSIC_GENRES).toEqual(musicGenres.map((o) => o.value))
     expect(CURRENCIES).toEqual(APP_CURRENCIES)
+  })
+
+  it("knows which wedding jobs have no style", () => {
+    expect(JOB_TYPES_WITHOUT_STYLE).toEqual(
+      jobTypes
+        .filter(
+          (jobType) => jobType.category === "wedding" && !hasDetail(jobType),
+        )
+        .map((jobType) => jobType.id),
+    )
   })
 
   it("asks for the fields the create form has", () => {
@@ -115,6 +126,40 @@ describe("toEventFields", () => {
     )
     expect(fields.title).toBe("Sundance Beats")
     expect(fields.details).toEqual({ headliner: "Ada", genre: "techno" })
+  })
+
+  it("keeps a concert's fields and name", () => {
+    const fields = toEventFields(
+      {
+        job_type: "concert_musician",
+        title: "Notte Rock",
+        details: { headliner: "Ada", genre: "rock" },
+      },
+      JOB_TYPES,
+      null,
+    )
+    expect(fields.title).toBe("Notte Rock")
+    expect(fields.details).toEqual({ headliner: "Ada", genre: "rock" })
+  })
+
+  it("drops the style of a wedding job that has none", () => {
+    const fields = toEventFields(
+      {
+        job_type: "wedding_makeup_artist",
+        details: {
+          spouse_first_name_1: "Ada",
+          spouse_first_name_2: "Tom",
+          style: "film",
+        },
+      },
+      JOB_TYPES,
+      null,
+    )
+    expect(fields.details).toEqual({
+      spouse_first_name_1: "Ada",
+      spouse_first_name_2: "Tom",
+      style: null,
+    })
   })
 
   it("gives a property job a title and no details", () => {

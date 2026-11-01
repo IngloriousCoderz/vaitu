@@ -14,6 +14,7 @@ import {
   ONE_MINUTE,
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
+import { GENRE_CATEGORIES } from "../data/event-taxonomy.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
 import { currentLocale, t } from "../i18n/index.js"
 import {
@@ -65,7 +66,7 @@ export function toViewModel(row) {
     year,
   }
 
-  if (row.category === "festival") {
+  if (GENRE_CATEGORIES.includes(row.category)) {
     return {
       ...base,
       title: row.title,
@@ -247,7 +248,7 @@ export async function fetchOpenEventsPage(feed, { from, to }) {
   if (feed.details.length) {
     query = query.or(
       [
-        `category.not.in.(${feed.details.map((d) => d.category).join(",")})`,
+        `category.not.in.(${feed.details.flatMap((d) => d.categories).join(",")})`,
         ...feed.details.map(
           (d) => `details->>${d.key}.in.(${d.values.join(",")})`,
         ),

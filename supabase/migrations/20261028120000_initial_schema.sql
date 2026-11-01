@@ -155,7 +155,8 @@ create table public.events (
   id uuid primary key default gen_random_uuid(),
   -- Null once the sender erased their account: the row is anonymous history.
   sender_id uuid references public.profiles (id) on delete set null,
-  category text not null default 'wedding',
+  category text not null default 'wedding'
+    check (category in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office')),
   profession text not null,
   job_type text generated always as (category || '_' || profession) stored,
   title text not null,

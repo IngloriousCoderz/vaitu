@@ -6,7 +6,7 @@ import {
 } from "../../data/event-taxonomy.js"
 import { uniqueRegions } from "../../data/regions/resolve.js"
 import { labelled, translatedLabel } from "../../i18n/index.js"
-import { categoryOfDetail, filterSections } from "./categories.js"
+import { detailAppliesTo, filterSections } from "./categories.js"
 
 export const periods = [
   labelled("periods.all", { id: "all", days: null }),
@@ -39,7 +39,7 @@ export function jobTypesInScope(types, details, interests, professions) {
   const available = jobTypesFor(professions)
   const fromDetails = details.flatMap((value) =>
     available
-      .filter((jobType) => jobType.category === categoryOfDetail(value))
+      .filter((jobType) => detailAppliesTo(value, jobType))
       .map((jobType) => jobType.id),
   )
   const picked = [...new Set([...types, ...fromDetails])]

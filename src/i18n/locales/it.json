@@ -74,7 +74,10 @@
       "techno": "Techno",
       "indie": "Indie",
       "jazz": "Jazz",
-      "electronic": "Elettronica"
+      "electronic": "Elettronica",
+      "rock": "Rock",
+      "pop": "Pop",
+      "classical": "Classica"
     },
     "profession": {
       "photographer": "Fotografia",
@@ -83,7 +86,9 @@
       "dj": "DJ",
       "sound_technician": "Audio",
       "cleaner": "Pulizie",
-      "electrician": "Impianti elettrici"
+      "electrician": "Impianti elettrici",
+      "planner": "Organizzazione eventi",
+      "makeup_artist": "Trucco"
     },
     "jobType": {
       "wedding_photographer": "Fotografia di matrimonio",
@@ -101,12 +106,18 @@
       "office_cleaner": "Pulizia uffici",
       "apartment_electrician": "Impianti elettrici in appartamento",
       "house_electrician": "Impianti elettrici in casa",
-      "office_electrician": "Impianti elettrici in ufficio"
+      "office_electrician": "Impianti elettrici in ufficio",
+      "concert_photographer": "Fotografia di concerti",
+      "concert_videographer": "Video di concerti",
+      "concert_musician": "Musica per concerti",
+      "concert_sound_technician": "Audio per concerti",
+      "wedding_planner": "Organizzazione di matrimoni",
+      "wedding_makeup_artist": "Trucco da sposa"
     }
   },
   "filters": {
     "weddingStyle": "Stile del matrimonio",
-    "festivalGenre": "Genere del festival",
+    "musicGenre": "Genere musicale",
     "allRegions": "Tutte le regioni",
     "myRegions": "Le mie regioni",
     "italianRegions": "Regioni italiane",

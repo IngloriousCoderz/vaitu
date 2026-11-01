@@ -8,7 +8,7 @@ import {
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { filterSections } from "./categories.js"
+import { filterSectionsFor } from "./categories.js"
 import {
   detailToggle,
   filtersClear,
@@ -112,7 +112,7 @@ export const EventList = {
         showTypes: interests.length !== ONE_INTEREST,
         professions,
         activeProfessions: entity.activeProfessions,
-        sections: filterSections(settings),
+        sections: filterSectionsFor(scope.map(jobTypeById).filter(Boolean)),
         active: filtersOn(entity),
         regions: regionsOf(entity),
         periods,
