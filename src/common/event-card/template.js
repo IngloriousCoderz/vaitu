@@ -6,6 +6,7 @@ import { when } from "@inglorious/web/directives/when"
 
 import { COVER_INDEX } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
+import { formatPay } from "../pay.js"
 import {
   deadlineBadge,
   deadlineTone,
@@ -60,6 +61,9 @@ export const Card = {
           ${Chip.render({ children: eventJobType(event) })}
           ${when(event.filterValue, () =>
             Chip.render({ children: eventTag(event) }),
+          )}
+          ${when(event.pay && event.pay.kind !== "to_agree", () =>
+            Chip.render({ children: formatPay(event.pay), color: "info" }),
           )}
           ${when(isApplied, () =>
             Chip.render({ children: t("card.applied"), color: "success" }),

@@ -1,0 +1,30 @@
+.deal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--iw-space-3);
+  margin-top: var(--iw-space-3);
+}
+
+.deal p {
+  margin: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--iw-font-size-base);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--iw-space-2);
+}
+
+.contested {
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.deal .hint {
+  font-size: var(--iw-font-size-sm);
+  color: var(--vmuted);
+}

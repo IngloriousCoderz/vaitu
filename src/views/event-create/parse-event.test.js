@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  CURRENCIES,
   DETAILS_BY_CATEGORY,
   FESTIVAL_GENRES,
   JOB_TYPES,
@@ -10,6 +11,7 @@ import {
   toEventFields,
   WEDDING_STYLES,
 } from "../../../supabase/functions/parse-event/schema.ts"
+import { CURRENCIES as APP_CURRENCIES } from "../../data/currencies.js"
 import {
   festivalGenres,
   jobTypes,
@@ -22,6 +24,7 @@ describe("parse-event's copies", () => {
     expect(JOB_TYPES).toEqual(jobTypes.map((jobType) => jobType.id))
     expect(WEDDING_STYLES).toEqual(weddingStyles.map((o) => o.value))
     expect(FESTIVAL_GENRES).toEqual(festivalGenres.map((o) => o.value))
+    expect(CURRENCIES).toEqual(APP_CURRENCIES)
   })
 
   it("asks for the fields the create form has", () => {
@@ -96,6 +99,7 @@ describe("toEventFields", () => {
         spouse_first_name_2: "Marco",
         style: "reportage",
       },
+      pay: null,
     })
   })
 
@@ -149,6 +153,30 @@ describe("toEventFields", () => {
     ).toBeNull()
   })
 
+  it("keeps a fixed amount or a range, and nothing else", () => {
+    const pay = (given) => toEventFields({ pay: given }, JOB_TYPES, null).pay
+    expect(pay({ kind: "fixed", amount_min: 500, currency: "EUR" })).toEqual({
+      kind: "fixed",
+      amount_min: 500,
+      amount_max: null,
+      currency: "EUR",
+    })
+    expect(
+      pay({ kind: "range", amount_min: 300, amount_max: 400, currency: "CHF" }),
+    ).toEqual({
+      kind: "range",
+      amount_min: 300,
+      amount_max: 400,
+      currency: "CHF",
+    })
+    expect(
+      pay({ kind: "fixed", amount_min: 5, currency: "XXX" }).currency,
+    ).toBe("EUR")
+    expect(pay({ kind: "range", amount_min: 400, amount_max: 300 })).toBeNull()
+    expect(pay({ kind: "fixed", amount_min: "lots" })).toBeNull()
+    expect(pay(null)).toBeNull()
+  })
+
   it("drops a malformed date, and survives a useless answer", () => {
     expect(
       toEventFields({ event_date: "June 12" }, JOB_TYPES, null).event_date,
@@ -161,6 +189,7 @@ describe("toEventFields", () => {
       region: null,
       event_date: null,
       details: {},
+      pay: null,
     })
   })
 })

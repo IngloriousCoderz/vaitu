@@ -8,7 +8,8 @@ import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
 
-const { load, save, withdraw, ...syncHandlers } = handlers
+const { load, save, withdraw, dealAnswer, dealSettle, ...syncHandlers } =
+  handlers
 
 export const ApplicationDetail = {
   ...Form,
@@ -16,6 +17,8 @@ export const ApplicationDetail = {
   ...load,
   ...save,
   ...withdraw,
+  ...dealAnswer,
+  ...dealSettle,
   ...renderers,
 
   create(entity) {
@@ -24,6 +27,8 @@ export const ApplicationDetail = {
     entity.initialValues = { motivation: "" }
     Form.create(entity)
     entity.isConfirmingWithdraw ??= false
+    entity.isDealBusy ??= false
+    entity.dealError ??= null
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -73,6 +78,16 @@ export const ApplicationDetail = {
         },
         onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),
         onCancelWithdraw: () => api.notify(`#${id}:withdrawCancel`),
+        onDealAnswer: (isConfirmed) =>
+          api.notify(`#${id}:dealAnswer`, {
+            application_id: entity.application_id,
+            isConfirmed,
+          }),
+        onDealSettle: (isSettled) =>
+          api.notify(`#${id}:dealSettle`, {
+            application_id: entity.application_id,
+            isSettled,
+          }),
         onReportReview: () =>
           api.notify("#safety:safetyOpen", {
             type: "review",

@@ -2,6 +2,7 @@ import eventOutline from "@iconify-icons/material-symbols/event-outline"
 import fiberNewOutline from "@iconify-icons/material-symbols/fiber-new-outline"
 import markEmailReadOutline from "@iconify-icons/material-symbols/mark-email-read-outline"
 import notificationsActiveOutline from "@iconify-icons/material-symbols/notifications-active-outline"
+import paymentsOutline from "@iconify-icons/material-symbols/payments-outline"
 import personCancelOutline from "@iconify-icons/material-symbols/person-cancel-outline"
 import personCheckOutline from "@iconify-icons/material-symbols/person-check-outline"
 import personRemoveOutline from "@iconify-icons/material-symbols/person-remove-outline"
@@ -29,6 +30,11 @@ const INBOX_ICONS = {
   job_outcome_due: reviewsOutline,
   job_reviewed: reviewsOutline,
   job_cancelled: eventOutline,
+  agreement_proposed: paymentsOutline,
+  agreement_confirmed: paymentsOutline,
+  agreement_rejected: paymentsOutline,
+  settlement_due: paymentsOutline,
+  settlement_contested: paymentsOutline,
 }
 
 export const Notifications = {
@@ -209,6 +215,16 @@ function feedLine(item) {
       return t("notifications.types.jobReviewed", { title })
     case "job_cancelled":
       return t("notifications.types.jobCancelled", { title })
+    case "agreement_proposed":
+      return t("notifications.types.agreementProposed", { title })
+    case "agreement_confirmed":
+      return t("notifications.types.agreementConfirmed", { title })
+    case "agreement_rejected":
+      return t("notifications.types.agreementRejected", { title })
+    case "settlement_due":
+      return t("notifications.types.settlementDue", { title })
+    case "settlement_contested":
+      return t("notifications.types.settlementContested", { title })
     default:
       return t("notifications.types.eventUpdated", { title })
   }

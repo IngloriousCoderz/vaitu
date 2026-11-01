@@ -9,6 +9,8 @@ import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/events.js"
+import { readUserId } from "../../api/session.js"
+import { Badges } from "../../common/badges/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import {
   deadlineBadge,
@@ -21,6 +23,7 @@ import {
 } from "../../common/event-card/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { formatPay } from "../../common/pay.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import {
@@ -129,8 +132,18 @@ export const EventDetail = {
                     ${this.renderGallery(event, onPhotoOpen)}
                     ${this.renderFacts(event)}
                     <p class=${styles.sender}>
+                      ${
+                        readUserId()
+                          ? t("pay.youEarn", { pay: formatPay(event.pay) })
+                          : t("pay.signInToSee")
+                      }
+                    </p>
+                    <p class=${styles.sender}>
                       ${t("detail.organizedBy", { name: entity.senderName })}
                     </p>
+                    ${when(entity.organizerStats?.badges?.length, () =>
+                      Badges.render({ badges: entity.organizerStats.badges }),
+                    )}
                     ${when(onReport, () => SafetyButton.render({ onClick: onReport }))}
                     <p class=${styles.countdown}>
                       ${

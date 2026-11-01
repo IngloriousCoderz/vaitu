@@ -19,6 +19,11 @@ const TYPES = [
   "job_outcome_due",
   "job_reviewed",
   "job_cancelled",
+  "agreement_proposed",
+  "agreement_confirmed",
+  "agreement_rejected",
+  "settlement_due",
+  "settlement_contested",
 ]
 
 function notification(fields = {}) {

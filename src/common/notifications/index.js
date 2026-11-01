@@ -64,7 +64,17 @@ export function pathFor(item) {
         : paths.events
   }
   if (item.type === "job_cancelled") return paths.applications
-  if (item.type === "job_outcome_due") {
+  if (item.type === "settlement_contested") {
+    if (item.application_id) return paths.application(item.application_id)
+    return item.event_id
+      ? paths.receivedApplications(item.event_id)
+      : paths.events
+  }
+  if (
+    item.type === "job_outcome_due" ||
+    item.type === "agreement_confirmed" ||
+    item.type === "agreement_rejected"
+  ) {
     return item.event_id
       ? paths.receivedApplications(item.event_id)
       : paths.events
@@ -72,7 +82,9 @@ export function pathFor(item) {
   if (
     item.type === "application_selected" ||
     item.type === "application_rejected" ||
-    item.type === "job_reviewed"
+    item.type === "job_reviewed" ||
+    item.type === "agreement_proposed" ||
+    item.type === "settlement_due"
   ) {
     return item.application_id
       ? paths.application(item.application_id)

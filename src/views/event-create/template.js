@@ -7,6 +7,7 @@ import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
+import { RadioGroup } from "@inglorious/ui/radio-group"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -24,11 +25,14 @@ import {
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
 } from "../../constants/index.js"
+import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { t, translated } from "../../i18n/index.js"
 import { categoryById } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
+
+const PAY_KINDS = ["to_agree", "fixed", "range"]
 
 export const EventCreate = {
   render(props, api) {
@@ -164,6 +168,7 @@ export const EventCreate = {
             isRequired: true,
             onField,
           })}
+          ${this.renderPay({ entity, onField })}
           ${this.renderImages({
             entity,
             busy,
@@ -201,6 +206,67 @@ export const EventCreate = {
         `,
       ],
     })
+  },
+
+  renderPay({ entity, onField }) {
+    const kind = getFieldValue(entity, "pay_kind", "to_agree")
+    const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
+    return html`
+      <div class=${styles.field}>
+        ${RadioGroup.render({
+          id: "pay-kind",
+          label: t("pay.title"),
+          value: kind,
+          options: PAY_KINDS.map((value) => ({
+            value,
+            label: t(`pay.kinds.${value}`),
+          })),
+          onChange: (value) => onField({ field: "pay_kind", value }),
+        })}
+        <p class=${styles.hint}>${t("pay.hint")}</p>
+      </div>
+      ${when(
+        kind !== "to_agree",
+        () => html`
+          ${this.renderTextField({
+            label: kind === "range" ? t("pay.min") : t("pay.amount"),
+            field: "pay_min",
+            value: getFieldValue(entity, "pay_min", ""),
+            type: "number",
+            error: translated(getFieldError(entity, "pay_min")),
+            isRequired: true,
+            onField,
+          })}
+          ${when(kind === "range", () =>
+            this.renderTextField({
+              label: t("pay.max"),
+              field: "pay_max",
+              value: getFieldValue(entity, "pay_max", ""),
+              type: "number",
+              error: translated(getFieldError(entity, "pay_max")),
+              isRequired: true,
+              onField,
+            }),
+          )}
+          <label class=${styles.field}>
+            <span>${t("pay.currency")}</span>
+            <select
+              class=${styles.currency}
+              .value=${currency}
+              @change=${(event) =>
+                onField({ field: "pay_currency", value: event.target.value })}
+            >
+              ${CURRENCIES.map(
+                (code) =>
+                  html`<option value=${code} ?selected=${code === currency}>
+                    ${code}
+                  </option>`,
+              )}
+            </select>
+          </label>
+        `,
+      )}
+    `
   },
 
   renderHeaderActions({ entity, onRecordStop, onOpenAudio }) {

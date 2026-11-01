@@ -204,7 +204,10 @@
     "passwordLength_one": "La password deve avere almeno {{count}} carattere",
     "passwordLength_other": "La password deve avere almeno {{count}} caratteri",
     "passwordLength_many": "La password deve avere almeno {{count}} caratteri",
-    "pickJobType": "Scegli un tipo di lavoro"
+    "pickJobType": "Scegli un tipo di lavoro",
+    "payAmount": "Inserisci un importo",
+    "payRange": "Inserisci un massimo superiore al minimo",
+    "payCurrency": "Scegli una valuta"
   },
   "errors": {
     "notLoggedIn": "Non hai effettuato l'accesso",
@@ -398,7 +401,8 @@
     "perGoodReview": "per recensione da {{stars}}★ in su",
     "perPoorReview": "per recensione fino a {{stars}}★",
     "perDropout": "per lavoro abbandonato dopo averlo ottenuto",
-    "perNoShow": "per mancata presentazione"
+    "perNoShow": "per mancata presentazione",
+    "perPaymentIssue": "per segnalazione di mancato saldo di quanto concordato"
   },
   "profile": {
     "title": "Profilo",
@@ -473,7 +477,7 @@
       },
       "payments": {
         "question": "Vaitu gestisce pagamenti o contratti?",
-        "answer": "No. Compenso e condizioni li concordate direttamente tra voi."
+        "answer": "No. Compenso e condizioni li concordate tra voi. Vaitu registra solo l'importo che confermate entrambi e, dopo il lavoro, chiede a ciascuno se è stato regolato."
       },
       "changeMind": {
         "question": "Posso cambiare idea?",
@@ -564,7 +568,12 @@
       "newEvent": "Nuovo lavoro per il tuo mestiere: {{title}}",
       "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
       "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}",
-      "jobCancelled": "{{title}} è stato annullato"
+      "jobCancelled": "{{title}} è stato annullato",
+      "agreementProposed": "Conferma l'importo concordato per {{title}}",
+      "agreementConfirmed": "L'importo per {{title}} è stato confermato",
+      "agreementRejected": "L'importo per {{title}} non è stato confermato: controllalo",
+      "settlementDue": "{{title}} è stato regolato come concordato?",
+      "settlementContested": "Qualcuno dice che {{title}} non è stato regolato come concordato: puoi replicare"
     }
   },
   "push": {
@@ -618,6 +627,10 @@
       "unreliable": {
         "label": "Inaffidabile",
         "description": "{{failures}}+ abbandoni o mancate presentazioni."
+      },
+      "payment_issues": {
+        "label": "Problemi di pagamento",
+        "description": "{{issues}}+ segnalazioni, non smentite, di mancato saldo di quanto concordato."
       }
     }
   },
@@ -669,7 +682,7 @@
       },
       "data": {
         "title": "Quali dati raccogliamo",
-        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, mestieri, regioni e lingua. Ciò che pubblichi: eventi e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti."
+        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, mestieri, regioni e lingua. Ciò che pubblichi: eventi e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti. Il compenso che offri, gli importi che confermi e se sono stati regolati."
       },
       "voice": {
         "title": "Messaggi vocali",
@@ -704,7 +717,7 @@
       },
       "handoff": {
         "title": "Passare un lavoro",
-        "body": "Compenso, condizioni ed eventuale contratto li concordate tra voi, e ciascuno è responsabile di tasse, assicurazioni e permessi propri. Assicurati di poter passare il lavoro e che il cliente sia d'accordo, dove serve. Vaitu non gestisce pagamenti e non garantisce lavori, candidati o risultati."
+        "body": "Compenso, condizioni ed eventuale contratto li concordate tra voi, e ciascuno è responsabile di tasse, assicurazioni e permessi propri. Assicurati di poter passare il lavoro e che il cliente sia d'accordo, dove serve. Vaitu non gestisce pagamenti e non garantisce lavori, candidati o risultati. Vaitu può registrare un importo confermato da entrambi, ma non ne impone il rispetto."
       },
       "content": {
         "title": "Ciò che pubblichi",
@@ -727,5 +740,42 @@
         "body": "Puoi eliminare l'account in qualsiasi momento dal tuo profilo. Ti informeremo delle modifiche importanti a questi termini. Questi termini sono regolati dalla legge italiana. Per domande, scrivi a {{email}}."
       }
     }
+  },
+  "pay": {
+    "title": "Quanto guadagna il collega",
+    "hint": "Quello che riceve per il lavoro, non quello che ti paga il cliente. Lo vede chi ha un account, non il pubblico.",
+    "amount": "Importo",
+    "min": "Da",
+    "max": "A",
+    "currency": "Valuta",
+    "toAgree": "Da concordare",
+    "youEarn": "Guadagni: {{pay}}",
+    "signInToSee": "Accedi per vedere quanto paga questo lavoro.",
+    "kinds": {
+      "to_agree": "Da concordare",
+      "fixed": "Importo definito",
+      "range": "Una fascia"
+    }
+  },
+  "deal": {
+    "title": "Quello che avete concordato",
+    "amountLabel": "Importo concordato",
+    "amountHint": "Quanto guadagna il collega. Gli chiederemo di confermarlo. Puoi anche aggiungerlo dopo.",
+    "propose": "Chiedi conferma",
+    "waiting": "In attesa che confermi {{amount}}.",
+    "confirmed": "Concordato e confermato da entrambi: {{amount}}.",
+    "confirmQuestion": "L'organizzatore dice che avete concordato {{amount}}. È corretto?",
+    "yesAgreed": "Sì, è corretto",
+    "notAgreed": "No, non è quanto concordato",
+    "rejectedOrganizer": "Ha risposto che {{amount}} non è quanto concordato. Parlatene e inserisci l'importo giusto.",
+    "rejectedWinner": "Hai risposto che {{amount}} non è quanto concordato. L'organizzatore può inserire un nuovo importo.",
+    "noneWinner": "L'organizzatore non ha ancora inserito l'importo concordato.",
+    "settledQuestion": "I soldi sono stati regolati come concordato?",
+    "settledYes": "Sì",
+    "settledNo": "No",
+    "settledHint": "Se rispondi no, l'altra persona ha tempo per replicare. Conta contro di lei solo se non lo fa.",
+    "answeredYes": "Hai risposto che è stato regolato come concordato.",
+    "answeredNo": "Hai risposto che non è stato regolato come concordato.",
+    "contested": "L'altra persona dice che non è stato regolato come concordato. Se non sei d'accordo, dillo qui."
   }
 }

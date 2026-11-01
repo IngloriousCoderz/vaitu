@@ -15,6 +15,7 @@ import {
   clearPendingAudio,
   releaseRecorder,
 } from "./handlers.js"
+import { payFromForm, payToForm } from "./helpers.js"
 import { EventCreate as renderers } from "./template.js"
 
 const {
@@ -53,6 +54,7 @@ export const EventCreate = {
       application_deadline: "",
       max_applicants: DEFAULT_MAX_APPLICANTS,
       details: {},
+      ...payToForm(null),
     }
     Form.create(entity)
     entity.cover_url ??= null
@@ -81,7 +83,11 @@ export const EventCreate = {
   saveSubmit(entity, _, api) {
     Form.validate(entity, {
       validate: (values) =>
-        validateEvent({ ...values, title: eventTitle(values) }),
+        validateEvent({
+          ...values,
+          title: eventTitle(values),
+          pay: payFromForm(values),
+        }),
     })
     syncComboboxErrors(entity, api)
     if (!entity.isValid) return
@@ -102,6 +108,7 @@ export const EventCreate = {
       event_date: values.event_date,
       application_deadline: values.application_deadline,
       max_applicants: values.max_applicants,
+      pay: payFromForm(values),
       cover_url: entity.cover_url,
       gallery_urls: [...(entity.gallery_urls ?? [])],
       loaded_image_urls: [...(entity.loaded_image_urls ?? [])],

@@ -21,6 +21,7 @@ export const EventDetail = {
     entity.event_id ??= null
     entity.event ??= null
     entity.senderName ??= null
+    entity.organizerStats ??= null
     entity.status ??= "idle"
     entity.error ??= null
     entity.initialValues = {
@@ -110,6 +111,7 @@ function open(entity, event_id, api) {
   entity.event_id = event_id
   entity.event = null
   entity.senderName = null
+  entity.organizerStats = null
   entity.status = "idle"
   entity.error = null
   entity.isSubmitted = false

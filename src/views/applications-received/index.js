@@ -12,6 +12,8 @@ const {
   load,
   statusSet,
   jobReview,
+  dealPropose,
+  dealSettle,
   winnerAssign,
   eventReopen,
   ...syncHandlers
@@ -23,6 +25,8 @@ export const ApplicationsReceived = {
   ...load,
   ...statusSet,
   ...jobReview,
+  ...dealPropose,
+  ...dealSettle,
   ...winnerAssign,
   ...eventReopen,
   ...renderers,
@@ -44,6 +48,11 @@ export const ApplicationsReceived = {
     entity.isPhotoPreviewOpen ??= false
     entity.items ??= []
     entity.review ??= emptyReview()
+    entity.pay ??= null
+    entity.assign_amount ??= ""
+    entity.deal_draft ??= ""
+    entity.isDealBusy ??= false
+    entity.dealError ??= null
     entity.status ??= "idle"
     entity.error ??= null
   },
@@ -102,8 +111,18 @@ export const ApplicationsReceived = {
           api.notify(`#${id}:winnerAssign`, {
             event_id: entity.event_id,
             application_id,
+            amount: entity.assign_amount,
           }),
         onCancelAssign: () => api.notify(`#${id}:assignCancel`),
+        onAssignAmount: (value) => api.notify(`#${id}:assignAmountSet`, value),
+        onDealDraft: (value) => api.notify(`#${id}:dealDraftSet`, value),
+        onDealPropose: (application_id) =>
+          api.notify(`#${id}:dealPropose`, {
+            application_id,
+            amount: entity.deal_draft,
+          }),
+        onDealSettle: (application_id, isSettled) =>
+          api.notify(`#${id}:dealSettle`, { application_id, isSettled }),
         onReport: (target) => api.notify("#safety:safetyOpen", target),
         onReviewField: (field, value) =>
           api.notify(`#${id}:reviewFieldSet`, { field, value }),
@@ -136,6 +155,10 @@ function open(entity, event_id, api) {
   entity.max_applicants = 5
   entity.items = []
   entity.review = emptyReview()
+  entity.pay = null
+  entity.assign_amount = ""
+  entity.deal_draft = ""
+  entity.dealError = null
   entity.expanded_application_id = null
   entity.confirming_assign = null
   entity.photoIndex = 0

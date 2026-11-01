@@ -53,7 +53,7 @@ import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
 import { categoryById } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
-import { droppedImageUrls, mergeParsedDetails } from "./helpers.js"
+import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
 
 const NO_ROOM = 0
 
@@ -349,6 +349,11 @@ export const audioParse = handleAsync("audioParse", {
       Form.fieldChange(entity, { path: "title", value: fields.title })
     }
     Form.fieldChange(entity, { path: "details", value: details })
+    if (fields.pay) {
+      for (const [path, value] of Object.entries(payToForm(fields.pay))) {
+        Form.fieldChange(entity, { path, value })
+      }
+    }
     const previousCountry = getFieldValue(entity, "country", "")
     if (typeof fields.location === "string" && fields.location.trim()) {
       Form.fieldChange(entity, {
@@ -597,6 +602,7 @@ export const save = handleAsync("save", {
       max_applicants: Number(event.max_applicants) || DEFAULT_MAX_APPLICANTS,
       image_urls: photos.image_urls,
       details: event.details,
+      pay: event.pay,
     }
     let saved
     try {
@@ -650,6 +656,7 @@ export const editLoad = handleAsync("editLoad", {
       application_deadline: toLocalInput(row.application_deadline),
       max_applicants: row.max_applicants ?? DEFAULT_MAX_APPLICANTS,
       details: row.details ?? {},
+      ...payToForm(row.event_pay),
     }
     entity.errors = {}
     entity.isValid = true

@@ -63,6 +63,16 @@ function line(item: FeedItem, locale: Locale) {
       return fill(lines.jobReviewed, { title })
     case "job_cancelled":
       return fill(lines.jobCancelled, { title })
+    case "agreement_proposed":
+      return fill(lines.agreementProposed, { title })
+    case "agreement_confirmed":
+      return fill(lines.agreementConfirmed, { title })
+    case "agreement_rejected":
+      return fill(lines.agreementRejected, { title })
+    case "settlement_due":
+      return fill(lines.settlementDue, { title })
+    case "settlement_contested":
+      return fill(lines.settlementContested, { title })
     default:
       return fill(lines.eventUpdated, { title })
   }
@@ -83,13 +93,23 @@ function destination(item: FeedItem) {
       : `/events/${item.event_id}`
   }
   if (item.type === "job_cancelled") return "/applications"
-  if (item.type === "job_outcome_due") {
+  if (item.type === "settlement_contested") {
+    if (item.application_id) return `/applications/${item.application_id}`
+    return item.event_id ? `/events/${item.event_id}/applications` : "/events"
+  }
+  if (
+    item.type === "job_outcome_due" ||
+    item.type === "agreement_confirmed" ||
+    item.type === "agreement_rejected"
+  ) {
     return item.event_id ? `/events/${item.event_id}/applications` : "/events"
   }
   if (
     item.type === "application_selected" ||
     item.type === "application_rejected" ||
-    item.type === "job_reviewed"
+    item.type === "job_reviewed" ||
+    item.type === "agreement_proposed" ||
+    item.type === "settlement_due"
   ) {
     return item.application_id
       ? `/applications/${item.application_id}`

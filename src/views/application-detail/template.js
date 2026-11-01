@@ -8,6 +8,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
+import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
@@ -31,6 +32,8 @@ export const ApplicationDetail = {
     onGoogleCalendar,
     onDownloadIcs,
     onReportReview,
+    onDealAnswer,
+    onDealSettle,
   }) {
     const { application, status, error } = entity
     const isBusy = status === "saving" || status === "withdrawing"
@@ -70,6 +73,23 @@ export const ApplicationDetail = {
                   <div class=${styles.statusRow}>
                     ${StatusChip.render({ status: application.applicationStatus })}
                   </div>
+                  ${when(application.applicationStatus === "selected", () =>
+                    JobDeal.render({
+                      role: "winner",
+                      agreement: application.agreement,
+                      settlements: application.settlements,
+                      isSettlementDue: isSettlementOpen({
+                        agreement: application.agreement,
+                        status: application.applicationStatus,
+                        event_date: application.event_date,
+                        review: application.review,
+                      }),
+                      isBusy: entity.isDealBusy,
+                      error: entity.dealError,
+                      onAnswer: onDealAnswer,
+                      onSettle: onDealSettle,
+                    }),
+                  )}
                   ${when(application.review, () =>
                     this.renderReview(application.review, onReportReview),
                   )}

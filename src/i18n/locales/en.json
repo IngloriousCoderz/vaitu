@@ -201,7 +201,10 @@
     "futureDeadline": "Pick a future deadline",
     "passwordLength_one": "Password must be at least {{count}} character",
     "passwordLength_other": "Password must be at least {{count}} characters",
-    "pickJobType": "Pick a job type"
+    "pickJobType": "Pick a job type",
+    "payAmount": "Enter an amount",
+    "payRange": "Enter a top amount above the bottom one",
+    "payCurrency": "Choose a currency"
   },
   "errors": {
     "notLoggedIn": "Not logged in",
@@ -390,7 +393,8 @@
     "perGoodReview": "per review of {{stars}}★ or more",
     "perPoorReview": "per review of {{stars}}★ or less",
     "perDropout": "per job dropped after winning it",
-    "perNoShow": "per no-show"
+    "perNoShow": "per no-show",
+    "perPaymentIssue": "per report of not settling what you agreed"
   },
   "profile": {
     "title": "Profile",
@@ -465,7 +469,7 @@
       },
       "payments": {
         "question": "Does Vaitu handle payments or contracts?",
-        "answer": "No. You agree on the fee and the terms between yourselves."
+        "answer": "No. You agree the fee and terms between yourselves. Vaitu only records the amount you both confirm, and asks each of you afterward whether it was settled."
       },
       "changeMind": {
         "question": "Can I change my mind?",
@@ -552,7 +556,12 @@
       "newEvent": "New job that matches your trade: {{title}}",
       "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
       "jobReviewed": "The organizer reported on {{title}}",
-      "jobCancelled": "{{title}} was cancelled"
+      "jobCancelled": "{{title}} was cancelled",
+      "agreementProposed": "Please confirm the amount you agreed for {{title}}",
+      "agreementConfirmed": "The amount for {{title}} was confirmed",
+      "agreementRejected": "The amount for {{title}} wasn't confirmed: please check it",
+      "settlementDue": "Was {{title}} settled as you agreed?",
+      "settlementContested": "Someone says {{title}} wasn't settled as agreed: you can reply"
     }
   },
   "push": {
@@ -605,6 +614,10 @@
       "unreliable": {
         "label": "Unreliable",
         "description": "{{failures}}+ dropouts or no-shows."
+      },
+      "payment_issues": {
+        "label": "Payment Issues",
+        "description": "{{issues}}+ reports of not settling what was agreed, not contradicted."
       }
     }
   },
@@ -656,7 +669,7 @@
       },
       "data": {
         "title": "What we collect",
-        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: events and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them."
+        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: events and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them. The pay you offer, the amounts you confirm and whether they were settled."
       },
       "voice": {
         "title": "Voice messages",
@@ -691,7 +704,7 @@
       },
       "handoff": {
         "title": "Handing off a job",
-        "body": "You agree on the fee, terms and any contract between yourselves, and each of you is responsible for your own taxes, insurance and permits. Make sure you may pass on a job, and that your client agrees where needed. Vaitu handles no payments and guarantees no job, applicant or outcome."
+        "body": "You agree on the fee, terms and any contract between yourselves, and each of you is responsible for your own taxes, insurance and permits. Make sure you may pass on a job, and that your client agrees where needed. Vaitu handles no payments and guarantees no job, applicant or outcome. Vaitu can record an amount you both confirm, but it doesn't enforce it."
       },
       "content": {
         "title": "What you publish",
@@ -714,5 +727,42 @@
         "body": "You can delete your account at any time from your profile. We'll tell you about important changes to these terms. These terms follow Italian law. For questions, write to {{email}}."
       }
     }
+  },
+  "pay": {
+    "title": "What the colleague earns",
+    "hint": "What they receive for the job, not what the client pays you. Signed-in users can see it, the public can't.",
+    "amount": "Amount",
+    "min": "From",
+    "max": "To",
+    "currency": "Currency",
+    "toAgree": "To be agreed",
+    "youEarn": "You earn: {{pay}}",
+    "signInToSee": "Sign in to see what this job pays.",
+    "kinds": {
+      "to_agree": "To be agreed",
+      "fixed": "A set amount",
+      "range": "A range"
+    }
+  },
+  "deal": {
+    "title": "What you agreed",
+    "amountLabel": "Agreed amount",
+    "amountHint": "What the colleague earns. They'll be asked to confirm it. You can also add it later.",
+    "propose": "Ask them to confirm",
+    "waiting": "Waiting for them to confirm {{amount}}.",
+    "confirmed": "Agreed and confirmed by both: {{amount}}.",
+    "confirmQuestion": "The organizer says you agreed {{amount}}. Is that right?",
+    "yesAgreed": "Yes, that's right",
+    "notAgreed": "No, that's not what we agreed",
+    "rejectedOrganizer": "They said {{amount}} isn't what you agreed. Talk to them and enter the right amount.",
+    "rejectedWinner": "You said {{amount}} isn't what you agreed. The organizer can enter a new amount.",
+    "noneWinner": "The organizer hasn't entered the amount you agreed yet.",
+    "settledQuestion": "Was the money settled as you agreed?",
+    "settledYes": "Yes",
+    "settledNo": "No",
+    "settledHint": "If you say no, the other person has time to reply. It only counts against them if they don't.",
+    "answeredYes": "You said it was settled as agreed.",
+    "answeredNo": "You said it wasn't settled as agreed.",
+    "contested": "The other person says it wasn't settled as agreed. If you disagree, say so here."
   }
 }

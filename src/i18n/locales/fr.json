@@ -204,7 +204,10 @@
     "passwordLength_one": "Le mot de passe doit contenir au moins {{count}} caractère",
     "passwordLength_other": "Le mot de passe doit contenir au moins {{count}} caractères",
     "passwordLength_many": "Le mot de passe doit contenir au moins {{count}} caractères",
-    "pickJobType": "Choisissez un type de mission"
+    "pickJobType": "Choisissez un type de mission",
+    "payAmount": "Saisissez un montant",
+    "payRange": "Saisissez un maximum supérieur au minimum",
+    "payCurrency": "Choisissez une devise"
   },
   "errors": {
     "notLoggedIn": "Vous n'êtes pas connecté",
@@ -398,7 +401,8 @@
     "perGoodReview": "par avis de {{stars}}★ ou plus",
     "perPoorReview": "par avis de {{stars}}★ ou moins",
     "perDropout": "par mission abandonnée après l'avoir obtenue",
-    "perNoShow": "par absence"
+    "perNoShow": "par absence",
+    "perPaymentIssue": "par signalement de non-règlement du montant convenu"
   },
   "profile": {
     "title": "Profil",
@@ -473,7 +477,7 @@
       },
       "payments": {
         "question": "Vaitu gère-t-il les paiements ou les contrats ?",
-        "answer": "Non. Vous convenez du tarif et des conditions entre vous."
+        "answer": "Non. Vous convenez entre vous de la rémunération et des conditions. Vaitu enregistre seulement le montant que vous confirmez tous les deux et demande ensuite à chacun s'il a été réglé."
       },
       "changeMind": {
         "question": "Puis-je changer d'avis ?",
@@ -564,7 +568,12 @@
       "newEvent": "Nouvelle mission pour votre métier : {{title}}",
       "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
       "jobReviewed": "L'organisateur a donné son retour sur {{title}}",
-      "jobCancelled": "{{title}} a été annulé"
+      "jobCancelled": "{{title}} a été annulé",
+      "agreementProposed": "Confirmez le montant convenu pour {{title}}",
+      "agreementConfirmed": "Le montant pour {{title}} a été confirmé",
+      "agreementRejected": "Le montant pour {{title}} n'a pas été confirmé : vérifiez-le",
+      "settlementDue": "{{title}} a-t-il été réglé comme convenu ?",
+      "settlementContested": "Quelqu'un indique que {{title}} n'a pas été réglé comme convenu : vous pouvez répondre"
     }
   },
   "push": {
@@ -618,6 +627,10 @@
       "unreliable": {
         "label": "Peu fiable",
         "description": "{{failures}}+ abandons ou absences."
+      },
+      "payment_issues": {
+        "label": "Problèmes de paiement",
+        "description": "{{issues}}+ signalements non contredits de non-règlement du montant convenu."
       }
     }
   },
@@ -669,7 +682,7 @@
       },
       "data": {
         "title": "Ce que nous collectons",
-        "body": "Votre e-mail, votre nom et votre mot de passe (conservé chiffré). Ce que vous ajoutez au profil : téléphone, site web, pays, photo, métiers, régions et langue. Ce que vous publiez : les événements et leurs photos, y compris les noms de clients saisis. Vos candidatures, avis, statistiques, signalements et blocages. Un identifiant d'appareil pour les notifications push, et des statistiques d'utilisation uniquement si vous les autorisez."
+        "body": "Votre e-mail, votre nom et votre mot de passe (conservé chiffré). Ce que vous ajoutez au profil : téléphone, site web, pays, photo, métiers, régions et langue. Ce que vous publiez : les événements et leurs photos, y compris les noms de clients saisis. Vos candidatures, avis, statistiques, signalements et blocages. Un identifiant d'appareil pour les notifications push, et des statistiques d'utilisation uniquement si vous les autorisez. La rémunération que vous proposez, les montants que vous confirmez et leur règlement."
       },
       "voice": {
         "title": "Messages vocaux",
@@ -704,7 +717,7 @@
       },
       "handoff": {
         "title": "Transmettre une mission",
-        "body": "Vous convenez entre vous de la rémunération, des conditions et d'un éventuel contrat, et chacun reste responsable de ses impôts, assurances et autorisations. Assurez-vous de pouvoir transmettre la mission et de l'accord de votre client si nécessaire. Vaitu ne gère aucun paiement et ne garantit ni mission, ni candidat, ni résultat."
+        "body": "Vous convenez entre vous de la rémunération, des conditions et d'un éventuel contrat, et chacun reste responsable de ses impôts, assurances et autorisations. Assurez-vous de pouvoir transmettre la mission et de l'accord de votre client si nécessaire. Vaitu ne gère aucun paiement et ne garantit ni mission, ni candidat, ni résultat. Vaitu peut enregistrer un montant confirmé par les deux, mais n'en impose pas le respect."
       },
       "content": {
         "title": "Ce que vous publiez",
@@ -727,5 +740,42 @@
         "body": "Vous pouvez supprimer votre compte à tout moment depuis votre profil. Nous vous informerons des modifications importantes de ces conditions. Ces conditions sont régies par le droit italien. Pour toute question, écrivez à {{email}}."
       }
     }
+  },
+  "pay": {
+    "title": "Ce que gagne le collègue",
+    "hint": "Ce qu'il reçoit pour la mission, pas ce que le client vous paie. Visible par les utilisateurs connectés, pas par le public.",
+    "amount": "Montant",
+    "min": "De",
+    "max": "À",
+    "currency": "Devise",
+    "toAgree": "À convenir",
+    "youEarn": "Vous gagnez : {{pay}}",
+    "signInToSee": "Connectez-vous pour voir ce que paie cette mission.",
+    "kinds": {
+      "to_agree": "À convenir",
+      "fixed": "Montant fixe",
+      "range": "Une fourchette"
+    }
+  },
+  "deal": {
+    "title": "Ce que vous avez convenu",
+    "amountLabel": "Montant convenu",
+    "amountHint": "Ce que gagne le collègue. Il lui sera demandé de le confirmer. Vous pouvez aussi l'ajouter plus tard.",
+    "propose": "Demander confirmation",
+    "waiting": "En attente de la confirmation de {{amount}}.",
+    "confirmed": "Convenu et confirmé par les deux : {{amount}}.",
+    "confirmQuestion": "L'organisateur indique que vous avez convenu de {{amount}}. Est-ce exact ?",
+    "yesAgreed": "Oui, c'est exact",
+    "notAgreed": "Non, ce n'est pas ce que nous avons convenu",
+    "rejectedOrganizer": "Il a répondu que {{amount}} n'est pas le montant convenu. Parlez-en et saisissez le bon montant.",
+    "rejectedWinner": "Vous avez répondu que {{amount}} n'est pas le montant convenu. L'organisateur peut saisir un nouveau montant.",
+    "noneWinner": "L'organisateur n'a pas encore saisi le montant convenu.",
+    "settledQuestion": "L'argent a-t-il été réglé comme convenu ?",
+    "settledYes": "Oui",
+    "settledNo": "Non",
+    "settledHint": "Si vous répondez non, l'autre personne a le temps de répondre. Cela ne compte contre elle que si elle ne le fait pas.",
+    "answeredYes": "Vous avez répondu que c'était réglé comme convenu.",
+    "answeredNo": "Vous avez répondu que ce n'était pas réglé comme convenu.",
+    "contested": "L'autre personne indique que ce n'était pas réglé comme convenu. Si vous n'êtes pas d'accord, dites-le ici."
   }
 }

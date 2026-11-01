@@ -66,6 +66,7 @@ Points only come from confirmed work, and never go below zero:
 | Review of 2 stars or less  | -10    |
 | Won a job, then dropped it | -15    |
 | Did not show up            | -30    |
+| Payment issue              | -20    |
 
 Badges describe habits, and nobody chooses them:
 
@@ -77,10 +78,36 @@ Badges describe habits, and nobody chooses them:
 | Serial Applicant   | Sending at least 10 applications                          |
 | Serial Withdrawer  | Withdrawing at least 3, and a third of those sent or more |
 | Unreliable         | Dropping out or not showing up at least twice             |
+| Payment Issues     | At least 2 payment issues                                 |
 
 Every number in these tables lives in `app_config`, so changing one needs no
 release: the Ranks page reads them too, and fills them into its descriptions.
 The fallbacks in `src/constants/index.js` should follow, and a test fails when
 they don't.
+
+## Pay and what was agreed
+
+Passing on a job often means keeping part of the fee, so a job says what the
+colleague would earn: a set amount, a range, or to be agreed. It's the colleague's
+amount only, never the client's price or the sender's margin, and it lives in
+`event_pay` rather than `events`, because events are public and broadcast by
+realtime. Signed-in users can read it; visitors and clients can't.
+
+Vaitu handles no money and takes no commission. It only keeps a record:
+
+1. **Agreeing.** The organizer enters the amount when assigning the winner, or
+   later, and the winner confirms it. A rejected amount can be proposed again; a
+   confirmed one can't change (`job_agreements`).
+2. **Settling.** From the event date, if the amount was confirmed and the job took
+   place, each side says once whether it was settled (`job_settlements`). It never
+   asks who owes whom, because the money can go either way.
+3. **Replying.** A "no" notifies the other person, who has `settlement_reply_days`
+   (14) to answer. Any answer from them, yes or no, makes it a disagreement that
+   counts against nobody. With no answer it becomes a payment issue against them:
+   `points_per_payment_issue` points, and the Payment Issues badge from
+   `badge_payment_issues_min`.
+
+Signed-in users can read the stats of organizers with an open event, so applicants
+can see that badge too.
 
 Next: [Moderation](moderation.md).

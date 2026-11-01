@@ -3,6 +3,7 @@ import {
   DEFAULT_MAX_APPLICANTS,
   MIN_TEXT_LENGTH,
 } from "../constants/index.js"
+import { CURRENCIES, DEFAULT_CURRENCY } from "../data/currencies.js"
 import {
   festivalGenres,
   jobTypeById,
@@ -12,6 +13,7 @@ import {
 import { canonicalRegion } from "../data/regions/resolve.js"
 
 const MIN_PLACES = 1
+const NO_AMOUNT = 0
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 const INSTANT =
@@ -45,6 +47,27 @@ export function normalizeEvent(payload = {}) {
       image_urls: [...(payload.image_urls ?? [])],
     }),
   }
+}
+
+export function normalizePay(pay = {}) {
+  const currency = pay.currency ?? DEFAULT_CURRENCY
+  if (pay.kind === "fixed") {
+    return {
+      kind: "fixed",
+      amount_min: pay.amount_min,
+      amount_max: null,
+      currency,
+    }
+  }
+  if (pay.kind === "range") {
+    return {
+      kind: "range",
+      amount_min: pay.amount_min,
+      amount_max: pay.amount_max,
+      currency,
+    }
+  }
+  return { kind: "to_agree", amount_min: null, amount_max: null, currency }
 }
 
 export function validateEvent(values = {}) {
@@ -92,6 +115,8 @@ export function validateEvent(values = {}) {
   ) {
     fail(errors, "max_applicants", "validation.pickPlaces")
   }
+
+  validatePay(errors, values.pay)
 
   const validateDetails = DETAIL_VALIDATORS[category]
   if (validateDetails) {
@@ -160,6 +185,24 @@ function validateFestivalDetails(details) {
     fail(errors, "genre", "validation.pickGenre")
   }
   return errors
+}
+
+function validatePay(errors, pay) {
+  if (!pay || pay.kind === "to_agree") return
+  if (!CURRENCIES.includes(pay.currency)) {
+    fail(errors, "pay_currency", "validation.payCurrency")
+  }
+  if (!isAmount(pay.amount_min)) {
+    fail(errors, "pay_min", "validation.payAmount")
+  }
+  if (pay.kind !== "range") return
+  if (!isAmount(pay.amount_max) || pay.amount_max <= pay.amount_min) {
+    fail(errors, "pay_max", "validation.payRange")
+  }
+}
+
+function isAmount(value) {
+  return Number.isFinite(value) && value >= NO_AMOUNT
 }
 
 function validatePropertyDetails() {

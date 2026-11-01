@@ -250,6 +250,9 @@ insert into public.app_config (key, value, description) values
   ('badge_top_rated_min_reviews', 3, 'Reviews for the Top Rated badge.'),
   ('badge_top_rated_min_tenths', 45, 'Average rating, in tenths of a star, for the Top Rated badge.'),
   ('badge_generous_min_handoffs', 3, 'Jobs handed off for the Generous Colleague badge.'),
+  ('points_per_payment_issue', -20, 'Points per uncontested report of not settling what was agreed.'),
+  ('settlement_reply_days', 14, 'Days to contradict a report of not settling before it counts.'),
+  ('badge_payment_issues_min', 2, 'Payment issues for the Payment Issues badge.'),
   ('voice_daily_limit', 3, 'Voice messages a user can transcribe, and parse, per day.'),
   ('reports_daily_limit', 5, 'Reports a user can send per day.');
 
@@ -462,7 +465,11 @@ create trigger trg_applications_motivation_change
   before update of motivation on public.applications
   for each row execute function public.enforce_motivation_change();
 
-create or replace function public.assign_winner(p_event_id uuid, p_application_id uuid)
+create or replace function public.assign_winner(
+  p_event_id uuid,
+  p_application_id uuid,
+  p_agreed_amount numeric default null
+)
 returns void
 language plpgsql
 security definer
@@ -513,10 +520,14 @@ begin
   where event_id = p_event_id
     and id <> p_application_id
     and status not in ('rejected', 'withdrawn');
+
+  if p_agreed_amount is not null then
+    perform public.record_job_agreement(p_application_id, p_agreed_amount);
+  end if;
 end;
 $$;
 
-grant execute on function public.assign_winner(uuid, uuid) to authenticated;
+grant execute on function public.assign_winner(uuid, uuid, numeric) to authenticated;
 
 -- Applicants cannot update events (RLS), so the reopen lives here. Only the
 -- winner's own withdrawal reopens: deleting the event or deactivating an
@@ -841,7 +852,12 @@ create table public.notifications (
       'new_event',
       'job_outcome_due',
       'job_reviewed',
-      'job_cancelled'
+      'job_cancelled',
+      'agreement_proposed',
+      'agreement_confirmed',
+      'agreement_rejected',
+      'settlement_due',
+      'settlement_contested'
     )
   ),
   event_id uuid references public.events (id) on delete cascade,
@@ -1155,11 +1171,297 @@ begin
     returning e.id, e.sender_id
   loop
     perform public.notify_user(v_due.sender_id, 'job_outcome_due', v_due.id);
+    perform public.notify_user(a.applicant_id, 'settlement_due', v_due.id, a.id)
+    from public.applications a
+    join public.job_agreements g on g.application_id = a.id
+    where a.event_id = v_due.id
+      and a.status = 'selected'
+      and g.status = 'confirmed';
     v_requested := v_requested + 1;
   end loop;
   return v_requested;
 end;
 $$;
+
+-- What a job pays. Apart from events, which anyone can read and realtime
+-- broadcasts: a client must not be able to find what their photographer keeps.
+-- What the colleague earns, never the client's price or the sender's margin.
+create table public.event_pay (
+  event_id uuid primary key references public.events (id) on delete cascade,
+  kind text not null default 'to_agree' check (kind in ('fixed', 'range', 'to_agree')),
+  amount_min numeric check (amount_min >= 0),
+  amount_max numeric check (amount_max >= 0),
+  currency text not null default 'EUR' check (char_length(currency) = 3),
+  check (
+    (kind = 'to_agree' and amount_min is null and amount_max is null)
+    or (kind = 'fixed' and amount_min is not null and amount_max is null)
+    or (kind = 'range' and amount_min is not null and amount_max > amount_min)
+  )
+);
+
+alter table public.event_pay enable row level security;
+
+create policy "Signed-in users read the pay of events they can see"
+  on public.event_pay for select to authenticated
+  using (exists (select 1 from public.events e where e.id = event_id));
+
+create policy "Senders write the pay of their own events"
+  on public.event_pay for all to authenticated
+  using (
+    exists (
+      select 1 from public.events e
+      where e.id = event_id and e.sender_id = auth.uid()
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.events e
+      where e.id = event_id and e.sender_id = auth.uid()
+    )
+  );
+
+revoke all on public.event_pay from anon, authenticated;
+grant select, insert, update on public.event_pay to authenticated;
+
+-- What the organizer and the winner say they agreed. The organizer proposes,
+-- the winner confirms, and a confirmed amount no longer changes.
+create table public.job_agreements (
+  application_id uuid primary key references public.applications (id) on delete cascade,
+  amount numeric not null check (amount >= 0),
+  currency text not null default 'EUR' check (char_length(currency) = 3),
+  status text not null default 'proposed'
+    check (status in ('proposed', 'confirmed', 'rejected')),
+  proposed_at timestamptz not null default now(),
+  answered_at timestamptz
+);
+
+alter table public.job_agreements enable row level security;
+
+create policy "Both sides of a job can read its agreement"
+  on public.job_agreements for select to authenticated
+  using (
+    exists (
+      select 1
+      from public.applications a
+      join public.events e on e.id = a.event_id
+      where a.id = job_agreements.application_id
+        and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
+    )
+  );
+
+revoke all on public.job_agreements from anon, authenticated;
+grant select on public.job_agreements to authenticated;
+
+create or replace function public.record_job_agreement(
+  p_application_id uuid,
+  p_amount numeric
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if p_amount < 0 then
+    raise exception 'The amount cannot be negative.';
+  end if;
+
+  insert into public.job_agreements (application_id, amount, currency)
+  select
+    a.id,
+    p_amount,
+    coalesce((select currency from public.event_pay p where p.event_id = a.event_id), 'EUR')
+  from public.applications a
+  where a.id = p_application_id
+  on conflict (application_id) do update
+    set amount = excluded.amount,
+        status = 'proposed',
+        proposed_at = now(),
+        answered_at = null
+    where public.job_agreements.status <> 'confirmed';
+
+  if not found then
+    raise exception 'This agreement is already confirmed.';
+  end if;
+end;
+$$;
+
+create or replace function public.propose_job_agreement(
+  p_application_id uuid,
+  p_amount numeric
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_application public.applications%rowtype;
+begin
+  select a.* into v_application
+  from public.applications a
+  join public.events e on e.id = a.event_id
+  where a.id = p_application_id
+    and a.status = 'selected'
+    and e.sender_id = auth.uid()
+    and e.deleted_at is null;
+
+  if not found then
+    raise exception 'Only the event owner can propose this agreement.';
+  end if;
+
+  perform public.record_job_agreement(p_application_id, p_amount);
+  perform public.notify_user(
+    v_application.applicant_id,
+    'agreement_proposed',
+    v_application.event_id,
+    p_application_id
+  );
+end;
+$$;
+
+grant execute on function public.propose_job_agreement(uuid, numeric) to authenticated;
+
+create or replace function public.answer_job_agreement(
+  p_application_id uuid,
+  p_is_confirmed boolean
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_sender_id uuid;
+  v_event_id uuid;
+begin
+  select e.sender_id, e.id into v_sender_id, v_event_id
+  from public.applications a
+  join public.events e on e.id = a.event_id
+  where a.id = p_application_id
+    and a.applicant_id = auth.uid()
+    and a.status = 'selected'
+    and e.deleted_at is null;
+
+  if not found then
+    raise exception 'Only the winner can answer this agreement.';
+  end if;
+
+  update public.job_agreements
+  set status = case when p_is_confirmed then 'confirmed' else 'rejected' end,
+      answered_at = now()
+  where application_id = p_application_id and status = 'proposed';
+
+  if not found then
+    raise exception 'There is no agreement to answer.';
+  end if;
+
+  perform public.notify_user(
+    v_sender_id,
+    case when p_is_confirmed then 'agreement_confirmed' else 'agreement_rejected' end,
+    v_event_id
+  );
+end;
+$$;
+
+grant execute on function public.answer_job_agreement(uuid, boolean) to authenticated;
+
+-- Whether what was agreed was settled, from each side. It never says who owed
+-- whom: the money can go either way, since sometimes the client pays the
+-- original professional and sometimes the colleague who did the job.
+create table public.job_settlements (
+  application_id uuid not null references public.applications (id) on delete cascade,
+  role text not null check (role in ('organizer', 'winner')),
+  is_settled boolean not null,
+  answered_at timestamptz not null default now(),
+  primary key (application_id, role)
+);
+
+alter table public.job_settlements enable row level security;
+
+create policy "Both sides of a job can read its settlement"
+  on public.job_settlements for select to authenticated
+  using (
+    exists (
+      select 1
+      from public.applications a
+      join public.events e on e.id = a.event_id
+      where a.id = job_settlements.application_id
+        and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
+    )
+  );
+
+revoke all on public.job_settlements from anon, authenticated;
+grant select on public.job_settlements to authenticated;
+
+create or replace function public.answer_job_settlement(
+  p_application_id uuid,
+  p_is_settled boolean
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_application public.applications%rowtype;
+  v_event public.events%rowtype;
+  v_role text;
+begin
+  select * into v_application
+  from public.applications
+  where id = p_application_id and status = 'selected';
+
+  if not found then
+    raise exception 'Only the two sides of a job can answer this.';
+  end if;
+
+  select * into v_event
+  from public.events
+  where id = v_application.event_id and deleted_at is null;
+
+  v_role := case
+    when v_event.sender_id = auth.uid() then 'organizer'
+    when v_application.applicant_id = auth.uid() then 'winner'
+  end;
+
+  if v_role is null then
+    raise exception 'Only the two sides of a job can answer this.';
+  end if;
+
+  if v_event.event_date > current_date then
+    raise exception 'This can be answered once the date of the job has come.';
+  end if;
+
+  if not exists (
+    select 1 from public.job_agreements
+    where application_id = p_application_id and status = 'confirmed'
+  ) then
+    raise exception 'There is no confirmed agreement for this job.';
+  end if;
+
+  if exists (
+    select 1 from public.job_reviews
+    where application_id = p_application_id and outcome <> 'completed'
+  ) then
+    raise exception 'This job did not take place.';
+  end if;
+
+  insert into public.job_settlements (application_id, role, is_settled)
+  values (p_application_id, v_role, p_is_settled);
+
+  if not p_is_settled then
+    perform public.notify_user(
+      case when v_role = 'organizer' then v_application.applicant_id else v_event.sender_id end,
+      'settlement_contested',
+      v_event.id,
+      case when v_role = 'organizer' then p_application_id end
+    );
+  end if;
+end;
+$$;
+
+grant execute on function public.answer_job_settlement(uuid, boolean) to authenticated;
 
 select cron.schedule(
   'request-job-outcomes',
@@ -1167,9 +1469,9 @@ select cron.schedule(
   $$select public.request_job_outcomes()$$
 );
 
--- Security definer: your applicants' records must count all their history, not
--- the part RLS shows you. You can read your own, and that of people applying
--- to your events.
+-- Security definer: a record must count all its history, not the part RLS shows
+-- you. You can read your own, that of people applying to your events, and that
+-- of organizers you might work with.
 create or replace function public.can_read_reputation(p_profile_id uuid)
 returns boolean
 language sql
@@ -1186,6 +1488,25 @@ as $$
         and a.status <> 'withdrawn'
         and e.sender_id = auth.uid()
         and e.deleted_at is null
+    )
+    or (
+      auth.uid() is not null
+      and exists (
+        select 1
+        from public.events e
+        where e.sender_id = p_profile_id
+          and e.status = 'open'
+          and e.deleted_at is null
+      )
+    )
+    or exists (
+      select 1
+      from public.applications a
+      join public.events e on e.id = a.event_id
+      where e.sender_id = p_profile_id
+        and a.applicant_id = auth.uid()
+        and a.status <> 'withdrawn'
+        and e.deleted_at is null
     );
 $$;
 
@@ -1198,6 +1519,7 @@ returns table (
   completed_count bigint,
   review_count bigint,
   average_rating numeric,
+  payment_issues bigint,
   points bigint,
   tier text,
   badges text[]
@@ -1253,16 +1575,38 @@ as $$
         from public.events handed
         where handed.sender_id = counted.profile_id and handed.status = 'assigned'
       ) as handoffs,
+      issues.payment_issues,
       greatest(
         0,
-        completed_count * (c ->> 'points_per_completed_job')::int
+        issues.payment_issues * (c ->> 'points_per_payment_issue')::int
+          + completed_count * (c ->> 'points_per_completed_job')::int
           + good_reviews * (c ->> 'points_per_good_review')::int
           + poor_reviews * (c ->> 'points_per_poor_review')::int
           + dropouts * (c ->> 'points_per_dropout')::int
           + no_shows * (c ->> 'points_per_no_show')::int
       ) as points,
       c
-    from counted, config
+    from counted
+    cross join config
+    cross join lateral (
+      -- Counts against the other side once they had the time to say otherwise.
+      select count(*) as payment_issues
+      from public.job_settlements s
+      join public.applications a on a.id = s.application_id
+      join public.events e on e.id = a.event_id
+      where not s.is_settled
+        and s.answered_at < now()
+          - make_interval(days => (config.c ->> 'settlement_reply_days')::int)
+        and (
+          (s.role = 'winner' and e.sender_id = counted.profile_id)
+          or (s.role = 'organizer' and a.applicant_id = counted.profile_id)
+        )
+        and not exists (
+          select 1 from public.job_settlements other
+          where other.application_id = s.application_id
+            and other.role <> s.role
+        )
+    ) issues
   )
   select
     profile_id,
@@ -1272,6 +1616,7 @@ as $$
     completed_count,
     review_count,
     average_rating,
+    payment_issues,
     points,
     case
       when points >= (c ->> 'tier_gold_min_points')::int then 'gold'
@@ -1293,7 +1638,9 @@ as $$
         and withdrawals * 100 >= lifetime_applications * (c ->> 'badge_serial_withdrawer_min_percent')::int
         then 'serial_withdrawer' end,
       case when dropouts + no_shows >= (c ->> 'badge_unreliable_min_failures')::int
-        then 'unreliable' end
+        then 'unreliable' end,
+      case when payment_issues >= (c ->> 'badge_payment_issues_min')::int
+        then 'payment_issues' end
     ], null) as badges
   from scored;
 $$;
@@ -1363,6 +1710,7 @@ begin
   end if;
 
   delete from public.notifications where event_id = p_event_id;
+  delete from public.event_pay where event_id = p_event_id;
 
   select title into v_title from public.events where id = p_event_id;
 

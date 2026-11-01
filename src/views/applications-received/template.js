@@ -17,8 +17,10 @@ import { getFieldError } from "@inglorious/web/form"
 import { Badges } from "../../common/badges/index.js"
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
+import { formatPay } from "../../common/pay.js"
 import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { telUrl } from "../../common/profile.js"
 import { SafetyButton } from "../../common/safety/index.js"
@@ -51,6 +53,10 @@ export const ApplicationsReceived = {
     onAskAssign,
     onAssign,
     onCancelAssign,
+    onAssignAmount,
+    onDealDraft,
+    onDealPropose,
+    onDealSettle,
     onAskReopen,
     onReopenDeadline,
     onReopen,
@@ -150,6 +156,7 @@ export const ApplicationsReceived = {
               entity.event_recap,
               selected_count,
               entity.max_applicants,
+              entity.pay,
               onPhotoOpen,
             ),
           )}
@@ -172,6 +179,14 @@ export const ApplicationsReceived = {
                   expanded: entity.expanded_application_id === item.id,
                   max_reached,
                   confirming_assign: entity.confirming_assign === item.id,
+                  assign_amount: entity.assign_amount,
+                  deal_draft: entity.deal_draft,
+                  is_deal_busy: entity.isDealBusy,
+                  deal_error: entity.dealError,
+                  onAssignAmount,
+                  onDealDraft,
+                  onDealPropose,
+                  onDealSettle,
                   status,
                   error,
                   event_assigned: entity.event_status === "assigned",
@@ -201,7 +216,7 @@ export const ApplicationsReceived = {
     })
   },
 
-  renderRecap(recap, shortlisted, maxApplicants, onPhotoOpen) {
+  renderRecap(recap, shortlisted, maxApplicants, pay, onPhotoOpen) {
     const photos = recap.image_urls ?? []
     const rows = [
       [t("received.status"), translatedValue("status.", recap.status)],
@@ -221,6 +236,7 @@ export const ApplicationsReceived = {
       [t("received.location"), recap.location || "—"],
       [t("received.eventDate"), formatDay(recap.event_date)],
       [t("received.deadline"), formatDeadline(recap.application_deadline)],
+      [t("pay.title"), formatPay(pay)],
       [t("received.shortlist"), `${shortlisted}/${maxApplicants ?? "—"}`],
       [
         t("received.created"),
@@ -280,6 +296,14 @@ export const ApplicationsReceived = {
     expanded,
     max_reached,
     confirming_assign,
+    assign_amount,
+    deal_draft,
+    is_deal_busy,
+    deal_error,
+    onAssignAmount,
+    onDealDraft,
+    onDealPropose,
+    onDealSettle,
     status,
     error,
     event_assigned,
@@ -366,6 +390,25 @@ export const ApplicationsReceived = {
                 }),
               )}
               <p class=${styles.motivation}>${item.motivation}</p>
+              ${when(item.status === "selected", () =>
+                JobDeal.render({
+                  role: "organizer",
+                  agreement: item.job_agreements,
+                  settlements: item.job_settlements,
+                  isSettlementDue: isSettlementOpen({
+                    agreement: item.job_agreements,
+                    status: item.status,
+                    event_date,
+                    review: item.job_reviews,
+                  }),
+                  draft: deal_draft,
+                  isBusy: is_deal_busy,
+                  error: deal_error,
+                  onDraft: onDealDraft,
+                  onPropose: () => onDealPropose(item.id),
+                  onSettle: (isSettled) => onDealSettle(item.id, isSettled),
+                }),
+              )}
               ${when(item.job_reviews, () =>
                 this.renderGivenReview(item.job_reviews),
               )}
@@ -439,6 +482,15 @@ export const ApplicationsReceived = {
                     id: `assign-confirm-${item.id}`,
                     isOpen: confirming_assign,
                     message: t("received.assignConfirm"),
+                    children: Input.render({
+                      id: `assign-amount-${item.id}`,
+                      label: t("deal.amountLabel"),
+                      hint: t("deal.amountHint"),
+                      inputType: "number",
+                      value: assign_amount,
+                      isFullWidth: true,
+                      onChange: onAssignAmount,
+                    }),
                     error: status === "error" ? error : null,
                     confirmLabel: t("received.yesAssign"),
                     busyLabel: t("received.assigning"),

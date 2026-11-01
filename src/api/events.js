@@ -19,6 +19,7 @@ import { currentLocale, t } from "../i18n/index.js"
 import {
   firstError,
   normalizeEvent,
+  normalizePay,
   validateEvent,
 } from "../validation/events.js"
 import { supabase } from "./client.js"
@@ -51,6 +52,7 @@ export function toViewModel(row) {
     ),
     place: [row.location, region].filter(Boolean).join(" • "),
     imageUrls: row.image_urls ?? [],
+    pay: row.event_pay ?? null,
     daysLeft: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
     ),
@@ -132,10 +134,14 @@ export async function fetchEventDetail(id) {
   )
   if (senderError) throw senderError
 
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
   const view = toViewModel(event)
   return {
     event: {
       ...view,
+      pay: session ? await fetchEventPay(id) : null,
       senderId: event.sender_id,
       max_applicants: event.max_applicants,
       application_deadline: event.application_deadline,
@@ -194,6 +200,26 @@ export async function fetchMyEvents() {
   }))
 }
 
+const PAY_COLUMNS = "kind, amount_min, amount_max, currency"
+
+// Signed-in only: a client must not find what their photographer keeps.
+async function fetchEventPay(event_id) {
+  const { data, error } = await supabase
+    .from("event_pay")
+    .select(PAY_COLUMNS)
+    .eq("event_id", event_id)
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
+async function savePay(event_id, pay) {
+  const { error } = await supabase
+    .from("event_pay")
+    .upsert({ event_id, ...normalizePay(pay) })
+  if (error) throw error
+}
+
 const OPEN_EVENT_COLUMNS =
   "id, category, profession, title, location, region, event_date, application_deadline, created_at, image_urls, details"
 
@@ -209,7 +235,12 @@ export async function fetchOpenEventsPage(feed, { from, to }) {
   const userId = readUserId()
   let query = supabase
     .from("events")
-    .select(OPEN_EVENT_COLUMNS, { count: "exact" })
+    .select(
+      userId
+        ? `${OPEN_EVENT_COLUMNS}, event_pay(${PAY_COLUMNS})`
+        : OPEN_EVENT_COLUMNS,
+      { count: "exact" },
+    )
     .eq("status", "open")
   if (userId) query = query.neq("sender_id", userId)
   if (feed.jobTypes.length) query = query.in("job_type", feed.jobTypes)
@@ -266,12 +297,13 @@ export async function createEvent(payload) {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) throw new Error("Not logged in")
-  const { error } = await supabase.from("events").insert({
-    ...row,
-    sender_id: user.id,
-    status: "open",
-  })
+  const { data, error } = await supabase
+    .from("events")
+    .insert({ ...row, sender_id: user.id, status: "open" })
+    .select("id")
+    .single()
   if (error) throw error
+  await savePay(data.id, payload.pay)
   return true
 }
 
@@ -283,7 +315,7 @@ export async function fetchEventForEdit(event_id) {
   const { data, error } = await supabase
     .from("events")
     .select(
-      "id, category, profession, title, location, country, region, event_date, application_deadline, max_applicants, image_urls, details",
+      "id, category, profession, title, location, country, region, event_date, application_deadline, max_applicants, image_urls, details, event_pay(kind, amount_min, amount_max, currency)",
     )
     .eq("id", event_id)
     .eq("sender_id", user.id)
@@ -299,6 +331,7 @@ export async function updateEvent(event_id, payload) {
     .update({ ...row, updated_at: new Date().toISOString() })
     .eq("id", event_id)
   if (error) throw error
+  if (payload.pay) await savePay(event_id, payload.pay)
   return true
 }
 

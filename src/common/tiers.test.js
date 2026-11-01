@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest"
 
 import {
   BADGE_GENEROUS_MIN_HANDOFFS,
+  BADGE_PAYMENT_ISSUES_MIN,
   BADGE_RELIABLE_MIN_JOBS,
   BADGE_SERIAL_APPLICANT_MIN_APPLICATIONS,
   BADGE_SERIAL_WITHDRAWER_MIN_PERCENT,
@@ -14,6 +15,7 @@ import {
   POINTS_PER_DROPOUT,
   POINTS_PER_GOOD_REVIEW,
   POINTS_PER_NO_SHOW,
+  POINTS_PER_PAYMENT_ISSUE,
   POINTS_PER_POOR_REVIEW,
   REVIEW_GOOD_MIN_STARS,
   REVIEW_POOR_MAX_STARS,
@@ -42,6 +44,8 @@ describe("defaultTiers", () => {
       perPoorReview: POINTS_PER_POOR_REVIEW,
       perDropout: POINTS_PER_DROPOUT,
       perNoShow: POINTS_PER_NO_SHOW,
+      perPaymentIssue: POINTS_PER_PAYMENT_ISSUE,
+      paymentIssuesMin: BADGE_PAYMENT_ISSUES_MIN,
       goodReviewMinStars: REVIEW_GOOD_MIN_STARS,
       poorReviewMaxStars: REVIEW_POOR_MAX_STARS,
       serialApplicantMinApplications: BADGE_SERIAL_APPLICANT_MIN_APPLICATIONS,

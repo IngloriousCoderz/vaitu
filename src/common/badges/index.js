@@ -11,6 +11,7 @@ const colors = {
   serial_applicant: "default",
   serial_withdrawer: "warning",
   unreliable: "error",
+  payment_issues: "error",
 }
 
 export const BADGES = Object.keys(colors)
@@ -32,6 +33,7 @@ const thresholds = {
     percent: tiers.serialWithdrawerMinPercent,
   }),
   unreliable: (tiers) => ({ failures: tiers.unreliableMinFailures }),
+  payment_issues: (tiers) => ({ issues: tiers.paymentIssuesMin }),
 }
 
 export function badgeDescription(badge, tiers) {

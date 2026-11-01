@@ -1,4 +1,5 @@
 import cancelOutline from "@iconify-icons/material-symbols/cancel-outline"
+import paymentsOutline from "@iconify-icons/material-symbols/payments-outline"
 import personCancelOutline from "@iconify-icons/material-symbols/person-cancel-outline"
 import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-leaderboard-outline"
 import starHalfOutline from "@iconify-icons/material-symbols/star-half-outline"
@@ -149,6 +150,11 @@ export const Ranks = {
                         icon: cancelOutline,
                         points: tiers.perNoShow,
                         label: t("ranks.perNoShow"),
+                      })}
+                      ${this.renderHowRow({
+                        icon: paymentsOutline,
+                        points: tiers.perPaymentIssue,
+                        label: t("ranks.perPaymentIssue"),
                       })}
                     `,
                   })}

@@ -1,6 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
+import { answerAgreement, answerSettlement } from "../../api/agreements.js"
 import {
   fetchApplicationDetail,
   updateMotivation,
@@ -56,6 +57,42 @@ export const save = handleAsync("save", {
   error(entity, err) {
     entity.status = "error"
     entity.error = err.message ?? "errors.save"
+  },
+})
+
+export const dealAnswer = handleAsync("dealAnswer", {
+  start(entity) {
+    entity.isDealBusy = true
+    entity.dealError = null
+  },
+  run({ application_id, isConfirmed }) {
+    return answerAgreement(application_id, isConfirmed)
+  },
+  success(entity, _, api) {
+    entity.isDealBusy = false
+    api.notify(`#${entity.id}:load`, entity.application_id)
+  },
+  error(entity) {
+    entity.isDealBusy = false
+    entity.dealError = "errors.update"
+  },
+})
+
+export const dealSettle = handleAsync("dealSettle", {
+  start(entity) {
+    entity.isDealBusy = true
+    entity.dealError = null
+  },
+  run({ application_id, isSettled }) {
+    return answerSettlement(application_id, isSettled)
+  },
+  success(entity, _, api) {
+    entity.isDealBusy = false
+    api.notify(`#${entity.id}:load`, entity.application_id)
+  },
+  error(entity) {
+    entity.isDealBusy = false
+    entity.dealError = "errors.update"
   },
 })
 

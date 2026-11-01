@@ -263,3 +263,12 @@ button:global(.iw-button).photoRemove :global(.iw-icon-button-content) {
   border-radius: var(--iw-radius-full);
   padding: var(--vcontrol-padding-block) var(--vcontrol-padding-inline);
 }
+
+.currency {
+  min-height: var(--vcontrol-height);
+  padding-inline: var(--vcontrol-padding-inline);
+  background: var(--vsurface);
+  border: 1px solid var(--vline);
+  border-radius: var(--iw-radius-lg);
+  font: inherit;
+}

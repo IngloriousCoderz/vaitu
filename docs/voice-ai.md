@@ -32,7 +32,13 @@ that isn't a valid value for the result, whatever the model answered:
   "country": "Italy",
   "region": "Lombardy",
   "event_date": "2027-07-03",
-  "details": { "headliner": "Ada", "genre": "techno" }
+  "details": { "headliner": "Ada", "genre": "techno" },
+  "pay": {
+    "kind": "fixed",
+    "amount_min": 500,
+    "amount_max": null,
+    "currency": "EUR"
+  }
 }
 ```
 

@@ -49,7 +49,7 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), events!inner(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
+      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), events!inner(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details, event_pay(kind, amount_min, amount_max, currency))",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
@@ -62,6 +62,8 @@ export async function fetchApplicationDetail(application_id) {
     applicationStatus: data.status,
     motivation: data.motivation,
     review: data.job_reviews ?? null,
+    agreement: data.job_agreements ?? null,
+    settlements: data.job_settlements ?? [],
   }
 }
 

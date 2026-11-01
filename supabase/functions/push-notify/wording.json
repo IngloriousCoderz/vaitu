@@ -9,7 +9,12 @@
     "newEvent": "عمل جديد يناسب مهنتك: {{title}}",
     "jobOutcomeDue": "كيف سار {{title}}؟ أخبرنا عن العمل",
     "jobReviewed": "قدّم المنظم تقريره عن {{title}}",
-    "jobCancelled": "أُلغي {{title}}"
+    "jobCancelled": "أُلغي {{title}}",
+    "agreementProposed": "يُرجى تأكيد المبلغ المتفق عليه لـ {{title}}",
+    "agreementConfirmed": "تم تأكيد المبلغ لـ {{title}}",
+    "agreementRejected": "لم يُؤكَّد المبلغ لـ {{title}}: يُرجى مراجعته",
+    "settlementDue": "هل سُوّي {{title}} كما اتفقتما؟",
+    "settlementContested": "يقول أحدهم إن {{title}} لم يُسوَّ كما اتُّفق: يمكنك الرد"
   },
   "en": {
     "applicationReceived": "{{name}} applied to {{title}}!",
@@ -21,7 +26,12 @@
     "newEvent": "New job that matches your trade: {{title}}",
     "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
     "jobReviewed": "The organizer reported on {{title}}",
-    "jobCancelled": "{{title}} was cancelled"
+    "jobCancelled": "{{title}} was cancelled",
+    "agreementProposed": "Please confirm the amount you agreed for {{title}}",
+    "agreementConfirmed": "The amount for {{title}} was confirmed",
+    "agreementRejected": "The amount for {{title}} wasn't confirmed: please check it",
+    "settlementDue": "Was {{title}} settled as you agreed?",
+    "settlementContested": "Someone says {{title}} wasn't settled as agreed: you can reply"
   },
   "fr": {
     "applicationReceived": "{{name}} a postulé à {{title}} !",
@@ -33,7 +43,12 @@
     "newEvent": "Nouvelle mission pour votre métier : {{title}}",
     "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
     "jobReviewed": "L'organisateur a donné son retour sur {{title}}",
-    "jobCancelled": "{{title}} a été annulé"
+    "jobCancelled": "{{title}} a été annulé",
+    "agreementProposed": "Confirmez le montant convenu pour {{title}}",
+    "agreementConfirmed": "Le montant pour {{title}} a été confirmé",
+    "agreementRejected": "Le montant pour {{title}} n'a pas été confirmé : vérifiez-le",
+    "settlementDue": "{{title}} a-t-il été réglé comme convenu ?",
+    "settlementContested": "Quelqu'un indique que {{title}} n'a pas été réglé comme convenu : vous pouvez répondre"
   },
   "it": {
     "applicationReceived": "{{name}} ha inviato una candidatura per {{title}}!",
@@ -45,7 +60,12 @@
     "newEvent": "Nuovo lavoro per il tuo mestiere: {{title}}",
     "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
     "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}",
-    "jobCancelled": "{{title}} è stato annullato"
+    "jobCancelled": "{{title}} è stato annullato",
+    "agreementProposed": "Conferma l'importo concordato per {{title}}",
+    "agreementConfirmed": "L'importo per {{title}} è stato confermato",
+    "agreementRejected": "L'importo per {{title}} non è stato confermato: controllalo",
+    "settlementDue": "{{title}} è stato regolato come concordato?",
+    "settlementContested": "Qualcuno dice che {{title}} non è stato regolato come concordato: puoi replicare"
   },
   "ja": {
     "applicationReceived": "{{name}}さんが「{{title}}」に応募しました！",
@@ -57,6 +77,11 @@
     "newEvent": "あなたの職種に合う新しい仕事：「{{title}}」",
     "jobOutcomeDue": "「{{title}}」はいかがでしたか？仕事の結果を教えてください",
     "jobReviewed": "主催者が「{{title}}」の結果を報告しました",
-    "jobCancelled": "「{{title}}」は中止になりました"
+    "jobCancelled": "「{{title}}」は中止になりました",
+    "agreementProposed": "「{{title}}」で合意した金額を確認してください",
+    "agreementConfirmed": "「{{title}}」の金額が確認されました",
+    "agreementRejected": "「{{title}}」の金額は確認されませんでした。内容をご確認ください",
+    "settlementDue": "「{{title}}」は合意どおりに精算されましたか？",
+    "settlementContested": "「{{title}}」が合意どおりに精算されていないとの報告があります。返答できます"
   }
 }

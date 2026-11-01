@@ -115,6 +115,14 @@ export async function userExists(userId) {
   return Boolean(data?.user)
 }
 
+export async function updateAsService(table, column, value, fields) {
+  const { error } = await serviceRoleClient()
+    .from(table)
+    .update(fields)
+    .eq(column, value)
+  if (error) throw error
+}
+
 export async function runAsService(fn, params) {
   const { data, error } = await serviceRoleClient().rpc(fn, params)
   if (error) throw error

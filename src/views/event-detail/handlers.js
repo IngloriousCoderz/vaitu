@@ -3,6 +3,7 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { fetchEventDetail } from "../../api/events.js"
+import { fetchProfileStats } from "../../api/reputation.js"
 import { readUserId } from "../../api/session.js"
 import { startTick } from "../../api/ticker.js"
 import {
@@ -117,12 +118,17 @@ export const load = handleAsync("load", {
     entity.status = "loading"
     entity.error = null
   },
-  run(event_id) {
-    return fetchEventDetail(event_id)
+  async run(event_id) {
+    const detail = await fetchEventDetail(event_id)
+    const { senderId } = detail.event
+    const isSomeoneElses = readUserId() && senderId !== readUserId()
+    const stats = isSomeoneElses ? await fetchProfileStats([senderId]) : {}
+    return { ...detail, organizerStats: stats[senderId] ?? null }
   },
-  success(entity, { event, senderName }, api) {
+  success(entity, { event, senderName, organizerStats }, api) {
     entity.status = "ready"
     entity.event = event
+    entity.organizerStats = organizerStats
     entity.senderName = senderName
     if (needsClock(event)) {
       const id = entity.id

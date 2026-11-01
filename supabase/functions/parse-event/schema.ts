@@ -49,9 +49,13 @@ export const JOB_TYPES = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
     settings.map((category) => `${category}_${profession}`),
 )
 
+export const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "AED"]
+
 export const TITLED_CATEGORIES = ["festival", "apartment", "house", "office"]
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+const DEFAULT_CURRENCY = "EUR"
+const NO_AMOUNT = 0
 
 export function offeredJobTypes(requested: unknown) {
   if (!Array.isArray(requested)) return JOB_TYPES
@@ -78,7 +82,8 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "country": string | null,
   "region": string | null,
   "event_date": "YYYY-MM-DD" | null,
-  "details": object
+  "details": object,
+  "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": ${oneOf(CURRENCIES)} } | null
 }
 A job type is its category, an underscore and the profession. "details" depends on the category:
 - wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "style": ${oneOf(WEDDING_STYLES)} | null }
@@ -89,6 +94,7 @@ Rules:
 - title: null for a wedding; the festival's name for a festival; for apartment, house and office, a short description of the work, in the transcript's language.
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
+- pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max. null when no amount is said.
 - Values from a list must be one of the listed values, or null.
 - event_date: use the stated year when given, otherwise the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day and month can be determined.`
 }
@@ -116,7 +122,29 @@ export function toEventFields(
     region: text(answer?.region),
     event_date: date(answer?.event_date),
     details: details(category, answer?.details),
+    pay: pay(answer?.pay),
   }
+}
+
+function pay(answer: unknown) {
+  const given = (answer ?? {}) as Record<string, unknown>
+  const min = amount(given.amount_min)
+  const max = amount(given.amount_max)
+  const currency = CURRENCIES.includes(given.currency as string)
+    ? (given.currency as string)
+    : DEFAULT_CURRENCY
+  if (min === null) return null
+  if (given.kind === "fixed") {
+    return { kind: "fixed", amount_min: min, amount_max: null, currency }
+  }
+  if (given.kind === "range" && max !== null && max > min) {
+    return { kind: "range", amount_min: min, amount_max: max, currency }
+  }
+  return null
+}
+
+function amount(value: unknown) {
+  return typeof value === "number" && value >= NO_AMOUNT ? value : null
 }
 
 function details(category: string, answer: unknown) {
