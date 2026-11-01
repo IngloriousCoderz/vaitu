@@ -38,29 +38,29 @@ export const entities = {
     targetEvent: "localeChange",
     targetField: "locale",
   },
-  "country-onboarding": countrySelect("onboarding", "fieldSet"),
-  "country-profile": countrySelect("profile", "fieldSet", {
+  countryOnboarding: countrySelect("onboarding", "fieldSet"),
+  countryProfile: countrySelect("profile", "fieldSet", {
     label: "fields.country",
   }),
-  "country-create": countrySelect("eventCreate", "fieldSet", {
+  countryCreate: countrySelect("eventCreate", "fieldSet", {
     label: "fields.country",
     isRequired: true,
   }),
-  "region-onboarding": regionSelect("onboarding", "fieldSet"),
-  "region-profile": regionSelect("profile", "fieldSet", {
+  regionOnboarding: regionSelect("onboarding", "fieldSet"),
+  regionProfile: regionSelect("profile", "fieldSet", {
     label: "fields.region",
   }),
-  "region-create": regionSelect("eventCreate", "fieldSet", {
+  regionCreate: regionSelect("eventCreate", "fieldSet", {
     label: "fields.region",
     isRequired: true,
   }),
-  "style-create": detailSelect("style", weddingStyles, "fields.style"),
-  "genre-create": detailSelect("genre", festivalGenres, "fields.genre"),
-  "favorite-region-preferences": favoriteRegionSelect(
+  styleCreate: detailSelect("style", weddingStyles, "fields.style"),
+  genreCreate: detailSelect("genre", festivalGenres, "fields.genre"),
+  favoriteRegionPreferences: favoriteRegionSelect(
     "preferences",
     "favoriteChoiceSelect",
   ),
-  "events-order-by": {
+  eventsOrderBy: {
     type: "CountrySelect",
     label: "events.orderBy",
     selectedValue: DEFAULT_SORT,

@@ -174,10 +174,10 @@ export const EventCreate = {
 }
 
 function syncComboboxErrors(entity, api) {
-  api.notify("#country-create:errorSet", getFieldError(entity, "country"))
-  api.notify("#region-create:errorSet", getFieldError(entity, "region"))
-  api.notify("#style-create:errorSet", getFieldError(entity, "details.style"))
-  api.notify("#genre-create:errorSet", getFieldError(entity, "details.genre"))
+  api.notify("#countryCreate:errorSet", getFieldError(entity, "country"))
+  api.notify("#regionCreate:errorSet", getFieldError(entity, "region"))
+  api.notify("#styleCreate:errorSet", getFieldError(entity, "details.style"))
+  api.notify("#genreCreate:errorSet", getFieldError(entity, "details.genre"))
 }
 
 function eventTitle(values) {
@@ -206,10 +206,10 @@ function open(entity, { event_id } = {}, api) {
   clearEventImages(entity)
   releaseRecorder()
   clearPendingAudio()
-  api.notify("#country-create:sync", "")
-  api.notify("#region-create:sync", "")
-  api.notify("#style-create:sync", "")
-  api.notify("#genre-create:sync", "")
+  api.notify("#countryCreate:sync", "")
+  api.notify("#regionCreate:sync", "")
+  api.notify("#styleCreate:sync", "")
+  api.notify("#genreCreate:sync", "")
   if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
 }
 

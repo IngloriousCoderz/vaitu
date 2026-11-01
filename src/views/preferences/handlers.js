@@ -60,9 +60,9 @@ export function emailsSet(entity, isReceiving, api) {
 
 export function favoriteOptionsSync(entity, _, api) {
   const regions = api.getEntity("eventList")?.regions ?? []
-  api.notify("#favorite-region-preferences:sync", "")
+  api.notify("#favoriteRegionPreferences:sync", "")
   api.notify(
-    "#favorite-region-preferences:optionsSet",
+    "#favoriteRegionPreferences:optionsSet",
     favoriteRegionOptions(regions, entity.favorite_regions),
   )
 }

@@ -188,7 +188,7 @@ export const Profile = {
                       ${Flex.render({
                         direction: "column",
                         className: styles.field,
-                        children: api.render("country-profile"),
+                        children: api.render("countryProfile"),
                       })}
                       ${when(
                         shown.country === ITALY,
@@ -196,7 +196,7 @@ export const Profile = {
                           Flex.render({
                             direction: "column",
                             className: styles.field,
-                            children: api.render("region-profile"),
+                            children: api.render("regionProfile"),
                           }),
                         () =>
                           this.renderEditField({

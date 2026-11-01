@@ -60,7 +60,7 @@ export const Preferences = {
                       onInput: onFavoriteInput,
                       onAdd: onFavoriteAdd,
                       onRemove: onFavoriteRemove,
-                      choiceId: "favorite-region-preferences",
+                      choiceId: "favoriteRegionPreferences",
                     },
                     api,
                   )}

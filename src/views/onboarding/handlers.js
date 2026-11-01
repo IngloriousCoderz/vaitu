@@ -13,7 +13,7 @@ export function fieldSet(entity, { field, value }, api) {
       path: "region",
       value: regionAfterCountryChange(previous, value, region),
     })
-    api?.notify("#region-onboarding:sync", getFieldValue(entity, "region", ""))
+    api?.notify("#regionOnboarding:sync", getFieldValue(entity, "region", ""))
   } else {
     Form.fieldChange(entity, { path: field, value })
   }

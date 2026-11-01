@@ -47,7 +47,7 @@ export const Onboarding = {
             }
           >
             <span>${t("fields.country")}</span>
-            ${api.render("country-onboarding")}
+            ${api.render("countryOnboarding")}
             ${ErrorLabel.render({ error: countryError })}
           </div>
           ${when(
@@ -55,7 +55,7 @@ export const Onboarding = {
             () => html`
               <div class=${styles.field}>
                 <span>${t("fields.regionOptional")}</span>
-                ${api.render("region-onboarding")}
+                ${api.render("regionOnboarding")}
               </div>
             `,
             () => html`

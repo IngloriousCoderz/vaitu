@@ -36,8 +36,8 @@ export function editStart(entity, _, api) {
   }
   Form.reset(entity)
   entity.error = null
-  api.notify("#country-profile:sync", entity.values.country ?? "")
-  api.notify("#region-profile:sync", entity.values.region ?? "")
+  api.notify("#countryProfile:sync", entity.values.country ?? "")
+  api.notify("#regionProfile:sync", entity.values.region ?? "")
 }
 
 export function editCancel(entity) {
@@ -55,7 +55,7 @@ export function fieldSet(entity, { field, value }, api) {
       path: "region",
       value: regionAfterCountryChange(previous, value, region),
     })
-    api?.notify("#region-profile:sync", entity.values.region ?? "")
+    api?.notify("#regionProfile:sync", entity.values.region ?? "")
     return
   }
   Form.fieldChange(entity, { path: field, value })

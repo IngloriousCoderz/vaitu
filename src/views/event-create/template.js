@@ -121,11 +121,11 @@ export const EventCreate = {
             isRequired: true,
             onField,
           })}
-          <div class=${styles.field}>${api.render("country-create")}</div>
+          <div class=${styles.field}>${api.render("countryCreate")}</div>
           ${when(
             country === ITALY,
             () => html`
-              <div class=${styles.field}>${api.render("region-create")}</div>
+              <div class=${styles.field}>${api.render("regionCreate")}</div>
             `,
             () =>
               this.renderTextField({
@@ -140,7 +140,7 @@ export const EventCreate = {
           )}
           <div class=${styles.field}>
             ${api.render(
-              categoryId === "festival" ? "genre-create" : "style-create",
+              categoryId === "festival" ? "genreCreate" : "styleCreate",
             )}
           </div>
           ${this.renderTextField({

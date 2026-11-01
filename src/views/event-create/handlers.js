@@ -107,7 +107,7 @@ export function fieldSet(entity, { field, value }, api) {
     )
     Form.fieldChange(entity, { path: "country", value })
     Form.fieldChange(entity, { path: "region", value: region })
-    api?.notify("#region-create:sync", region)
+    api?.notify("#regionCreate:sync", region)
   } else {
     Form.fieldChange(entity, { path: field, value })
   }
@@ -131,10 +131,10 @@ export function categorySelect(entity, category, api) {
   entity.errors = {}
   entity.isValid = true
   entity.error = null
-  api.notify("#country-create:errorSet", null)
-  api.notify("#region-create:errorSet", null)
-  api.notify("#style-create:sync", "")
-  api.notify("#genre-create:sync", "")
+  api.notify("#countryCreate:errorSet", null)
+  api.notify("#regionCreate:errorSet", null)
+  api.notify("#styleCreate:sync", "")
+  api.notify("#genreCreate:sync", "")
 }
 
 export const audioRecord = handleAsync("audioRecord", {
@@ -324,10 +324,10 @@ export const audioParse = handleAsync("audioParse", {
       getFieldValue(entity, "region", ""),
     )
     Form.fieldChange(entity, { path: "region", value: region })
-    api.notify("#country-create:sync", country)
-    api.notify("#region-create:sync", region)
-    api.notify("#style-create:sync", details.style ?? "")
-    api.notify("#genre-create:sync", details.genre ?? "")
+    api.notify("#countryCreate:sync", country)
+    api.notify("#regionCreate:sync", region)
+    api.notify("#styleCreate:sync", details.style ?? "")
+    api.notify("#genreCreate:sync", details.genre ?? "")
     if (
       typeof fields.event_date === "string" &&
       /^\d{4}-\d{2}-\d{2}$/.test(fields.event_date)
@@ -632,10 +632,10 @@ export const editLoad = handleAsync("editLoad", {
     entity.is_audio_open = false
     entity.audio_transcript = row.transcript ?? null
     entity.audio_error = null
-    api.notify("#country-create:sync", country)
-    api.notify("#region-create:sync", region)
-    api.notify("#style-create:sync", row.details?.style ?? "")
-    api.notify("#genre-create:sync", row.details?.genre ?? "")
+    api.notify("#countryCreate:sync", country)
+    api.notify("#regionCreate:sync", region)
+    api.notify("#styleCreate:sync", row.details?.style ?? "")
+    api.notify("#genreCreate:sync", row.details?.genre ?? "")
   },
   error(entity, err) {
     entity.status = "error"

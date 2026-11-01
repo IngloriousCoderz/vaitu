@@ -180,7 +180,7 @@ export const EventList = {
                   ${t("events.results", { count: total })}
                 </p>`,
                 html`<div class=${styles.orderBy}>
-                  ${api.render("events-order-by")}
+                  ${api.render("eventsOrderBy")}
                 </div>`,
               ],
             }),
