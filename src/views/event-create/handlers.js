@@ -46,7 +46,6 @@ import {
   jobTypeById,
   jobTypeId,
   jobTypesFor,
-  weddingStyles,
 } from "../../data/event-taxonomy.js"
 import {
   regionAfterCountryChange,
@@ -54,8 +53,9 @@ import {
 } from "../../data/regions/resolve.js"
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
+import { categoryById } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
-import { droppedImageUrls } from "./helpers.js"
+import { droppedImageUrls, mergeParsedDetails } from "./helpers.js"
 
 const NO_ROOM = 0
 
@@ -69,8 +69,6 @@ let pendingPath = null
 let pendingUrl = null
 let removedPath = null
 let recordStartedAt = null
-
-const FILLABLE_DETAILS = ["spouse_first_name_1", "spouse_first_name_2", "style"]
 
 /** @type {Map<string, { file: File | null, sourceFile: File | null }>} */
 const pendingImageFiles = new Map()
@@ -280,6 +278,11 @@ export function audioCancel(entity) {
   entity.audio_error = null
 }
 
+// The results that arrive later are ignored: the user may be typing by then.
+export function voiceWaitDismiss(entity) {
+  entity.is_voice_wait_dismissed = true
+}
+
 export function audioClipReady(entity, { url }, api) {
   entity.audio_preview_url = url
   entity.audio_transcript = null
@@ -290,6 +293,7 @@ export function audioClipReady(entity, { url }, api) {
 export const audioProcess = handleAsync("audioProcess", {
   start(entity) {
     entity.is_transcribing = true
+    entity.is_voice_wait_dismissed = false
     entity.audio_error = null
   },
   async run() {
@@ -310,7 +314,24 @@ export const audioProcess = handleAsync("audioProcess", {
     }
     entity.audio_preview_url = url
     entity.audio_transcript = transcript || null
-    if (transcript) api.notify(`#${entity.id}:audioParse`, { text: transcript })
+    if (transcript && !entity.is_voice_wait_dismissed) {
+      const job_type = jobTypeId(
+        getFieldValue(entity, "category", ""),
+        getFieldValue(entity, "profession", ""),
+      )
+      const mine = api.getEntity("eventList")?.professions ?? []
+      api.notify(`#${entity.id}:audioParse`, {
+        text: transcript,
+        form: {
+          job_type,
+          // An edit can be on a job type the poster no longer offers.
+          job_types: [
+            job_type,
+            ...jobTypesFor([...mine]).map((jobType) => jobType.id),
+          ],
+        },
+      })
+    }
   },
   error(entity, err) {
     entity.is_transcribing = false
@@ -323,24 +344,25 @@ export const audioParse = handleAsync("audioParse", {
   start(entity) {
     entity.is_parsing = true
   },
-  async run({ text }) {
-    return parseEvent(text)
+  run({ text, form }) {
+    return parseEvent(text, form)
   },
   success(entity, fields, api) {
     entity.is_parsing = false
+    if (entity.is_voice_wait_dismissed) return
     if (!fields || typeof fields !== "object") return
-    const details = { ...getFieldValue(entity, "details", {}) }
-    const fillable =
-      getFieldValue(entity, "category", "") === "wedding"
-        ? FILLABLE_DETAILS
-        : []
-    for (const field of fillable) {
-      const value = fields[field]
-      if (typeof value !== "string" || !value.trim()) continue
-      if (field === "style" && !weddingStyles.some((s) => s.value === value)) {
-        continue
-      }
-      details[field] = value.trim()
+    if (fields.job_type && jobTypeById(fields.job_type)) {
+      jobTypeSelect(entity, { value: fields.job_type }, api)
+      api.notify("#jobTypeCreate:sync", fields.job_type)
+    }
+    const category = categoryById(getFieldValue(entity, "category", ""))
+    const details = mergeParsedDetails(
+      category,
+      getFieldValue(entity, "details", {}),
+      fields.details,
+    )
+    if (category.title_from.input && fields.title) {
+      Form.fieldChange(entity, { path: "title", value: fields.title })
     }
     Form.fieldChange(entity, { path: "details", value: details })
     const previousCountry = getFieldValue(entity, "country", "")
@@ -386,6 +408,8 @@ export const audioParse = handleAsync("audioParse", {
   },
   error(entity) {
     entity.is_parsing = false
+    if (!entity.is_voice_wait_dismissed)
+      entity.audio_error = "errors.parseFailed"
   },
 })
 

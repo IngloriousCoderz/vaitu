@@ -43,6 +43,8 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Vaitu uses the microphone to record the voice message that fills in your event.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

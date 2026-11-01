@@ -1,11 +1,13 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
+import { alertProviderLimit } from "../_shared/alerts.ts"
 import { json, serve, STATUS_CODE, upstreamError } from "../_shared/http.ts"
 import { admin, currentUser, env } from "../_shared/supabase.ts"
+import { deepgramLanguage } from "./language.ts"
 
 const BUCKET = "event-audio"
 
 serve(async (req) => {
-  const { audio_path } = await req.json()
+  const { audio_path, locale } = await req.json()
   if (!audio_path || typeof audio_path !== "string") {
     return json({ error: "audio_path is required" }, STATUS_CODE.BadRequest)
   }
@@ -23,7 +25,7 @@ serve(async (req) => {
   if (downloadError) throw downloadError
 
   const dg = await fetch(
-    "https://api.deepgram.com/v1/listen?model=nova-3&language=it&smart_format=true",
+    `https://api.deepgram.com/v1/listen?model=nova-3&language=${deepgramLanguage(locale)}&smart_format=true`,
     {
       method: "POST",
       headers: {
@@ -33,7 +35,10 @@ serve(async (req) => {
       body: audio,
     },
   )
-  if (!dg.ok) throw await upstreamError("Deepgram", dg)
+  if (!dg.ok) {
+    await alertProviderLimit("deepgram", dg.status)
+    throw await upstreamError("Deepgram", dg)
+  }
 
   const result = await dg.json()
   const [channel] = result?.results?.channels ?? []

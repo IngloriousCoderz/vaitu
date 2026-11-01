@@ -241,7 +241,8 @@
     "resend": "Could not resend the email",
     "loadPreferences": "Failed to load preferences",
     "savePreferences": "Failed to save preferences",
-    "saveReview": "Failed to save the review"
+    "saveReview": "Failed to save the review",
+    "parseFailed": "We couldn't fill in the fields from your message. Please fill them in yourself."
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -364,7 +365,9 @@
     "galleryHint": "Mini gallery inside the event. Up to {{count}}.",
     "addGalleryPhotos": "Add photos",
     "jobTitleExample": "E.g. Deep clean, two-bedroom apartment",
-    "propertyLocationExample": "Neighborhood or town, not the street address"
+    "propertyLocationExample": "Neighborhood or town, not the street address",
+    "voiceWaitHint": "This can take a little while. You can wait here, or fill in the event yourself.",
+    "fillMyself": "I'll fill it in myself"
   },
   "ranks": {
     "title": "Ranks",

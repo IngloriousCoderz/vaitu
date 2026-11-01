@@ -1,19 +1,31 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
+import { alertProviderLimit } from "../_shared/alerts.ts"
 import { json, serve, STATUS_CODE, upstreamError } from "../_shared/http.ts"
 import { currentUser, env } from "../_shared/supabase.ts"
+import { offeredJobTypes, systemPrompt, toEventFields } from "./schema.ts"
 
-const MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+// Free models get withdrawn or rate-limited without notice: OpenRouter moves
+// down this list when one fails, and openrouter/free picks any that is free.
+const MODELS = [
+  "google/gemma-4-31b-it:free",
+  "nvidia/nemotron-3.5-lightning:free",
+  "openrouter/free",
+]
 
 const JSON_OBJECT = /\{[\s\S]*\}/
 
 serve(async (req) => {
-  const { transcript } = await req.json()
+  const { transcript, job_type, job_types } = await req.json()
   if (!transcript || typeof transcript !== "string") {
     return json({ error: "transcript is required" }, STATUS_CODE.BadRequest)
   }
 
   const user = await currentUser(req)
   if (!user) return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
+
+  const offered = offeredJobTypes(job_types)
+  const current = offered.includes(job_type) ? job_type : null
+  const [today] = new Date().toISOString().split("T")
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -22,38 +34,28 @@ serve(async (req) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
+      models: MODELS,
       messages: [
-        { role: "system", content: systemPrompt() },
+        { role: "system", content: systemPrompt(today, offered, current) },
         { role: "user", content: transcript },
       ],
     }),
   })
-  if (!res.ok) throw await upstreamError("OpenRouter", res)
+  if (!res.ok) {
+    await alertProviderLimit("openrouter", res.status)
+    throw await upstreamError("OpenRouter", res)
+  }
 
   const body = await res.json()
+  // OpenRouter can answer 200 and still report that every model failed.
+  if (body?.error) {
+    await alertProviderLimit("openrouter", body.error.code)
+    throw new Error(`OpenRouter ${body.error.code}: ${body.error.message}`)
+  }
   const [choice] = body?.choices ?? []
   const content: string = choice?.message?.content ?? ""
   const [fields] = content.match(JSON_OBJECT) ?? []
   if (!fields) throw new Error("No JSON in response")
 
-  return json({ fields: JSON.parse(fields) })
+  return json({ fields: toEventFields(JSON.parse(fields), offered, current) })
 }, "parse failed")
-
-function systemPrompt() {
-  const [today] = new Date().toISOString().split("T")
-
-  return `You extract wedding event data from an Italian voice transcript.
-Today is ${today}.
-Respond with JSON only, no other text, using exactly these keys (null when unknown):
-{
-  "spouse_first_name_1": string | null,
-  "spouse_first_name_2": string | null,
-  "location": string | null,
-  "country": string | null,
-  "region": string | null,
-  "style": "editorial" | "documentary" | "reportage" | "classic" | "film" | "fine_art" | null,
-  "event_date": "YYYY-MM-DD" | null
-}
-Rules: first names only, no surnames. Country in English ("Italy"). Style must be one of the listed values or null. For event_date: use the stated year when given, otherwise use the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day/month can be determined.`
-}

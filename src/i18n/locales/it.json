@@ -245,7 +245,8 @@
     "resend": "Impossibile inviare di nuovo l'email",
     "loadPreferences": "Impossibile caricare le preferenze",
     "savePreferences": "Impossibile salvare le preferenze",
-    "saveReview": "Impossibile salvare la recensione"
+    "saveReview": "Impossibile salvare la recensione",
+    "parseFailed": "Non siamo riusciti a compilare i campi dal tuo messaggio. Compilali tu, per favore."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -371,7 +372,9 @@
     "galleryHint": "Mini galleria dentro l'evento. Fino a {{count}}.",
     "addGalleryPhotos": "Aggiungi foto",
     "jobTitleExample": "Es. Pulizia a fondo, bilocale",
-    "propertyLocationExample": "Quartiere o paese, non la via"
+    "propertyLocationExample": "Quartiere o paese, non la via",
+    "voiceWaitHint": "Può volerci un po'. Puoi aspettare qui oppure compilare l'evento da solo.",
+    "fillMyself": "Lo compilo io"
   },
   "ranks": {
     "title": "Livelli",

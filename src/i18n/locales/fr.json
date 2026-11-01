@@ -245,7 +245,8 @@
     "resend": "Impossible de renvoyer l'e-mail",
     "loadPreferences": "Impossible de charger les préférences",
     "savePreferences": "Impossible d'enregistrer les préférences",
-    "saveReview": "Impossible d'enregistrer l'avis"
+    "saveReview": "Impossible d'enregistrer l'avis",
+    "parseFailed": "Nous n'avons pas pu remplir les champs à partir de votre message. Veuillez les remplir vous-même."
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -371,7 +372,9 @@
     "galleryHint": "Mini galerie dans l'événement. Jusqu'à {{count}}.",
     "addGalleryPhotos": "Ajouter des photos",
     "jobTitleExample": "Ex. Grand ménage, appartement deux pièces",
-    "propertyLocationExample": "Quartier ou commune, pas la rue"
+    "propertyLocationExample": "Quartier ou commune, pas la rue",
+    "voiceWaitHint": "Cela peut prendre un moment. Vous pouvez patienter ici ou remplir l'événement vous-même.",
+    "fillMyself": "Je le remplis moi-même"
   },
   "ranks": {
     "title": "Niveaux",

@@ -253,7 +253,8 @@
     "resend": "تعذّرت إعادة إرسال البريد",
     "loadPreferences": "تعذّر تحميل التفضيلات",
     "savePreferences": "تعذّر حفظ التفضيلات",
-    "saveReview": "تعذّر حفظ التقييم"
+    "saveReview": "تعذّر حفظ التقييم",
+    "parseFailed": "تعذّرت تعبئة الحقول من رسالتك. يُرجى تعبئتها بنفسك."
   },
   "auth": {
     "welcome": "مرحبًا بك في Vaitu",
@@ -386,7 +387,9 @@
     "galleryHint": "معرض صغير داخل الحدث. حتى {{count}}.",
     "addGalleryPhotos": "أضف صورًا",
     "jobTitleExample": "مثال: تنظيف شامل لشقة بغرفتي نوم",
-    "propertyLocationExample": "الحي أو البلدة، وليس عنوان الشارع"
+    "propertyLocationExample": "الحي أو البلدة، وليس عنوان الشارع",
+    "voiceWaitHint": "قد يستغرق هذا بعض الوقت. يمكنك الانتظار هنا أو تعبئة الفعالية بنفسك.",
+    "fillMyself": "سأعبّئها بنفسي"
   },
   "ranks": {
     "title": "المراتب",

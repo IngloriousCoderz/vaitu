@@ -19,6 +19,7 @@
     "edge": "supabase functions serve",
     "edge:check": "cd supabase/functions && deno check */index.ts && deno lint",
     "vault:push": "node scripts/push-vault-secrets.mjs",
+    "secrets:push": "node scripts/push-function-secrets.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "cap": "cap",

@@ -17,7 +17,7 @@ import {
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
-import { t } from "../i18n/index.js"
+import { currentLocale, t } from "../i18n/index.js"
 import { randomId } from "../text/index.js"
 import {
   firstError,
@@ -347,7 +347,7 @@ export async function uploadEventAudio(blob) {
 
 export async function transcribeAudio(path) {
   const { data, error } = await supabase.functions.invoke("transcribe-audio", {
-    body: { audio_path: path },
+    body: { audio_path: path, locale: currentLocale() },
   })
   if (error) throw error
   return data?.transcript ?? null
@@ -381,9 +381,14 @@ export async function fetchMyFeedDefaults() {
   }
 }
 
-export async function parseEvent(transcript) {
+/**
+ * @param {string} transcript
+ * @param {{ job_type: string, job_types: string[] }} form - The job type the
+ *   form is on, and those it offers: the only ones the answer can pick.
+ */
+export async function parseEvent(transcript, { job_type, job_types }) {
   const { data, error } = await supabase.functions.invoke("parse-event", {
-    body: { transcript },
+    body: { transcript, job_type, job_types },
   })
   if (error) throw error
   return data?.fields ?? {}

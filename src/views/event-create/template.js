@@ -1,10 +1,12 @@
 import closeIcon from "@iconify-icons/material-symbols/close"
 import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
+import { Dialog } from "@inglorious/ui/dialog"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
+import { Progress } from "@inglorious/ui/progress"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -43,6 +45,7 @@ export const EventCreate = {
       onRecordStop,
       onCancelAudio,
       onRemoveAudio,
+      onVoiceWaitDismiss,
       onImagesAdd,
       onImageRemove,
       onCoverSelect,
@@ -67,6 +70,7 @@ export const EventCreate = {
       read: true,
       category: categoryId,
       children: [
+        this.renderVoiceWait({ entity, onVoiceWaitDismiss }),
         html`
           ${this.renderAudio({
             entity,
@@ -206,6 +210,45 @@ export const EventCreate = {
       color: "primary",
       shape: "round",
       onClick: entity.is_recording ? onRecordStop : onOpenAudio,
+    })
+  },
+
+  renderVoiceWait({ entity, onVoiceWaitDismiss }) {
+    return Dialog.render({
+      id: "voice-wait",
+      isOpen:
+        (entity.is_transcribing || entity.is_parsing) &&
+        !entity.is_voice_wait_dismissed,
+      size: "sm",
+      children: Flex.render({
+        direction: "column",
+        align: "center",
+        gap: "md",
+        className: styles.voiceWait,
+        children: html`
+          ${Progress.render({
+            variant: "circular",
+            color: "primary",
+            ariaLabel: t("create.voice"),
+          })}
+          <p class=${styles.voiceWaitStep} role="status">
+            ${
+              entity.is_transcribing
+                ? t("create.transcribing")
+                : t("create.filling")
+            }
+          </p>
+          <p class=${styles.transcribing}>${t("create.voiceWaitHint")}</p>
+        `,
+      }),
+      actions: Button.render({
+        children: t("create.fillMyself"),
+        variant: "outline",
+        shape: "pill",
+        size: "md",
+        isFullWidth: true,
+        onClick: onVoiceWaitDismiss,
+      }),
     })
   },
 

@@ -1554,6 +1554,34 @@ select cron.schedule(
 );
 
 
+-- When each alert to the owner last went out, so a limit that every user hits
+-- sends one email a day. No policies: only the service role gets here.
+create table public.alert_log (
+  key text primary key,
+  last_sent_at timestamptz not null default now()
+);
+
+alter table public.alert_log enable row level security;
+
+revoke all on table public.alert_log from anon, authenticated;
+
+create or replace function public.claim_alert(p_key text)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.alert_log (key)
+  values (p_key)
+  on conflict (key) do update
+    set last_sent_at = now()
+    where public.alert_log.last_sent_at < now() - interval '1 day';
+  return found;
+end;
+$$;
+
+
 -- Raising min_build makes a release mandatory: the native apps carry their web
 -- code, so the service worker never updates them.
 create table public.app_versions (

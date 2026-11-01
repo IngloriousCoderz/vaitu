@@ -1,0 +1,139 @@
+// Copies of the app's taxonomy and create form: a function cannot import app
+// source. src/views/event-create/parse-event.test.js fails when they drift.
+
+const SETTINGS_BY_PROFESSION = {
+  photographer: ["wedding", "festival", "office"],
+  videographer: ["wedding", "festival"],
+  musician: ["wedding", "festival"],
+  dj: ["wedding", "festival"],
+  sound_technician: ["festival"],
+  cleaner: ["apartment", "house", "office"],
+  electrician: ["apartment", "house", "office"],
+}
+
+export const WEDDING_STYLES = [
+  "editorial",
+  "documentary",
+  "reportage",
+  "classic",
+  "film",
+  "fine_art",
+]
+
+export const FESTIVAL_GENRES = [
+  "house",
+  "techno",
+  "indie",
+  "jazz",
+  "electronic",
+]
+
+// null means free text, a list the only values allowed.
+export const DETAILS_BY_CATEGORY: Record<
+  string,
+  Record<string, string[] | null>
+> = {
+  wedding: {
+    spouse_first_name_1: null,
+    spouse_first_name_2: null,
+    style: WEDDING_STYLES,
+  },
+  festival: { headliner: null, genre: FESTIVAL_GENRES },
+  apartment: {},
+  house: {},
+  office: {},
+}
+
+export const JOB_TYPES = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
+  ([profession, settings]) =>
+    settings.map((category) => `${category}_${profession}`),
+)
+
+export const TITLED_CATEGORIES = ["festival", "apartment", "house", "office"]
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+export function offeredJobTypes(requested: unknown) {
+  if (!Array.isArray(requested)) return JOB_TYPES
+  const offered = JOB_TYPES.filter((id) => requested.includes(id))
+  return offered.length ? offered : JOB_TYPES
+}
+
+export function systemPrompt(
+  today: string,
+  jobTypes: string[],
+  current: string | null,
+) {
+  const keep = current
+    ? `The form is set to "${current}": keep it unless the transcript clearly describes another of the listed job types.`
+    : "Pick the listed job type the transcript describes, or null when it does not say."
+
+  return `A professional is passing on a job they cannot take. You extract the job's data from their voice transcript, which can be in any language.
+Today is ${today}.
+Respond with JSON only, no other text, using exactly these keys (null when unknown):
+{
+  "job_type": ${jobTypes.map((id) => `"${id}"`).join(" | ")} | null,
+  "title": string | null,
+  "location": string | null,
+  "country": string | null,
+  "region": string | null,
+  "event_date": "YYYY-MM-DD" | null,
+  "details": object
+}
+A job type is its category, an underscore and the profession. "details" depends on the category:
+- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "style": ${oneOf(WEDDING_STYLES)} | null }
+- festival: { "headliner": string | null, "genre": ${oneOf(FESTIVAL_GENRES)} | null }
+- apartment, house, office: {}
+Rules:
+- ${keep}
+- title: null for a wedding; the festival's name for a festival; for apartment, house and office, a short description of the work, in the transcript's language.
+- First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
+- For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
+- Values from a list must be one of the listed values, or null.
+- event_date: use the stated year when given, otherwise the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day and month can be determined.`
+}
+
+function oneOf(values: string[]) {
+  return values.map((value) => `"${value}"`).join(" | ")
+}
+
+// The model's answer is never trusted: whatever is not a valid value for the
+// chosen job type's category is dropped here.
+export function toEventFields(
+  answer: Record<string, unknown>,
+  jobTypes: string[],
+  current: string | null,
+) {
+  const job_type = jobTypes.includes(answer?.job_type as string)
+    ? (answer.job_type as string)
+    : current
+  const [category] = (job_type ?? "").split("_")
+  return {
+    job_type,
+    title: TITLED_CATEGORIES.includes(category) ? text(answer?.title) : null,
+    location: text(answer?.location),
+    country: text(answer?.country),
+    region: text(answer?.region),
+    event_date: date(answer?.event_date),
+    details: details(category, answer?.details),
+  }
+}
+
+function details(category: string, answer: unknown) {
+  const given = (answer ?? {}) as Record<string, unknown>
+  const fields = DETAILS_BY_CATEGORY[category] ?? {}
+  return Object.fromEntries(
+    Object.entries(fields).map(([field, allowed]) => {
+      const value = text(given[field])
+      return [field, !allowed || allowed.includes(value ?? "") ? value : null]
+    }),
+  )
+}
+
+function text(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null
+}
+
+function date(value: unknown) {
+  return typeof value === "string" && ISO_DATE.test(value) ? value : null
+}

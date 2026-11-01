@@ -125,6 +125,16 @@
   margin: 0;
 }
 
+.voiceWait {
+  padding-block: var(--iw-space-3);
+  text-align: center;
+}
+
+.voiceWaitStep {
+  margin: 0;
+  font-weight: var(--iw-font-weight-semibold);
+}
+
 .transcribing {
   font-size: var(--iw-font-size-sm);
   color: var(--vmuted);

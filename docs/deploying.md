@@ -16,11 +16,15 @@ containerize.
 supabase login
 supabase link --project-ref utzdcnnjxulwlsuhzjaq
 supabase db push                                        # apply migrations
-supabase secrets set \
-  DEEPGRAM_API_KEY=... OPENROUTER_API_KEY=... \
-  FCM_SERVICE_ACCOUNT="$(cat service-account.json)"     # third-party keys
+pnpm secrets:push                                       # third-party keys
 supabase functions deploy                               # every function
 ```
+
+`pnpm secrets:push` sends everything in `supabase/functions/.env` to the linked
+project, overwriting the secrets of the same name, and then checks that production
+holds exactly those values. `pnpm secrets:push ALERT_EMAIL` sends only the ones
+you name. It is not `pnpm vault:push`, which sets the two values the database
+itself needs to call `push-notify`.
 
 `supabase functions deploy` is required for every function change; `db push`
 only covers SQL. `SUPABASE_URL` / `SUPABASE_ANON_KEY` /

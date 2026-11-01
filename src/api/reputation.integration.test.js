@@ -70,6 +70,20 @@ async function winJob(organizer, applicant, { eventDate = PAST_DATE } = {}) {
   return { eventId, applicationId }
 }
 
+describe("claim_alert", () => {
+  test("gives out one alert a day, and none to the client", async () => {
+    const key = `vitest-${crypto.randomUUID()}`
+    expect(await runAsService("claim_alert", { p_key: key })).toBe(true)
+    expect(await runAsService("claim_alert", { p_key: key })).toBe(false)
+
+    await signIn(SEEKER)
+    const { error } = await supabase.rpc("claim_alert", { p_key: key })
+    expect(error?.message).toContain("permission denied")
+    const { error: readError } = await supabase.from("alert_log").select("key")
+    expect(readError?.message).toContain("permission denied")
+  })
+})
+
 describe("app_config", () => {
   test("the fallbacks match what the database holds", async () => {
     const { data, error } = await supabase

@@ -238,7 +238,8 @@
     "resend": "メールを再送信できませんでした",
     "loadPreferences": "設定を読み込めませんでした",
     "savePreferences": "設定を保存できませんでした",
-    "saveReview": "レビューを保存できませんでした"
+    "saveReview": "レビューを保存できませんでした",
+    "parseFailed": "メッセージから項目を入力できませんでした。ご自身で入力してください。"
   },
   "auth": {
     "welcome": "Vaituへようこそ",
@@ -358,7 +359,9 @@
     "galleryHint": "イベント内のミニギャラリー。最大 {{count}} 枚。",
     "addGalleryPhotos": "写真を追加",
     "jobTitleExample": "例：2LDKの徹底清掃",
-    "propertyLocationExample": "番地ではなく地区名や市区町村名"
+    "propertyLocationExample": "番地ではなく地区名や市区町村名",
+    "voiceWaitHint": "少し時間がかかる場合があります。このままお待ちいただくか、ご自身で入力してください。",
+    "fillMyself": "自分で入力する"
   },
   "ranks": {
     "title": "ランク",
