@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { errorKey } from "../../api/errors.js"
 import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
 import {
   favoriteRegionOptions,
@@ -73,7 +74,7 @@ export const skip = handleAsync("skip", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to save"
+    entity.error = errorKey(err, "errors.save")
   },
 })
 
@@ -136,7 +137,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "Failed to save"
+    entity.error = errorKey(err, "errors.save")
   },
 })
 

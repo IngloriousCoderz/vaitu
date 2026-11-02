@@ -3,6 +3,7 @@ import { cropImage } from "@inglorious/ui/image-cropper"
 import { Form, getFieldValue } from "@inglorious/web/form"
 import fixWebmDuration from "fix-webm-duration"
 
+import { errorKey } from "../../api/errors.js"
 import {
   createEvent,
   fetchEventForEdit,
@@ -549,7 +550,7 @@ export const coverCropEdit = handleAsync("coverCropEdit", {
     coverCropOpen(entity, crop, api)
   },
   error(entity, err) {
-    entity.image_error = err.message ?? "errors.imageCrop"
+    entity.image_error = errorKey(err, "errors.imageCrop")
   },
 })
 
@@ -586,7 +587,7 @@ export const coverCropConfirm = handleAsync("coverCropConfirm", {
     closeCrop(entity)
   },
   error(entity, err) {
-    entity.cropError = err.message ?? "errors.imageCrop"
+    entity.cropError = errorKey(err, "errors.imageCrop")
   },
   finally(entity) {
     entity.isCropSaving = false
@@ -655,7 +656,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.saveEvent"
+    entity.error = errorKey(err, "errors.saveEvent")
   },
 })
 
@@ -706,7 +707,7 @@ export const editLoad = handleAsync("editLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadEvent"
+    entity.error = errorKey(err, "errors.loadEvent")
   },
 })
 

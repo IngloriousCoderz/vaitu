@@ -181,6 +181,9 @@
     "updateReady": "New version available",
     "refresh": "Update now"
   },
+  "offline": {
+    "message": "You're offline. Vaitu will catch up when you're back."
+  },
   "reactivated": {
     "message": "Welcome back! Your account is active again. The applications you had sent and your open events were removed when you deactivated it.",
     "dismiss": "Got it"
@@ -257,7 +260,8 @@
     "saveReview": "Failed to save the review",
     "parseFailed": "We couldn't fill in the fields from your message. Please fill them in yourself.",
     "voiceLimit": "You've used today's free voice messages. Fill in the event yourself, or try again tomorrow.",
-    "eraseAccount": "We couldn't delete the account. Please try again."
+    "eraseAccount": "We couldn't delete the account. Please try again.",
+    "offline": "You're offline. Try again when you're back online."
   },
   "auth": {
     "welcome": "Welcome to Vaitu",

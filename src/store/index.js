@@ -1,6 +1,7 @@
 import { createStore } from "@inglorious/store"
 import { PwaUpdate } from "@inglorious/web/pwa"
 import { Router, setRoutes } from "@inglorious/web/router"
+import { NetworkStatus } from "@inglorious/web/sensors/network-status"
 
 import { liveAlways, livePage, liveSession } from "../api/live.js"
 import { Shell } from "../app/shell.js"
@@ -63,6 +64,7 @@ export const store = createStore({
     CountrySelect,
     LanguageSelect,
     PwaUpdate,
+    NetworkStatus,
     AppVersion,
     PushPrompt,
     AnalyticsConsent,

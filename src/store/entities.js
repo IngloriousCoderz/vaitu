@@ -20,6 +20,7 @@ export const entities = {
   safety: { type: "Safety" },
   analytics: { type: "AnalyticsConsent" },
   i18n: { type: "I18n" },
+  network: { type: "NetworkStatus" },
   language: {
     type: "LanguageSelect",
     selectedValue: null,

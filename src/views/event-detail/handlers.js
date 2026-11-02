@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { errorKey } from "../../api/errors.js"
 import { fetchEventDetail } from "../../api/events.js"
 import { fetchProfileStats } from "../../api/reputation.js"
 import { readUserId } from "../../api/session.js"
@@ -105,7 +106,7 @@ export const apply = handleAsync("apply", {
   },
   error(entity, err) {
     entity.applyStatus = "error"
-    entity.applyError = err.message ?? "errors.applicationFailed"
+    entity.applyError = errorKey(err, "errors.applicationFailed")
   },
 })
 
@@ -133,7 +134,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadEvent"
+    entity.error = errorKey(err, "errors.loadEvent")
   },
 })
 

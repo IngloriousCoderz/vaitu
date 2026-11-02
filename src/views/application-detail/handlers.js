@@ -7,6 +7,7 @@ import {
   updateMotivation,
   withdrawApplication,
 } from "../../api/applications.js"
+import { errorKey } from "../../api/errors.js"
 import { paths } from "../../routes.js"
 
 export function fieldSet(entity, { field, value }) {
@@ -38,7 +39,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadApplication"
+    entity.error = errorKey(err, "errors.loadApplication")
   },
 })
 
@@ -56,7 +57,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.save"
+    entity.error = errorKey(err, "errors.save")
   },
 })
 
@@ -112,6 +113,6 @@ export const withdraw = handleAsync("withdraw", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.withdraw"
+    entity.error = errorKey(err, "errors.withdraw")
   },
 })

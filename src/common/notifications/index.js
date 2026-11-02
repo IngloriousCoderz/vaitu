@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { optimistic } from "@inglorious/store/optimistic"
 import { pageRouteChange } from "@inglorious/web/router"
 
+import { errorKey } from "../../api/errors.js"
 import {
   fetchMyNotifications,
   markAllNotificationsRead,
@@ -28,7 +29,7 @@ const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "notifications.error"
+    entity.error = errorKey(err, "notifications.error")
   },
 })
 

@@ -183,6 +183,9 @@
     "updateReady": "Nuova versione disponibile",
     "refresh": "Aggiorna ora"
   },
+  "offline": {
+    "message": "Sei offline. Vaitu si aggiorna appena torni online."
+  },
   "reactivated": {
     "message": "Ti diamo il bentornato! Il tuo account è di nuovo attivo. Le candidature che avevi inviato e i tuoi eventi aperti sono stati rimossi quando l'hai disattivato.",
     "dismiss": "Ho capito"
@@ -261,7 +264,8 @@
     "saveReview": "Impossibile salvare la recensione",
     "parseFailed": "Non siamo riusciti a compilare i campi dal tuo messaggio. Compilali tu, per favore.",
     "voiceLimit": "Hai usato i messaggi vocali gratuiti di oggi. Compila l'evento da solo o riprova domani.",
-    "eraseAccount": "Non siamo riusciti a eliminare l'account. Riprova."
+    "eraseAccount": "Non siamo riusciti a eliminare l'account. Riprova.",
+    "offline": "Sei offline. Riprova quando torni online."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",

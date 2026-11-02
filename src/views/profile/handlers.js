@@ -3,6 +3,7 @@ import { cropImage } from "@inglorious/ui/image-cropper"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { errorKey } from "../../api/errors.js"
 import {
   deleteAvatar,
   deleteImage,
@@ -99,7 +100,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadProfile"
+    entity.error = errorKey(err, "errors.loadProfile")
     if (isSessionDead(err)) void endSession()
   },
 })
@@ -139,7 +140,7 @@ export const save = handleAsync("save", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.saveProfile"
+    entity.error = errorKey(err, "errors.saveProfile")
   },
 })
 
@@ -222,7 +223,7 @@ export const avatarSave = handleAsync("avatarSave", {
   },
   error(entity, err) {
     entity.avatarStatus = "idle"
-    entity.avatarError = err.message ?? "errors.saveProfile"
+    entity.avatarError = errorKey(err, "errors.saveProfile")
   },
 })
 
@@ -302,7 +303,7 @@ export const logout = handleAsync("logout", {
     entity.status = "idle"
   },
   error(entity, err) {
-    entity.error = err.message ?? "errors.logout"
+    entity.error = errorKey(err, "errors.logout")
   },
 })
 

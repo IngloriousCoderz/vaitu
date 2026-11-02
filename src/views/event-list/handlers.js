@@ -1,6 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { fetchMyApplicationMap } from "../../api/applications.js"
+import { errorKey } from "../../api/errors.js"
 import {
   fetchMyFeedDefaults,
   fetchOpenEventRegions,
@@ -140,7 +141,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadEvents"
+    entity.error = errorKey(err, "errors.loadEvents")
   },
 })
 
@@ -160,7 +161,7 @@ export const regionsFetch = handleAsync("regionsFetch", {
     if (request !== entity.regionsRequest) return
     if (error) {
       entity.status = "error"
-      entity.error = error.message ?? "errors.loadEvents"
+      entity.error = errorKey(error, "errors.loadEvents")
       return
     }
     entity.regions = regions
@@ -198,7 +199,7 @@ export const pageFetch = handleAsync("pageFetch", {
     entity.isLoadingMore = false
     if (error) {
       entity.status = "error"
-      entity.error = error.message ?? "errors.loadEvents"
+      entity.error = errorKey(error, "errors.loadEvents")
       return
     }
     entity.status = "ready"

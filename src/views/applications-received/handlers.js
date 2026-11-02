@@ -3,6 +3,7 @@ import { Form } from "@inglorious/web/form"
 
 import { answerSettlement, proposeAgreement } from "../../api/agreements.js"
 import { supabase } from "../../api/client.js"
+import { errorKey } from "../../api/errors.js"
 import {
   fetchProfileReviews,
   fetchProfileStats,
@@ -179,7 +180,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadApplications"
+    entity.error = errorKey(err, "errors.loadApplications")
   },
 })
 
@@ -206,7 +207,7 @@ export const statusSet = handleAsync("statusSet", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.update"
+    entity.error = errorKey(err, "errors.update")
   },
 })
 
@@ -261,7 +262,7 @@ export const jobReview = handleAsync("jobReview", {
   },
   error(entity, err) {
     entity.review.status = "idle"
-    entity.review.error = err.message ?? "errors.saveReview"
+    entity.review.error = errorKey(err, "errors.saveReview")
   },
 })
 
@@ -286,7 +287,7 @@ export const winnerAssign = handleAsync("winnerAssign", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.assignWinner"
+    entity.error = errorKey(err, "errors.assignWinner")
   },
 })
 
@@ -322,7 +323,7 @@ export const eventReopen = handleAsync("eventReopen", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.reopenEvent"
+    entity.error = errorKey(err, "errors.reopenEvent")
   },
 })
 

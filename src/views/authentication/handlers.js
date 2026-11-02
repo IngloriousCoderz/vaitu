@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
+import { errorKey } from "../../api/errors.js"
 import { setOnboardingDue, writeUser } from "../../api/session.js"
 import {
   MIN_PASSWORD_LENGTH,
@@ -113,7 +114,7 @@ export const emailCheck = handleAsync("emailCheck", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.checkEmail"
+    entity.error = errorKey(err, "errors.checkEmail")
   },
 })
 
@@ -158,7 +159,7 @@ export const login = handleAsync("login", {
       return
     }
     entity.status = "error"
-    entity.error = err.message ?? "errors.login"
+    entity.error = errorKey(err, "errors.login")
   },
 })
 
@@ -191,7 +192,7 @@ export const signup = handleAsync("signup", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.signup"
+    entity.error = errorKey(err, "errors.signup")
   },
 })
 
@@ -216,7 +217,7 @@ export const resend = handleAsync("resend", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.resend"
+    entity.error = errorKey(err, "errors.resend")
   },
 })
 

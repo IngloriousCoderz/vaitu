@@ -1,5 +1,6 @@
 import { handleAsync } from "@inglorious/store/async"
 
+import { errorKey } from "../../api/errors.js"
 import { deleteEvent, fetchMyEvents } from "../../api/events.js"
 
 export function deleteAsk(entity, event_id) {
@@ -24,7 +25,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadEvents"
+    entity.error = errorKey(err, "errors.loadEvents")
   },
 })
 
@@ -43,6 +44,6 @@ export const eventRemove = handleAsync("eventRemove", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.deleteEvent"
+    entity.error = errorKey(err, "errors.deleteEvent")
   },
 })

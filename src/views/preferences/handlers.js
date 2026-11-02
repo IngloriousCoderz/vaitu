@@ -1,5 +1,6 @@
 import { handleAsync } from "@inglorious/store/async"
 
+import { errorKey } from "../../api/errors.js"
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { fetchMyBlocks, unblockUser } from "../../api/safety.js"
 import { readUserId } from "../../api/session.js"
@@ -86,7 +87,7 @@ export const load = handleAsync("load", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadPreferences"
+    entity.error = errorKey(err, "errors.loadPreferences")
   },
 })
 
@@ -107,7 +108,7 @@ export const save = handleAsync("save", {
     }
   },
   error(entity, err, api) {
-    entity.saveError = err.message ?? "errors.savePreferences"
+    entity.saveError = errorKey(err, "errors.savePreferences")
     api.notify(`#${entity.id}:load`)
   },
 })

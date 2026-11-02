@@ -1,6 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
+import { errorKey } from "../../api/errors.js"
 import { fetchProfileStats } from "../../api/reputation.js"
 import { tiersFromConfig } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
@@ -33,6 +34,6 @@ export const tiersLoad = handleAsync("tiersLoad", {
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = err.message ?? "errors.loadRanks"
+    entity.error = errorKey(err, "errors.loadRanks")
   },
 })

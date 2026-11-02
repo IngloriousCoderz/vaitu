@@ -183,6 +183,9 @@
     "updateReady": "Nouvelle version disponible",
     "refresh": "Mettre à jour"
   },
+  "offline": {
+    "message": "Vous êtes hors ligne. Vaitu se mettra à jour dès votre retour."
+  },
   "reactivated": {
     "message": "Bon retour ! Votre compte est de nouveau actif. Les candidatures que vous aviez envoyées et vos événements ouverts ont été supprimés lors de sa désactivation.",
     "dismiss": "Compris"
@@ -261,7 +264,8 @@
     "saveReview": "Impossible d'enregistrer l'avis",
     "parseFailed": "Nous n'avons pas pu remplir les champs à partir de votre message. Veuillez les remplir vous-même.",
     "voiceLimit": "Vous avez utilisé vos messages vocaux gratuits du jour. Remplissez l'événement vous-même ou réessayez demain.",
-    "eraseAccount": "Nous n'avons pas pu supprimer le compte. Veuillez réessayer."
+    "eraseAccount": "Nous n'avons pas pu supprimer le compte. Veuillez réessayer.",
+    "offline": "Vous êtes hors ligne. Réessayez une fois la connexion revenue."
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",

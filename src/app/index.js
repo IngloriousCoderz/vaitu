@@ -16,6 +16,7 @@ import { Logo } from "../common/logo/index.js"
 import { pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { NotificationsPanel } from "../common/notifications/template.js"
+import { OfflineBar } from "../common/offline-bar/template.js"
 import { PromptBar } from "../common/prompt-bar/index.js"
 import { ReactivatedBar } from "../common/reactivated-bar/template.js"
 import { UpdateBar } from "../common/update-bar/template.js"
@@ -98,6 +99,7 @@ export const App = {
     const showWide = !NO_WIDE_CHROME.has(router.route)
 
     const updatebar =
+      this.renderOfflineBar(api) ||
       this.renderUpdateBar(api, pwaUpdate) ||
       this.renderReactivatedBar(api, shell)
     const pushPromptBar =
@@ -130,6 +132,11 @@ export const App = {
         chrome.isTabbarRendered === false || (chrome.isHidden ?? false),
       isWide: showWide,
     })
+  },
+
+  renderOfflineBar(api) {
+    if (api.getEntity("network")?.isOnline !== false) return ""
+    return OfflineBar.render()
   },
 
   renderUpdateBar(api, pwaUpdate) {
