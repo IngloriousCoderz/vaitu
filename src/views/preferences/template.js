@@ -1,4 +1,5 @@
 import { Button } from "@inglorious/ui/button"
+import { Checkbox } from "@inglorious/ui/checkbox"
 import { Flex } from "@inglorious/ui/flex"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
@@ -10,6 +11,11 @@ import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
 import { PageStatus } from "../../common/page-status/index.js"
 import { professions } from "../../data/event-taxonomy.js"
+import {
+  ALL_TYPES,
+  isMuted,
+  notificationGroups,
+} from "../../data/notification-types.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
@@ -19,7 +25,7 @@ export const Preferences = {
   },
 
   renderPreferences(
-    { entity, onToggleProfession, onEmails, onNewEventAlerts, onUnblock },
+    { entity, onToggleProfession, onNotificationToggle, onUnblock },
     api,
   ) {
     return Page.render({
@@ -59,6 +65,7 @@ export const Preferences = {
                 </div>`,
               ],
             })}
+            ${this.renderNotifications({ entity, onNotificationToggle })}
 
             <h2 class=${styles.sectionTitle}>${t("preferences.app")}</h2>
             ${Flex.render({
@@ -71,18 +78,6 @@ export const Preferences = {
                   >
                   ${api.render("language")}
                 </div>`,
-                Switch.render({
-                  label: t("preferences.newEventAlerts"),
-                  description: t("preferences.newEventAlertsDescription"),
-                  isChecked: entity.has_new_event_alerts,
-                  onChange: onNewEventAlerts,
-                }),
-                Switch.render({
-                  label: t("preferences.emails"),
-                  description: t("preferences.emailsDescription"),
-                  isChecked: !entity.is_email_opted_out,
-                  onChange: onEmails,
-                }),
                 Switch.render({
                   label: t("preferences.analytics"),
                   description: t("preferences.analyticsDescription"),
@@ -131,5 +126,73 @@ export const Preferences = {
           `,
       ],
     })
+  },
+
+  renderNotifications({ entity, onNotificationToggle }) {
+    const row = (label, type) => html`
+      <div class=${styles.notificationRow}>
+        <span>${label}</span>
+        ${["muted_email_types", "muted_push_types"].map((column) =>
+          this.renderNotificationCheckbox({
+            entity,
+            column,
+            type,
+            label,
+            onNotificationToggle,
+          }),
+        )}
+      </div>
+    `
+    return html`
+      <h2 class=${styles.sectionTitle}>
+        ${t("preferences.notifications.title")}
+      </h2>
+      <p class=${styles.sectionHint}>${t("preferences.notifications.hint")}</p>
+      <div class=${styles.notifications}>
+        <div class="${styles.notificationRow} ${styles.notificationHead}">
+          <span></span>
+          <span>${t("preferences.notifications.email")}</span>
+          <span>${t("preferences.notifications.push")}</span>
+        </div>
+        ${row(t("preferences.notifications.all"), ALL_TYPES)}
+        ${notificationGroups.map(
+          ({ id, types }) => html`
+            <h3 class=${styles.notificationGroup}>
+              ${t(`preferences.notifications.groups.${id}`)}
+            </h3>
+            ${types.map((type) =>
+              row(t(`preferences.notifications.types.${type}`), type),
+            )}
+          `,
+        )}
+      </div>
+      <p class=${styles.sectionHint}>
+        ${t("preferences.notifications.newJobsHint")}
+      </p>
+    `
+  },
+
+  renderNotificationCheckbox({
+    entity,
+    column,
+    type,
+    label,
+    onNotificationToggle,
+  }) {
+    const channel = t(
+      `preferences.notifications.${
+        column === "muted_email_types" ? "email" : "push"
+      }`,
+    )
+    const muted = entity[column]
+    return html`<span class=${styles.notificationCheck}>
+      ${Checkbox.render({
+        "aria-label": `${label}: ${channel}`,
+        isChecked: !isMuted(muted, type),
+        isDisabled: type !== ALL_TYPES && muted.includes(ALL_TYPES),
+        onChange: (isReceiving) =>
+          onNotificationToggle({ column, type, isReceiving }),
+      })}
+    </span>`
   },
 }

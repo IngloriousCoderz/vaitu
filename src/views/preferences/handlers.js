@@ -4,6 +4,7 @@ import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { fetchMyBlocks, unblockUser } from "../../api/safety.js"
 import { readUserId } from "../../api/session.js"
 import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
+import { withMuted } from "../../data/notification-types.js"
 import {
   favoriteRegionOptions,
   uniqueRegions,
@@ -36,17 +37,12 @@ export function favoriteRegionsSet(entity, { value }, api) {
   api.notify(`#${entity.id}:save`, { favorite_regions })
 }
 
-// On means the user gets emails: the stored flag is the opt-out.
-export function emailsSet(entity, isReceiving, api) {
-  entity.is_email_opted_out = !isReceiving
-  api.notify(`#${entity.id}:save`, {
-    is_email_opted_out: entity.is_email_opted_out,
-  })
-}
-
-export function newEventAlertsSet(entity, isReceiving, api) {
-  entity.has_new_event_alerts = isReceiving
-  api.notify(`#${entity.id}:save`, { has_new_event_alerts: isReceiving })
+// The stored lists are the opt-outs. The new list itself: the save runs after
+// this draft is revoked.
+export function notificationToggle(entity, { column, type, isReceiving }, api) {
+  const muted = withMuted([...entity[column]], type, isReceiving)
+  entity[column] = muted
+  api.notify(`#${entity.id}:save`, { [column]: muted })
 }
 
 export function favoriteOptionsSync(entity, _, api) {
@@ -82,8 +78,8 @@ export const load = handleAsync("load", {
       api,
     )
     entity.favorite_regions = preferences.favorite_regions ?? []
-    entity.is_email_opted_out = preferences.is_email_opted_out ?? false
-    entity.has_new_event_alerts = preferences.has_new_event_alerts ?? true
+    entity.muted_email_types = preferences.muted_email_types ?? []
+    entity.muted_push_types = preferences.muted_push_types ?? []
     favoriteOptionsSync(entity, null, api)
   },
   error(entity, err) {

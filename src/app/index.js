@@ -52,6 +52,7 @@ const CHROME = {
   preferences: { tab: "preferences", isHidden: true },
   about: { tab: "about", isHidden: true },
   eraseAccount: { isTabbarRendered: false },
+  unsubscribe: { isTabbarRendered: false },
   authentication: { isTabbarRendered: false },
   onboarding: { isTabbarRendered: false },
   notFound: { isTabbarRendered: false },
@@ -59,7 +60,12 @@ const CHROME = {
 
 const DEFAULT_CHROME = { tab: "events" }
 
-const NO_WIDE_CHROME = new Set(["authentication", "onboarding", "eraseAccount"])
+const NO_WIDE_CHROME = new Set([
+  "authentication",
+  "onboarding",
+  "eraseAccount",
+  "unsubscribe",
+])
 
 const DRAWER_PATHS = {
   events: paths.events,

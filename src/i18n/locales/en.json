@@ -433,12 +433,39 @@
     "favoriteRegions": "Favorite regions",
     "app": "App",
     "language": "Language",
-    "emails": "Email notifications",
-    "emailsDescription": "Receive emails about new events, applications and updates. Essential account emails (security, billing) are always sent.",
     "analytics": "Usage statistics",
     "analyticsDescription": "Lets us measure how you use the app, through Google Analytics. No ads.",
-    "newEventAlerts": "New job alerts",
-    "newEventAlertsDescription": "Get notified when a job is posted for your trades and regions. Choose your trades above to start."
+    "notifications": {
+      "title": "Notifications",
+      "hint": "The bell in the app always shows what happens. Choose how else to hear about it. Emails work on every phone; pushes need notifications allowed on that device.",
+      "email": "Email",
+      "push": "Push",
+      "all": "Everything",
+      "groups": {
+        "newJobs": "New jobs",
+        "posted": "Jobs you post",
+        "applied": "Jobs you applied to",
+        "payments": "Amounts and payments"
+      },
+      "newJobsHint": "New jobs follow the trades and regions in your feed above: choose at least one trade to get them. Other emails arrive within minutes, grouped together. Essential account emails are always sent.",
+      "types": {
+        "application_received": "Someone applied to your job",
+        "application_withdrawn": "An applicant withdrew",
+        "job_outcome_due": "Time to report on a job",
+        "application_selected": "You were selected",
+        "application_rejected": "You were not selected",
+        "event_updated": "A job you applied to changed",
+        "event_closed": "A job you applied to closed",
+        "job_reviewed": "The organizer reported on your job",
+        "job_cancelled": "A job was cancelled",
+        "agreement_proposed": "An amount to confirm",
+        "agreement_confirmed": "An amount was confirmed",
+        "agreement_rejected": "An amount was rejected",
+        "settlement_due": "A payment to confirm",
+        "settlement_contested": "A payment was disputed",
+        "new_event": "New jobs (one email each morning)"
+      }
+    }
   },
   "about": {
     "title": "About",
@@ -575,6 +602,14 @@
       "agreementRejected": "The amount for {{title}} wasn't confirmed: please check it",
       "settlementDue": "Was {{title}} settled as you agreed?",
       "settlementContested": "Someone says {{title}} wasn't settled as agreed: you can reply"
+    },
+    "email": {
+      "subject": "{{count}} updates from Vaitu",
+      "open": "Open",
+      "more": "…and {{count}} more in the app",
+      "manage": "Choose which emails you get: {{link}}",
+      "stopThese": "Stop emails like these: {{link}}",
+      "stopAll": "Stop all these emails: {{link}}"
     }
   },
   "push": {
@@ -708,5 +743,15 @@
     "answeredYes": "You said it was settled as agreed.",
     "answeredNo": "You said it wasn't settled as agreed.",
     "contested": "The other person says it wasn't settled as agreed. If you disagree, say so here."
+  },
+  "unsubscribe": {
+    "title": "Stop emails",
+    "questionAll": "Stop all notification emails from Vaitu? You can turn them back on in Preferences. Essential account emails are still sent.",
+    "questionType": "Stop emails about “{{type}}”? You can turn them back on in Preferences.",
+    "confirm": "Stop these emails",
+    "stopping": "Stopping…",
+    "done": "Done: you won't get these emails any more. You can change this in Preferences.",
+    "linkExpired": "This link is no longer valid. Sign in and choose your emails in Preferences.",
+    "failed": "That didn't work. Please try again."
   }
 }

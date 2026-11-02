@@ -189,7 +189,7 @@ function serviceRoleClient() {
   )
 }
 
-function localServiceRoleKey() {
+export function localServiceRoleKey() {
   const output = execFileSync("supabase", ["status", "-o", "env"], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "ignore"],

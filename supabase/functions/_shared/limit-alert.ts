@@ -5,6 +5,7 @@ const LIMIT_STATUSES: Record<string, number[]> = {
   // 404 is every model in the list having been withdrawn from the free tier.
   openrouter: [402, 404, 429],
   deepgram: [402, 429],
+  resend: [429],
 }
 
 const WHAT_STOPS: Record<string, string> = {
@@ -12,6 +13,8 @@ const WHAT_STOPS: Record<string, string> = {
     "Voice messages are no longer filling in the event form. People see an error and fill it in by hand.",
   deepgram:
     "Voice messages are no longer being transcribed. People see an error and fill in the event form by hand.",
+  resend:
+    "Notification emails are waiting for tomorrow's allowance, and new job digests may arrive late. After three days unsent ones are dropped; the bell still has them.",
 }
 
 export interface AlertSteps {

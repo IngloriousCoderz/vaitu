@@ -1,3 +1,4 @@
+import { decodeBase64Url } from "jsr:@std/encoding@1/base64url"
 import { createClient } from "npm:@supabase/supabase-js@2"
 
 export function env(name: string) {
@@ -20,4 +21,17 @@ export async function currentUser(req: Request) {
 
   const { data } = await admin().auth.getUser(token)
   return data.user
+}
+
+export function callerRole(req: Request) {
+  const token = (req.headers.get("authorization") ?? "").replace(
+    /^Bearer\s+/i,
+    "",
+  )
+  try {
+    const payload = decodeBase64Url(token.split(".")[1])
+    return JSON.parse(new TextDecoder().decode(payload)).role
+  } catch {
+    return null
+  }
 }

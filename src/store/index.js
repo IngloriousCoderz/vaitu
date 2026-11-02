@@ -30,6 +30,7 @@ import { Preferences } from "../views/preferences/index.js"
 import { AvatarCropper } from "../views/profile/avatar-cropper.js"
 import { Profile } from "../views/profile/index.js"
 import { Ranks } from "../views/ranks/index.js"
+import { Unsubscribe } from "../views/unsubscribe/index.js"
 import { entities } from "./entities"
 import { guards } from "./guards"
 import { middlewares } from "./middlewares"
@@ -73,6 +74,7 @@ export const store = createStore({
     Ranks,
     Safety,
     EraseAccount,
+    Unsubscribe,
     ...guards,
   },
   entities,

@@ -8,8 +8,8 @@ import { paths } from "../routes"
 // session unless opted out.
 
 const PRE_LOGIN_ROUTES = new Set(["authentication", "onboarding"])
-// The link in the deactivation email works signed out.
-const PUBLIC_ROUTES = new Set(["eraseAccount"])
+// The links in the deactivation and notification emails work signed out.
+const PUBLIC_ROUTES = new Set(["eraseAccount", "unsubscribe"])
 
 /**
  * Where a signed-out visitor goes, carrying where they were headed.
@@ -54,7 +54,8 @@ export function isPreLoginPath(pathname) {
   return (
     pathname === paths.login ||
     pathname === paths.onboarding ||
-    pathname === paths.eraseAccount
+    pathname === paths.eraseAccount ||
+    pathname === paths.unsubscribe
   )
 }
 

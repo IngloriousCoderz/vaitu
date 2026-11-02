@@ -123,7 +123,7 @@
       },
       "keeping": {
         "title": "Pourquoi et combien de temps",
-        "body": "Nous utilisons vos données pour fournir le service auquel vous vous êtes inscrit, pour le sécuriser et, avec votre accord uniquement, pour des statistiques. Nous les conservons jusqu'à la suppression de votre compte. La désactivation les conserve, pour que vous puissiez revenir. La suppression retire le compte, le profil, les fichiers et les événements, tandis que les avis et l'historique des missions restent sans votre nom, sous [Utilisateur supprimé], car ils font partie de l'historique d'autres personnes."
+        "body": "Nous utilisons vos données pour fournir le service auquel vous vous êtes inscrit, pour le sécuriser et, avec votre accord uniquement, pour des statistiques. Nous les conservons jusqu'à la suppression de votre compte. La désactivation les conserve, pour que vous puissiez revenir. La suppression retire le compte, le profil, les fichiers et les événements, tandis que les avis et l'historique des missions restent sans votre nom, sous [Utilisateur supprimé], car ils font partie de l'historique d'autres personnes. Nous vous envoyons des e-mails sur vos missions et candidatures, et sur les nouvelles missions de vos métiers : choisissez lesquels dans les Préférences, ou utilisez le lien de chaque e-mail."
       },
       "rights": {
         "title": "Vos droits",

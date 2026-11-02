@@ -441,12 +441,39 @@
     "favoriteRegions": "Regioni preferite",
     "app": "App",
     "language": "Lingua",
-    "emails": "Notifiche email",
-    "emailsDescription": "Ricevi email su nuovi eventi, candidature e aggiornamenti. Le email essenziali dell'account (sicurezza, fatturazione) vengono sempre inviate.",
     "analytics": "Statistiche di utilizzo",
     "analyticsDescription": "Ci permette di misurare come usi l'app, tramite Google Analytics. Niente pubblicità.",
-    "newEventAlerts": "Avvisi di nuovi lavori",
-    "newEventAlertsDescription": "Ricevi una notifica quando viene pubblicato un lavoro per i tuoi mestieri e le tue regioni. Per iniziare, scegli i mestieri qui sopra."
+    "notifications": {
+      "title": "Notifiche",
+      "hint": "La campanella nell'app mostra sempre cosa succede. Scegli in quale altro modo saperlo. Le email funzionano su ogni telefono; le notifiche push devono essere consentite sul dispositivo.",
+      "email": "Email",
+      "push": "Push",
+      "all": "Tutto",
+      "groups": {
+        "newJobs": "Nuovi lavori",
+        "posted": "Lavori che pubblichi",
+        "applied": "Lavori a cui ti sei candidato",
+        "payments": "Importi e pagamenti"
+      },
+      "newJobsHint": "I nuovi lavori seguono i mestieri e le regioni del tuo feed qui sopra: scegli almeno un mestiere per riceverli. Le altre email arrivano in pochi minuti, raggruppate. Le email essenziali sull'account vengono sempre inviate.",
+      "types": {
+        "application_received": "Qualcuno si è candidato al tuo lavoro",
+        "application_withdrawn": "Un candidato si è ritirato",
+        "job_outcome_due": "È ora di riferire su un lavoro",
+        "application_selected": "Sei stato selezionato",
+        "application_rejected": "Non sei stato selezionato",
+        "event_updated": "Un lavoro a cui ti sei candidato è cambiato",
+        "event_closed": "Un lavoro a cui ti sei candidato è stato chiuso",
+        "job_reviewed": "L'organizzatore ha riferito sul tuo lavoro",
+        "job_cancelled": "Un lavoro è stato annullato",
+        "agreement_proposed": "Un importo da confermare",
+        "agreement_confirmed": "Un importo è stato confermato",
+        "agreement_rejected": "Un importo è stato rifiutato",
+        "settlement_due": "Un pagamento da confermare",
+        "settlement_contested": "Un pagamento è stato contestato",
+        "new_event": "Nuovi lavori (un'email ogni mattina)"
+      }
+    }
   },
   "about": {
     "title": "Informazioni",
@@ -587,6 +614,14 @@
       "agreementRejected": "L'importo per {{title}} non è stato confermato: controllalo",
       "settlementDue": "{{title}} è stato regolato come concordato?",
       "settlementContested": "Qualcuno dice che {{title}} non è stato regolato come concordato: puoi replicare"
+    },
+    "email": {
+      "subject": "{{count}} novità da Vaitu",
+      "open": "Apri",
+      "more": "…e altre {{count}} nell'app",
+      "manage": "Scegli quali email ricevere: {{link}}",
+      "stopThese": "Non ricevere più email come queste: {{link}}",
+      "stopAll": "Non ricevere più queste email: {{link}}"
     }
   },
   "push": {
@@ -721,5 +756,15 @@
     "answeredYes": "Hai risposto che è stato regolato come concordato.",
     "answeredNo": "Hai risposto che non è stato regolato come concordato.",
     "contested": "L'altra persona dice che non è stato regolato come concordato. Se non sei d'accordo, dillo qui."
+  },
+  "unsubscribe": {
+    "title": "Interrompi le email",
+    "questionAll": "Interrompere tutte le email di notifica di Vaitu? Puoi riattivarle nelle Preferenze. Le email essenziali sull'account vengono comunque inviate.",
+    "questionType": "Interrompere le email su “{{type}}”? Puoi riattivarle nelle Preferenze.",
+    "confirm": "Interrompi queste email",
+    "stopping": "Interruzione…",
+    "done": "Fatto: non riceverai più queste email. Puoi cambiare idea nelle Preferenze.",
+    "linkExpired": "Questo link non è più valido. Accedi e scegli le tue email nelle Preferenze.",
+    "failed": "Non ha funzionato. Riprova."
   }
 }

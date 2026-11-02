@@ -98,4 +98,11 @@ describe("the public page", () => {
     expect(api.notify).not.toHaveBeenCalled()
     expect(isPreLoginPath(paths.eraseAccount)).toBe(true)
   })
+
+  it("leaves a signed-out visitor on the unsubscribe link", () => {
+    const api = { notify: vi.fn(), getEntity: vi.fn() }
+    routeGuard({}, { route: "unsubscribe", path: "/unsubscribe" }, api)
+    expect(api.notify).not.toHaveBeenCalled()
+    expect(isPreLoginPath(paths.unsubscribe)).toBe(true)
+  })
 })

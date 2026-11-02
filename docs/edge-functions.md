@@ -10,6 +10,8 @@ Server-side code that needs the service role or a third-party key lives in
 | `transcribe-audio`   | Event form, voice input | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](voice-ai.md)) |
 | `parse-event`        | Event form, voice input | Logged-in user        | Transcript → event fields ([Voice AI](voice-ai.md))             |
 | `push-notify`        | A database trigger      | The database only     | Sends a new notification ([Notifications](notifications.md))    |
+| `send-emails`        | `pg_cron`               | The database only     | Emails what's waiting ([Notifications](notifications.md))       |
+| `email-unsubscribe`  | Email links, mail apps  | Anyone with a token   | Turns off a type of email ([Notifications](notifications.md))   |
 
 ```
 supabase/functions/

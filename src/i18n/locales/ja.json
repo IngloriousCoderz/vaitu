@@ -426,12 +426,39 @@
     "favoriteRegions": "お気に入りの地域",
     "app": "アプリ",
     "language": "言語",
-    "emails": "メール通知",
-    "emailsDescription": "新しいイベント、応募、アップデートについてメールを受け取ります。アカウント必須メール（セキュリティ、請求）は常に送信されます。",
     "analytics": "利用状況の計測",
     "analyticsDescription": "Google アナリティクスでアプリの使われ方を計測します。広告には使いません。",
-    "newEventAlerts": "新着の仕事のお知らせ",
-    "newEventAlertsDescription": "あなたの職種と地域の仕事が投稿されると通知します。まず上で職種を選んでください。"
+    "notifications": {
+      "title": "通知",
+      "hint": "アプリのベルにはいつでも最新の動きが表示されます。ほかの受け取り方を選んでください。メールはどのスマートフォンでも届きます。プッシュ通知は端末で許可が必要です。",
+      "email": "メール",
+      "push": "プッシュ",
+      "all": "すべて",
+      "groups": {
+        "newJobs": "新しい仕事",
+        "posted": "投稿した仕事",
+        "applied": "応募した仕事",
+        "payments": "金額と支払い"
+      },
+      "newJobsHint": "新しい仕事は上のフィードの職種と地域に基づきます。受け取るには職種を1つ以上選んでください。その他のメールは数分以内にまとめて届きます。アカウントに関する重要なメールは常に送信されます。",
+      "types": {
+        "application_received": "あなたの仕事に応募がありました",
+        "application_withdrawn": "応募者が辞退しました",
+        "job_outcome_due": "仕事の報告をする時期です",
+        "application_selected": "選ばれました",
+        "application_rejected": "選ばれませんでした",
+        "event_updated": "応募した仕事が変更されました",
+        "event_closed": "応募した仕事が締め切られました",
+        "job_reviewed": "主催者があなたの仕事を報告しました",
+        "job_cancelled": "仕事がキャンセルされました",
+        "agreement_proposed": "確認が必要な金額",
+        "agreement_confirmed": "金額が確認されました",
+        "agreement_rejected": "金額が拒否されました",
+        "settlement_due": "確認が必要な支払い",
+        "settlement_contested": "支払いに異議が出ました",
+        "new_event": "新しい仕事（毎朝1通のメール）"
+      }
+    }
   },
   "about": {
     "title": "Vaituについて",
@@ -564,6 +591,14 @@
       "agreementRejected": "「{{title}}」の金額は確認されませんでした。内容をご確認ください",
       "settlementDue": "「{{title}}」は合意どおりに精算されましたか？",
       "settlementContested": "「{{title}}」が合意どおりに精算されていないとの報告があります。返答できます"
+    },
+    "email": {
+      "subject": "Vaituからのお知らせ{{count}}件",
+      "open": "開く",
+      "more": "…ほか{{count}}件はアプリで",
+      "manage": "受け取るメールを選ぶ：{{link}}",
+      "stopThese": "この種類のメールを停止：{{link}}",
+      "stopAll": "これらのメールをすべて停止：{{link}}"
     }
   },
   "push": {
@@ -696,5 +731,15 @@
     "answeredYes": "合意どおりに精算されたと回答しました。",
     "answeredNo": "合意どおりに精算されていないと回答しました。",
     "contested": "相手は合意どおりに精算されていないとしています。異議がある場合はここで回答してください。"
+  },
+  "unsubscribe": {
+    "title": "メールを停止",
+    "questionAll": "Vaituからの通知メールをすべて停止しますか？設定でいつでも再開できます。アカウントに関する重要なメールは引き続き送信されます。",
+    "questionType": "「{{type}}」のメールを停止しますか？設定でいつでも再開できます。",
+    "confirm": "これらのメールを停止",
+    "stopping": "停止中…",
+    "done": "完了しました。これらのメールは届かなくなります。設定で変更できます。",
+    "linkExpired": "このリンクは無効です。ログインして設定でメールを選んでください。",
+    "failed": "うまくいきませんでした。もう一度お試しください。"
   }
 }

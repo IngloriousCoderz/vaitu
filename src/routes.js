@@ -22,6 +22,7 @@ export const routes = {
   "/preferences": "preferences",
   "/about": "about",
   "/erase-account": "eraseAccount",
+  "/unsubscribe": "unsubscribe",
 
   "*": "notFound",
 }
@@ -42,6 +43,7 @@ export const paths = {
   preferences: "/preferences",
   about: "/about",
   eraseAccount: "/erase-account",
+  unsubscribe: "/unsubscribe",
   login: "/login",
   onboarding: "/onboarding",
 }

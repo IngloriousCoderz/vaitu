@@ -32,3 +32,39 @@
   display: flex;
   flex-direction: column;
 }
+
+.notifications {
+  margin-bottom: var(--iw-space-3);
+}
+
+.notificationRow {
+  display: grid;
+  grid-template-columns: 1fr 3.5rem 3.5rem;
+  align-items: center;
+  gap: var(--iw-space-2);
+  padding: var(--iw-space-2) 0;
+  font-size: var(--iw-font-size-sm);
+  border-bottom: 1px solid var(--vline);
+}
+
+.notificationHead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: center;
+  font-weight: var(--iw-font-weight-medium);
+  color: var(--vmuted);
+  background: var(--vbg);
+}
+
+.notificationGroup {
+  margin: var(--iw-space-4) 0 0;
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-medium);
+  color: var(--vmuted);
+}
+
+.notificationCheck {
+  display: flex;
+  justify-content: center;
+}

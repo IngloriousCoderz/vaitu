@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { messageFor } from "../../../supabase/functions/push-notify/message.ts"
-import wording from "../../../supabase/functions/push-notify/wording.json"
+import { messageFor } from "../../../supabase/functions/_shared/notification-message.ts"
+import wording from "../../../supabase/functions/_shared/notification-wording.json"
 import { pathFor } from "./index.js"
 
 const catalogues = import.meta.glob("../../i18n/locales/*.json", {

@@ -1,6 +1,6 @@
-import wording from "./wording.json" with { type: "json" }
+import wording from "./notification-wording.json" with { type: "json" }
 
-// Copies of the feed's lines (wording.json) and destinations (pathFor): a
+// Copies of the feed's lines (notification-wording.json) and destinations (pathFor): a
 // function cannot import app source. src/common/notifications/push.test.js
 // fails when they drift.
 

@@ -367,7 +367,14 @@ describe("reputation", () => {
       const elsewhere = await account("elsewhere")
       const preferences = [
         [fan, { professions: ["photographer"], favorite_regions: ["Tuscany"] }],
-        [muted, { professions: ["photographer"], has_new_event_alerts: false }],
+        [
+          muted,
+          {
+            professions: ["photographer"],
+            muted_email_types: ["new_event"],
+            muted_push_types: ["all"],
+          },
+        ],
         [
           elsewhere,
           { professions: ["photographer"], favorite_regions: ["Sicily"] },

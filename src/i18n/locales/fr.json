@@ -441,12 +441,39 @@
     "favoriteRegions": "Régions favorites",
     "app": "Application",
     "language": "Langue",
-    "emails": "Notifications par email",
-    "emailsDescription": "Recevez des emails sur les nouveaux événements, candidatures et mises à jour. Les emails essentiels du compte (sécurité, facturation) sont toujours envoyés.",
     "analytics": "Statistiques d'utilisation",
     "analyticsDescription": "Nous permet de mesurer comment vous utilisez l'app, via Google Analytics. Sans publicité.",
-    "newEventAlerts": "Alertes de nouvelles missions",
-    "newEventAlertsDescription": "Soyez averti lorsqu'une mission est publiée pour vos métiers et vos régions. Pour commencer, choisissez vos métiers ci-dessus."
+    "notifications": {
+      "title": "Notifications",
+      "hint": "La cloche de l'application montre toujours ce qui se passe. Choisissez comment en être informé autrement. Les e-mails fonctionnent sur tous les téléphones ; les notifications push doivent être autorisées sur l'appareil.",
+      "email": "E-mail",
+      "push": "Push",
+      "all": "Tout",
+      "groups": {
+        "newJobs": "Nouvelles missions",
+        "posted": "Missions que vous publiez",
+        "applied": "Missions auxquelles vous avez postulé",
+        "payments": "Montants et paiements"
+      },
+      "newJobsHint": "Les nouvelles missions suivent les métiers et régions de votre fil ci-dessus : choisissez au moins un métier pour les recevoir. Les autres e-mails arrivent en quelques minutes, regroupés. Les e-mails essentiels sur le compte sont toujours envoyés.",
+      "types": {
+        "application_received": "Quelqu'un a postulé à votre mission",
+        "application_withdrawn": "Un candidat s'est retiré",
+        "job_outcome_due": "Il est temps de faire le point sur une mission",
+        "application_selected": "Vous avez été sélectionné",
+        "application_rejected": "Vous n'avez pas été sélectionné",
+        "event_updated": "Une mission à laquelle vous avez postulé a changé",
+        "event_closed": "Une mission à laquelle vous avez postulé est close",
+        "job_reviewed": "L'organisateur a fait le point sur votre mission",
+        "job_cancelled": "Une mission a été annulée",
+        "agreement_proposed": "Un montant à confirmer",
+        "agreement_confirmed": "Un montant a été confirmé",
+        "agreement_rejected": "Un montant a été refusé",
+        "settlement_due": "Un paiement à confirmer",
+        "settlement_contested": "Un paiement a été contesté",
+        "new_event": "Nouvelles missions (un e-mail chaque matin)"
+      }
+    }
   },
   "about": {
     "title": "À propos",
@@ -587,6 +614,14 @@
       "agreementRejected": "Le montant pour {{title}} n'a pas été confirmé : vérifiez-le",
       "settlementDue": "{{title}} a-t-il été réglé comme convenu ?",
       "settlementContested": "Quelqu'un indique que {{title}} n'a pas été réglé comme convenu : vous pouvez répondre"
+    },
+    "email": {
+      "subject": "{{count}} nouveautés sur Vaitu",
+      "open": "Ouvrir",
+      "more": "…et {{count}} de plus dans l'application",
+      "manage": "Choisissez les e-mails que vous recevez : {{link}}",
+      "stopThese": "Ne plus recevoir ce type d'e-mail : {{link}}",
+      "stopAll": "Ne plus recevoir ces e-mails : {{link}}"
     }
   },
   "push": {
@@ -721,5 +756,15 @@
     "answeredYes": "Vous avez répondu que c'était réglé comme convenu.",
     "answeredNo": "Vous avez répondu que ce n'était pas réglé comme convenu.",
     "contested": "L'autre personne indique que ce n'était pas réglé comme convenu. Si vous n'êtes pas d'accord, dites-le ici."
+  },
+  "unsubscribe": {
+    "title": "Arrêter les e-mails",
+    "questionAll": "Arrêter tous les e-mails de notification de Vaitu ? Vous pouvez les réactiver dans les Préférences. Les e-mails essentiels sur le compte restent envoyés.",
+    "questionType": "Arrêter les e-mails sur « {{type}} » ? Vous pouvez les réactiver dans les Préférences.",
+    "confirm": "Arrêter ces e-mails",
+    "stopping": "Arrêt…",
+    "done": "C'est fait : vous ne recevrez plus ces e-mails. Vous pouvez changer cela dans les Préférences.",
+    "linkExpired": "Ce lien n'est plus valide. Connectez-vous et choisissez vos e-mails dans les Préférences.",
+    "failed": "Cela n'a pas fonctionné. Veuillez réessayer."
   }
 }

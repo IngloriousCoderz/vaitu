@@ -5,15 +5,27 @@ row in `notifications` for them: a new job for their trades and regions, an
 application to their event, a decision on their application, a change to an
 event they applied to, a job waiting for their report. Triggers write these
 rows (the notifications section of `supabase/migrations/20261028120000_initial_schema.sql`), so no client
-can make one up, and a row is all the app needs to tell the user in two ways:
+can make one up, and a row is all the app needs to tell the user in three ways:
 
 - **The bell** in the app shows the newest rows and counts the unread ones,
   live while the app is open.
 - **A push** reaches a browser or a phone where the user allowed
   notifications, even with the app closed.
+- **An email** reaches everyone else: on an iPhone, a website can only send
+  pushes once it's installed on the Home Screen, which most people never do.
 
 The bell needs nothing but the row. Pushes go through Firebase Cloud
-Messaging (FCM), one service for the PWA, Android and iOS alike.
+Messaging (FCM), one service for the PWA, Android and iOS alike. Emails go
+through Resend.
+
+## Choosing
+
+Preferences has an email and a push checkbox for each type of notification, plus
+one for everything. `profiles.muted_email_types` and `muted_push_types` hold what
+is off, and `all` in a list turns the channel off, new types included.
+`src/data/notification-types.js` groups the types for that screen, so a new type
+goes there and in `preferences.notifications.types` in every locale. The bell
+always shows the row.
 
 ## The bell
 
@@ -49,7 +61,7 @@ which wraps `@capacitor-firebase/messaging`; `endSession` in
 ### Sending
 
 1. A row lands in `notifications`.
-2. If its recipient has a token, a trigger calls the `push-notify`
+2. If its recipient has a token and hasn't muted the type, a trigger calls the `push-notify`
    [edge function](edge-functions.md) with the row's id.
 3. `push-notify` marks the row as pushed, so it is never sent twice, writes
    the message in the recipient's language, and sends it through FCM to each
@@ -64,19 +76,56 @@ While the native app is open, Android shows no notification: the bell already
 has the row.
 
 The edge function can't import app code, so it keeps copies of the feed's
-lines (`wording.json`) and destinations (`message.ts`).
+lines (`_shared/notification-wording.json`) and destinations
+(`_shared/notification-message.ts`).
 `src/common/notifications/push.test.js` fails when they drift from the
 catalogues or from `pathFor`. After changing a line in
-`notifications.types`, copy it into `wording.json`.
+`notifications.types`, copy it into `notification-wording.json`.
 
-### New job alerts
+## Emails
+
+Every five minutes, if any row hasn't been handled, `pg_cron` calls the
+`send-emails` [edge function](edge-functions.md):
+
+1. It drops the rows nobody needs an email about: already read in the bell,
+   muted, or over three days old.
+2. It groups the rest by person, so several updates share one email. New jobs
+   wait for the morning digest, at 7:00 UTC.
+3. It marks the rows in `emailed_at`, so they are never sent twice, and sends
+   everything in one Resend batch. If that fails, the rows go back to waiting.
+
+The wording is the feed's lines (`_shared/notification-wording.json`), in the
+recipient's language, with `send-emails/wording.json` around them.
+`src/common/notifications/email.test.js` fails when that file drifts from
+`notifications.email` in the catalogues.
+
+### The daily limit
+
+Resend's free plan allows 100 emails a day and 3,000 a month, and signup
+confirmations share them if Supabase Auth sends through Resend. So `send-emails`
+stops at 80 a day (`DAILY_BUDGET`, counted in `email_budget`), with people waiting
+on something other than new jobs first. The rest wait for the next day, and
+`ALERT_EMAIL` hears about it once a day. Past about 80 people with a new job
+every morning, the plan needs upgrading or the digests will arrive late.
+
+### Unsubscribing
+
+Each email links to `/unsubscribe`, which works signed out with the token from
+`email_tokens`, and needs a button press, because mail scanners follow links. The
+`List-Unsubscribe` headers also give mail apps their own button, which calls
+`email-unsubscribe` directly. That function runs without a key
+(`verify_jwt = false` in `supabase/config.toml`), so a token can only ever turn
+emails off.
+
+## New job alerts
 
 A new event notifies whoever chose its profession in Preferences, if its job
 type and region suit theirs too (an empty list of either means any). An empty
 list of professions gets no alerts: in the feed it means "show me everything",
-which is not a wish for a push per event. `has_new_event_alerts` turns them
-off. Regions are compared as stored, which works because `normalizeEvent`
-writes the canonical name, the one favorites use.
+which is not a wish for an email per event. Muting `new_event` on both channels
+stops the row too, so the bell stays quiet as well. Regions are compared as
+stored, which works because `normalizeEvent` writes the canonical name, the one
+favorites use.
 
 ## Setting up Firebase
 

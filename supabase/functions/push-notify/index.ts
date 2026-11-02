@@ -1,11 +1,12 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 
-import { decodeBase64Url } from "jsr:@std/encoding@1/base64url"
-
 import { json, serve, STATUS_CODE } from "../_shared/http.ts"
-import { admin } from "../_shared/supabase.ts"
+import { admin, callerRole } from "../_shared/supabase.ts"
 import { type FcmMessage, send } from "./fcm.ts"
-import { messageFor, type PushMessage } from "./message.ts"
+import {
+  messageFor,
+  type PushMessage,
+} from "../_shared/notification-message.ts"
 
 serve(async (req) => {
   if (callerRole(req) !== "service_role") {
@@ -110,17 +111,4 @@ function fcmMessage(
 // types each embed as a list.
 function one<T>(embed: T | T[] | null | undefined) {
   return (Array.isArray(embed) ? embed[0] : embed) ?? null
-}
-
-function callerRole(req: Request) {
-  const token = (req.headers.get("authorization") ?? "").replace(
-    /^Bearer\s+/i,
-    "",
-  )
-  try {
-    const payload = decodeBase64Url(token.split(".")[1])
-    return JSON.parse(new TextDecoder().decode(payload)).role
-  } catch {
-    return null
-  }
 }
