@@ -216,7 +216,10 @@ describe("toEventFields", () => {
     })
     expect(
       pay({ kind: "fixed", amount_min: 5, currency: "XXX" }).currency,
-    ).toBe("EUR")
+    ).toBeNull()
+    expect(
+      pay({ kind: "fixed", amount_min: 5, currency: "AUD" }).currency,
+    ).toBe("AUD")
     expect(pay({ kind: "range", amount_min: 400, amount_max: 300 })).toBeNull()
     expect(pay({ kind: "fixed", amount_min: "lots" })).toBeNull()
     expect(pay(null)).toBeNull()

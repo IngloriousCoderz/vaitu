@@ -173,8 +173,8 @@ importers:
         specifier: ^12.1.1
         version: 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/web':
-        specifier: ^6.13.1
-        version: 6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+        specifier: ^6.14.0
+        version: 6.14.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
 
 packages:
 
@@ -385,8 +385,8 @@ packages:
     resolution: {integrity: sha512-SmK15U5QV01XpBIKw5CMMHBN5rxSZZ2tUESCDuBaN48+Pal0G49L0btWHWTkK81fn9VhAHRemvzTI0JcNT/wCQ==}
     engines: {node: '>= 22'}
 
-  '@inglorious/web@6.13.1':
-    resolution: {integrity: sha512-4SSw7jnRpKYy7mBeZ7/xVXdcyMYWejw5PBfmP2Lv0iPwT4Y1/V+s2LQWDE3SutjnaPtz+SSOrb1uU0lTR5GuGA==}
+  '@inglorious/web@6.14.0':
+    resolution: {integrity: sha512-oUVq20VablvhbKfynL4I+DlRBvrLDdm8WeIVFH7yiKZejfahhZZpgYhOW87eiI7CvQOJiYMtz1L68FBRm69FpA==}
     engines: {node: '>= 26'}
     peerDependencies:
       '@inglorious/store': ^12.1.1
@@ -1533,7 +1533,7 @@ snapshots:
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0
-      '@inglorious/web': 6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.14.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
       '@lit-labs/ssr': 4.1.0
       commander: 15.0.0
       connect: 3.7.0
@@ -1571,7 +1571,7 @@ snapshots:
 
   '@inglorious/utils@5.1.0': {}
 
-  '@inglorious/web@6.13.1(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))':
+  '@inglorious/web@6.14.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0

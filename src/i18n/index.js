@@ -9,6 +9,8 @@ const {
   currentLocale,
 } = createI18n({
   catalogues: import.meta.glob("./locales/*.json"),
+  // fr, ja and ar stay translated, but launch offers only these.
+  locales: ["en", "it"],
   defaultLocale: "en",
   storageKey: "vaitu-locale",
   queryParam: "lang",

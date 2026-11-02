@@ -89,7 +89,6 @@
     "jobType": {
       "wedding_photographer": "結婚式の写真撮影",
       "festival_photographer": "フェスティバルの写真撮影",
-      "office_photographer": "オフィスの写真撮影",
       "wedding_videographer": "結婚式の映像撮影",
       "festival_videographer": "フェスティバルの映像撮影",
       "wedding_musician": "結婚式の音楽",
@@ -134,7 +133,8 @@
     "location": "会場",
     "eventDate": "日付",
     "deadline": "応募締切",
-    "maxShortlist": "候補の上限",
+    "shortlistSize": "候補の上限",
+    "shortlistSizeHint": "応募は誰でもできます。選ぶ前に候補に入れられる人数です。",
     "professions": "あなたの職種",
     "professionsHint": "フィードには最初にこれらの職種の仕事が表示されます。何も選ばなければすべて表示されます。",
     "jobTitle": "作業内容",
@@ -364,7 +364,7 @@
     "start": "開始",
     "voiceHint": "入力する代わりにイベントについて話してください。下の項目に文字起こしされます。",
     "coverPhoto": "カバー写真",
-    "coverHint": "頭文字の代わりにイベントカードに表示されます。",
+    "coverHint": "イベントカードに表示されます。ない場合は頭文字が表示されます。",
     "addCover": "カバーを追加",
     "changeCover": "カバーを変更",
     "editCover": "カバーを編集",
@@ -480,7 +480,7 @@
       },
       "audience": {
         "question": "どんな人向けですか？",
-        "answer": "引き受けられない仕事を他の人に引き継ぎたいプロフェッショナルのためのアプリです。結婚式の写真家から始まり、フェスティバルの音響技術者や、アパート・一戸建て・オフィスの清掃など、他の職種にも広がっています。"
+        "answer": "結婚式で働き、引き受けられない仕事を他の人に引き継ぎたいプロフェッショナルのためのアプリです。写真家、ビデオグラファー、ミュージシャン、DJ、プランナー、メイクアップアーティストが対象です。他の職種も今後追加されます。"
       },
       "publish": {
         "question": "イベントを投稿するには？",

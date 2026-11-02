@@ -2,7 +2,7 @@
   "title": "Vaitu: passa a un collega il lavoro che non puoi fare",
   "description": "Hai un lavoro ma non puoi farlo? Pubblicalo su Vaitu: i colleghi del tuo settore si candidano e scegli tu chi ci va.",
   "languageLabel": "Lingua",
-  "eyebrow": "Per chi lavora a eventi, case e uffici",
+  "eyebrow": "Per chi lavora ai matrimoni",
   "headline": "Non puoi esserci più? Di' a un collega: “vai tu”.",
   "lede": "Vaitu è il posto in cui i professionisti passano ai colleghi i lavori che non possono fare. Pubblichi il lavoro, i colleghi si candidano e scegli tu a chi affidarlo.",
   "cta": "Apri Vaitu",
@@ -67,9 +67,8 @@
     "Video",
     "Musica",
     "DJ",
-    "Audio",
-    "Pulizie",
-    "Impianti elettrici"
+    "Wedding planning",
+    "Trucco"
   ],
   "earlyTitle": "Siamo all'inizio.",
   "earlyBody": "All'inizio i lavori saranno pochi. Scegli mestieri e regioni e ti avviseremo quando ne arriva uno adatto a te.",

@@ -31,8 +31,7 @@ export function distinctRegions(regions) {
 
 /**
  * The job types a feed asks for: the picked ones and those of each picked style
- * or genre, else your interests, else all of the trades in scope. Empty means
- * every job type.
+ * or genre, else your interests, else all of the trades in scope.
  */
 export function jobTypesInScope(types, details, interests, professions) {
   const available = jobTypesFor(professions)
@@ -45,7 +44,7 @@ export function jobTypesInScope(types, details, interests, professions) {
   if (picked.length) return picked
   const interesting = interestsFor(interests, professions)
   if (interesting.length) return interesting
-  return professions.length ? available.map((jobType) => jobType.id) : []
+  return available.map((jobType) => jobType.id)
 }
 
 export function professionsInScope(activeProfessions, professions = []) {

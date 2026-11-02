@@ -21,7 +21,7 @@ export const musicGenres = [
 ]
 
 const SETTINGS_BY_PROFESSION = {
-  photographer: ["wedding", "festival", "concert", "office"],
+  photographer: ["wedding", "festival", "concert"],
   videographer: ["wedding", "festival", "concert"],
   musician: ["wedding", "festival", "concert"],
   dj: ["wedding", "festival"],
@@ -32,10 +32,9 @@ const SETTINGS_BY_PROFESSION = {
   electrician: ["apartment", "house", "office"],
 }
 
-export const professions = Object.keys(SETTINGS_BY_PROFESSION).map((id) => ({
-  id,
-  label: `taxonomy.profession.${id}`,
-}))
+// Launch is weddings only. The other settings stay defined, so they can come
+// back with one line and events already posted in them still display.
+const OFFERED_CATEGORIES = ["wedding"]
 
 export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
   ([profession, settings]) =>
@@ -51,6 +50,14 @@ export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
     }),
 )
 
+export const availableJobTypes = jobTypes.filter((jobType) =>
+  OFFERED_CATEGORIES.includes(jobType.category),
+)
+
+export const professions = [
+  ...new Set(availableJobTypes.map((jobType) => jobType.profession)),
+].map((id) => ({ id, label: `taxonomy.profession.${id}` }))
+
 export function jobTypeId(category, profession) {
   return `${category}_${profession}`
 }
@@ -60,10 +67,10 @@ export function jobTypeById(id) {
 }
 
 export function jobTypesFor(professionIds) {
-  if (!professionIds.length) return jobTypes
-  return jobTypes.filter((jobType) =>
+  const picked = availableJobTypes.filter((jobType) =>
     professionIds.includes(jobType.profession),
   )
+  return picked.length ? picked : availableJobTypes
 }
 
 export function interestsFor(interests, professionIds) {

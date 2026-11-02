@@ -25,9 +25,9 @@ describe("deadline", () => {
   })
 
   it("counts days until a week, then rounds to weeks", () => {
-    expect(deadlineBadge({ daysLeft: WEEK_DAYS - 1 })).toBe("6D LEFT")
-    expect(deadlineBadge({ daysLeft: WEEK_DAYS })).toBe("1W LEFT")
-    expect(deadlineBadge({ daysLeft: WEEK_DAYS + 4 })).toBe("2W LEFT")
+    expect(deadlineBadge({ daysLeft: WEEK_DAYS - 1 })).toBe("6 DAYS LEFT")
+    expect(deadlineBadge({ daysLeft: WEEK_DAYS })).toBe("1 WEEK LEFT")
+    expect(deadlineBadge({ daysLeft: WEEK_DAYS + 4 })).toBe("2 WEEKS LEFT")
   })
 
   it("tones a closed or closing deadline and leaves the rest unmarked", () => {

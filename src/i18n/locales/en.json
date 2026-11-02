@@ -48,10 +48,10 @@
     "assigned": "ASSIGNED",
     "closed": "CLOSED",
     "closing": "CLOSING",
-    "daysLeft_one": "{{count}}D LEFT",
-    "daysLeft_other": "{{count}}D LEFT",
-    "weeksLeft_one": "{{count}}W LEFT",
-    "weeksLeft_other": "{{count}}W LEFT"
+    "daysLeft_one": "{{count}} DAY LEFT",
+    "daysLeft_other": "{{count}} DAYS LEFT",
+    "weeksLeft_one": "{{count}} WEEK LEFT",
+    "weeksLeft_other": "{{count}} WEEKS LEFT"
   },
   "notFound": {
     "title": "Nothing here",
@@ -91,7 +91,6 @@
     "jobType": {
       "wedding_photographer": "Wedding photography",
       "festival_photographer": "Festival photography",
-      "office_photographer": "Office photography",
       "wedding_videographer": "Wedding video",
       "festival_videographer": "Festival video",
       "wedding_musician": "Wedding music",
@@ -136,7 +135,8 @@
     "location": "Location",
     "eventDate": "Date",
     "deadline": "Application deadline",
-    "maxShortlist": "Max shortlist",
+    "shortlistSize": "Shortlist size",
+    "shortlistSizeHint": "Everyone can apply. This is how many of them you can shortlist before choosing.",
     "professions": "What you do",
     "professionsHint": "Your feed shows jobs in these trades by default. Pick none to see all of them.",
     "jobTitle": "What needs doing",
@@ -370,7 +370,7 @@
     "start": "Start",
     "voiceHint": "Talk through your event instead of typing — it will be transcribed into the fields below.",
     "coverPhoto": "Cover photo",
-    "coverHint": "Shows on the event card instead of the initials.",
+    "coverHint": "Shown on the event card. Without one, the card shows the initials.",
     "addCover": "Add cover",
     "changeCover": "Change cover",
     "editCover": "Edit cover",
@@ -487,7 +487,7 @@
       },
       "audience": {
         "question": "Who is it for?",
-        "answer": "Professionals who need to pass on a job they can't take. It started with wedding photographers and is expanding to other trades, such as sound technicians at a festival or cleaners looking after apartments, houses and offices."
+        "answer": "Professionals who work at weddings and need to pass on a job they can't take: photographers, videographers, musicians, DJs, planners and make-up artists. Other trades will follow."
       },
       "publish": {
         "question": "How do I publish an event?",

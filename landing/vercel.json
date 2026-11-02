@@ -2,5 +2,27 @@
   "framework": null,
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "redirects": [
+    {
+      "source": "/en",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:locale(fr|ja|ar)",
+      "destination": "/",
+      "permanent": false
+    },
+    {
+      "source": "/:locale(fr|ja|ar)/:path*",
+      "destination": "/:path*",
+      "permanent": false
+    }
+  ]
 }

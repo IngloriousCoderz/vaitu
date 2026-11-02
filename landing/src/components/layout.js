@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { copy, LANGUAGES, localeOf, localePath } from "../site.js"
+import { copy, LANGUAGES, localeChoose, localeOf, localePath } from "../site.js"
 
 export const Header = {
   /** @param {object} entity @param {string} path - This page, in any language. */
@@ -12,17 +12,22 @@ export const Header = {
           <img src="/logo.svg" alt="" width="40" height="27" />
           <span>vaitu</span>
         </a>
-        <nav class="languages" aria-label=${copy(entity).languageLabel}>
+        <select
+          class="languages"
+          aria-label=${copy(entity).languageLabel}
+          @change=${(event) => localeChoose(event.target.value, path)}
+        >
           ${LANGUAGES.map(
             ({ locale, label }) =>
-              html`<a
-                href=${localePath(locale, path)}
+              html`<option
+                value=${locale}
                 lang=${locale}
-                aria-current=${locale === current ? "page" : "false"}
-                >${label}</a
-              >`,
+                ?selected=${locale === current}
+              >
+                ${label}
+              </option>`,
           )}
-        </nav>
+        </select>
       </header>
     `
   },

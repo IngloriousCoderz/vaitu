@@ -1,7 +1,7 @@
 import { html } from "@inglorious/web"
 
 import { Footer, Header } from "../components/layout.js"
-import { alternateLinks, copy, localeOf } from "../site.js"
+import { copy, localeOf, pageHead } from "../site.js"
 
 const APP_URL = import.meta.env.VITE_APP_URL
 
@@ -9,7 +9,7 @@ export const metadata = (entity) => {
   const { title, description } = copy(entity)
   return {
     title,
-    head: alternateLinks("/"),
+    head: pageHead(entity, "/"),
     meta: {
       description,
       "og:title": title,

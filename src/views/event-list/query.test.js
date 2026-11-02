@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { availableJobTypes } from "../../data/event-taxonomy.js"
 import { feedQuery, localToday } from "./query.js"
 
 const defaults = {
@@ -22,9 +23,9 @@ function query(fields = {}) {
 }
 
 describe("feedQuery", () => {
-  it("asks for everything, newest first, when nothing is picked", () => {
+  it("asks for everything on offer, newest first, when nothing is picked", () => {
     expect(query()).toEqual({
-      jobTypes: [],
+      jobTypes: availableJobTypes.map((jobType) => jobType.id),
       details: [],
       regions: null,
       dateFrom: null,
@@ -34,36 +35,31 @@ describe("feedQuery", () => {
     })
   })
 
-  it("scopes the job types to the picked ones, a genre's, or the interests", () => {
+  it("scopes the job types to the picked ones, a style's, or the interests", () => {
     expect(query({ interests: ["wedding_dj"] }).jobTypes).toEqual([
       "wedding_dj",
     ])
-    expect(query({ types: ["festival_dj"] }).jobTypes).toEqual(["festival_dj"])
-    expect(query({ details: ["techno"] }).jobTypes).toContain("festival_dj")
+    expect(query({ types: ["wedding_photographer"] }).jobTypes).toEqual([
+      "wedding_photographer",
+    ])
+    expect(query({ details: ["editorial"] }).jobTypes).toContain("wedding_dj")
   })
 
   it("scopes the job types to the picked trades, or else your own", () => {
-    expect(query({ myProfessions: ["sound_technician"] }).jobTypes).toEqual([
-      "festival_sound_technician",
-      "concert_sound_technician",
+    expect(query({ myProfessions: ["planner"] }).jobTypes).toEqual([
+      "wedding_planner",
     ])
     expect(
-      query({
-        myProfessions: ["cleaner"],
-        activeProfessions: ["sound_technician"],
-      }).jobTypes,
-    ).toEqual(["festival_sound_technician", "concert_sound_technician"])
+      query({ myProfessions: ["planner"], activeProfessions: ["dj"] }).jobTypes,
+    ).toEqual(["wedding_dj"])
   })
 
   it("ignores the interests the trades in scope don't work on", () => {
-    const picked = {
-      interests: ["apartment_cleaner"],
-      myProfessions: ["cleaner"],
-    }
-    expect(query(picked).jobTypes).toEqual(["apartment_cleaner"])
+    const picked = { interests: ["wedding_dj"], myProfessions: ["dj"] }
+    expect(query(picked).jobTypes).toEqual(["wedding_dj"])
     expect(
-      query({ ...picked, activeProfessions: ["sound_technician"] }).jobTypes,
-    ).toEqual(["festival_sound_technician", "concert_sound_technician"])
+      query({ ...picked, activeProfessions: ["planner"] }).jobTypes,
+    ).toEqual(["wedding_planner"])
   })
 
   it("groups the picked styles and genres by the detail they filter", () => {

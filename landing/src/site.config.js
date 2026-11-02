@@ -10,8 +10,9 @@ export default {
   title: "Vaitu",
   favicon: "/logo.svg",
   i18n: {
-    defaultLocale: "it",
-    locales: ["it", "en", "fr", "ja", "ar"],
+    defaultLocale: "en",
+    // fr, ja and ar stay translated in src/i18n, but launch builds only these.
+    locales: ["en", "it"],
   },
   meta: {
     viewport: "width=device-width, initial-scale=1.0",

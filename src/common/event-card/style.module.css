@@ -84,6 +84,11 @@
   flex-wrap: wrap;
 }
 
+.badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .badgeClosing {
   --iw-badge-accent: #f0e3bd;
   --iw-badge-on-accent: #7a5f22;

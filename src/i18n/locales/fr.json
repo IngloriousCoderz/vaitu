@@ -48,12 +48,12 @@
     "assigned": "ATTRIBUÉ",
     "closed": "FERMÉ",
     "closing": "BIENTÔT FERMÉ",
-    "daysLeft_one": "PLUS QUE {{count}} J",
-    "daysLeft_other": "PLUS QUE {{count}} J",
-    "daysLeft_many": "PLUS QUE {{count}} J",
-    "weeksLeft_one": "PLUS QUE {{count}} SEM.",
-    "weeksLeft_other": "PLUS QUE {{count}} SEM.",
-    "weeksLeft_many": "PLUS QUE {{count}} SEM."
+    "daysLeft_one": "PLUS QUE {{count}} JOUR",
+    "daysLeft_other": "PLUS QUE {{count}} JOURS",
+    "daysLeft_many": "PLUS QUE {{count}} JOURS",
+    "weeksLeft_one": "PLUS QUE {{count}} SEMAINE",
+    "weeksLeft_other": "PLUS QUE {{count}} SEMAINES",
+    "weeksLeft_many": "PLUS QUE {{count}} SEMAINES"
   },
   "notFound": {
     "title": "Rien ici",
@@ -93,7 +93,6 @@
     "jobType": {
       "wedding_photographer": "Photographie de mariage",
       "festival_photographer": "Photographie de festival",
-      "office_photographer": "Photographie de bureaux",
       "wedding_videographer": "Vidéo de mariage",
       "festival_videographer": "Vidéo de festival",
       "wedding_musician": "Musique de mariage",
@@ -138,7 +137,8 @@
     "location": "Lieu",
     "eventDate": "Date",
     "deadline": "Date limite de candidature",
-    "maxShortlist": "Places en présélection",
+    "shortlistSize": "Places en présélection",
+    "shortlistSizeHint": "Tout le monde peut postuler. C'est le nombre de candidats que vous pouvez présélectionner avant de choisir.",
     "professions": "Votre métier",
     "professionsHint": "Votre fil affiche par défaut les missions de ces métiers. N'en choisissez aucun pour toutes les voir.",
     "jobTitle": "Ce qu'il y a à faire",
@@ -377,7 +377,7 @@
     "start": "Commencer",
     "voiceHint": "Décrivez votre événement au lieu de le saisir : il sera transcrit dans les champs ci-dessous.",
     "coverPhoto": "Photo de couverture",
-    "coverHint": "Apparait sur la carte de l'événement à la place des initiales.",
+    "coverHint": "Affichée sur la carte de l'événement. Sans photo, la carte affiche les initiales.",
     "addCover": "Ajouter une couverture",
     "changeCover": "Changer la couverture",
     "editCover": "Modifier la couverture",
@@ -495,7 +495,7 @@
       },
       "audience": {
         "question": "À qui s'adresse-t-elle ?",
-        "answer": "Les professionnels qui doivent transmettre une mission qu'ils ne peuvent pas assurer. L'app a commencé avec les photographes de mariage et s'ouvre à d'autres métiers, comme les techniciens du son en festival ou le ménage dans les appartements, maisons et bureaux."
+        "answer": "Les professionnels du mariage qui doivent transmettre une mission qu'ils ne peuvent pas assurer : photographes, vidéastes, musiciens, DJ, wedding planners et maquilleurs. D'autres métiers suivront."
       },
       "publish": {
         "question": "Comment publier un événement ?",

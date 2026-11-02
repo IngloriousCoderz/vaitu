@@ -2,7 +2,7 @@
   "title": "Vaitu : confiez à un collègue la mission que vous ne pouvez pas assurer",
   "description": "Vous avez une mission mais ne pouvez pas l'assurer ? Publiez-la sur Vaitu : des collègues de votre métier candidatent et vous choisissez qui y va.",
   "languageLabel": "Langue",
-  "eyebrow": "Pour ceux qui travaillent sur des événements, chez des particuliers et en entreprise",
+  "eyebrow": "Pour ceux qui travaillent sur des mariages",
   "headline": "Vous ne pouvez pas y être ? Dites à un collègue : « vai tu ».",
   "lede": "Vaitu permet aux professionnels de transmettre à des collègues les missions qu'ils ne peuvent pas assurer. Vous publiez la mission, des collègues candidatent, et vous choisissez à qui la confier.",
   "cta": "Ouvrir Vaitu",
@@ -67,9 +67,8 @@
     "Vidéo",
     "Musique",
     "DJ",
-    "Son",
-    "Nettoyage",
-    "Électricité"
+    "Organisation de mariage",
+    "Maquillage"
   ],
   "earlyTitle": "Nous débutons.",
   "earlyBody": "Les missions seront peu nombreuses au début. Choisissez vos métiers et régions, et nous vous préviendrons lorsqu'une mission convient.",

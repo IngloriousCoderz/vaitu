@@ -1,5 +1,9 @@
 import { countries } from "../data/countries.js"
-import { jobTypes, musicGenres, weddingStyles } from "../data/event-taxonomy.js"
+import {
+  availableJobTypes,
+  musicGenres,
+  weddingStyles,
+} from "../data/event-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 import { favoriteRegionOptions, regionOption } from "../data/regions/resolve.js"
 import { languages } from "../i18n/index.js"
@@ -156,7 +160,7 @@ function jobTypeSelect(targetId, targetEvent) {
     loadingMessage: "combobox.loading",
     isFullWidth: true,
     size: "md",
-    options: jobTypes,
+    options: availableJobTypes,
     changeEvent: `#${targetId}:${targetEvent}`,
     changePayload: { field: "job_type" },
   }

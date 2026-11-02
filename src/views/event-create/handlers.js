@@ -41,6 +41,10 @@ import {
   PAD_LENGTH,
 } from "../../constants/index.js"
 import {
+  currencyAfterCountryChange,
+  DEFAULT_CURRENCY,
+} from "../../data/currencies.js"
+import {
   jobTypeById,
   jobTypeId,
   jobTypesFor,
@@ -102,6 +106,14 @@ export function fieldSet(entity, { field, value }, api) {
     )
     Form.fieldChange(entity, { path: "country", value })
     Form.fieldChange(entity, { path: "region", value: region })
+    Form.fieldChange(entity, {
+      path: "pay_currency",
+      value: currencyAfterCountryChange(
+        previous,
+        value,
+        getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY),
+      ),
+    })
     api?.notify("#regionCreate:valueSet", region)
     api?.notify("#countryCreate:errorSet", null)
     api?.notify("#regionCreate:errorSet", null)
@@ -355,8 +367,10 @@ export const audioParse = handleAsync("audioParse", {
       Form.fieldChange(entity, { path: "title", value: fields.title })
     }
     Form.fieldChange(entity, { path: "details", value: details })
+    const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
     if (fields.pay) {
-      for (const [path, value] of Object.entries(payToForm(fields.pay))) {
+      const pay = { ...fields.pay, currency: fields.pay.currency ?? currency }
+      for (const [path, value] of Object.entries(payToForm(pay))) {
         Form.fieldChange(entity, { path, value })
       }
     }
@@ -386,6 +400,12 @@ export const audioParse = handleAsync("audioParse", {
       getFieldValue(entity, "region", ""),
     )
     Form.fieldChange(entity, { path: "region", value: region })
+    if (!fields.pay?.currency) {
+      Form.fieldChange(entity, {
+        path: "pay_currency",
+        value: currencyAfterCountryChange(previousCountry, country, currency),
+      })
+    }
     api.notify("#countryCreate:valueSet", country)
     api.notify("#regionCreate:valueSet", region)
     api.notify("#styleCreate:valueSet", details.style ?? "")

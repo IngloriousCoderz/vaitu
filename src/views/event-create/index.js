@@ -85,6 +85,7 @@ export const EventCreate = {
       validate: (values) =>
         validateEvent({
           ...values,
+          max_applicants: Number(values.max_applicants),
           title: eventTitle(values),
           pay: payFromForm(values),
         }),
@@ -107,7 +108,7 @@ export const EventCreate = {
       region: values.region,
       event_date: values.event_date,
       application_deadline: values.application_deadline,
-      max_applicants: values.max_applicants,
+      max_applicants: Number(values.max_applicants),
       pay: payFromForm(values),
       cover_url: entity.cover_url,
       gallery_urls: [...(entity.gallery_urls ?? [])],

@@ -2,7 +2,7 @@
 // source. src/views/event-create/parse-event.test.js fails when they drift.
 
 const SETTINGS_BY_PROFESSION = {
-  photographer: ["wedding", "festival", "concert", "office"],
+  photographer: ["wedding", "festival", "concert"],
   videographer: ["wedding", "festival", "concert"],
   musician: ["wedding", "festival", "concert"],
   dj: ["wedding", "festival"],
@@ -60,7 +60,163 @@ export const JOB_TYPES = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
     settings.map((category) => `${category}_${profession}`),
 )
 
-export const CURRENCIES = ["EUR", "USD", "GBP", "CHF", "JPY", "AED"]
+export const CURRENCIES = [
+  "AED",
+  "AFN",
+  "ALL",
+  "AMD",
+  "AOA",
+  "ARS",
+  "AUD",
+  "AWG",
+  "AZN",
+  "BAM",
+  "BBD",
+  "BDT",
+  "BGN",
+  "BHD",
+  "BIF",
+  "BMD",
+  "BND",
+  "BOB",
+  "BRL",
+  "BSD",
+  "BTN",
+  "BWP",
+  "BYN",
+  "BZD",
+  "CAD",
+  "CDF",
+  "CHF",
+  "CLP",
+  "CNY",
+  "COP",
+  "CRC",
+  "CUP",
+  "CVE",
+  "CZK",
+  "DJF",
+  "DKK",
+  "DOP",
+  "DZD",
+  "EGP",
+  "ERN",
+  "ETB",
+  "EUR",
+  "FJD",
+  "FKP",
+  "GBP",
+  "GEL",
+  "GHS",
+  "GIP",
+  "GMD",
+  "GNF",
+  "GTQ",
+  "GYD",
+  "HKD",
+  "HNL",
+  "HTG",
+  "HUF",
+  "IDR",
+  "ILS",
+  "INR",
+  "IQD",
+  "IRR",
+  "ISK",
+  "JMD",
+  "JOD",
+  "JPY",
+  "KES",
+  "KGS",
+  "KHR",
+  "KMF",
+  "KPW",
+  "KRW",
+  "KWD",
+  "KYD",
+  "KZT",
+  "LAK",
+  "LBP",
+  "LKR",
+  "LRD",
+  "LSL",
+  "LYD",
+  "MAD",
+  "MDL",
+  "MGA",
+  "MKD",
+  "MMK",
+  "MNT",
+  "MOP",
+  "MRU",
+  "MUR",
+  "MVR",
+  "MWK",
+  "MXN",
+  "MYR",
+  "MZN",
+  "NAD",
+  "NGN",
+  "NIO",
+  "NOK",
+  "NPR",
+  "NZD",
+  "OMR",
+  "PAB",
+  "PEN",
+  "PGK",
+  "PHP",
+  "PKR",
+  "PLN",
+  "PYG",
+  "QAR",
+  "RON",
+  "RSD",
+  "RUB",
+  "RWF",
+  "SAR",
+  "SBD",
+  "SCR",
+  "SDG",
+  "SEK",
+  "SGD",
+  "SHP",
+  "SLE",
+  "SOS",
+  "SRD",
+  "SSP",
+  "STN",
+  "SVC",
+  "SYP",
+  "SZL",
+  "THB",
+  "TJS",
+  "TMT",
+  "TND",
+  "TOP",
+  "TRY",
+  "TTD",
+  "TWD",
+  "TZS",
+  "UAH",
+  "UGX",
+  "USD",
+  "UYU",
+  "UZS",
+  "VES",
+  "VND",
+  "VUV",
+  "WST",
+  "XAF",
+  "XCD",
+  "XCG",
+  "XOF",
+  "XPF",
+  "YER",
+  "ZAR",
+  "ZMW",
+  "ZWG",
+]
 
 export const TITLED_CATEGORIES = [
   "festival",
@@ -71,7 +227,6 @@ export const TITLED_CATEGORIES = [
 ]
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
-const DEFAULT_CURRENCY = "EUR"
 const NO_AMOUNT = 0
 
 export function offeredJobTypes(requested: unknown) {
@@ -100,7 +255,7 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "region": string | null,
   "event_date": "YYYY-MM-DD" | null,
   "details": object,
-  "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": ${oneOf(CURRENCIES)} } | null
+  "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its category, an underscore and the profession. "details" depends on the category:
 - wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "style": ${oneOf(WEDDING_STYLES)} | null }
@@ -113,6 +268,7 @@ Rules:
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
 - pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max. null when no amount is said.
+- currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
 - Values from a list must be one of the listed values, or null.
 - event_date: use the stated year when given, otherwise the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day and month can be determined.`
 }
@@ -150,7 +306,7 @@ function pay(answer: unknown) {
   const max = amount(given.amount_max)
   const currency = CURRENCIES.includes(given.currency as string)
     ? (given.currency as string)
-    : DEFAULT_CURRENCY
+    : null
   if (min === null) return null
   if (given.kind === "fixed") {
     return { kind: "fixed", amount_min: min, amount_max: null, currency }

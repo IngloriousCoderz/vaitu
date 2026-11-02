@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { availableJobTypes } from "../../data/event-taxonomy.js"
 import {
   activeFilters,
   defaultRegion,
@@ -9,14 +10,13 @@ import {
 } from "./helpers.js"
 
 describe("jobTypesInScope", () => {
-  it("adds the job types of each picked style or genre", () => {
-    expect(jobTypesInScope([], [], [], [])).toEqual([])
-    expect(jobTypesInScope([], ["techno"], [], ["sound_technician"])).toEqual([
-      "festival_sound_technician",
-      "concert_sound_technician",
+  const everything = availableJobTypes.map((jobType) => jobType.id)
+
+  it("adds the job types of each picked style", () => {
+    expect(jobTypesInScope([], [], [], [])).toEqual(everything)
+    expect(jobTypesInScope([], ["editorial"], [], ["dj"])).toEqual([
+      "wedding_dj",
     ])
-    expect(jobTypesInScope([], ["techno"], [], [])).toContain("festival_dj")
-    expect(jobTypesInScope([], ["techno"], [], [])).not.toContain("wedding_dj")
     expect(jobTypesInScope([], ["editorial"], [], [])).not.toContain(
       "wedding_planner",
     )
@@ -25,16 +25,14 @@ describe("jobTypesInScope", () => {
   it("falls back to the interests only while nothing is picked", () => {
     const interests = ["wedding_dj"]
     expect(jobTypesInScope([], [], interests, [])).toEqual(interests)
-    expect(jobTypesInScope(["festival_dj"], [], interests, [])).toEqual([
-      "festival_dj",
-    ])
+    expect(
+      jobTypesInScope(["wedding_photographer"], [], interests, []),
+    ).toEqual(["wedding_photographer"])
   })
 
   it("falls back to the trades when no interest applies to them", () => {
-    expect(jobTypesInScope([], [], ["wedding_dj"], ["cleaner"])).toEqual([
-      "apartment_cleaner",
-      "house_cleaner",
-      "office_cleaner",
+    expect(jobTypesInScope([], [], ["wedding_dj"], ["planner"])).toEqual([
+      "wedding_planner",
     ])
   })
 })

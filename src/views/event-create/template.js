@@ -9,6 +9,7 @@ import { IconButton } from "@inglorious/ui/icon-button"
 import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
 import { RadioGroup } from "@inglorious/ui/radio-group"
+import { Select } from "@inglorious/ui/select"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -27,7 +28,7 @@ import {
 } from "../../constants/index.js"
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
-import { t } from "../../i18n/index.js"
+import { currentLocale, t } from "../../i18n/index.js"
 import { categoryById, hasDetail } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
@@ -161,7 +162,8 @@ export const EventCreate = {
             onField,
           })}
           ${this.renderTextField({
-            label: t("fields.maxShortlist"),
+            label: t("fields.shortlistSize"),
+            hint: t("fields.shortlistSizeHint"),
             field: "max_applicants",
             value: getFieldValue(entity, "max_applicants", ""),
             type: "number",
@@ -212,6 +214,9 @@ export const EventCreate = {
   renderPay({ entity, onField }) {
     const kind = getFieldValue(entity, "pay_kind", "to_agree")
     const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
+    const currencyNames = new Intl.DisplayNames(currentLocale(), {
+      type: "currency",
+    })
     return html`
       <div class=${styles.field}>
         ${RadioGroup.render({
@@ -249,22 +254,19 @@ export const EventCreate = {
               onField,
             }),
           )}
-          <label class=${styles.field}>
-            <span>${t("pay.currency")}</span>
-            <select
-              class=${styles.currency}
-              .value=${currency}
-              @change=${(event) =>
-                onField({ field: "pay_currency", value: event.target.value })}
-            >
-              ${CURRENCIES.map(
-                (code) =>
-                  html`<option value=${code} ?selected=${code === currency}>
-                    ${code}
-                  </option>`,
-              )}
-            </select>
-          </label>
+          <div class=${styles.field}>
+            ${Select.render({
+              id: "create-pay_currency",
+              label: t("pay.currency"),
+              value: currency,
+              options: CURRENCIES.map((code) => ({
+                value: code,
+                label: `${code} · ${currencyNames.of(code)}`,
+              })),
+              isFullWidth: true,
+              onChange: (value) => onField({ field: "pay_currency", value }),
+            })}
+          </div>
         `,
       )}
     `
@@ -607,6 +609,7 @@ export const EventCreate = {
     field,
     value = "",
     placeholder = "",
+    hint,
     type,
     error,
     isRequired = false,
@@ -620,6 +623,7 @@ export const EventCreate = {
           inputType: type ?? "text",
           value,
           placeholder,
+          hint,
           isRequired,
           isFullWidth: true,
           error,

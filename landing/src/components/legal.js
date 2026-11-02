@@ -1,6 +1,6 @@
 import { html } from "@inglorious/web"
 
-import { alternateLinks, copy } from "../site.js"
+import { copy, pageHead } from "../site.js"
 import { Footer, Header } from "./layout.js"
 
 const UPDATED_ON = "2026-11-01"
@@ -36,7 +36,7 @@ function fill(text) {
 export function legalMetadata(doc) {
   return (entity) => ({
     title: `${copy(entity).legal[doc].title} | Vaitu`,
-    head: alternateLinks(`/${doc}`),
+    head: pageHead(entity, `/${doc}`),
   })
 }
 

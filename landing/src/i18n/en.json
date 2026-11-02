@@ -2,7 +2,7 @@
   "title": "Vaitu: pass on the jobs you can't take to a colleague",
   "description": "Booked for a job you can't do? Publish it on Vaitu: colleagues in your trade apply, and you choose who goes.",
   "languageLabel": "Language",
-  "eyebrow": "For people who work at events, homes and offices",
+  "eyebrow": "For people who work at weddings",
   "headline": "Can't make it? Tell a colleague: “vai tu”.",
   "lede": "Vaitu is where professionals hand off jobs they can't take. You publish the job, colleagues apply, and you choose who to pass it to.",
   "cta": "Open Vaitu",
@@ -67,9 +67,8 @@
     "Video",
     "Music",
     "DJ",
-    "Sound",
-    "Cleaning",
-    "Electrical work"
+    "Wedding planning",
+    "Make-up"
   ],
   "earlyTitle": "We're just getting started.",
   "earlyBody": "There won't be many jobs at first. Choose your trades and regions, and we'll let you know when one fits.",

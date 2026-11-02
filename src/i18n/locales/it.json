@@ -48,12 +48,12 @@
     "assigned": "ASSEGNATO",
     "closed": "CHIUSO",
     "closing": "IN CHIUSURA",
-    "daysLeft_one": "MANCA {{count}} G",
-    "daysLeft_other": "MANCANO {{count}} G",
-    "daysLeft_many": "MANCANO {{count}} G",
-    "weeksLeft_one": "MANCA {{count}} SETT.",
-    "weeksLeft_other": "MANCANO {{count}} SETT.",
-    "weeksLeft_many": "MANCANO {{count}} SETT."
+    "daysLeft_one": "MANCA {{count}} GIORNO",
+    "daysLeft_other": "MANCANO {{count}} GIORNI",
+    "daysLeft_many": "MANCANO {{count}} GIORNI",
+    "weeksLeft_one": "MANCA {{count}} SETTIMANA",
+    "weeksLeft_other": "MANCANO {{count}} SETTIMANE",
+    "weeksLeft_many": "MANCANO {{count}} SETTIMANE"
   },
   "notFound": {
     "title": "Qui non c'è niente",
@@ -93,7 +93,6 @@
     "jobType": {
       "wedding_photographer": "Fotografia di matrimonio",
       "festival_photographer": "Fotografia di festival",
-      "office_photographer": "Fotografia di uffici",
       "wedding_videographer": "Video di matrimonio",
       "festival_videographer": "Video di festival",
       "wedding_musician": "Musica per matrimoni",
@@ -138,7 +137,8 @@
     "location": "Luogo",
     "eventDate": "Data",
     "deadline": "Scadenza candidature",
-    "maxShortlist": "Posti in shortlist",
+    "shortlistSize": "Posti in shortlist",
+    "shortlistSizeHint": "Tutti possono candidarsi. Questi sono i posti per chi metti in shortlist prima di scegliere.",
     "professions": "Di cosa ti occupi",
     "professionsHint": "Il tuo feed mostra di default i lavori di questi settori. Non sceglierne nessuno per vederli tutti.",
     "jobTitle": "Cosa c'è da fare",
@@ -377,7 +377,7 @@
     "start": "Inizia",
     "voiceHint": "Racconta il tuo evento invece di scriverlo: verrà trascritto nei campi qui sotto.",
     "coverPhoto": "Foto di copertina",
-    "coverHint": "Compare nella scheda dell'evento al posto delle iniziali.",
+    "coverHint": "Appare nella scheda dell'evento. Se manca, vengono mostrate le iniziali.",
     "addCover": "Aggiungi copertina",
     "changeCover": "Cambia copertina",
     "editCover": "Modifica copertina",
@@ -495,7 +495,7 @@
       },
       "audience": {
         "question": "A chi è rivolta?",
-        "answer": "Professionisti che devono passare un lavoro che non possono accettare. È nato per i fotografi di matrimoni e si sta allargando ad altri settori, come i tecnici del suono ai festival o chi fa pulizie in appartamenti, case e uffici."
+        "answer": "Professionisti che lavorano ai matrimoni e devono passare un lavoro che non possono accettare: fotografi, videomaker, musicisti, DJ, wedding planner e truccatori. Seguiranno altri settori."
       },
       "publish": {
         "question": "Come pubblico un evento?",

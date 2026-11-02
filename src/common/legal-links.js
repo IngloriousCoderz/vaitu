@@ -1,7 +1,7 @@
 import { currentLocale } from "../i18n/index.js"
 
-// The site's default language has no prefix: /privacy, /en/privacy.
-const SITE_DEFAULT_LOCALE = "it"
+// The site's default language has no prefix: /privacy, /it/privacy.
+const SITE_DEFAULT_LOCALE = "en"
 
 /** @param {"privacy" | "terms"} doc */
 export function legalUrl(doc, locale = currentLocale()) {

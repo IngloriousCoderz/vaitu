@@ -89,25 +89,31 @@ a {
 }
 
 .languages {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.875rem;
-  font-size: 0.875rem;
-}
-
-.languages a {
-  color: var(--muted);
-  text-decoration: none;
-  padding-block: 0.25rem;
-}
-
-.languages a:hover {
-  text-decoration: underline;
-}
-
-.languages a[aria-current="page"] {
+  appearance: none;
+  padding: 0.375rem 2rem 0.375rem 0.875rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235f6656'/%3E%3C/svg%3E")
+    no-repeat right 0.875rem center;
   color: var(--ink);
-  font-weight: 600;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+[dir="rtl"] .languages {
+  padding-inline: 0.875rem 2rem;
+  background-position: left 0.875rem center;
+}
+
+.languages:hover {
+  border-color: var(--muted);
+}
+
+.languages:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 section {

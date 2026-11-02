@@ -53,7 +53,9 @@ export const Card = {
           ${Badge.render({
             children: deadlineBadge(event),
             shape: "pill",
-            className: tone ? toneClass[tone] : "",
+            className: [styles.badge, toneClass[tone]]
+              .filter(Boolean)
+              .join(" "),
           })}
         </div>
         <p class=${styles.meta}>${eventSubtitle(event)}</p>
