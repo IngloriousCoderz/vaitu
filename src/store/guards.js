@@ -64,7 +64,7 @@ export function isPreLoginPath(pathname) {
  * they have no reason to be on. Navigates rather than returning a verdict, so
  * nothing downstream renders a page that is about to be replaced.
  * @param {object} entity - The router entity.
- * @param {{route: string, path: string}} payload - The resolved route.
+ * @param {{route: string, path: string, query?: object}} payload - The resolved route.
  * @param {object} api - The application API.
  */
 export function routeGuard(entity, payload, api) {
@@ -88,7 +88,7 @@ export function routeGuard(entity, payload, api) {
     return
   }
 
-  api.notify("#router:navigate", landingForSession(api.getEntity("router")))
+  api.notify("#router:navigate", landingForSession(payload))
 }
 
 export const guards = {

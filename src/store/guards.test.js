@@ -91,6 +91,31 @@ describe("routeGuard, signed out", () => {
   })
 })
 
+describe("routeGuard, signed in", () => {
+  it("sends a visitor who opens the sign-in page back where they were headed", () => {
+    const notify = vi.fn()
+    const originalWindow = globalThis.window
+    globalThis.window = {
+      localStorage: { getItem: () => JSON.stringify({ id: "user-1" }) },
+      sessionStorage: { getItem: () => null },
+    }
+    try {
+      routeGuard(
+        {},
+        {
+          route: "authentication",
+          path: paths.login,
+          query: { from: "/profile" },
+        },
+        { notify, getEntity: () => ({ route: "eventList", query: {} }) },
+      )
+    } finally {
+      globalThis.window = originalWindow
+    }
+    expect(notify).toHaveBeenCalledWith("#router:navigate", "/profile")
+  })
+})
+
 describe("the public page", () => {
   it("leaves a signed-out visitor on the account erasure link", () => {
     const api = { notify: vi.fn(), getEntity: vi.fn() }
