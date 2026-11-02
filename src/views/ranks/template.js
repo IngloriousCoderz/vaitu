@@ -12,8 +12,8 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { badgeDescription, BADGES, Badges } from "../../common/badges/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
@@ -78,40 +78,39 @@ export const Ranks = {
             direction: "column",
             className: styles.list,
             children: html`
-              ${
-                PageStatus.render({
-                  isError: status === "error",
-                  error,
-                  isLoading: status === "loading",
-                }) ??
-                when(tiers, () =>
-                  RANK_ORDER.map(
-                    (rank) => html`
-                      ${Flex.render({
-                        align: "center",
-                        justify: "between",
-                        className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
-                        children: [
-                          Flex.render({
-                            element: "span",
-                            isInline: true,
-                            align: "center",
-                            gap: "sm",
-                            className: styles.rankName,
-                            children: html`
-                              ${Icon.render({ icon: socialLeaderboardOutline, size: "lg" })}
-                              ${t(`ranks.tier.${rank}`)}
-                            `,
-                          }),
-                          html`<span class=${styles.rankPoints}>
-                            ${t("ranks.minPoints", { count: rankMin(tiers, rank) })}
-                          </span>`,
-                        ],
-                      })}
-                    `,
+              ${LoadStatus.render({
+                isError: status === "error",
+                error,
+                isLoading: status === "loading",
+                content: () =>
+                  when(tiers, () =>
+                    RANK_ORDER.map(
+                      (rank) => html`
+                        ${Flex.render({
+                          align: "center",
+                          justify: "between",
+                          className: `${styles[`${rank}Card`]} ${mine?.tier === rank ? styles.currentCard : ""}`,
+                          children: [
+                            Flex.render({
+                              element: "span",
+                              isInline: true,
+                              align: "center",
+                              gap: "sm",
+                              className: styles.rankName,
+                              children: html`
+                                ${Icon.render({ icon: socialLeaderboardOutline, size: "lg" })}
+                                ${t(`ranks.tier.${rank}`)}
+                              `,
+                            }),
+                            html`<span class=${styles.rankPoints}>
+                              ${t("ranks.minPoints", { count: rankMin(tiers, rank) })}
+                            </span>`,
+                          ],
+                        })}
+                      `,
+                    ),
                   ),
-                )
-              }
+              })}
               ${when(
                 status === "ready" && tiers,
                 () => html`

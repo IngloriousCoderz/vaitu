@@ -34,10 +34,6 @@ export function photoClose(entity) {
   entity.isPhotoPreviewOpen = false
 }
 
-export function photoSwipeStart(entity, x) {
-  entity.photoSwipeX = x
-}
-
 export function photoStep(entity, delta) {
   if (!entity.isPhotoPreviewOpen) return
   const urls = entity.event_recap?.image_urls ?? []

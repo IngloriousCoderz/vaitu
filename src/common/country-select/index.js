@@ -3,12 +3,17 @@ import "./style.css"
 import { Combobox } from "@inglorious/ui/combobox"
 import { html } from "@inglorious/web"
 
-import { t, translated, translatedLabel } from "../../i18n/index.js"
-import * as handlers from "./handlers.js"
+import { t } from "../../i18n/index.js"
 
 export const CountrySelect = {
   ...Combobox,
-  ...handlers,
+  create(entity) {
+    entity.placeholder ??= "combobox.select"
+    entity.searchPlaceholder ??= "combobox.search"
+    entity.noOptionsMessage ??= "combobox.noOptions"
+    entity.loadingMessage ??= "combobox.loading"
+    Combobox.create(entity)
+  },
   render(entity, api) {
     return html`<div class="vaitu-country-select">
       ${Combobox.render(
@@ -20,10 +25,10 @@ export const CountrySelect = {
           noOptionsMessage: t(entity.noOptionsMessage),
           loadingMessage: t(entity.loadingMessage),
           formatCreateLabel: (term) => t("combobox.addValue", { term }),
-          error: translated(entity.error),
+          error: t(entity.error),
           options: entity.options.map((option) => ({
             ...option,
-            label: translatedLabel(option),
+            label: t(option.label),
           })),
         },
         api,

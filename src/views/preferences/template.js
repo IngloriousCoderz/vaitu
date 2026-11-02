@@ -1,15 +1,15 @@
 import { Button } from "@inglorious/ui/button"
 import { Checkbox } from "@inglorious/ui/checkbox"
+import { ChipPicker } from "@inglorious/ui/chip-picker"
 import { Flex } from "@inglorious/ui/flex"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { ChipPicker } from "../../common/chip-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { professions } from "../../data/event-taxonomy.js"
 import {
   ALL_TYPES,
@@ -32,12 +32,11 @@ export const Preferences = {
       variant: "document",
       read: true,
       children: [
-        PageStatus.render({
+        LoadStatus.render({
           isError: entity.status === "error",
           error: entity.error,
           isLoading: entity.status !== "ready",
-        }) ??
-          html`
+          content: () => html`
             <h2 class=${styles.sectionTitle}>${t("preferences.feed")}</h2>
             <p class=${styles.sectionHint}>${t("preferences.feedHint")}</p>
             ${Flex.render({
@@ -47,7 +46,10 @@ export const Preferences = {
                 ChipPicker.render({
                   label: t("fields.professions"),
                   hint: t("fields.professionsHint"),
-                  options: professions,
+                  options: professions.map(({ id, label }) => ({
+                    value: id,
+                    label: t(label),
+                  })),
                   value: entity.professions,
                   onToggle: onToggleProfession,
                 }),
@@ -124,6 +126,7 @@ export const Preferences = {
               className: styles.error,
             })}
           `,
+        }),
       ],
     })
   },

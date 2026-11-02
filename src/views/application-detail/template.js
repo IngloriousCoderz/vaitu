@@ -9,11 +9,11 @@ import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/event-card/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
-import { t, translated } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -54,13 +54,11 @@ export const ApplicationDetail = {
       category: application?.category ?? "wedding",
       children: [
         html`
-          ${
-            PageStatus.render({
-              isError: status !== "loading" && !application,
-              error,
-              isLoading: status === "loading" && !application,
-            }) ??
-            html`
+          ${LoadStatus.render({
+            isError: status !== "loading" && !application,
+            error,
+            isLoading: status === "loading" && !application,
+            content: () => html`
               <div class=${styles.stage}>
                 <div class=${styles.story}>
                   ${Card.render({
@@ -133,9 +131,7 @@ export const ApplicationDetail = {
                           value: motivation,
                           rows: 5,
                           isFullWidth: true,
-                          error: translated(
-                            getFieldError(entity, "motivation"),
-                          ),
+                          error: t(getFieldError(entity, "motivation")),
                           onChange: (value) =>
                             onField({ field: "motivation", value }),
                         })}
@@ -189,8 +185,8 @@ export const ApplicationDetail = {
                   })}
                 </div>
               </div>
-            `
-          }
+            `,
+          })}
         `,
       ],
     })

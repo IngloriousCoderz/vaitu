@@ -1,5 +1,6 @@
 import { handleAsync } from "@inglorious/store/async"
 import { optimistic } from "@inglorious/store/optimistic"
+import { pageRouteChange } from "@inglorious/web/router"
 
 import {
   fetchMyNotifications,
@@ -8,7 +9,6 @@ import {
 } from "../../api/notifications.js"
 import { NO_UNREAD } from "../../constants/index.js"
 import { paths } from "../../routes.js"
-import { pageRouteChange } from "../page-route.js"
 import { Notifications as renderers } from "./template.js"
 
 const ONE_NOTIFICATION = 1
@@ -134,7 +134,7 @@ export const Notifications = {
     api.notify("#router:navigate", { to: paths.notifications, replace: true })
   },
 
-  routeChange: pageRouteChange(routeOpen, routeClose),
+  routeChange: pageRouteChange({ open: routeOpen, close: routeClose }),
 
   renderHeader(entity, api) {
     const id = entity.id

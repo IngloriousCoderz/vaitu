@@ -1,6 +1,7 @@
 import closeIcon from "@iconify-icons/material-symbols/close"
 import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
+import { CropDialog } from "@inglorious/ui/crop-dialog"
 import { Dialog } from "@inglorious/ui/dialog"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
@@ -12,7 +13,6 @@ import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
@@ -27,7 +27,7 @@ import {
 } from "../../constants/index.js"
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
-import { t, translated } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import { categoryById, hasDetail } from "../event-list/categories.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
@@ -91,7 +91,7 @@ export const EventCreate = {
             this.renderDetailField({
               spec,
               details,
-              error: translated(getFieldError(entity, `details.${spec.field}`)),
+              error: t(getFieldError(entity, `details.${spec.field}`)),
               onDetailField,
             }),
           )}
@@ -102,7 +102,7 @@ export const EventCreate = {
               value: getFieldValue(entity, "title", ""),
               placeholder:
                 category.titlePlaceholder ?? t("create.titleExample"),
-              error: translated(getFieldError(entity, "title")),
+              error: t(getFieldError(entity, "title")),
               isRequired: true,
               onField,
             }),
@@ -113,7 +113,7 @@ export const EventCreate = {
             value: getFieldValue(entity, "location", ""),
             placeholder:
               category.locationPlaceholder ?? t("create.locationExample"),
-            error: translated(getFieldError(entity, "location")),
+            error: t(getFieldError(entity, "location")),
             isRequired: true,
             onField,
           })}
@@ -129,7 +129,7 @@ export const EventCreate = {
                 field: "region",
                 value: getFieldValue(entity, "region", ""),
                 placeholder: t("create.regionExample"),
-                error: translated(getFieldError(entity, "region")),
+                error: t(getFieldError(entity, "region")),
                 isRequired: true,
                 onField,
               }),
@@ -147,7 +147,7 @@ export const EventCreate = {
             field: "event_date",
             value: getFieldValue(entity, "event_date", ""),
             type: "date",
-            error: translated(getFieldError(entity, "event_date")),
+            error: t(getFieldError(entity, "event_date")),
             isRequired: true,
             onField,
           })}
@@ -156,7 +156,7 @@ export const EventCreate = {
             field: "application_deadline",
             value: getFieldValue(entity, "application_deadline", ""),
             type: "datetime-local",
-            error: translated(getFieldError(entity, "application_deadline")),
+            error: t(getFieldError(entity, "application_deadline")),
             isRequired: true,
             onField,
           })}
@@ -165,7 +165,7 @@ export const EventCreate = {
             field: "max_applicants",
             value: getFieldValue(entity, "max_applicants", ""),
             type: "number",
-            error: translated(getFieldError(entity, "max_applicants")),
+            error: t(getFieldError(entity, "max_applicants")),
             isRequired: true,
             onField,
           })}
@@ -234,7 +234,7 @@ export const EventCreate = {
             field: "pay_min",
             value: getFieldValue(entity, "pay_min", ""),
             type: "number",
-            error: translated(getFieldError(entity, "pay_min")),
+            error: t(getFieldError(entity, "pay_min")),
             isRequired: true,
             onField,
           })}
@@ -244,7 +244,7 @@ export const EventCreate = {
               field: "pay_max",
               value: getFieldValue(entity, "pay_max", ""),
               type: "number",
-              error: translated(getFieldError(entity, "pay_max")),
+              error: t(getFieldError(entity, "pay_max")),
               isRequired: true,
               onField,
             }),
@@ -577,7 +577,12 @@ export const EventCreate = {
         title: t("create.cropTitle"),
         description: t("create.cropHint"),
         applyLabel: t("create.cropApply"),
-        error: entity.cropError,
+        cancelLabel: t("common.cancel"),
+        savingLabel: t("common.saving"),
+        closeLabel: t("common.close"),
+        loadErrorText: t("errors.imageCrop"),
+        error: t(entity.cropError),
+        isOpen: true,
         isSaving: entity.isCropSaving,
         onCancel: onCropCancel,
         onApply: onCropConfirm,

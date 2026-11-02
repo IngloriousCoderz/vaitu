@@ -1,7 +1,7 @@
 import { Alert } from "@inglorious/ui/alert"
 import { nothing } from "@inglorious/web"
 
-import { translated } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 
 export const ErrorAlert = {
   render({ error, className = "" }) {
@@ -9,7 +9,7 @@ export const ErrorAlert = {
     return Alert.render({
       severity: "error",
       className: ["vaitu-alert", className].filter(Boolean).join(" "),
-      children: translated(error),
+      children: t(error),
     })
   },
 }

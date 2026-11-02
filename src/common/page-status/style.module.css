@@ -1,7 +1,0 @@
-.status {
-  text-align: center;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
-  padding: var(--iw-space-10) 0;
-  grid-column: 1 / -1;
-}

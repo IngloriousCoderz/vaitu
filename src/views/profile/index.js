@@ -1,6 +1,6 @@
 import { Form } from "@inglorious/web/form"
+import { pageRouteChange } from "@inglorious/web/router"
 
-import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
@@ -57,7 +57,7 @@ export const Profile = {
     entity.error ??= null
   },
 
-  routeChange: pageRouteChange(open, close),
+  routeChange: pageRouteChange({ open, close }),
 
   renderHeader() {
     return { title: t("profile.title") }

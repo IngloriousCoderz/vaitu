@@ -13,10 +13,10 @@ import { ref } from "@inglorious/web/directives/ref"
 import { when } from "@inglorious/web/directives/when"
 
 import { Card } from "../../common/event-card/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
-import { t, translatedLabel } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import { DEFAULT_SORT } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -139,7 +139,7 @@ export const EventList = {
                 isActive: (profession) =>
                   activeProfessions.includes(profession.id),
                 onSelect: onToggleProfession,
-                getLabel: (profession) => profession.label,
+                getLabel: (profession) => t(profession.label),
               })}
               ${sections.map(
                 (section) => html`
@@ -148,7 +148,7 @@ export const EventList = {
                     items: section.options,
                     isActive: (option) => activeDetails.includes(option.id),
                     onSelect: onToggleDetail,
-                    getLabel: (option) => option.label,
+                    getLabel: (option) => t(option.label),
                   })}
                 `,
               )}
@@ -157,14 +157,14 @@ export const EventList = {
                 items: regions,
                 isActive: (region) => region.id === activeRegion,
                 onSelect: onSelectRegion,
-                getLabel: translatedLabel,
+                getLabel: (region) => t(region.label),
               })}
               <h3 class=${styles.filterTitle}>${t("events.period")}</h3>
               ${this.renderChipRow({
                 items: periods,
                 isActive: (period) => period.id === activePeriod,
                 onSelect: onSelectPeriod,
-                getLabel: (period) => period.label,
+                getLabel: (period) => t(period.label),
               })}
             `,
             actions: Button.render({
@@ -191,25 +191,24 @@ export const EventList = {
             }),
           )}
           <main class="${styles.list} vaitu-list">
-            ${
-              PageStatus.render({
-                isError: status === "error",
-                error,
-                isLoading: status === "loading" && !events.length,
-                isEmpty: !events.length,
-                emptyText: t("events.noneMatch"),
-              }) ??
-              events.map((event, index) =>
-                Card.render({
-                  event,
-                  isApplied: Boolean(appliedMap[event.id]),
-                  onOpen: onOpenEvent,
-                  cover: true,
-                  className: `vaitu-list-item ${styles.tile}`,
-                  style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
-                }),
-              )
-            }
+            ${LoadStatus.render({
+              isError: status === "error",
+              error,
+              isLoading: status === "loading" && !events.length,
+              isEmpty: !events.length,
+              emptyText: t("events.noneMatch"),
+              content: () =>
+                events.map((event, index) =>
+                  Card.render({
+                    event,
+                    isApplied: Boolean(appliedMap[event.id]),
+                    onOpen: onOpenEvent,
+                    cover: true,
+                    className: `vaitu-list-item ${styles.tile}`,
+                    style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
+                  }),
+                ),
+            })}
           </main>
           ${when(
             hasMore,
@@ -261,11 +260,11 @@ export const EventList = {
             <button
               type="button"
               class=${styles.chipButton}
-              aria-label=${t("events.removeFilter", { label: filter.label })}
+              aria-label=${t("events.removeFilter", { label: t(filter.label) })}
               @click=${() => onRemoveFilter(filter)}
             >
               ${Chip.render({
-                children: html`${filter.label}
+                children: html`${t(filter.label)}
                   <span class=${styles.chipRemove} aria-hidden="true">×</span>`,
                 color: "primary",
               })}

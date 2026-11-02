@@ -5,25 +5,24 @@ import {
   professions as allProfessions,
 } from "../../data/event-taxonomy.js"
 import { uniqueRegions } from "../../data/regions/resolve.js"
-import { labelled, translatedLabel } from "../../i18n/index.js"
 import { detailAppliesTo, filterSections } from "./categories.js"
 
 export const periods = [
-  labelled("periods.all", { id: "all", days: null }),
-  labelled("periods.week", { id: "week", days: 7 }),
-  labelled("periods.month", { id: "month", days: 30 }),
-  labelled("periods.quarter", { id: "quarter", days: 90 }),
+  { id: "all", days: null, label: "periods.all" },
+  { id: "week", days: 7, label: "periods.week" },
+  { id: "month", days: 30, label: "periods.month" },
+  { id: "quarter", days: 90, label: "periods.quarter" },
 ]
 
 export const DEFAULT_SORT = "created_desc"
 
 export const sorts = [
-  labelled("sorts.createdNewest", { value: "created_desc" }),
-  labelled("sorts.createdOldest", { value: "created_asc" }),
-  labelled("sorts.eventDateNewest", { value: "event_date_desc" }),
-  labelled("sorts.eventDateOldest", { value: "event_date_asc" }),
-  labelled("sorts.deadlineSoonest", { value: "deadline_asc" }),
-  labelled("sorts.deadlineFarthest", { value: "deadline_desc" }),
+  { value: "created_desc", label: "sorts.createdNewest" },
+  { value: "created_asc", label: "sorts.createdOldest" },
+  { value: "event_date_desc", label: "sorts.eventDateNewest" },
+  { value: "event_date_asc", label: "sorts.eventDateOldest" },
+  { value: "deadline_asc", label: "sorts.deadlineSoonest" },
+  { value: "deadline_desc", label: "sorts.deadlineFarthest" },
 ]
 
 export function distinctRegions(regions) {
@@ -94,7 +93,7 @@ export function activeFilters({
           {
             kind: "region",
             id: region,
-            label: regionItem ? translatedLabel(regionItem) : region,
+            label: regionItem?.label ?? region,
           },
         ]),
     ...(period === "all" || !periodItem

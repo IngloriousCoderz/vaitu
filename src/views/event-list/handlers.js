@@ -36,7 +36,7 @@ export function searchRun(entity, _, api) {
 
 export function typeToggle(entity, jobTypeId, api) {
   entity.activeTypes = toggled(entity.activeTypes, jobTypeId)
-  api.notify("#jobTypesFilter:sync", [...entity.activeTypes])
+  api.notify("#jobTypesFilter:valueSet", [...entity.activeTypes])
   fetchRegions(entity, api, "reset")
 }
 
@@ -234,7 +234,7 @@ function jobTypesInReach(entity) {
 
 function jobTypesFilterSync(entity, api) {
   api.notify("#jobTypesFilter:optionsSet", jobTypesInReach(entity))
-  api.notify("#jobTypesFilter:sync", [...entity.activeTypes])
+  api.notify("#jobTypesFilter:valueSet", [...entity.activeTypes])
 }
 
 function refetch(entity, api) {

@@ -102,7 +102,7 @@ export function fieldSet(entity, { field, value }, api) {
     )
     Form.fieldChange(entity, { path: "country", value })
     Form.fieldChange(entity, { path: "region", value: region })
-    api?.notify("#regionCreate:sync", region)
+    api?.notify("#regionCreate:valueSet", region)
     api?.notify("#countryCreate:errorSet", null)
     api?.notify("#regionCreate:errorSet", null)
   } else {
@@ -132,7 +132,7 @@ export function jobTypeSelect(entity, { value }, api) {
   if (isSameCategory) {
     if (category === "wedding" && !hasDetail({ category, profession })) {
       Form.fieldChange(entity, { path: "details.style", value: undefined })
-      api.notify("#styleCreate:sync", "")
+      api.notify("#styleCreate:valueSet", "")
     }
     return
   }
@@ -141,8 +141,8 @@ export function jobTypeSelect(entity, { value }, api) {
   entity.isValid = true
   api.notify("#countryCreate:errorSet", null)
   api.notify("#regionCreate:errorSet", null)
-  api.notify("#styleCreate:sync", "")
-  api.notify("#genreCreate:sync", "")
+  api.notify("#styleCreate:valueSet", "")
+  api.notify("#genreCreate:valueSet", "")
 }
 
 // New jobs start on the poster's first job type. An edit keeps its own, even if
@@ -161,17 +161,17 @@ export function jobTypeOptionsSync(entity, _, api) {
       "#jobTypeCreate:optionsSet",
       isOffered || !own ? options : [own, ...options],
     )
-    api.notify("#jobTypeCreate:sync", current)
+    api.notify("#jobTypeCreate:valueSet", current)
     return
   }
   api.notify("#jobTypeCreate:optionsSet", options)
   if (isOffered) {
-    api.notify("#jobTypeCreate:sync", current)
+    api.notify("#jobTypeCreate:valueSet", current)
     return
   }
   const [first] = options
   jobTypeSelect(entity, { value: first.id }, api)
-  api.notify("#jobTypeCreate:sync", first.id)
+  api.notify("#jobTypeCreate:valueSet", first.id)
 }
 
 export const audioRecord = handleAsync("audioRecord", {
@@ -343,7 +343,7 @@ export const audioParse = handleAsync("audioParse", {
     if (!fields || typeof fields !== "object") return
     if (fields.job_type && jobTypeById(fields.job_type)) {
       jobTypeSelect(entity, { value: fields.job_type }, api)
-      api.notify("#jobTypeCreate:sync", fields.job_type)
+      api.notify("#jobTypeCreate:valueSet", fields.job_type)
     }
     const category = categoryById(getFieldValue(entity, "category", ""))
     const details = mergeParsedDetails(
@@ -386,10 +386,10 @@ export const audioParse = handleAsync("audioParse", {
       getFieldValue(entity, "region", ""),
     )
     Form.fieldChange(entity, { path: "region", value: region })
-    api.notify("#countryCreate:sync", country)
-    api.notify("#regionCreate:sync", region)
-    api.notify("#styleCreate:sync", details.style ?? "")
-    api.notify("#genreCreate:sync", details.genre ?? "")
+    api.notify("#countryCreate:valueSet", country)
+    api.notify("#regionCreate:valueSet", region)
+    api.notify("#styleCreate:valueSet", details.style ?? "")
+    api.notify("#genreCreate:valueSet", details.genre ?? "")
     if (
       typeof fields.event_date === "string" &&
       /^\d{4}-\d{2}-\d{2}$/.test(fields.event_date)
@@ -678,10 +678,10 @@ export const editLoad = handleAsync("editLoad", {
     entity.is_audio_open = false
     entity.audio_transcript = null
     entity.audio_error = null
-    api.notify("#countryCreate:sync", country)
-    api.notify("#regionCreate:sync", region)
-    api.notify("#styleCreate:sync", row.details?.style ?? "")
-    api.notify("#genreCreate:sync", row.details?.genre ?? "")
+    api.notify("#countryCreate:valueSet", country)
+    api.notify("#regionCreate:valueSet", region)
+    api.notify("#styleCreate:valueSet", row.details?.style ?? "")
+    api.notify("#genreCreate:valueSet", row.details?.genre ?? "")
     jobTypeOptionsSync(entity, null, api)
   },
   error(entity, err) {

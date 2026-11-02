@@ -3,6 +3,7 @@ import { Button } from "@inglorious/ui/button"
 import { Chip } from "@inglorious/ui/chip"
 import { Flex } from "@inglorious/ui/flex"
 import { Input } from "@inglorious/ui/input"
+import { Lightbox } from "@inglorious/ui/lightbox"
 import { Textarea } from "@inglorious/ui/textarea"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
@@ -21,10 +22,9 @@ import {
   eventTag,
   thumbGradient,
 } from "../../common/event-card/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { formatPay } from "../../common/pay.js"
-import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import {
   COVER_IMAGES,
@@ -36,7 +36,7 @@ import {
   PAD_LENGTH,
   SECONDS_PER_MINUTE,
 } from "../../constants/index.js"
-import { t, translated, translatedLabel } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const toneClass = {
@@ -61,8 +61,6 @@ export const EventDetail = {
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
-    onPhotoSwipeStart,
-    dir,
   }) {
     const { event, status, error } = entity
     const msLeft = event?.application_deadline
@@ -78,121 +76,125 @@ export const EventDetail = {
       wide: true,
       category: event?.category ?? "wedding",
       children: [
-        PhotoCarousel.render({
-          urls: photos,
+        Lightbox.render({
+          images: photos,
           index: entity.photoIndex,
           isOpen: entity.isPhotoPreviewOpen,
-          swipeStartX: entity.photoSwipeX,
-          dir,
+          label: t("common.photoPreview"),
+          closeLabel: t("common.photoClose"),
+          previousLabel: t("common.photoPrevious"),
+          nextLabel: t("common.photoNext"),
           onStep: onPhotoStep,
-          onSwipeStart: onPhotoSwipeStart,
           onClose: onPhotoClose,
         }),
         html`
           ${
             /* Keyed on the data, not the status: `open` sets status to idle
                with a null event before the load starts. */
-            PageStatus.render({
+            LoadStatus.render({
               isError: status === "error",
               error,
               isLoading: !event,
-            }) ??
-            when(
-              entity.isSubmitted,
-              () => this.renderSubmitted({ onOpenEvents }),
-              () => html`
-                <div class=${styles.stage}>
-                  ${this.renderBanner(event, onPhotoOpen)}
-                  <div class=${styles.story}>
-                    ${Flex.render({
-                      align: "center",
-                      justify: "between",
-                      gap: "sm",
-                      className: styles.topRow,
-                      children: [
-                        html`<h2 class=${styles.title}>${event.title}</h2>`,
-                        Badge.render({
-                          children: deadlineBadge(event),
-                          shape: "pill",
-                          className: detailToneClass(event),
-                        }),
-                      ],
-                    })}
-                    <p class=${styles.meta}>${eventSubtitle(event)}</p>
-                    ${Flex.render({
-                      gap: "sm",
-                      wrap: "wrap",
-                      children: [
-                        Chip.render({ children: eventJobType(event) }),
-                        when(event.filterValue, () =>
-                          Chip.render({ children: eventTag(event) }),
-                        ),
-                      ],
-                    })}
-                    ${this.renderGallery(event, onPhotoOpen)}
-                    ${this.renderFacts(event)}
-                    <p class=${styles.sender}>
-                      ${
-                        readUserId()
-                          ? t("pay.youEarn", { pay: formatPay(event.pay) })
-                          : t("pay.signInToSee")
-                      }
-                    </p>
-                    <p class=${styles.sender}>
-                      ${t("detail.organizedBy", { name: entity.senderName })}
-                    </p>
-                    ${when(entity.organizerStats?.badges?.length, () =>
-                      Badges.render({ badges: entity.organizerStats.badges }),
-                    )}
-                    ${when(onReport, () => SafetyButton.render({ onClick: onReport }))}
-                    <p class=${styles.countdown}>
-                      ${
-                        showClock
-                          ? t("countdown.clock", {
-                              time: formatClock(
-                                Math.floor(msLeft / MS_PER_SECOND),
-                              ),
-                            })
-                          : countdownLabel(event)
-                      }
-                    </p>
-                  </div>
-                  <div class=${styles.panel}>
-                    ${when(
-                      onOpenApplications,
-                      () => html`
-                        <div class=${styles.actions}>
-                          ${Button.render({
-                            variant: "outline",
-                            shape: "pill",
-                            isFullWidth: true,
-                            children: t("detail.reviewApplications"),
-                            onClick: onOpenApplications,
-                          })}
-                        </div>
-                      `,
-                      () =>
-                        when(
-                          liveClosed || isApplicationClosed(event),
+              content: () =>
+                when(
+                  entity.isSubmitted,
+                  () => this.renderSubmitted({ onOpenEvents }),
+                  () => html`
+                    <div class=${styles.stage}>
+                      ${this.renderBanner(event, onPhotoOpen)}
+                      <div class=${styles.story}>
+                        ${Flex.render({
+                          align: "center",
+                          justify: "between",
+                          gap: "sm",
+                          className: styles.topRow,
+                          children: [
+                            html`<h2 class=${styles.title}>${event.title}</h2>`,
+                            Badge.render({
+                              children: deadlineBadge(event),
+                              shape: "pill",
+                              className: detailToneClass(event),
+                            }),
+                          ],
+                        })}
+                        <p class=${styles.meta}>${eventSubtitle(event)}</p>
+                        ${Flex.render({
+                          gap: "sm",
+                          wrap: "wrap",
+                          children: [
+                            Chip.render({ children: eventJobType(event) }),
+                            when(event.filterValue, () =>
+                              Chip.render({ children: eventTag(event) }),
+                            ),
+                          ],
+                        })}
+                        ${this.renderGallery(event, onPhotoOpen)}
+                        ${this.renderFacts(event)}
+                        <p class=${styles.sender}>
+                          ${
+                            readUserId()
+                              ? t("pay.youEarn", { pay: formatPay(event.pay) })
+                              : t("pay.signInToSee")
+                          }
+                        </p>
+                        <p class=${styles.sender}>
+                          ${t("detail.organizedBy", { name: entity.senderName })}
+                        </p>
+                        ${when(entity.organizerStats?.badges?.length, () =>
+                          Badges.render({
+                            badges: entity.organizerStats.badges,
+                          }),
+                        )}
+                        ${when(onReport, () => SafetyButton.render({ onClick: onReport }))}
+                        <p class=${styles.countdown}>
+                          ${
+                            showClock
+                              ? t("countdown.clock", {
+                                  time: formatClock(
+                                    Math.floor(msLeft / MS_PER_SECOND),
+                                  ),
+                                })
+                              : countdownLabel(event)
+                          }
+                        </p>
+                      </div>
+                      <div class=${styles.panel}>
+                        ${when(
+                          onOpenApplications,
                           () => html`
-                            <div class=${styles.closedBox}>
-                              ${t("detail.closed")}
+                            <div class=${styles.actions}>
+                              ${Button.render({
+                                variant: "outline",
+                                shape: "pill",
+                                isFullWidth: true,
+                                children: t("detail.reviewApplications"),
+                                onClick: onOpenApplications,
+                              })}
                             </div>
                           `,
                           () =>
-                            this.renderForm({
-                              entity,
-                              profileComplete,
-                              onField,
-                              onSubmit,
-                              onCompleteProfile,
-                            }),
-                        ),
-                    )}
-                  </div>
-                </div>
-              `,
-            )
+                            when(
+                              liveClosed || isApplicationClosed(event),
+                              () => html`
+                                <div class=${styles.closedBox}>
+                                  ${t("detail.closed")}
+                                </div>
+                              `,
+                              () =>
+                                this.renderForm({
+                                  entity,
+                                  profileComplete,
+                                  onField,
+                                  onSubmit,
+                                  onCompleteProfile,
+                                }),
+                            ),
+                        )}
+                      </div>
+                    </div>
+                  `,
+                ),
+            })
           }
         `,
       ],
@@ -252,7 +254,7 @@ export const EventDetail = {
             justify: "between",
             className: styles.fact,
             children: html`
-              <dt>${translatedLabel(fact)}</dt>
+              <dt>${t(fact.label)}</dt>
               <dd>${fact.value}</dd>
             `,
           }),
@@ -375,7 +377,7 @@ export const EventDetail = {
             placeholder: t("detail.motivationPlaceholder"),
             isFullWidth: true,
             isRequired: true,
-            error: translated(getFieldError(entity, "motivation")),
+            error: t(getFieldError(entity, "motivation")),
             onChange: (value) => onField({ field: "motivation", value }),
           })}
         </div>

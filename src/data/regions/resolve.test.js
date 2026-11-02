@@ -90,14 +90,14 @@ describe("regionFilterItems", () => {
   it("lists every event region when there are no favorites", () => {
     const items = regionFilterItems(["Tuscany", "Toscana", "Provence"], [])
     expect(items.map((item) => item.id)).toEqual(["all", "Tuscany", "Provence"])
-    expect(items[0].label).toBe("All regions")
+    expect(items[0].label).toBe("filters.allRegions")
   })
 
   it("puts my regions first, then favorites, without repeating them among the others", () => {
     const items = regionFilterItems(["Provence", "Tuscany"], ["Toscana"])
     expect(items.map((item) => ({ id: item.id, label: item.label }))).toEqual([
-      { id: "mine", label: "My regions" },
-      { id: "all", label: "All regions" },
+      { id: "mine", label: "filters.myRegions" },
+      { id: "all", label: "filters.allRegions" },
       { id: "Tuscany", label: "Tuscany" },
       { id: "Provence", label: "Provence" },
     ])
@@ -120,14 +120,14 @@ describe("favoriteRegionOptions", () => {
     const options = favoriteRegionOptions(["Provence", "Toscana"])
     expect(options[0]).toMatchObject({
       value: "__group_italian",
-      label: "Italian regions",
+      label: "filters.italianRegions",
       isDisabled: true,
     })
     expect(options.some((option) => option.value === "Tuscany")).toBe(true)
     expect(options.some((option) => option.value === "Toscana")).toBe(false)
     const other = options.find((option) => option.value === "__group_other")
     expect(other).toMatchObject({
-      label: "Other regions",
+      label: "filters.otherRegions",
       isDisabled: true,
     })
     expect(options.at(-1)).toEqual({ value: "Provence", label: "Provence" })

@@ -1,6 +1,6 @@
 import { Form, getFieldError } from "@inglorious/web/form"
+import { pageRouteChange } from "@inglorious/web/router"
 
-import { pageRouteChange } from "../../common/page-route.js"
 import {
   DEFAULT_MAX_APPLICANTS,
   NO_TIME_RECORDED,
@@ -122,9 +122,13 @@ export const EventCreate = {
     })
   },
 
-  routeChange: pageRouteChange(open, close, (payload) => ({
-    event_id: payload.params.eventId,
-  })),
+  routeChange: pageRouteChange({
+    select: (payload) => ({
+      event_id: payload.params.eventId,
+    }),
+    open,
+    close,
+  }),
 
   renderHeader(entity, api) {
     const id = entity.id
@@ -213,10 +217,10 @@ function open(entity, { event_id } = {}, api) {
   clearEventImages(entity)
   releaseRecorder()
   clearPendingAudio()
-  api.notify("#countryCreate:sync", "")
-  api.notify("#regionCreate:sync", "")
-  api.notify("#styleCreate:sync", "")
-  api.notify("#genreCreate:sync", "")
+  api.notify("#countryCreate:valueSet", "")
+  api.notify("#regionCreate:valueSet", "")
+  api.notify("#styleCreate:valueSet", "")
+  api.notify("#genreCreate:valueSet", "")
   if (!event_id) handlers.jobTypeOptionsSync(entity, null, api)
   if (event_id) api.notify(`#${entity.id}:editLoad`, event_id)
 }

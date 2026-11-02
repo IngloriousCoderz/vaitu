@@ -1,9 +1,9 @@
 import { Button } from "@inglorious/ui/button"
+import { ChipPicker } from "@inglorious/ui/chip-picker"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { ChipPicker } from "../../common/chip-picker/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
@@ -36,7 +36,10 @@ export const Onboarding = {
             ${ChipPicker.render({
               label: t("fields.professions"),
               hint: t("fields.professionsHint"),
-              options: professions,
+              options: professions.map(({ id, label }) => ({
+                value: id,
+                label: t(label),
+              })),
               value: getFieldValue(entity, "professions", []),
               isDisabled: saving,
               onToggle: onToggleProfession,

@@ -1,4 +1,3 @@
-import { labelled } from "../../i18n/index.js"
 import { italianRegions, regionSpellings } from "./index.js"
 
 const aliasByKey = new Map(
@@ -81,10 +80,8 @@ export function regionFilterItems(eventRegions, favoriteRegions) {
     (region) => !favorites.some((favorite) => sameRegion(favorite, region)),
   )
   return [
-    ...(favorites.length
-      ? [labelled("filters.myRegions", { id: "mine" })]
-      : []),
-    labelled("filters.allRegions", { id: "all" }),
+    ...(favorites.length ? [{ id: "mine", label: "filters.myRegions" }] : []),
+    { id: "all", label: "filters.allRegions" },
     ...favorites.map((region) => ({ id: region, label: region })),
     ...others.map((region) => ({ id: region, label: region })),
   ]
@@ -99,17 +96,15 @@ export function favoriteRegionOptions(eventRegions, favorites = []) {
     (region) => !isItalianRegion(region),
   )
   return [
-    labelled("filters.italianRegions", {
-      value: ITALIAN_GROUP,
-      isDisabled: true,
-    }),
+    { value: ITALIAN_GROUP, isDisabled: true, label: "filters.italianRegions" },
     ...sortedRegions(italianRegions).map(regionOption),
     ...(others.length
       ? [
-          labelled("filters.otherRegions", {
+          {
             value: OTHER_GROUP,
             isDisabled: true,
-          }),
+            label: "filters.otherRegions",
+          },
           ...others.map(regionOption),
         ]
       : []),

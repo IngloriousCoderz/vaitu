@@ -7,6 +7,8 @@ Server-side code that needs the service role or a third-party key lives in
 | -------------------- | ----------------------- | --------------------- | --------------------------------------------------------------- |
 | `check-email`        | Login/signup routing    | Anyone (rate-limited) | Says whether an account exists for an email                     |
 | `deactivate-account` | Profile → deactivate    | Logged-in user        | Deactivates the caller, drops their applications/open events    |
+| `erase-account`      | Profile, erasure email  | User or link holder   | Erases the account and what it holds                            |
+| `report-content`     | Report buttons          | Logged-in user        | Files a report and emails the owner                             |
 | `transcribe-audio`   | Event form, voice input | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](voice-ai.md)) |
 | `parse-event`        | Event form, voice input | Logged-in user        | Transcript → event fields ([Voice AI](voice-ai.md))             |
 | `push-notify`        | A database trigger      | The database only     | Sends a new notification ([Notifications](notifications.md))    |
@@ -16,14 +18,17 @@ Server-side code that needs the service role or a third-party key lives in
 ```
 supabase/functions/
 ├── .env                 # third-party keys, gitignored
-├── deno.json            # keeps Deno off the app's node_modules; lint config
+├── deno.json            # keeps Deno off the app's node_modules; lint config;
+│                        # @inglorious/supabase usable the day it is published
 ├── _shared/
-│   ├── http.ts          # CORS, json(), serve(), upstreamError(), STATUS_CODE
-│   └── supabase.ts      # env(), admin() service-role client, currentUser()
+│   ├── email.ts         # Resend with Vaitu's sender, skipped on the local stack
+│   └── supabase.ts      # admin(): the service-role client
 └── <name>/index.ts      # one per function
 ```
 
-Folders starting with `_` are never deployed as functions.
+Folders starting with `_` are never deployed as functions. The helpers every
+function needs, such as `serve()`, `json()`, `env()` and `currentUser()`, come
+from [`@inglorious/supabase/edge`](https://www.npmjs.com/package/@inglorious/supabase).
 
 ## Editor setup
 
@@ -67,16 +72,26 @@ stack running.
 
    ```ts
    import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
-   import { json, serve, STATUS_CODE } from "../_shared/http.ts"
-   import { currentUser } from "../_shared/supabase.ts"
 
-   serve(async (req) => {
-     const user = await currentUser(req)
-     if (!user)
-       return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
+   import { STATUS_CODE } from "jsr:@std/http@1/status"
+   import {
+     currentUser,
+     json,
+     serve,
+   } from "npm:@inglorious/supabase@^0.2.0/edge"
 
-     return json({ ok: true })
-   }, "<name> failed")
+   import { admin } from "../_shared/supabase.ts"
+
+   serve(
+     async (req) => {
+       const user = await currentUser(admin(), req)
+       if (!user)
+         return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
+
+       return json({ ok: true })
+     },
+     { fallbackError: "<name> failed" },
+   )
 
    // support functions below the handler
    ```

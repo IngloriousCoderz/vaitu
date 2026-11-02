@@ -33,9 +33,7 @@ export const entities = {
     isFullWidth: true,
     size: "md",
     options: languages,
-    targetId: "i18n",
-    targetEvent: "localeChange",
-    targetField: "locale",
+    changeEvent: "#i18n:localeChange",
   },
   countryOnboarding: countrySelect("onboarding", "fieldSet"),
   countryProfile: countrySelect("profile", "fieldSet", {
@@ -87,9 +85,7 @@ export const entities = {
     isFullWidth: false,
     size: "sm",
     options: sorts,
-    targetId: "eventList",
-    targetEvent: "sortSelect",
-    targetField: "sort",
+    changeEvent: "#eventList:sortSelect",
   },
 }
 
@@ -113,9 +109,8 @@ function countrySelect(targetId, targetEvent, overrides = {}) {
     isFullWidth: true,
     size: "md",
     options: countryOptions,
-    targetId,
-    targetEvent,
-    targetField: "country",
+    changeEvent: `#${targetId}:${targetEvent}`,
+    changePayload: { field: "country" },
   }
 }
 
@@ -139,9 +134,8 @@ function regionSelect(targetId, targetEvent, overrides = {}) {
     isFullWidth: true,
     size: "md",
     options: regionOptions,
-    targetId,
-    targetEvent,
-    targetField: "region",
+    changeEvent: `#${targetId}:${targetEvent}`,
+    changePayload: { field: "region" },
   }
 }
 
@@ -163,9 +157,8 @@ function jobTypeSelect(targetId, targetEvent) {
     isFullWidth: true,
     size: "md",
     options: jobTypes,
-    targetId,
-    targetEvent,
-    targetField: "job_type",
+    changeEvent: `#${targetId}:${targetEvent}`,
+    changePayload: { field: "job_type" },
   }
 }
 
@@ -179,7 +172,7 @@ function jobTypesSelect(targetId, label = "") {
   }
 }
 
-function detailSelect(targetField, options, label) {
+function detailSelect(field, options, label) {
   return {
     type: "CountrySelect",
     label,
@@ -198,9 +191,8 @@ function detailSelect(targetField, options, label) {
     isFullWidth: true,
     size: "md",
     options,
-    targetId: "eventCreate",
-    targetEvent: "detailFieldSet",
-    targetField,
+    changeEvent: "#eventCreate:detailFieldSet",
+    changePayload: { field },
   }
 }
 
@@ -213,6 +205,5 @@ function favoriteRegionsSelect(targetId, targetEvent, label) {
     isCreatable: true,
     isClearable: false,
     searchPlaceholder: "combobox.searchOrAddRegion",
-    targetField: "favorite",
   }
 }

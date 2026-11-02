@@ -1,4 +1,6 @@
-import { json, STATUS_CODE } from "./http.ts"
+import { STATUS_CODE } from "jsr:@std/http@1/status"
+import { json } from "npm:@inglorious/supabase@^0.2.0/edge"
+
 import { admin } from "./supabase.ts"
 
 export type VoiceKind = "transcribe" | "parse"

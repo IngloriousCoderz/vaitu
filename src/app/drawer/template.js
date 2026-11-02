@@ -9,31 +9,30 @@ import { Icon } from "@inglorious/ui/icon"
 import { List } from "@inglorious/ui/list"
 
 import { Logo } from "../../common/logo/index.js"
-import { labelled, t } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 
 const NAV = [
-  labelled("nav.events", { id: "events", icon: eventOutline, tab: "events" }),
-  labelled("nav.myEvents", {
+  { id: "events", icon: eventOutline, tab: "events", label: "nav.events" },
+  {
     id: "myEvents",
     icon: editCalendarOutline,
     tab: "myEvents",
-  }),
-  labelled("nav.applications", {
+    label: "nav.myEvents",
+  },
+  {
     id: "applications",
     icon: assignmentOutline,
     tab: "applications",
-  }),
-  labelled("nav.profile", {
-    id: "profile",
-    icon: personOutline,
-    tab: "profile",
-  }),
-  labelled("nav.preferences", {
+    label: "nav.applications",
+  },
+  { id: "profile", icon: personOutline, tab: "profile", label: "nav.profile" },
+  {
     id: "preferences",
     icon: settingsOutline,
     tab: "preferences",
-  }),
-  labelled("nav.about", { id: "about", icon: helpOutline, tab: "about" }),
+    label: "nav.preferences",
+  },
+  { id: "about", icon: helpOutline, tab: "about", label: "nav.about" },
 ]
 
 export const AppDrawer = {
@@ -62,7 +61,7 @@ export const AppDrawer = {
         padding: "sm",
         items: NAV.map((item) => ({
           id: item.id,
-          primary: item.label,
+          primary: t(item.label),
           icon: Icon.render({ icon: item.icon, size: "lg" }),
           isSelected: active === item.tab,
           onClick: () => onNavigate(item.id),

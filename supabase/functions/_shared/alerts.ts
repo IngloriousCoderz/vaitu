@@ -1,6 +1,8 @@
+import { env } from "npm:@inglorious/supabase@^0.2.0/edge"
+
 import { sendEmail } from "./email.ts"
 import { alertOnLimit, isLimitStatus } from "./limit-alert.ts"
-import { admin, env } from "./supabase.ts"
+import { admin } from "./supabase.ts"
 
 // An alert is a courtesy to the owner: it never changes what the user gets.
 export async function alertProviderLimit(service: string, status: number) {

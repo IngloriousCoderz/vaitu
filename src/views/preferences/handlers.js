@@ -47,7 +47,9 @@ export function notificationToggle(entity, { column, type, isReceiving }, api) {
 
 export function favoriteOptionsSync(entity, _, api) {
   const regions = api.getEntity("eventList")?.regions ?? []
-  api.notify("#favoriteRegionPreferences:sync", [...entity.favorite_regions])
+  api.notify("#favoriteRegionPreferences:valueSet", [
+    ...entity.favorite_regions,
+  ])
   api.notify(
     "#favoriteRegionPreferences:optionsSet",
     favoriteRegionOptions(regions, entity.favorite_regions),
@@ -140,5 +142,5 @@ export const localeSave = handleAsync("localeSave", {
 
 function jobTypesSync(entity, professions, interests, api) {
   api.notify("#jobTypesPreferences:optionsSet", jobTypesFor(professions))
-  api.notify("#jobTypesPreferences:sync", interests)
+  api.notify("#jobTypesPreferences:valueSet", interests)
 }

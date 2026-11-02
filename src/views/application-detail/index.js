@@ -1,9 +1,9 @@
 import { Capacitor } from "@capacitor/core"
 import { Share } from "@capacitor/share"
 import { Form } from "@inglorious/web/form"
+import { pageRouteChange } from "@inglorious/web/router"
 
 import { uploadIcsFile } from "../../api/applications.js"
-import { pageRouteChange } from "../../common/page-route.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { ApplicationDetail as renderers } from "./template.js"
@@ -43,9 +43,13 @@ export const ApplicationDetail = {
     })
   },
 
-  routeChange: pageRouteChange(open, close, (payload) => ({
-    application_id: payload.params.applicationId,
-  })),
+  routeChange: pageRouteChange({
+    select: (payload) => ({
+      application_id: payload.params.applicationId,
+    }),
+    open,
+    close,
+  }),
 
   renderHeader(entity) {
     return { title: entity.application?.title ?? "", back: paths.applications }

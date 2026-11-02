@@ -15,8 +15,8 @@ import { when } from "@inglorious/web/directives/when"
 
 import { LIST_STAGGER_CAP, NO_UNREAD } from "../../constants/index.js"
 import { currentLocale, t } from "../../i18n/index.js"
+import { LoadStatus } from "../load-status/index.js"
 import { Page } from "../page/index.js"
-import { PageStatus } from "../page-status/index.js"
 import styles from "./style.module.css"
 
 const INBOX_ICONS = {
@@ -70,19 +70,18 @@ export const Notifications = {
       children: [
         html`
           <main class="${styles.list} vaitu-list">
-            ${
-              PageStatus.render({
-                isError: status === "error",
-                error,
-                isLoading:
-                  (status === "loading" || status === "idle") && !items.length,
-                isEmpty: !items.length,
-                emptyText: t("notifications.empty"),
-              }) ??
-              items.map((item, index) =>
-                renderFeedItem({ item, onOpenRow, index }),
-              )
-            }
+            ${LoadStatus.render({
+              isError: status === "error",
+              error,
+              isLoading:
+                (status === "loading" || status === "idle") && !items.length,
+              isEmpty: !items.length,
+              emptyText: t("notifications.empty"),
+              content: () =>
+                items.map((item, index) =>
+                  renderFeedItem({ item, onOpenRow, index }),
+                ),
+            })}
           </main>
         `,
       ],
@@ -130,19 +129,18 @@ export const NotificationsPanel = {
       }),
       children: html`
         <div class="${styles.panelBody} vaitu-list">
-          ${
-            PageStatus.render({
-              isError: status === "error",
-              error,
-              isLoading:
-                (status === "loading" || status === "idle") && !items.length,
-              isEmpty: !items.length,
-              emptyText: t("notifications.empty"),
-            }) ??
-            items.map((item, index) =>
-              renderFeedItem({ item, onOpenRow, index }),
-            )
-          }
+          ${LoadStatus.render({
+            isError: status === "error",
+            error,
+            isLoading:
+              (status === "loading" || status === "idle") && !items.length,
+            isEmpty: !items.length,
+            emptyText: t("notifications.empty"),
+            content: () =>
+              items.map((item, index) =>
+                renderFeedItem({ item, onOpenRow, index }),
+              ),
+          })}
         </div>
       `,
     })

@@ -1,4 +1,4 @@
-import { createCropper } from "../../common/crop-dialog/index.js"
+import { createCropper } from "../../common/cropper.js"
 
 export const AVATAR_CROPPER = "avatarCropper"
 

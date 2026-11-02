@@ -6,20 +6,19 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { Card } from "../../common/event-card/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
-import { labelled } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const FilterOptions = [
-  labelled("status.all", { id: "all" }),
-  labelled("status.pending", { id: "pending" }),
-  labelled("status.shortlisted", { id: "shortlisted" }),
-  labelled("status.selected", { id: "selected" }),
-  labelled("status.rejected", { id: "rejected" }),
+  { id: "all", label: "status.all" },
+  { id: "pending", label: "status.pending" },
+  { id: "shortlisted", label: "status.shortlisted" },
+  { id: "selected", label: "status.selected" },
+  { id: "rejected", label: "status.rejected" },
 ]
 
 export const ApplicationList = {
@@ -49,7 +48,7 @@ export const ApplicationList = {
                     @click=${() => onSelectStatus(option.id)}
                   >
                     ${Chip.render({
-                      children: option.label,
+                      children: t(option.label),
                       color:
                         option.id === status_filter ? "primary" : "default",
                     })}
@@ -60,24 +59,23 @@ export const ApplicationList = {
           </div>
 
           <main class="${styles.list} vaitu-list">
-            ${
-              PageStatus.render({
-                isError: status === "error",
-                error,
-                isLoading: status === "loading" && !applications.length,
-                isEmpty: !shown.length,
-                emptyText: !applications.length
-                  ? t("applications.none")
-                  : t("applications.noneWithStatus"),
-              }) ??
-              shown.map((application, index) =>
-                this.renderApplicationItem({
-                  application,
-                  onOpenEvent,
-                  index,
-                }),
-              )
-            }
+            ${LoadStatus.render({
+              isError: status === "error",
+              error,
+              isLoading: status === "loading" && !applications.length,
+              isEmpty: !shown.length,
+              emptyText: !applications.length
+                ? t("applications.none")
+                : t("applications.noneWithStatus"),
+              content: () =>
+                shown.map((application, index) =>
+                  this.renderApplicationItem({
+                    application,
+                    onOpenEvent,
+                    index,
+                  }),
+                ),
+            })}
           </main>
         `,
       ],

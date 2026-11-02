@@ -72,8 +72,8 @@ export function toViewModel(row) {
       title: row.title,
       filterValue: row.details.genre,
       facts: [
-        { labelKey: "fields.headliner", value: row.details.headliner },
-        ...(region ? [{ labelKey: "fields.region", value: region }] : []),
+        { label: "fields.headliner", value: row.details.headliner },
+        ...(region ? [{ label: "fields.region", value: region }] : []),
       ],
     }
   }
@@ -83,7 +83,7 @@ export function toViewModel(row) {
       ...base,
       title: row.title,
       filterValue: null,
-      facts: region ? [{ labelKey: "fields.region", value: region }] : [],
+      facts: region ? [{ label: "fields.region", value: region }] : [],
     }
   }
 
@@ -93,8 +93,8 @@ export function toViewModel(row) {
     title: couple,
     filterValue: row.details.style,
     facts: [
-      { labelKey: "facts.spouses", value: couple },
-      ...(region ? [{ labelKey: "fields.region", value: region }] : []),
+      { label: "facts.spouses", value: couple },
+      ...(region ? [{ label: "fields.region", value: region }] : []),
     ],
   }
 }

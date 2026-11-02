@@ -1,9 +1,17 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 
+import { STATUS_CODE } from "jsr:@std/http@1/status"
+import {
+  callerRole,
+  EmailError,
+  env,
+  json,
+  serve,
+} from "npm:@inglorious/supabase@^0.2.0/edge"
+
 import { alertProviderLimit } from "../_shared/alerts.ts"
-import { EmailError, sendEmails } from "../_shared/email.ts"
-import { json, serve, STATUS_CODE } from "../_shared/http.ts"
-import { admin, callerRole, env } from "../_shared/supabase.ts"
+import { sendEmails } from "../_shared/email.ts"
+import { admin } from "../_shared/supabase.ts"
 import {
   byRecipient,
   compose,
@@ -22,64 +30,67 @@ const STATUS_TOO_MANY_REQUESTS = 429
 const COLUMNS =
   "id, user_id, type, created_at, is_read, event_id, application_id, applicant_name, event_title, events(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale, is_active, muted_email_types)"
 
-serve(async (req) => {
-  if (callerRole(req) !== "service_role") {
-    return json({ error: "Database only" }, STATUS_CODE.Forbidden)
-  }
-
-  const db = admin()
-  const now = new Date()
-
-  const { data, error } = await db
-    .from("notifications")
-    .select(COLUMNS)
-    .is("emailed_at", null)
-    .order("created_at")
-    .limit(PAGE)
-  if (error) throw error
-
-  const rows = data.map(toPending)
-  const dropped = rows.filter((row) => isDropped(row, now))
-  await mark(db, dropped, now.toISOString())
-
-  const due = rows.filter((row) => !isDropped(row, now) && isDue(row, now))
-  const groups = byRecipient(due)
-  const allowed = groups.slice(0, await budgetLeft(db))
-  if (allowed.length < groups.length) {
-    await alertProviderLimit("resend", STATUS_TOO_MANY_REQUESTS)
-  }
-  if (!allowed.length) return json({ sent: 0, dropped: dropped.length })
-
-  const recipients = await recipientsOf(db, allowed)
-  const toSend = allowed.filter((group) => recipients.has(group[0].user_id))
-
-  // Claimed first, so a run that overlaps this one can't send them twice.
-  const claimed = toSend.flat()
-  await mark(db, claimed, now.toISOString())
-  try {
-    await sendEmails(
-      toSend.map((group) =>
-        compose(group, recipients.get(group[0].user_id) as Recipient, {
-          appUrl: env("APP_URL"),
-          supabaseUrl: env("SUPABASE_URL"),
-        }),
-      ),
-    )
-  } catch (err) {
-    await mark(db, claimed, null)
-    if (err instanceof EmailError) {
-      await alertProviderLimit("resend", err.status)
+serve(
+  async (req) => {
+    if (callerRole(req) !== "service_role") {
+      return json({ error: "Database only" }, STATUS_CODE.Forbidden)
     }
-    throw err
-  }
 
-  const { error: countError } = await db.rpc("count_emails_sent", {
-    p_count: toSend.length,
-  })
-  if (countError) console.error("email count failed", countError)
+    const db = admin()
+    const now = new Date()
 
-  return json({ sent: toSend.length, dropped: dropped.length })
-}, "send failed")
+    const { data, error } = await db
+      .from("notifications")
+      .select(COLUMNS)
+      .is("emailed_at", null)
+      .order("created_at")
+      .limit(PAGE)
+    if (error) throw error
+
+    const rows = data.map(toPending)
+    const dropped = rows.filter((row) => isDropped(row, now))
+    await mark(db, dropped, now.toISOString())
+
+    const due = rows.filter((row) => !isDropped(row, now) && isDue(row, now))
+    const groups = byRecipient(due)
+    const allowed = groups.slice(0, await budgetLeft(db))
+    if (allowed.length < groups.length) {
+      await alertProviderLimit("resend", STATUS_TOO_MANY_REQUESTS)
+    }
+    if (!allowed.length) return json({ sent: 0, dropped: dropped.length })
+
+    const recipients = await recipientsOf(db, allowed)
+    const toSend = allowed.filter((group) => recipients.has(group[0].user_id))
+
+    // Claimed first, so a run that overlaps this one can't send them twice.
+    const claimed = toSend.flat()
+    await mark(db, claimed, now.toISOString())
+    try {
+      await sendEmails(
+        toSend.map((group) =>
+          compose(group, recipients.get(group[0].user_id) as Recipient, {
+            appUrl: env("APP_URL"),
+            supabaseUrl: env("SUPABASE_URL"),
+          }),
+        ),
+      )
+    } catch (err) {
+      await mark(db, claimed, null)
+      if (err instanceof EmailError) {
+        await alertProviderLimit("resend", err.status)
+      }
+      throw err
+    }
+
+    const { error: countError } = await db.rpc("count_emails_sent", {
+      p_count: toSend.length,
+    })
+    if (countError) console.error("email count failed", countError)
+
+    return json({ sent: toSend.length, dropped: dropped.length })
+  },
+  { fallbackError: "send failed" },
+)
 
 async function budgetLeft(db: ReturnType<typeof admin>) {
   const { data, error } = await db

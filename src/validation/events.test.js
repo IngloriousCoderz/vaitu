@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { translated } from "../i18n/index.js"
+import { t } from "../i18n/index.js"
 import {
   firstError,
   normalizeEvent,
@@ -149,12 +149,10 @@ describe("validateEvent", () => {
 
   it("keeps the date wording the UI already relied on", () => {
     expect(
-      translated(
-        validateEvent({ ...validWedding, event_date: "nope" }).event_date,
-      ),
+      t(validateEvent({ ...validWedding, event_date: "nope" }).event_date),
     ).toBe("Pick a date")
     expect(
-      translated(
+      t(
         validateEvent({ ...validWedding, application_deadline: "nope" })
           .application_deadline,
       ),
@@ -162,9 +160,9 @@ describe("validateEvent", () => {
   })
 
   it("asks for the missing title in words a person can act on", () => {
-    expect(
-      translated(validateEvent({ ...validWedding, title: "  " }).title),
-    ).toBe("Add a title")
+    expect(t(validateEvent({ ...validWedding, title: "  " }).title)).toBe(
+      "Add a title",
+    )
   })
 
   it("knows a wedding by its two names", () => {
@@ -279,10 +277,7 @@ describe("firstError", () => {
 
 function inWords(errors) {
   return Object.fromEntries(
-    Object.entries(errors).map(([field, message]) => [
-      field,
-      translated(message),
-    ]),
+    Object.entries(errors).map(([field, message]) => [field, t(message)]),
   )
 }
 

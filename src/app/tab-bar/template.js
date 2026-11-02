@@ -7,24 +7,23 @@ import { BottomNavigation } from "@inglorious/ui/bottom-navigation"
 import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 
-import { labelled } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const tabs = [
-  labelled("nav.tabs.events", { value: "events", icon: eventOutline }),
-  labelled("nav.tabs.applications", {
+  { value: "events", icon: eventOutline, label: "nav.tabs.events" },
+  {
     value: "applications",
     icon: assignmentOutline,
-  }),
-  labelled("nav.tabs.myEvents", {
-    value: "myEvents",
-    icon: editCalendarOutline,
-  }),
-  labelled("nav.tabs.notifications", {
+    label: "nav.tabs.applications",
+  },
+  { value: "myEvents", icon: editCalendarOutline, label: "nav.tabs.myEvents" },
+  {
     value: "notifications",
     icon: notificationsOutline,
-  }),
-  labelled("nav.tabs.profile", { value: "profile", icon: personOutline }),
+    label: "nav.tabs.notifications",
+  },
+  { value: "profile", icon: personOutline, label: "nav.tabs.profile" },
 ]
 
 export const TabBar = {
@@ -38,7 +37,7 @@ export const TabBar = {
           onChange: (value) => onNavigate(value),
           actions: tabs.map((tab) => ({
             value: tab.value,
-            label: tab.label,
+            label: t(tab.label),
             icon: Icon.render({ icon: tab.icon, size: "lg" }),
           })),
         })}

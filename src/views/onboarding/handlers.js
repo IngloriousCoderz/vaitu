@@ -24,7 +24,7 @@ export function favoriteRegionsSet(entity, { value }, api) {
 export function favoriteOptionsSync(entity, _, api) {
   const favorites = [...getFieldValue(entity, "favorite_regions", [])]
   const regions = api.getEntity("eventList")?.regions ?? []
-  api.notify("#favoriteRegionOnboarding:sync", favorites)
+  api.notify("#favoriteRegionOnboarding:valueSet", favorites)
   api.notify(
     "#favoriteRegionOnboarding:optionsSet",
     favoriteRegionOptions(regions, favorites),
@@ -47,7 +47,7 @@ export function professionToggle(entity, professionId, api) {
   Form.fieldChange(entity, { path: "professions", value: professions })
   Form.fieldChange(entity, { path: "interested_job_types", value: interests })
   api.notify("#jobTypesOnboarding:optionsSet", jobTypesFor(professions))
-  api.notify("#jobTypesOnboarding:sync", interests)
+  api.notify("#jobTypesOnboarding:valueSet", interests)
 }
 
 export const skip = handleAsync("skip", {

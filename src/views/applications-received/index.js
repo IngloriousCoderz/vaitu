@@ -1,6 +1,6 @@
 import { Form } from "@inglorious/web/form"
+import { pageRouteChange } from "@inglorious/web/router"
 
-import { pageRouteChange } from "../../common/page-route.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
@@ -57,11 +57,11 @@ export const ApplicationsReceived = {
     entity.error ??= null
   },
 
-  routeChange: pageRouteChange(
+  routeChange: pageRouteChange({
+    select: (payload) => payload.params.eventId,
     open,
     close,
-    (payload) => payload.params.eventId,
-  ),
+  }),
 
   renderHeader(entity) {
     const items = entity.items ?? []
@@ -136,8 +136,6 @@ export const ApplicationsReceived = {
         onPhotoOpen: (index) => api.notify(`#${id}:photoOpen`, index),
         onPhotoClose: () => api.notify(`#${id}:photoClose`),
         onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
-        dir: api.getEntity("i18n").dir,
-        onPhotoSwipeStart: (x) => api.notify(`#${id}:photoSwipeStart`, x),
       },
       api,
     )

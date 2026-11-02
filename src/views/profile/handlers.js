@@ -31,7 +31,7 @@ export function editStart(entity, _, api) {
   }
   Form.reset(entity)
   entity.error = null
-  api.notify("#countryProfile:sync", entity.values.country ?? "")
+  api.notify("#countryProfile:valueSet", entity.values.country ?? "")
 }
 
 export function editCancel(entity) {

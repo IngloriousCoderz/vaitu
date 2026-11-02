@@ -1,4 +1,5 @@
-import { pageRouteChange } from "../../common/page-route.js"
+import { pageRouteChange } from "@inglorious/web/router"
+
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { deleteAsk, deleteCancel, eventRemove, load } from "./handlers.js"
@@ -18,7 +19,7 @@ export const MyEvents = {
     entity.error ??= null
   },
 
-  routeChange: pageRouteChange(open, close),
+  routeChange: pageRouteChange({ open, close }),
 
   renderHeader() {
     return { title: t("myEvents.title") }

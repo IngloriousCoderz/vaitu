@@ -5,6 +5,7 @@
     "jsr:@std/http@1": "1.1.4",
     "jsr:@supabase/functions-js@*": "2.118.0",
     "jsr:@supabase/functions-js@2": "2.118.0",
+    "npm:@inglorious/supabase@0.2": "0.2.0_@supabase+supabase-js@2.118.0",
     "npm:@supabase/supabase-js@2": "2.118.0",
     "npm:openai@^4.52.5": "4.104.0",
     "npm:web-push@3.6.7": "3.6.7"
@@ -24,6 +25,12 @@
     }
   },
   "npm": {
+    "@inglorious/supabase@0.2.0_@supabase+supabase-js@2.118.0": {
+      "integrity": "sha512-QKMz9E/gYm5e/eGZFKPsY9MO14Pxzm5Hkf6y5+coN6wSyX2ASHU8h6byx8/M01XgKfSFq/EcQ0+vH23NZhvwpA==",
+      "dependencies": [
+        "@supabase/supabase-js"
+      ]
+    },
     "@supabase/auth-js@2.118.0": {
       "integrity": "sha512-xWfPXyhS2KDSfAneMtI6p/tBnbdiz/5vaRKXEqUfzfC9WCniKr2Ds5o5G7RIGig0bom4z6wUY9zaV07WDVTfnQ==",
       "dependencies": [

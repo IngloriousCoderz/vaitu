@@ -1,25 +1,23 @@
-import { labelled } from "../i18n/index.js"
-
 export const weddingStyles = [
-  labelled("taxonomy.style.editorial", { value: "editorial" }),
-  labelled("taxonomy.style.documentary", { value: "documentary" }),
-  labelled("taxonomy.style.reportage", { value: "reportage" }),
-  labelled("taxonomy.style.classic", { value: "classic" }),
-  labelled("taxonomy.style.film", { value: "film" }),
-  labelled("taxonomy.style.fine_art", { value: "fine_art" }),
+  { value: "editorial", label: "taxonomy.style.editorial" },
+  { value: "documentary", label: "taxonomy.style.documentary" },
+  { value: "reportage", label: "taxonomy.style.reportage" },
+  { value: "classic", label: "taxonomy.style.classic" },
+  { value: "film", label: "taxonomy.style.film" },
+  { value: "fine_art", label: "taxonomy.style.fine_art" },
 ]
 
 export const GENRE_CATEGORIES = ["festival", "concert"]
 
 export const musicGenres = [
-  labelled("taxonomy.genre.house", { value: "house" }),
-  labelled("taxonomy.genre.techno", { value: "techno" }),
-  labelled("taxonomy.genre.indie", { value: "indie" }),
-  labelled("taxonomy.genre.jazz", { value: "jazz" }),
-  labelled("taxonomy.genre.electronic", { value: "electronic" }),
-  labelled("taxonomy.genre.rock", { value: "rock" }),
-  labelled("taxonomy.genre.pop", { value: "pop" }),
-  labelled("taxonomy.genre.classical", { value: "classical" }),
+  { value: "house", label: "taxonomy.genre.house" },
+  { value: "techno", label: "taxonomy.genre.techno" },
+  { value: "indie", label: "taxonomy.genre.indie" },
+  { value: "jazz", label: "taxonomy.genre.jazz" },
+  { value: "electronic", label: "taxonomy.genre.electronic" },
+  { value: "rock", label: "taxonomy.genre.rock" },
+  { value: "pop", label: "taxonomy.genre.pop" },
+  { value: "classical", label: "taxonomy.genre.classical" },
 ]
 
 const SETTINGS_BY_PROFESSION = {
@@ -34,20 +32,22 @@ const SETTINGS_BY_PROFESSION = {
   electrician: ["apartment", "house", "office"],
 }
 
-export const professions = Object.keys(SETTINGS_BY_PROFESSION).map((id) =>
-  labelled(`taxonomy.profession.${id}`, { id }),
-)
+export const professions = Object.keys(SETTINGS_BY_PROFESSION).map((id) => ({
+  id,
+  label: `taxonomy.profession.${id}`,
+}))
 
 export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
   ([profession, settings]) =>
     settings.map((category) => {
       const id = jobTypeId(category, profession)
-      return labelled(`taxonomy.jobType.${id}`, {
+      return {
         id,
         value: id,
         category,
         profession,
-      })
+        label: `taxonomy.jobType.${id}`,
+      }
     }),
 )
 

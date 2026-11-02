@@ -1,4 +1,4 @@
-import { Router } from "@inglorious/web/router"
+import { Router, safePath } from "@inglorious/web/router"
 
 import { isOnboardingDue, readUser } from "../api/session.js"
 import { paths } from "../routes"
@@ -17,7 +17,7 @@ const PUBLIC_ROUTES = new Set(["eraseAccount", "unsubscribe"])
  * @returns {{to: string, replace: boolean}} A navigation.
  */
 export function signInTarget(path) {
-  const from = safeFrom(path)
+  const from = safePath(path)
   return {
     to: from ? `${paths.login}?from=${encodeURIComponent(from)}` : paths.login,
     replace: true,
@@ -31,7 +31,7 @@ export function signInTarget(path) {
  * @returns {string} A path.
  */
 export function landingForSession(router) {
-  return safeFrom(router.query?.from) ?? paths.events
+  return safePath(router.query?.from) ?? paths.events
 }
 
 /**
@@ -93,19 +93,6 @@ export function routeGuard(entity, payload, api) {
 
 export const guards = {
   Router: [Router, { routeChange: routeGuard }],
-}
-
-/**
- * Reads a `from` value back out of a URL. Only same-origin paths are honoured —
- * anything starting with a scheme or with `//` would send a freshly signed-in
- * visitor off the site, so it is discarded rather than followed.
- * @param {unknown} value - The raw value.
- * @returns {string | null} A safe path, or null.
- */
-function safeFrom(value) {
-  if (typeof value !== "string") return null
-  if (!value.startsWith("/") || value.startsWith("//")) return null
-  return value
 }
 
 function isPreLogin(route) {

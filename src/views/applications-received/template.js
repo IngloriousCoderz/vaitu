@@ -7,6 +7,7 @@ import { Card } from "@inglorious/ui/card"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { Input } from "@inglorious/ui/input"
+import { Lightbox } from "@inglorious/ui/lightbox"
 import { RadioGroup } from "@inglorious/ui/radio-group"
 import { Rating } from "@inglorious/ui/rating"
 import { Textarea } from "@inglorious/ui/textarea"
@@ -18,10 +19,9 @@ import { Badges } from "../../common/badges/index.js"
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { formatPay } from "../../common/pay.js"
-import { PhotoCarousel } from "../../common/photo-carousel/index.js"
 import { telUrl } from "../../common/profile.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
@@ -32,7 +32,7 @@ import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
 } from "../../constants/index.js"
-import { currentLocale, t, translated } from "../../i18n/index.js"
+import { currentLocale, t } from "../../i18n/index.js"
 import { isReviewDue } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -67,8 +67,6 @@ export const ApplicationsReceived = {
     onPhotoOpen,
     onPhotoClose,
     onPhotoStep,
-    onPhotoSwipeStart,
-    dir,
   }) {
     const { items, status, error } = entity
     const selected_count = items.filter(
@@ -82,14 +80,15 @@ export const ApplicationsReceived = {
       variant: "stickyFlat",
       wide: true,
       children: [
-        PhotoCarousel.render({
-          urls: photos,
+        Lightbox.render({
+          images: photos,
           index: entity.photoIndex,
           isOpen: entity.isPhotoPreviewOpen,
-          swipeStartX: entity.photoSwipeX,
-          dir,
+          label: t("common.photoPreview"),
+          closeLabel: t("common.photoClose"),
+          previousLabel: t("common.photoPrevious"),
+          nextLabel: t("common.photoNext"),
           onStep: onPhotoStep,
-          onSwipeStart: onPhotoSwipeStart,
           onClose: onPhotoClose,
         }),
         html`
@@ -123,9 +122,7 @@ export const ApplicationsReceived = {
                           inputType: "datetime-local",
                           value: entity.reopen_deadline ?? "",
                           isFullWidth: true,
-                          error: translated(
-                            getFieldError(entity, "reopen_deadline"),
-                          ),
+                          error: t(getFieldError(entity, "reopen_deadline")),
                           onChange: onReopenDeadline,
                         })}
                       </div>
@@ -162,50 +159,49 @@ export const ApplicationsReceived = {
           )}
 
           <main class=${styles.list}>
-            ${
-              PageStatus.render({
-                isError: status === "error" && !items.length,
-                error,
-                isLoading: status === "loading" && !items.length,
-                isEmpty: !items.length,
-                emptyText:
-                  entity.event_status === "open"
-                    ? t("received.none")
-                    : t("received.noneReceived"),
-              }) ??
-              items.map((item) =>
-                this.renderApplicant({
-                  item,
-                  expanded: entity.expanded_application_id === item.id,
-                  max_reached,
-                  confirming_assign: entity.confirming_assign === item.id,
-                  assign_amount: entity.assign_amount,
-                  deal_draft: entity.deal_draft,
-                  is_deal_busy: entity.isDealBusy,
-                  deal_error: entity.dealError,
-                  onAssignAmount,
-                  onDealDraft,
-                  onDealPropose,
-                  onDealSettle,
-                  status,
-                  error,
-                  event_assigned: entity.event_status === "assigned",
-                  event_date: entity.event_recap?.event_date,
-                  review: entity.review,
-                  onReviewField,
-                  onReviewSubmit,
-                  onReport,
-                  onToggle,
-                  onSelect,
-                  onReject,
-                  onUnshortlist,
-                  onUnreject,
-                  onAskAssign,
-                  onAssign,
-                  onCancelAssign,
-                }),
-              )
-            }
+            ${LoadStatus.render({
+              isError: status === "error" && !items.length,
+              error,
+              isLoading: status === "loading" && !items.length,
+              isEmpty: !items.length,
+              emptyText:
+                entity.event_status === "open"
+                  ? t("received.none")
+                  : t("received.noneReceived"),
+              content: () =>
+                items.map((item) =>
+                  this.renderApplicant({
+                    item,
+                    expanded: entity.expanded_application_id === item.id,
+                    max_reached,
+                    confirming_assign: entity.confirming_assign === item.id,
+                    assign_amount: entity.assign_amount,
+                    deal_draft: entity.deal_draft,
+                    is_deal_busy: entity.isDealBusy,
+                    deal_error: entity.dealError,
+                    onAssignAmount,
+                    onDealDraft,
+                    onDealPropose,
+                    onDealSettle,
+                    status,
+                    error,
+                    event_assigned: entity.event_status === "assigned",
+                    event_date: entity.event_recap?.event_date,
+                    review: entity.review,
+                    onReviewField,
+                    onReviewSubmit,
+                    onReport,
+                    onToggle,
+                    onSelect,
+                    onReject,
+                    onUnshortlist,
+                    onUnreject,
+                    onAskAssign,
+                    onAssign,
+                    onCancelAssign,
+                  }),
+                ),
+            })}
             ${ErrorAlert.render({
               error: status === "error" && items.length ? error : null,
               className: styles.error,

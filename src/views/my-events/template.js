@@ -8,8 +8,8 @@ import { when } from "@inglorious/web/directives/when"
 
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { Card } from "../../common/event-card/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
@@ -37,24 +37,23 @@ export const MyEvents = {
       children: [
         html`
           <main class="${styles.list} vaitu-list">
-            ${
-              PageStatus.render({
-                isError: status === "error" && !isConfirmingDelete,
-                error,
-                isLoading: status === "loading" && !events.length,
-                isEmpty: !events.length,
-                emptyText: t("myEvents.none"),
-              }) ??
-              events.map((event, index) =>
-                this.renderMyEvent({
-                  event,
-                  style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
-                  onOpenEvent,
-                  onEdit,
-                  onAskDelete,
-                }),
-              )
-            }
+            ${LoadStatus.render({
+              isError: status === "error" && !isConfirmingDelete,
+              error,
+              isLoading: status === "loading" && !events.length,
+              isEmpty: !events.length,
+              emptyText: t("myEvents.none"),
+              content: () =>
+                events.map((event, index) =>
+                  this.renderMyEvent({
+                    event,
+                    style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
+                    onOpenEvent,
+                    onEdit,
+                    onAskDelete,
+                  }),
+                ),
+            })}
           </main>
         `,
         ConfirmDialog.render({

@@ -1,7 +1,7 @@
 import { Input } from "@inglorious/ui/input"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
-import { translated } from "../../i18n/index.js"
+import { t } from "../../i18n/index.js"
 import { RevealToggle } from "./reveal-toggle.js"
 
 export const PasswordField = {
@@ -25,7 +25,7 @@ export const PasswordField = {
       placeholder: "••••••••",
       isFullWidth: true,
       isRequired: true,
-      error: translated(getFieldError(entity, field)),
+      error: t(getFieldError(entity, field)),
       onChange: (value) => onField({ field, value }),
       autocomplete,
       iconAfter: RevealToggle.render({

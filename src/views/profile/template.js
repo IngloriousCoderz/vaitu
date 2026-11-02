@@ -3,6 +3,7 @@ import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-lea
 import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
+import { CropDialog } from "@inglorious/ui/crop-dialog"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
 import { IconButton } from "@inglorious/ui/icon-button"
@@ -13,10 +14,9 @@ import { when } from "@inglorious/web/directives/when"
 
 import { Badges } from "../../common/badges/index.js"
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
-import { CropDialog } from "../../common/crop-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { PageStatus } from "../../common/page-status/index.js"
 import { telUrl } from "../../common/profile.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
@@ -64,13 +64,11 @@ export const Profile = {
       read: true,
       children: [
         html`
-          ${
-            PageStatus.render({
-              isError: status === "error" && !profile,
-              error,
-              isLoading: !profile,
-            }) ??
-            html`
+          ${LoadStatus.render({
+            isError: status === "error" && !profile,
+            error,
+            isLoading: !profile,
+            content: () => html`
               ${Flex.render({
                 direction: "column",
                 align: "center",
@@ -266,8 +264,8 @@ export const Profile = {
                   })}
                 `,
               )}
-            `
-          }
+            `,
+          })}
         `,
       ],
     })
@@ -281,7 +279,12 @@ export const Profile = {
         title: t("profile.cropTitle"),
         description: t("profile.cropHint"),
         applyLabel: t("profile.cropApply"),
-        error: entity.avatarError,
+        cancelLabel: t("common.cancel"),
+        savingLabel: t("common.saving"),
+        closeLabel: t("common.close"),
+        loadErrorText: t("errors.imageCrop"),
+        error: t(entity.avatarError),
+        isOpen: true,
         isSaving: entity.avatarStatus === "saving",
         onCancel: onPhotoCropCancel,
         onApply: onPhotoCropApply,

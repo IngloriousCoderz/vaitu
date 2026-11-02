@@ -1,4 +1,5 @@
-import { pageRouteChange } from "../../common/page-route.js"
+import { pageRouteChange } from "@inglorious/web/router"
+
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
@@ -17,7 +18,7 @@ export const Ranks = {
     entity.error ??= null
   },
 
-  routeChange: pageRouteChange(open, close),
+  routeChange: pageRouteChange({ open, close }),
 
   renderHeader() {
     return { title: t("ranks.title"), back: paths.profile }
