@@ -132,3 +132,5 @@ When a change can't stay compatible, do it in two releases:
 
 The web app doesn't need this: it moves to the new version within one
 foreground or background of each open session.
+
+Next: [Security](security.md).

@@ -76,3 +76,4 @@ Read in this order: each guide assumes the ones before it.
 9. [Mobile](docs/mobile.md): running the Android and iOS apps.
 10. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
 11. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.
+12. [Security](docs/security.md): how the data is guarded, the authorization tests and the ZAP scan, and what stays open on purpose.

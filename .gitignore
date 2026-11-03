@@ -100,3 +100,6 @@ skills/
 
 # Landing page build output
 landing/dist
+
+# Security scan builds and reports (pnpm security:scan)
+.security-scan/

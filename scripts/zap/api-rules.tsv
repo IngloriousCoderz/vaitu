@@ -1,0 +1,5 @@
+# Warnings accepted for the API scan: they come from the Supabase gateway, see docs/security.md.
+10021	IGNORE	(X-Content-Type-Options missing: JSON responses from the Supabase gateway)
+10036	IGNORE	(Server header leaks version: set by the Supabase gateway)
+10098	IGNORE	(Cross-domain misconfiguration: open CORS is how the Supabase API works, RLS guards it)
+40026	IGNORE	(DOM XSS: needs a page that runs scripts, and starting its browser crashes the scan)

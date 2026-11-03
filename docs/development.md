@@ -84,6 +84,7 @@ pnpm test:unit                # tests that need nothing running
 pnpm test:integration         # tests against the local Supabase (*.integration.test.js)
 pnpm edge:check               # type-check and lint the edge functions
 pnpm typecheck                # wrong or unknown props on components, missing imports
+pnpm security:scan            # ZAP scans of the app and the API (see Security)
 supabase status               # URLs + keys
 supabase db reset --yes       # wipe + migrate + reseed (deletes local rows!)
 supabase migration up         # apply new migrations only

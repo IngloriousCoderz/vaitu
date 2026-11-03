@@ -1,0 +1,5 @@
+# Warnings accepted for the app scan: see docs/security.md.
+10049	IGNORE	(Storable and Cacheable Content: static files, nothing private)
+10055	IGNORE	(CSP: style-src unsafe-inline: the templates bind inline styles)
+10109	IGNORE	(Modern Web Application: informational, the AJAX spider already runs)
+90004	IGNORE	(Cross-Origin-Embedder-Policy: would block Supabase-hosted images)
