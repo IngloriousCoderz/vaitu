@@ -11,6 +11,7 @@ import {
   signIn,
   signOut,
   signUp,
+  updateAsService,
 } from "../testing/index.js"
 import {
   fetchReceivedDetail,
@@ -342,11 +343,7 @@ describe("an event that is not open", () => {
     "a closed event refuses a new application",
     async () => {
       eventId = await createEventAs(SEEKER, crypto.randomUUID())
-      const { error: closeError } = await supabase
-        .from("events")
-        .update({ status: "closed" })
-        .eq("id", eventId)
-      expect(closeError).toBeNull()
+      await updateAsService("events", "id", eventId, { status: "closed" })
 
       await signIn(SENDER)
       const { error } = await apply(eventId, MOTIVATION)

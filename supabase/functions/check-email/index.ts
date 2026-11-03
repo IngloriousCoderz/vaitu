@@ -45,13 +45,17 @@ serve(
   { fallbackError: "check failed" },
 )
 
+// Cloudflare sets cf-connecting-ip itself; the first x-forwarded-for entry is
+// whatever the caller sent, so trusting it first lets anyone skip the limit.
 function clientIp(req: Request) {
+  const connecting = req.headers.get("cf-connecting-ip")
+  if (connecting) return connecting
   const forwarded = req.headers.get("x-forwarded-for")
   if (forwarded) {
     const [client] = forwarded.split(",")
     return client.trim()
   }
-  return req.headers.get("cf-connecting-ip") ?? "unknown"
+  return "unknown"
 }
 
 async function hashIp(value: string) {

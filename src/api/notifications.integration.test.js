@@ -23,28 +23,17 @@ describe("notifications feed", () => {
   let eventId = null
   let applicationId = null
 
+  let rejectedEventId = null
+
   beforeAll(async () => {
     eventId = await createEventAs(SEEKER, crypto.randomUUID())
-    await signIn(SENDER)
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    const { data, error } = await supabase
-      .from("applications")
-      .insert({
-        event_id: eventId,
-        applicant_id: user.id,
-        motivation: MOTIVATION,
-      })
-      .select("id")
-      .single()
-    if (error) throw error
-    applicationId = data.id
+    applicationId = await applyAsSender(eventId)
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
     await signOut()
     if (eventId) await deleteOwnedEvent(eventId)
+    if (rejectedEventId) await deleteOwnedEvent(rejectedEventId)
   })
 
   test(
@@ -211,11 +200,13 @@ describe("notifications feed", () => {
   test(
     "rejecting notifies the applicant too",
     async () => {
+      rejectedEventId = await createEventAs(SEEKER, crypto.randomUUID())
+      const rejectedId = await applyAsSender(rejectedEventId)
       await signIn(SEEKER)
       const { error: rejectError } = await supabase
         .from("applications")
         .update({ status: "rejected" })
-        .eq("id", applicationId)
+        .eq("id", rejectedId)
       if (rejectError) throw rejectError
 
       await signIn(SENDER)
@@ -280,3 +271,21 @@ describe("withdrawal notification", () => {
     TEST_TIMEOUT_MS,
   )
 })
+
+async function applyAsSender(eventId) {
+  await signIn(SENDER)
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const { data, error } = await supabase
+    .from("applications")
+    .insert({
+      event_id: eventId,
+      applicant_id: user.id,
+      motivation: MOTIVATION,
+    })
+    .select("id")
+    .single()
+  if (error) throw error
+  return data.id
+}

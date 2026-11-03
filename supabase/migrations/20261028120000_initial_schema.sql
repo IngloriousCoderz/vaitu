@@ -423,13 +423,17 @@ begin
   from public.events
   where id = new.event_id;
 
-  if auth.uid() = v_sender_id and new.status in ('pending', 'shortlisted', 'rejected') then
+  if auth.uid() = v_sender_id
+    and current_setting('vaitu.assigning', true) = 'on'
+    and new.status in ('selected', 'rejected') then
     return new;
   end if;
 
+  -- The winner's job is theirs: taking it back would also stop them from
+  -- saying whether they were paid.
   if auth.uid() = v_sender_id
-    and new.status = 'selected'
-    and current_setting('vaitu.assigning', true) = 'on' then
+    and old.status <> 'selected'
+    and new.status in ('pending', 'shortlisted', 'rejected') then
     return new;
   end if;
 
@@ -720,10 +724,15 @@ create policy "Senders can view their own events"
   on public.events for select to authenticated
   using (sender_id = auth.uid() and deleted_at is null);
 
+-- Status moves only through the functions: an event posted or marked
+-- assigned by hand would count as a handoff without anyone doing the job.
 create policy "Users can create their own events"
   on public.events for insert to authenticated
   with check (
     sender_id = auth.uid()
+    and status = 'open'
+    and deleted_at is null
+    and outcome_requested_at is null
     and public.is_active_profile(auth.uid())
   );
 
@@ -809,7 +818,6 @@ grant update (
   event_date,
   application_deadline,
   max_applicants,
-  status,
   details,
   updated_at,
   image_urls
@@ -2192,9 +2200,11 @@ insert into public.app_versions (platform, min_build, store_url) values
   ('android', 1, 'https://play.google.com/store/apps/details?id=it.ingloriouscoderz.vaitu');
 
 
+-- Public buckets serve files by URL with no policy: select policies only decide
+-- who can list, so nobody lists another user's folder.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
-  ('event-ics', 'event-ics', true, null, null),
+  ('event-ics', 'event-ics', true, 64 * 1024, array['text/calendar']),
   ('event-images', 'event-images', true, 5 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
   ('avatars', 'avatars', true, 2 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do update
@@ -2202,9 +2212,12 @@ set public = excluded.public,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
 
-create policy "Anyone can read event ics"
-  on storage.objects for select to anon, authenticated
-  using (bucket_id = 'event-ics');
+create policy "Users can list their own ics"
+  on storage.objects for select to authenticated
+  using (
+    bucket_id = 'event-ics'
+    and split_part(name, '/', 1) = auth.uid()::text
+  );
 
 create policy "Users can upload their own ics"
   on storage.objects for insert to authenticated
@@ -2224,9 +2237,12 @@ create policy "Users can update their own ics"
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Anyone can read event images"
-  on storage.objects for select to anon, authenticated
-  using (bucket_id = 'event-images');
+create policy "Senders can list their own event images"
+  on storage.objects for select to authenticated
+  using (
+    bucket_id = 'event-images'
+    and split_part(name, '/', 1) = auth.uid()::text
+  );
 
 create policy "Senders can upload event images"
   on storage.objects for insert to authenticated
@@ -2253,9 +2269,12 @@ create policy "Senders can delete own event images"
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Anyone can read avatars"
-  on storage.objects for select to anon, authenticated
-  using (bucket_id = 'avatars');
+create policy "Users can list their own avatar"
+  on storage.objects for select to authenticated
+  using (
+    bucket_id = 'avatars'
+    and split_part(name, '/', 1) = auth.uid()::text
+  );
 
 create policy "Users can upload own avatar"
   on storage.objects for insert to authenticated
