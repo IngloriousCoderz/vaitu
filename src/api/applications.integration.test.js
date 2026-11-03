@@ -14,6 +14,7 @@ import {
   updateAsService,
 } from "../testing/index.js"
 import {
+  fetchApplicants,
   fetchReceivedDetail,
   updateMotivation,
   withdrawApplication,
@@ -52,14 +53,12 @@ describe("applying and choosing a winner", () => {
     await signIn(SEEKER)
     const { data, error } = await supabase
       .from("applications")
-      .select(
-        "motivation, applicant:profiles!applications_applicant_id_fkey(full_name)",
-      )
+      .select("id, motivation")
       .eq("event_id", eventId)
     expect(error).toBeNull()
-    expect(data).toEqual([
-      { motivation: MOTIVATION, applicant: { full_name: "Test Sender" } },
-    ])
+    expect(data).toEqual([{ id: expect.any(String), motivation: MOTIVATION }])
+    const applicants = await fetchApplicants([data[0].id])
+    expect(applicants[data[0].id].full_name).toBe("Test Sender")
   })
 
   test("a pending application cannot win", async () => {

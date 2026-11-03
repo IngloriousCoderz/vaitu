@@ -16,6 +16,7 @@ import wording from "./wording.json" with { type: "json" }
 type Locale = keyof typeof wording
 
 const FALLBACK_LOCALE: Locale = "en"
+const IMAGES_BUCKET = "event-images"
 
 // The sent applications are withdrawn, so organizers cannot pick someone who
 // left, and the open events are deleted. Past events with winners stay: they
@@ -25,6 +26,14 @@ serve(
     const db = admin()
     const user = await currentUser(db, req)
     if (!user) return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
+
+    const { data: open, error: openError } = await db
+      .from("events")
+      .select("image_urls")
+      .eq("sender_id", user.id)
+      .eq("status", "open")
+      .is("deleted_at", null)
+    if (openError) throw openError
 
     // This goes first: if the profile flag below fails, the caller can repeat
     // the call and it succeeds — no window where someone inactive keeps
@@ -41,6 +50,17 @@ serve(
       .eq("id", user.id)
     if (error) throw error
 
+    const images = open
+      .flatMap((event) => event.image_urls)
+      .map((url) => imagePath(url, user.id))
+      .filter((path): path is string => path !== null)
+    if (images.length) {
+      const { error: removeError } = await db.storage
+        .from(IMAGES_BUCKET)
+        .remove(images)
+      if (removeError) console.error("event images not removed", removeError)
+    }
+
     // The account is deactivated either way: a failed email must not undo that.
     try {
       await emailErasureLink(db, user.id, user.email)
@@ -52,6 +72,15 @@ serve(
   },
   { fallbackError: "deactivate failed" },
 )
+
+// Only files in the user's own folder: image_urls is written by the client.
+function imagePath(url: string, userId: string) {
+  const marker = `/${IMAGES_BUCKET}/`
+  const index = url.indexOf(marker)
+  if (index === -1) return null
+  const [path] = url.slice(index + marker.length).split(/[?#]/)
+  return path.startsWith(`${userId}/`) ? decodeURIComponent(path) : null
+}
 
 async function emailErasureLink(
   db: ReturnType<typeof admin>,

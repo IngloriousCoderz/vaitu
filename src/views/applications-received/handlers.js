@@ -2,6 +2,7 @@ import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { answerSettlement, proposeAgreement } from "../../api/agreements.js"
+import { fetchApplicants } from "../../api/applications.js"
 import { supabase } from "../../api/client.js"
 import { errorKey } from "../../api/errors.js"
 import {
@@ -130,7 +131,7 @@ export const load = handleAsync("load", {
     const { data: items, error } = await supabase
       .from("applications")
       .select(
-        "id, status, motivation, created_at, applicant_id, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), applicant:profiles!applications_applicant_id_fkey(full_name, website, phone, country)",
+        "id, status, motivation, created_at, applicant_id, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled)",
       )
       .eq("event_id", event_id)
       .neq("status", "withdrawn")
@@ -138,14 +139,16 @@ export const load = handleAsync("load", {
       .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
     if (error) throw error
     const applicantIds = items.map((item) => item.applicant_id).filter(Boolean)
-    const [stats, reviews] = await Promise.all([
+    const [stats, reviews, applicants] = await Promise.all([
       fetchProfileStats(applicantIds),
       fetchProfileReviews(applicantIds),
+      fetchApplicants(items.map((item) => item.id)),
     ])
     return {
       event,
       items: items.map((item) => ({
         ...item,
+        applicant: applicants[item.id] ?? null,
         stats: stats[item.applicant_id] ?? null,
         reviews: reviews[item.applicant_id] ?? [],
       })),

@@ -19,6 +19,7 @@ import {
   fetchEventDetail,
   fetchMyEvents,
 } from "./events.js"
+import { uploadEventImage } from "./images.js"
 
 const TEST_TIMEOUT_MS = 60000
 
@@ -224,6 +225,30 @@ test(
 
     await deleteSignedUpUser(userId)
     userId = null
+  },
+  TEST_TIMEOUT_MS,
+)
+
+test(
+  "deactivating takes down the images of the events it deletes",
+  async () => {
+    const id = crypto.randomUUID()
+    const email = `vitest-${id}@vaitu.local`
+    const imageOwnerId = await signUp({ email, fullName: `Vitest ${id}` })
+    try {
+      await signIn({ email, password: SEEKER.password })
+      const image = await uploadEventImage(
+        new File([new Uint8Array([1])], "venue.png", { type: "image/png" }),
+      )
+      await createEvent({ ...eventPayload(id), image_urls: [image.url] })
+      expect((await fetch(image.url)).ok).toBe(true)
+
+      const result = await invoke("deactivate-account")
+      expect(result.status).toBe(200)
+      expect((await fetch(image.url)).ok).toBe(false)
+    } finally {
+      await deleteSignedUpUser(imageOwnerId)
+    }
   },
   TEST_TIMEOUT_MS,
 )

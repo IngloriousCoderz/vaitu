@@ -299,6 +299,13 @@ describe("a stranger", () => {
     ).toEqual([])
   })
 
+  test("cannot read an applicant's contact details", async () => {
+    const { data } = await cast.stranger.db.rpc("applicant_profiles", {
+      p_application_ids: [cast.pendingId, cast.jobId],
+    })
+    expect(data).toEqual([])
+  })
+
   test("cannot upload into someone else's folder", async () => {
     const { error } = await cast.stranger.db.storage
       .from("avatars")
@@ -347,6 +354,27 @@ describe("the applicant", () => {
 })
 
 describe("the owner", () => {
+  test("gets an applicant's contact details and nothing else", async () => {
+    const { data: rows } = await cast.owner.db
+      .from("profiles")
+      .select("*")
+      .eq("id", cast.winner.userId)
+    expect(rows).toEqual([])
+
+    const { data } = await cast.owner.db.rpc("applicant_profiles", {
+      p_application_ids: [cast.pendingId],
+    })
+    expect(data).toEqual([
+      {
+        application_id: cast.pendingId,
+        full_name: "Vitest winner",
+        website: null,
+        phone: null,
+        country: null,
+      },
+    ])
+  })
+
   test("cannot hand the event to someone else or undelete it", async () => {
     for (const fields of [
       { sender_id: cast.stranger.userId },

@@ -1,6 +1,7 @@
 -- Vaitu · initial schema. Access is ownership: events.sender_id,
 -- applications.applicant_id.
--- - profiles is own-row only; the poster's name comes from event_poster_name().
+-- - profiles is own-row only; the poster's name comes from event_poster_name(),
+-- an applicant's contact details from applicant_profiles().
 -- - Deadlines close events through close_expired_events() on pg_cron: triggers
 -- cannot fire on time.
 -- - Event policies must NOT select profiles under RLS: it recurses through the
@@ -689,19 +690,32 @@ create policy "Users can update their own profile"
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
-create policy "Senders can view applicants to their events"
-  on public.profiles for select to authenticated
-  using (
-    exists (
-      select 1
-      from public.applications a
-      join public.events e on e.id = a.event_id
-      where a.applicant_id = public.profiles.id
-        and a.status <> 'withdrawn'
-        and e.sender_id = auth.uid()
-        and e.deleted_at is null
-    )
-  );
+-- What an organizer needs to contact an applicant, and nothing else of their
+-- profile: a policy would hand over the whole row.
+create function public.applicant_profiles(p_application_ids uuid[])
+returns table (
+  application_id uuid,
+  full_name text,
+  website text,
+  phone text,
+  country text
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select a.id, p.full_name, p.website, p.phone, p.country
+  from public.applications a
+  join public.events e on e.id = a.event_id
+  join public.profiles p on p.id = a.applicant_id
+  where a.id = any (p_application_ids)
+    and a.status <> 'withdrawn'
+    and e.sender_id = auth.uid()
+    and e.deleted_at is null;
+$$;
+
+grant execute on function public.applicant_profiles(uuid[]) to authenticated;
 
 create policy "Anyone can read app config"
   on public.app_config for select to anon, authenticated
@@ -2201,10 +2215,11 @@ insert into public.app_versions (platform, min_build, store_url) values
 
 
 -- Public buckets serve files by URL with no policy: select policies only decide
--- who can list, so nobody lists another user's folder.
+-- who can list, so nobody lists another user's folder. Calendars stay private
+-- and go out as expiring links: they outlive the event they describe.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
-  ('event-ics', 'event-ics', true, 64 * 1024, array['text/calendar']),
+  ('event-ics', 'event-ics', false, 64 * 1024, array['text/calendar']),
   ('event-images', 'event-images', true, 5 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
   ('avatars', 'avatars', true, 2 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do update

@@ -25,7 +25,7 @@ afterAll(async () => {
 }, TEST_TIMEOUT_MS)
 
 test(
-  "a signed-in user can upload a calendar file and read it back",
+  "a signed-in user gets an expiring link to their calendar file",
   async () => {
     const applicationId = crypto.randomUUID()
     await signIn(SEEKER)
@@ -38,6 +38,11 @@ test(
     const fetched = await fetch(url)
     expect(fetched.ok).toBe(true)
     expect(await fetched.text()).toContain("BEGIN:VCALENDAR")
+
+    const { publicUrl } = supabase.storage
+      .from("event-ics")
+      .getPublicUrl(storedPath).data
+    expect((await fetch(publicUrl)).ok).toBe(false)
   },
   TEST_TIMEOUT_MS,
 )

@@ -1,8 +1,14 @@
-import { MIN_TEXT_LENGTH, REQUEST_TIMEOUT_MS } from "../constants/index.js"
+import {
+  DAY_MS,
+  MIN_TEXT_LENGTH,
+  MS_PER_SECOND,
+  REQUEST_TIMEOUT_MS,
+} from "../constants/index.js"
 import { supabase } from "./client.js"
 import { toViewModel } from "./events.js"
 
 const ICS_BUCKET = "event-ics"
+const ICS_LINK_SECONDS = DAY_MS / MS_PER_SECOND
 
 export async function fetchMyApplications() {
   const {
@@ -107,13 +113,23 @@ export async function updateApplicationStatus(application_id, status) {
 export async function fetchReceivedDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
-    .select(
-      "id, status, motivation, created_at, event_id, applicant:profiles!applications_applicant_id_fkey(full_name, website, phone, country)",
-    )
+    .select("id, status, motivation, created_at, event_id")
     .eq("id", application_id)
     .single()
   if (error) throw error
-  return data
+  const applicants = await fetchApplicants([data.id])
+  return { ...data, applicant: applicants[data.id] ?? null }
+}
+
+export async function fetchApplicants(application_ids) {
+  if (!application_ids.length) return {}
+  const { data, error } = await supabase.rpc("applicant_profiles", {
+    p_application_ids: application_ids,
+  })
+  if (error) throw error
+  return Object.fromEntries(
+    data.map(({ application_id, ...applicant }) => [application_id, applicant]),
+  )
 }
 
 export async function uploadIcsFile(application_id, ics) {
@@ -129,5 +145,9 @@ export async function uploadIcsFile(application_id, ics) {
       upsert: true,
     })
   if (error) throw error
-  return supabase.storage.from(ICS_BUCKET).getPublicUrl(path).data.publicUrl
+  const { data, error: linkError } = await supabase.storage
+    .from(ICS_BUCKET)
+    .createSignedUrl(path, ICS_LINK_SECONDS)
+  if (linkError) throw linkError
+  return data.signedUrl
 }

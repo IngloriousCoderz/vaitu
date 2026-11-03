@@ -1,4 +1,5 @@
 import { FEED_LIMIT, REQUEST_TIMEOUT_MS } from "../constants/index.js"
+import { fetchApplicants } from "./applications.js"
 import { supabase } from "./client.js"
 
 export async function fetchMyNotifications() {
@@ -9,13 +10,16 @@ export async function fetchMyNotifications() {
   const { data, error } = await supabase
     .from("notifications")
     .select(
-      "id, type, is_read, created_at, event_id, application_id, applicant_name, event_title, events(id, title, status, category), applications(applicant:profiles!applications_applicant_id_fkey(full_name))",
+      "id, type, is_read, created_at, event_id, application_id, applicant_name, event_title, events(id, title, status, category)",
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(FEED_LIMIT)
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
+  const applicants = await fetchApplicants(
+    data.map((row) => row.application_id).filter(Boolean),
+  )
   return data.map((row) => ({
     id: row.id,
     type: row.type,
@@ -26,7 +30,7 @@ export async function fetchMyNotifications() {
     event_title: row.events?.title ?? row.event_title ?? null,
     event_status: row.events?.status ?? null,
     applicant_name:
-      row.applications?.applicant?.full_name ?? row.applicant_name ?? null,
+      applicants[row.application_id]?.full_name ?? row.applicant_name ?? null,
   }))
 }
 
