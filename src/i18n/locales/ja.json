@@ -157,10 +157,10 @@
     "quarter": "90日以内"
   },
   "sorts": {
-    "createdNewest": "作成：新しい順",
-    "createdOldest": "作成：古い順",
-    "eventDateNewest": "開催：新しい順",
-    "eventDateOldest": "開催：古い順",
+    "createdNewest": "新しい順",
+    "createdOldest": "古い順",
+    "eventDateNewest": "開催：遠い順",
+    "eventDateOldest": "開催：近い順",
     "deadlineSoonest": "締切：近い順",
     "deadlineFarthest": "締切：遠い順"
   },

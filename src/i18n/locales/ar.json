@@ -167,10 +167,10 @@
     "quarter": "الأيام التسعون القادمة"
   },
   "sorts": {
-    "createdNewest": "إنشاء: الأحدث",
-    "createdOldest": "إنشاء: الأقدم",
-    "eventDateNewest": "حدث: الأحدث",
-    "eventDateOldest": "حدث: الأقدم",
+    "createdNewest": "الأحدث",
+    "createdOldest": "الأقدم",
+    "eventDateNewest": "حدث: الأبعد",
+    "eventDateOldest": "حدث: الأقرب",
     "deadlineSoonest": "موعد: الأقرب",
     "deadlineFarthest": "موعد: الأبعد"
   },

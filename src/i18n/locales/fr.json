@@ -161,10 +161,10 @@
     "quarter": "90 prochains jours"
   },
   "sorts": {
-    "createdNewest": "Création : récents",
-    "createdOldest": "Création : anciens",
-    "eventDateNewest": "Événement : récents",
-    "eventDateOldest": "Événement : anciens",
+    "createdNewest": "Plus récents",
+    "createdOldest": "Plus anciens",
+    "eventDateNewest": "Événement : lointains",
+    "eventDateOldest": "Événement : proches",
     "deadlineSoonest": "Échéance : proches",
     "deadlineFarthest": "Échéance : lointaines"
   },

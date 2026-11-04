@@ -159,12 +159,12 @@
     "quarter": "Next 90 days"
   },
   "sorts": {
-    "createdNewest": "Created: newest",
-    "createdOldest": "Created: oldest",
-    "eventDateNewest": "Event: newest",
-    "eventDateOldest": "Event: oldest",
+    "createdNewest": "Newest",
+    "createdOldest": "Oldest",
+    "eventDateNewest": "Event: latest",
+    "eventDateOldest": "Event: soonest",
     "deadlineSoonest": "Deadline: soonest",
-    "deadlineFarthest": "Deadline: farthest"
+    "deadlineFarthest": "Deadline: latest"
   },
   "combobox": {
     "select": "Select…",

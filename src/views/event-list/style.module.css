@@ -21,10 +21,8 @@
 }
 
 .orderBy {
-  flex: 1 1 auto;
+  flex: 0 1 75%;
   min-width: 0;
-  max-width: 12.5rem;
-  margin-inline-start: auto;
 }
 
 .orderBy :global(.iw-combobox) {
@@ -36,11 +34,15 @@
 }
 
 .orderBy :global(.iw-combobox-label) {
-  margin: 0;
-  flex: 0 0 auto;
-  color: var(--vmuted);
-  font-size: var(--iw-font-size-sm);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
   white-space: nowrap;
+  border: 0;
 }
 
 .orderBy :global(.iw-combobox-frame) {
@@ -184,10 +186,6 @@ button:global(.iw-button.iw-button-secondary).filterActive {
 
   .resultsBar {
     margin: 0 0 var(--iw-space-2);
-  }
-
-  .orderBy {
-    max-width: 16rem;
   }
 
   .list {
