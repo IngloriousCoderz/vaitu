@@ -117,31 +117,30 @@ describe("regionOption", () => {
 
 describe("favoriteRegionOptions", () => {
   it("groups the Italian list, then names already used on jobs", () => {
-    const options = favoriteRegionOptions(["Provence", "Toscana"])
-    expect(options[0]).toMatchObject({
-      value: "__group_italian",
-      label: "filters.italianRegions",
-      isDisabled: true,
-    })
-    expect(options.some((option) => option.value === "Tuscany")).toBe(true)
-    expect(options.some((option) => option.value === "Toscana")).toBe(false)
-    const other = options.find((option) => option.value === "__group_other")
-    expect(other).toMatchObject({
+    const [italian, other] = favoriteRegionOptions(["Provence", "Toscana"])
+    expect(italian.label).toBe("filters.italianRegions")
+    const values = italian.options.map((option) => option.value)
+    expect(values).toContain("Tuscany")
+    expect(values).not.toContain("Toscana")
+    expect(other).toEqual({
       label: "filters.otherRegions",
-      isDisabled: true,
+      options: [{ value: "Provence", label: "Provence" }],
     })
-    expect(options.at(-1)).toEqual({ value: "Provence", label: "Provence" })
   })
 
   it("lists a favorite no job uses, in the spelling it was saved with", () => {
-    const options = favoriteRegionOptions(["Provence"], ["bavaria", "provence"])
-    const others = options.slice(
-      options.findIndex((option) => option.value === "__group_other") + 1,
+    const [, other] = favoriteRegionOptions(
+      ["Provence"],
+      ["bavaria", "provence"],
     )
-    expect(others.map((option) => option.value)).toEqual([
+    expect(other.options.map((option) => option.value)).toEqual([
       "bavaria",
       "provence",
     ])
+  })
+
+  it("leaves out the other group when every name is Italian", () => {
+    expect(favoriteRegionOptions(["Toscana"])).toHaveLength(1)
   })
 })
 

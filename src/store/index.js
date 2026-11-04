@@ -6,11 +6,11 @@ import { NetworkStatus } from "@inglorious/web/sensors/network-status"
 import { liveAlways, livePage, liveSession } from "../api/live.js"
 import { Shell } from "../app/shell.js"
 import { AnalyticsConsent } from "../common/analytics-consent/index.js"
-import { CountrySelect } from "../common/country-select/index.js"
 import { LanguageSelect } from "../common/language-select/index.js"
 import { Notifications } from "../common/notifications/index.js"
 import { PushPrompt } from "../common/push-prompt/index.js"
 import { Safety } from "../common/safety/index.js"
+import { TranslatedCombobox } from "../common/translated-combobox/index.js"
 import { AppVersion } from "../common/update-required/index.js"
 import { I18n } from "../i18n/index.js"
 import { routes } from "../routes"
@@ -61,7 +61,7 @@ export const store = createStore({
 
     JobCreate,
     CoverCropper,
-    CountrySelect,
+    TranslatedCombobox,
     LanguageSelect,
     PwaUpdate,
     NetworkStatus,

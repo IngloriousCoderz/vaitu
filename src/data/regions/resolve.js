@@ -4,9 +4,6 @@ const aliasByKey = new Map(
   regionSpellings.map(({ name, canonical }) => [regionKey(name), canonical]),
 )
 
-const ITALIAN_GROUP = "__group_italian"
-const OTHER_GROUP = "__group_other"
-
 export { italianRegions }
 
 export const ITALY = "Italy"
@@ -89,24 +86,19 @@ export function regionFilterItems(jobRegions, favoriteRegions) {
 
 /**
  * Favorite combobox: Italian regions, then the favorites and other names already
- * on jobs. Group labels are not selectable.
+ * on jobs, each under its heading.
  */
 export function favoriteRegionOptions(jobRegions, favorites = []) {
   const others = sortedRegions([...favorites, ...jobRegions]).filter(
     (region) => !isItalianRegion(region),
   )
   return [
-    { value: ITALIAN_GROUP, isDisabled: true, label: "filters.italianRegions" },
-    ...sortedRegions(italianRegions).map(regionOption),
+    {
+      label: "filters.italianRegions",
+      options: sortedRegions(italianRegions).map(regionOption),
+    },
     ...(others.length
-      ? [
-          {
-            value: OTHER_GROUP,
-            isDisabled: true,
-            label: "filters.otherRegions",
-          },
-          ...others.map(regionOption),
-        ]
+      ? [{ label: "filters.otherRegions", options: others.map(regionOption) }]
       : []),
   ]
 }

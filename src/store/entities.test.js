@@ -4,7 +4,7 @@ import { entities } from "./entities.js"
 
 describe("entities", () => {
   const selects = Object.entries(entities).filter(([, entity]) =>
-    entity.type?.endsWith("Select"),
+    ["TranslatedCombobox", "LanguageSelect"].includes(entity.type),
   )
 
   it.each(selects)("%s tells its owner when it changes", (_, entity) => {

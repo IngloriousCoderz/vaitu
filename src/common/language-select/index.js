@@ -1,13 +1,13 @@
 import { html } from "@inglorious/web"
 
-import { CountrySelect } from "../country-select/index.js"
+import { TranslatedCombobox } from "../translated-combobox/index.js"
 import styles from "./style.module.css"
 
 export const LanguageSelect = {
-  ...CountrySelect,
+  ...TranslatedCombobox,
   render(entity, api) {
     return html`<div class=${styles.languageSelect}>
-      ${CountrySelect.render(
+      ${TranslatedCombobox.render(
         { ...entity, selectedValue: api.getEntity("i18n")?.locale ?? null },
         api,
       )}

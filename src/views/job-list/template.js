@@ -17,33 +17,9 @@ import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
-import { DEFAULT_SORT } from "./helpers.js"
 import styles from "./style.module.css"
 
 export const JobList = {
-  create(entity) {
-    entity.query ??= ""
-    entity.activeTypes ??= []
-    entity.activeProfessions ??= []
-    entity.activeDetails ??= []
-    entity.activeRegion ??= null
-    entity.activePeriod ??= "all"
-    entity.activeSort ??= DEFAULT_SORT
-    entity.isFiltersVisible ??= false
-    entity.jobs ??= []
-    entity.total ??= 0
-    entity.isLoadingMore ??= false
-    entity.request ??= 0
-    entity.regionsRequest ??= 0
-    entity.regions ??= []
-    entity.appliedMap ??= {}
-    entity.favoriteRegions ??= []
-    entity.interests ??= []
-    entity.professions ??= []
-    entity.status ??= "loading"
-    entity.error ??= null
-  },
-
   render(props, api) {
     return this.renderJobList(props, api)
   },

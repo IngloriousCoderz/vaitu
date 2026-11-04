@@ -20,16 +20,12 @@
   white-space: nowrap;
 }
 
-.orderBy {
-  flex: 0 1 75%;
-  min-width: 0;
-}
-
 .orderBy :global(.iw-combobox) {
   flex-direction: row;
   align-items: center;
   gap: var(--iw-space-2);
-  width: 100%;
+  width: 16rem;
+  /* width: 100%; */
   min-width: 0;
 }
 
