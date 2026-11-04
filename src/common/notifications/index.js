@@ -8,13 +8,11 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from "../../api/notifications.js"
-import { NO_UNREAD } from "../../constants/index.js"
+import { NO_UNREAD, WIDE_QUERY } from "../../constants/index.js"
 import { paths } from "../../routes.js"
 import { Notifications as renderers } from "./template.js"
 
 const ONE_NOTIFICATION = 1
-
-const WIDE_QUERY = "(min-width: 48rem)"
 
 const load = handleAsync("load", {
   start(entity) {

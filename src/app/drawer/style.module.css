@@ -1,0 +1,5 @@
+/* Only the navigation drawer: the notifications panel is a drawer too, and two
+   elements sharing a name make the browser skip every page transition. */
+.drawer {
+  view-transition-name: drawer;
+}

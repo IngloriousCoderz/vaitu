@@ -100,7 +100,3 @@ button:global(.iw-button).avatarButton {
   overflow-x: clip;
   overflow-y: auto;
 }
-
-:global(.iw-drawer) {
-  view-transition-name: drawer;
-}

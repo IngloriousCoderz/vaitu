@@ -10,20 +10,21 @@ import { List } from "@inglorious/ui/list"
 
 import { Logo } from "../../common/logo/index.js"
 import { t } from "../../i18n/index.js"
+import styles from "./style.module.css"
 
 const NAV = [
   { id: "events", icon: eventOutline, tab: "events", label: "nav.events" },
-  {
-    id: "myEvents",
-    icon: editCalendarOutline,
-    tab: "myEvents",
-    label: "nav.myEvents",
-  },
   {
     id: "applications",
     icon: assignmentOutline,
     tab: "applications",
     label: "nav.applications",
+  },
+  {
+    id: "myEvents",
+    icon: editCalendarOutline,
+    tab: "myEvents",
+    label: "nav.myEvents",
   },
   { id: "profile", icon: personOutline, tab: "profile", label: "nav.profile" },
   {
@@ -50,6 +51,7 @@ export const AppDrawer = {
       isHidden,
       isCollapsed,
       anchor: "left",
+      className: styles.drawer,
       title: Logo.render(),
       closeLabel: t("common.close"),
       collapseLabel: t("nav.collapse"),
