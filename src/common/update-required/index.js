@@ -4,12 +4,12 @@ import { handleAsync } from "@inglorious/store/async"
 
 import { fetchAppVersion } from "../../api/app-versions.js"
 import { isOutdated } from "./is-outdated.js"
-import * as renderers from "./template.js"
+import { template } from "./template.js"
 
 // A failed check keeps the last answer: the gate never closes or opens on a
 // guess.
 export const AppVersion = {
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.isUpdateRequired = false
@@ -33,5 +33,12 @@ export const AppVersion = {
 
   storeOpen(entity) {
     window.location.assign(entity.storeUrl)
+  },
+
+  render(entity, api) {
+    return this.renderUpdateRequired({
+      storeUrl: entity.storeUrl,
+      onStoreOpen: () => api.notify(`#${entity.id}:storeOpen`),
+    })
   },
 }

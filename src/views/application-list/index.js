@@ -3,14 +3,14 @@ import { pageRouteChange } from "@inglorious/web/router"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
-import { ApplicationList as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { load, ...syncHandlers } = handlers
 
 export const ApplicationList = {
   ...syncHandlers,
   ...load,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.applications ??= []

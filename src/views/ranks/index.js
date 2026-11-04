@@ -3,14 +3,14 @@ import { pageRouteChange } from "@inglorious/web/router"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
-import { Ranks as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { tiersLoad, ...syncHandlers } = handlers
 
 export const Ranks = {
   ...syncHandlers,
   ...tiersLoad,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.tiers ??= null

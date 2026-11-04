@@ -10,7 +10,7 @@ import {
 } from "../../api/notifications.js"
 import { NO_UNREAD, WIDE_QUERY } from "../../constants/index.js"
 import { paths } from "../../routes.js"
-import { Notifications as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const ONE_NOTIFICATION = 1
 
@@ -89,7 +89,7 @@ export function pathFor(item) {
 }
 
 export const Notifications = {
-  ...renderers,
+  ...template,
   ...load,
 
   create(entity, _, api) {
@@ -133,7 +133,7 @@ export const Notifications = {
 
   renderHeader(entity, api) {
     const id = entity.id
-    return renderers.renderHeader({
+    return this.renderNotificationsHeader({
       unread: entity.unread,
       onMarkAll: () => api.notify(`#${id}:readAll`),
     })
@@ -200,3 +200,5 @@ function routeOpen(entity, _payload, api) {
 function routeClose(entity) {
   entity.status = entity.items.length ? "ready" : "idle"
 }
+
+export { NotificationsPanel } from "./template.js"

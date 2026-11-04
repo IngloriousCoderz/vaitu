@@ -19,13 +19,20 @@ import {
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-export const Preferences = {
+export const template = {
   render(props, api) {
     return this.renderPreferences(props, api)
   },
 
   renderPreferences(
-    { entity, onToggleProfession, onNotificationToggle, onUnblock },
+    {
+      entity,
+      isAnalyticsOn,
+      onToggleProfession,
+      onNotificationToggle,
+      onAnalyticsToggle,
+      onUnblock,
+    },
     api,
   ) {
     return Page.render({
@@ -83,9 +90,8 @@ export const Preferences = {
                 Switch.render({
                   label: t("preferences.analytics"),
                   description: t("preferences.analyticsDescription"),
-                  isChecked: api.getEntity("analytics")?.consent === "granted",
-                  onChange: (isOn) =>
-                    api.notify("#analytics:analyticsConsent", isOn),
+                  isChecked: isAnalyticsOn,
+                  onChange: onAnalyticsToggle,
                 }),
               ],
             })}

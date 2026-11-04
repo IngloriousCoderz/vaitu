@@ -16,7 +16,7 @@ import {
   releaseRecorder,
 } from "./handlers.js"
 import { payFromForm, payToForm } from "./helpers.js"
-import { JobCreate as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const {
   save,
@@ -39,7 +39,7 @@ export const JobCreate = {
   ...audioParse,
   ...coverCropConfirm,
   ...coverCropEdit,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.editing_job_id ??= null

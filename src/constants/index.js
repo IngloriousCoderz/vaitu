@@ -98,3 +98,10 @@ export const NOTIFICATION_BADGE_MAX = 9
 export const FEED_LIMIT = 50
 // Where the tab bar gives way to the drawer; keep in step with the CSS.
 export const WIDE_QUERY = "(min-width: 48rem)"
+export const SAFETY_REASONS = [
+  "spam",
+  "inappropriate",
+  "fake",
+  "harassment",
+  "other",
+]

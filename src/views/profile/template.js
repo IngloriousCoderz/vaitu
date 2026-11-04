@@ -25,7 +25,7 @@ import { AVATAR_CROPPER } from "./avatar-cropper.js"
 import { displayWebsite, initials } from "./helpers.js"
 import styles from "./style.module.css"
 
-export const Profile = {
+export const template = {
   render(props, api) {
     return this.renderProfile(props, api)
   },

@@ -55,7 +55,7 @@ const CREDITS = [
   },
 ]
 
-export const About = {
+export const template = {
   render() {
     return this.renderAbout()
   },

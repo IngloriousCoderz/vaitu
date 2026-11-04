@@ -36,7 +36,7 @@ import {
   professionsInScope,
   regionInEffect,
 } from "./helpers.js"
-import { JobList as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const ONE_INTEREST = 1
 const SEARCH_DELAY_MS = 300
@@ -63,7 +63,7 @@ export const JobList = {
   ...load,
   ...pageFetch,
   ...regionsFetch,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.query ??= ""

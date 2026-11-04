@@ -3,14 +3,14 @@ import { pageRouteChange } from "@inglorious/web/router"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { deleteAsk, deleteCancel, jobRemove, load } from "./handlers.js"
-import { MyJobs as renderers } from "./template.js"
+import { template } from "./template.js"
 
 export const MyJobs = {
   deleteAsk,
   deleteCancel,
   ...load,
   ...jobRemove,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.jobs ??= []

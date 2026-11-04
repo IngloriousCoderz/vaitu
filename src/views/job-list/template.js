@@ -19,7 +19,7 @@ import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-export const JobList = {
+export const template = {
   render(props, api) {
     return this.renderJobList(props, api)
   },

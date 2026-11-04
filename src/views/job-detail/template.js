@@ -44,7 +44,7 @@ const toneClass = {
   closed: styles.badgeClosed,
 }
 
-export const JobDetail = {
+export const template = {
   render(props, api) {
     return this.renderJobDetail(props, api)
   },

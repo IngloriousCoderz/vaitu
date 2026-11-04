@@ -6,7 +6,7 @@ import { stopTick } from "../../api/ticker.js"
 import { isProfileComplete } from "../../common/profile.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
-import { JobDetail as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { apply, load, ...syncHandlers } = handlers
 
@@ -15,7 +15,7 @@ export const JobDetail = {
   ...syncHandlers,
   ...apply,
   ...load,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.job_id ??= null

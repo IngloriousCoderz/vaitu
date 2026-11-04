@@ -35,7 +35,7 @@ import styles from "./style.module.css"
 
 const PAY_KINDS = ["to_agree", "fixed", "range"]
 
-export const JobCreate = {
+export const template = {
   render(props, api) {
     return this.renderJobCreate(props, api)
   },

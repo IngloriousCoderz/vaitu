@@ -17,7 +17,7 @@ import { t } from "../../i18n/index.js"
 import { calendarLinks } from "./helpers.js"
 import styles from "./style.module.css"
 
-export const ApplicationDetail = {
+export const template = {
   render(props, api) {
     return this.renderApplicationDetail(props, api)
   },

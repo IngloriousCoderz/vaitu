@@ -38,7 +38,7 @@ import styles from "./style.module.css"
 
 const OUTCOMES = ["completed", "no_show", "cancelled"]
 
-export const ApplicationsReceived = {
+export const template = {
   render(props, api) {
     return this.renderApplicationsReceived(props, api)
   },

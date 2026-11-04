@@ -37,12 +37,12 @@ const INBOX_ICONS = {
   settlement_contested: paymentsOutline,
 }
 
-export const Notifications = {
+export const template = {
   render(props, api) {
     return this.renderInbox(props, api)
   },
 
-  renderHeader({ unread = NO_UNREAD, onMarkAll }) {
+  renderNotificationsHeader({ unread = NO_UNREAD, onMarkAll }) {
     return {
       title: t("notifications.title"),
       actions: when(

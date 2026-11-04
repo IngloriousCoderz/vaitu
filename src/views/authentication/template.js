@@ -9,7 +9,7 @@ import { LoginStep } from "./login-step.js"
 import { SignupStep } from "./signup-step.js"
 import styles from "./style.module.css"
 
-export const Authentication = {
+export const template = {
   render(props, api) {
     return this.renderAuthentication(props, api)
   },

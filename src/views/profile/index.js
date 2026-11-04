@@ -5,7 +5,7 @@ import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { closeAvatarCrop } from "./handlers.js"
-import { Profile as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const {
   load,
@@ -26,7 +26,7 @@ export const Profile = {
   ...accountDelete,
   ...logout,
   ...avatarSave,
-  ...renderers,
+  ...template,
 
   sessionStart(entity, _, api) {
     api.notify(`#${entity.id}:load`)

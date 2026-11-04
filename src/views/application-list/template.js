@@ -21,7 +21,7 @@ const FilterOptions = [
   { id: "rejected", label: "status.rejected" },
 ]
 
-export const ApplicationList = {
+export const template = {
   render(props, api) {
     return this.renderApplicationList(props, api)
   },

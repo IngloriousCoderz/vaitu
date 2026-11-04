@@ -2,7 +2,7 @@ import { Form } from "@inglorious/web/form"
 
 import * as handlers from "./handlers.js"
 import { clearAuthErrors } from "./handlers.js"
-import { Authentication as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { emailCheck, login, signup, resend, ...syncHandlers } = handlers
 
@@ -13,7 +13,7 @@ export const Authentication = {
   ...login,
   ...signup,
   ...resend,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.initialValues = {

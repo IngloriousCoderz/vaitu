@@ -3,7 +3,7 @@ import { pageRouteChange } from "@inglorious/web/router"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
-import { Preferences as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { load, save, unblock, localeSave, ...syncHandlers } = handlers
 
@@ -13,7 +13,7 @@ export const Preferences = {
   ...save,
   ...unblock,
   ...localeSave,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.interested_job_types ??= []
@@ -38,10 +38,13 @@ export const Preferences = {
     return this.renderPreferences(
       {
         entity,
+        isAnalyticsOn: api.getEntity("analytics")?.consent === "granted",
         onToggleProfession: (professionId) =>
           api.notify(`#${id}:professionToggle`, professionId),
         onNotificationToggle: (payload) =>
           api.notify(`#${id}:notificationToggle`, payload),
+        onAnalyticsToggle: (isOn) =>
+          api.notify("#analytics:analyticsConsent", isOn),
         onUnblock: (user_id) => api.notify(`#${id}:unblock`, user_id),
       },
       api,

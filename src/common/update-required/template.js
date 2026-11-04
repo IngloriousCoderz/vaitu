@@ -7,24 +7,31 @@ import { Logo } from "../logo/index.js"
 import { Page } from "../page/index.js"
 import styles from "./style.module.css"
 
-export const render = (entity, api) =>
-  Page.render({
-    variant: "centered",
-    align: "center",
-    children: html`<div class=${styles.gate}>
-      ${Logo.render()}
-      <h2 class=${styles.title}>${t("appUpdate.title")}</h2>
-      <p class=${styles.subtitle}>
-        ${t(entity.storeUrl ? "appUpdate.body" : "appUpdate.bodyNoLink")}
-      </p>
-      ${when(entity.storeUrl, () =>
-        Button.render({
-          children: t("appUpdate.update"),
-          color: "primary",
-          shape: "pill",
-          isFullWidth: true,
-          onClick: () => api.notify(`#${entity.id}:storeOpen`),
-        }),
-      )}
-    </div>`,
-  })
+export const template = {
+  render(props) {
+    return this.renderUpdateRequired(props)
+  },
+
+  renderUpdateRequired({ storeUrl, onStoreOpen }) {
+    return Page.render({
+      variant: "centered",
+      align: "center",
+      children: html`<div class=${styles.gate}>
+        ${Logo.render()}
+        <h2 class=${styles.title}>${t("appUpdate.title")}</h2>
+        <p class=${styles.subtitle}>
+          ${t(storeUrl ? "appUpdate.body" : "appUpdate.bodyNoLink")}
+        </p>
+        ${when(storeUrl, () =>
+          Button.render({
+            children: t("appUpdate.update"),
+            color: "primary",
+            shape: "pill",
+            isFullWidth: true,
+            onClick: onStoreOpen,
+          }),
+        )}
+      </div>`,
+    })
+  },
+}

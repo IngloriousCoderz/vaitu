@@ -6,7 +6,7 @@ import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { clearReopenError } from "./handlers.js"
 import { emptyReview } from "./helpers.js"
-import { ApplicationsReceived as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const {
   load,
@@ -29,7 +29,7 @@ export const ApplicationsReceived = {
   ...dealSettle,
   ...winnerAssign,
   ...jobReopen,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.job_id ??= null

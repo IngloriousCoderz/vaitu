@@ -1,7 +1,7 @@
 import { Form } from "@inglorious/web/form"
 
 import * as handlers from "./handlers.js"
-import { Onboarding as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { save, skip, ...syncHandlers } = handlers
 
@@ -10,7 +10,7 @@ export const Onboarding = {
   ...syncHandlers,
   ...save,
   ...skip,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.initialValues = {

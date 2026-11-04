@@ -6,7 +6,7 @@ import { pageRouteChange } from "@inglorious/web/router"
 import { uploadIcsFile } from "../../api/applications.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
-import { ApplicationDetail as renderers } from "./template.js"
+import { template } from "./template.js"
 
 const { load, save, withdraw, dealAnswer, dealSettle, ...syncHandlers } =
   handlers
@@ -19,7 +19,7 @@ export const ApplicationDetail = {
   ...withdraw,
   ...dealAnswer,
   ...dealSettle,
-  ...renderers,
+  ...template,
 
   create(entity) {
     entity.application_id ??= null

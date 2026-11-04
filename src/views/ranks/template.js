@@ -21,7 +21,7 @@ import styles from "./style.module.css"
 
 const RANK_ORDER = ["bronze", "silver", "gold"]
 
-export const Ranks = {
+export const template = {
   render(props, api) {
     return this.renderRanks(props, api)
   },

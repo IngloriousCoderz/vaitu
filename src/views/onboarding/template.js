@@ -13,7 +13,7 @@ import { professions } from "../../data/job-taxonomy.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
-export const Onboarding = {
+export const template = {
   render(props, api) {
     return this.renderOnboarding(props, api)
   },
