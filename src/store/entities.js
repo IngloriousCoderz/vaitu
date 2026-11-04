@@ -90,11 +90,11 @@ export const entities = {
     isFullWidth: false,
     size: "sm",
     options: sorts,
-    changeJob: "#jobList:sortSelect",
+    changeEvent: "#jobList:sortSelect",
   },
 }
 
-function countrySelect(targetId, targetJob, overrides = {}) {
+function countrySelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
     ...overrides,
@@ -114,12 +114,12 @@ function countrySelect(targetId, targetJob, overrides = {}) {
     isFullWidth: true,
     size: "md",
     options: countryOptions,
-    changeJob: `#${targetId}:${targetJob}`,
+    changeEvent: `#${targetId}:${targetEvent}`,
     changePayload: { field: "country" },
   }
 }
 
-function regionSelect(targetId, targetJob, overrides = {}) {
+function regionSelect(targetId, targetEvent, overrides = {}) {
   return {
     type: "CountrySelect",
     ...overrides,
@@ -139,12 +139,12 @@ function regionSelect(targetId, targetJob, overrides = {}) {
     isFullWidth: true,
     size: "md",
     options: regionOptions,
-    changeJob: `#${targetId}:${targetJob}`,
+    changeEvent: `#${targetId}:${targetEvent}`,
     changePayload: { field: "region" },
   }
 }
 
-function jobTypeSelect(targetId, targetJob) {
+function jobTypeSelect(targetId, targetEvent) {
   return {
     type: "CountrySelect",
     selectedValue: null,
@@ -162,7 +162,7 @@ function jobTypeSelect(targetId, targetJob) {
     isFullWidth: true,
     size: "md",
     options: availableJobTypes,
-    changeJob: `#${targetId}:${targetJob}`,
+    changeEvent: `#${targetId}:${targetEvent}`,
     changePayload: { field: "job_type" },
   }
 }
@@ -196,14 +196,14 @@ function detailSelect(field, options, label) {
     isFullWidth: true,
     size: "md",
     options,
-    changeJob: "#jobCreate:detailFieldSet",
+    changeEvent: "#jobCreate:detailFieldSet",
     changePayload: { field },
   }
 }
 
-function favoriteRegionsSelect(targetId, targetJob, label) {
+function favoriteRegionsSelect(targetId, targetEvent, label) {
   return {
-    ...regionSelect(targetId, targetJob, { label }),
+    ...regionSelect(targetId, targetEvent, { label }),
     options: favoriteRegionOptions([]),
     selectedValue: [],
     isMulti: true,
