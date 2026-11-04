@@ -38,7 +38,7 @@ export const entities = {
     isFullWidth: true,
     size: "md",
     options: languages,
-    changeJob: "#i18n:localeChange",
+    changeEvent: "#i18n:localeChange",
   },
   countryOnboarding: countrySelect("onboarding", "fieldSet"),
   countryProfile: countrySelect("profile", "fieldSet", {
