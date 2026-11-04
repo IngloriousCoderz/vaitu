@@ -8,25 +8,25 @@ const EXTENSIONS = {
   "image/webp": "webp",
 }
 
-export const EVENT_IMAGES_BUCKET = "event-images"
+export const JOB_IMAGES_BUCKET = "job-images"
 export const AVATARS_BUCKET = "avatars"
 
-const BUCKETS = [EVENT_IMAGES_BUCKET, AVATARS_BUCKET]
+const BUCKETS = [JOB_IMAGES_BUCKET, AVATARS_BUCKET]
 
 export function imageExtension(type) {
   return EXTENSIONS[type] ?? null
 }
 
-export async function uploadEventImage(file) {
-  return uploadImage(file, EVENT_IMAGES_BUCKET)
+export async function uploadJobImage(file) {
+  return uploadImage(file, JOB_IMAGES_BUCKET)
 }
 
 export async function uploadAvatar(file) {
   return uploadImage(file, AVATARS_BUCKET)
 }
 
-export async function deleteEventImage(path) {
-  return deleteImage(path, EVENT_IMAGES_BUCKET)
+export async function deleteJobImage(path) {
+  return deleteImage(path, JOB_IMAGES_BUCKET)
 }
 
 export async function deleteAvatar(path) {

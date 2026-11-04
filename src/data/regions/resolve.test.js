@@ -87,7 +87,7 @@ describe("uniqueRegions", () => {
 })
 
 describe("regionFilterItems", () => {
-  it("lists every event region when there are no favorites", () => {
+  it("lists every job region when there are no favorites", () => {
     const items = regionFilterItems(["Tuscany", "Toscana", "Provence"], [])
     expect(items.map((item) => item.id)).toEqual(["all", "Tuscany", "Provence"])
     expect(items[0].label).toBe("filters.allRegions")
@@ -116,7 +116,7 @@ describe("regionOption", () => {
 })
 
 describe("favoriteRegionOptions", () => {
-  it("groups the Italian list, then names already used on events", () => {
+  it("groups the Italian list, then names already used on jobs", () => {
     const options = favoriteRegionOptions(["Provence", "Toscana"])
     expect(options[0]).toMatchObject({
       value: "__group_italian",
@@ -133,7 +133,7 @@ describe("favoriteRegionOptions", () => {
     expect(options.at(-1)).toEqual({ value: "Provence", label: "Provence" })
   })
 
-  it("lists a favorite no event uses, in the spelling it was saved with", () => {
+  it("lists a favorite no job uses, in the spelling it was saved with", () => {
     const options = favoriteRegionOptions(["Provence"], ["bavaria", "provence"])
     const others = options.slice(
       options.findIndex((option) => option.value === "__group_other") + 1,

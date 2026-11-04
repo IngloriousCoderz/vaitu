@@ -3,8 +3,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
   ANTONY,
-  createEventAs,
-  deleteOwnedEvent,
+  createJobAs,
+  deleteOwnedJob,
   deleteSignedUpUser,
   GIADA,
   PASSWORD,
@@ -27,26 +27,26 @@ const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 const SHORTLIST_CAP = 1
 
 describe("applying and choosing a winner", () => {
-  let eventId = null
+  let jobId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(ANTONY, crypto.randomUUID())
+    jobId = await createJobAs(ANTONY, crypto.randomUUID())
   })
 
   afterAll(async () => {
-    if (eventId) await deleteOwnedEvent(eventId)
+    if (jobId) await deleteOwnedJob(jobId)
     await signOut()
   })
 
-  test("the owner cannot apply to their own event", async () => {
+  test("the owner cannot apply to their own job", async () => {
     await signIn(ANTONY)
-    const { error } = await apply(eventId, MOTIVATION)
-    expect(error.message).toContain("You cannot apply to your own event")
+    const { error } = await apply(jobId, MOTIVATION)
+    expect(error.message).toContain("You cannot apply to your own job")
   })
 
-  test("someone else can apply to that event", async () => {
+  test("someone else can apply to that job", async () => {
     await signIn(GIADA)
-    const { error } = await apply(eventId, MOTIVATION)
+    const { error } = await apply(jobId, MOTIVATION)
     expect(error).toBeNull()
   })
 
@@ -55,7 +55,7 @@ describe("applying and choosing a winner", () => {
     const { data, error } = await supabase
       .from("applications")
       .select("id, motivation")
-      .eq("event_id", eventId)
+      .eq("job_id", jobId)
     expect(error).toBeNull()
     expect(data).toEqual([{ id: expect.any(String), motivation: MOTIVATION }])
     const applicants = await fetchApplicants([data[0].id])
@@ -64,13 +64,13 @@ describe("applying and choosing a winner", () => {
 
   test("a pending application cannot win", async () => {
     await signIn(ANTONY)
-    const { error } = await assignWinner(eventId, await applicationId(eventId))
+    const { error } = await assignWinner(jobId, await applicationId(jobId))
     expect(error.message).toContain("Winner must come from the shortlist")
   })
 
   test("the owner shortlists the application", async () => {
     await signIn(ANTONY)
-    const id = await applicationId(eventId)
+    const id = await applicationId(jobId)
     const { error } = await supabase
       .from("applications")
       .update({ status: "shortlisted" })
@@ -88,14 +88,14 @@ describe("applying and choosing a winner", () => {
 
   test("the applicant cannot assign the winner", async () => {
     await signIn(GIADA)
-    const { error } = await assignWinner(eventId, await applicationId(eventId))
-    expect(error.message).toContain("Only the event owner can assign a winner")
+    const { error } = await assignWinner(jobId, await applicationId(jobId))
+    expect(error.message).toContain("Only the job owner can assign a winner")
   })
 
   test("the owner assigns the winner", async () => {
     await signIn(ANTONY)
-    const id = await applicationId(eventId)
-    const { error } = await assignWinner(eventId, id)
+    const id = await applicationId(jobId)
+    const { error } = await assignWinner(jobId, id)
     expect(error).toBeNull()
 
     const { data: application, error: applicationError } = await supabase
@@ -103,20 +103,20 @@ describe("applying and choosing a winner", () => {
       .select("status")
       .eq("id", id)
       .single()
-    const { data: event, error: eventError } = await supabase
-      .from("events")
+    const { data: job, error: jobError } = await supabase
+      .from("jobs")
       .select("status")
-      .eq("id", eventId)
+      .eq("id", jobId)
       .single()
     expect(applicationError).toBeNull()
-    expect(eventError).toBeNull()
+    expect(jobError).toBeNull()
     expect(application.status).toBe("selected")
-    expect(event.status).toBe("assigned")
+    expect(job.status).toBe("assigned")
   })
 
-  test("the winner withdrawing reopens the event", async () => {
+  test("the winner withdrawing reopens the job", async () => {
     await signIn(GIADA)
-    const id = await applicationId(eventId)
+    const id = await applicationId(jobId)
     await withdrawApplication(id)
 
     const { data: application, error: applicationError } = await supabase
@@ -124,70 +124,66 @@ describe("applying and choosing a winner", () => {
       .select("status, withdrawn_from")
       .eq("id", id)
       .single()
-    const { data: event, error: eventError } = await supabase
-      .from("events")
+    const { data: job, error: jobError } = await supabase
+      .from("jobs")
       .select("status")
-      .eq("id", eventId)
+      .eq("id", jobId)
       .single()
     expect(applicationError).toBeNull()
-    expect(eventError).toBeNull()
+    expect(jobError).toBeNull()
     expect(application).toEqual({
       status: "withdrawn",
       withdrawn_from: "selected",
     })
-    expect(event.status).toBe("open")
+    expect(job.status).toBe("open")
   })
 })
 
 describe("a passed deadline", () => {
-  const eventIds = []
+  const jobIds = []
 
   afterAll(async () => {
-    for (const id of eventIds) await deleteOwnedEvent(id)
+    for (const id of jobIds) await deleteOwnedJob(id)
     await signOut()
   })
 
   test("a new application is refused", async () => {
-    const eventId = await createEventAs(
-      ANTONY,
-      crypto.randomUUID(),
-      pastDeadline(),
-    )
-    eventIds.push(eventId)
+    const jobId = await createJobAs(ANTONY, crypto.randomUUID(), pastDeadline())
+    jobIds.push(jobId)
     await signIn(GIADA)
-    const { error } = await apply(eventId, MOTIVATION)
+    const { error } = await apply(jobId, MOTIVATION)
     expect(error.message).toContain("Application deadline has passed")
   })
 
-  test("the winner withdrawing after the deadline leaves the event assigned", async () => {
-    const eventId = await createEventAs(ANTONY, crypto.randomUUID())
-    eventIds.push(eventId)
+  test("the winner withdrawing after the deadline leaves the job assigned", async () => {
+    const jobId = await createJobAs(ANTONY, crypto.randomUUID())
+    jobIds.push(jobId)
     await signIn(GIADA)
-    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
     await signIn(ANTONY)
-    const id = await shortlist(eventId)
-    expect((await assignWinner(eventId, id)).error).toBeNull()
+    const id = await shortlist(jobId)
+    expect((await assignWinner(jobId, id)).error).toBeNull()
 
     const { error: deadlineError } = await supabase
-      .from("events")
+      .from("jobs")
       .update({ application_deadline: pastDeadline() })
-      .eq("id", eventId)
+      .eq("id", jobId)
     expect(deadlineError).toBeNull()
 
     await signIn(GIADA)
     await withdrawApplication(id)
-    const { data: event, error: eventError } = await supabase
-      .from("events")
+    const { data: job, error: jobError } = await supabase
+      .from("jobs")
       .select("status")
-      .eq("id", eventId)
+      .eq("id", jobId)
       .single()
-    expect(eventError).toBeNull()
-    expect(event.status).toBe("assigned")
+    expect(jobError).toBeNull()
+    expect(job.status).toBe("assigned")
   })
 })
 
 describe("the shortlist after the winner withdraws", () => {
-  let eventId = null
+  let jobId = null
   let userId = null
   let winnerUserId = null
   let otherId = null
@@ -196,30 +192,30 @@ describe("the shortlist after the winner withdraws", () => {
     const id = crypto.randomUUID()
     const email = `vitest-${id}@vaitu.local`
     userId = await signUp({ email, fullName: `Vitest ${id}` })
-    eventId = await createEventAs(ANTONY, crypto.randomUUID())
+    jobId = await createJobAs(ANTONY, crypto.randomUUID())
 
     await signIn({ email, password: PASSWORD })
-    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
     await signIn(GIADA)
     winnerUserId = (await supabase.auth.getUser()).data.user.id
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
-    if (eventId) await deleteOwnedEvent(eventId)
+    if (jobId) await deleteOwnedJob(jobId)
     if (userId) await deleteSignedUpUser(userId)
     await signOut()
   }, TEST_TIMEOUT_MS)
 
   async function assignSender({ shortlistOther = true } = {}) {
     await signIn(GIADA)
-    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
 
     await signIn(ANTONY)
-    const winnerId = await applicationIdFor(eventId, winnerUserId)
-    otherId = await applicationIdFor(eventId, userId)
+    const winnerId = await applicationIdFor(jobId, winnerUserId)
+    otherId = await applicationIdFor(jobId, userId)
     await setStatus(winnerId, "shortlisted")
     if (shortlistOther) await setStatus(otherId, "shortlisted")
-    expect((await assignWinner(eventId, winnerId)).error).toBeNull()
+    expect((await assignWinner(jobId, winnerId)).error).toBeNull()
     expect(await statusOf(otherId)).toBe("rejected")
     return winnerId
   }
@@ -256,26 +252,26 @@ describe("the shortlist after the winner withdraws", () => {
 })
 
 describe("withdrawing an application", () => {
-  let eventId = null
+  let jobId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(ANTONY, crypto.randomUUID())
+    jobId = await createJobAs(ANTONY, crypto.randomUUID())
   })
 
   afterAll(async () => {
-    if (eventId) await deleteOwnedEvent(eventId)
+    if (jobId) await deleteOwnedJob(jobId)
     await signOut()
   })
 
   test("a pending application can be withdrawn", async () => {
     await signIn(GIADA)
-    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-    await withdrawApplication(await applicationId(eventId))
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
+    await withdrawApplication(await applicationId(jobId))
 
     const { data, error } = await supabase
       .from("applications")
       .select("id")
-      .eq("event_id", eventId)
+      .eq("job_id", jobId)
       .neq("status", "withdrawn")
     expect(error).toBeNull()
     expect(data).toEqual([])
@@ -286,7 +282,7 @@ describe("withdrawing an application", () => {
     const { data: withdrawn } = await supabase
       .from("applications")
       .select("id")
-      .eq("event_id", eventId)
+      .eq("job_id", jobId)
       .eq("status", "withdrawn")
       .limit(1)
       .single()
@@ -306,60 +302,60 @@ describe("withdrawing an application", () => {
     const { error } = await supabase
       .from("applications")
       .delete()
-      .eq("event_id", eventId)
+      .eq("job_id", jobId)
     expect(error?.message).toContain("permission denied")
   })
 
   test("a shortlisted application can be withdrawn", async () => {
     await signIn(GIADA)
-    expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
     await signIn(ANTONY)
-    await shortlist(eventId)
+    await shortlist(jobId)
     await signIn(GIADA)
-    await withdrawApplication(await applicationId(eventId))
+    await withdrawApplication(await applicationId(jobId))
 
     const { data, error } = await supabase
       .from("applications")
       .select("id")
-      .eq("event_id", eventId)
+      .eq("job_id", jobId)
       .neq("status", "withdrawn")
     expect(error).toBeNull()
     expect(data).toEqual([])
   })
 })
 
-describe("an event that is not open", () => {
-  let eventId = null
+describe("a job that is not open", () => {
+  let jobId = null
 
   afterAll(async () => {
     try {
-      if (eventId) await deleteOwnedEvent(eventId)
+      if (jobId) await deleteOwnedJob(jobId)
     } finally {
       await signOut()
     }
   }, TEST_TIMEOUT_MS)
 
   test(
-    "a closed event refuses a new application",
+    "a closed job refuses a new application",
     async () => {
-      eventId = await createEventAs(ANTONY, crypto.randomUUID())
-      await updateAsService("events", "id", eventId, { status: "closed" })
+      jobId = await createJobAs(ANTONY, crypto.randomUUID())
+      await updateAsService("jobs", "id", jobId, { status: "closed" })
 
       await signIn(GIADA)
-      const { error } = await apply(eventId, MOTIVATION)
-      expect(error.message).toContain("Event is not open for applications")
+      const { error } = await apply(jobId, MOTIVATION)
+      expect(error.message).toContain("Job is not open for applications")
     },
     TEST_TIMEOUT_MS,
   )
 })
 
 describe("the shortlist cap", () => {
-  let eventId = null
+  let jobId = null
   let userId = null
 
   afterAll(async () => {
     try {
-      if (eventId) await deleteOwnedEvent(eventId)
+      if (jobId) await deleteOwnedJob(jobId)
     } finally {
       try {
         if (userId) await deleteSignedUpUser(userId)
@@ -376,7 +372,7 @@ describe("the shortlist cap", () => {
       const email = `vitest-${id}@vaitu.local`
       userId = await signUp({ email, fullName: `Vitest ${id}` })
 
-      eventId = await createEventAs(ANTONY, crypto.randomUUID(), undefined, {
+      jobId = await createJobAs(ANTONY, crypto.randomUUID(), undefined, {
         max_applicants: SHORTLIST_CAP,
       })
 
@@ -384,22 +380,22 @@ describe("the shortlist cap", () => {
       const {
         data: { user: sender },
       } = await supabase.auth.getUser()
-      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+      expect((await apply(jobId, MOTIVATION)).error).toBeNull()
 
       await signIn({ email, password: PASSWORD })
-      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+      expect((await apply(jobId, MOTIVATION)).error).toBeNull()
 
       await signIn(ANTONY)
       const { error: firstError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
-        .eq("id", await applicationIdFor(eventId, sender.id))
+        .eq("id", await applicationIdFor(jobId, sender.id))
       expect(firstError).toBeNull()
 
       const { error: secondError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
-        .eq("id", await applicationIdFor(eventId, userId))
+        .eq("id", await applicationIdFor(jobId, userId))
       expect(secondError.message).toContain("Shortlist is full")
     },
     TEST_TIMEOUT_MS,
@@ -407,11 +403,11 @@ describe("the shortlist cap", () => {
 })
 
 describe("the applicant's own status", () => {
-  let eventId = null
+  let jobId = null
 
   afterAll(async () => {
     try {
-      if (eventId) await deleteOwnedEvent(eventId)
+      if (jobId) await deleteOwnedJob(jobId)
     } finally {
       await signOut()
     }
@@ -420,10 +416,10 @@ describe("the applicant's own status", () => {
   test(
     "the applicant cannot shortlist or select themselves",
     async () => {
-      eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      jobId = await createJobAs(ANTONY, crypto.randomUUID())
       await signIn(GIADA)
-      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-      const id = await applicationId(eventId)
+      expect((await apply(jobId, MOTIVATION)).error).toBeNull()
+      const id = await applicationId(jobId)
 
       const { error: shortlistError } = await supabase
         .from("applications")
@@ -462,12 +458,12 @@ describe("the applicant's own status", () => {
 })
 
 describe("someone else's application", () => {
-  let eventId = null
+  let jobId = null
   let userId = null
 
   afterAll(async () => {
     try {
-      if (eventId) await deleteOwnedEvent(eventId)
+      if (jobId) await deleteOwnedJob(jobId)
     } finally {
       try {
         if (userId) await deleteSignedUpUser(userId)
@@ -480,10 +476,10 @@ describe("someone else's application", () => {
   test(
     "another account cannot read it",
     async () => {
-      eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      jobId = await createJobAs(ANTONY, crypto.randomUUID())
       await signIn(GIADA)
-      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-      const id = await applicationId(eventId)
+      expect((await apply(jobId, MOTIVATION)).error).toBeNull()
+      const id = await applicationId(jobId)
 
       const accountId = crypto.randomUUID()
       const email = `vitest-${accountId}@vaitu.local`
@@ -512,11 +508,11 @@ describe("someone else's application", () => {
 })
 
 describe("applying twice", () => {
-  let eventId = null
+  let jobId = null
 
   afterAll(async () => {
     try {
-      if (eventId) await deleteOwnedEvent(eventId)
+      if (jobId) await deleteOwnedJob(jobId)
     } finally {
       await signOut()
     }
@@ -525,11 +521,11 @@ describe("applying twice", () => {
   test(
     "the same account cannot apply twice",
     async () => {
-      eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      jobId = await createJobAs(ANTONY, crypto.randomUUID())
       await signIn(GIADA)
-      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
+      expect((await apply(jobId, MOTIVATION)).error).toBeNull()
 
-      const { error } = await apply(eventId, MOTIVATION)
+      const { error } = await apply(jobId, MOTIVATION)
       expect(error.message).toContain("duplicate key")
     },
     TEST_TIMEOUT_MS,
@@ -537,13 +533,13 @@ describe("applying twice", () => {
 })
 
 describe("rewriting an application", () => {
-  let eventId = null
-  let otherEventId = null
+  let jobId = null
+  let otherJobId = null
 
   afterAll(async () => {
     try {
-      if (eventId) await deleteOwnedEvent(eventId)
-      if (otherEventId) await deleteOwnedEvent(otherEventId)
+      if (jobId) await deleteOwnedJob(jobId)
+      if (otherJobId) await deleteOwnedJob(otherJobId)
     } finally {
       await signOut()
     }
@@ -552,19 +548,19 @@ describe("rewriting an application", () => {
   test(
     "only the applicant's motivation and the status can change",
     async () => {
-      eventId = await createEventAs(ANTONY, crypto.randomUUID())
-      otherEventId = await createEventAs(
+      jobId = await createJobAs(ANTONY, crypto.randomUUID())
+      otherJobId = await createJobAs(
         ANTONY,
         crypto.randomUUID(),
         pastDeadline(),
       )
       await signIn(GIADA)
-      expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-      const id = await applicationId(eventId)
+      expect((await apply(jobId, MOTIVATION)).error).toBeNull()
+      const id = await applicationId(jobId)
 
       const { error: moveError } = await supabase
         .from("applications")
-        .update({ event_id: otherEventId })
+        .update({ job_id: otherJobId })
         .eq("id", id)
       expect(moveError?.message).toContain("permission denied")
 
@@ -589,12 +585,12 @@ describe("rewriting an application", () => {
 
       const { data, error } = await supabase
         .from("applications")
-        .select("event_id, motivation")
+        .select("job_id, motivation")
         .eq("id", id)
         .single()
       expect(error).toBeNull()
       expect(data).toEqual({
-        event_id: eventId,
+        job_id: jobId,
         motivation: `${MOTIVATION}, edited`,
       })
     },
@@ -602,22 +598,22 @@ describe("rewriting an application", () => {
   )
 })
 
-async function apply(eventId, motivation) {
+async function apply(jobId, motivation) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
   return supabase.from("applications").insert({
-    event_id: eventId,
+    job_id: jobId,
     applicant_id: user.id,
     motivation,
   })
 }
 
-async function applicationId(eventId) {
+async function applicationId(jobId) {
   const { data, error } = await supabase
     .from("applications")
     .select("id")
-    .eq("event_id", eventId)
+    .eq("job_id", jobId)
     .neq("status", "withdrawn")
     .single()
   if (error) throw error
@@ -642,11 +638,11 @@ async function setStatus(applicationId, status) {
   if (error) throw error
 }
 
-async function applicationIdFor(eventId, applicantId) {
+async function applicationIdFor(jobId, applicantId) {
   const { data, error } = await supabase
     .from("applications")
     .select("id")
-    .eq("event_id", eventId)
+    .eq("job_id", jobId)
     .eq("applicant_id", applicantId)
     .neq("status", "withdrawn")
     .single()
@@ -654,15 +650,15 @@ async function applicationIdFor(eventId, applicantId) {
   return data.id
 }
 
-function assignWinner(eventId, applicationId) {
+function assignWinner(jobId, applicationId) {
   return supabase.rpc("assign_winner", {
-    p_event_id: eventId,
+    p_job_id: jobId,
     p_application_id: applicationId,
   })
 }
 
-async function shortlist(eventId) {
-  const id = await applicationId(eventId)
+async function shortlist(jobId) {
+  const id = await applicationId(jobId)
   const { error } = await supabase
     .from("applications")
     .update({ status: "shortlisted" })

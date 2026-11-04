@@ -1,21 +1,21 @@
-// First match wins: literal paths before parameterised ones (/events/new before
-// /events/:eventId). Values are entity ids.
+// First match wins: literal paths before parameterised ones (/jobs/new before
+// /jobs/:jobId). Values are entity ids.
 
 export const routes = {
   "/login": "authentication",
   "/onboarding": "onboarding",
 
-  "/": "eventList",
-  "/events": "eventList",
+  "/": "jobList",
+  "/jobs": "jobList",
   "/applications": "applicationList",
   "/profile": "profile",
 
-  "/events/mine": "myEvents",
-  "/events/new": "eventCreate",
-  "/events/:eventId/edit": "eventCreate",
+  "/jobs/mine": "myJobs",
+  "/jobs/new": "jobCreate",
+  "/jobs/:jobId/edit": "jobCreate",
 
-  "/events/:eventId": "eventDetail",
-  "/events/:eventId/applications": "applicationsReceived",
+  "/jobs/:jobId": "jobDetail",
+  "/jobs/:jobId/applications": "applicationsReceived",
   "/applications/:applicationId": "applicationDetail",
   "/notifications": "notifications",
   "/ranks": "ranks",
@@ -28,12 +28,12 @@ export const routes = {
 }
 
 export const paths = {
-  events: "/events",
-  myEvents: "/events/mine",
-  newEvent: "/events/new",
-  event: (eventId) => `/events/${eventId}`,
-  editEvent: (eventId) => `/events/${eventId}/edit`,
-  receivedApplications: (eventId) => `/events/${eventId}/applications`,
+  jobs: "/jobs",
+  myJobs: "/jobs/mine",
+  newJob: "/jobs/new",
+  job: (jobId) => `/jobs/${jobId}`,
+  editJob: (jobId) => `/jobs/${jobId}/edit`,
+  receivedApplications: (jobId) => `/jobs/${jobId}/applications`,
   applications: "/applications",
   applicationsByStatus: (status) => `/applications?status=${status}`,
   application: (applicationId) => `/applications/${applicationId}`,

@@ -74,7 +74,7 @@ export const ApplicationsReceived = {
     ).length
     const max_reached =
       entity.max_applicants != null && selected_count >= entity.max_applicants
-    const photos = entity.event_recap?.image_urls ?? []
+    const photos = entity.job_recap?.image_urls ?? []
 
     return Page.render({
       variant: "stickyFlat",
@@ -94,8 +94,8 @@ export const ApplicationsReceived = {
         html`
           <header class=${styles.header}>
             ${when(
-              entity.event_status === "assigned" ||
-                entity.event_status === "closed",
+              entity.job_status === "assigned" ||
+                entity.job_status === "closed",
               () => html`
                 ${Button.render({
                   children: t("received.reopen"),
@@ -109,11 +109,11 @@ export const ApplicationsReceived = {
                   id: "reopen-confirm",
                   isOpen: entity.confirming_reopen,
                   message:
-                    entity.event_status === "assigned"
+                    entity.job_status === "assigned"
                       ? t("received.reopenAssigned")
                       : t("received.reopenClosed"),
                   children: when(
-                    deadlinePast(entity.event_deadline),
+                    deadlinePast(entity.job_deadline),
                     () => html`
                       <div class=${styles.field}>
                         <span>${t("received.newDeadline")}</span>
@@ -132,13 +132,13 @@ export const ApplicationsReceived = {
                   confirmLabel: t("received.yesReopen"),
                   busyLabel: t("received.reopening"),
                   cancelLabel:
-                    entity.event_status === "assigned"
+                    entity.job_status === "assigned"
                       ? t("received.keepAssigned")
                       : t("received.keepClosed"),
                   tone: "primary",
                   isBusy: status === "saving",
                   isDisabled:
-                    deadlinePast(entity.event_deadline) &&
+                    deadlinePast(entity.job_deadline) &&
                     (entity.reopen_deadline ?? "").length !==
                       DATETIME_LOCAL_LENGTH,
                   onConfirm: onReopen,
@@ -148,9 +148,9 @@ export const ApplicationsReceived = {
             )}
           </header>
 
-          ${when(entity.event_recap, () =>
+          ${when(entity.job_recap, () =>
             this.renderRecap(
-              entity.event_recap,
+              entity.job_recap,
               selected_count,
               entity.max_applicants,
               entity.pay,
@@ -165,7 +165,7 @@ export const ApplicationsReceived = {
               isLoading: status === "loading" && !items.length,
               isEmpty: !items.length,
               emptyText:
-                entity.event_status === "open"
+                entity.job_status === "open"
                   ? t("received.none")
                   : t("received.noneReceived"),
               content: () =>
@@ -185,8 +185,8 @@ export const ApplicationsReceived = {
                     onDealSettle,
                     status,
                     error,
-                    event_assigned: entity.event_status === "assigned",
-                    event_date: entity.event_recap?.event_date,
+                    job_assigned: entity.job_status === "assigned",
+                    job_date: entity.job_recap?.job_date,
                     review: entity.review,
                     onReviewField,
                     onReviewSubmit,
@@ -230,7 +230,7 @@ export const ApplicationsReceived = {
           ]
         : []),
       [t("received.location"), recap.location || "—"],
-      [t("received.eventDate"), formatDay(recap.event_date)],
+      [t("received.jobDate"), formatDay(recap.job_date)],
       [t("received.deadline"), formatDeadline(recap.application_deadline)],
       [t("pay.title"), formatPay(pay)],
       [t("received.shortlist"), `${shortlisted}/${maxApplicants ?? "—"}`],
@@ -302,8 +302,8 @@ export const ApplicationsReceived = {
     onDealSettle,
     status,
     error,
-    event_assigned,
-    event_date,
+    job_assigned,
+    job_date,
     review,
     onReviewField,
     onReviewSubmit,
@@ -394,7 +394,7 @@ export const ApplicationsReceived = {
                   isSettlementDue: isSettlementOpen({
                     agreement: item.job_agreements,
                     status: item.status,
-                    event_date,
+                    job_date,
                     review: item.job_reviews,
                   }),
                   draft: deal_draft,
@@ -408,7 +408,7 @@ export const ApplicationsReceived = {
               ${when(item.job_reviews, () =>
                 this.renderGivenReview(item.job_reviews),
               )}
-              ${when(isReviewDue(item, event_date), () =>
+              ${when(isReviewDue(item, job_date), () =>
                 this.renderReviewForm({
                   item,
                   review,
@@ -418,7 +418,7 @@ export const ApplicationsReceived = {
               )}
               ${when(
                 (item.status === "pending" || item.status === "rejected") &&
-                  !event_assigned,
+                  !job_assigned,
                 () => html`
                   <div class=${styles.actions}>
                     ${Button.render({
@@ -456,7 +456,7 @@ export const ApplicationsReceived = {
                 `,
               )}
               ${when(
-                item.status === "shortlisted" && !event_assigned,
+                item.status === "shortlisted" && !job_assigned,
                 () => html`
                   <div class=${styles.actions}>
                     ${Button.render({

@@ -7,7 +7,7 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
-import { Card } from "../../common/event-card/index.js"
+import { Card } from "../../common/job-card/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
@@ -43,7 +43,7 @@ export const ApplicationDetail = {
       application?.applicationStatus === "selected"
         ? calendarLinks({
             title: application.title,
-            eventDate: application.event_date,
+            jobDate: application.job_date,
             location: application.place,
           })
         : null
@@ -62,7 +62,7 @@ export const ApplicationDetail = {
               <div class=${styles.stage}>
                 <div class=${styles.story}>
                   ${Card.render({
-                    event: application,
+                    job: application,
                     cover: true,
                     hero: true,
                   })}
@@ -79,7 +79,7 @@ export const ApplicationDetail = {
                       isSettlementDue: isSettlementOpen({
                         agreement: application.agreement,
                         status: application.applicationStatus,
-                        event_date: application.event_date,
+                        job_date: application.job_date,
                         review: application.review,
                       }),
                       isBusy: entity.isDealBusy,

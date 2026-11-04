@@ -6,10 +6,10 @@ import wording from "./notification-wording.json" with { type: "json" }
 
 export interface FeedItem {
   type: string
-  event_id: string | null
+  job_id: string | null
   application_id: string | null
-  event_title: string | null
-  event_status: string | null
+  job_title: string | null
+  job_status: string | null
   applicant_name: string | null
 }
 
@@ -37,7 +37,7 @@ function isLocale(locale: string | null): locale is Locale {
 
 function line(item: FeedItem, locale: Locale) {
   const lines = wording[locale]
-  const title = item.event_title ?? ""
+  const title = item.job_title ?? ""
   switch (item.type) {
     case "application_received":
       return fill(lines.applicationReceived, {
@@ -53,10 +53,10 @@ function line(item: FeedItem, locale: Locale) {
         name: item.applicant_name ?? "",
         title,
       })
-    case "event_closed":
-      return fill(lines.eventClosed, { title })
-    case "new_event":
-      return fill(lines.newEvent, { title })
+    case "job_closed":
+      return fill(lines.jobClosed, { title })
+    case "new_job":
+      return fill(lines.newJob, { title })
     case "job_outcome_due":
       return fill(lines.jobOutcomeDue, { title })
     case "job_reviewed":
@@ -74,7 +74,7 @@ function line(item: FeedItem, locale: Locale) {
     case "settlement_contested":
       return fill(lines.settlementContested, { title })
     default:
-      return fill(lines.eventUpdated, { title })
+      return fill(lines.jobUpdated, { title })
   }
 }
 
@@ -87,22 +87,22 @@ function destination(item: FeedItem) {
     item.type === "application_received" ||
     item.type === "application_withdrawn"
   ) {
-    if (!item.event_id) return "/events"
-    return item.event_status === "open"
-      ? `/events/${item.event_id}/applications`
-      : `/events/${item.event_id}`
+    if (!item.job_id) return "/jobs"
+    return item.job_status === "open"
+      ? `/jobs/${item.job_id}/applications`
+      : `/jobs/${item.job_id}`
   }
   if (item.type === "job_cancelled") return "/applications"
   if (item.type === "settlement_contested") {
     if (item.application_id) return `/applications/${item.application_id}`
-    return item.event_id ? `/events/${item.event_id}/applications` : "/events"
+    return item.job_id ? `/jobs/${item.job_id}/applications` : "/jobs"
   }
   if (
     item.type === "job_outcome_due" ||
     item.type === "agreement_confirmed" ||
     item.type === "agreement_rejected"
   ) {
-    return item.event_id ? `/events/${item.event_id}/applications` : "/events"
+    return item.job_id ? `/jobs/${item.job_id}/applications` : "/jobs"
   }
   if (
     item.type === "application_selected" ||
@@ -115,5 +115,5 @@ function destination(item: FeedItem) {
       ? `/applications/${item.application_id}`
       : "/applications"
   }
-  return item.event_id ? `/events/${item.event_id}` : "/events"
+  return item.job_id ? `/jobs/${item.job_id}` : "/jobs"
 }

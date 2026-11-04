@@ -2,8 +2,8 @@
 
 When something happens that a user should hear about, the database writes a
 row in `notifications` for them: a new job for their trades and regions, an
-application to their event, a decision on their application, a change to an
-event they applied to, a job waiting for their report. Triggers write these
+application to their job, a decision on their application, a change to a
+job they applied to, a job waiting for their report. Triggers write these
 rows (the notifications section of `supabase/migrations/20261028120000_initial_schema.sql`), so no client
 can make one up, and a row is all the app needs to tell the user in three ways:
 
@@ -119,12 +119,12 @@ emails off.
 
 ## New job alerts
 
-A new event notifies whoever chose its profession in Preferences, if its job
+A new job notifies whoever chose its profession in Preferences, if its job
 type and region suit theirs too (an empty list of either means any). An empty
 list of professions gets no alerts: in the feed it means "show me everything",
-which is not a wish for an email per event. Muting `new_event` on both channels
+which is not a wish for an email per job. Muting `new_job` on both channels
 stops the row too, so the bell stays quiet as well. Regions are compared as
-stored, which works because `normalizeEvent` writes the canonical name, the one
+stored, which works because `normalizeJob` writes the canonical name, the one
 favorites use.
 
 ## Setting up Firebase
@@ -186,7 +186,7 @@ iOS also needs, once the Apple Developer account is active:
 In a browser the service worker only exists in a build, so try it with
 `pnpm build && pnpm preview`. Sign in as `giada@vaitu.local`, allow
 notifications and close the tab. Then, as `antony@vaitu.local` in another
-browser, apply to one of Giada's events. On Android, sign in as Giada with
+browser, apply to one of Giada's jobs. On Android, sign in as Giada with
 `pnpm mobile:android`, allow notifications and leave the app.
 
 Next: [Reputation](reputation.md).

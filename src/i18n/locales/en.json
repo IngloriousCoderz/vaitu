@@ -1,12 +1,12 @@
 {
   "nav": {
-    "events": "Events",
-    "myEvents": "My events",
+    "jobs": "Jobs",
+    "myJobs": "My jobs",
     "applications": "Applications",
     "profile": "Profile",
     "preferences": "Preferences",
     "about": "About",
-    "newEvent": "New event",
+    "newJob": "New job",
     "toggle": "Toggle navigation",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
@@ -14,9 +14,9 @@
     "account": "Account",
     "profileOf": "Profile: {{name}}",
     "tabs": {
-      "events": "Explore",
+      "jobs": "Explore",
       "applications": "Applied",
-      "myEvents": "Posted",
+      "myJobs": "Posted",
       "notifications": "Inbox",
       "profile": "Profile"
     }
@@ -56,7 +56,7 @@
   "notFound": {
     "title": "Nothing here",
     "noMatch": "No page matches <code>{{path}}</code>.",
-    "goToEvents": "Go to events"
+    "goToJobs": "Go to jobs"
   },
   "taxonomy": {
     "style": {
@@ -133,7 +133,7 @@
     "website": "Website or social page",
     "title": "Title",
     "location": "Location",
-    "eventDate": "Date",
+    "jobDate": "Date",
     "deadline": "Application deadline",
     "shortlistSize": "Shortlist size",
     "shortlistSizeHint": "Everyone can apply. This is how many of them you can shortlist before choosing.",
@@ -161,8 +161,8 @@
   "sorts": {
     "createdNewest": "Newest",
     "createdOldest": "Oldest",
-    "eventDateNewest": "Event: latest",
-    "eventDateOldest": "Event: soonest",
+    "jobDateNewest": "Date: latest",
+    "jobDateOldest": "Date: soonest",
     "deadlineSoonest": "Deadline: soonest",
     "deadlineFarthest": "Deadline: latest"
   },
@@ -185,7 +185,7 @@
     "message": "You're offline. Vaitu will catch up when you're back."
   },
   "reactivated": {
-    "message": "Welcome back! Your account is active again. The applications you had sent and your open events were removed when you deactivated it.",
+    "message": "Welcome back! Your account is active again. The applications you had sent and your open jobs were removed when you deactivated it.",
     "dismiss": "Got it"
   },
   "appUpdate": {
@@ -222,27 +222,27 @@
   },
   "errors": {
     "notLoggedIn": "Not logged in",
-    "alreadyApplied": "You already applied for this event",
+    "alreadyApplied": "You already applied for this job",
     "applicationFailed": "Application failed",
-    "loadEvent": "Failed to load event",
+    "loadJob": "Failed to load job",
     "micUnavailable": "Microphone unavailable",
     "emptyRecording": "Recording came out empty — try again",
     "noAudio": "No audio to process",
     "transcriptionFailed": "We couldn't transcribe your message. Please fill in the fields yourself.",
-    "saveEvent": "Failed to save event",
+    "saveJob": "Failed to save job",
     "imageType": "Use a JPEG, PNG, or WebP image",
     "imageSize": "Each image must be under 5 MB",
     "imageCrop": "Could not process the image",
     "avatarSize": "Profile photos must be under 2 MB",
     "imageLimit_one": "You can add {{count}} photo",
     "imageLimit_other": "You can add up to {{count}} photos",
-    "noEventForApplications": "No event to load applications for",
+    "noJobForApplications": "No job to load applications for",
     "loadApplications": "Failed to load applications",
     "update": "Failed to update",
     "assignWinner": "Failed to assign winner",
-    "reopenEvent": "Failed to reopen event",
-    "loadEvents": "Failed to load events",
-    "deleteEvent": "Failed to delete event",
+    "reopenJob": "Failed to reopen job",
+    "loadJobs": "Failed to load jobs",
+    "deleteJob": "Failed to delete job",
     "loadApplication": "Failed to load application",
     "save": "Failed to save",
     "withdraw": "Failed to withdraw",
@@ -259,8 +259,8 @@
     "savePreferences": "Failed to save preferences",
     "saveReview": "Failed to save the review",
     "parseFailed": "We couldn't fill in the fields from your message. Please fill them in yourself.",
-    "voiceLimit": "You've used today's free voice messages. Fill in the event yourself, or try again tomorrow.",
-    "voicePaused": "Voice messages are paused for today. Fill in the event yourself, or try again tomorrow.",
+    "voiceLimit": "You've used today's free voice messages. Fill in the details yourself, or try again tomorrow.",
+    "voicePaused": "Voice messages are paused for today. Fill in the details yourself, or try again tomorrow.",
     "eraseAccount": "We couldn't delete the account. Please try again.",
     "offline": "You're offline. Try again when you're back online.",
     "captcha": "We couldn't check that you're a person. Please try again.",
@@ -296,9 +296,9 @@
     "subtitle": "Tell us where you are so organizers can find you.",
     "skip": "Skip for now"
   },
-  "events": {
-    "title": "Events",
-    "search": "Find events by city, style or genre…",
+  "jobs": {
+    "title": "Jobs",
+    "search": "Find jobs by city, style or genre…",
     "feedPreferences": "Feed preferences",
     "region": "Region",
     "period": "Period",
@@ -308,51 +308,51 @@
     "removeFilter": "Remove filter: {{label}}",
     "filtersOn_one": "Filters, {{count}} on",
     "filtersOn_other": "Filters, {{count}} on",
-    "noneMatch": "No events match your search yet.",
+    "noneMatch": "No jobs match your search yet.",
     "orderBy": "Order by",
-    "results_one": "{{count}} event",
-    "results_other": "{{count}} events",
+    "results_one": "{{count}} job",
+    "results_other": "{{count}} jobs",
     "profession": "Trade"
   },
-  "myEvents": {
-    "title": "My events",
-    "none": "You haven't posted any event yet.",
-    "edit": "Edit event",
-    "delete": "Delete event",
-    "deleteConfirm": "Delete this event and all its applications?",
+  "myJobs": {
+    "title": "My jobs",
+    "none": "You haven't posted any job yet.",
+    "edit": "Edit job",
+    "delete": "Delete job",
+    "deleteConfirm": "Delete this job and all its applications?",
     "yesDelete": "Yes, delete",
     "applications_one": "{{count}} application",
     "applications_other": "{{count}} applications"
   },
   "applications": {
     "title": "My Applications",
-    "none": "You haven't applied for any event yet.",
+    "none": "You haven't applied for any job yet.",
     "noneWithStatus": "Nothing with this status."
   },
   "received": {
     "summary": "{{shortlisted}} shortlisted · {{received}} received",
-    "reopenAssigned": "Reopen this event? Applications keep their status and you can adjust the shortlist again.",
-    "reopenClosed": "Reopen this event? New applications will be accepted again.",
+    "reopenAssigned": "Reopen this job? Applications keep their status and you can adjust the shortlist again.",
+    "reopenClosed": "Reopen this job? New applications will be accepted again.",
     "newDeadline": "New application deadline",
     "yesReopen": "Yes, reopen",
     "reopening": "Reopening…",
     "keepAssigned": "Keep assigned",
     "keepClosed": "Keep closed",
-    "reopen": "Reopen event",
+    "reopen": "Reopen job",
     "none": "No applications yet.",
     "noneReceived": "No applications received.",
     "status": "Status",
     "names": "Names",
     "style": "Style",
     "location": "Location",
-    "eventDate": "Date",
+    "jobDate": "Date",
     "deadline": "Application deadline",
     "shortlist": "Shortlist",
     "created": "Created",
     "shortlistAction": "Shortlist",
     "reject": "Reject",
     "backToPending": "Back to pending",
-    "assignConfirm": "Assign this applicant as the winner? The event will close and the others will be rejected.",
+    "assignConfirm": "Assign this applicant as the winner? The job will close and the others will be rejected.",
     "yesAssign": "Yes, assign",
     "assigning": "Assigning…",
     "keepShortlist": "Keep shortlist",
@@ -360,24 +360,24 @@
     "removeFromShortlist": "Remove from shortlist"
   },
   "create": {
-    "newTitle": "New event",
-    "editTitle": "Edit event",
+    "newTitle": "New job",
+    "editTitle": "Edit job",
     "titleExample": "E.g. Sundance Beats",
     "locationExample": "Venue Name",
     "regionExample": "E.g. Tuscany",
     "saveChanges": "Save changes",
-    "saveEvent": "Save event",
+    "saveJob": "Save job",
     "voice": "Describe by voice",
-    "listening": "Listening… tell us about your event",
+    "listening": "Listening… tell us about your job",
     "stop": "Stop",
     "transcribing": "Transcribing…",
     "filling": "Filling fields…",
     "recordAgain": "Record again",
     "remove": "Remove",
     "start": "Start",
-    "voiceHint": "Talk through your event instead of typing — it will be transcribed into the fields below.",
+    "voiceHint": "Talk through your job instead of typing — it will be transcribed into the fields below.",
     "coverPhoto": "Cover photo",
-    "coverHint": "Shown on the event card. Without one, the card shows the initials.",
+    "coverHint": "Shown on the job card. Without one, the card shows the initials.",
     "addCover": "Add cover",
     "changeCover": "Change cover",
     "editCover": "Edit cover",
@@ -385,11 +385,11 @@
     "cropHint": "Drag the frame to move it. Pull a corner or edge to resize it, or pinch to scale it.",
     "cropApply": "Crop and use",
     "gallery": "More photos",
-    "galleryHint": "Mini gallery inside the event. Up to {{count}}.",
+    "galleryHint": "Mini gallery on the job page. Up to {{count}}.",
     "addGalleryPhotos": "Add photos",
     "jobTitleExample": "E.g. Deep clean, two-bedroom apartment",
     "propertyLocationExample": "Neighborhood or town, not the street address",
-    "voiceWaitHint": "This can take a little while. You can wait here, or fill in the event yourself.",
+    "voiceWaitHint": "This can take a little while. You can wait here, or fill in the details yourself.",
     "fillMyself": "I'll fill it in myself"
   },
   "ranks": {
@@ -428,7 +428,7 @@
     "logOut": "Log out",
     "howRanksWork": "How ranks work",
     "deactivateAccount": "Deactivate account",
-    "deactivateConfirm": "Deactivate your account? Your open events are deleted and your applications are withdrawn, including wins for jobs still to come, which count as dropouts. Past events with winners and your stats stay. To come back, sign in again. We'll also email you a link to erase your account for good.",
+    "deactivateConfirm": "Deactivate your account? Your open jobs are deleted and your applications are withdrawn, including wins for jobs still to come, which count as dropouts. Past jobs with winners and your stats stay. To come back, sign in again. We'll also email you a link to erase your account for good.",
     "yesDeactivate": "Yes, deactivate",
     "deactivating": "Deactivating…",
     "deleteAccount": "Delete account"
@@ -436,7 +436,7 @@
   "preferences": {
     "title": "Preferences",
     "feed": "Your feed",
-    "feedHint": "What the events list shows before you filter it.",
+    "feedHint": "What the jobs list shows before you filter it.",
     "favoriteRegions": "Favorite regions",
     "app": "App",
     "language": "Language",
@@ -461,8 +461,8 @@
         "job_outcome_due": "Time to report on a job",
         "application_selected": "You were selected",
         "application_rejected": "You were not selected",
-        "event_updated": "A job you applied to changed",
-        "event_closed": "A job you applied to closed",
+        "job_updated": "A job you applied to changed",
+        "job_closed": "A job you applied to closed",
         "job_reviewed": "The organizer reported on your job",
         "job_cancelled": "A job was cancelled",
         "agreement_proposed": "An amount to confirm",
@@ -470,7 +470,7 @@
         "agreement_rejected": "An amount was rejected",
         "settlement_due": "A payment to confirm",
         "settlement_contested": "A payment was disputed",
-        "new_event": "New jobs (one email each morning)"
+        "new_job": "New jobs (one email each morning)"
       }
     }
   },
@@ -486,7 +486,7 @@
     "faq": {
       "whatIs": {
         "question": "What is Vaitu?",
-        "answer": "An app for handing off jobs you can't take. If you've been booked for an event you can't attend, you publish it, colleagues apply, and you pass the job to the candidate you choose."
+        "answer": "An app for handing off jobs you can't take. If you've been booked for a job and can't make it, you publish it, colleagues apply, and you pass the job to the candidate you choose."
       },
       "name": {
         "question": "Where does the name come from?",
@@ -497,16 +497,16 @@
         "answer": "Professionals who work at weddings and need to pass on a job they can't take: photographers, videographers, musicians, DJs, planners and make-up artists. Other trades will follow."
       },
       "publish": {
-        "question": "How do I publish an event?",
-        "answer": "Start a new event and fill in the details, or describe it by voice and let the app fill in the fields. You also set the application deadline and the maximum size of your shortlist."
+        "question": "How do I publish a job?",
+        "answer": "Start a new job and fill in the details, or describe it by voice and let the app fill in the fields. You also set the application deadline and the maximum size of your shortlist."
       },
       "apply": {
         "question": "How do I apply?",
-        "answer": "Open an event and tell the organizer why you're the right person for it. You need a name on your profile, plus a website, social page or phone number, and you can apply until the deadline."
+        "answer": "Open a job and tell the organizer why you're the right person for it. You need a name on your profile, plus a website, social page or phone number, and you can apply until the deadline."
       },
       "choose": {
         "question": "How do I choose a candidate?",
-        "answer": "Open the applications you received, add the most promising ones to your shortlist, then assign the event to the winner. The event closes and the other applicants are rejected."
+        "answer": "Open the applications you received, add the most promising ones to your shortlist, then assign the job to the winner. The job closes and the other applicants are rejected."
       },
       "contact": {
         "question": "How do we get in touch?",
@@ -518,7 +518,7 @@
       },
       "changeMind": {
         "question": "Can I change my mind?",
-        "answer": "Yes. Applicants can withdraw, even after winning, and the organizer then picks someone else. Organizers can edit their events, and reopen one that is closed or assigned."
+        "answer": "Yes. Applicants can withdraw, even after winning, and the organizer then picks someone else. Organizers can edit their jobs, and reopen one that is closed or assigned."
       },
       "ranks": {
         "question": "What are ranks?",
@@ -526,15 +526,15 @@
       },
       "notifications": {
         "question": "How do notifications work?",
-        "answer": "The app tells you about new jobs for your trades and regions, new applications, decisions and changes to events you applied to. You can also allow push notifications on your device, and manage alerts and emails in Preferences."
+        "answer": "The app tells you about new jobs for your trades and regions, new applications, decisions and changes to jobs you applied to. You can also allow push notifications on your device, and manage alerts and emails in Preferences."
       },
       "leave": {
         "question": "How do I leave?",
-        "answer": "You have two options in your profile. Deactivating hides you and can be undone by signing in again: your open events are deleted and your applications withdrawn, and we email you a link to erase the account for good. Deleting erases your account straight away. Reviews and past job records stay, without your name, as [Deleted User]."
+        "answer": "You have two options in your profile. Deactivating hides you and can be undone by signing in again: your open jobs are deleted and your applications withdrawn, and we email you a link to erase the account for good. Deleting erases your account straight away. Reviews and past job records stay, without your name, as [Deleted User]."
       },
       "report": {
         "question": "How do I report someone or something?",
-        "answer": "Use the report button on an event, an applicant or a review. You can also block someone: you stop seeing each other's open events and can no longer apply to them. You can undo a block in Preferences."
+        "answer": "Use the report button on a job, an applicant or a review. You can also block someone: you stop seeing each other's open jobs and can no longer apply to them. You can undo a block in Preferences."
       }
     },
     "legalTitle": "Legal",
@@ -561,16 +561,16 @@
   "detail": {
     "organizedBy": "Organized by {{name}}",
     "reviewApplications": "Review the applications you received",
-    "closed": "Applications are closed for this event.",
+    "closed": "Applications are closed for this job.",
     "sent": "Application sent!",
     "feedback": "You will receive feedback within a few days.",
-    "backToEvents": "Back to events",
-    "applyTitle": "Apply for this event",
+    "backToJobs": "Back to jobs",
+    "applyTitle": "Apply for this job",
     "completeFirst": "Complete your profile (your name, plus a website, social page or phone number) before applying.",
     "completeProfile": "Complete profile",
     "forwarded_one": "Only {{count}} name will be forwarded to the organizer.",
     "forwarded_other": "Only {{count}} names will be forwarded to the organizer.",
-    "motivation": "Why are you the ideal candidate for this event?",
+    "motivation": "Why are you the ideal candidate for this job?",
     "motivationPlaceholder": "Tell your story…",
     "sending": "Sending…",
     "apply": "Apply"
@@ -580,7 +580,7 @@
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Download .ics",
     "yourMotivation": "Your motivation",
-    "withdrawWinnerConfirm": "Withdraw from this event? The organizer will need to pick another winner, and dropping a job you won costs you rank points.",
+    "withdrawWinnerConfirm": "Withdraw from this job? The organizer will need to pick another winner, and dropping a job you won costs you rank points.",
     "withdrawConfirm": "Are you sure you want to withdraw your application? The organizer will no longer see it.",
     "yesWithdraw": "Yes, withdraw",
     "withdrawing": "Withdrawing…",
@@ -590,7 +590,7 @@
   "notifications": {
     "error": "Could not load notifications",
     "title": "Notifications",
-    "empty": "Nothing new yet. When someone applies to your events, or one of yours is decided, it lands here.",
+    "empty": "Nothing new yet. When someone applies to your jobs, or one of yours is decided, it lands here.",
     "markAll": "Mark all read",
     "unreadAria": "{{count}} unread notifications",
     "types": {
@@ -598,9 +598,9 @@
       "applicationSelected": "Great news: you were selected for {{title}}!",
       "applicationRejected": "You were not selected for {{title}} this time",
       "applicationWithdrawn": "{{name}} withdrew their application to {{title}}",
-      "eventUpdated": "{{title}} has updates!",
-      "eventClosed": "{{title}} was closed",
-      "newEvent": "New job that matches your trade: {{title}}",
+      "jobUpdated": "{{title}} has updates!",
+      "jobClosed": "{{title}} was closed",
+      "newJob": "New job that matches your trade: {{title}}",
       "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
       "jobReviewed": "The organizer reported on {{title}}",
       "jobCancelled": "{{title}} was cancelled",
@@ -641,7 +641,7 @@
     "outcome": {
       "completed": "The job was done",
       "no_show": "They did not show up",
-      "cancelled": "The event was cancelled"
+      "cancelled": "The job was cancelled"
     },
     "completedJobs_one": "{{count}} job done",
     "completedJobs_other": "{{count}} jobs done",
@@ -683,7 +683,7 @@
     "detailsLabel": "Anything else we should know? (optional)",
     "send": "Send report",
     "block": "Block this person",
-    "blockConfirm": "Block this person? You'll stop seeing each other's open events, neither of you can apply to the other's, and any undecided applications between you are withdrawn. You can undo this in Preferences.",
+    "blockConfirm": "Block this person? You'll stop seeing each other's open jobs, neither of you can apply to the other's, and any undecided applications between you are withdrawn. You can undo this in Preferences.",
     "yesBlock": "Yes, block",
     "thanks": "Thanks. We've received your report and will look into it.",
     "reportReview": "Report review",
@@ -704,7 +704,7 @@
   },
   "eraseAccount": {
     "title": "Delete account",
-    "warning": "This permanently deletes your account, your profile, your photos and your events. Reviews and past job records stay, without your name, as [Deleted User]. This can't be undone.",
+    "warning": "This permanently deletes your account, your profile, your photos and your jobs. Reviews and past job records stay, without your name, as [Deleted User]. This can't be undone.",
     "confirm": "Delete my account",
     "erasing": "Deleting…",
     "done": "Your account has been deleted.",

@@ -11,8 +11,8 @@ import {
 
 describe("signInTarget", () => {
   it("carries a same-origin path and drops a value that would leave the site", () => {
-    expect(signInTarget("/events/abc")).toEqual({
-      to: `${paths.login}?from=${encodeURIComponent("/events/abc")}`,
+    expect(signInTarget("/jobs/abc")).toEqual({
+      to: `${paths.login}?from=${encodeURIComponent("/jobs/abc")}`,
       replace: true,
     })
     expect(signInTarget("//example.com")).toEqual({
@@ -28,14 +28,14 @@ describe("signInTarget", () => {
 })
 
 describe("landingForSession", () => {
-  it("returns where the visitor was headed, or the event list", () => {
+  it("returns where the visitor was headed, or the job list", () => {
     expect(landingForSession({ query: { from: "/profile" } })).toBe(
       paths.profile,
     )
     expect(landingForSession({ query: { from: "//example.com" } })).toBe(
-      paths.events,
+      paths.jobs,
     )
-    expect(landingForSession({})).toBe(paths.events)
+    expect(landingForSession({})).toBe(paths.jobs)
   })
 })
 
@@ -43,10 +43,10 @@ describe("pre-login routes", () => {
   it("allows only login and onboarding before a session", () => {
     expect(isPreLoginRoute({ route: "authentication" })).toBe(true)
     expect(isPreLoginRoute({ route: "onboarding" })).toBe(true)
-    expect(isPreLoginRoute({ route: "eventList" })).toBe(false)
+    expect(isPreLoginRoute({ route: "jobList" })).toBe(false)
     expect(isPreLoginPath(paths.login)).toBe(true)
     expect(isPreLoginPath(paths.onboarding)).toBe(true)
-    expect(isPreLoginPath(paths.events)).toBe(false)
+    expect(isPreLoginPath(paths.jobs)).toBe(false)
   })
 })
 
@@ -107,7 +107,7 @@ describe("routeGuard, signed in", () => {
           path: paths.login,
           query: { from: "/profile" },
         },
-        { notify, getEntity: () => ({ route: "eventList", query: {} }) },
+        { notify, getEntity: () => ({ route: "jobList", query: {} }) },
       )
     } finally {
       globalThis.window = originalWindow

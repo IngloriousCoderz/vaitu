@@ -54,7 +54,7 @@
     },
     {
       "title": "Contatti protetti",
-      "body": "I tuoi contatti li vede solo chi organizza gli eventi a cui ti candidi."
+      "body": "I tuoi contatti li vede solo chi pubblica i lavori a cui ti candidi."
     },
     {
       "title": "Segnala e blocca",
@@ -106,15 +106,15 @@
       },
       "data": {
         "title": "Quali dati raccogliamo",
-        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, mestieri, regioni e lingua. Ciò che pubblichi: eventi e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti. Il compenso che offri, gli importi che confermi e se sono stati regolati."
+        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, mestieri, regioni e lingua. Ciò che pubblichi: lavori e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti. Il compenso che offri, gli importi che confermi e se sono stati regolati."
       },
       "voice": {
         "title": "Messaggi vocali",
-        "body": "Se descrivi un evento a voce, la registrazione viene inviata al nostro fornitore di trascrizione per ottenere il testo, e il testo a un fornitore di IA per compilare il modulo. Non conserviamo mai né la registrazione né il testo. Evita di dire sui clienti più di quanto serva al lavoro."
+        "body": "Se descrivi un lavoro a voce, la registrazione viene inviata al nostro fornitore di trascrizione per ottenere il testo, e il testo a un fornitore di IA per compilare il modulo. Non conserviamo mai né la registrazione né il testo. Evita di dire sui clienti più di quanto serva al lavoro."
       },
       "visible": {
         "title": "Chi vede cosa",
-        "body": "Gli eventi aperti sono pubblici, anche per chi non ha un account. Quando ti candidi, l'organizzatore vede nome, contatti, messaggio, livello, distintivi e recensioni. Le recensioni non mostrano il nome di chi le ha scritte."
+        "body": "I lavori aperti sono pubblici, anche per chi non ha un account. Quando ti candidi, l'organizzatore vede nome, contatti, messaggio, livello, distintivi e recensioni. Le recensioni non mostrano il nome di chi le ha scritte."
       },
       "providers": {
         "title": "Chi ci aiuta",
@@ -122,7 +122,7 @@
       },
       "keeping": {
         "title": "Perché e per quanto tempo",
-        "body": "Usiamo i tuoi dati per fornire il servizio a cui ti sei iscritto, per mantenerlo sicuro e, solo con il tuo consenso, per le statistiche. Li conserviamo finché non elimini l'account. La disattivazione li conserva, così puoi tornare. L'eliminazione rimuove account, profilo, file ed eventi, mentre recensioni e storico dei lavori restano senza il tuo nome, come [Utente eliminato], perché fanno parte della storia di altre persone. Ti inviamo email sui tuoi lavori e candidature e sui nuovi lavori per i tuoi mestieri: scegli quali nelle Preferenze, o usa il link in ogni email."
+        "body": "Usiamo i tuoi dati per fornire il servizio a cui ti sei iscritto, per mantenerlo sicuro e, solo con il tuo consenso, per le statistiche. Li conserviamo finché non elimini l'account. La disattivazione li conserva, così puoi tornare. L'eliminazione rimuove account, profilo, file e lavori, mentre recensioni e storico dei lavori restano senza il tuo nome, come [Utente eliminato], perché fanno parte della storia di altre persone. Ti inviamo email sui tuoi lavori e candidature e sui nuovi lavori per i tuoi mestieri: scegli quali nelle Preferenze, o usa il link in ogni email."
       },
       "rights": {
         "title": "I tuoi diritti",

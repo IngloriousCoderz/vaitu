@@ -15,7 +15,7 @@ const {
   dealPropose,
   dealSettle,
   winnerAssign,
-  eventReopen,
+  jobReopen,
   ...syncHandlers
 } = handlers
 
@@ -28,15 +28,15 @@ export const ApplicationsReceived = {
   ...dealPropose,
   ...dealSettle,
   ...winnerAssign,
-  ...eventReopen,
+  ...jobReopen,
   ...renderers,
 
   create(entity) {
-    entity.event_id ??= null
-    entity.event_title ??= ""
-    entity.event_status ??= "open"
-    entity.event_deadline ??= null
-    entity.event_recap ??= null
+    entity.job_id ??= null
+    entity.job_title ??= ""
+    entity.job_status ??= "open"
+    entity.job_deadline ??= null
+    entity.job_recap ??= null
     entity.initialValues = { reopen_deadline: "" }
     Form.create(entity)
     entity.reopen_deadline ??= ""
@@ -58,7 +58,7 @@ export const ApplicationsReceived = {
   },
 
   routeChange: pageRouteChange({
-    select: (payload) => payload.params.eventId,
+    select: (payload) => payload.params.jobId,
     open,
     close,
   }),
@@ -69,12 +69,12 @@ export const ApplicationsReceived = {
       (item) => item.status === "shortlisted",
     ).length
     return {
-      title: entity.event_title ?? "",
+      title: entity.job_title ?? "",
       subtitle: t("received.summary", {
         shortlisted,
         received: items.length,
       }),
-      back: paths.myEvents,
+      back: paths.myJobs,
     }
   },
 
@@ -109,7 +109,7 @@ export const ApplicationsReceived = {
           api.notify(`#${id}:assignAsk`, application_id),
         onAssign: (application_id) =>
           api.notify(`#${id}:winnerAssign`, {
-            event_id: entity.event_id,
+            job_id: entity.job_id,
             application_id,
             amount: entity.assign_amount,
           }),
@@ -142,11 +142,11 @@ export const ApplicationsReceived = {
   },
 }
 
-function open(entity, event_id, api) {
-  entity.event_id = event_id
-  entity.event_title = ""
-  entity.event_deadline = null
-  entity.event_recap = null
+function open(entity, job_id, api) {
+  entity.job_id = job_id
+  entity.job_title = ""
+  entity.job_deadline = null
+  entity.job_recap = null
   entity.reopen_deadline = ""
   entity.confirming_reopen = false
   clearReopenError(entity)
@@ -161,14 +161,14 @@ function open(entity, event_id, api) {
   entity.confirming_assign = null
   entity.photoIndex = 0
   entity.isPhotoPreviewOpen = false
-  api.notify(`#${entity.id}:load`, event_id)
+  api.notify(`#${entity.id}:load`, job_id)
 }
 
 function close(entity) {
-  entity.event_id = null
-  entity.event_title = ""
-  entity.event_status = "open"
-  entity.event_recap = null
+  entity.job_id = null
+  entity.job_title = ""
+  entity.job_status = "open"
+  entity.job_recap = null
   entity.items = []
   entity.expanded_application_id = null
   entity.confirming_assign = null

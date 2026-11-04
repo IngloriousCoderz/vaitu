@@ -12,7 +12,7 @@ export const Fab = {
     return IwFab.render({
       children: Icon.render({ icon: addOutline, size: "lg" }),
       color: "primary",
-      ariaLabel: t("nav.newEvent"),
+      ariaLabel: t("nav.newJob"),
       className: [styles.fab, LIFTS[pillCount]].filter(Boolean).join(" "),
       onClick,
     })

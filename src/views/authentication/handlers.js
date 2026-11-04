@@ -39,7 +39,7 @@ export function clearAuthErrors(entity) {
 
 export function onboardingFinish(entity, _, api) {
   setOnboardingDue(false)
-  api.notify("#router:navigate", paths.events)
+  api.notify("#router:navigate", paths.jobs)
 }
 
 export function emailBack(entity) {
@@ -145,7 +145,7 @@ export const login = handleAsync("login", {
     entity.password = ""
     writeUser(user)
     setOnboardingDue(!isOnboarded)
-    api.notify("#eventList:load")
+    api.notify("#jobList:load")
     api.notify("#profile:load")
     const router = api.getEntity(ROUTER)
     api.notify("#router:navigate", {

@@ -20,7 +20,7 @@ export async function alertVoiceBudget() {
     alertOnce(
       "voice-budget",
       "Vaitu: voice messages paused for today",
-      "Today's minutes of transcription (voice_daily_minutes in app_config) are used up. People see that voice messages are paused, and fill in the event form by hand until midnight UTC.",
+      "Today's minutes of transcription (voice_daily_minutes in app_config) are used up. People see that voice messages are paused, and fill in the job form by hand until midnight UTC.",
       steps,
     ),
   )

@@ -32,22 +32,22 @@ import { TabBar } from "./tab-bar/template.js"
 const SIDEBAR_QUERY = "(min-width: 64rem)"
 
 const TAB_PATHS = {
-  events: paths.events,
+  jobs: paths.jobs,
   applications: paths.applications,
-  myEvents: paths.myEvents,
+  myJobs: paths.myJobs,
   notifications: paths.notifications,
   profile: paths.profile,
 }
 
 const CHROME = {
-  eventList: { tab: "events", hasFab: true },
-  myEvents: { tab: "myEvents", hasFab: true },
+  jobList: { tab: "jobs", hasFab: true },
+  myJobs: { tab: "myJobs", hasFab: true },
   applicationList: { tab: "applications" },
   applicationDetail: { tab: "applications" },
   notifications: { tab: "notifications" },
   profile: { tab: "profile" },
-  eventDetail: { isTabbarRendered: false },
-  eventCreate: { isHidden: true },
+  jobDetail: { isTabbarRendered: false },
+  jobCreate: { isHidden: true },
   applicationsReceived: { isHidden: true },
   ranks: { isHidden: true },
   preferences: { tab: "preferences", isHidden: true },
@@ -59,7 +59,7 @@ const CHROME = {
   notFound: { isTabbarRendered: false },
 }
 
-const DEFAULT_CHROME = { tab: "events" }
+const DEFAULT_CHROME = { tab: "jobs" }
 
 const NO_WIDE_CHROME = new Set([
   "authentication",
@@ -69,8 +69,8 @@ const NO_WIDE_CHROME = new Set([
 ])
 
 const DRAWER_PATHS = {
-  events: paths.events,
-  myEvents: paths.myEvents,
+  jobs: paths.jobs,
+  myJobs: paths.myJobs,
   applications: paths.applications,
   profile: paths.profile,
   preferences: paths.preferences,
@@ -122,7 +122,7 @@ export const App = {
       fab: when(chrome.hasFab, () =>
         Fab.render({
           pillCount: [updatebar, pushPromptBar].filter(Boolean).length,
-          onClick: () => api.notify("#router:navigate", paths.newEvent),
+          onClick: () => api.notify("#router:navigate", paths.newJob),
         }),
       ),
       updatebar,
@@ -243,16 +243,16 @@ export const App = {
       gap: "sm",
       className: styles.globalActions,
       children: [
-        when(route !== "eventCreate", () =>
+        when(route !== "jobCreate", () =>
           Button.render({
             children: html`
               ${Icon.render({ icon: addOutline, size: "lg" })}
-              <span>${t("nav.newEvent")}</span>
+              <span>${t("nav.newJob")}</span>
             `,
             color: "primary",
             shape: "pill",
             size: "md",
-            onClick: () => api.notify("#router:navigate", paths.newEvent),
+            onClick: () => api.notify("#router:navigate", paths.newJob),
           }),
         ),
         Flex.render({
@@ -316,7 +316,7 @@ export const App = {
       onCollapseToggle: () => api.notify("#shell:drawerCollapseToggle"),
       onNavigate: (id) => {
         api.notify("#shell:drawerClose")
-        api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.events)
+        api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.jobs)
       },
     })
   },
@@ -328,7 +328,7 @@ export const App = {
       value: chrome.tab,
       isHidden: chrome.isHidden,
       onNavigate: (value) =>
-        api.notify("#router:navigate", TAB_PATHS[value] ?? paths.events),
+        api.notify("#router:navigate", TAB_PATHS[value] ?? paths.jobs),
     })
   },
 

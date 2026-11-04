@@ -37,10 +37,10 @@ checks that:
 - signed-out visitors and strangers read none of the private rows;
 - nobody reads or writes the tables only the service uses;
 - nobody but the service calls the internal functions;
-- a stranger cannot act on someone else's event, application or job;
+- a stranger cannot act on someone else's job or application;
 - the applicant cannot decide on their own application or write their
   account flags;
-- the organizer cannot hand off, undelete or fake the status of an event,
+- the organizer cannot hand off, undelete or fake the status of a job,
   take the job back from the winner, or read more of an applicant than their
   contact details;
 - nobody lists other users' files, and the calendar bucket only takes
@@ -87,14 +87,14 @@ All fixed, in the initial migration and in production.
 
 | Hole                                                                                     | What it allowed                                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| An organizer could post an event already `assigned`, or set that status by hand          | Earning the Generous Colleague badge with fake handoffs                              |
+| An organizer could post a job already `assigned`, or set that status by hand             | Earning the Generous Colleague badge with fake handoffs                              |
 | An organizer could switch the winner back to `rejected`                                  | Taking the job back, which also stopped the winner from reporting they were not paid |
-| Anyone could list the storage buckets                                                    | Collecting every user id, and the calendars of every event, deleted ones included    |
+| Anyone could list the storage buckets                                                    | Collecting every user id, and the calendars of every job, deleted ones included      |
 | The calendar bucket took any file                                                        | Hosting HTML or scripts on the storage domain                                        |
 | `check-email` rate-limited by the first `X-Forwarded-For` entry, which the caller writes | Unlimited checks of which emails have an account                                     |
 | Organizers could read an applicant's whole profile row                                   | Seeing last login, language and notification settings, not just contact details      |
-| Calendar files stayed public forever                                                     | Reading an event's details long after it was deleted                                 |
-| Deactivating left the images of the deleted events online                                | Same, for images                                                                     |
+| Calendar files stayed public forever                                                     | Reading a job's details long after it was deleted                                    |
+| Deactivating left the images of the deleted jobs online                                  | Same, for images                                                                     |
 | No security headers                                                                      | Framing the app, and no limit on where scripts could load from                       |
 
 Calendars now go out as links that expire after a day, and applicants'
@@ -107,7 +107,7 @@ These are known and accepted. The scan ignores the ones it reports.
 | What                                                                     | Why it stays                                                                                                                                                                                                 |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `style-src 'unsafe-inline'` in the content security policy               | The templates bind inline styles. Scripts stay strict, and they are what an injection needs.                                                                                                                 |
-| No `Cross-Origin-Embedder-Policy`                                        | It would block avatars and event images served by Supabase, and only matters for features Vaitu does not use.                                                                                                |
+| No `Cross-Origin-Embedder-Policy`                                        | It would block avatars and job images served by Supabase, and only matters for features Vaitu does not use.                                                                                                  |
 | Static files without cache headers                                       | Nothing private in them.                                                                                                                                                                                     |
 | The API misses `nosniff`, names its server version and allows any origin | Supabase's gateway sets these, not Vaitu. Any origin is how a public API key works: row level security does the guarding.                                                                                    |
 | `check-email` tells whether an email has an account                      | The login flow needs it. It is limited to 20 checks per IP every 15 minutes.                                                                                                                                 |

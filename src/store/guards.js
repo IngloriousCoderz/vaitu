@@ -26,12 +26,12 @@ export function signInTarget(path) {
 
 /**
  * Where a visitor who has just signed in belongs: back where they were headed, or
- * the event list.
+ * the job list.
  * @param {{query?: object}} router - The router entity.
  * @returns {string} A path.
  */
 export function landingForSession(router) {
-  return safePath(router.query?.from) ?? paths.events
+  return safePath(router.query?.from) ?? paths.jobs
 }
 
 /**
@@ -83,7 +83,7 @@ export function routeGuard(entity, payload, api) {
 
   if (payload.route === "onboarding") {
     if (!isOnboardingDue()) {
-      api.notify("#router:navigate", { to: paths.events, replace: true })
+      api.notify("#router:navigate", { to: paths.jobs, replace: true })
     }
     return
   }

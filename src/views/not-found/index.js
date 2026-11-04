@@ -34,8 +34,8 @@ export const NotFound = {
           })}
           ${Button.render({
             color: "primary",
-            onClick: goToEvents(api),
-            children: t("notFound.goToEvents"),
+            onClick: goToJobs(api),
+            children: t("notFound.goToJobs"),
           })}
         </div>
       `,
@@ -43,6 +43,6 @@ export const NotFound = {
   },
 }
 
-function goToEvents(api) {
-  return () => api.notify("#router:navigate", paths.events)
+function goToJobs(api) {
+  return () => api.notify("#router:navigate", paths.jobs)
 }

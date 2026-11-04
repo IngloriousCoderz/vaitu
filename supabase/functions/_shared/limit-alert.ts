@@ -10,9 +10,9 @@ const LIMIT_STATUSES: Record<string, number[]> = {
 
 const WHAT_STOPS: Record<string, string> = {
   openrouter:
-    "Voice messages are no longer filling in the event form. People see an error and fill it in by hand.",
+    "Voice messages are no longer filling in the job form. People see an error and fill it in by hand.",
   deepgram:
-    "Voice messages are no longer being transcribed. People see an error and fill in the event form by hand.",
+    "Voice messages are no longer being transcribed. People see an error and fill in the job form by hand.",
   resend:
     "Notification emails are waiting for tomorrow's allowance, and new job digests may arrive late. After three days unsent ones are dropped; the bell still has them.",
 }

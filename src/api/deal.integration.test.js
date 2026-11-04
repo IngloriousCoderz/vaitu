@@ -3,10 +3,10 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import {
   ANTONY,
-  createEventAs,
+  createJobAs,
   deleteSignedUpUser,
   PASSWORD,
-  setEventDate,
+  setJobDate,
   signIn,
   signOut,
   signUp,
@@ -19,7 +19,7 @@ import {
 } from "./agreements.js"
 import { fetchApplicationDetail } from "./applications.js"
 import { supabase } from "./client.js"
-import { fetchEventDetail, fetchEventForEdit, updateEvent } from "./events.js"
+import { fetchJobDetail, fetchJobForEdit, updateJob } from "./jobs.js"
 import { fetchMyNotifications } from "./notifications.js"
 import { fetchProfileStats, submitJobReview } from "./reputation.js"
 
@@ -39,8 +39,8 @@ async function account(label) {
   return { userId, login: { email, password: PASSWORD } }
 }
 
-async function winJob(organizer, winner, { amount, eventDate = PAST_DATE }) {
-  const eventId = await createEventAs(
+async function winJob(organizer, winner, { amount, jobDate = PAST_DATE }) {
+  const jobId = await createJobAs(
     organizer.login,
     crypto.randomUUID(),
     undefined,
@@ -50,7 +50,7 @@ async function winJob(organizer, winner, { amount, eventDate = PAST_DATE }) {
   const { data, error } = await supabase
     .from("applications")
     .insert({
-      event_id: eventId,
+      job_id: jobId,
       applicant_id: winner.userId,
       motivation: "Available",
     })
@@ -63,13 +63,13 @@ async function winJob(organizer, winner, { amount, eventDate = PAST_DATE }) {
     .update({ status: "shortlisted" })
     .eq("id", data.id)
   const { error: assignError } = await supabase.rpc("assign_winner", {
-    p_event_id: eventId,
+    p_job_id: jobId,
     p_application_id: data.id,
     p_agreed_amount: amount,
   })
   if (assignError) throw assignError
-  await setEventDate(eventId, eventDate)
-  return { eventId, applicationId: data.id }
+  await setJobDate(jobId, jobDate)
+  return { jobId, applicationId: data.id }
 }
 
 async function confirmedJob(organizer, winner) {
@@ -81,16 +81,13 @@ async function confirmedJob(organizer, winner) {
 
 describe("what a job pays", () => {
   let organizer
-  let eventId
+  let jobId
 
   beforeAll(async () => {
     organizer = await account("payer")
-    eventId = await createEventAs(
-      organizer.login,
-      crypto.randomUUID(),
-      undefined,
-      { pay: OFFER },
-    )
+    jobId = await createJobAs(organizer.login, crypto.randomUUID(), undefined, {
+      pay: OFFER,
+    })
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
@@ -99,40 +96,40 @@ describe("what a job pays", () => {
   }, TEST_TIMEOUT_MS)
 
   test(
-    "signed-in users see it, on the event and on the edit form",
+    "signed-in users see it, on the job and on the edit form",
     async () => {
       await signIn(ANTONY)
-      const { event } = await fetchEventDetail(eventId)
-      expect(event.pay).toMatchObject({ kind: "fixed", currency: "EUR" })
-      expect(Number(event.pay.amount_min)).toBe(AGREED)
+      const { job } = await fetchJobDetail(jobId)
+      expect(job.pay).toMatchObject({ kind: "fixed", currency: "EUR" })
+      expect(Number(job.pay.amount_min)).toBe(AGREED)
 
       await signIn(organizer.login)
-      const row = await fetchEventForEdit(eventId)
-      expect(row.event_pay.kind).toBe("fixed")
+      const row = await fetchJobForEdit(jobId)
+      expect(row.job_pay.kind).toBe("fixed")
     },
     TEST_TIMEOUT_MS,
   )
 
   test(
-    "visitors never do, even though they can read the event",
+    "visitors never do, even though they can read the job",
     async () => {
       const visitor = createClient(
         import.meta.env.VITE_SUPABASE_URL,
         import.meta.env.VITE_SUPABASE_ANON_KEY,
         { auth: { persistSession: false } },
       )
-      const { data: event } = await visitor
-        .from("events")
+      const { data: job } = await visitor
+        .from("jobs")
         .select("id")
-        .eq("id", eventId)
-      expect(event).toHaveLength(1)
+        .eq("id", jobId)
+      expect(job).toHaveLength(1)
 
-      const { error } = await visitor.from("event_pay").select("kind")
+      const { error } = await visitor.from("job_pay").select("kind")
       expect(error?.message).toContain("permission denied")
       const { error: embedError } = await visitor
-        .from("events")
-        .select("id, event_pay(kind)")
-        .eq("id", eventId)
+        .from("jobs")
+        .select("id, job_pay(kind)")
+        .eq("id", jobId)
       expect(embedError).not.toBeNull()
     },
     TEST_TIMEOUT_MS,
@@ -143,23 +140,23 @@ describe("what a job pays", () => {
     async () => {
       await signIn(ANTONY)
       const { error } = await supabase
-        .from("event_pay")
+        .from("job_pay")
         .update({ amount_min: 1 })
-        .eq("event_id", eventId)
+        .eq("job_id", jobId)
       expect(error).toBeNull()
-      const { event } = await fetchEventDetail(eventId)
-      expect(Number(event.pay.amount_min)).toBe(AGREED)
+      const { job } = await fetchJobDetail(jobId)
+      expect(Number(job.pay.amount_min)).toBe(AGREED)
 
       await signIn(organizer.login)
-      const row = await fetchEventForEdit(eventId)
-      await updateEvent(eventId, {
+      const row = await fetchJobForEdit(jobId)
+      await updateJob(jobId, {
         ...row,
         pay: { kind: "to_agree" },
         details: row.details,
       })
-      const edited = await fetchEventForEdit(eventId)
-      expect(edited.event_pay.kind).toBe("to_agree")
-      expect(edited.event_pay.amount_min).toBeNull()
+      const edited = await fetchJobForEdit(jobId)
+      expect(edited.job_pay.kind).toBe("to_agree")
+      expect(edited.job_pay.amount_min).toBeNull()
     },
     TEST_TIMEOUT_MS,
   )
@@ -229,7 +226,7 @@ describe("what they agreed, and whether it was settled", () => {
       const job = await winJob(organizer, winner, { amount: AGREED })
       await signIn(stranger.login)
       await expect(proposeAgreement(job.applicationId, 1)).rejects.toThrow(
-        "Only the event owner",
+        "Only the job owner",
       )
       await expect(answerAgreement(job.applicationId, true)).rejects.toThrow(
         "Only the winner",
@@ -262,7 +259,7 @@ describe("what they agreed, and whether it was settled", () => {
 
       const future = await winJob(organizer, winner, {
         amount: AGREED,
-        eventDate: FUTURE_DATE,
+        jobDate: FUTURE_DATE,
       })
       await signIn(winner.login)
       await answerAgreement(future.applicationId, true)
@@ -305,8 +302,7 @@ describe("what they agreed, and whether it was settled", () => {
       const notes = await fetchMyNotifications()
       expect(
         notes.some(
-          (n) =>
-            n.type === "settlement_contested" && n.event_id === job.eventId,
+          (n) => n.type === "settlement_contested" && n.job_id === job.jobId,
         ),
       ).toBe(true)
       expect((await statsOf(accused)).payment_issues).toBe(0)
@@ -367,7 +363,7 @@ describe("what they agreed, and whether it was settled", () => {
           { answered_at: LONG_AGO },
         )
       }
-      const open = await createEventAs(accused.login, crypto.randomUUID())
+      const open = await createJobAs(accused.login, crypto.randomUUID())
       expect(open).toBeTruthy()
 
       await signIn(stranger.login)

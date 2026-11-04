@@ -4,7 +4,12 @@ import node from "@inglorious/eslint-config/node"
 const shared = Array.isArray(browser) ? browser : [browser]
 const nodeOnly = Array.isArray(node) ? node : [node]
 
-const nodeFiles = ["scripts/**", "*.config.js", "landing/src/site.config.js"]
+const nodeFiles = [
+  "scripts/**",
+  "supabase/snippets/**",
+  "*.config.js",
+  "landing/src/site.config.js",
+]
 
 export default [
   {

@@ -15,13 +15,13 @@ describe("isSettlementOpen", () => {
   const job = {
     status: "selected",
     agreement: { status: "confirmed" },
-    event_date: "2027-06-10",
+    job_date: "2027-06-10",
     review: null,
   }
 
   it("opens on the date of a job with a confirmed amount", () => {
     expect(isSettlementOpen(job)).toBe(true)
-    expect(isSettlementOpen({ ...job, event_date: "2027-06-11" })).toBe(false)
+    expect(isSettlementOpen({ ...job, job_date: "2027-06-11" })).toBe(false)
   })
 
   it("needs a confirmed amount and a winner", () => {

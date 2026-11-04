@@ -50,7 +50,7 @@ export function isDropped(row: Pending, now: Date) {
 
 export function isDue(row: Pending, now: Date) {
   return (
-    row.type !== "new_event" || new Date(row.created_at) <= latestDigestAt(now)
+    row.type !== "new_job" || new Date(row.created_at) <= latestDigestAt(now)
   )
 }
 
@@ -61,7 +61,7 @@ export function byRecipient(rows: Pending[]) {
     groups.set(row.user_id, [...(groups.get(row.user_id) ?? []), row])
   }
   const isDigest = (group: Pending[]) =>
-    group.every((row) => row.type === "new_event")
+    group.every((row) => row.type === "new_job")
   return [...groups.values()].sort(
     (a, b) => Number(isDigest(a)) - Number(isDigest(b)),
   )

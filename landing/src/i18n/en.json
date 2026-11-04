@@ -54,7 +54,7 @@
     },
     {
       "title": "Contacts kept private",
-      "body": "Your contact details are only seen by organizers of the events you apply to."
+      "body": "Your contact details are only seen by organizers of the jobs you apply to."
     },
     {
       "title": "Report and block",
@@ -106,15 +106,15 @@
       },
       "data": {
         "title": "What we collect",
-        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: events and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them. The pay you offer, the amounts you confirm and whether they were settled."
+        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: jobs and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them. The pay you offer, the amounts you confirm and whether they were settled."
       },
       "voice": {
         "title": "Voice messages",
-        "body": "If you describe an event by voice, the recording is sent to our speech provider to be turned into text, and that text to an AI provider to fill in the form. We never store the recording or the text. Please avoid saying more about your clients than the job needs."
+        "body": "If you describe a job by voice, the recording is sent to our speech provider to be turned into text, and that text to an AI provider to fill in the form. We never store the recording or the text. Please avoid saying more about your clients than the job needs."
       },
       "visible": {
         "title": "Who sees what",
-        "body": "Open events are public, even to people without an account. When you apply, the organizer sees your name, contact details, message, rank, badges and reviews. Reviews are shown without the name of whoever wrote them."
+        "body": "Open jobs are public, even to people without an account. When you apply, the organizer sees your name, contact details, message, rank, badges and reviews. Reviews are shown without the name of whoever wrote them."
       },
       "providers": {
         "title": "Who helps us",
@@ -122,7 +122,7 @@
       },
       "keeping": {
         "title": "Why, and for how long",
-        "body": "We use your data to run the service you signed up for, to keep it safe, and for statistics only with your consent. We keep it until you delete your account. Deactivating keeps it, so you can come back. Deleting removes your account, profile, files and events, while reviews and past job records stay without your name, as [Deleted User], because they are part of other people's history. We email you about your jobs and applications, and about new jobs for your trades: choose which in Preferences, or use the link in each email."
+        "body": "We use your data to run the service you signed up for, to keep it safe, and for statistics only with your consent. We keep it until you delete your account. Deactivating keeps it, so you can come back. Deleting removes your account, profile, files and jobs, while reviews and past job records stay without your name, as [Deleted User], because they are part of other people's history. We email you about your jobs and applications, and about new jobs for your trades: choose which in Preferences, or use the link in each email."
       },
       "rights": {
         "title": "Your rights",

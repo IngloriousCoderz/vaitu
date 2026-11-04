@@ -4,7 +4,7 @@ import { createHash } from "node:crypto"
 import { createClient } from "@supabase/supabase-js"
 
 import { supabase } from "../api/client.js"
-import { createEvent, deleteEvent } from "../api/events.js"
+import { createJob, deleteJob } from "../api/jobs.js"
 import { DAY_MS } from "../constants/index.js"
 
 const DEADLINE_IN_DAYS = 7
@@ -29,7 +29,7 @@ export function pastDeadline() {
   return new Date(Date.now() - DAY_MS).toISOString()
 }
 
-export function eventPayload(id, deadline) {
+export function jobPayload(id, deadline) {
   return {
     category: "wedding",
     profession: "photographer",
@@ -37,7 +37,7 @@ export function eventPayload(id, deadline) {
     location: "Florence",
     country: "Italy",
     region: "Tuscany",
-    event_date: "2027-06-01",
+    job_date: "2027-06-01",
     application_deadline:
       deadline ??
       new Date(Date.now() + DEADLINE_IN_DAYS * DAY_MS).toISOString(),
@@ -53,40 +53,40 @@ export function coupleTitle(id) {
   return `Ada${id} & Ben${id}`
 }
 
-export async function createEventAs(account, id, deadline, fields) {
+export async function createJobAs(account, id, deadline, fields) {
   await signIn(account)
-  const payload = { ...eventPayload(id, deadline), ...fields }
-  await createEvent(payload)
-  const eventId = await ownedEventId(payload.title)
-  if (!eventId) throw new Error("Created event was not found")
-  return eventId
+  const payload = { ...jobPayload(id, deadline), ...fields }
+  await createJob(payload)
+  const jobId = await ownedJobId(payload.title)
+  if (!jobId) throw new Error("Created job was not found")
+  return jobId
 }
 
-export async function deleteOwnedEvent(eventId) {
+export async function deleteOwnedJob(jobId) {
   await signIn(ANTONY)
-  await deleteEvent(eventId)
+  await deleteJob(jobId)
 }
 
-export async function deleteOwnedEventByTitle(title) {
+export async function deleteOwnedJobByTitle(title) {
   await signIn(ANTONY)
-  const eventId = await ownedEventId(title)
-  if (!eventId) return
-  await deleteEvent(eventId)
+  const jobId = await ownedJobId(title)
+  if (!jobId) return
+  await deleteJob(jobId)
 }
 
-export async function setEventDate(eventId, event_date) {
+export async function setJobDate(jobId, job_date) {
   const { error } = await serviceRoleClient()
-    .from("events")
-    .update({ event_date })
-    .eq("id", eventId)
+    .from("jobs")
+    .update({ job_date })
+    .eq("id", jobId)
   if (error) throw error
 }
 
-export async function readEventAsService(eventId) {
+export async function readJobAsService(jobId) {
   const { data, error } = await serviceRoleClient()
-    .from("events")
+    .from("jobs")
     .select("*")
-    .eq("id", eventId)
+    .eq("id", jobId)
     .maybeSingle()
   if (error) throw error
   return data
@@ -167,7 +167,7 @@ export async function removeStoredFile(bucket, path) {
   if (error) throw error
 }
 
-async function ownedEventId(title) {
+async function ownedJobId(title) {
   const {
     data: { user },
     error: authError,
@@ -175,7 +175,7 @@ async function ownedEventId(title) {
   if (authError) throw authError
   if (!user) throw new Error("Not logged in")
   const { data, error } = await supabase
-    .from("events")
+    .from("jobs")
     .select("id")
     .eq("title", title)
     .eq("sender_id", user.id)

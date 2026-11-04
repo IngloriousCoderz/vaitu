@@ -4,7 +4,7 @@ import { errorKey } from "../../api/errors.js"
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { fetchMyBlocks, unblockUser } from "../../api/safety.js"
 import { readUserId } from "../../api/session.js"
-import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
+import { interestsFor, jobTypesFor } from "../../data/job-taxonomy.js"
 import { withMuted } from "../../data/notification-types.js"
 import {
   favoriteRegionOptions,
@@ -47,7 +47,7 @@ export function notificationToggle(entity, { column, type, isReceiving }, api) {
 }
 
 export function favoriteOptionsSync(entity, _, api) {
-  const regions = api.getEntity("eventList")?.regions ?? []
+  const regions = api.getEntity("jobList")?.regions ?? []
   api.notify("#favoriteRegionPreferences:valueSet", [
     ...entity.favorite_regions,
   ])
@@ -104,7 +104,7 @@ export const save = handleAsync("save", {
       fields.professions ||
       fields.favorite_regions
     ) {
-      api.notify("#eventList:load")
+      api.notify("#jobList:load")
     }
   },
   error(entity, err, api) {
@@ -125,7 +125,7 @@ export const unblock = handleAsync("unblock", {
     entity.blocks = entity.blocks.filter(
       (block) => block.blocked_id !== user_id,
     )
-    api.notify("#eventList:load")
+    api.notify("#jobList:load")
   },
   error(entity) {
     entity.saveError = "safety.unblockFailed"

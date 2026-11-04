@@ -72,11 +72,11 @@ export function uniqueRegions(values) {
 
 /**
  * All regions, then My regions, then each favorite, then the other
- * regions that events already use.
+ * regions that jobs already use.
  */
-export function regionFilterItems(eventRegions, favoriteRegions) {
+export function regionFilterItems(jobRegions, favoriteRegions) {
   const favorites = uniqueRegions(favoriteRegions)
-  const others = uniqueRegions(eventRegions).filter(
+  const others = uniqueRegions(jobRegions).filter(
     (region) => !favorites.some((favorite) => sameRegion(favorite, region)),
   )
   return [
@@ -89,10 +89,10 @@ export function regionFilterItems(eventRegions, favoriteRegions) {
 
 /**
  * Favorite combobox: Italian regions, then the favorites and other names already
- * on events. Group labels are not selectable.
+ * on jobs. Group labels are not selectable.
  */
-export function favoriteRegionOptions(eventRegions, favorites = []) {
-  const others = sortedRegions([...favorites, ...eventRegions]).filter(
+export function favoriteRegionOptions(jobRegions, favorites = []) {
+  const others = sortedRegions([...favorites, ...jobRegions]).filter(
     (region) => !isItalianRegion(region),
   )
   return [

@@ -1,12 +1,12 @@
 {
   "nav": {
-    "events": "Eventi",
-    "myEvents": "I miei eventi",
+    "jobs": "Lavori",
+    "myJobs": "I miei lavori",
     "applications": "Candidature",
     "profile": "Profilo",
     "preferences": "Preferenze",
     "about": "Informazioni",
-    "newEvent": "Nuovo evento",
+    "newJob": "Nuovo lavoro",
     "toggle": "Apri o chiudi la navigazione",
     "collapse": "Comprimi la barra laterale",
     "expand": "Espandi la barra laterale",
@@ -14,9 +14,9 @@
     "account": "Account",
     "profileOf": "Profilo: {{name}}",
     "tabs": {
-      "events": "Esplora",
+      "jobs": "Esplora",
       "applications": "Proposte",
-      "myEvents": "Pubblicati",
+      "myJobs": "Pubblicati",
       "notifications": "Avvisi",
       "profile": "Profilo"
     }
@@ -58,7 +58,7 @@
   "notFound": {
     "title": "Qui non c'è niente",
     "noMatch": "Nessuna pagina corrisponde a <code>{{path}}</code>.",
-    "goToEvents": "Vai agli eventi"
+    "goToJobs": "Vai ai lavori"
   },
   "taxonomy": {
     "style": {
@@ -135,7 +135,7 @@
     "website": "Sito web o pagina social",
     "title": "Titolo",
     "location": "Luogo",
-    "eventDate": "Data",
+    "jobDate": "Data",
     "deadline": "Scadenza candidature",
     "shortlistSize": "Posti in shortlist",
     "shortlistSizeHint": "Tutti possono candidarsi. Questi sono i posti per chi metti in shortlist prima di scegliere.",
@@ -163,8 +163,8 @@
   "sorts": {
     "createdNewest": "Più recenti",
     "createdOldest": "Meno recenti",
-    "eventDateNewest": "Evento: lontani",
-    "eventDateOldest": "Evento: vicini",
+    "jobDateNewest": "Data: lontani",
+    "jobDateOldest": "Data: vicini",
     "deadlineSoonest": "Scadenza: vicine",
     "deadlineFarthest": "Scadenza: lontane"
   },
@@ -187,7 +187,7 @@
     "message": "Sei offline. Vaitu si aggiorna appena torni online."
   },
   "reactivated": {
-    "message": "Ti diamo il bentornato! Il tuo account è di nuovo attivo. Le candidature che avevi inviato e i tuoi eventi aperti sono stati rimossi quando l'hai disattivato.",
+    "message": "Ti diamo il bentornato! Il tuo account è di nuovo attivo. Le candidature che avevi inviato e i tuoi lavori aperti sono stati rimossi quando l'hai disattivato.",
     "dismiss": "Ho capito"
   },
   "appUpdate": {
@@ -225,14 +225,14 @@
   },
   "errors": {
     "notLoggedIn": "Non hai effettuato l'accesso",
-    "alreadyApplied": "Ti sei già candidato a questo evento",
+    "alreadyApplied": "Ti sei già candidato a questo lavoro",
     "applicationFailed": "Candidatura non riuscita",
-    "loadEvent": "Impossibile caricare l'evento",
+    "loadJob": "Impossibile caricare il lavoro",
     "micUnavailable": "Microfono non disponibile",
     "emptyRecording": "La registrazione è vuota: riprova",
     "noAudio": "Nessun audio da elaborare",
     "transcriptionFailed": "Non siamo riusciti a trascrivere il tuo messaggio. Compila i campi da solo.",
-    "saveEvent": "Impossibile salvare l'evento",
+    "saveJob": "Impossibile salvare il lavoro",
     "imageType": "Usa un'immagine JPEG, PNG o WebP",
     "imageSize": "Ogni immagine deve pesare meno di 5 MB",
     "imageCrop": "Impossibile elaborare l'immagine",
@@ -240,13 +240,13 @@
     "imageLimit_one": "Puoi aggiungere {{count}} foto",
     "imageLimit_other": "Puoi aggiungere fino a {{count}} foto",
     "imageLimit_many": "Puoi aggiungere fino a {{count}} foto",
-    "noEventForApplications": "Nessun evento di cui caricare le candidature",
+    "noJobForApplications": "Nessun lavoro di cui caricare le candidature",
     "loadApplications": "Impossibile caricare le candidature",
     "update": "Aggiornamento non riuscito",
     "assignWinner": "Impossibile assegnare il vincitore",
-    "reopenEvent": "Impossibile riaprire l'evento",
-    "loadEvents": "Impossibile caricare gli eventi",
-    "deleteEvent": "Impossibile eliminare l'evento",
+    "reopenJob": "Impossibile riaprire il lavoro",
+    "loadJobs": "Impossibile caricare i lavori",
+    "deleteJob": "Impossibile eliminare il lavoro",
     "loadApplication": "Impossibile caricare la candidatura",
     "save": "Salvataggio non riuscito",
     "withdraw": "Impossibile ritirare la candidatura",
@@ -263,8 +263,8 @@
     "savePreferences": "Impossibile salvare le preferenze",
     "saveReview": "Impossibile salvare la recensione",
     "parseFailed": "Non siamo riusciti a compilare i campi dal tuo messaggio. Compilali tu, per favore.",
-    "voiceLimit": "Hai usato i messaggi vocali gratuiti di oggi. Compila l'evento da solo o riprova domani.",
-    "voicePaused": "I messaggi vocali sono sospesi per oggi. Compila l'evento da solo o riprova domani.",
+    "voiceLimit": "Hai usato i messaggi vocali gratuiti di oggi. Compila i campi da solo o riprova domani.",
+    "voicePaused": "I messaggi vocali sono sospesi per oggi. Compila i campi da solo o riprova domani.",
     "eraseAccount": "Non siamo riusciti a eliminare l'account. Riprova.",
     "offline": "Sei offline. Riprova quando torni online.",
     "captcha": "Non siamo riusciti a verificare che tu sia una persona. Riprova.",
@@ -300,9 +300,9 @@
     "subtitle": "Dicci dove sei, così gli organizzatori possono trovarti.",
     "skip": "Salta per ora"
   },
-  "events": {
-    "title": "Eventi",
-    "search": "Cerca eventi per città, stile o genere…",
+  "jobs": {
+    "title": "Lavori",
+    "search": "Cerca lavori per città, stile o genere…",
     "feedPreferences": "Preferenze del feed",
     "region": "Regione",
     "period": "Periodo",
@@ -313,19 +313,19 @@
     "filtersOn_one": "Filtri, {{count}} attivo",
     "filtersOn_other": "Filtri, {{count}} attivi",
     "filtersOn_many": "Filtri, {{count}} attivi",
-    "noneMatch": "Nessun evento corrisponde alla tua ricerca.",
+    "noneMatch": "Nessun lavoro corrisponde alla tua ricerca.",
     "orderBy": "Ordina per",
-    "results_one": "{{count}} evento",
-    "results_other": "{{count}} eventi",
-    "results_many": "{{count}} eventi",
+    "results_one": "{{count}} lavoro",
+    "results_other": "{{count}} lavori",
+    "results_many": "{{count}} lavori",
     "profession": "Settore"
   },
-  "myEvents": {
-    "title": "I miei eventi",
-    "none": "Non hai ancora pubblicato eventi.",
-    "edit": "Modifica evento",
-    "delete": "Elimina evento",
-    "deleteConfirm": "Eliminare questo evento e tutte le sue candidature?",
+  "myJobs": {
+    "title": "I miei lavori",
+    "none": "Non hai ancora pubblicato lavori.",
+    "edit": "Modifica lavoro",
+    "delete": "Elimina lavoro",
+    "deleteConfirm": "Eliminare questo lavoro e tutte le sue candidature?",
     "yesDelete": "Sì, elimina",
     "applications_one": "{{count}} candidatura",
     "applications_other": "{{count}} candidature",
@@ -333,58 +333,58 @@
   },
   "applications": {
     "title": "Le mie candidature",
-    "none": "Non ti sei ancora candidato a nessun evento.",
+    "none": "Non ti sei ancora candidato a nessun lavoro.",
     "noneWithStatus": "Nessuna candidatura con questo stato."
   },
   "received": {
     "summary": "{{shortlisted}} in shortlist · {{received}} ricevute",
-    "reopenAssigned": "Riaprire questo evento? Le candidature mantengono il loro stato e potrai modificare di nuovo la shortlist.",
-    "reopenClosed": "Riaprire questo evento? Si potranno di nuovo inviare candidature.",
+    "reopenAssigned": "Riaprire questo lavoro? Le candidature mantengono il loro stato e potrai modificare di nuovo la shortlist.",
+    "reopenClosed": "Riaprire questo lavoro? Si potranno di nuovo inviare candidature.",
     "newDeadline": "Nuova scadenza candidature",
     "yesReopen": "Sì, riapri",
     "reopening": "Riapertura…",
     "keepAssigned": "Lascia assegnato",
     "keepClosed": "Lascia chiuso",
-    "reopen": "Riapri evento",
+    "reopen": "Riapri lavoro",
     "none": "Ancora nessuna candidatura.",
     "noneReceived": "Nessuna candidatura ricevuta.",
     "status": "Stato",
     "names": "Nomi",
     "style": "Stile",
     "location": "Luogo",
-    "eventDate": "Data",
+    "jobDate": "Data",
     "deadline": "Scadenza candidature",
     "shortlist": "Shortlist",
     "created": "Creato",
     "shortlistAction": "Metti in shortlist",
     "reject": "Rifiuta",
     "backToPending": "Rimetti in attesa",
-    "assignConfirm": "Assegnare l'evento a questo candidato? L'evento si chiuderà e gli altri candidati saranno rifiutati.",
+    "assignConfirm": "Assegnare il lavoro a questo candidato? Il lavoro si chiuderà e gli altri candidati saranno rifiutati.",
     "yesAssign": "Sì, assegna",
     "assigning": "Assegnazione…",
     "keepShortlist": "Lascia in shortlist",
-    "assign": "Assegna l'evento",
+    "assign": "Assegna il lavoro",
     "removeFromShortlist": "Togli dalla shortlist"
   },
   "create": {
-    "newTitle": "Nuovo evento",
-    "editTitle": "Modifica evento",
+    "newTitle": "Nuovo lavoro",
+    "editTitle": "Modifica lavoro",
     "titleExample": "Es. Sundance Beats",
     "locationExample": "Nome del luogo",
     "regionExample": "Es. Toscana",
     "saveChanges": "Salva modifiche",
-    "saveEvent": "Salva evento",
+    "saveJob": "Salva lavoro",
     "voice": "Descrivi a voce",
-    "listening": "Ti ascolto… raccontaci il tuo evento",
+    "listening": "Ti ascolto… raccontaci il tuo lavoro",
     "stop": "Stop",
     "transcribing": "Trascrizione…",
     "filling": "Compilazione dei campi…",
     "recordAgain": "Registra di nuovo",
     "remove": "Elimina",
     "start": "Inizia",
-    "voiceHint": "Racconta il tuo evento invece di scriverlo: verrà trascritto nei campi qui sotto.",
+    "voiceHint": "Racconta il tuo lavoro invece di scriverlo: verrà trascritto nei campi qui sotto.",
     "coverPhoto": "Foto di copertina",
-    "coverHint": "Appare nella scheda dell'evento. Se manca, vengono mostrate le iniziali.",
+    "coverHint": "Appare nella scheda del lavoro. Se manca, vengono mostrate le iniziali.",
     "addCover": "Aggiungi copertina",
     "changeCover": "Cambia copertina",
     "editCover": "Modifica copertina",
@@ -392,11 +392,11 @@
     "cropHint": "Trascina la cornice per spostarla. Tira un angolo o un bordo per ridimensionarla, oppure pizzica per scalarla.",
     "cropApply": "Ritaglia e usa",
     "gallery": "Altre foto",
-    "galleryHint": "Mini galleria dentro l'evento. Fino a {{count}}.",
+    "galleryHint": "Mini galleria nella pagina del lavoro. Fino a {{count}}.",
     "addGalleryPhotos": "Aggiungi foto",
     "jobTitleExample": "Es. Pulizia a fondo, bilocale",
     "propertyLocationExample": "Quartiere o paese, non la via",
-    "voiceWaitHint": "Può volerci un po'. Puoi aspettare qui oppure compilare l'evento da solo.",
+    "voiceWaitHint": "Può volerci un po'. Puoi aspettare qui oppure compilare i campi da solo.",
     "fillMyself": "Lo compilo io"
   },
   "ranks": {
@@ -436,7 +436,7 @@
     "logOut": "Esci",
     "howRanksWork": "Come funzionano i livelli",
     "deactivateAccount": "Disattiva account",
-    "deactivateConfirm": "Disattivi l'account? I tuoi eventi aperti verranno eliminati e le tue candidature ritirate, compresi i lavori ottenuti ancora da svolgere, che contano come abbandoni. Restano gli eventi passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo. Ti invieremo anche via email un link per cancellare l'account definitivamente.",
+    "deactivateConfirm": "Disattivi l'account? I tuoi lavori aperti verranno eliminati e le tue candidature ritirate, compresi i lavori ottenuti ancora da svolgere, che contano come abbandoni. Restano i lavori passati con i vincitori e le tue statistiche. Per tornare, accedi di nuovo. Ti invieremo anche via email un link per cancellare l'account definitivamente.",
     "yesDeactivate": "Sì, disattiva",
     "deactivating": "Disattivazione…",
     "deleteAccount": "Elimina account"
@@ -444,7 +444,7 @@
   "preferences": {
     "title": "Preferenze",
     "feed": "Il tuo feed",
-    "feedHint": "Cosa mostra l'elenco degli eventi prima di filtrarlo.",
+    "feedHint": "Cosa mostra l'elenco dei lavori prima di filtrarlo.",
     "favoriteRegions": "Regioni preferite",
     "app": "App",
     "language": "Lingua",
@@ -469,8 +469,8 @@
         "job_outcome_due": "È ora di riferire su un lavoro",
         "application_selected": "Sei stato selezionato",
         "application_rejected": "Non sei stato selezionato",
-        "event_updated": "Un lavoro a cui ti sei candidato è cambiato",
-        "event_closed": "Un lavoro a cui ti sei candidato è stato chiuso",
+        "job_updated": "Un lavoro a cui ti sei candidato è cambiato",
+        "job_closed": "Un lavoro a cui ti sei candidato è stato chiuso",
         "job_reviewed": "L'organizzatore ha riferito sul tuo lavoro",
         "job_cancelled": "Un lavoro è stato annullato",
         "agreement_proposed": "Un importo da confermare",
@@ -478,7 +478,7 @@
         "agreement_rejected": "Un importo è stato rifiutato",
         "settlement_due": "Un pagamento da confermare",
         "settlement_contested": "Un pagamento è stato contestato",
-        "new_event": "Nuovi lavori (un'email ogni mattina)"
+        "new_job": "Nuovi lavori (un'email ogni mattina)"
       }
     }
   },
@@ -494,7 +494,7 @@
     "faq": {
       "whatIs": {
         "question": "Che cos'è Vaitu?",
-        "answer": "Un'app per passare a un collega i lavori che non puoi accettare. Se hai un evento in calendario ma non puoi esserci, lo pubblichi, i colleghi si candidano e affidi il lavoro alla persona che scegli."
+        "answer": "Un'app per passare a un collega i lavori che non puoi accettare. Se hai un lavoro in calendario ma non puoi farlo, lo pubblichi, i colleghi si candidano e affidi il lavoro alla persona che scegli."
       },
       "name": {
         "question": "Da dove viene il nome?",
@@ -505,16 +505,16 @@
         "answer": "Professionisti che lavorano ai matrimoni e devono passare un lavoro che non possono accettare: fotografi, videomaker, musicisti, DJ, wedding planner e truccatori. Seguiranno altri settori."
       },
       "publish": {
-        "question": "Come pubblico un evento?",
-        "answer": "Crea un nuovo evento e inserisci i dettagli, oppure descrivilo a voce e lascia che l'app compili i campi. Imposti anche la scadenza delle candidature e la dimensione massima della shortlist."
+        "question": "Come pubblico un lavoro?",
+        "answer": "Crea un nuovo lavoro e inserisci i dettagli, oppure descrivilo a voce e lascia che l'app compili i campi. Imposti anche la scadenza delle candidature e la dimensione massima della shortlist."
       },
       "apply": {
         "question": "Come mi candido?",
-        "answer": "Apri un evento e spiega all'organizzatore perché sei la persona giusta. Sul tuo profilo servono il nome e un sito web, una pagina social o un numero di telefono, e puoi candidarti fino alla scadenza."
+        "answer": "Apri un lavoro e spiega all'organizzatore perché sei la persona giusta. Sul tuo profilo servono il nome e un sito web, una pagina social o un numero di telefono, e puoi candidarti fino alla scadenza."
       },
       "choose": {
         "question": "Come scelgo un candidato?",
-        "answer": "Apri le candidature ricevute, aggiungi le più promettenti alla shortlist, poi assegna l'evento a chi hai scelto. L'evento si chiude e le altre candidature vengono rifiutate."
+        "answer": "Apri le candidature ricevute, aggiungi le più promettenti alla shortlist, poi assegna il lavoro a chi hai scelto. Il lavoro si chiude e le altre candidature vengono rifiutate."
       },
       "contact": {
         "question": "Come ci mettiamo in contatto?",
@@ -526,7 +526,7 @@
       },
       "changeMind": {
         "question": "Posso cambiare idea?",
-        "answer": "Sì. Chi si candida può ritirarsi, anche dopo essere stato scelto, e l'organizzatore sceglie qualcun altro. Gli organizzatori possono modificare i propri eventi e riaprirne uno chiuso o assegnato."
+        "answer": "Sì. Chi si candida può ritirarsi, anche dopo essere stato scelto, e l'organizzatore sceglie qualcun altro. Gli organizzatori possono modificare i propri lavori e riaprirne uno chiuso o assegnato."
       },
       "ranks": {
         "question": "Cosa sono i livelli?",
@@ -534,15 +534,15 @@
       },
       "notifications": {
         "question": "Come funzionano le notifiche?",
-        "answer": "L'app ti avvisa di nuovi lavori per i tuoi mestieri e le tue regioni, nuove candidature, decisioni e modifiche agli eventi a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e gestire avvisi ed email nelle Preferenze."
+        "answer": "L'app ti avvisa di nuovi lavori per i tuoi mestieri e le tue regioni, nuove candidature, decisioni e modifiche ai lavori a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e gestire avvisi ed email nelle Preferenze."
       },
       "leave": {
         "question": "Come lascio Vaitu?",
-        "answer": "Nel tuo profilo hai due opzioni. La disattivazione ti nasconde e si annulla accedendo di nuovo: i tuoi eventi aperti vengono eliminati, le candidature ritirate e ti inviamo via email un link per cancellare l'account definitivamente. L'eliminazione cancella subito l'account. Recensioni e storico dei lavori restano, senza il tuo nome, come [Utente eliminato]."
+        "answer": "Nel tuo profilo hai due opzioni. La disattivazione ti nasconde e si annulla accedendo di nuovo: i tuoi lavori aperti vengono eliminati, le candidature ritirate e ti inviamo via email un link per cancellare l'account definitivamente. L'eliminazione cancella subito l'account. Recensioni e storico dei lavori restano, senza il tuo nome, come [Utente eliminato]."
       },
       "report": {
         "question": "Come segnalo qualcuno o qualcosa?",
-        "answer": "Usa il pulsante di segnalazione su un evento, un candidato o una recensione. Puoi anche bloccare una persona: non vedrete più i rispettivi eventi aperti e non potrete candidarvi. Puoi annullare il blocco nelle Preferenze."
+        "answer": "Usa il pulsante di segnalazione su un lavoro, un candidato o una recensione. Puoi anche bloccare una persona: non vedrete più i rispettivi lavori aperti e non potrete candidarvi. Puoi annullare il blocco nelle Preferenze."
       }
     },
     "legalTitle": "Informazioni legali",
@@ -572,17 +572,17 @@
   "detail": {
     "organizedBy": "Organizzato da {{name}}",
     "reviewApplications": "Rivedi le candidature ricevute",
-    "closed": "Le candidature per questo evento sono chiuse.",
+    "closed": "Le candidature per questo lavoro sono chiuse.",
     "sent": "Candidatura inviata!",
     "feedback": "Riceverai una risposta entro pochi giorni.",
-    "backToEvents": "Torna agli eventi",
-    "applyTitle": "Candidati per questo evento",
+    "backToJobs": "Torna ai lavori",
+    "applyTitle": "Candidati per questo lavoro",
     "completeFirst": "Completa il tuo profilo (nome, più un sito web, una pagina social o un numero di telefono) prima di candidarti.",
     "completeProfile": "Completa il profilo",
     "forwarded_one": "Solo {{count}} nome sarà inoltrato all'organizzatore.",
     "forwarded_other": "Solo {{count}} nomi saranno inoltrati all'organizzatore.",
     "forwarded_many": "Solo {{count}} nomi saranno inoltrati all'organizzatore.",
-    "motivation": "Perché sei il candidato ideale per questo evento?",
+    "motivation": "Perché sei il candidato ideale per questo lavoro?",
     "motivationPlaceholder": "Racconta la tua storia…",
     "sending": "Invio…",
     "apply": "Candidati"
@@ -592,7 +592,7 @@
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Scarica .ics",
     "yourMotivation": "La tua motivazione",
-    "withdrawWinnerConfirm": "Ritirarti da questo evento? L'organizzatore dovrà scegliere un altro vincitore, e abbandonare un lavoro ottenuto ti costa punti.",
+    "withdrawWinnerConfirm": "Ritirarti da questo lavoro? L'organizzatore dovrà scegliere un altro vincitore, e abbandonare un lavoro ottenuto ti costa punti.",
     "withdrawConfirm": "Vuoi davvero ritirare la candidatura? L'organizzatore non la vedrà più.",
     "yesWithdraw": "Sì, ritira",
     "withdrawing": "Ritiro in corso…",
@@ -602,7 +602,7 @@
   "notifications": {
     "error": "Impossibile caricare le notifiche",
     "title": "Notifiche",
-    "empty": "Ancora niente di nuovo. Una candidatura ai tuoi eventi, una decisione su una tua richiesta: compare qui.",
+    "empty": "Ancora niente di nuovo. Una candidatura ai tuoi lavori, una decisione su una tua richiesta: compare qui.",
     "markAll": "Segna tutto come letto",
     "unreadAria": "{{count}} notifiche non lette",
     "types": {
@@ -610,9 +610,9 @@
       "applicationSelected": "Ottime notizie: sei stato selezionato per {{title}}!",
       "applicationRejected": "Questa volta non sei stato selezionato per {{title}}",
       "applicationWithdrawn": "{{name}} ha ritirato la candidatura per {{title}}",
-      "eventUpdated": "{{title}} è stato aggiornato!",
-      "eventClosed": "{{title}} è stato chiuso",
-      "newEvent": "Nuovo lavoro per il tuo mestiere: {{title}}",
+      "jobUpdated": "{{title}} è stato aggiornato!",
+      "jobClosed": "{{title}} è stato chiuso",
+      "newJob": "Nuovo lavoro per il tuo mestiere: {{title}}",
       "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
       "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}",
       "jobCancelled": "{{title}} è stato annullato",
@@ -653,7 +653,7 @@
     "outcome": {
       "completed": "Il lavoro è stato svolto",
       "no_show": "Non si è presentato nessuno",
-      "cancelled": "L'evento è stato annullato"
+      "cancelled": "Il lavoro è stato annullato"
     },
     "completedJobs_one": "{{count}} lavoro svolto",
     "completedJobs_many": "{{count}} lavori svolti",
@@ -696,7 +696,7 @@
     "detailsLabel": "Altro che dovremmo sapere? (facoltativo)",
     "send": "Invia segnalazione",
     "block": "Blocca questa persona",
-    "blockConfirm": "Bloccare questa persona? Non vedrete più i rispettivi eventi aperti, nessuno dei due potrà candidarsi a quelli dell'altro e le candidature ancora da decidere tra voi verranno ritirate. Puoi annullare nelle Preferenze.",
+    "blockConfirm": "Bloccare questa persona? Non vedrete più i rispettivi lavori aperti, nessuno dei due potrà candidarsi a quelli dell'altro e le candidature ancora da decidere tra voi verranno ritirate. Puoi annullare nelle Preferenze.",
     "yesBlock": "Sì, blocca",
     "thanks": "Grazie. Abbiamo ricevuto la tua segnalazione e la esamineremo.",
     "reportReview": "Segnala recensione",
@@ -717,7 +717,7 @@
   },
   "eraseAccount": {
     "title": "Elimina account",
-    "warning": "Questa azione elimina definitivamente account, profilo, foto ed eventi. Recensioni e storico dei lavori restano, senza il tuo nome, come [Utente eliminato]. Non si può annullare.",
+    "warning": "Questa azione elimina definitivamente account, profilo, foto e lavori. Recensioni e storico dei lavori restano, senza il tuo nome, come [Utente eliminato]. Non si può annullare.",
     "confirm": "Elimina il mio account",
     "erasing": "Eliminazione…",
     "done": "Il tuo account è stato eliminato.",

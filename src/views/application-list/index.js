@@ -33,8 +33,8 @@ export const ApplicationList = {
     const id = entity.id
     return this.renderApplicationList({
       entity,
-      onOpenEvent: (event_id) => {
-        const application = entity.applications.find((a) => a.id === event_id)
+      onOpenJob: (job_id) => {
+        const application = entity.applications.find((a) => a.id === job_id)
         if (application) {
           api.notify(
             "#router:navigate",

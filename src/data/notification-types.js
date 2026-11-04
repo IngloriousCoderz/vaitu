@@ -1,7 +1,7 @@
 export const ALL_TYPES = "all"
 
 export const notificationGroups = [
-  { id: "newJobs", types: ["new_event"] },
+  { id: "newJobs", types: ["new_job"] },
   {
     id: "posted",
     types: ["application_received", "application_withdrawn", "job_outcome_due"],
@@ -11,8 +11,8 @@ export const notificationGroups = [
     types: [
       "application_selected",
       "application_rejected",
-      "event_updated",
-      "event_closed",
+      "job_updated",
+      "job_closed",
       "job_reviewed",
       "job_cancelled",
     ],

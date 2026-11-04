@@ -8,10 +8,10 @@ describe("errorKey", () => {
 
   it("says offline when the server couldn't be reached", () => {
     expect(
-      errorKey({ message: "TypeError: Failed to fetch" }, "errors.loadEvents"),
+      errorKey({ message: "TypeError: Failed to fetch" }, "errors.loadJobs"),
     ).toBe("errors.offline")
     vi.stubGlobal("navigator", { onLine: false })
-    expect(errorKey(new Error("boom"), "errors.loadEvents")).toBe(
+    expect(errorKey(new Error("boom"), "errors.loadJobs")).toBe(
       "errors.offline",
     )
   })

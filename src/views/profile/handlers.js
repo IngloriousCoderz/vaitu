@@ -85,7 +85,7 @@ export const load = handleAsync("load", {
     entity.profile = profile
     entity.stats = stats
     entity.tierConfig = tiers
-    api.notify("#eventDetail:prefill", profile)
+    api.notify("#jobDetail:prefill", profile)
     api.notify("#i18n:userLocaleLoad", {
       userId: profile.id,
       locale: profile.locale,

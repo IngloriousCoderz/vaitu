@@ -57,11 +57,11 @@ talks to. Edge functions always talk to the local database (see
 
 ### Test accounts (seed)
 
-There is one kind of account: it can post events and apply to other people's.
+There is one kind of account: it can post jobs and apply to other people's.
 Both seeded accounts have the password `vaitu-local`, as do the accounts the
 tests sign up.
 
-- `giada@vaitu.local`, Giada Cazzola, posted the seeded events.
+- `giada@vaitu.local`, Giada Cazzola, posted the seeded jobs.
 - `antony@vaitu.local`, Matteo Antony Mistretta, can apply to them right away.
 
 ### Migrations

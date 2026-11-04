@@ -3,19 +3,19 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { defaultTiers, tiersFromConfig } from "../common/tiers.js"
 import {
   ANTONY,
-  createEventAs,
+  createJobAs,
   deleteSignedUpUser,
   PASSWORD,
-  readEventAsService,
+  readJobAsService,
   runAsService,
-  setEventDate,
+  setJobDate,
   signIn,
   signOut,
   signUp,
 } from "../testing/index.js"
 import { fetchMyApplications, withdrawApplication } from "./applications.js"
 import { supabase } from "./client.js"
-import { deleteEvent, fetchEventDetail } from "./events.js"
+import { deleteJob, fetchJobDetail } from "./jobs.js"
 import { fetchMyNotifications } from "./notifications.js"
 import {
   fetchProfileReviews,
@@ -38,12 +38,12 @@ async function account(label) {
   return { userId, login: { email, password: PASSWORD } }
 }
 
-async function apply(eventId, applicant) {
+async function apply(jobId, applicant) {
   await signIn(applicant.login)
   const { data, error } = await supabase
     .from("applications")
     .insert({
-      event_id: eventId,
+      job_id: jobId,
       applicant_id: applicant.userId,
       motivation: MOTIVATION,
     })
@@ -53,9 +53,9 @@ async function apply(eventId, applicant) {
   return data.id
 }
 
-async function winJob(organizer, applicant, { eventDate = PAST_DATE } = {}) {
-  const eventId = await createEventAs(organizer.login, crypto.randomUUID())
-  const applicationId = await apply(eventId, applicant)
+async function winJob(organizer, applicant, { jobDate = PAST_DATE } = {}) {
+  const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+  const applicationId = await apply(jobId, applicant)
   await signIn(organizer.login)
   const { error: shortlistError } = await supabase
     .from("applications")
@@ -63,12 +63,12 @@ async function winJob(organizer, applicant, { eventDate = PAST_DATE } = {}) {
     .eq("id", applicationId)
   if (shortlistError) throw shortlistError
   const { error: assignError } = await supabase.rpc("assign_winner", {
-    p_event_id: eventId,
+    p_job_id: jobId,
     p_application_id: applicationId,
   })
   if (assignError) throw assignError
-  await setEventDate(eventId, eventDate)
-  return { eventId, applicationId }
+  await setJobDate(jobId, jobDate)
+  return { jobId, applicationId }
 }
 
 describe("claim_alert", () => {
@@ -121,8 +121,8 @@ describe("reputation", () => {
   test(
     "applying alone earns nothing",
     async () => {
-      const eventId = await createEventAs(organizer.login, crypto.randomUUID())
-      await apply(eventId, worker)
+      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+      await apply(jobId, worker)
       const stats = await statsOfWorker()
       expect(stats.points).toBe(0)
       expect(stats.applications_count).toBe(1)
@@ -135,7 +135,7 @@ describe("reputation", () => {
     "only the organizer reviews, and only once the date has come",
     async () => {
       const future = await winJob(organizer, worker, {
-        eventDate: "2099-01-01",
+        jobDate: "2099-01-01",
       })
       const review = {
         application_id: future.applicationId,
@@ -147,10 +147,10 @@ describe("reputation", () => {
       await signIn(organizer.login)
       await expect(submitJobReview(review)).rejects.toThrow("date has come")
 
-      await setEventDate(future.eventId, PAST_DATE)
+      await setJobDate(future.jobId, PAST_DATE)
       await signIn(worker.login)
       await expect(submitJobReview(review)).rejects.toThrow(
-        "Only the event owner",
+        "Only the job owner",
       )
 
       await signIn(organizer.login)
@@ -166,7 +166,7 @@ describe("reputation", () => {
       expect(
         notes.some(
           (note) =>
-            note.type === "job_reviewed" && note.event_id === future.eventId,
+            note.type === "job_reviewed" && note.job_id === future.jobId,
         ),
       ).toBe(true)
     },
@@ -192,8 +192,8 @@ describe("reputation", () => {
       const before = await statsOfWorker()
 
       await signIn(organizer.login)
-      await deleteEvent(job.eventId)
-      await expect(fetchEventDetail(job.eventId)).rejects.toThrow()
+      await deleteJob(job.jobId)
+      await expect(fetchJobDetail(job.jobId)).rejects.toThrow()
 
       const after = await statsOfWorker()
       expect(after.points).toBe(before.points)
@@ -201,19 +201,19 @@ describe("reputation", () => {
       expect(after.selections_count).toBe(before.selections_count - 1)
 
       const shown = await fetchMyApplications()
-      expect(shown.some((row) => row.id === job.eventId)).toBe(false)
+      expect(shown.some((row) => row.id === job.jobId)).toBe(false)
     },
     TEST_TIMEOUT_MS,
   )
 
   test(
-    "deleting wipes what the event says",
+    "deleting wipes what the job says",
     async () => {
       const job = await winJob(organizer, worker)
       await signIn(organizer.login)
-      await deleteEvent(job.eventId)
+      await deleteJob(job.jobId)
 
-      const row = await readEventAsService(job.eventId)
+      const row = await readJobAsService(job.jobId)
       expect(row.deleted_at).toBeTruthy()
       expect(row).toMatchObject({
         title: "",
@@ -224,20 +224,20 @@ describe("reputation", () => {
 
       await signIn(worker.login)
       const { data } = await supabase
-        .from("events")
+        .from("jobs")
         .select("id")
-        .eq("id", job.eventId)
+        .eq("id", job.jobId)
       expect(data).toEqual([])
     },
     TEST_TIMEOUT_MS,
   )
 
   test(
-    "an event nobody applied to is simply gone",
+    "a job nobody applied to is simply gone",
     async () => {
-      const eventId = await createEventAs(organizer.login, crypto.randomUUID())
-      await deleteEvent(eventId)
-      expect(await readEventAsService(eventId)).toBeNull()
+      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+      await deleteJob(jobId)
+      expect(await readJobAsService(jobId)).toBeNull()
     },
     TEST_TIMEOUT_MS,
   )
@@ -255,8 +255,8 @@ describe("reputation", () => {
   test(
     "an organizer reads the whole record of someone applying to them",
     async () => {
-      const eventId = await createEventAs(stranger.login, crypto.randomUUID())
-      await apply(eventId, worker)
+      const jobId = await createJobAs(stranger.login, crypto.randomUUID())
+      await apply(jobId, worker)
       await signIn(stranger.login)
       const stats = (await fetchProfileStats([worker.userId]))[worker.userId]
       expect(stats.completed_count).toBeGreaterThan(0)
@@ -311,7 +311,7 @@ describe("reputation", () => {
       const dropper = await account("dropper")
       for (let round = 0; round < 2; round++) {
         const job = await winJob(organizer, dropper, {
-          eventDate: "2099-01-01",
+          jobDate: "2099-01-01",
         })
         await signIn(dropper.login)
         await withdrawApplication(job.applicationId)
@@ -329,11 +329,8 @@ describe("reputation", () => {
     async () => {
       const quitter = await account("quitter")
       for (let round = 0; round < 3; round++) {
-        const eventId = await createEventAs(
-          organizer.login,
-          crypto.randomUUID(),
-        )
-        const id = await apply(eventId, quitter)
+        const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+        const id = await apply(jobId, quitter)
         await withdrawApplication(id)
       }
       const stats = (await fetchProfileStats([quitter.userId]))[quitter.userId]
@@ -352,8 +349,7 @@ describe("reputation", () => {
       await runAsService("request_job_outcomes")
       await signIn(organizer.login)
       const asked = (await fetchMyNotifications()).filter(
-        (note) =>
-          note.type === "job_outcome_due" && note.event_id === job.eventId,
+        (note) => note.type === "job_outcome_due" && note.job_id === job.jobId,
       )
       expect(asked).toHaveLength(1)
     },
@@ -361,7 +357,7 @@ describe("reputation", () => {
   )
 
   test(
-    "a matching new event alerts who asked for it, and nobody else",
+    "a matching new job alerts who asked for it, and nobody else",
     async () => {
       const fan = await account("fan")
       const muted = await account("muted")
@@ -372,7 +368,7 @@ describe("reputation", () => {
           muted,
           {
             professions: ["photographer"],
-            muted_email_types: ["new_event"],
+            muted_email_types: ["new_job"],
             muted_push_types: ["all"],
           },
         ],
@@ -390,13 +386,13 @@ describe("reputation", () => {
         expect(error).toBeNull()
       }
 
-      const eventId = await createEventAs(organizer.login, crypto.randomUUID())
+      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
 
       async function isAlerted(person) {
         await signIn(person.login)
         const notes = await fetchMyNotifications()
         return notes.some(
-          (note) => note.type === "new_event" && note.event_id === eventId,
+          (note) => note.type === "new_job" && note.job_id === jobId,
         )
       }
       expect(await isAlerted(fan)).toBe(true)
@@ -415,17 +411,17 @@ describe("reputation", () => {
     "users cannot flip their own record",
     async () => {
       await signIn(organizer.login)
-      const eventId = await createEventAs(organizer.login, crypto.randomUUID())
+      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
       const { error: undelete } = await supabase
-        .from("events")
+        .from("jobs")
         .update({ deleted_at: null })
-        .eq("id", eventId)
+        .eq("id", jobId)
       expect(undelete?.message).toContain("permission denied")
 
       const { error: hardDelete } = await supabase
-        .from("events")
+        .from("jobs")
         .delete()
-        .eq("id", eventId)
+        .eq("id", jobId)
       expect(hardDelete?.message).toContain("permission denied")
 
       const { error: forged } = await supabase.from("job_reviews").insert({

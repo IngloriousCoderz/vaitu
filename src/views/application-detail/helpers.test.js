@@ -5,7 +5,7 @@ import { calendarLinks } from "./helpers.js"
 describe("calendarLinks", () => {
   const links = calendarLinks({
     title: "Ada & Grace",
-    eventDate: "2026-06-01",
+    jobDate: "2026-06-01",
     location: "Villa",
   })
 
@@ -19,7 +19,7 @@ describe("calendarLinks", () => {
   it("leaves the place out when the event has none", () => {
     const placeless = calendarLinks({
       title: "Ada & Grace",
-      eventDate: "2026-06-01",
+      jobDate: "2026-06-01",
     })
     expect(placeless.ics).toContain("LOCATION:\r\n")
   })

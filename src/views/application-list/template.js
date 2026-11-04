@@ -5,7 +5,7 @@ import { Icon } from "@inglorious/ui/icon"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { Card } from "../../common/event-card/index.js"
+import { Card } from "../../common/job-card/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
@@ -26,7 +26,7 @@ export const ApplicationList = {
     return this.renderApplicationList(props, api)
   },
 
-  renderApplicationList({ entity, onOpenEvent, onSelectStatus }) {
+  renderApplicationList({ entity, onOpenJob, onSelectStatus }) {
     const { applications, status_filter, status, error } = entity
     const shown =
       status_filter === "all"
@@ -71,7 +71,7 @@ export const ApplicationList = {
                 shown.map((application, index) =>
                   this.renderApplicationItem({
                     application,
-                    onOpenEvent,
+                    onOpenJob,
                     index,
                   }),
                 ),
@@ -82,7 +82,7 @@ export const ApplicationList = {
     })
   },
 
-  renderApplicationItem({ application, onOpenEvent, index }) {
+  renderApplicationItem({ application, onOpenJob, index }) {
     const isWinner = application.applicationStatus === "selected"
     const itemClass = [
       styles.application,
@@ -97,10 +97,10 @@ export const ApplicationList = {
       style: `--vaitu-list-index:${Math.min(index, LIST_STAGGER_CAP)}`,
       children: [
         Card.render({
-          event: application,
+          job: application,
           divider: false,
           cover: true,
-          onOpen: onOpenEvent,
+          onOpen: onOpenJob,
         }),
         html`
           <div class=${styles.applicationFooter}>

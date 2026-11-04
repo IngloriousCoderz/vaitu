@@ -12,15 +12,15 @@ comment on column public.profiles.muted_push_types is
   'Notification types not to push, or ''all''.';
 
 update public.profiles
-set muted_email_types = '{new_event}', muted_push_types = '{new_event}'
-where not has_new_event_alerts;
+set muted_email_types = '{new_job}', muted_push_types = '{new_job}'
+where not has_new_job_alerts;
 
 update public.profiles
 set muted_email_types = '{all}'
 where is_email_opted_out;
 
 alter table public.profiles
-  drop column has_new_event_alerts,
+  drop column has_new_job_alerts,
   drop column is_email_opted_out;
 
 grant update (muted_email_types, muted_push_types)
@@ -37,7 +37,7 @@ create index notifications_unemailed_idx on public.notifications (created_at)
 
 -- Whoever turned off both channels gets no row at all, not even in the bell:
 -- on a busy trade that would be a feed of jobs they asked not to hear about.
-create or replace function public.vaitu_on_event_created()
+create or replace function public.vaitu_on_job_created()
 returns trigger
 language plpgsql
 security definer
@@ -48,13 +48,13 @@ begin
     return new;
   end if;
 
-  perform public.notify_user(p.id, 'new_event', new.id)
+  perform public.notify_user(p.id, 'new_job', new.id)
   from public.profiles p
   where p.id <> new.sender_id
     and p.is_active
     and not (
-      p.muted_email_types && array['all', 'new_event']
-      and p.muted_push_types && array['all', 'new_event']
+      p.muted_email_types && array['all', 'new_job']
+      and p.muted_push_types && array['all', 'new_job']
     )
     and not public.are_blocked(p.id, new.sender_id)
     and new.profession = any (p.professions)

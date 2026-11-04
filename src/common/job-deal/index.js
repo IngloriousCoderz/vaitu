@@ -10,11 +10,11 @@ import { formatAmount } from "../pay.js"
 import styles from "./style.module.css"
 
 /** Whether it's time to ask if what was agreed was settled. */
-export function isSettlementOpen({ agreement, status, event_date, review }) {
+export function isSettlementOpen({ agreement, status, job_date, review }) {
   if (status !== "selected" || agreement?.status !== "confirmed") return false
   if (review && review.outcome !== "completed") return false
   const today = new Date().toISOString().slice(FIRST_INDEX, DATE_ISO_LENGTH)
-  return event_date <= today
+  return job_date <= today
 }
 
 export const JobDeal = {

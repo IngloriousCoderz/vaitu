@@ -11,13 +11,13 @@ import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const tabs = [
-  { value: "events", icon: eventOutline, label: "nav.tabs.events" },
+  { value: "jobs", icon: eventOutline, label: "nav.tabs.jobs" },
   {
     value: "applications",
     icon: assignmentOutline,
     label: "nav.tabs.applications",
   },
-  { value: "myEvents", icon: editCalendarOutline, label: "nav.tabs.myEvents" },
+  { value: "myJobs", icon: editCalendarOutline, label: "nav.tabs.myJobs" },
   {
     value: "notifications",
     icon: notificationsOutline,

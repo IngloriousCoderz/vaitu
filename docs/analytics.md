@@ -29,7 +29,7 @@ The privacy policy has to say all this, and name Google as the processor.
 
 Page views, by themselves: in a browser, Google Analytics counts route changes
 as page views. In the native apps, the adapter logs a screen view on each route
-change, named after the route (`eventList`, `applicationDetail`).
+change, named after the route (`jobList`, `applicationDetail`).
 
 The app's own events go through the same entity, and nothing is sent without
 consent:

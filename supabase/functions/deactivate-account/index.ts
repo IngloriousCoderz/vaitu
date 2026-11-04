@@ -16,10 +16,10 @@ import wording from "./wording.json" with { type: "json" }
 type Locale = keyof typeof wording
 
 const FALLBACK_LOCALE: Locale = "en"
-const IMAGES_BUCKET = "event-images"
+const IMAGES_BUCKET = "job-images"
 
 // The sent applications are withdrawn, so organizers cannot pick someone who
-// left, and the open events are deleted. Past events with winners stay: they
+// left, and the open jobs are deleted. Past jobs with winners stay: they
 // are other users' points and history.
 serve(
   async (req) => {
@@ -28,7 +28,7 @@ serve(
     if (!user) return json({ error: "Not logged in" }, STATUS_CODE.Unauthorized)
 
     const { data: open, error: openError } = await db
-      .from("events")
+      .from("jobs")
       .select("image_urls")
       .eq("sender_id", user.id)
       .eq("status", "open")
@@ -51,14 +51,14 @@ serve(
     if (error) throw error
 
     const images = open
-      .flatMap((event) => event.image_urls)
+      .flatMap((job) => job.image_urls)
       .map((url) => imagePath(url, user.id))
       .filter((path): path is string => path !== null)
     if (images.length) {
       const { error: removeError } = await db.storage
         .from(IMAGES_BUCKET)
         .remove(images)
-      if (removeError) console.error("event images not removed", removeError)
+      if (removeError) console.error("job images not removed", removeError)
     }
 
     // The account is deactivated either way: a failed email must not undo that.

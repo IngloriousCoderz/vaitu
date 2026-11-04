@@ -28,7 +28,7 @@ does the rest:
    It can't be dismissed: if it's ignored, step 3 applies the update anyway.
 
 Anything not yet saved when the app goes to the background, such as a
-half-filled event form, is lost in that reload.
+half-filled job form, is lost in that reload.
 
 The rules live in `@inglorious/web/pwa` (`watchPwaUpdate`), wired in `src/pwa.js`; the pill is `src/common/update-bar/`. The check never runs
 inside the native apps.

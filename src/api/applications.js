@@ -5,9 +5,9 @@ import {
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
 import { supabase } from "./client.js"
-import { toViewModel } from "./events.js"
+import { toViewModel } from "./jobs.js"
 
-const ICS_BUCKET = "event-ics"
+const ICS_BUCKET = "job-ics"
 const ICS_LINK_SECONDS = DAY_MS / MS_PER_SECOND
 
 export async function fetchMyApplications() {
@@ -18,7 +18,7 @@ export async function fetchMyApplications() {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, created_at, events!inner(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details)",
+      "id, status, created_at, jobs!inner(id, category, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details)",
     )
     .eq("applicant_id", user.id)
     .neq("status", "withdrawn")
@@ -26,7 +26,7 @@ export async function fetchMyApplications() {
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return data.map((row) => ({
-    ...toViewModel(row.events),
+    ...toViewModel(row.jobs),
     application_id: row.id,
     applicationStatus: row.status,
   }))
@@ -39,12 +39,12 @@ export async function fetchMyApplicationMap() {
   if (!user) return {}
   const { data, error } = await supabase
     .from("applications")
-    .select("id,event_id")
+    .select("id,job_id")
     .eq("applicant_id", user.id)
     .neq("status", "withdrawn")
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
-  return Object.fromEntries(data.map((row) => [row.event_id, row.id]))
+  return Object.fromEntries(data.map((row) => [row.job_id, row.id]))
 }
 
 export async function fetchApplicationDetail(application_id) {
@@ -55,7 +55,7 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), events!inner(id, category, profession, status, title, location, region, event_date, application_deadline, created_at, image_urls, details, event_pay(kind, amount_min, amount_max, currency))",
+      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), jobs!inner(id, category, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency))",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
@@ -63,7 +63,7 @@ export async function fetchApplicationDetail(application_id) {
     .single()
   if (error) throw error
   return {
-    ...toViewModel(data.events),
+    ...toViewModel(data.jobs),
     application_id: data.id,
     applicationStatus: data.status,
     motivation: data.motivation,
@@ -113,7 +113,7 @@ export async function updateApplicationStatus(application_id, status) {
 export async function fetchReceivedDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
-    .select("id, status, motivation, created_at, event_id")
+    .select("id, status, motivation, created_at, job_id")
     .eq("id", application_id)
     .single()
   if (error) throw error

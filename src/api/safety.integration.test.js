@@ -2,14 +2,14 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import {
   ANTONY,
-  createEventAs,
+  createJobAs,
   deleteSignedUpUser,
   issueErasureLink,
   PASSWORD,
   readAsService,
-  readEventAsService,
+  readJobAsService,
   runAsService,
-  setEventDate,
+  setJobDate,
   signIn,
   signOut,
   signUp,
@@ -17,7 +17,7 @@ import {
   userExists,
 } from "../testing/index.js"
 import { supabase } from "./client.js"
-import { fetchEventDetail } from "./events.js"
+import { fetchJobDetail } from "./jobs.js"
 import { fetchMyNotifications } from "./notifications.js"
 import { fetchProfileStats, submitJobReview } from "./reputation.js"
 import {
@@ -43,12 +43,12 @@ async function account(label) {
   return { userId, login: { email, password: PASSWORD } }
 }
 
-async function apply(eventId, applicant) {
+async function apply(jobId, applicant) {
   await signIn(applicant.login)
   const { data, error } = await supabase
     .from("applications")
     .insert({
-      event_id: eventId,
+      job_id: jobId,
       applicant_id: applicant.userId,
       motivation: MOTIVATION,
     })
@@ -58,21 +58,21 @@ async function apply(eventId, applicant) {
   return data.id
 }
 
-async function winJob(organizer, applicant, eventDate) {
-  const eventId = await createEventAs(organizer.login, crypto.randomUUID())
-  const applicationId = await apply(eventId, applicant)
+async function winJob(organizer, applicant, jobDate) {
+  const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+  const applicationId = await apply(jobId, applicant)
   await signIn(organizer.login)
   await supabase
     .from("applications")
     .update({ status: "shortlisted" })
     .eq("id", applicationId)
   const { error } = await supabase.rpc("assign_winner", {
-    p_event_id: eventId,
+    p_job_id: jobId,
     p_application_id: applicationId,
   })
   if (error) throw error
-  await setEventDate(eventId, eventDate)
-  return { eventId, applicationId }
+  await setJobDate(jobId, jobDate)
+  return { jobId, applicationId }
 }
 
 async function invoke(name, body) {
@@ -126,7 +126,7 @@ describe("erasing an account", () => {
         notes.some(
           (note) =>
             note.type === "application_withdrawn" &&
-            note.event_id === upcoming.eventId,
+            note.job_id === upcoming.jobId,
         ),
       ).toBe(true)
 
@@ -154,9 +154,9 @@ describe("erasing an account", () => {
       expect((await invoke("erase-account", {})).status).toBe(200)
       await signOut()
 
-      const event = await readEventAsService(past.eventId)
-      expect(event).toMatchObject({ sender_id: null, title: "", details: {} })
-      expect(event.deleted_at).toBeTruthy()
+      const job = await readJobAsService(past.jobId)
+      expect(job).toMatchObject({ sender_id: null, title: "", details: {} })
+      expect(job.deleted_at).toBeTruthy()
 
       await signIn(worker.login)
       const stats = (await fetchProfileStats([worker.userId]))[worker.userId]
@@ -164,8 +164,8 @@ describe("erasing an account", () => {
       expect(Number(stats.average_rating)).toBe(FIVE_STARS)
       const notes = await fetchMyNotifications()
       const cancelled = notes.find((note) => note.type === "job_cancelled")
-      expect(cancelled?.event_title).toBeTruthy()
-      await expect(fetchEventDetail(upcoming.eventId)).rejects.toThrow()
+      expect(cancelled?.job_title).toBeTruthy()
+      await expect(fetchJobDetail(upcoming.jobId)).rejects.toThrow()
 
       await deleteSignedUpUser(worker.userId)
       await signOut()
@@ -236,8 +236,8 @@ describe("blocking", () => {
   test(
     "keeps both apart, withdraws without penalty, and can be undone",
     async () => {
-      const eventId = await createEventAs(one.login, crypto.randomUUID())
-      const applicationId = await apply(eventId, other)
+      const jobId = await createJobAs(one.login, crypto.randomUUID())
+      const applicationId = await apply(jobId, other)
 
       await signIn(one.login)
       await blockUser(other.userId)
@@ -255,12 +255,12 @@ describe("blocking", () => {
 
       await signIn(other.login)
       const { data: seen } = await supabase
-        .from("events")
+        .from("jobs")
         .select("id")
-        .eq("id", eventId)
+        .eq("id", jobId)
       expect(seen).toEqual([])
       const { error: applyError } = await supabase.from("applications").insert({
-        event_id: eventId,
+        job_id: jobId,
         applicant_id: other.userId,
         motivation: MOTIVATION,
       })
@@ -271,9 +271,9 @@ describe("blocking", () => {
       expect(await fetchMyBlocks()).toEqual([])
       await signIn(other.login)
       const { data: seenAgain } = await supabase
-        .from("events")
+        .from("jobs")
         .select("id")
-        .eq("id", eventId)
+        .eq("id", jobId)
       expect(seenAgain).toHaveLength(1)
     },
     TEST_TIMEOUT_MS,
@@ -294,11 +294,11 @@ describe("reporting", () => {
     "stores the report, limits it per day, and hides it from clients",
     async () => {
       const reporter = await account("reporter")
-      const eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      const jobId = await createJobAs(ANTONY, crypto.randomUUID())
       await signIn(reporter.login)
       const report = {
-        target_type: "event",
-        target_id: eventId,
+        target_type: "job",
+        target_id: jobId,
         reason: "spam",
         details: "Looks fake",
       }
@@ -311,7 +311,7 @@ describe("reporting", () => {
         payload: { error: "report_limit" },
       })
 
-      const stored = await readAsService("reports", "event_id", eventId)
+      const stored = await readAsService("reports", "job_id", jobId)
       expect(stored).toHaveLength(REPORTS_LIMIT)
       expect(stored[0]).toMatchObject({
         reporter_id: reporter.userId,
@@ -355,7 +355,7 @@ describe("the daily voice allowance", () => {
 
       await signIn(talker.login)
       const limited = { status: 429, payload: { error: "voice_limit" } }
-      expect(await invoke("parse-event", { transcript: "Ada e Leo" })).toEqual(
+      expect(await invoke("parse-job", { transcript: "Ada e Leo" })).toEqual(
         limited,
       )
       expect(await invoke("transcribe-audio", new Blob(["clip"]))).toEqual(

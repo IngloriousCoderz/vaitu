@@ -56,27 +56,23 @@ export function pathFor(item) {
     item.type === "application_received" ||
     item.type === "application_withdrawn"
   ) {
-    return item.event_status === "open" && item.event_id
-      ? paths.receivedApplications(item.event_id)
-      : item.event_id
-        ? paths.event(item.event_id)
-        : paths.events
+    return item.job_status === "open" && item.job_id
+      ? paths.receivedApplications(item.job_id)
+      : item.job_id
+        ? paths.job(item.job_id)
+        : paths.jobs
   }
   if (item.type === "job_cancelled") return paths.applications
   if (item.type === "settlement_contested") {
     if (item.application_id) return paths.application(item.application_id)
-    return item.event_id
-      ? paths.receivedApplications(item.event_id)
-      : paths.events
+    return item.job_id ? paths.receivedApplications(item.job_id) : paths.jobs
   }
   if (
     item.type === "job_outcome_due" ||
     item.type === "agreement_confirmed" ||
     item.type === "agreement_rejected"
   ) {
-    return item.event_id
-      ? paths.receivedApplications(item.event_id)
-      : paths.events
+    return item.job_id ? paths.receivedApplications(item.job_id) : paths.jobs
   }
   if (
     item.type === "application_selected" ||
@@ -89,7 +85,7 @@ export function pathFor(item) {
       ? paths.application(item.application_id)
       : paths.applications
   }
-  return item.event_id ? paths.event(item.event_id) : paths.events
+  return item.job_id ? paths.job(item.job_id) : paths.jobs
 }
 
 export const Notifications = {
@@ -125,7 +121,7 @@ export const Notifications = {
     if (isWide) {
       if (window.location.pathname !== paths.notifications) return
       api.notify(`#${entity.id}:panelOpen`)
-      api.notify("#router:navigate", { to: paths.events, replace: true })
+      api.notify("#router:navigate", { to: paths.jobs, replace: true })
       return
     }
     if (!entity.isPanelOpen) return
@@ -195,7 +191,7 @@ export const Notifications = {
 function routeOpen(entity, _payload, api) {
   if (typeof window !== "undefined" && window.matchMedia(WIDE_QUERY).matches) {
     api.notify(`#${entity.id}:panelOpen`)
-    api.notify("#router:navigate", { to: paths.events, replace: true })
+    api.notify("#router:navigate", { to: paths.jobs, replace: true })
     return
   }
   api.notify(`#${entity.id}:load`)

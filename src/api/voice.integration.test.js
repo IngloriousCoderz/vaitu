@@ -25,7 +25,7 @@ test(
   "parsing refuses a missing transcript",
   async () => {
     await signIn(ANTONY)
-    expect(await invoke("parse-event", {})).toEqual({
+    expect(await invoke("parse-job", {})).toEqual({
       status: 400,
       payload: { error: "transcript is required" },
     })
@@ -42,7 +42,7 @@ test(
       payload: { error: "Not logged in" },
     })
     expect(
-      await invoke("parse-event", { transcript: "Ada e Leo a Firenze" }),
+      await invoke("parse-job", { transcript: "Ada e Leo a Firenze" }),
     ).toEqual({
       status: 401,
       payload: { error: "Not logged in" },

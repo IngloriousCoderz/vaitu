@@ -8,10 +8,10 @@ import {
 import { t } from "../../i18n/index.js"
 import { randomId } from "../../text/index.js"
 
-export function calendarLinks({ title, eventDate, location = "" }) {
-  if (!eventDate) return null
-  const start = toStamp(eventDate)
-  const end = endExclusive(eventDate)
+export function calendarLinks({ title, jobDate, location = "" }) {
+  if (!jobDate) return null
+  const start = toStamp(jobDate)
+  const end = endExclusive(jobDate)
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: title,

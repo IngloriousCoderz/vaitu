@@ -10,7 +10,7 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { professions } from "../../data/event-taxonomy.js"
+import { professions } from "../../data/job-taxonomy.js"
 import {
   ALL_TYPES,
   isMuted,

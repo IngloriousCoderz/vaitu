@@ -10,7 +10,7 @@ import {
   fetchProfileStats,
   submitJobReview,
 } from "../../api/reputation.js"
-import { eventJobType } from "../../common/event-card/index.js"
+import { jobTypeLabel } from "../../common/job-card/index.js"
 import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
@@ -38,7 +38,7 @@ export function photoClose(entity) {
 
 export function photoStep(entity, delta) {
   if (!entity.isPhotoPreviewOpen) return
-  const urls = entity.event_recap?.image_urls ?? []
+  const urls = entity.job_recap?.image_urls ?? []
   const n = urls.length
   if (n < MIN_PHOTOS_TO_NAVIGATE) return
   entity.photoIndex = ((entity.photoIndex ?? FIRST_INDEX) + delta + n) % n
@@ -106,8 +106,8 @@ export function reopenSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateReopen })
   if (!entity.isValid) return
   entity.error = null
-  api.notify(`#${entity.id}:eventReopen`, {
-    event_id: entity.event_id,
+  api.notify(`#${entity.id}:jobReopen`, {
+    job_id: entity.job_id,
     application_deadline: entity.values.reopen_deadline || undefined,
   })
 }
@@ -117,23 +117,23 @@ export const load = handleAsync("load", {
     entity.status = "loading"
     entity.error = null
   },
-  async run(event_id) {
-    if (!event_id) throw new Error("errors.noEventForApplications")
+  async run(job_id) {
+    if (!job_id) throw new Error("errors.noJobForApplications")
 
-    const { data: event, error: eventError } = await supabase
-      .from("events")
+    const { data: job, error: jobError } = await supabase
+      .from("jobs")
       .select(
-        "id, category, title, profession, status, max_applicants, application_deadline, location, country, region, event_date, created_at, image_urls, details, event_pay(kind, amount_min, amount_max, currency)",
+        "id, category, title, profession, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
       )
-      .eq("id", event_id)
+      .eq("id", job_id)
       .single()
-    if (eventError) throw eventError
+    if (jobError) throw jobError
     const { data: items, error } = await supabase
       .from("applications")
       .select(
         "id, status, motivation, created_at, applicant_id, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled)",
       )
-      .eq("event_id", event_id)
+      .eq("job_id", job_id)
       .neq("status", "withdrawn")
       .order("created_at", { ascending: true })
       .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
@@ -145,7 +145,7 @@ export const load = handleAsync("load", {
       fetchApplicants(items.map((item) => item.id)),
     ])
     return {
-      event,
+      job,
       items: items.map((item) => ({
         ...item,
         applicant: applicants[item.id] ?? null,
@@ -154,31 +154,31 @@ export const load = handleAsync("load", {
       })),
     }
   },
-  success(entity, { event, items }) {
+  success(entity, { job, items }) {
     entity.status = "ready"
-    entity.event_title = event.title
-    entity.pay = event.event_pay ?? null
-    entity.event_status = event.status
-    entity.event_deadline = event.application_deadline
-    entity.max_applicants = event.max_applicants
-    entity.event_recap = {
-      status: event.status,
-      jobType: eventJobType(event),
-      location: [event.location, canonicalRegion(event.region), event.country]
+    entity.job_title = job.title
+    entity.pay = job.job_pay ?? null
+    entity.job_status = job.status
+    entity.job_deadline = job.application_deadline
+    entity.max_applicants = job.max_applicants
+    entity.job_recap = {
+      status: job.status,
+      jobType: jobTypeLabel(job),
+      location: [job.location, canonicalRegion(job.region), job.country]
         .filter(Boolean)
         .join(", "),
-      event_date: event.event_date,
-      application_deadline: event.application_deadline,
-      created_at: event.created_at,
-      image_urls: [...(event.image_urls ?? [])],
+      job_date: job.job_date,
+      application_deadline: job.application_deadline,
+      created_at: job.created_at,
+      image_urls: [...(job.image_urls ?? [])],
       names:
-        event.details?.spouse_first_name_1 && event.details?.spouse_first_name_2
-          ? `${event.details.spouse_first_name_1} & ${event.details.spouse_first_name_2}`
-          : (event.details?.headliner ?? null),
-      style: event.details?.style ?? event.details?.genre ?? null,
+        job.details?.spouse_first_name_1 && job.details?.spouse_first_name_2
+          ? `${job.details.spouse_first_name_1} & ${job.details.spouse_first_name_2}`
+          : (job.details?.headliner ?? null),
+      style: job.details?.style ?? job.details?.genre ?? null,
     }
     entity.items = items
-    const due = items.find((item) => isReviewDue(item, event.event_date))
+    const due = items.find((item) => isReviewDue(item, job.job_date))
     if (due) entity.expanded_application_id ??= due.id
   },
   error(entity, err) {
@@ -225,7 +225,7 @@ export const dealPropose = handleAsync("dealPropose", {
   success(entity, _, api) {
     entity.isDealBusy = false
     entity.deal_draft = ""
-    api.notify(`#${entity.id}:load`, entity.event_id)
+    api.notify(`#${entity.id}:load`, entity.job_id)
   },
   error(entity) {
     entity.isDealBusy = false
@@ -243,7 +243,7 @@ export const dealSettle = handleAsync("dealSettle", {
   },
   success(entity, _, api) {
     entity.isDealBusy = false
-    api.notify(`#${entity.id}:load`, entity.event_id)
+    api.notify(`#${entity.id}:load`, entity.job_id)
   },
   error(entity) {
     entity.isDealBusy = false
@@ -261,7 +261,7 @@ export const jobReview = handleAsync("jobReview", {
   },
   success(entity, _, api) {
     entity.review = emptyReview()
-    api.notify(`#${entity.id}:load`, entity.event_id)
+    api.notify(`#${entity.id}:load`, entity.job_id)
   },
   error(entity, err) {
     entity.review.status = "idle"
@@ -274,19 +274,19 @@ export const winnerAssign = handleAsync("winnerAssign", {
     entity.status = "saving"
     entity.error = null
   },
-  async run({ event_id, application_id, amount }) {
+  async run({ job_id, application_id, amount }) {
     const { error } = await supabase.rpc("assign_winner", {
-      p_event_id: event_id,
+      p_job_id: job_id,
       p_application_id: application_id,
       p_agreed_amount: amount === "" ? null : Number(amount),
     })
     if (error) throw error
-    return event_id
+    return job_id
   },
-  success(entity, event_id, api) {
+  success(entity, job_id, api) {
     entity.status = "ready"
     entity.confirming_assign = null
-    api.notify(`#${entity.id}:load`, event_id)
+    api.notify(`#${entity.id}:load`, job_id)
   },
   error(entity, err) {
     entity.status = "error"
@@ -294,12 +294,12 @@ export const winnerAssign = handleAsync("winnerAssign", {
   },
 })
 
-export const eventReopen = handleAsync("eventReopen", {
+export const jobReopen = handleAsync("jobReopen", {
   start(entity) {
     entity.status = "saving"
     entity.error = null
   },
-  async run({ event_id, application_deadline }) {
+  async run({ job_id, application_deadline }) {
     const patch = { status: "open" }
     if (application_deadline) {
       const iso =
@@ -311,22 +311,19 @@ export const eventReopen = handleAsync("eventReopen", {
       }
       patch.application_deadline = iso
     }
-    const { error } = await supabase
-      .from("events")
-      .update(patch)
-      .eq("id", event_id)
+    const { error } = await supabase.from("jobs").update(patch).eq("id", job_id)
     if (error) throw error
-    return event_id
+    return job_id
   },
-  success(entity, event_id, api) {
+  success(entity, job_id, api) {
     entity.status = "ready"
     entity.confirming_reopen = false
     entity.reopen_deadline = ""
-    api.notify(`#${entity.id}:load`, event_id)
+    api.notify(`#${entity.id}:load`, job_id)
   },
   error(entity, err) {
     entity.status = "error"
-    entity.error = errorKey(err, "errors.reopenEvent")
+    entity.error = errorKey(err, "errors.reopenJob")
   },
 })
 

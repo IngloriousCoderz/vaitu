@@ -1,12 +1,12 @@
 {
   "nav": {
-    "events": "Événements",
-    "myEvents": "Mes événements",
+    "jobs": "Missions",
+    "myJobs": "Mes missions",
     "applications": "Candidatures",
     "profile": "Profil",
     "preferences": "Préférences",
     "about": "À propos",
-    "newEvent": "Nouvel événement",
+    "newJob": "Nouvelle mission",
     "toggle": "Ouvrir ou fermer la navigation",
     "collapse": "Réduire la barre latérale",
     "expand": "Développer la barre latérale",
@@ -14,9 +14,9 @@
     "account": "Compte",
     "profileOf": "Profil : {{name}}",
     "tabs": {
-      "events": "Explorer",
+      "jobs": "Explorer",
       "applications": "Envoyées",
-      "myEvents": "Publiés",
+      "myJobs": "Publiées",
       "notifications": "Alertes",
       "profile": "Profil"
     }
@@ -58,7 +58,7 @@
   "notFound": {
     "title": "Rien ici",
     "noMatch": "Aucune page ne correspond à <code>{{path}}</code>.",
-    "goToEvents": "Voir les événements"
+    "goToJobs": "Voir les missions"
   },
   "taxonomy": {
     "style": {
@@ -135,7 +135,7 @@
     "website": "Site web ou page sociale",
     "title": "Titre",
     "location": "Lieu",
-    "eventDate": "Date",
+    "jobDate": "Date",
     "deadline": "Date limite de candidature",
     "shortlistSize": "Places en présélection",
     "shortlistSizeHint": "Tout le monde peut postuler. C'est le nombre de candidats que vous pouvez présélectionner avant de choisir.",
@@ -163,8 +163,8 @@
   "sorts": {
     "createdNewest": "Plus récents",
     "createdOldest": "Plus anciens",
-    "eventDateNewest": "Événement : lointains",
-    "eventDateOldest": "Événement : proches",
+    "jobDateNewest": "Date : lointaines",
+    "jobDateOldest": "Date : proches",
     "deadlineSoonest": "Échéance : proches",
     "deadlineFarthest": "Échéance : lointaines"
   },
@@ -187,7 +187,7 @@
     "message": "Vous êtes hors ligne. Vaitu se mettra à jour dès votre retour."
   },
   "reactivated": {
-    "message": "Bon retour ! Votre compte est de nouveau actif. Les candidatures que vous aviez envoyées et vos événements ouverts ont été supprimés lors de sa désactivation.",
+    "message": "Bon retour ! Votre compte est de nouveau actif. Les candidatures que vous aviez envoyées et vos missions ouvertes ont été supprimées lors de sa désactivation.",
     "dismiss": "Compris"
   },
   "appUpdate": {
@@ -225,14 +225,14 @@
   },
   "errors": {
     "notLoggedIn": "Vous n'êtes pas connecté",
-    "alreadyApplied": "Vous avez déjà candidaté à cet événement",
+    "alreadyApplied": "Vous avez déjà candidaté à cette mission",
     "applicationFailed": "La candidature a échoué",
-    "loadEvent": "Impossible de charger l'événement",
+    "loadJob": "Impossible de charger la mission",
     "micUnavailable": "Microphone indisponible",
     "emptyRecording": "L'enregistrement est vide : réessayez",
     "noAudio": "Aucun audio à traiter",
     "transcriptionFailed": "Nous n'avons pas pu transcrire votre message. Veuillez remplir les champs vous-même.",
-    "saveEvent": "Impossible d'enregistrer l'événement",
+    "saveJob": "Impossible d'enregistrer la mission",
     "imageType": "Utilisez une image JPEG, PNG ou WebP",
     "imageSize": "Chaque image doit faire moins de 5 Mo",
     "imageCrop": "Impossible de traiter l'image",
@@ -240,13 +240,13 @@
     "imageLimit_one": "Vous pouvez ajouter {{count}} photo",
     "imageLimit_other": "Vous pouvez ajouter jusqu'à {{count}} photos",
     "imageLimit_many": "Vous pouvez ajouter jusqu'à {{count}} photos",
-    "noEventForApplications": "Aucun événement dont charger les candidatures",
+    "noJobForApplications": "Aucune mission dont charger les candidatures",
     "loadApplications": "Impossible de charger les candidatures",
     "update": "La mise à jour a échoué",
-    "assignWinner": "Impossible d'attribuer l'événement",
-    "reopenEvent": "Impossible de rouvrir l'événement",
-    "loadEvents": "Impossible de charger les événements",
-    "deleteEvent": "Impossible de supprimer l'événement",
+    "assignWinner": "Impossible d'attribuer la mission",
+    "reopenJob": "Impossible de rouvrir la mission",
+    "loadJobs": "Impossible de charger les missions",
+    "deleteJob": "Impossible de supprimer la mission",
     "loadApplication": "Impossible de charger la candidature",
     "save": "L'enregistrement a échoué",
     "withdraw": "Impossible de retirer la candidature",
@@ -263,8 +263,8 @@
     "savePreferences": "Impossible d'enregistrer les préférences",
     "saveReview": "Impossible d'enregistrer l'avis",
     "parseFailed": "Nous n'avons pas pu remplir les champs à partir de votre message. Veuillez les remplir vous-même.",
-    "voiceLimit": "Vous avez utilisé vos messages vocaux gratuits du jour. Remplissez l'événement vous-même ou réessayez demain.",
-    "voicePaused": "Les messages vocaux sont suspendus pour aujourd'hui. Remplissez l'événement vous-même ou réessayez demain.",
+    "voiceLimit": "Vous avez utilisé vos messages vocaux gratuits du jour. Remplissez les champs vous-même ou réessayez demain.",
+    "voicePaused": "Les messages vocaux sont suspendus pour aujourd'hui. Remplissez les champs vous-même ou réessayez demain.",
     "eraseAccount": "Nous n'avons pas pu supprimer le compte. Veuillez réessayer.",
     "offline": "Vous êtes hors ligne. Réessayez une fois la connexion revenue.",
     "captcha": "Nous n'avons pas pu vérifier que vous êtes une personne. Veuillez réessayer.",
@@ -300,8 +300,8 @@
     "subtitle": "Dites-nous où vous êtes pour que les organisateurs vous trouvent.",
     "skip": "Plus tard"
   },
-  "events": {
-    "title": "Événements",
+  "jobs": {
+    "title": "Missions",
     "search": "Chercher par ville, style ou genre…",
     "feedPreferences": "Préférences du fil",
     "region": "Région",
@@ -313,19 +313,19 @@
     "filtersOn_one": "Filtres, {{count}} actif",
     "filtersOn_other": "Filtres, {{count}} actifs",
     "filtersOn_many": "Filtres, {{count}} actifs",
-    "noneMatch": "Aucun événement ne correspond à votre recherche.",
+    "noneMatch": "Aucune mission ne correspond à votre recherche.",
     "orderBy": "Trier par",
-    "results_one": "{{count}} événement",
-    "results_other": "{{count}} événements",
-    "results_many": "{{count}} événements",
+    "results_one": "{{count}} mission",
+    "results_other": "{{count}} missions",
+    "results_many": "{{count}} missions",
     "profession": "Métier"
   },
-  "myEvents": {
-    "title": "Mes événements",
-    "none": "Vous n'avez encore publié aucun événement.",
-    "edit": "Modifier l'événement",
-    "delete": "Supprimer l'événement",
-    "deleteConfirm": "Supprimer cet événement et toutes ses candidatures ?",
+  "myJobs": {
+    "title": "Mes missions",
+    "none": "Vous n'avez encore publié aucune mission.",
+    "edit": "Modifier la mission",
+    "delete": "Supprimer la mission",
+    "deleteConfirm": "Supprimer cette mission et toutes ses candidatures ?",
     "yesDelete": "Oui, supprimer",
     "applications_one": "{{count}} candidature",
     "applications_other": "{{count}} candidatures",
@@ -333,58 +333,58 @@
   },
   "applications": {
     "title": "Mes candidatures",
-    "none": "Vous n'avez encore candidaté à aucun événement.",
+    "none": "Vous n'avez encore candidaté à aucune mission.",
     "noneWithStatus": "Aucune candidature avec ce statut."
   },
   "received": {
     "summary": "{{shortlisted}} présélectionnées · {{received}} reçues",
-    "reopenAssigned": "Rouvrir cet événement ? Les candidatures gardent leur statut et vous pourrez de nouveau ajuster la présélection.",
-    "reopenClosed": "Rouvrir cet événement ? Les candidatures seront de nouveau acceptées.",
+    "reopenAssigned": "Rouvrir cette mission ? Les candidatures gardent leur statut et vous pourrez de nouveau ajuster la présélection.",
+    "reopenClosed": "Rouvrir cette mission ? Les candidatures seront de nouveau acceptées.",
     "newDeadline": "Nouvelle date limite de candidature",
     "yesReopen": "Oui, rouvrir",
     "reopening": "Réouverture…",
     "keepAssigned": "Laisser attribué",
     "keepClosed": "Laisser fermé",
-    "reopen": "Rouvrir l'événement",
+    "reopen": "Rouvrir la mission",
     "none": "Pas encore de candidature.",
     "noneReceived": "Aucune candidature reçue.",
     "status": "Statut",
     "names": "Noms",
     "style": "Style",
     "location": "Lieu",
-    "eventDate": "Date",
+    "jobDate": "Date",
     "deadline": "Date limite de candidature",
     "shortlist": "Présélection",
     "created": "Créé le",
     "shortlistAction": "Présélectionner",
     "reject": "Refuser",
     "backToPending": "Remettre en attente",
-    "assignConfirm": "Attribuer l'événement à ce candidat ? L'événement sera fermé et les autres candidats seront refusés.",
+    "assignConfirm": "Attribuer la mission à ce candidat ? La mission sera fermée et les autres candidats seront refusés.",
     "yesAssign": "Oui, attribuer",
     "assigning": "Attribution…",
     "keepShortlist": "Garder la présélection",
-    "assign": "Attribuer l'événement",
+    "assign": "Attribuer la mission",
     "removeFromShortlist": "Retirer de la présélection"
   },
   "create": {
-    "newTitle": "Nouvel événement",
-    "editTitle": "Modifier l'événement",
+    "newTitle": "Nouvelle mission",
+    "editTitle": "Modifier la mission",
     "titleExample": "Ex. Sundance Beats",
     "locationExample": "Nom du lieu",
     "regionExample": "Ex. Toscane",
     "saveChanges": "Enregistrer les modifications",
-    "saveEvent": "Enregistrer l'événement",
+    "saveJob": "Enregistrer la mission",
     "voice": "Décrire à voix haute",
-    "listening": "Je vous écoute… parlez-nous de votre événement",
+    "listening": "Je vous écoute… parlez-nous de votre mission",
     "stop": "Arrêter",
     "transcribing": "Transcription…",
     "filling": "Remplissage des champs…",
     "recordAgain": "Réenregistrer",
     "remove": "Supprimer",
     "start": "Commencer",
-    "voiceHint": "Décrivez votre événement au lieu de le saisir : il sera transcrit dans les champs ci-dessous.",
+    "voiceHint": "Décrivez votre mission au lieu de la saisir : elle sera transcrite dans les champs ci-dessous.",
     "coverPhoto": "Photo de couverture",
-    "coverHint": "Affichée sur la carte de l'événement. Sans photo, la carte affiche les initiales.",
+    "coverHint": "Affichée sur la carte de la mission. Sans photo, la carte affiche les initiales.",
     "addCover": "Ajouter une couverture",
     "changeCover": "Changer la couverture",
     "editCover": "Modifier la couverture",
@@ -392,11 +392,11 @@
     "cropHint": "Faites glisser le cadre pour le déplacer. Tirez un coin ou un bord pour le redimensionner, ou pincez pour le mettre à l'échelle.",
     "cropApply": "Recadrer et utiliser",
     "gallery": "Autres photos",
-    "galleryHint": "Mini galerie dans l'événement. Jusqu'à {{count}}.",
+    "galleryHint": "Mini galerie sur la page de la mission. Jusqu'à {{count}}.",
     "addGalleryPhotos": "Ajouter des photos",
     "jobTitleExample": "Ex. Grand ménage, appartement deux pièces",
     "propertyLocationExample": "Quartier ou commune, pas la rue",
-    "voiceWaitHint": "Cela peut prendre un moment. Vous pouvez patienter ici ou remplir l'événement vous-même.",
+    "voiceWaitHint": "Cela peut prendre un moment. Vous pouvez patienter ici ou remplir les champs vous-même.",
     "fillMyself": "Je le remplis moi-même"
   },
   "ranks": {
@@ -436,7 +436,7 @@
     "logOut": "Se déconnecter",
     "howRanksWork": "Comment fonctionnent les niveaux",
     "deactivateAccount": "Désactiver le compte",
-    "deactivateConfirm": "Désactiver votre compte ? Vos événements ouverts seront supprimés et vos candidatures retirées, y compris les missions obtenues encore à venir, qui comptent comme des abandons. Restent les événements passés avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous. Nous vous enverrons aussi par e-mail un lien pour effacer définitivement votre compte.",
+    "deactivateConfirm": "Désactiver votre compte ? Vos missions ouvertes seront supprimées et vos candidatures retirées, y compris les missions obtenues encore à venir, qui comptent comme des abandons. Restent les missions passées avec leurs gagnants et vos statistiques. Pour revenir, reconnectez-vous. Nous vous enverrons aussi par e-mail un lien pour effacer définitivement votre compte.",
     "yesDeactivate": "Oui, désactiver",
     "deactivating": "Désactivation…",
     "deleteAccount": "Supprimer le compte"
@@ -444,7 +444,7 @@
   "preferences": {
     "title": "Préférences",
     "feed": "Votre fil",
-    "feedHint": "Ce que la liste des événements affiche avant tout filtre.",
+    "feedHint": "Ce que la liste des missions affiche avant tout filtre.",
     "favoriteRegions": "Régions favorites",
     "app": "Application",
     "language": "Langue",
@@ -469,8 +469,8 @@
         "job_outcome_due": "Il est temps de faire le point sur une mission",
         "application_selected": "Vous avez été sélectionné",
         "application_rejected": "Vous n'avez pas été sélectionné",
-        "event_updated": "Une mission à laquelle vous avez postulé a changé",
-        "event_closed": "Une mission à laquelle vous avez postulé est close",
+        "job_updated": "Une mission à laquelle vous avez postulé a changé",
+        "job_closed": "Une mission à laquelle vous avez postulé est close",
         "job_reviewed": "L'organisateur a fait le point sur votre mission",
         "job_cancelled": "Une mission a été annulée",
         "agreement_proposed": "Un montant à confirmer",
@@ -478,7 +478,7 @@
         "agreement_rejected": "Un montant a été refusé",
         "settlement_due": "Un paiement à confirmer",
         "settlement_contested": "Un paiement a été contesté",
-        "new_event": "Nouvelles missions (un e-mail chaque matin)"
+        "new_job": "Nouvelles missions (un e-mail chaque matin)"
       }
     }
   },
@@ -494,7 +494,7 @@
     "faq": {
       "whatIs": {
         "question": "Qu'est-ce que Vaitu ?",
-        "answer": "Une application pour confier à un collègue les missions que vous ne pouvez pas assurer. Si vous êtes réservé pour un événement auquel vous ne pouvez pas assister, vous le publiez, des collègues candidatent et vous confiez la mission à la personne de votre choix."
+        "answer": "Une application pour confier à un collègue les missions que vous ne pouvez pas assurer. Si vous êtes réservé pour une mission que vous ne pouvez pas assurer, vous la publiez, des collègues candidatent et vous confiez la mission à la personne de votre choix."
       },
       "name": {
         "question": "D'où vient le nom ?",
@@ -505,16 +505,16 @@
         "answer": "Les professionnels du mariage qui doivent transmettre une mission qu'ils ne peuvent pas assurer : photographes, vidéastes, musiciens, DJ, wedding planners et maquilleurs. D'autres métiers suivront."
       },
       "publish": {
-        "question": "Comment publier un événement ?",
-        "answer": "Créez un nouvel événement et renseignez les détails, ou décrivez-le à voix haute et laissez l'application remplir les champs. Vous fixez aussi la date limite de candidature et la taille maximale de votre présélection."
+        "question": "Comment publier une mission ?",
+        "answer": "Créez une nouvelle mission et renseignez les détails, ou décrivez-la à voix haute et laissez l'application remplir les champs. Vous fixez aussi la date limite de candidature et la taille maximale de votre présélection."
       },
       "apply": {
         "question": "Comment candidater ?",
-        "answer": "Ouvrez un événement et expliquez à l'organisateur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom et un site web, une page sociale ou un numéro de téléphone, et vous pouvez candidater jusqu'à la date limite."
+        "answer": "Ouvrez une mission et expliquez à l'organisateur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom et un site web, une page sociale ou un numéro de téléphone, et vous pouvez candidater jusqu'à la date limite."
       },
       "choose": {
         "question": "Comment choisir un candidat ?",
-        "answer": "Ouvrez les candidatures reçues, ajoutez les plus prometteuses à votre présélection, puis attribuez l'événement à la personne retenue. L'événement se ferme et les autres candidatures sont refusées."
+        "answer": "Ouvrez les candidatures reçues, ajoutez les plus prometteuses à votre présélection, puis attribuez la mission à la personne retenue. La mission se ferme et les autres candidatures sont refusées."
       },
       "contact": {
         "question": "Comment se contacter ?",
@@ -526,7 +526,7 @@
       },
       "changeMind": {
         "question": "Puis-je changer d'avis ?",
-        "answer": "Oui. Les candidats peuvent se retirer, même après avoir été retenus, et l'organisateur choisit alors quelqu'un d'autre. Les organisateurs peuvent modifier leurs événements et rouvrir un événement fermé ou attribué."
+        "answer": "Oui. Les candidats peuvent se retirer, même après avoir été retenus, et l'organisateur choisit alors quelqu'un d'autre. Les organisateurs peuvent modifier leurs missions et rouvrir une mission fermée ou attribuée."
       },
       "ranks": {
         "question": "Que sont les niveaux ?",
@@ -534,15 +534,15 @@
       },
       "notifications": {
         "question": "Comment fonctionnent les notifications ?",
-        "answer": "L'application vous informe des nouvelles missions pour vos métiers et vos régions, des nouvelles candidatures, des décisions et des changements sur les événements auxquels vous avez candidaté. Vous pouvez aussi autoriser les notifications push sur votre appareil, et gérer les alertes et les e-mails dans les Préférences."
+        "answer": "L'application vous informe des nouvelles missions pour vos métiers et vos régions, des nouvelles candidatures, des décisions et des changements sur les missions auxquels vous avez candidaté. Vous pouvez aussi autoriser les notifications push sur votre appareil, et gérer les alertes et les e-mails dans les Préférences."
       },
       "leave": {
         "question": "Comment quitter Vaitu ?",
-        "answer": "Votre profil propose deux options. La désactivation vous masque et s'annule en vous reconnectant : vos événements ouverts sont supprimés, vos candidatures retirées, et nous vous envoyons par e-mail un lien pour effacer définitivement le compte. La suppression efface le compte immédiatement. Les avis et l'historique des missions restent, sans votre nom, sous [Utilisateur supprimé]."
+        "answer": "Votre profil propose deux options. La désactivation vous masque et s'annule en vous reconnectant : vos missions ouvertes sont supprimées, vos candidatures retirées, et nous vous envoyons par e-mail un lien pour effacer définitivement le compte. La suppression efface le compte immédiatement. Les avis et l'historique des missions restent, sans votre nom, sous [Utilisateur supprimé]."
       },
       "report": {
         "question": "Comment signaler quelqu'un ou quelque chose ?",
-        "answer": "Utilisez le bouton de signalement sur un événement, un candidat ou un avis. Vous pouvez aussi bloquer quelqu'un : vous ne verrez plus vos événements ouverts respectifs et ne pourrez plus y candidater. Vous pouvez annuler un blocage dans les Préférences."
+        "answer": "Utilisez le bouton de signalement sur une mission, un candidat ou un avis. Vous pouvez aussi bloquer quelqu'un : vous ne verrez plus vos missions ouvertes respectives et ne pourrez plus y candidater. Vous pouvez annuler un blocage dans les Préférences."
       }
     },
     "legalTitle": "Mentions légales",
@@ -572,17 +572,17 @@
   "detail": {
     "organizedBy": "Organisé par {{name}}",
     "reviewApplications": "Voir les candidatures reçues",
-    "closed": "Les candidatures sont closes pour cet événement.",
+    "closed": "Les candidatures sont closes pour cette mission.",
     "sent": "Candidature envoyée !",
     "feedback": "Vous recevrez une réponse d'ici quelques jours.",
-    "backToEvents": "Retour aux événements",
-    "applyTitle": "Candidater à cet événement",
+    "backToJobs": "Retour aux missions",
+    "applyTitle": "Candidater à cette mission",
     "completeFirst": "Complétez votre profil (votre nom, plus un site web, une page sociale ou un numéro de téléphone) avant de candidater.",
     "completeProfile": "Compléter le profil",
     "forwarded_one": "Seul {{count}} nom sera transmis à l'organisateur.",
     "forwarded_other": "Seuls {{count}} noms seront transmis à l'organisateur.",
     "forwarded_many": "Seuls {{count}} noms seront transmis à l'organisateur.",
-    "motivation": "Pourquoi êtes-vous le candidat idéal pour cet événement ?",
+    "motivation": "Pourquoi êtes-vous le candidat idéal pour cette mission ?",
     "motivationPlaceholder": "Racontez votre histoire…",
     "sending": "Envoi…",
     "apply": "Candidater"
@@ -592,7 +592,7 @@
     "googleCalendar": "Google Agenda",
     "downloadIcs": "Télécharger le .ics",
     "yourMotivation": "Votre motivation",
-    "withdrawWinnerConfirm": "Vous retirer de cet événement ? L'organisateur devra choisir un autre gagnant, et abandonner une mission obtenue vous coûte des points.",
+    "withdrawWinnerConfirm": "Vous retirer de cette mission ? L'organisateur devra choisir un autre gagnant, et abandonner une mission obtenue vous coûte des points.",
     "withdrawConfirm": "Voulez-vous vraiment retirer votre candidature ? L'organisateur ne la verra plus.",
     "yesWithdraw": "Oui, retirer",
     "withdrawing": "Retrait…",
@@ -602,7 +602,7 @@
   "notifications": {
     "error": "Impossible de charger les notifications",
     "title": "Notifications",
-    "empty": "Rien de neuf pour l'instant. Une candidature à vos événements, une décision sur l'une des vôtres, et c'est ici.",
+    "empty": "Rien de neuf pour l'instant. Une candidature à vos missions, une décision sur l'une des vôtres, et c'est ici.",
     "markAll": "Tout marquer comme lu",
     "unreadAria": "{{count}} notifications non lues",
     "types": {
@@ -610,9 +610,9 @@
       "applicationSelected": "Bonne nouvelle : vous avez été retenu pour {{title}} !",
       "applicationRejected": "Cette fois, vous n'avez pas été retenu pour {{title}}",
       "applicationWithdrawn": "{{name}} a retiré sa candidature à {{title}}",
-      "eventUpdated": "{{title}} a été mis à jour !",
-      "eventClosed": "{{title}} a été clôturé",
-      "newEvent": "Nouvelle mission pour votre métier : {{title}}",
+      "jobUpdated": "{{title}} a été mis à jour !",
+      "jobClosed": "{{title}} a été clôturé",
+      "newJob": "Nouvelle mission pour votre métier : {{title}}",
       "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
       "jobReviewed": "L'organisateur a donné son retour sur {{title}}",
       "jobCancelled": "{{title}} a été annulé",
@@ -653,7 +653,7 @@
     "outcome": {
       "completed": "La mission a été réalisée",
       "no_show": "Personne ne s'est présenté",
-      "cancelled": "L'événement a été annulé"
+      "cancelled": "La mission a été annulée"
     },
     "completedJobs_one": "{{count}} mission réalisée",
     "completedJobs_many": "{{count}} missions réalisées",
@@ -696,7 +696,7 @@
     "detailsLabel": "Autre chose à nous dire ? (facultatif)",
     "send": "Envoyer le signalement",
     "block": "Bloquer cette personne",
-    "blockConfirm": "Bloquer cette personne ? Vous ne verrez plus vos événements ouverts respectifs, aucun de vous ne pourra candidater à ceux de l'autre, et les candidatures non décidées entre vous seront retirées. Vous pouvez annuler dans les Préférences.",
+    "blockConfirm": "Bloquer cette personne ? Vous ne verrez plus vos missions ouvertes respectives, aucun de vous ne pourra candidater à celles de l'autre, et les candidatures non décidées entre vous seront retirées. Vous pouvez annuler dans les Préférences.",
     "yesBlock": "Oui, bloquer",
     "thanks": "Merci. Nous avons bien reçu votre signalement et allons l'examiner.",
     "reportReview": "Signaler l'avis",
@@ -717,7 +717,7 @@
   },
   "eraseAccount": {
     "title": "Supprimer le compte",
-    "warning": "Cette action supprime définitivement votre compte, votre profil, vos photos et vos événements. Les avis et l'historique des missions restent, sans votre nom, sous [Utilisateur supprimé]. C'est irréversible.",
+    "warning": "Cette action supprime définitivement votre compte, votre profil, vos photos et vos missions. Les avis et l'historique des missions restent, sans votre nom, sous [Utilisateur supprimé]. C'est irréversible.",
     "confirm": "Supprimer mon compte",
     "erasing": "Suppression…",
     "done": "Votre compte a été supprimé.",

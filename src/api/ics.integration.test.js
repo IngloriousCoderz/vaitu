@@ -18,7 +18,7 @@ let storedPath = null
 
 afterAll(async () => {
   try {
-    if (storedPath) await removeStoredFile("event-ics", storedPath)
+    if (storedPath) await removeStoredFile("job-ics", storedPath)
   } finally {
     await signOut()
   }
@@ -40,7 +40,7 @@ test(
     expect(await fetched.text()).toContain("BEGIN:VCALENDAR")
 
     const { publicUrl } = supabase.storage
-      .from("event-ics")
+      .from("job-ics")
       .getPublicUrl(storedPath).data
     expect((await fetch(publicUrl)).ok).toBe(false)
   },
@@ -69,7 +69,7 @@ test(
 
     await signIn(GIADA)
     const { error } = await supabase.storage
-      .from("event-ics")
+      .from("job-ics")
       .upload(path, new Blob([ICS], { type: "text/calendar" }), {
         contentType: "text/calendar",
         upsert: true,

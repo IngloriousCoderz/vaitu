@@ -1,15 +1,15 @@
--- Vaitu · initial schema. Access is ownership: events.sender_id,
+-- Vaitu · initial schema. Access is ownership: jobs.sender_id,
 -- applications.applicant_id.
--- - profiles is own-row only; the poster's name comes from event_poster_name(),
+-- - profiles is own-row only; the poster's name comes from job_poster_name(),
 -- an applicant's contact details from applicant_profiles().
--- - Deadlines close events through close_expired_events() on pg_cron: triggers
+-- - Deadlines close jobs through close_expired_jobs() on pg_cron: triggers
 -- cannot fire on time.
--- - Event policies must NOT select profiles under RLS: it recurses through the
+-- - Job policies must NOT select profiles under RLS: it recurses through the
 -- applicants policy. is_active_profile() is security definer for this.
 -- - RLS picks the rows a client may update, column grants pick the columns.
--- - Withdrawals and deleted events stay as rows: they are other people's
+-- - Withdrawals and deleted jobs stay as rows: they are other people's
 -- history and a user's track record, which profile_stats() scores. Everything
--- personal in a deleted event is wiped, and RLS hides it.
+-- personal in a deleted job is wiped, and RLS hides it.
 -- - Functions are callable only where granted: by default anon could call
 -- security definer ones.
 
@@ -64,7 +64,7 @@ create table public.profiles (
   deactivated_at timestamptz,
   is_email_opted_out boolean not null default false,
   onboarded_at timestamptz,
-  has_new_event_alerts boolean not null default true
+  has_new_job_alerts boolean not null default true
 );
 
 comment on column public.profiles.interested_job_types is
@@ -81,8 +81,8 @@ comment on column public.profiles.is_email_opted_out is
   'When true, do not send re-engagement (or other marketing) email.';
 comment on column public.profiles.onboarded_at is
   'When the user finished or skipped onboarding; null while it is still owed.';
-comment on column public.profiles.has_new_event_alerts is
-  'Whether a new event matching the user''s trades and regions notifies them.';
+comment on column public.profiles.has_new_job_alerts is
+  'Whether a new job matching the user''s trades and regions notifies them.';
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -102,7 +102,7 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- Reads is_active without RLS (avoids events ↔ profiles policy recursion).
+-- Reads is_active without RLS (avoids jobs ↔ profiles policy recursion).
 create or replace function public.is_active_profile(profile_id uuid)
 returns boolean
 language sql
@@ -152,7 +152,7 @@ $$;
 grant execute on function public.touch_login() to authenticated;
 
 
-create table public.events (
+create table public.jobs (
   id uuid primary key default gen_random_uuid(),
   -- Null once the sender erased their account: the row is anonymous history.
   sender_id uuid references public.profiles (id) on delete set null,
@@ -164,7 +164,7 @@ create table public.events (
   location text not null,
   country text not null,
   region text not null,
-  event_date date not null,
+  job_date date not null,
   application_deadline timestamptz not null,
   max_applicants integer not null default 5 check (max_applicants > 0),
   status text not null default 'open' check (status in ('open', 'closed', 'assigned')),
@@ -184,20 +184,20 @@ create table public.events (
   ) stored
 );
 
-create index events_sender_id_idx on public.events (sender_id);
-create index events_browse_idx on public.events (status, region, event_date);
-create index events_category_idx on public.events (category);
-create index events_job_type_idx on public.events (job_type);
-create index events_search_idx on public.events
+create index jobs_sender_id_idx on public.jobs (sender_id);
+create index jobs_browse_idx on public.jobs (status, region, job_date);
+create index jobs_category_idx on public.jobs (category);
+create index jobs_job_type_idx on public.jobs (job_type);
+create index jobs_search_idx on public.jobs
   using gin (search_text extensions.gin_trgm_ops);
-create index events_details_gin_idx on public.events using gin (details);
-create index events_details_style_idx on public.events ((details ->> 'style'));
-create index events_details_genre_idx on public.events ((details ->> 'genre'));
+create index jobs_details_gin_idx on public.jobs using gin (details);
+create index jobs_details_style_idx on public.jobs ((details ->> 'style'));
+create index jobs_details_genre_idx on public.jobs ((details ->> 'genre'));
 
 
 create table public.applications (
   id uuid primary key default gen_random_uuid(),
-  event_id uuid not null references public.events (id) on delete cascade,
+  job_id uuid not null references public.jobs (id) on delete cascade,
   -- Null once the applicant erased their account: [Deleted User] in the app.
   applicant_id uuid references public.profiles (id) on delete set null,
   motivation text not null,
@@ -213,16 +213,16 @@ create table public.applications (
   updated_at timestamptz not null default now()
 );
 
-create unique index applications_one_live_per_event
-  on public.applications (event_id, applicant_id)
+create unique index applications_one_live_per_job
+  on public.applications (job_id, applicant_id)
   where status <> 'withdrawn';
-create index applications_event_id_idx on public.applications (event_id);
+create index applications_job_id_idx on public.applications (job_id);
 create index applications_applicant_id_idx on public.applications (applicant_id);
-create index applications_event_status_idx on public.applications (event_id, status);
+create index applications_job_status_idx on public.applications (job_id, status);
 
 -- Filtered realtime evaluates UPDATE/DELETE filters only when the full row is
 -- replicated; otherwise filtered channels stay silent.
-alter table public.events replica identity full;
+alter table public.jobs replica identity full;
 alter table public.applications replica identity full;
 
 
@@ -296,40 +296,40 @@ security definer
 set search_path = public
 as $$
 declare
-  v_event public.events%rowtype;
+  v_job public.jobs%rowtype;
 begin
-  select * into v_event
-  from public.events
-  where id = new.event_id;
+  select * into v_job
+  from public.jobs
+  where id = new.job_id;
 
   if not found then
-    raise exception 'Event does not exist.';
+    raise exception 'Job does not exist.';
   end if;
 
-  if v_event.sender_id = new.applicant_id then
-    raise exception 'You cannot apply to your own event.';
+  if v_job.sender_id = new.applicant_id then
+    raise exception 'You cannot apply to your own job.';
   end if;
 
-  if v_event.deleted_at is not null then
-    raise exception 'Event does not exist.';
+  if v_job.deleted_at is not null then
+    raise exception 'Job does not exist.';
   end if;
 
-  if public.are_blocked(v_event.sender_id, new.applicant_id) then
-    raise exception 'You cannot apply to this event.';
+  if public.are_blocked(v_job.sender_id, new.applicant_id) then
+    raise exception 'You cannot apply to this job.';
   end if;
 
-  if v_event.status <> 'open' then
-    raise exception 'Event is not open for applications (status=%).', v_event.status;
+  if v_job.status <> 'open' then
+    raise exception 'Job is not open for applications (status=%).', v_job.status;
   end if;
 
   if not exists (
     select 1 from public.profiles
-    where id = v_event.sender_id and is_active
+    where id = v_job.sender_id and is_active
   ) then
-    raise exception 'The account behind this event has been deactivated.';
+    raise exception 'The account behind this job has been deactivated.';
   end if;
 
-  if now() > v_event.application_deadline then
+  if now() > v_job.application_deadline then
     raise exception 'Application deadline has passed.';
   end if;
 
@@ -362,12 +362,12 @@ begin
   end if;
 
   select max_applicants into v_max
-  from public.events
-  where id = new.event_id;
+  from public.jobs
+  where id = new.job_id;
 
   select count(*) into v_count
   from public.applications
-  where event_id = new.event_id
+  where job_id = new.job_id
     and status = 'shortlisted'
     and id <> new.id;
 
@@ -422,8 +422,8 @@ begin
   end if;
 
   select sender_id into v_sender_id
-  from public.events
-  where id = new.event_id;
+  from public.jobs
+  where id = new.job_id;
 
   if auth.uid() = v_sender_id
     and current_setting('vaitu.assigning', true) = 'on'
@@ -473,7 +473,7 @@ create trigger trg_applications_motivation_change
   for each row execute function public.enforce_motivation_change();
 
 create or replace function public.assign_winner(
-  p_event_id uuid,
+  p_job_id uuid,
   p_application_id uuid,
   p_agreed_amount numeric default null
 )
@@ -487,32 +487,32 @@ declare
   v_status text;
 begin
   select sender_id into v_sender_id
-  from public.events
-  where id = p_event_id and deleted_at is null;
+  from public.jobs
+  where id = p_job_id and deleted_at is null;
 
   if not found then
-    raise exception 'Event does not exist.';
+    raise exception 'Job does not exist.';
   end if;
 
   if v_sender_id <> auth.uid() then
-    raise exception 'Only the event owner can assign a winner.';
+    raise exception 'Only the job owner can assign a winner.';
   end if;
 
   select status into v_status
   from public.applications
-  where id = p_application_id and event_id = p_event_id;
+  where id = p_application_id and job_id = p_job_id;
 
   if not found then
-    raise exception 'Application does not belong to this event.';
+    raise exception 'Application does not belong to this job.';
   end if;
 
   if v_status <> 'shortlisted' then
     raise exception 'Winner must come from the shortlist.';
   end if;
 
-  update public.events
+  update public.jobs
   set status = 'assigned', updated_at = now()
-  where id = p_event_id;
+  where id = p_job_id;
 
   perform set_config('vaitu.assigning', 'on', true);
 
@@ -524,7 +524,7 @@ begin
   set status = 'rejected',
       status_before_assign = status,
       updated_at = now()
-  where event_id = p_event_id
+  where job_id = p_job_id
     and id <> p_application_id
     and status not in ('rejected', 'withdrawn');
 
@@ -536,8 +536,8 @@ $$;
 
 grant execute on function public.assign_winner(uuid, uuid, numeric) to authenticated;
 
--- Applicants cannot update events (RLS), so the reopen lives here. Only the
--- winner's own withdrawal reopens: deleting the event or deactivating an
+-- Applicants cannot update jobs (RLS), so the reopen lives here. Only the
+-- winner's own withdrawal reopens: deleting the job or deactivating an
 -- account must not.
 create or replace function public.withdraw_application(p_application_id uuid)
 returns void
@@ -547,7 +547,7 @@ set search_path = public
 as $$
 declare
   v_application public.applications%rowtype;
-  v_event public.events%rowtype;
+  v_job public.jobs%rowtype;
 begin
   select * into v_application
   from public.applications
@@ -575,14 +575,14 @@ begin
   where id = p_application_id;
   perform set_config('vaitu.withdrawing', 'off', true);
 
-  select * into v_event
-  from public.events
-  where id = v_application.event_id;
+  select * into v_job
+  from public.jobs
+  where id = v_application.job_id;
 
   perform public.notify_user(
-    v_event.sender_id,
+    v_job.sender_id,
     'application_withdrawn',
-    v_event.id,
+    v_job.id,
     null,
     (select full_name from public.profiles where id = v_application.applicant_id)
   );
@@ -595,30 +595,30 @@ begin
   update public.applications
   set status = status_before_assign,
       status_before_assign = null
-  where event_id = v_event.id
+  where job_id = v_job.id
     and status = 'rejected'
     and status_before_assign is not null;
   perform set_config('vaitu.restoring', 'off', true);
 
-  if v_event.status <> 'assigned'
-    or v_event.deleted_at is not null
-    or v_event.application_deadline <= now()
+  if v_job.status <> 'assigned'
+    or v_job.deleted_at is not null
+    or v_job.application_deadline <= now()
     or exists (
       select 1 from public.applications
-      where event_id = v_event.id and status = 'selected'
+      where job_id = v_job.id and status = 'selected'
     ) then
     return;
   end if;
 
-  update public.events
+  update public.jobs
   set status = 'open'
-  where id = v_event.id;
+  where id = v_job.id;
 end;
 $$;
 
 grant execute on function public.withdraw_application(uuid) to authenticated;
 
-create or replace function public.close_expired_events()
+create or replace function public.close_expired_jobs()
 returns integer
 language plpgsql
 security definer
@@ -627,7 +627,7 @@ as $$
 declare
   v_closed integer;
 begin
-  update public.events
+  update public.jobs
   set status = 'closed', updated_at = now()
   where status = 'open'
     and deleted_at is null
@@ -641,9 +641,9 @@ $$;
 -- Time alone never touches a row, so realtime can only fire after this flips
 -- expired statuses.
 select cron.schedule(
-  'close-expired-events',
+  'close-expired-jobs',
   '* * * * *',
-  $$select public.close_expired_events()$$
+  $$select public.close_expired_jobs()$$
 );
 
 
@@ -651,8 +651,8 @@ create trigger trg_profiles_updated_at
   before update on public.profiles
   for each row execute function public.set_updated_at();
 
-create trigger trg_events_updated_at
-  before update on public.events
+create trigger trg_jobs_updated_at
+  before update on public.jobs
   for each row execute function public.set_updated_at();
 
 create trigger trg_applications_updated_at
@@ -660,7 +660,7 @@ create trigger trg_applications_updated_at
   for each row execute function public.set_updated_at();
 
 
-create function public.event_poster_name(p_event_id uuid)
+create function public.job_poster_name(p_job_id uuid)
 returns text
 language sql
 stable
@@ -668,17 +668,17 @@ security definer
 set search_path = public
 as $$
   select p.full_name
-  from public.events e
+  from public.jobs e
   join public.profiles p on p.id = e.sender_id
-  where e.id = p_event_id
+  where e.id = p_job_id
     and e.deleted_at is null
     and (e.status <> 'open' or p.is_active or e.sender_id = auth.uid());
 $$;
 
-grant execute on function public.event_poster_name(uuid) to anon, authenticated;
+grant execute on function public.job_poster_name(uuid) to anon, authenticated;
 
 alter table public.profiles enable row level security;
-alter table public.events enable row level security;
+alter table public.jobs enable row level security;
 alter table public.applications enable row level security;
 alter table public.app_config enable row level security;
 
@@ -708,7 +708,7 @@ set search_path = public
 as $$
   select a.id, p.full_name, p.website, p.phone, p.country
   from public.applications a
-  join public.events e on e.id = a.event_id
+  join public.jobs e on e.id = a.job_id
   join public.profiles p on p.id = a.applicant_id
   where a.id = any (p_application_ids)
     and a.status <> 'withdrawn'
@@ -722,8 +722,8 @@ create policy "Anyone can read app config"
   on public.app_config for select to anon, authenticated
   using (true);
 
-create policy "Anyone can view open events"
-  on public.events for select to anon, authenticated
+create policy "Anyone can view open jobs"
+  on public.jobs for select to anon, authenticated
   using (
     status = 'open'
     and deleted_at is null
@@ -731,18 +731,18 @@ create policy "Anyone can view open events"
     and not public.are_blocked(auth.uid(), sender_id)
   );
 
-create policy "Anyone can view closed events"
-  on public.events for select to anon, authenticated
+create policy "Anyone can view closed jobs"
+  on public.jobs for select to anon, authenticated
   using (status <> 'open' and deleted_at is null);
 
-create policy "Senders can view their own events"
-  on public.events for select to authenticated
+create policy "Senders can view their own jobs"
+  on public.jobs for select to authenticated
   using (sender_id = auth.uid() and deleted_at is null);
 
--- Status moves only through the functions: an event posted or marked
+-- Status moves only through the functions: a job posted or marked
 -- assigned by hand would count as a handoff without anyone doing the job.
-create policy "Users can create their own events"
-  on public.events for insert to authenticated
+create policy "Users can create their own jobs"
+  on public.jobs for insert to authenticated
   with check (
     sender_id = auth.uid()
     and status = 'open'
@@ -751,8 +751,8 @@ create policy "Users can create their own events"
     and public.is_active_profile(auth.uid())
   );
 
-create policy "Senders can update their own events"
-  on public.events for update to authenticated
+create policy "Senders can update their own jobs"
+  on public.jobs for update to authenticated
   using (
     sender_id = auth.uid()
     and deleted_at is null
@@ -767,17 +767,17 @@ create policy "Applicants can view their own applications"
   on public.applications for select to authenticated
   using (applicant_id = auth.uid());
 
-create policy "Senders can view applications to their events"
+create policy "Senders can view applications to their jobs"
   on public.applications for select to authenticated
   using (
     exists (
-      select 1 from public.events e
-      where e.id = applications.event_id
+      select 1 from public.jobs e
+      where e.id = applications.job_id
         and e.sender_id = auth.uid()
     )
   );
 
-create policy "Applicants can apply to events"
+create policy "Applicants can apply to jobs"
   on public.applications for insert to authenticated
   with check (applicant_id = auth.uid());
 
@@ -786,12 +786,12 @@ create policy "Applicants can update their own applications"
   using (applicant_id = auth.uid())
   with check (applicant_id = auth.uid());
 
-create policy "Senders can update applications to their events"
+create policy "Senders can update applications to their jobs"
   on public.applications for update to authenticated
   using (
     exists (
-      select 1 from public.events e
-      where e.id = applications.event_id
+      select 1 from public.jobs e
+      where e.id = applications.job_id
         and e.sender_id = auth.uid()
     )
   );
@@ -801,9 +801,9 @@ create policy "Senders can update applications to their events"
 -- without these column grants an owner could rewrite any column.
 grant select on public.app_config to anon, authenticated;
 
-grant select on public.events to anon, authenticated;
+grant select on public.jobs to anon, authenticated;
 
-create or replace function public.open_event_regions(
+create or replace function public.open_job_regions(
   job_types text[] default '{}'
 )
 returns setof text
@@ -813,16 +813,16 @@ security invoker
 set search_path = ''
 as $$
   select distinct e.region
-  from public.events e
+  from public.jobs e
   where e.status = 'open'
     and (auth.uid() is null or e.sender_id <> auth.uid())
     and (cardinality(job_types) = 0 or e.job_type = any (job_types))
 $$;
 
-grant execute on function public.open_event_regions(text[])
+grant execute on function public.open_job_regions(text[])
   to anon, authenticated;
-revoke delete, update on public.events from anon, authenticated;
-grant insert on public.events to authenticated;
+revoke delete, update on public.jobs from anon, authenticated;
+grant insert on public.jobs to authenticated;
 grant update (
   category,
   profession,
@@ -830,13 +830,13 @@ grant update (
   location,
   country,
   region,
-  event_date,
+  job_date,
   application_deadline,
   max_applicants,
   details,
   updated_at,
   image_urls
-) on public.events to authenticated;
+) on public.jobs to authenticated;
 
 revoke insert, update on public.profiles from anon, authenticated;
 grant select on public.profiles to authenticated;
@@ -852,12 +852,12 @@ grant update (
   avatar_url,
   onboarded_at,
   is_email_opted_out,
-  has_new_event_alerts
+  has_new_job_alerts
 ) on public.profiles to authenticated;
 
 revoke insert, update, delete on public.applications from anon, authenticated;
 grant select on public.applications to authenticated;
-grant insert (event_id, applicant_id, motivation)
+grant insert (job_id, applicant_id, motivation)
   on public.applications to authenticated;
 grant update (status, motivation) on public.applications to authenticated;
 
@@ -871,9 +871,9 @@ create table public.notifications (
       'application_selected',
       'application_rejected',
       'application_withdrawn',
-      'event_updated',
-      'event_closed',
-      'new_event',
+      'job_updated',
+      'job_closed',
+      'new_job',
       'job_outcome_due',
       'job_reviewed',
       'job_cancelled',
@@ -884,11 +884,11 @@ create table public.notifications (
       'settlement_contested'
     )
   ),
-  event_id uuid references public.events (id) on delete cascade,
+  job_id uuid references public.jobs (id) on delete cascade,
   application_id uuid references public.applications (id) on delete cascade,
   applicant_name text,
-  -- Only when the event is gone, so its title cannot come from the event.
-  event_title text,
+  -- Only when the job is gone, so its title cannot come from the job.
+  job_title text,
   is_read boolean not null default false,
   created_at timestamptz not null default now(),
   -- Exactly-once claim for push-notify: null -> now() under READ COMMITTED.
@@ -921,10 +921,10 @@ grant update (is_read) on public.notifications to authenticated;
 create or replace function public.notify_user(
   p_user uuid,
   p_type text,
-  p_event uuid default null,
+  p_job uuid default null,
   p_application uuid default null,
   p_applicant_name text default null,
-  p_event_title text default null
+  p_job_title text default null
 )
 returns void
 language plpgsql
@@ -939,8 +939,8 @@ begin
     where id = p_user and is_active
   ) then return; end if;
   insert into public.notifications
-    (user_id, type, event_id, application_id, applicant_name, event_title)
-  values (p_user, p_type, p_event, p_application, p_applicant_name, p_event_title);
+    (user_id, type, job_id, application_id, applicant_name, job_title)
+  values (p_user, p_type, p_job, p_application, p_applicant_name, p_job_title);
 end;
 $$;
 
@@ -953,10 +953,10 @@ as $$
 begin
   perform public.notify_user(
     (
-      select sender_id from public.events where id = new.event_id
+      select sender_id from public.jobs where id = new.job_id
     ),
     'application_received',
-    new.event_id,
+    new.job_id,
     new.id
   );
   return new;
@@ -980,7 +980,7 @@ begin
       when 'selected' then 'application_selected'
       else 'application_rejected'
     end,
-    new.event_id,
+    new.job_id,
     new.id
   );
   return new;
@@ -994,7 +994,7 @@ create trigger trg_application_decided
         and new.status in ('selected', 'rejected'))
   execute function public.vaitu_on_application_decided();
 
-create or replace function public.vaitu_on_event_changed()
+create or replace function public.vaitu_on_job_changed()
 returns trigger
 language plpgsql
 security definer
@@ -1002,8 +1002,8 @@ set search_path = public
 as $$
 declare
   v_type text := case new.status
-    when 'closed' then 'event_closed'
-    else 'event_updated'
+    when 'closed' then 'job_closed'
+    else 'job_updated'
   end;
 begin
   perform public.notify_user(
@@ -1012,17 +1012,17 @@ begin
     new.id
   )
   from public.applications a
-  where a.event_id = new.id
+  where a.job_id = new.id
     and a.status in ('pending', 'selected')
     and a.applicant_id <> new.sender_id;
   return new;
 end;
 $$;
 
-create trigger trg_event_changed
-  after update of title, location, country, region, event_date,
+create trigger trg_job_changed
+  after update of title, location, country, region, job_date,
                    application_deadline, details, status
-  on public.events
+  on public.jobs
   for each row
   when (
     new.deleted_at is null
@@ -1031,19 +1031,19 @@ create trigger trg_event_changed
     or old.location is distinct from new.location
     or old.country is distinct from new.country
     or old.region is distinct from new.region
-    or old.event_date is distinct from new.event_date
+    or old.job_date is distinct from new.job_date
     or old.application_deadline is distinct from new.application_deadline
     or old.details is distinct from new.details
     or old.status is distinct from new.status
     )
   )
-  execute function public.vaitu_on_event_changed();
+  execute function public.vaitu_on_job_changed();
 
--- Only someone who named their trades hears about new events: an empty list
+-- Only someone who named their trades hears about new jobs: an empty list
 -- means "show me everything" in the feed, which is not a wish for a push per
--- event. Regions are compared as written: normalizeEvent stores the canonical
+-- job. Regions are compared as written: normalizeJob stores the canonical
 -- name, the one favorites use.
-create or replace function public.vaitu_on_event_created()
+create or replace function public.vaitu_on_job_created()
 returns trigger
 language plpgsql
 security definer
@@ -1054,11 +1054,11 @@ begin
     return new;
   end if;
 
-  perform public.notify_user(p.id, 'new_event', new.id)
+  perform public.notify_user(p.id, 'new_job', new.id)
   from public.profiles p
   where p.id <> new.sender_id
     and p.is_active
-    and p.has_new_event_alerts
+    and p.has_new_job_alerts
     and not public.are_blocked(p.id, new.sender_id)
     and new.profession = any (p.professions)
     and (
@@ -1073,12 +1073,12 @@ begin
 end;
 $$;
 
-create trigger trg_event_created
-  after insert on public.events
-  for each row execute function public.vaitu_on_event_created();
+create trigger trg_job_created
+  after insert on public.jobs
+  for each row execute function public.vaitu_on_job_created();
 
 
--- What the organizer reports once the event date has come: whether the winner
+-- What the organizer reports once the job date has come: whether the winner
 -- did the job, and how well. One review per job, written once, and only by the
 -- organizer: nothing in here is the winner's to change.
 create table public.job_reviews (
@@ -1101,7 +1101,7 @@ create policy "Both sides of a job can read its review"
     exists (
       select 1
       from public.applications a
-      join public.events e on e.id = a.event_id
+      join public.jobs e on e.id = a.job_id
       where a.id = job_reviews.application_id
         and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
     )
@@ -1123,7 +1123,7 @@ set search_path = public
 as $$
 declare
   v_application public.applications%rowtype;
-  v_event public.events%rowtype;
+  v_job public.jobs%rowtype;
 begin
   select * into v_application
   from public.applications
@@ -1133,19 +1133,19 @@ begin
     raise exception 'Application does not exist.';
   end if;
 
-  select * into v_event
-  from public.events
-  where id = v_application.event_id and deleted_at is null;
+  select * into v_job
+  from public.jobs
+  where id = v_application.job_id and deleted_at is null;
 
-  if not found or v_event.sender_id is distinct from auth.uid() then
-    raise exception 'Only the event owner can review this job.';
+  if not found or v_job.sender_id is distinct from auth.uid() then
+    raise exception 'Only the job owner can review this job.';
   end if;
 
   if v_application.status <> 'selected' then
     raise exception 'Only the winner can be reviewed.';
   end if;
 
-  if v_event.event_date > current_date then
+  if v_job.job_date > current_date then
     raise exception 'A job can be reviewed once its date has come.';
   end if;
 
@@ -1156,7 +1156,7 @@ begin
     perform public.notify_user(
       v_application.applicant_id,
       'job_reviewed',
-      v_event.id,
+      v_job.id,
       p_application_id
     );
   end if;
@@ -1177,16 +1177,16 @@ declare
   v_requested integer := 0;
 begin
   for v_due in
-    update public.events e
+    update public.jobs e
     set outcome_requested_at = now()
     where e.status = 'assigned'
       and e.deleted_at is null
       and e.outcome_requested_at is null
-      and e.event_date < current_date
+      and e.job_date < current_date
       and exists (
         select 1
         from public.applications a
-        where a.event_id = e.id
+        where a.job_id = e.id
           and a.status = 'selected'
           and not exists (
             select 1 from public.job_reviews r where r.application_id = a.id
@@ -1198,7 +1198,7 @@ begin
     perform public.notify_user(a.applicant_id, 'settlement_due', v_due.id, a.id)
     from public.applications a
     join public.job_agreements g on g.application_id = a.id
-    where a.event_id = v_due.id
+    where a.job_id = v_due.id
       and a.status = 'selected'
       and g.status = 'confirmed';
     v_requested := v_requested + 1;
@@ -1207,11 +1207,11 @@ begin
 end;
 $$;
 
--- What a job pays. Apart from events, which anyone can read and realtime
+-- What a job pays. Apart from jobs, which anyone can read and realtime
 -- broadcasts: a client must not be able to find what their photographer keeps.
 -- What the colleague earns, never the client's price or the sender's margin.
-create table public.event_pay (
-  event_id uuid primary key references public.events (id) on delete cascade,
+create table public.job_pay (
+  job_id uuid primary key references public.jobs (id) on delete cascade,
   kind text not null default 'to_agree' check (kind in ('fixed', 'range', 'to_agree')),
   amount_min numeric check (amount_min >= 0),
   amount_max numeric check (amount_max >= 0),
@@ -1223,29 +1223,29 @@ create table public.event_pay (
   )
 );
 
-alter table public.event_pay enable row level security;
+alter table public.job_pay enable row level security;
 
-create policy "Signed-in users read the pay of events they can see"
-  on public.event_pay for select to authenticated
-  using (exists (select 1 from public.events e where e.id = event_id));
+create policy "Signed-in users read the pay of jobs they can see"
+  on public.job_pay for select to authenticated
+  using (exists (select 1 from public.jobs e where e.id = job_id));
 
-create policy "Senders write the pay of their own events"
-  on public.event_pay for all to authenticated
+create policy "Senders write the pay of their own jobs"
+  on public.job_pay for all to authenticated
   using (
     exists (
-      select 1 from public.events e
-      where e.id = event_id and e.sender_id = auth.uid()
+      select 1 from public.jobs e
+      where e.id = job_id and e.sender_id = auth.uid()
     )
   )
   with check (
     exists (
-      select 1 from public.events e
-      where e.id = event_id and e.sender_id = auth.uid()
+      select 1 from public.jobs e
+      where e.id = job_id and e.sender_id = auth.uid()
     )
   );
 
-revoke all on public.event_pay from anon, authenticated;
-grant select, insert, update on public.event_pay to authenticated;
+revoke all on public.job_pay from anon, authenticated;
+grant select, insert, update on public.job_pay to authenticated;
 
 -- What the organizer and the winner say they agreed. The organizer proposes,
 -- the winner confirms, and a confirmed amount no longer changes.
@@ -1267,7 +1267,7 @@ create policy "Both sides of a job can read its agreement"
     exists (
       select 1
       from public.applications a
-      join public.events e on e.id = a.event_id
+      join public.jobs e on e.id = a.job_id
       where a.id = job_agreements.application_id
         and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
     )
@@ -1294,7 +1294,7 @@ begin
   select
     a.id,
     p_amount,
-    coalesce((select currency from public.event_pay p where p.event_id = a.event_id), 'EUR')
+    coalesce((select currency from public.job_pay p where p.job_id = a.job_id), 'EUR')
   from public.applications a
   where a.id = p_application_id
   on conflict (application_id) do update
@@ -1324,21 +1324,21 @@ declare
 begin
   select a.* into v_application
   from public.applications a
-  join public.events e on e.id = a.event_id
+  join public.jobs e on e.id = a.job_id
   where a.id = p_application_id
     and a.status = 'selected'
     and e.sender_id = auth.uid()
     and e.deleted_at is null;
 
   if not found then
-    raise exception 'Only the event owner can propose this agreement.';
+    raise exception 'Only the job owner can propose this agreement.';
   end if;
 
   perform public.record_job_agreement(p_application_id, p_amount);
   perform public.notify_user(
     v_application.applicant_id,
     'agreement_proposed',
-    v_application.event_id,
+    v_application.job_id,
     p_application_id
   );
 end;
@@ -1357,11 +1357,11 @@ set search_path = public
 as $$
 declare
   v_sender_id uuid;
-  v_event_id uuid;
+  v_job_id uuid;
 begin
-  select e.sender_id, e.id into v_sender_id, v_event_id
+  select e.sender_id, e.id into v_sender_id, v_job_id
   from public.applications a
-  join public.events e on e.id = a.event_id
+  join public.jobs e on e.id = a.job_id
   where a.id = p_application_id
     and a.applicant_id = auth.uid()
     and a.status = 'selected'
@@ -1383,7 +1383,7 @@ begin
   perform public.notify_user(
     v_sender_id,
     case when p_is_confirmed then 'agreement_confirmed' else 'agreement_rejected' end,
-    v_event_id
+    v_job_id
   );
 end;
 $$;
@@ -1409,7 +1409,7 @@ create policy "Both sides of a job can read its settlement"
     exists (
       select 1
       from public.applications a
-      join public.events e on e.id = a.event_id
+      join public.jobs e on e.id = a.job_id
       where a.id = job_settlements.application_id
         and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
     )
@@ -1429,7 +1429,7 @@ set search_path = public
 as $$
 declare
   v_application public.applications%rowtype;
-  v_event public.events%rowtype;
+  v_job public.jobs%rowtype;
   v_role text;
 begin
   select * into v_application
@@ -1440,12 +1440,12 @@ begin
     raise exception 'Only the two sides of a job can answer this.';
   end if;
 
-  select * into v_event
-  from public.events
-  where id = v_application.event_id and deleted_at is null;
+  select * into v_job
+  from public.jobs
+  where id = v_application.job_id and deleted_at is null;
 
   v_role := case
-    when v_event.sender_id = auth.uid() then 'organizer'
+    when v_job.sender_id = auth.uid() then 'organizer'
     when v_application.applicant_id = auth.uid() then 'winner'
   end;
 
@@ -1453,7 +1453,7 @@ begin
     raise exception 'Only the two sides of a job can answer this.';
   end if;
 
-  if v_event.event_date > current_date then
+  if v_job.job_date > current_date then
     raise exception 'This can be answered once the date of the job has come.';
   end if;
 
@@ -1476,9 +1476,9 @@ begin
 
   if not p_is_settled then
     perform public.notify_user(
-      case when v_role = 'organizer' then v_application.applicant_id else v_event.sender_id end,
+      case when v_role = 'organizer' then v_application.applicant_id else v_job.sender_id end,
       'settlement_contested',
-      v_event.id,
+      v_job.id,
       case when v_role = 'organizer' then p_application_id end
     );
   end if;
@@ -1494,7 +1494,7 @@ select cron.schedule(
 );
 
 -- Security definer: a record must count all its history, not the part RLS shows
--- you. You can read your own, that of people applying to your events, and that
+-- you. You can read your own, that of people applying to your jobs, and that
 -- of organizers you might work with.
 create or replace function public.can_read_reputation(p_profile_id uuid)
 returns boolean
@@ -1507,7 +1507,7 @@ as $$
     or exists (
       select 1
       from public.applications a
-      join public.events e on e.id = a.event_id
+      join public.jobs e on e.id = a.job_id
       where a.applicant_id = p_profile_id
         and a.status <> 'withdrawn'
         and e.sender_id = auth.uid()
@@ -1517,7 +1517,7 @@ as $$
       auth.uid() is not null
       and exists (
         select 1
-        from public.events e
+        from public.jobs e
         where e.sender_id = p_profile_id
           and e.status = 'open'
           and e.deleted_at is null
@@ -1526,7 +1526,7 @@ as $$
     or exists (
       select 1
       from public.applications a
-      join public.events e on e.id = a.event_id
+      join public.jobs e on e.id = a.job_id
       where e.sender_id = p_profile_id
         and a.applicant_id = auth.uid()
         and a.status <> 'withdrawn'
@@ -1586,7 +1586,7 @@ as $$
     from config, unnest(p_profile_ids) as requested (id)
     join public.profiles p on p.id = requested.id
     left join public.applications a on a.applicant_id = p.id
-    left join public.events e on e.id = a.event_id
+    left join public.jobs e on e.id = a.job_id
     left join public.job_reviews r on r.application_id = a.id
     where public.can_read_reputation(p.id)
     group by p.id, config.c
@@ -1596,7 +1596,7 @@ as $$
       counted.*,
       (
         select count(*)
-        from public.events handed
+        from public.jobs handed
         where handed.sender_id = counted.profile_id and handed.status = 'assigned'
       ) as handoffs,
       issues.payment_issues,
@@ -1617,7 +1617,7 @@ as $$
       select count(*) as payment_issues
       from public.job_settlements s
       join public.applications a on a.id = s.application_id
-      join public.events e on e.id = a.event_id
+      join public.jobs e on e.id = a.job_id
       where not s.is_settled
         and s.answered_at < now()
           - make_interval(days => (config.c ->> 'settlement_reply_days')::int)
@@ -1714,10 +1714,10 @@ $$;
 
 grant execute on function public.profile_reviews(uuid[]) to authenticated;
 
--- Deleting removes what the event says, not that it happened. With nobody
+-- Deleting removes what the job says, not that it happened. With nobody
 -- involved there is no history to keep, so the row goes. Whoever is still
--- counting on an upcoming event hears it is off.
-create or replace function public.retire_event(p_event_id uuid)
+-- counting on an upcoming job hears it is off.
+create or replace function public.retire_job(p_job_id uuid)
 returns void
 language plpgsql
 security definer
@@ -1727,16 +1727,16 @@ declare
   v_title text;
 begin
   if not exists (
-    select 1 from public.applications where event_id = p_event_id
+    select 1 from public.applications where job_id = p_job_id
   ) then
-    delete from public.events where id = p_event_id;
+    delete from public.jobs where id = p_job_id;
     return;
   end if;
 
-  delete from public.notifications where event_id = p_event_id;
-  delete from public.event_pay where event_id = p_event_id;
+  delete from public.notifications where job_id = p_job_id;
+  delete from public.job_pay where job_id = p_job_id;
 
-  select title into v_title from public.events where id = p_event_id;
+  select title into v_title from public.jobs where id = p_job_id;
 
   perform public.notify_user(
     a.applicant_id,
@@ -1747,22 +1747,22 @@ begin
     v_title
   )
   from public.applications a
-  join public.events e on e.id = a.event_id
-  where a.event_id = p_event_id
+  join public.jobs e on e.id = a.job_id
+  where a.job_id = p_job_id
     and a.status in ('pending', 'shortlisted', 'selected')
-    and e.event_date >= current_date;
+    and e.job_date >= current_date;
 
-  update public.events
+  update public.jobs
   set deleted_at = now(),
       title = '',
       location = '',
       details = '{}'::jsonb,
       image_urls = '{}'
-  where id = p_event_id;
+  where id = p_job_id;
 end;
 $$;
 
-create or replace function public.delete_event(p_event_id uuid)
+create or replace function public.delete_job(p_job_id uuid)
 returns void
 language plpgsql
 security definer
@@ -1770,20 +1770,20 @@ set search_path = public
 as $$
 begin
   if not exists (
-    select 1 from public.events
-    where id = p_event_id
+    select 1 from public.jobs
+    where id = p_job_id
       and sender_id = auth.uid()
       and deleted_at is null
       and public.is_active_profile(auth.uid())
   ) then
-    raise exception 'Only the event owner can delete this event.';
+    raise exception 'Only the job owner can delete this job.';
   end if;
 
-  perform public.retire_event(p_event_id);
+  perform public.retire_job(p_job_id);
 end;
 $$;
 
-grant execute on function public.delete_event(uuid) to authenticated;
+grant execute on function public.delete_job(uuid) to authenticated;
 
 -- Deactivating takes a user out of what is still undecided or ahead. Only a
 -- winner abandoning a job counts against them: the other withdrawals were not
@@ -1806,21 +1806,21 @@ begin
         withdrawn_from = 'selected',
         withdrawn_at = now(),
         status_before_assign = null
-    from public.events e
-    where e.id = a.event_id
+    from public.jobs e
+    where e.id = a.job_id
       and a.applicant_id = p_user_id
       and a.status = 'selected'
       and e.deleted_at is null
-      and e.event_date >= current_date
+      and e.job_date >= current_date
       and not exists (
         select 1 from public.job_reviews r where r.application_id = a.id
       )
-    returning e.id as event_id, e.sender_id
+    returning e.id as job_id, e.sender_id
   loop
     perform public.notify_user(
       v_abandoned.sender_id,
       'application_withdrawn',
-      v_abandoned.event_id,
+      v_abandoned.job_id,
       null,
       (select full_name from public.profiles where id = p_user_id)
     );
@@ -1835,8 +1835,8 @@ begin
 
   perform set_config('vaitu.withdrawing', 'off', true);
 
-  perform public.retire_event(id)
-  from public.events
+  perform public.retire_job(id)
+  from public.jobs
   where sender_id = p_user_id
     and status = 'open'
     and deleted_at is null;
@@ -2028,8 +2028,8 @@ $$;
 create table public.reports (
   id uuid primary key default gen_random_uuid(),
   reporter_id uuid references public.profiles (id) on delete set null,
-  target_type text not null check (target_type in ('event', 'user', 'review')),
-  event_id uuid references public.events (id) on delete set null,
+  target_type text not null check (target_type in ('job', 'user', 'review')),
+  job_id uuid references public.jobs (id) on delete set null,
   reported_user_id uuid references public.profiles (id) on delete set null,
   application_id uuid references public.applications (id) on delete set null,
   reason text not null
@@ -2084,8 +2084,8 @@ begin
   set status = 'withdrawn',
       withdrawn_at = now(),
       status_before_assign = null
-  from public.events e
-  where e.id = a.event_id
+  from public.jobs e
+  where e.id = a.job_id
     and e.status = 'open'
     and a.status in ('pending', 'shortlisted')
     and (
@@ -2127,8 +2127,8 @@ begin
   where applicant_id = old.id;
   perform set_config('vaitu.withdrawing', 'off', true);
 
-  perform public.retire_event(id)
-  from public.events
+  perform public.retire_job(id)
+  from public.jobs
   where sender_id = old.id
     and deleted_at is null;
 
@@ -2246,11 +2246,11 @@ insert into public.app_versions (platform, min_build, store_url) values
 
 -- Public buckets serve files by URL with no policy: select policies only decide
 -- who can list, so nobody lists another user's folder. Calendars stay private
--- and go out as expiring links: they outlive the event they describe.
+-- and go out as expiring links: they outlive the job they describe.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
-  ('event-ics', 'event-ics', false, 64 * 1024, array['text/calendar']),
-  ('event-images', 'event-images', true, 5 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
+  ('job-ics', 'job-ics', false, 64 * 1024, array['text/calendar']),
+  ('job-images', 'job-images', true, 5 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
   ('avatars', 'avatars', true, 2 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do update
 set public = excluded.public,
@@ -2260,57 +2260,57 @@ set public = excluded.public,
 create policy "Users can list their own ics"
   on storage.objects for select to authenticated
   using (
-    bucket_id = 'event-ics'
+    bucket_id = 'job-ics'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
 create policy "Users can upload their own ics"
   on storage.objects for insert to authenticated
   with check (
-    bucket_id = 'event-ics'
+    bucket_id = 'job-ics'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
 create policy "Users can update their own ics"
   on storage.objects for update to authenticated
   using (
-    bucket_id = 'event-ics'
+    bucket_id = 'job-ics'
     and split_part(name, '/', 1) = auth.uid()::text
   )
   with check (
-    bucket_id = 'event-ics'
+    bucket_id = 'job-ics'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can list their own event images"
+create policy "Senders can list their own job images"
   on storage.objects for select to authenticated
   using (
-    bucket_id = 'event-images'
+    bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can upload event images"
+create policy "Senders can upload job images"
   on storage.objects for insert to authenticated
   with check (
-    bucket_id = 'event-images'
+    bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can update own event images"
+create policy "Senders can update own job images"
   on storage.objects for update to authenticated
   using (
-    bucket_id = 'event-images'
+    bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   )
   with check (
-    bucket_id = 'event-images'
+    bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can delete own event images"
+create policy "Senders can delete own job images"
   on storage.objects for delete to authenticated
   using (
-    bucket_id = 'event-images'
+    bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
@@ -2348,5 +2348,5 @@ create policy "Users can delete own avatar"
 
 
 alter publication supabase_realtime add table public.applications;
-alter publication supabase_realtime add table public.events;
+alter publication supabase_realtime add table public.jobs;
 alter publication supabase_realtime add table public.notifications;

@@ -14,8 +14,8 @@ export function emptyReview() {
   }
 }
 
-export function isReviewDue(item, eventDate) {
+export function isReviewDue(item, jobDate) {
   if (item.status !== "selected" || item.job_reviews) return false
   const today = new Date().toISOString().slice(FIRST_INDEX, DATE_ISO_LENGTH)
-  return eventDate <= today
+  return jobDate <= today
 }

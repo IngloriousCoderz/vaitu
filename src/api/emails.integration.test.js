@@ -3,8 +3,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
   ANTONY,
-  createEventAs,
-  deleteOwnedEvent,
+  createJobAs,
+  deleteOwnedJob,
   GIADA,
   localServiceRoleKey,
   readAsService,
@@ -33,14 +33,14 @@ async function currentUserId() {
   return user.id
 }
 
-async function notificationOf(eventId) {
-  const rows = await readAsService("notifications", "event_id", eventId)
+async function notificationOf(jobId) {
+  const rows = await readAsService("notifications", "job_id", jobId)
   return rows.find((row) => row.type === "application_received")
 }
 
 describe("notification emails", () => {
   let organizerId = null
-  const eventIds = []
+  const jobIds = []
 
   // Skipped emails count on the local stack too, and would use up the day's.
   beforeAll(() => updateAsService("email_budget", "day", today(), { sent: 0 }))
@@ -51,22 +51,22 @@ describe("notification emails", () => {
         muted_email_types: [],
       })
     }
-    for (const id of eventIds) await deleteOwnedEvent(id)
+    for (const id of jobIds) await deleteOwnedJob(id)
     await signOut()
   }, TEST_TIMEOUT_MS)
 
   async function applied() {
-    const eventId = await createEventAs(ANTONY, crypto.randomUUID())
-    eventIds.push(eventId)
+    const jobId = await createJobAs(ANTONY, crypto.randomUUID())
+    jobIds.push(jobId)
     organizerId = await currentUserId()
     await signIn(GIADA)
     const { error } = await supabase.from("applications").insert({
-      event_id: eventId,
+      job_id: jobId,
       applicant_id: await currentUserId(),
       motivation: "Available",
     })
     expect(error).toBeNull()
-    return eventId
+    return jobId
   }
 
   test(
@@ -110,15 +110,15 @@ describe("notification emails", () => {
       })
 
       const stop = await fetch(
-        `${FUNCTIONS}/email-unsubscribe?token=${token}&type=event_closed`,
+        `${FUNCTIONS}/email-unsubscribe?token=${token}&type=job_closed`,
         { method: "POST", body: "List-Unsubscribe=One-Click" },
       )
       expect(stop.ok).toBe(true)
       const { muted_email_types } = await profileOf(organizerId)
-      expect(muted_email_types).toEqual(["event_closed"])
+      expect(muted_email_types).toEqual(["job_closed"])
 
       const forged = await fetch(
-        `${FUNCTIONS}/email-unsubscribe?token=nope&type=event_closed`,
+        `${FUNCTIONS}/email-unsubscribe?token=nope&type=job_closed`,
         { method: "POST" },
       )
       expect(forged.status).toBe(STATUS_NOT_FOUND)
@@ -128,7 +128,7 @@ describe("notification emails", () => {
       )
       expect(scanner.ok).toBe(false)
       expect((await profileOf(organizerId)).muted_email_types).toEqual([
-        "event_closed",
+        "job_closed",
       ])
     },
     TEST_TIMEOUT_MS,

@@ -87,7 +87,7 @@ describe("Notifications.load", () => {
     Notifications.create(entity)
     fetchMyNotifications.mockResolvedValue([
       notification(),
-      notification({ id: "n2", is_read: true, type: "event_closed" }),
+      notification({ id: "n2", is_read: true, type: "job_closed" }),
     ])
 
     Notifications.load(entity, undefined, makeApi(entity))
@@ -177,10 +177,7 @@ describe("Notifications.readAll", () => {
   it("empties the badge in one go", () => {
     const entity = {
       id: "notifications",
-      items: [
-        notification(),
-        notification({ id: "n2", type: "event_updated" }),
-      ],
+      items: [notification(), notification({ id: "n2", type: "job_updated" })],
       unread: 2,
       status: "ready",
     }
@@ -227,22 +224,22 @@ describe("Notifications.sessionEnd", () => {
 })
 
 describe("pathFor", () => {
-  it("a received application visits the review page while the event is open", () => {
-    expect(pathFor(notification({ event_status: "open" }))).toBe(
-      "/events/e1/applications",
+  it("a received application visits the review page while the job is open", () => {
+    expect(pathFor(notification({ job_status: "open" }))).toBe(
+      "/jobs/e1/applications",
     )
   })
 
-  it("a received application on a closed event visits the event itself", () => {
-    expect(pathFor(notification({ event_status: "closed" }))).toBe("/events/e1")
+  it("a received application on a closed job visits the job itself", () => {
+    expect(pathFor(notification({ job_status: "closed" }))).toBe("/jobs/e1")
   })
 
-  it("a withdrawal visits the event's received applications", () => {
+  it("a withdrawal visits the job's received applications", () => {
     const withdrawn = { type: "application_withdrawn", application_id: null }
-    expect(pathFor(notification(withdrawn))).toBe("/events/e1/applications")
-    expect(
-      pathFor(notification({ ...withdrawn, event_status: "closed" })),
-    ).toBe("/events/e1")
+    expect(pathFor(notification(withdrawn))).toBe("/jobs/e1/applications")
+    expect(pathFor(notification({ ...withdrawn, job_status: "closed" }))).toBe(
+      "/jobs/e1",
+    )
   })
 
   it("a decided application visits the application detail", () => {
@@ -251,20 +248,20 @@ describe("pathFor", () => {
     )
     expect(
       pathFor(
-        notification({ type: "application_rejected", event_status: "open" }),
+        notification({ type: "application_rejected", job_status: "open" }),
       ),
     ).toBe("/applications/a1")
   })
 
-  it("everything about an event lands on the event", () => {
-    expect(pathFor(notification({ type: "event_updated" }))).toBe("/events/e1")
-    expect(pathFor(notification({ type: "event_closed" }))).toBe("/events/e1")
+  it("everything about a job lands on the job", () => {
+    expect(pathFor(notification({ type: "job_updated" }))).toBe("/jobs/e1")
+    expect(pathFor(notification({ type: "job_closed" }))).toBe("/jobs/e1")
   })
 
   it("a row whose subject is gone falls back to the lists", () => {
     expect(
-      pathFor(notification({ type: "application_received", event_id: null })),
-    ).toBe("/events")
+      pathFor(notification({ type: "application_received", job_id: null })),
+    ).toBe("/jobs")
     expect(
       pathFor(
         notification({ type: "application_selected", application_id: null }),
@@ -279,7 +276,7 @@ describe("NotificationsPanel.render", () => {
       id: "notifications",
       items: [
         notification(),
-        notification({ id: "n2", is_read: true, type: "event_updated" }),
+        notification({ id: "n2", is_read: true, type: "job_updated" }),
       ],
       unread: 1,
       status: "ready",
@@ -320,10 +317,10 @@ function notification(over = {}) {
     type: "application_received",
     is_read: false,
     created_at: new Date().toISOString(),
-    event_id: "e1",
+    job_id: "e1",
     application_id: "a1",
-    event_title: "The Marchetti wedding",
-    event_status: "open",
+    job_title: "The Marchetti wedding",
+    job_status: "open",
     applicant_name: "Test Sender",
     ...over,
   }

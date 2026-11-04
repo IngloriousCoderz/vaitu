@@ -1,13 +1,13 @@
 # Voice AI (transcription + field parsing)
 
-Voice-to-form records a message on the event form, turns it into text, and
+Voice-to-form records a message on the job form, turns it into text, and
 fills the fields from the text. Two [edge functions](edge-functions.md) do the
 work, each backed by an external provider.
 
-| Step                      | Provider   | Function           | Model                       |
-| ------------------------- | ---------- | ------------------ | --------------------------- |
-| Speech-to-text            | Deepgram   | `transcribe-audio` | `nova-3`                    |
-| Transcript → event fields | OpenRouter | `parse-event`      | The free models in `MODELS` |
+| Step                    | Provider   | Function           | Model                       |
+| ----------------------- | ---------- | ------------------ | --------------------------- |
+| Speech-to-text          | Deepgram   | `transcribe-audio` | `nova-3`                    |
+| Transcript → job fields | OpenRouter | `parse-job`        | The free models in `MODELS` |
 
 The app sends its language with the recording. Deepgram is told that language,
 which gets names right more often than detecting it does. Arabic and anything
@@ -17,11 +17,11 @@ the app's may get a poor transcript.
 
 ## One schema, every job type
 
-`parse-event/schema.ts` holds the fields each category has: a wedding has
+`parse-job/schema.ts` holds the fields each category has: a wedding has
 spouses and a style, a festival or concert a name, a headliner and a genre, and an
 apartment, house or office job a title and nothing else. The app sends the job
 type the form is on and those it offers. The model keeps the first unless the
-message clearly describes another of them, and `toEventFields` drops anything
+message clearly describes another of them, and `toJobFields` drops anything
 that isn't a valid value for the result, whatever the model answered:
 
 ```json
@@ -31,7 +31,7 @@ that isn't a valid value for the result, whatever the model answered:
   "location": "Parco Sempione",
   "country": "Italy",
   "region": "Lombardy",
-  "event_date": "2027-07-03",
+  "job_date": "2027-07-03",
   "details": { "headliner": "Ada", "genre": "techno" },
   "pay": {
     "kind": "fixed",
@@ -43,12 +43,12 @@ that isn't a valid value for the result, whatever the model answered:
 ```
 
 For property jobs the prompt asks for a neighborhood or town instead of a street
-address, since events are public. That rests on the model, so the form's hint
+address, since jobs are public. That rests on the model, so the form's hint
 says the same.
 
 The schema is a copy of the taxonomy and the create form, because a function
 can't import app code. When you add a job type, a style or a form field,
-`src/views/event-create/parse-event.test.js` fails until the copy follows.
+`src/views/job-create/parse-job.test.js` fails until the copy follows.
 
 ## Keys
 
@@ -86,7 +86,7 @@ set `ALERT_FROM`, such as `Vaitu <alerts@vaitu.net>`.
 - `401 INVALID_AUTH from Deepgram` → the key itself is bad: regenerate
   it in the Deepgram console (copy the full value, no spaces, no quotes)
   and replace it.
-- Free OpenRouter models rotate and rate-limit. `parse-event` lists several in
+- Free OpenRouter models rotate and rate-limit. `parse-job` lists several in
   `MODELS`, and OpenRouter moves down the list when one fails. If they all fail
   (`404` or `429`), update the list from `openrouter.ai/api/v1/models`.
 

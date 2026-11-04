@@ -29,11 +29,11 @@ await page.route("**/auth/v1/**", (route) =>
 
 for (const guarded of [
   "/",
-  "/events",
-  "/events/abc",
-  "/events/new",
-  "/events/abc/edit",
-  "/events/abc/applications",
+  "/jobs",
+  "/jobs/abc",
+  "/jobs/new",
+  "/jobs/abc/edit",
+  "/jobs/abc/applications",
   "/applications",
   "/applications/xyz",
   "/profile",

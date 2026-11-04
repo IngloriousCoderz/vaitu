@@ -13,9 +13,9 @@ const TYPES = [
   "application_selected",
   "application_rejected",
   "application_withdrawn",
-  "event_updated",
-  "event_closed",
-  "new_event",
+  "job_updated",
+  "job_closed",
+  "new_job",
   "job_outcome_due",
   "job_reviewed",
   "job_cancelled",
@@ -29,10 +29,10 @@ const TYPES = [
 function notification(fields = {}) {
   return {
     type: "application_received",
-    event_id: "e1",
+    job_id: "e1",
     application_id: "a1",
-    event_title: "Ada & Ben",
-    event_status: "open",
+    job_title: "Ada & Ben",
+    job_status: "open",
     applicant_name: "Carla",
     ...fields,
   }
@@ -52,8 +52,8 @@ describe("push-notify's copies", () => {
   it.each(TYPES)("lands a %s push where the feed's row lands", (type) => {
     for (const fields of [
       { type },
-      { type, event_status: "closed" },
-      { type, event_id: null },
+      { type, job_status: "closed" },
+      { type, job_id: null },
       { type, application_id: null },
     ]) {
       const item = notification(fields)
@@ -67,7 +67,7 @@ describe("messageFor", () => {
     expect(messageFor(notification(), "it")).toEqual({
       title: "Vaitu",
       body: "Carla ha inviato una candidatura per Ada & Ben!",
-      url: "/events/e1/applications",
+      url: "/jobs/e1/applications",
     })
   })
 

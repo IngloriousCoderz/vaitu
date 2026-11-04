@@ -19,7 +19,7 @@ ready.then(() => {
   document.getElementById("boot-splash")?.remove()
 })
 
-store.notify("#eventList:load")
+store.notify("#jobList:load")
 
 function trackSession(session) {
   if (session) {

@@ -9,7 +9,7 @@ import {
   signUp,
 } from "../testing/index.js"
 import { supabase } from "./client.js"
-import { fetchMyFeedDefaults } from "./events.js"
+import { fetchMyFeedDefaults } from "./jobs.js"
 
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 

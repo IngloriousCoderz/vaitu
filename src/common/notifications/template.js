@@ -24,9 +24,9 @@ const INBOX_ICONS = {
   application_selected: personCheckOutline,
   application_rejected: personRemoveOutline,
   application_withdrawn: personCancelOutline,
-  event_updated: eventOutline,
-  event_closed: eventOutline,
-  new_event: fiberNewOutline,
+  job_updated: eventOutline,
+  job_closed: eventOutline,
+  new_job: fiberNewOutline,
   job_outcome_due: reviewsOutline,
   job_reviewed: reviewsOutline,
   job_cancelled: eventOutline,
@@ -187,7 +187,7 @@ function renderFeedItem({ item, onOpenRow, index }) {
 }
 
 function feedLine(item) {
-  const title = item.event_title ?? ""
+  const title = item.job_title ?? ""
   switch (item.type) {
     case "application_received":
       return t("notifications.types.applicationReceived", {
@@ -203,10 +203,10 @@ function feedLine(item) {
         name: item.applicant_name ?? t("common.deletedUser"),
         title,
       })
-    case "event_closed":
-      return t("notifications.types.eventClosed", { title })
-    case "new_event":
-      return t("notifications.types.newEvent", { title })
+    case "job_closed":
+      return t("notifications.types.jobClosed", { title })
+    case "new_job":
+      return t("notifications.types.newJob", { title })
     case "job_outcome_due":
       return t("notifications.types.jobOutcomeDue", { title })
     case "job_reviewed":
@@ -224,7 +224,7 @@ function feedLine(item) {
     case "settlement_contested":
       return t("notifications.types.settlementContested", { title })
     default:
-      return t("notifications.types.eventUpdated", { title })
+      return t("notifications.types.jobUpdated", { title })
   }
 }
 

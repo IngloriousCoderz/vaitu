@@ -15,7 +15,7 @@ export const ANALYTICS_CONSENT_KEY = "vaitu-analytics-consent"
 export const MIN_PASSWORD_LENGTH = 10
 export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5
-export const DEFAULT_EVENT_CATEGORY = "wedding"
+export const DEFAULT_JOB_CATEGORY = "wedding"
 export const CLOSING_MAX_DAYS = 1
 export const DATE_PAD_LENGTH = 2
 export const WEEK_DAYS = 7
@@ -70,7 +70,7 @@ export const AUDIO_MAX_SECONDS = 120
 export const CAPTCHA_ELEMENT_ID = "captcha"
 // transcribe-audio refuses more than MAX_AUDIO_BYTES, which this keeps clear of.
 export const AUDIO_BITS_PER_SECOND = 64000
-export const MAX_EVENT_IMAGES = 6
+export const MAX_JOB_IMAGES = 6
 export const IMAGE_MAX_BYTES = 5242880
 export const MIN_PHOTOS_TO_NAVIGATE = 2
 export const COVER_ASPECT_WIDTH = 21

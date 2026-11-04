@@ -58,8 +58,8 @@ instead of a new file. `db push` skips that file, so run the equivalent SQL once
 on production, in the dashboard's SQL Editor:
 
 ```sql
-alter table public.events drop constraint events_category_check;
-alter table public.events add constraint events_category_check
+alter table public.jobs drop constraint jobs_category_check;
+alter table public.jobs add constraint jobs_category_check
   check (category in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office'));
 ```
 
@@ -144,10 +144,10 @@ is off in Supabase.
 
 `VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
 "Job type missing?" link is hidden. To add a job type, extend
-`SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and its copy in
-`supabase/functions/parse-event/schema.ts`, and translate its `taxonomy.jobType`
+`SETTINGS_BY_PROFESSION` in `src/data/job-taxonomy.js` and its copy in
+`supabase/functions/parse-job/schema.ts`, and translate its `taxonomy.jobType`
 label in every locale. No schema change is needed unless the job type brings a
-new category: `events_category_check` lists them all, as described in
+new category: `jobs_category_check` lists them all, as described in
 [Small schema changes](#small-schema-changes).
 
 ```bash

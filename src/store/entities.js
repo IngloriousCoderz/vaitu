@@ -3,11 +3,11 @@ import {
   availableJobTypes,
   musicGenres,
   weddingStyles,
-} from "../data/event-taxonomy.js"
+} from "../data/job-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 import { favoriteRegionOptions, regionOption } from "../data/regions/resolve.js"
 import { languages } from "../i18n/index.js"
-import { DEFAULT_SORT, sorts } from "../views/event-list/helpers.js"
+import { DEFAULT_SORT, sorts } from "../views/job-list/helpers.js"
 
 const countryOptions = countries.map((country) => ({
   value: country,
@@ -38,28 +38,28 @@ export const entities = {
     isFullWidth: true,
     size: "md",
     options: languages,
-    changeEvent: "#i18n:localeChange",
+    changeJob: "#i18n:localeChange",
   },
   countryOnboarding: countrySelect("onboarding", "fieldSet"),
   countryProfile: countrySelect("profile", "fieldSet", {
     label: "fields.country",
   }),
-  countryCreate: countrySelect("eventCreate", "fieldSet", {
+  countryCreate: countrySelect("jobCreate", "fieldSet", {
     label: "fields.country",
     isRequired: true,
   }),
-  regionCreate: regionSelect("eventCreate", "fieldSet", {
+  regionCreate: regionSelect("jobCreate", "fieldSet", {
     label: "fields.region",
     isRequired: true,
   }),
   jobTypeCreate: {
-    ...jobTypeSelect("eventCreate", "jobTypeSelect"),
+    ...jobTypeSelect("jobCreate", "jobTypeSelect"),
     label: "fields.jobType",
     isRequired: true,
   },
   jobTypesOnboarding: jobTypesSelect("onboarding", "fields.jobTypes"),
   jobTypesPreferences: jobTypesSelect("preferences", "fields.jobTypes"),
-  jobTypesFilter: jobTypesSelect("eventList"),
+  jobTypesFilter: jobTypesSelect("jobList"),
   styleCreate: detailSelect("style", weddingStyles, "fields.style"),
   genreCreate: detailSelect("genre", musicGenres, "fields.genre"),
   favoriteRegionOnboarding: favoriteRegionsSelect(
@@ -72,9 +72,9 @@ export const entities = {
     "favoriteRegionsSet",
     "preferences.favoriteRegions",
   ),
-  eventsOrderBy: {
+  jobsOrderBy: {
     type: "CountrySelect",
-    label: "events.orderBy",
+    label: "jobs.orderBy",
     selectedValue: DEFAULT_SORT,
     isMulti: false,
     isOpen: false,
@@ -90,11 +90,11 @@ export const entities = {
     isFullWidth: false,
     size: "sm",
     options: sorts,
-    changeEvent: "#eventList:sortSelect",
+    changeJob: "#jobList:sortSelect",
   },
 }
 
-function countrySelect(targetId, targetEvent, overrides = {}) {
+function countrySelect(targetId, targetJob, overrides = {}) {
   return {
     type: "CountrySelect",
     ...overrides,
@@ -114,12 +114,12 @@ function countrySelect(targetId, targetEvent, overrides = {}) {
     isFullWidth: true,
     size: "md",
     options: countryOptions,
-    changeEvent: `#${targetId}:${targetEvent}`,
+    changeJob: `#${targetId}:${targetJob}`,
     changePayload: { field: "country" },
   }
 }
 
-function regionSelect(targetId, targetEvent, overrides = {}) {
+function regionSelect(targetId, targetJob, overrides = {}) {
   return {
     type: "CountrySelect",
     ...overrides,
@@ -139,12 +139,12 @@ function regionSelect(targetId, targetEvent, overrides = {}) {
     isFullWidth: true,
     size: "md",
     options: regionOptions,
-    changeEvent: `#${targetId}:${targetEvent}`,
+    changeJob: `#${targetId}:${targetJob}`,
     changePayload: { field: "region" },
   }
 }
 
-function jobTypeSelect(targetId, targetEvent) {
+function jobTypeSelect(targetId, targetJob) {
   return {
     type: "CountrySelect",
     selectedValue: null,
@@ -162,7 +162,7 @@ function jobTypeSelect(targetId, targetEvent) {
     isFullWidth: true,
     size: "md",
     options: availableJobTypes,
-    changeEvent: `#${targetId}:${targetEvent}`,
+    changeJob: `#${targetId}:${targetJob}`,
     changePayload: { field: "job_type" },
   }
 }
@@ -196,14 +196,14 @@ function detailSelect(field, options, label) {
     isFullWidth: true,
     size: "md",
     options,
-    changeEvent: "#eventCreate:detailFieldSet",
+    changeJob: "#jobCreate:detailFieldSet",
     changePayload: { field },
   }
 }
 
-function favoriteRegionsSelect(targetId, targetEvent, label) {
+function favoriteRegionsSelect(targetId, targetJob, label) {
   return {
-    ...regionSelect(targetId, targetEvent, { label }),
+    ...regionSelect(targetId, targetJob, { label }),
     options: favoriteRegionOptions([]),
     selectedValue: [],
     isMulti: true,

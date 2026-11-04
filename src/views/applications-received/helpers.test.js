@@ -14,7 +14,7 @@ describe("isReviewDue", () => {
 
   const winner = { status: "selected", job_reviews: null }
 
-  it("waits for the event date, and includes the day itself", () => {
+  it("waits for the job date, and includes the day itself", () => {
     expect(isReviewDue(winner, "2027-06-11")).toBe(false)
     expect(isReviewDue(winner, "2027-06-10")).toBe(true)
     expect(isReviewDue(winner, "2027-06-09")).toBe(true)

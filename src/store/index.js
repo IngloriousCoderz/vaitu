@@ -20,11 +20,11 @@ import { ApplicationList } from "../views/application-list/index.js"
 import { ApplicationsReceived } from "../views/applications-received/index.js"
 import { Authentication } from "../views/authentication/index.js"
 import { EraseAccount } from "../views/erase-account/index.js"
-import { CoverCropper } from "../views/event-create/cover-cropper.js"
-import { EventCreate } from "../views/event-create/index.js"
-import { EventDetail } from "../views/event-detail/index.js"
-import { EventList } from "../views/event-list/index.js"
-import { MyEvents } from "../views/my-events/index.js"
+import { CoverCropper } from "../views/job-create/cover-cropper.js"
+import { JobCreate } from "../views/job-create/index.js"
+import { JobDetail } from "../views/job-detail/index.js"
+import { JobList } from "../views/job-list/index.js"
+import { MyJobs } from "../views/my-jobs/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
 import { Preferences } from "../views/preferences/index.js"
@@ -44,22 +44,22 @@ export const store = createStore({
     Shell,
     I18n,
     Authentication,
-    EventList: [EventList, liveAlways(["events", "applications"])],
-    MyEvents: [MyEvents, livePage(["events", "applications"])],
-    EventDetail: [EventDetail, livePage(["events"], (e) => e.event_id)],
-    ApplicationList: [ApplicationList, livePage(["applications", "events"])],
+    JobList: [JobList, liveAlways(["jobs", "applications"])],
+    MyJobs: [MyJobs, livePage(["jobs", "applications"])],
+    JobDetail: [JobDetail, livePage(["jobs"], (e) => e.job_id)],
+    ApplicationList: [ApplicationList, livePage(["applications", "jobs"])],
     ApplicationDetail: [
       ApplicationDetail,
-      livePage(["applications", "events"], (e) => e.application_id),
+      livePage(["applications", "jobs"], (e) => e.application_id),
     ],
     ApplicationsReceived: [
       ApplicationsReceived,
-      livePage(["applications", "events"], (e) => e.event_id),
+      livePage(["applications", "jobs"], (e) => e.job_id),
     ],
     Profile: [Profile, livePage(["applications"])],
     Notifications: [Notifications, liveSession(["notifications"])],
 
-    EventCreate,
+    JobCreate,
     CoverCropper,
     CountrySelect,
     LanguageSelect,

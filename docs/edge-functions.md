@@ -3,17 +3,17 @@
 Server-side code that needs the service role or a third-party key lives in
 `supabase/functions/`, one folder per function. They run on Deno, not Node.
 
-| Function             | Called from             | Caller                | Does                                                            |
-| -------------------- | ----------------------- | --------------------- | --------------------------------------------------------------- |
-| `check-email`        | Login/signup routing    | Anyone (rate-limited) | Says whether an account exists for an email                     |
-| `deactivate-account` | Profile → deactivate    | Logged-in user        | Deactivates the caller, drops their applications/open events    |
-| `erase-account`      | Profile, erasure email  | User or link holder   | Erases the account and what it holds                            |
-| `report-content`     | Report buttons          | Logged-in user        | Files a report and emails the owner                             |
-| `transcribe-audio`   | Event form, voice input | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](voice-ai.md)) |
-| `parse-event`        | Event form, voice input | Logged-in user        | Transcript → event fields ([Voice AI](voice-ai.md))             |
-| `push-notify`        | A database trigger      | The database only     | Sends a new notification ([Notifications](notifications.md))    |
-| `send-emails`        | `pg_cron`               | The database only     | Emails what's waiting ([Notifications](notifications.md))       |
-| `email-unsubscribe`  | Email links, mail apps  | Anyone with a token   | Turns off a type of email ([Notifications](notifications.md))   |
+| Function             | Called from            | Caller                | Does                                                            |
+| -------------------- | ---------------------- | --------------------- | --------------------------------------------------------------- |
+| `check-email`        | Login/signup routing   | Anyone (rate-limited) | Says whether an account exists for an email                     |
+| `deactivate-account` | Profile → deactivate   | Logged-in user        | Deactivates the caller, drops their applications/open jobs      |
+| `erase-account`      | Profile, erasure email | User or link holder   | Erases the account and what it holds                            |
+| `report-content`     | Report buttons         | Logged-in user        | Files a report and emails the owner                             |
+| `transcribe-audio`   | Job form, voice input  | Logged-in user        | Speech-to-text of the caller's upload ([Voice AI](voice-ai.md)) |
+| `parse-job`          | Job form, voice input  | Logged-in user        | Transcript → job fields ([Voice AI](voice-ai.md))               |
+| `push-notify`        | A database trigger     | The database only     | Sends a new notification ([Notifications](notifications.md))    |
+| `send-emails`        | `pg_cron`              | The database only     | Emails what's waiting ([Notifications](notifications.md))       |
+| `email-unsubscribe`  | Email links, mail apps | Anyone with a token   | Turns off a type of email ([Notifications](notifications.md))   |
 
 ```
 supabase/functions/

@@ -3,8 +3,8 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
   ANTONY,
-  createEventAs,
-  deleteOwnedEvent,
+  createJobAs,
+  deleteOwnedJob,
   GIADA,
   signIn,
   signOut,
@@ -20,20 +20,20 @@ const MOTIVATION = "Available the whole weekend"
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
 
 describe("notifications feed", () => {
-  let eventId = null
+  let jobId = null
   let applicationId = null
 
-  let rejectedEventId = null
+  let rejectedJobId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(ANTONY, crypto.randomUUID())
-    applicationId = await applyAsSender(eventId)
+    jobId = await createJobAs(ANTONY, crypto.randomUUID())
+    applicationId = await applyAsSender(jobId)
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
     await signOut()
-    if (eventId) await deleteOwnedEvent(eventId)
-    if (rejectedEventId) await deleteOwnedEvent(rejectedEventId)
+    if (jobId) await deleteOwnedJob(jobId)
+    if (rejectedJobId) await deleteOwnedJob(rejectedJobId)
   })
 
   test(
@@ -42,11 +42,10 @@ describe("notifications feed", () => {
       await signIn(ANTONY)
       const items = await fetchMyNotifications()
       const received = items.find(
-        (item) =>
-          item.type === "application_received" && item.event_id === eventId,
+        (item) => item.type === "application_received" && item.job_id === jobId,
       )
       expect(received).toBeTruthy()
-      expect(received.event_id).toBe(eventId)
+      expect(received.job_id).toBe(jobId)
       expect(received.application_id).toBe(applicationId)
       expect(received.is_read).toBe(false)
       expect(received.applicant_name).toBeTruthy()
@@ -83,7 +82,7 @@ describe("notifications feed", () => {
         .eq("id", applicationId)
       if (shortlistError) throw shortlistError
       const { error: winnerError } = await supabase.rpc("assign_winner", {
-        p_event_id: eventId,
+        p_job_id: jobId,
         p_application_id: applicationId,
       })
       if (winnerError) throw winnerError
@@ -103,7 +102,7 @@ describe("notifications feed", () => {
       await signIn(GIADA)
       const before = await fetchMyNotifications()
       const unreadRows = before.filter(
-        (item) => !item.is_read && item.event_id === eventId,
+        (item) => !item.is_read && item.job_id === jobId,
       )
       expect(unreadRows.length).toBeGreaterThan(0)
 
@@ -173,7 +172,7 @@ describe("notifications feed", () => {
       await signIn(GIADA)
       const { error } = await supabase.rpc("notify_user", {
         p_user: user.id,
-        p_type: "event_closed",
+        p_type: "job_closed",
       })
       expect(error?.message).toContain("permission denied")
     },
@@ -181,18 +180,18 @@ describe("notifications feed", () => {
   )
 
   test(
-    "editing the event notifies the live applicants",
+    "editing the job notifies the live applicants",
     async () => {
       await signIn(ANTONY)
       const { error: editError } = await supabase
-        .from("events")
+        .from("jobs")
         .update({ details: "Updated for the notifications test." })
-        .eq("id", eventId)
+        .eq("id", jobId)
       if (editError) throw editError
 
       await signIn(GIADA)
       const items = await fetchMyNotifications()
-      expect(items.some((item) => item.type === "event_updated")).toBe(true)
+      expect(items.some((item) => item.type === "job_updated")).toBe(true)
     },
     TEST_TIMEOUT_MS,
   )
@@ -200,8 +199,8 @@ describe("notifications feed", () => {
   test(
     "rejecting notifies the applicant too",
     async () => {
-      rejectedEventId = await createEventAs(ANTONY, crypto.randomUUID())
-      const rejectedId = await applyAsSender(rejectedEventId)
+      rejectedJobId = await createJobAs(ANTONY, crypto.randomUUID())
+      const rejectedId = await applyAsSender(rejectedJobId)
       await signIn(ANTONY)
       const { error: rejectError } = await supabase
         .from("applications")
@@ -220,19 +219,19 @@ describe("notifications feed", () => {
 })
 
 describe("withdrawal notification", () => {
-  let eventId = null
+  let jobId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(ANTONY, crypto.randomUUID())
+    jobId = await createJobAs(ANTONY, crypto.randomUUID())
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
     await signOut()
-    if (eventId) await deleteOwnedEvent(eventId)
+    if (jobId) await deleteOwnedJob(jobId)
   })
 
   test(
-    "withdrawing tells the event's owner who withdrew",
+    "withdrawing tells the job's owner who withdrew",
     async () => {
       await signIn(GIADA)
       const {
@@ -242,7 +241,7 @@ describe("withdrawal notification", () => {
         supabase
           .from("applications")
           .insert({
-            event_id: eventId,
+            job_id: jobId,
             applicant_id: user.id,
             motivation: MOTIVATION,
           })
@@ -262,7 +261,7 @@ describe("withdrawal notification", () => {
       const items = await fetchMyNotifications()
       const row = items.find(
         (item) =>
-          item.type === "application_withdrawn" && item.event_id === eventId,
+          item.type === "application_withdrawn" && item.job_id === jobId,
       )
       expect(row).toBeTruthy()
       expect(row.application_id).toBeNull()
@@ -272,7 +271,7 @@ describe("withdrawal notification", () => {
   )
 })
 
-async function applyAsSender(eventId) {
+async function applyAsSender(jobId) {
   await signIn(GIADA)
   const {
     data: { user },
@@ -280,7 +279,7 @@ async function applyAsSender(eventId) {
   const { data, error } = await supabase
     .from("applications")
     .insert({
-      event_id: eventId,
+      job_id: jobId,
       applicant_id: user.id,
       motivation: MOTIVATION,
     })

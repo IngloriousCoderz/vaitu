@@ -3,7 +3,7 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { errorKey } from "../../api/errors.js"
-import { interestsFor, jobTypesFor } from "../../data/event-taxonomy.js"
+import { interestsFor, jobTypesFor } from "../../data/job-taxonomy.js"
 import {
   favoriteRegionOptions,
   uniqueRegions,
@@ -24,7 +24,7 @@ export function favoriteRegionsSet(entity, { value }, api) {
 
 export function favoriteOptionsSync(entity, _, api) {
   const favorites = [...getFieldValue(entity, "favorite_regions", [])]
-  const regions = api.getEntity("eventList")?.regions ?? []
+  const regions = api.getEntity("jobList")?.regions ?? []
   api.notify("#favoriteRegionOnboarding:valueSet", favorites)
   api.notify(
     "#favoriteRegionOnboarding:optionsSet",
@@ -133,7 +133,7 @@ export const save = handleAsync("save", {
     entity.status = "ready"
     api.notify("#authentication:onboardingFinish")
     api.notify("#profile:load")
-    api.notify("#eventList:load")
+    api.notify("#jobList:load")
   },
   error(entity, err) {
     entity.status = "error"

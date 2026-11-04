@@ -6,7 +6,7 @@ import { currentUser, json, serve } from "npm:@inglorious/supabase@^0.4.0/edge"
 import { sha256Hex } from "../_shared/erasure.ts"
 import { admin } from "../_shared/supabase.ts"
 
-const USER_BUCKETS = ["avatars", "event-images", "event-ics"]
+const USER_BUCKETS = ["avatars", "job-images", "job-ics"]
 const LIST_PAGE = 100
 
 // By the link in the deactivation email, which works signed out, or as the

@@ -13,7 +13,7 @@ import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
 const NAV = [
-  { id: "events", icon: eventOutline, tab: "events", label: "nav.events" },
+  { id: "jobs", icon: eventOutline, tab: "jobs", label: "nav.jobs" },
   {
     id: "applications",
     icon: assignmentOutline,
@@ -21,10 +21,10 @@ const NAV = [
     label: "nav.applications",
   },
   {
-    id: "myEvents",
+    id: "myJobs",
     icon: editCalendarOutline,
-    tab: "myEvents",
-    label: "nav.myEvents",
+    tab: "myJobs",
+    label: "nav.myJobs",
   },
   { id: "profile", icon: personOutline, tab: "profile", label: "nav.profile" },
   {

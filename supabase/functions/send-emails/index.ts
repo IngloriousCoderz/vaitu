@@ -28,7 +28,7 @@ const PAGE = 1000
 const STATUS_TOO_MANY_REQUESTS = 429
 
 const COLUMNS =
-  "id, user_id, type, created_at, is_read, event_id, application_id, applicant_name, event_title, events(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale, is_active, muted_email_types)"
+  "id, user_id, type, created_at, is_read, job_id, application_id, applicant_name, job_title, jobs(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale, is_active, muted_email_types)"
 
 serve(
   async (req) => {
@@ -132,7 +132,7 @@ async function mark(
 
 // deno-lint-ignore no-explicit-any
 function toPending(row: any): Pending {
-  const event = one(row.events)
+  const job = one(row.jobs)
   const recipient = one(row.recipient)
   return {
     id: row.id,
@@ -140,10 +140,10 @@ function toPending(row: any): Pending {
     type: row.type,
     created_at: row.created_at,
     is_read: row.is_read,
-    event_id: row.event_id,
+    job_id: row.job_id,
     application_id: row.application_id,
-    event_title: event?.title ?? row.event_title ?? null,
-    event_status: event?.status ?? null,
+    job_title: job?.title ?? row.job_title ?? null,
+    job_status: job?.status ?? null,
     applicant_name:
       one(one(row.applications)?.applicant)?.full_name ??
       row.applicant_name ??

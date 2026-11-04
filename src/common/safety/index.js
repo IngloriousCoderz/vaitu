@@ -46,14 +46,14 @@ const blockSend = handleAsync("blockSend", {
   success(entity, _, api) {
     entity.status = "idle"
     entity.isOpen = false
-    api.notify("#eventList:load")
+    api.notify("#jobList:load")
     const router = api.getEntity("router")
-    if (router.route === "eventDetail") {
-      api.notify("#router:navigate", paths.events)
+    if (router.route === "jobDetail") {
+      api.notify("#router:navigate", paths.jobs)
     }
     if (router.route === "applicationsReceived") {
-      const { event_id } = api.getEntity("applicationsReceived")
-      api.notify("#applicationsReceived:load", event_id)
+      const { job_id } = api.getEntity("applicationsReceived")
+      api.notify("#applicationsReceived:load", job_id)
     }
   },
   error(entity) {
@@ -78,7 +78,7 @@ export const Safety = {
 
   /**
    * @param {object} entity
-   * @param {{ type: "event" | "user" | "review", id: string, block_user_id?: string }} target
+   * @param {{ type: "job" | "user" | "review", id: string, block_user_id?: string }} target
    * @param {object} api
    */
   safetyOpen(entity, target, api) {

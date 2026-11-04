@@ -9,7 +9,7 @@ import { ErrorLabel } from "../../common/error-label/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
-import { professions } from "../../data/event-taxonomy.js"
+import { professions } from "../../data/job-taxonomy.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 

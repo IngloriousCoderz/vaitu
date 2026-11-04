@@ -30,10 +30,10 @@ function row(fields = {}) {
     is_active: true,
     muted_email_types: [],
     locale: "en",
-    event_id: "e1",
+    job_id: "e1",
     application_id: "a1",
-    event_title: "Ada & Ben",
-    event_status: "open",
+    job_title: "Ada & Ben",
+    job_status: "open",
     applicant_name: "Carla",
     ...fields,
   }
@@ -75,9 +75,7 @@ describe("which notifications get an email", () => {
       isDropped(row({ muted_email_types: ["application_received"] }), NOW),
     ).toBe(true)
     expect(isDropped(row({ muted_email_types: ["all"] }), NOW)).toBe(true)
-    expect(isDropped(row({ muted_email_types: ["new_event"] }), NOW)).toBe(
-      false,
-    )
+    expect(isDropped(row({ muted_email_types: ["new_job"] }), NOW)).toBe(false)
     expect(isDropped(row({ created_at: "2026-11-06T12:00:00Z" }), NOW)).toBe(
       true,
     )
@@ -90,19 +88,16 @@ describe("which notifications get an email", () => {
     )
 
     expect(isDue(row(), NOW)).toBe(true)
-    expect(isDue(row({ type: "new_event" }), NOW)).toBe(false)
+    expect(isDue(row({ type: "new_job" }), NOW)).toBe(false)
     expect(
-      isDue(
-        row({ type: "new_event", created_at: "2026-11-10T06:59:00Z" }),
-        NOW,
-      ),
+      isDue(row({ type: "new_job", created_at: "2026-11-10T06:59:00Z" }), NOW),
     ).toBe(true)
   })
 
   it("puts people waiting on more than a digest first", () => {
     const groups = byRecipient([
-      row({ id: "1", user_id: "digest", type: "new_event" }),
-      row({ id: "2", user_id: "both", type: "new_event" }),
+      row({ id: "1", user_id: "digest", type: "new_job" }),
+      row({ id: "2", user_id: "both", type: "new_job" }),
       row({ id: "3", user_id: "both" }),
     ])
     expect(groups.map((group) => group[0].user_id)).toEqual(["both", "digest"])
@@ -115,7 +110,7 @@ describe("compose", () => {
     const email = compose([row()], RECIPIENT, URLS)
     expect(email.to).toBe(RECIPIENT.email)
     expect(email.subject).toBe("Carla applied to Ada & Ben!")
-    expect(email.text).toContain("https://app.test/events/e1/applications")
+    expect(email.text).toContain("https://app.test/jobs/e1/applications")
     expect(email.text).toContain(
       "https://app.test/unsubscribe?token=tok&type=application_received&lang=en",
     )
@@ -129,7 +124,7 @@ describe("compose", () => {
 
   it("merges several updates, and offers to stop them all if they differ", () => {
     const email = compose(
-      [row(), row({ id: "n2", type: "event_closed" })],
+      [row(), row({ id: "n2", type: "job_closed" })],
       RECIPIENT,
       URLS,
     )
@@ -140,12 +135,12 @@ describe("compose", () => {
 
   it("keeps a big digest short", () => {
     const rows = Array.from({ length: 25 }, (_, id) =>
-      row({ id: String(id), type: "new_event" }),
+      row({ id: String(id), type: "new_job" }),
     )
     const email = compose(rows, RECIPIENT, URLS)
     expect(email.subject).toBe("25 updates from Vaitu")
     expect(email.text).toContain("…and 5 more in the app")
-    expect(email.text).toContain("type=new_event")
+    expect(email.text).toContain("type=new_job")
   })
 
   it("writes in the recipient's language, or else in English", () => {
@@ -160,15 +155,15 @@ describe("compose", () => {
 
 describe("muted lists", () => {
   it("lets one type go, or all of them", () => {
-    expect(isMuted([], "new_event")).toBe(false)
-    expect(isMuted(["new_event"], "new_event")).toBe(true)
-    expect(isMuted(["all"], "new_event")).toBe(true)
-    expect(isMuted(["new_event"], "event_closed")).toBe(false)
+    expect(isMuted([], "new_job")).toBe(false)
+    expect(isMuted(["new_job"], "new_job")).toBe(true)
+    expect(isMuted(["all"], "new_job")).toBe(true)
+    expect(isMuted(["new_job"], "job_closed")).toBe(false)
   })
 
   it("adds and removes without duplicates", () => {
     expect(withMuted([], "all", false)).toEqual(["all"])
-    expect(withMuted(["all", "new_event"], "all", true)).toEqual(["new_event"])
-    expect(withMuted(["new_event"], "new_event", false)).toEqual(["new_event"])
+    expect(withMuted(["all", "new_job"], "all", true)).toEqual(["new_job"])
+    expect(withMuted(["new_job"], "new_job", false)).toEqual(["new_job"])
   })
 })

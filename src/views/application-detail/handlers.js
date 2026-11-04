@@ -108,7 +108,7 @@ export const withdraw = handleAsync("withdraw", {
   success(entity, _, api) {
     entity.status = "ready"
     entity.isConfirmingWithdraw = false
-    api.notify("#eventList:load")
+    api.notify("#jobList:load")
     api.notify("#router:navigate", paths.applications)
   },
   error(entity, err) {

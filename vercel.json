@@ -1,4 +1,12 @@
 {
+  "redirects": [
+    { "source": "/events", "destination": "/jobs", "permanent": true },
+    {
+      "source": "/events/:path*",
+      "destination": "/jobs/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {

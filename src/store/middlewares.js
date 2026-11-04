@@ -5,17 +5,17 @@ import { WIDE_QUERY } from "../constants/index.js"
 
 // Tab bar order: a tab switch slides towards the tab that was tapped.
 const TAB_POSITIONS = {
-  eventList: 0,
+  jobList: 0,
   applicationList: 1,
   applicationDetail: 1,
-  myEvents: 2,
+  myJobs: 2,
   notifications: 3,
   profile: 4,
 }
 
 const SLIDING_ROUTES = new Set([
-  "eventDetail",
-  "eventCreate",
+  "jobDetail",
+  "jobCreate",
   "applicationsReceived",
   "applicationDetail",
   "ranks",

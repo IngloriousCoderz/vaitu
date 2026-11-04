@@ -13,7 +13,7 @@ import { admin } from "../_shared/supabase.ts"
 
 const REASONS = ["spam", "inappropriate", "fake", "harassment", "other"]
 const TARGET_COLUMNS: Record<string, string> = {
-  event: "event_id",
+  job: "job_id",
   user: "reported_user_id",
   review: "application_id",
 }
