@@ -89,7 +89,7 @@ describe("applying and choosing a winner", () => {
   test("the applicant cannot assign the winner", async () => {
     await signIn(GIADA)
     const { error } = await assignWinner(jobId, await applicationId(jobId))
-    expect(error.message).toContain("Only the job owner can assign a winner")
+    expect(error.message).toContain("Only the poster can assign a winner")
   })
 
   test("the owner assigns the winner", async () => {
@@ -206,7 +206,7 @@ describe("the shortlist after the winner withdraws", () => {
     await signOut()
   }, TEST_TIMEOUT_MS)
 
-  async function assignSender({ shortlistOther = true } = {}) {
+  async function assignPoster({ shortlistOther = true } = {}) {
     await signIn(GIADA)
     expect((await apply(jobId, MOTIVATION)).error).toBeNull()
 
@@ -223,7 +223,7 @@ describe("the shortlist after the winner withdraws", () => {
   test(
     "comes back as it was before the assignment",
     async () => {
-      const winnerId = await assignSender()
+      const winnerId = await assignPoster()
 
       await signIn(GIADA)
       await withdrawApplication(winnerId)
@@ -235,9 +235,9 @@ describe("the shortlist after the winner withdraws", () => {
   )
 
   test(
-    "keeps a rejection the sender made after the assignment",
+    "keeps a rejection the poster made after the assignment",
     async () => {
-      const winnerId = await assignSender({ shortlistOther: false })
+      const winnerId = await assignPoster({ shortlistOther: false })
       await setStatus(otherId, "pending")
       await setStatus(otherId, "rejected")
 
@@ -378,7 +378,7 @@ describe("the shortlist cap", () => {
 
       await signIn(GIADA)
       const {
-        data: { user: sender },
+        data: { user: poster },
       } = await supabase.auth.getUser()
       expect((await apply(jobId, MOTIVATION)).error).toBeNull()
 
@@ -389,7 +389,7 @@ describe("the shortlist cap", () => {
       const { error: firstError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
-        .eq("id", await applicationIdFor(jobId, sender.id))
+        .eq("id", await applicationIdFor(jobId, poster.id))
       expect(firstError).toBeNull()
 
       const { error: secondError } = await supabase

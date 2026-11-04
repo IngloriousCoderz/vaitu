@@ -18,7 +18,7 @@ type Locale = keyof typeof wording
 const FALLBACK_LOCALE: Locale = "en"
 const IMAGES_BUCKET = "job-images"
 
-// The sent applications are withdrawn, so organizers cannot pick someone who
+// The sent applications are withdrawn, so posters cannot pick someone who
 // left, and the open jobs are deleted. Past jobs with winners stay: they
 // are other users' points and history.
 serve(
@@ -30,14 +30,14 @@ serve(
     const { data: open, error: openError } = await db
       .from("jobs")
       .select("image_urls")
-      .eq("sender_id", user.id)
+      .eq("poster_id", user.id)
       .eq("status", "open")
       .is("deleted_at", null)
     if (openError) throw openError
 
     // This goes first: if the profile flag below fails, the caller can repeat
     // the call and it succeeds — no window where someone inactive keeps
-    // applications an organizer could pick.
+    // applications a poster could pick.
     const { error: retireError } = await db.rpc("retire_profile_activity", {
       p_user_id: user.id,
     })

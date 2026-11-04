@@ -1,6 +1,6 @@
 # Reputation
 
-Handing your client to a stranger is a risk, so an organizer needs to know who
+Handing your client to a stranger is a risk, so a poster needs to know who
 they are picking. Ranks and badges tell them, and they are built on what
 actually happened to a job rather than on activity.
 
@@ -38,17 +38,17 @@ stored only as a hash, and stops working when they sign back in. Functions skip 
 
 ## Job reports and reviews
 
-Once the job date has come, the organizer reports on the winner in the
+Once the job date has come, the poster reports on the winner in the
 applications they received: the job was done, with 1 to 5 stars and an optional
 comment; they did not show up; or the job was cancelled, which counts for
 nobody. A report is one row in `job_reviews`, written once through
 `submit_job_review()`. A reviewed job can't be withdrawn from.
 
-`request_job_outcomes()` runs hourly on pg_cron and asks the organizer once, the
+`request_job_outcomes()` runs hourly on pg_cron and asks the poster once, the
 day after the job date, with a `job_outcome_due` notification.
 
-Reviews go one way, from organizer to winner: there is nothing yet for a winner
-to review an organizer with, or to dispute a report.
+Reviews go one way, from poster to winner: there is nothing yet for a winner
+to review a poster with, or to dispute a report.
 
 ## Ranks and badges
 
@@ -89,13 +89,13 @@ they don't.
 
 Passing on a job often means keeping part of the fee, so a job says what the
 colleague would earn: a set amount, a range, or to be agreed. It's the colleague's
-amount only, never the client's price or the sender's margin, and it lives in
+amount only, never the client's price or the poster's margin, and it lives in
 `job_pay` rather than `jobs`, because jobs are public and broadcast by
 realtime. Signed-in users can read it; visitors and clients can't.
 
 Vaitu handles no money and takes no commission. It only keeps a record:
 
-1. **Agreeing.** The organizer enters the amount when assigning the winner, or
+1. **Agreeing.** The poster enters the amount when assigning the winner, or
    later, and the winner confirms it. A rejected amount can be proposed again; a
    confirmed one can't change (`job_agreements`).
 2. **Settling.** From the job date, if the amount was confirmed and the job took
@@ -107,7 +107,7 @@ Vaitu handles no money and takes no commission. It only keeps a record:
    `points_per_payment_issue` points, and the Payment Issues badge from
    `badge_payment_issues_min`.
 
-Signed-in users can read the stats of organizers with an open job, so applicants
+Signed-in users can read the stats of posters with an open job, so applicants
 can see that badge too.
 
 Next: [Moderation](moderation.md).

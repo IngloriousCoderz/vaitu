@@ -39,9 +39,9 @@ async function account(label) {
   return { userId, login: { email, password: PASSWORD } }
 }
 
-async function winJob(organizer, winner, { amount, jobDate = PAST_DATE }) {
+async function winJob(poster, winner, { amount, jobDate = PAST_DATE }) {
   const jobId = await createJobAs(
-    organizer.login,
+    poster.login,
     crypto.randomUUID(),
     undefined,
     { pay: OFFER },
@@ -57,7 +57,7 @@ async function winJob(organizer, winner, { amount, jobDate = PAST_DATE }) {
     .select("id")
     .single()
   if (error) throw error
-  await signIn(organizer.login)
+  await signIn(poster.login)
   await supabase
     .from("applications")
     .update({ status: "shortlisted" })
@@ -72,26 +72,26 @@ async function winJob(organizer, winner, { amount, jobDate = PAST_DATE }) {
   return { jobId, applicationId: data.id }
 }
 
-async function confirmedJob(organizer, winner) {
-  const job = await winJob(organizer, winner, { amount: AGREED })
+async function confirmedJob(poster, winner) {
+  const job = await winJob(poster, winner, { amount: AGREED })
   await signIn(winner.login)
   await answerAgreement(job.applicationId, true)
   return job
 }
 
 describe("what a job pays", () => {
-  let organizer
+  let poster
   let jobId
 
   beforeAll(async () => {
-    organizer = await account("payer")
-    jobId = await createJobAs(organizer.login, crypto.randomUUID(), undefined, {
+    poster = await account("payer")
+    jobId = await createJobAs(poster.login, crypto.randomUUID(), undefined, {
       pay: OFFER,
     })
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
-    await deleteSignedUpUser(organizer.userId)
+    await deleteSignedUpUser(poster.userId)
     await signOut()
   }, TEST_TIMEOUT_MS)
 
@@ -103,7 +103,7 @@ describe("what a job pays", () => {
       expect(job.pay).toMatchObject({ kind: "fixed", currency: "EUR" })
       expect(Number(job.pay.amount_min)).toBe(AGREED)
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       const row = await fetchJobForEdit(jobId)
       expect(row.job_pay.kind).toBe("fixed")
     },
@@ -136,7 +136,7 @@ describe("what a job pays", () => {
   )
 
   test(
-    "only the sender can change it",
+    "only the poster can change it",
     async () => {
       await signIn(ANTONY)
       const { error } = await supabase
@@ -147,7 +147,7 @@ describe("what a job pays", () => {
       const { job } = await fetchJobDetail(jobId)
       expect(Number(job.pay.amount_min)).toBe(AGREED)
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       const row = await fetchJobForEdit(jobId)
       await updateJob(jobId, {
         ...row,
@@ -163,18 +163,18 @@ describe("what a job pays", () => {
 })
 
 describe("what they agreed, and whether it was settled", () => {
-  let organizer
+  let poster
   let winner
   let stranger
 
   beforeAll(async () => {
-    organizer = await account("organizer")
+    poster = await account("poster")
     winner = await account("winner")
     stranger = await account("stranger")
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
-    await deleteSignedUpUser(organizer.userId)
+    await deleteSignedUpUser(poster.userId)
     await deleteSignedUpUser(winner.userId)
     await deleteSignedUpUser(stranger.userId)
     await signOut()
@@ -188,9 +188,9 @@ describe("what they agreed, and whether it was settled", () => {
   test(
     "the winner confirms an amount, or sends it back to be corrected",
     async () => {
-      const job = await winJob(organizer, winner, { amount: AGREED })
+      const job = await winJob(poster, winner, { amount: AGREED })
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       await expect(answerAgreement(job.applicationId, true)).rejects.toThrow(
         "Only the winner",
       )
@@ -201,7 +201,7 @@ describe("what they agreed, and whether it was settled", () => {
       expect(Number(proposed.agreement.amount)).toBe(AGREED)
       await answerAgreement(job.applicationId, false)
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       const notes = await fetchMyNotifications()
       expect(notes.some((n) => n.type === "agreement_rejected")).toBe(true)
       await proposeAgreement(job.applicationId, CORRECTED)
@@ -212,7 +212,7 @@ describe("what they agreed, and whether it was settled", () => {
       expect(confirmed.agreement.status).toBe("confirmed")
       expect(Number(confirmed.agreement.amount)).toBe(CORRECTED)
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       await expect(proposeAgreement(job.applicationId, 1)).rejects.toThrow(
         "already confirmed",
       )
@@ -223,10 +223,10 @@ describe("what they agreed, and whether it was settled", () => {
   test(
     "nobody else can propose, answer or read it",
     async () => {
-      const job = await winJob(organizer, winner, { amount: AGREED })
+      const job = await winJob(poster, winner, { amount: AGREED })
       await signIn(stranger.login)
       await expect(proposeAgreement(job.applicationId, 1)).rejects.toThrow(
-        "Only the job owner",
+        "Only the poster",
       )
       await expect(answerAgreement(job.applicationId, true)).rejects.toThrow(
         "Only the winner",
@@ -251,13 +251,13 @@ describe("what they agreed, and whether it was settled", () => {
   test(
     "settling waits for the date and a confirmed amount, once per side",
     async () => {
-      const unconfirmed = await winJob(organizer, winner, { amount: AGREED })
+      const unconfirmed = await winJob(poster, winner, { amount: AGREED })
       await signIn(winner.login)
       await expect(
         answerSettlement(unconfirmed.applicationId, true),
       ).rejects.toThrow("no confirmed agreement")
 
-      const future = await winJob(organizer, winner, {
+      const future = await winJob(poster, winner, {
         amount: AGREED,
         jobDate: FUTURE_DATE,
       })
@@ -267,7 +267,7 @@ describe("what they agreed, and whether it was settled", () => {
         answerSettlement(future.applicationId, true),
       ).rejects.toThrow("date of the job")
 
-      const job = await confirmedJob(organizer, winner)
+      const job = await confirmedJob(poster, winner)
       await answerSettlement(job.applicationId, true)
       await expect(answerSettlement(job.applicationId, true)).rejects.toThrow()
     },
@@ -277,8 +277,8 @@ describe("what they agreed, and whether it was settled", () => {
   test(
     "isn't asked of a job that did not take place",
     async () => {
-      const job = await confirmedJob(organizer, winner)
-      await signIn(organizer.login)
+      const job = await confirmedJob(poster, winner)
+      await signIn(poster.login)
       await submitJobReview({
         application_id: job.applicationId,
         outcome: "cancelled",

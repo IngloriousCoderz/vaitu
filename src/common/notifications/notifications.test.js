@@ -321,7 +321,7 @@ function notification(over = {}) {
     application_id: "a1",
     job_title: "The Marchetti wedding",
     job_status: "open",
-    applicant_name: "Test Sender",
+    applicant_name: "Test Poster",
     ...over,
   }
 }

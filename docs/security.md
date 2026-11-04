@@ -30,7 +30,7 @@ and what stays open on purpose.
 ### The authorization tests
 
 `src/api/authorization.integration.test.js` runs with the other integration
-tests (see [Development](development.md#useful-commands)). It signs in an organizer, a
+tests (see [Development](development.md#useful-commands)). It signs in a poster, a
 winner and a stranger, sets up a finished job between the first two, and
 checks that:
 
@@ -40,7 +40,7 @@ checks that:
 - a stranger cannot act on someone else's job or application;
 - the applicant cannot decide on their own application or write their
   account flags;
-- the organizer cannot hand off, undelete or fake the status of a job,
+- the poster cannot hand off, undelete or fake the status of a job,
   take the job back from the winner, or read more of an applicant than their
   contact details;
 - nobody lists other users' files, and the calendar bucket only takes
@@ -87,12 +87,12 @@ All fixed, in the initial migration and in production.
 
 | Hole                                                                                     | What it allowed                                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| An organizer could post a job already `assigned`, or set that status by hand             | Earning the Generous Colleague badge with fake handoffs                              |
-| An organizer could switch the winner back to `rejected`                                  | Taking the job back, which also stopped the winner from reporting they were not paid |
+| A poster could post a job already `assigned`, or set that status by hand                 | Earning the Generous Colleague badge with fake handoffs                              |
+| A poster could switch the winner back to `rejected`                                      | Taking the job back, which also stopped the winner from reporting they were not paid |
 | Anyone could list the storage buckets                                                    | Collecting every user id, and the calendars of every job, deleted ones included      |
 | The calendar bucket took any file                                                        | Hosting HTML or scripts on the storage domain                                        |
 | `check-email` rate-limited by the first `X-Forwarded-For` entry, which the caller writes | Unlimited checks of which emails have an account                                     |
-| Organizers could read an applicant's whole profile row                                   | Seeing last login, language and notification settings, not just contact details      |
+| Posters could read an applicant's whole profile row                                      | Seeing last login, language and notification settings, not just contact details      |
 | Calendar files stayed public forever                                                     | Reading a job's details long after it was deleted                                    |
 | Deactivating left the images of the deleted jobs online                                  | Same, for images                                                                     |
 | No security headers                                                                      | Framing the app, and no limit on where scripts could load from                       |
@@ -112,9 +112,9 @@ These are known and accepted. The scan ignores the ones it reports.
 | The API misses `nosniff`, names its server version and allows any origin | Supabase's gateway sets these, not Vaitu. Any origin is how a public API key works: row level security does the guarding.                                                                                    |
 | `check-email` tells whether an email has an account                      | The login flow needs it. It is limited to 20 checks per IP every 15 minutes.                                                                                                                                 |
 | Anyone holding another device's push token can move it to their account  | The token only lives on that device, the taker only receives that device's pushes, and the next login there takes it back. Blocking it would break switching accounts on a phone.                            |
-| Organizers see an applicant's phone, website and country                 | That is how they get in touch.                                                                                                                                                                               |
+| Posters see an applicant's phone, website and country                    | That is how they get in touch.                                                                                                                                                                               |
 | Someone determined can still make a few accounts by hand                 | Turnstile stops scripts, not people. The shared voice budget caps what they cost, and reports and blocking handle what they post.                                                                            |
-| Reputation can be faked with a second account                            | Reviews come from whoever posted the job, so an organizer can review their own second account. Nothing yet weighs a review by who wrote it.                                                                  |
+| Reputation can be faked with a second account                            | Reviews come from whoever posted the job, so a poster can review their own second account. Nothing yet weighs a review by who wrote it.                                                                      |
 | HSTS without `preload`                                                   | Preloading binds the whole domain to HTTPS for good, and is hard to undo.                                                                                                                                    |
 | Analytics and push sign-up are not exercised by the local checks         | Their policy entries follow Google's and Firebase's documented domains. After changing the policy, accept analytics and turn on push on production, and look for "Refused to" errors in the browser console. |
 

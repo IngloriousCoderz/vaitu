@@ -39,15 +39,15 @@ async function notificationOf(jobId) {
 }
 
 describe("notification emails", () => {
-  let organizerId = null
+  let posterId = null
   const jobIds = []
 
   // Skipped emails count on the local stack too, and would use up the day's.
   beforeAll(() => updateAsService("email_budget", "day", today(), { sent: 0 }))
 
   afterAll(async () => {
-    if (organizerId) {
-      await updateAsService("profiles", "id", organizerId, {
+    if (posterId) {
+      await updateAsService("profiles", "id", posterId, {
         muted_email_types: [],
       })
     }
@@ -58,7 +58,7 @@ describe("notification emails", () => {
   async function applied() {
     const jobId = await createJobAs(ANTONY, crypto.randomUUID())
     jobIds.push(jobId)
-    organizerId = await currentUserId()
+    posterId = await currentUserId()
     await signIn(GIADA)
     const { error } = await supabase.from("applications").insert({
       job_id: jobId,
@@ -91,7 +91,7 @@ describe("notification emails", () => {
       await runSendEmails()
       expect((await notificationOf(sent)).emailed_at).toBe(first)
 
-      await updateAsService("profiles", "id", organizerId, {
+      await updateAsService("profiles", "id", posterId, {
         muted_email_types: ["application_received"],
       })
       const muted = await applied()
@@ -104,8 +104,8 @@ describe("notification emails", () => {
   test(
     "the link in an email turns that type off, signed out and without a key",
     async () => {
-      const [{ token }] = await emailRecipient(organizerId)
-      await updateAsService("profiles", "id", organizerId, {
+      const [{ token }] = await emailRecipient(posterId)
+      await updateAsService("profiles", "id", posterId, {
         muted_email_types: [],
       })
 
@@ -114,7 +114,7 @@ describe("notification emails", () => {
         { method: "POST", body: "List-Unsubscribe=One-Click" },
       )
       expect(stop.ok).toBe(true)
-      const { muted_email_types } = await profileOf(organizerId)
+      const { muted_email_types } = await profileOf(posterId)
       expect(muted_email_types).toEqual(["job_closed"])
 
       const forged = await fetch(
@@ -127,7 +127,7 @@ describe("notification emails", () => {
         `${FUNCTIONS}/email-unsubscribe?token=${token}&type=all`,
       )
       expect(scanner.ok).toBe(false)
-      expect((await profileOf(organizerId)).muted_email_types).toEqual([
+      expect((await profileOf(posterId)).muted_email_types).toEqual([
         "job_closed",
       ])
     },

@@ -20,8 +20,8 @@ export const JobDetail = {
   create(entity) {
     entity.job_id ??= null
     entity.job ??= null
-    entity.senderName ??= null
-    entity.organizerStats ??= null
+    entity.posterName ??= null
+    entity.posterStats ??= null
     entity.status ??= "idle"
     entity.error ??= null
     entity.initialValues = {
@@ -54,7 +54,7 @@ export const JobDetail = {
   renderHeader(entity) {
     return {
       title: entity.job?.title ?? "",
-      back: entity.job?.senderId === readUserId() ? paths.myJobs : paths.jobs,
+      back: entity.job?.posterId === readUserId() ? paths.myJobs : paths.jobs,
     }
   },
 
@@ -73,16 +73,16 @@ export const JobDetail = {
         onPhotoClose: () => api.notify(`#${id}:photoClose`),
         onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
         onReport:
-          entity.job && entity.job.senderId !== readUserId()
+          entity.job && entity.job.posterId !== readUserId()
             ? () =>
                 api.notify("#safety:safetyOpen", {
                   type: "job",
                   id: entity.job.id,
-                  block_user_id: entity.job.senderId,
+                  block_user_id: entity.job.posterId,
                 })
             : undefined,
         onOpenApplications:
-          entity.job?.senderId === readUserId()
+          entity.job?.posterId === readUserId()
             ? () =>
                 api.notify(
                   "#router:navigate",
@@ -107,8 +107,8 @@ function open(entity, job_id, api) {
   stopTick("clock")
   entity.job_id = job_id
   entity.job = null
-  entity.senderName = null
-  entity.organizerStats = null
+  entity.posterName = null
+  entity.posterStats = null
   entity.status = "idle"
   entity.error = null
   entity.isSubmitted = false
@@ -128,7 +128,7 @@ function close(entity) {
   stopTick("clock")
   entity.job_id = null
   entity.job = null
-  entity.senderName = null
+  entity.posterName = null
   entity.status = "idle"
   entity.error = null
   entity.isSubmitted = false

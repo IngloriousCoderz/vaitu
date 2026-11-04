@@ -117,16 +117,16 @@ export const load = handleAsync("load", {
   },
   async run(job_id) {
     const detail = await fetchJobDetail(job_id)
-    const { senderId } = detail.job
-    const isSomeoneElses = readUserId() && senderId !== readUserId()
-    const stats = isSomeoneElses ? await fetchProfileStats([senderId]) : {}
-    return { ...detail, organizerStats: stats[senderId] ?? null }
+    const { posterId } = detail.job
+    const isSomeoneElses = readUserId() && posterId !== readUserId()
+    const stats = isSomeoneElses ? await fetchProfileStats([posterId]) : {}
+    return { ...detail, posterStats: stats[posterId] ?? null }
   },
-  success(entity, { job, senderName, organizerStats }, api) {
+  success(entity, { job, posterName, posterStats }, api) {
     entity.status = "ready"
     entity.job = job
-    entity.organizerStats = organizerStats
-    entity.senderName = senderName
+    entity.posterStats = posterStats
+    entity.posterName = posterName
     if (needsClock(job)) {
       const id = entity.id
       startTick("clock", () => api.notify(`#${id}:clockTick`))

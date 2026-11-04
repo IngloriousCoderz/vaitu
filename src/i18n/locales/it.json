@@ -297,7 +297,7 @@
   },
   "onboarding": {
     "title": "Completa il tuo profilo",
-    "subtitle": "Dicci dove sei, così gli organizzatori possono trovarti.",
+    "subtitle": "Dicci dove sei, così gli inserzionisti possono trovarti.",
     "skip": "Salta per ora"
   },
   "jobs": {
@@ -471,7 +471,7 @@
         "application_rejected": "Non sei stato selezionato",
         "job_updated": "Un lavoro a cui ti sei candidato è cambiato",
         "job_closed": "Un lavoro a cui ti sei candidato è stato chiuso",
-        "job_reviewed": "L'organizzatore ha riferito sul tuo lavoro",
+        "job_reviewed": "L'inserzionista ha riferito sul tuo lavoro",
         "job_cancelled": "Un lavoro è stato annullato",
         "agreement_proposed": "Un importo da confermare",
         "agreement_confirmed": "Un importo è stato confermato",
@@ -510,7 +510,7 @@
       },
       "apply": {
         "question": "Come mi candido?",
-        "answer": "Apri un lavoro e spiega all'organizzatore perché sei la persona giusta. Sul tuo profilo servono il nome e un sito web, una pagina social o un numero di telefono, e puoi candidarti fino alla scadenza."
+        "answer": "Apri un lavoro e spiega all'inserzionista perché sei la persona giusta. Sul tuo profilo servono il nome e un sito web, una pagina social o un numero di telefono, e puoi candidarti fino alla scadenza."
       },
       "choose": {
         "question": "Come scelgo un candidato?",
@@ -518,7 +518,7 @@
       },
       "contact": {
         "question": "Come ci mettiamo in contatto?",
-        "answer": "L'organizzatore vede il sito web o la pagina social e il numero di telefono di ogni candidato, e contatta lì la persona scelta. Vaitu non ha una chat."
+        "answer": "L'inserzionista vede il sito web o la pagina social e il numero di telefono di ogni candidato, e contatta lì la persona scelta. Vaitu non ha una chat."
       },
       "payments": {
         "question": "Vaitu gestisce pagamenti o contratti?",
@@ -526,11 +526,11 @@
       },
       "changeMind": {
         "question": "Posso cambiare idea?",
-        "answer": "Sì. Chi si candida può ritirarsi, anche dopo essere stato scelto, e l'organizzatore sceglie qualcun altro. Gli organizzatori possono modificare i propri lavori e riaprirne uno chiuso o assegnato."
+        "answer": "Sì. Chi si candida può ritirarsi, anche dopo essere stato scelto, e l'inserzionista sceglie qualcun altro. Gli inserzionisti possono modificare i propri lavori e riaprirne uno chiuso o assegnato."
       },
       "ranks": {
         "question": "Cosa sono i livelli?",
-        "answer": "Guadagni punti con i lavori svolti e le recensioni degli organizzatori, e li perdi se abbandoni un lavoro ottenuto o non ti presenti. Ti fanno salire ai livelli bronzo, argento e oro. Quando ti candidi, gli organizzatori vedono livello, recensioni e distintivi."
+        "answer": "Guadagni punti con i lavori svolti e le recensioni degli inserzionisti, e li perdi se abbandoni un lavoro ottenuto o non ti presenti. Ti fanno salire ai livelli bronzo, argento e oro. Quando ti candidi, gli inserzionisti vedono livello, recensioni e distintivi."
       },
       "notifications": {
         "question": "Come funzionano le notifiche?",
@@ -570,7 +570,7 @@
     "clock": "Le candidature chiudono tra {{time}}"
   },
   "detail": {
-    "organizedBy": "Organizzato da {{name}}",
+    "postedBy": "Pubblicato da {{name}}",
     "reviewApplications": "Rivedi le candidature ricevute",
     "closed": "Le candidature per questo lavoro sono chiuse.",
     "sent": "Candidatura inviata!",
@@ -579,9 +579,9 @@
     "applyTitle": "Candidati per questo lavoro",
     "completeFirst": "Completa il tuo profilo (nome, più un sito web, una pagina social o un numero di telefono) prima di candidarti.",
     "completeProfile": "Completa il profilo",
-    "forwarded_one": "Solo {{count}} nome sarà inoltrato all'organizzatore.",
-    "forwarded_other": "Solo {{count}} nomi saranno inoltrati all'organizzatore.",
-    "forwarded_many": "Solo {{count}} nomi saranno inoltrati all'organizzatore.",
+    "forwarded_one": "Solo {{count}} nome sarà inoltrato all'inserzionista.",
+    "forwarded_other": "Solo {{count}} nomi saranno inoltrati all'inserzionista.",
+    "forwarded_many": "Solo {{count}} nomi saranno inoltrati all'inserzionista.",
     "motivation": "Perché sei il candidato ideale per questo lavoro?",
     "motivationPlaceholder": "Racconta la tua storia…",
     "sending": "Invio…",
@@ -592,8 +592,8 @@
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Scarica .ics",
     "yourMotivation": "La tua motivazione",
-    "withdrawWinnerConfirm": "Ritirarti da questo lavoro? L'organizzatore dovrà scegliere un altro vincitore, e abbandonare un lavoro ottenuto ti costa punti.",
-    "withdrawConfirm": "Vuoi davvero ritirare la candidatura? L'organizzatore non la vedrà più.",
+    "withdrawWinnerConfirm": "Ritirarti da questo lavoro? L'inserzionista dovrà scegliere un altro vincitore, e abbandonare un lavoro ottenuto ti costa punti.",
+    "withdrawConfirm": "Vuoi davvero ritirare la candidatura? L'inserzionista non la vedrà più.",
     "yesWithdraw": "Sì, ritira",
     "withdrawing": "Ritiro in corso…",
     "withdraw": "Ritira la candidatura",
@@ -614,7 +614,7 @@
       "jobClosed": "{{title}} è stato chiuso",
       "newJob": "Nuovo lavoro per il tuo mestiere: {{title}}",
       "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
-      "jobReviewed": "L'organizzatore ha dato un riscontro su {{title}}",
+      "jobReviewed": "L'inserzionista ha dato un riscontro su {{title}}",
       "jobCancelled": "{{title}} è stato annullato",
       "agreementProposed": "Conferma l'importo concordato per {{title}}",
       "agreementConfirmed": "L'importo per {{title}} è stato confermato",
@@ -643,12 +643,12 @@
   },
   "reputation": {
     "badgesTitle": "Distintivi",
-    "yourReview": "Il riscontro dell'organizzatore",
+    "yourReview": "Il riscontro dell'inserzionista",
     "ratingLabel": "Valutazione",
     "rating": "★ {{rating}} ({{count}})",
     "ratingRequired": "Scegli una valutazione",
     "howDidItGo": "Com'è andato il lavoro?",
-    "commentLabel": "Commento (facoltativo): lo leggeranno altri organizzatori",
+    "commentLabel": "Commento (facoltativo): lo leggeranno altri inserzionisti",
     "submit": "Invia riscontro",
     "outcome": {
       "completed": "Il lavoro è stato svolto",
@@ -750,12 +750,12 @@
     "propose": "Chiedi conferma",
     "waiting": "In attesa che confermi {{amount}}.",
     "confirmed": "Concordato e confermato da entrambi: {{amount}}.",
-    "confirmQuestion": "L'organizzatore dice che avete concordato {{amount}}. È corretto?",
+    "confirmQuestion": "L'inserzionista dice che avete concordato {{amount}}. È corretto?",
     "yesAgreed": "Sì, è corretto",
     "notAgreed": "No, non è quanto concordato",
-    "rejectedOrganizer": "Ha risposto che {{amount}} non è quanto concordato. Parlatene e inserisci l'importo giusto.",
-    "rejectedWinner": "Hai risposto che {{amount}} non è quanto concordato. L'organizzatore può inserire un nuovo importo.",
-    "noneWinner": "L'organizzatore non ha ancora inserito l'importo concordato.",
+    "rejectedPoster": "Ha risposto che {{amount}} non è quanto concordato. Parlatene e inserisci l'importo giusto.",
+    "rejectedWinner": "Hai risposto che {{amount}} non è quanto concordato. L'inserzionista può inserire un nuovo importo.",
+    "noneWinner": "L'inserzionista non ha ancora inserito l'importo concordato.",
     "settledQuestion": "I soldi sono stati regolati come concordato?",
     "settledYes": "Sì",
     "settledNo": "No",

@@ -293,7 +293,7 @@
   },
   "onboarding": {
     "title": "Complete your profile",
-    "subtitle": "Tell us where you are so organizers can find you.",
+    "subtitle": "Tell us where you are so posters can find you.",
     "skip": "Skip for now"
   },
   "jobs": {
@@ -463,7 +463,7 @@
         "application_rejected": "You were not selected",
         "job_updated": "A job you applied to changed",
         "job_closed": "A job you applied to closed",
-        "job_reviewed": "The organizer reported on your job",
+        "job_reviewed": "The poster reported on your job",
         "job_cancelled": "A job was cancelled",
         "agreement_proposed": "An amount to confirm",
         "agreement_confirmed": "An amount was confirmed",
@@ -502,7 +502,7 @@
       },
       "apply": {
         "question": "How do I apply?",
-        "answer": "Open a job and tell the organizer why you're the right person for it. You need a name on your profile, plus a website, social page or phone number, and you can apply until the deadline."
+        "answer": "Open a job and tell the poster why you're the right person for it. You need a name on your profile, plus a website, social page or phone number, and you can apply until the deadline."
       },
       "choose": {
         "question": "How do I choose a candidate?",
@@ -510,7 +510,7 @@
       },
       "contact": {
         "question": "How do we get in touch?",
-        "answer": "The organizer sees each applicant's website or social page and phone number, and contacts the winner there. Vaitu has no chat."
+        "answer": "The poster sees each applicant's website or social page and phone number, and contacts the winner there. Vaitu has no chat."
       },
       "payments": {
         "question": "Does Vaitu handle payments or contracts?",
@@ -518,11 +518,11 @@
       },
       "changeMind": {
         "question": "Can I change my mind?",
-        "answer": "Yes. Applicants can withdraw, even after winning, and the organizer then picks someone else. Organizers can edit their jobs, and reopen one that is closed or assigned."
+        "answer": "Yes. Applicants can withdraw, even after winning, and the poster then picks someone else. Posters can edit their jobs, and reopen one that is closed or assigned."
       },
       "ranks": {
         "question": "What are ranks?",
-        "answer": "You earn points for the jobs you do and the reviews organizers leave, and lose them by dropping a job you won or not showing up. They take you through the bronze, silver and gold ranks. Organizers see your rank, reviews and badges when you apply."
+        "answer": "You earn points for the jobs you do and the reviews posters leave, and lose them by dropping a job you won or not showing up. They take you through the bronze, silver and gold ranks. Posters see your rank, reviews and badges when you apply."
       },
       "notifications": {
         "question": "How do notifications work?",
@@ -559,7 +559,7 @@
     "clock": "Applications close in {{time}}"
   },
   "detail": {
-    "organizedBy": "Organized by {{name}}",
+    "postedBy": "Posted by {{name}}",
     "reviewApplications": "Review the applications you received",
     "closed": "Applications are closed for this job.",
     "sent": "Application sent!",
@@ -568,8 +568,8 @@
     "applyTitle": "Apply for this job",
     "completeFirst": "Complete your profile (your name, plus a website, social page or phone number) before applying.",
     "completeProfile": "Complete profile",
-    "forwarded_one": "Only {{count}} name will be forwarded to the organizer.",
-    "forwarded_other": "Only {{count}} names will be forwarded to the organizer.",
+    "forwarded_one": "Only {{count}} name will be forwarded to the poster.",
+    "forwarded_other": "Only {{count}} names will be forwarded to the poster.",
     "motivation": "Why are you the ideal candidate for this job?",
     "motivationPlaceholder": "Tell your story…",
     "sending": "Sending…",
@@ -580,8 +580,8 @@
     "googleCalendar": "Google Calendar",
     "downloadIcs": "Download .ics",
     "yourMotivation": "Your motivation",
-    "withdrawWinnerConfirm": "Withdraw from this job? The organizer will need to pick another winner, and dropping a job you won costs you rank points.",
-    "withdrawConfirm": "Are you sure you want to withdraw your application? The organizer will no longer see it.",
+    "withdrawWinnerConfirm": "Withdraw from this job? The poster will need to pick another winner, and dropping a job you won costs you rank points.",
+    "withdrawConfirm": "Are you sure you want to withdraw your application? The poster will no longer see it.",
     "yesWithdraw": "Yes, withdraw",
     "withdrawing": "Withdrawing…",
     "withdraw": "Withdraw application",
@@ -602,7 +602,7 @@
       "jobClosed": "{{title}} was closed",
       "newJob": "New job that matches your trade: {{title}}",
       "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
-      "jobReviewed": "The organizer reported on {{title}}",
+      "jobReviewed": "The poster reported on {{title}}",
       "jobCancelled": "{{title}} was cancelled",
       "agreementProposed": "Please confirm the amount you agreed for {{title}}",
       "agreementConfirmed": "The amount for {{title}} was confirmed",
@@ -631,12 +631,12 @@
   },
   "reputation": {
     "badgesTitle": "Badges",
-    "yourReview": "The organizer's report",
+    "yourReview": "The poster's report",
     "ratingLabel": "Rating",
     "rating": "★ {{rating}} ({{count}})",
     "ratingRequired": "Choose a rating",
     "howDidItGo": "How did the job go?",
-    "commentLabel": "Comment (optional): other organizers will read it",
+    "commentLabel": "Comment (optional): other posters will read it",
     "submit": "Send report",
     "outcome": {
       "completed": "The job was done",
@@ -737,12 +737,12 @@
     "propose": "Ask them to confirm",
     "waiting": "Waiting for them to confirm {{amount}}.",
     "confirmed": "Agreed and confirmed by both: {{amount}}.",
-    "confirmQuestion": "The organizer says you agreed {{amount}}. Is that right?",
+    "confirmQuestion": "The poster says you agreed {{amount}}. Is that right?",
     "yesAgreed": "Yes, that's right",
     "notAgreed": "No, that's not what we agreed",
-    "rejectedOrganizer": "They said {{amount}} isn't what you agreed. Talk to them and enter the right amount.",
-    "rejectedWinner": "You said {{amount}} isn't what you agreed. The organizer can enter a new amount.",
-    "noneWinner": "The organizer hasn't entered the amount you agreed yet.",
+    "rejectedPoster": "They said {{amount}} isn't what you agreed. Talk to them and enter the right amount.",
+    "rejectedWinner": "You said {{amount}} isn't what you agreed. The poster can enter a new amount.",
+    "noneWinner": "The poster hasn't entered the amount you agreed yet.",
     "settledQuestion": "Was the money settled as you agreed?",
     "settledYes": "Yes",
     "settledNo": "No",

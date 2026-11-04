@@ -46,7 +46,7 @@
   "trust": [
     {
       "title": "Reputation earned on the job",
-      "body": "Points come from jobs done and organizers' reviews, not from how many times you apply."
+      "body": "Points come from jobs done and posters' reviews, not from how many times you apply."
     },
     {
       "title": "Your deal, your terms",
@@ -54,7 +54,7 @@
     },
     {
       "title": "Contacts kept private",
-      "body": "Your contact details are only seen by organizers of the jobs you apply to."
+      "body": "Your contact details are only seen by posters of the jobs you apply to."
     },
     {
       "title": "Report and block",
@@ -80,7 +80,7 @@
     },
     {
       "question": "How do we get in touch?",
-      "answer": "Organizers see applicants' websites and phone numbers, and contact the person they choose directly. Vaitu has no chat."
+      "answer": "Posters see applicants' websites and phone numbers, and contact the person they choose directly. Vaitu has no chat."
     },
     {
       "question": "Does Vaitu handle payments or contracts?",
@@ -114,7 +114,7 @@
       },
       "visible": {
         "title": "Who sees what",
-        "body": "Open jobs are public, even to people without an account. When you apply, the organizer sees your name, contact details, message, rank, badges and reviews. Reviews are shown without the name of whoever wrote them."
+        "body": "Open jobs are public, even to people without an account. When you apply, the poster sees your name, contact details, message, rank, badges and reviews. Reviews are shown without the name of whoever wrote them."
       },
       "providers": {
         "title": "Who helps us",

@@ -290,7 +290,7 @@
   },
   "onboarding": {
     "title": "プロフィールを完成させましょう",
-    "subtitle": "主催者があなたを見つけられるよう、活動地域を教えてください。",
+    "subtitle": "投稿者があなたを見つけられるよう、活動地域を教えてください。",
     "skip": "あとで"
   },
   "jobs": {
@@ -456,7 +456,7 @@
         "application_rejected": "選ばれませんでした",
         "job_updated": "応募した仕事が変更されました",
         "job_closed": "応募した仕事が締め切られました",
-        "job_reviewed": "主催者があなたの仕事を報告しました",
+        "job_reviewed": "投稿者があなたの仕事を報告しました",
         "job_cancelled": "仕事がキャンセルされました",
         "agreement_proposed": "確認が必要な金額",
         "agreement_confirmed": "金額が確認されました",
@@ -495,7 +495,7 @@
       },
       "apply": {
         "question": "応募するには？",
-        "answer": "仕事を開き、自分が適任である理由を主催者に伝えてください。プロフィールには名前と、ウェブサイト・SNSページ・電話番号のいずれかが必要で、締切まで応募できます。"
+        "answer": "仕事を開き、自分が適任である理由を投稿者に伝えてください。プロフィールには名前と、ウェブサイト・SNSページ・電話番号のいずれかが必要で、締切まで応募できます。"
       },
       "choose": {
         "question": "応募者を選ぶには？",
@@ -503,7 +503,7 @@
       },
       "contact": {
         "question": "連絡はどう取りますか？",
-        "answer": "主催者は各応募者のウェブサイトまたはSNSページと電話番号を確認でき、そこから当選者に連絡します。Vaituにチャット機能はありません。"
+        "answer": "投稿者は各応募者のウェブサイトまたはSNSページと電話番号を確認でき、そこから当選者に連絡します。Vaituにチャット機能はありません。"
       },
       "payments": {
         "question": "Vaituは支払いや契約を扱いますか？",
@@ -511,11 +511,11 @@
       },
       "changeMind": {
         "question": "気が変わったら？",
-        "answer": "応募者は当選後でも辞退でき、その場合は主催者が別の方を選びます。主催者は仕事を編集でき、締切済みや決定済みの仕事を再開することもできます。"
+        "answer": "応募者は当選後でも辞退でき、その場合は投稿者が別の方を選びます。投稿者は仕事を編集でき、締切済みや決定済みの仕事を再開することもできます。"
       },
       "ranks": {
         "question": "ランクとは何ですか？",
-        "answer": "完了した仕事と主催者のレビューでポイントがたまり、当選後の辞退や欠席で減ります。ポイントに応じてブロンズ、シルバー、ゴールドとランクが上がります。応募すると、主催者にはランク、レビュー、バッジが表示されます。"
+        "answer": "完了した仕事と投稿者のレビューでポイントがたまり、当選後の辞退や欠席で減ります。ポイントに応じてブロンズ、シルバー、ゴールドとランクが上がります。応募すると、投稿者にはランク、レビュー、バッジが表示されます。"
       },
       "notifications": {
         "question": "通知のしくみは？",
@@ -549,7 +549,7 @@
     "clock": "応募締切まであと{{time}}"
   },
   "detail": {
-    "organizedBy": "主催：{{name}}",
+    "postedBy": "投稿者：{{name}}",
     "reviewApplications": "受け取った応募を確認する",
     "closed": "この仕事の応募は締め切られました。",
     "sent": "応募しました！",
@@ -558,7 +558,7 @@
     "applyTitle": "この仕事に応募",
     "completeFirst": "応募する前にプロフィール（名前と、ウェブサイト・SNSページ・電話番号のいずれか）を完成させてください。",
     "completeProfile": "プロフィールを完成させる",
-    "forwarded_other": "主催者に送られるのは{{count}}名だけです。",
+    "forwarded_other": "投稿者に送られるのは{{count}}名だけです。",
     "motivation": "あなたがこの仕事に最適な理由は？",
     "motivationPlaceholder": "あなたのストーリーを聞かせてください…",
     "sending": "送信中…",
@@ -569,8 +569,8 @@
     "googleCalendar": "Google カレンダー",
     "downloadIcs": ".ics をダウンロード",
     "yourMotivation": "あなたの志望動機",
-    "withdrawWinnerConfirm": "この仕事への応募を取り下げますか？主催者は別の当選者を選ぶ必要があり、当選後の辞退はポイントの減少につながります。",
-    "withdrawConfirm": "応募を取り下げますか？主催者には表示されなくなります。",
+    "withdrawWinnerConfirm": "この仕事への応募を取り下げますか？投稿者は別の当選者を選ぶ必要があり、当選後の辞退はポイントの減少につながります。",
+    "withdrawConfirm": "応募を取り下げますか？投稿者には表示されなくなります。",
     "yesWithdraw": "取り下げる",
     "withdrawing": "取り下げ中…",
     "withdraw": "応募を取り下げる",
@@ -591,7 +591,7 @@
       "jobClosed": "「{{title}}」は締め切られました",
       "newJob": "あなたの職種に合う新しい仕事：「{{title}}」",
       "jobOutcomeDue": "「{{title}}」はいかがでしたか？仕事の結果を教えてください",
-      "jobReviewed": "主催者が「{{title}}」の結果を報告しました",
+      "jobReviewed": "投稿者が「{{title}}」の結果を報告しました",
       "jobCancelled": "「{{title}}」は中止になりました",
       "agreementProposed": "「{{title}}」で合意した金額を確認してください",
       "agreementConfirmed": "「{{title}}」の金額が確認されました",
@@ -620,12 +620,12 @@
   },
   "reputation": {
     "badgesTitle": "バッジ",
-    "yourReview": "主催者からの報告",
+    "yourReview": "投稿者からの報告",
     "ratingLabel": "評価",
     "rating": "★ {{rating}}（{{count}}）",
     "ratingRequired": "評価を選んでください",
     "howDidItGo": "仕事はいかがでしたか？",
-    "commentLabel": "コメント（任意）：他の主催者にも表示されます",
+    "commentLabel": "コメント（任意）：他の投稿者にも表示されます",
     "submit": "報告を送信",
     "outcome": {
       "completed": "仕事は完了しました",
@@ -725,12 +725,12 @@
     "propose": "確認を依頼",
     "waiting": "{{amount}}の確認を待っています。",
     "confirmed": "双方が確認済み：{{amount}}。",
-    "confirmQuestion": "主催者は{{amount}}で合意したとしています。正しいですか？",
+    "confirmQuestion": "投稿者は{{amount}}で合意したとしています。正しいですか？",
     "yesAgreed": "はい、正しいです",
     "notAgreed": "いいえ、合意した内容と違います",
-    "rejectedOrganizer": "{{amount}}は合意した額ではないとの回答です。話し合って正しい金額を入力してください。",
-    "rejectedWinner": "{{amount}}は合意した額ではないと回答しました。主催者が新しい金額を入力できます。",
-    "noneWinner": "主催者はまだ合意した金額を入力していません。",
+    "rejectedPoster": "{{amount}}は合意した額ではないとの回答です。話し合って正しい金額を入力してください。",
+    "rejectedWinner": "{{amount}}は合意した額ではないと回答しました。投稿者が新しい金額を入力できます。",
+    "noneWinner": "投稿者はまだ合意した金額を入力していません。",
     "settledQuestion": "合意どおりに精算されましたか？",
     "settledYes": "はい",
     "settledNo": "いいえ",

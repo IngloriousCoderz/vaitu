@@ -93,7 +93,7 @@
   font-weight: var(--iw-font-weight-semibold);
 }
 
-.sender {
+.poster {
   font-size: var(--iw-font-size-sm);
   color: var(--vmuted);
 }

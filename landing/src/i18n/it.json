@@ -46,7 +46,7 @@
   "trust": [
     {
       "title": "Reputazione guadagnata sul campo",
-      "body": "I punti arrivano dai lavori svolti e dalle recensioni degli organizzatori, non dal numero di candidature."
+      "body": "I punti arrivano dai lavori svolti e dalle recensioni degli inserzionisti, non dal numero di candidature."
     },
     {
       "title": "Accordi tra voi",
@@ -80,7 +80,7 @@
     },
     {
       "question": "Come ci mettiamo in contatto?",
-      "answer": "Chi organizza vede sito e telefono dei candidati e contatta direttamente chi sceglie. Vaitu non ha una chat."
+      "answer": "Chi pubblica vede sito e telefono dei candidati e contatta direttamente chi sceglie. Vaitu non ha una chat."
     },
     {
       "question": "Vaitu gestisce pagamenti o contratti?",
@@ -114,7 +114,7 @@
       },
       "visible": {
         "title": "Chi vede cosa",
-        "body": "I lavori aperti sono pubblici, anche per chi non ha un account. Quando ti candidi, l'organizzatore vede nome, contatti, messaggio, livello, distintivi e recensioni. Le recensioni non mostrano il nome di chi le ha scritte."
+        "body": "I lavori aperti sono pubblici, anche per chi non ha un account. Quando ti candidi, l'inserzionista vede nome, contatti, messaggio, livello, distintivi e recensioni. Le recensioni non mostrano il nome di chi le ha scritte."
       },
       "providers": {
         "title": "Chi ci aiuta",

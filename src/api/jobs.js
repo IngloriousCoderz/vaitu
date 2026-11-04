@@ -123,17 +123,17 @@ export async function fetchJobDetail(id) {
   const { data: job, error } = await supabase
     .from("jobs")
     .select(
-      "id, category, profession, status, sender_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details",
+      "id, category, profession, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details",
     )
     .eq("id", id)
     .single()
   if (error) throw error
 
-  const { data: senderName, error: senderError } = await supabase.rpc(
+  const { data: posterName, error: posterError } = await supabase.rpc(
     "job_poster_name",
     { p_job_id: id },
   )
-  if (senderError) throw senderError
+  if (posterError) throw posterError
 
   const {
     data: { session },
@@ -143,7 +143,7 @@ export async function fetchJobDetail(id) {
     job: {
       ...view,
       pay: session ? await fetchJobPay(id) : null,
-      senderId: job.sender_id,
+      posterId: job.poster_id,
       max_applicants: job.max_applicants,
       application_deadline: job.application_deadline,
       hoursLeft: Math.max(
@@ -160,7 +160,7 @@ export async function fetchJobDetail(id) {
         ),
       ),
     },
-    senderName: senderName ?? "",
+    posterName: posterName ?? "",
   }
 }
 
@@ -174,7 +174,7 @@ export async function fetchMyJobs() {
     .select(
       "id, category, profession, title, location, region, job_date, application_deadline, status, created_at, image_urls, details",
     )
-    .eq("sender_id", user.id)
+    .eq("poster_id", user.id)
     .order("job_date", { ascending: true })
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
@@ -242,7 +242,7 @@ export async function fetchOpenJobsPage(feed, { from, to }) {
       { count: "exact" },
     )
     .eq("status", "open")
-  if (userId) query = query.neq("sender_id", userId)
+  if (userId) query = query.neq("poster_id", userId)
   if (feed.jobTypes.length) query = query.in("job_type", feed.jobTypes)
   if (feed.details.length) {
     query = query.or(
@@ -297,7 +297,7 @@ export async function createJob(payload) {
   if (!user) throw new Error("Not logged in")
   const { data, error } = await supabase
     .from("jobs")
-    .insert({ ...row, sender_id: user.id, status: "open" })
+    .insert({ ...row, poster_id: user.id, status: "open" })
     .select("id")
     .single()
   if (error) throw error
@@ -316,7 +316,7 @@ export async function fetchJobForEdit(job_id) {
       "id, category, profession, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
     )
     .eq("id", job_id)
-    .eq("sender_id", user.id)
+    .eq("poster_id", user.id)
     .single()
   if (error) throw error
   return data

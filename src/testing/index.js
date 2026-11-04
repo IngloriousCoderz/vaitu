@@ -178,7 +178,7 @@ async function ownedJobId(title) {
     .from("jobs")
     .select("id")
     .eq("title", title)
-    .eq("sender_id", user.id)
+    .eq("poster_id", user.id)
     .maybeSingle()
   if (error) throw error
   return data?.id ?? null

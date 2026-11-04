@@ -50,13 +50,13 @@ begin
 
   perform public.notify_user(p.id, 'new_job', new.id)
   from public.profiles p
-  where p.id <> new.sender_id
+  where p.id <> new.poster_id
     and p.is_active
     and not (
       p.muted_email_types && array['all', 'new_job']
       and p.muted_push_types && array['all', 'new_job']
     )
-    and not public.are_blocked(p.id, new.sender_id)
+    and not public.are_blocked(p.id, new.poster_id)
     and new.profession = any (p.professions)
     and (
       cardinality(p.interested_job_types) = 0

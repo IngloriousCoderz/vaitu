@@ -58,10 +58,10 @@ async function apply(jobId, applicant) {
   return data.id
 }
 
-async function winJob(organizer, applicant, jobDate) {
-  const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+async function winJob(poster, applicant, jobDate) {
+  const jobId = await createJobAs(poster.login, crypto.randomUUID())
   const applicationId = await apply(jobId, applicant)
-  await signIn(organizer.login)
+  await signIn(poster.login)
   await supabase
     .from("applications")
     .update({ status: "shortlisted" })
@@ -86,17 +86,17 @@ describe("erasing an account", () => {
   test(
     "keeps reviews and history anonymously, and wipes the person",
     async () => {
-      const organizer = await account("organizer")
+      const poster = await account("poster")
       const worker = await account("worker")
-      const job = await winJob(organizer, worker, PAST_DATE)
-      await signIn(organizer.login)
+      const job = await winJob(poster, worker, PAST_DATE)
+      await signIn(poster.login)
       await submitJobReview({
         application_id: job.applicationId,
         outcome: "completed",
         rating: FIVE_STARS,
         comment: "Punctual",
       })
-      const upcoming = await winJob(organizer, worker, FUTURE_DATE)
+      const upcoming = await winJob(poster, worker, FUTURE_DATE)
 
       await signIn(worker.login)
       expect(await invoke("erase-account", {})).toEqual({
@@ -120,7 +120,7 @@ describe("erasing an account", () => {
       )
       expect(review).toMatchObject({ rating: FIVE_STARS, comment: "Punctual" })
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       const notes = await fetchMyNotifications()
       expect(
         notes.some(
@@ -130,32 +130,32 @@ describe("erasing an account", () => {
         ),
       ).toBe(true)
 
-      await deleteSignedUpUser(organizer.userId)
+      await deleteSignedUpUser(poster.userId)
       await signOut()
     },
     TEST_TIMEOUT_MS,
   )
 
   test(
-    "as an organizer keeps the winner's record and tells the upcoming winner",
+    "as a poster keeps the winner's record and tells the upcoming winner",
     async () => {
-      const organizer = await account("organizer")
+      const poster = await account("poster")
       const worker = await account("worker")
-      const past = await winJob(organizer, worker, PAST_DATE)
-      await signIn(organizer.login)
+      const past = await winJob(poster, worker, PAST_DATE)
+      await signIn(poster.login)
       await submitJobReview({
         application_id: past.applicationId,
         outcome: "completed",
         rating: FIVE_STARS,
         comment: "Great",
       })
-      const upcoming = await winJob(organizer, worker, FUTURE_DATE)
-      await signIn(organizer.login)
+      const upcoming = await winJob(poster, worker, FUTURE_DATE)
+      await signIn(poster.login)
       expect((await invoke("erase-account", {})).status).toBe(200)
       await signOut()
 
       const job = await readJobAsService(past.jobId)
-      expect(job).toMatchObject({ sender_id: null, title: "", details: {} })
+      expect(job).toMatchObject({ poster_id: null, title: "", details: {} })
       expect(job.deleted_at).toBeTruthy()
 
       await signIn(worker.login)

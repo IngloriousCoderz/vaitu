@@ -130,19 +130,19 @@ export const JobDetail = {
                         })}
                         ${this.renderGallery(job, onPhotoOpen)}
                         ${this.renderFacts(job)}
-                        <p class=${styles.sender}>
+                        <p class=${styles.poster}>
                           ${
                             readUserId()
                               ? t("pay.youEarn", { pay: formatPay(job.pay) })
                               : t("pay.signInToSee")
                           }
                         </p>
-                        <p class=${styles.sender}>
-                          ${t("detail.organizedBy", { name: entity.senderName })}
+                        <p class=${styles.poster}>
+                          ${t("detail.postedBy", { name: entity.posterName })}
                         </p>
-                        ${when(entity.organizerStats?.badges?.length, () =>
+                        ${when(entity.posterStats?.badges?.length, () =>
                           Badges.render({
-                            badges: entity.organizerStats.badges,
+                            badges: entity.posterStats.badges,
                           }),
                         )}
                         ${when(onReport, () => SafetyButton.render({ onClick: onReport }))}

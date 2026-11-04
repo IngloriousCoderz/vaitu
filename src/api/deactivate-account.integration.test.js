@@ -20,13 +20,13 @@ import { createJob, deleteJob, fetchJobDetail, fetchMyJobs } from "./jobs.js"
 const TEST_TIMEOUT_MS = 60000
 
 let userId = null
-let senderJobId = null
+let posterJobId = null
 
 afterAll(async () => {
   try {
-    if (senderJobId) {
+    if (posterJobId) {
       await signIn(GIADA)
-      await deleteJob(senderJobId)
+      await deleteJob(posterJobId)
     }
     if (userId) await deleteSignedUpUser(userId)
   } finally {
@@ -92,7 +92,7 @@ test(
     expect(assignedJob).toBeTruthy()
 
     const appliedId = crypto.randomUUID()
-    senderJobId = await createJobAs(GIADA, appliedId)
+    posterJobId = await createJobAs(GIADA, appliedId)
     await signIn({ email, password: PASSWORD })
 
     await signIn(ANTONY)
@@ -126,11 +126,11 @@ test(
 
     await signIn(GIADA)
     const {
-      data: { user: sender },
+      data: { user: poster },
     } = await supabase.auth.getUser()
     await signIn({ email, password: PASSWORD })
 
-    const result = await invoke("deactivate-account", { user_id: sender.id })
+    const result = await invoke("deactivate-account", { user_id: poster.id })
     expect(result).toEqual({ status: 200, payload: { deactivated: true } })
 
     const { data: profile, error: profileError } = await supabase
@@ -159,7 +159,7 @@ test(
     expect(kept?.jobs?.id).toBe(assignedJob.id)
 
     const detail = await fetchJobDetail(assignedJob.id)
-    expect(detail.senderName).toBe(`Vitest ${id}`)
+    expect(detail.posterName).toBe(`Vitest ${id}`)
 
     await signOut()
 
@@ -175,7 +175,7 @@ test(
     const { data: received, error: receivedError } = await supabase
       .from("applications")
       .select("id")
-      .eq("job_id", senderJobId)
+      .eq("job_id", posterJobId)
     expect(receivedError).toBeNull()
     expect(received).toEqual([])
 
@@ -216,8 +216,8 @@ test(
     expect(count).toBe(0)
 
     await signIn(GIADA)
-    await deleteJob(senderJobId)
-    senderJobId = null
+    await deleteJob(posterJobId)
+    posterJobId = null
 
     await deleteSignedUpUser(userId)
     userId = null

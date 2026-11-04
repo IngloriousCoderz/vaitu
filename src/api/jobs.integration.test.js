@@ -81,7 +81,7 @@ describe("deleting a job", () => {
       ownedJobId = await createJobAs(ANTONY, ownedUuid)
 
       await signIn(GIADA)
-      await expect(deleteJob(ownedJobId)).rejects.toThrow("Only the job owner")
+      await expect(deleteJob(ownedJobId)).rejects.toThrow("Only the poster")
 
       await signIn(ANTONY)
       const mine = await fetchMyJobs()
@@ -138,7 +138,7 @@ describe("a job's category", () => {
     } = await supabase.auth.getUser()
     return supabase
       .from("jobs")
-      .insert({ ...jobPayload(id), category, sender_id: user.id })
+      .insert({ ...jobPayload(id), category, poster_id: user.id })
       .select("id")
       .single()
   }

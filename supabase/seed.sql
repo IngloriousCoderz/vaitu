@@ -95,7 +95,7 @@ begin
   where id = v_antony_id;
 
   insert into public.jobs
-    (sender_id, category, profession, title, location, country, region, job_date, application_deadline, max_applicants, status, details, created_at)
+    (poster_id, category, profession, title, location, country, region, job_date, application_deadline, max_applicants, status, details, created_at)
   values
     (v_giada_id, 'wedding', 'photographer', 'Sophie & Leo', 'Florence', 'Italy', 'Tuscany', '2026-10-24', now() + interval '2 days', 5, 'open',
       '{"style":"fine_art","spouse_first_name_1":"Sophie","spouse_first_name_2":"Leo"}', now() - interval '10 days'),

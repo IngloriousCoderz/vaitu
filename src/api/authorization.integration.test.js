@@ -75,7 +75,7 @@ async function postJob(owner) {
       .from("jobs")
       .insert({
         ...jobPayload(crypto.randomUUID()),
-        sender_id: owner.userId,
+        poster_id: owner.userId,
         status: "open",
       })
       .select("id")
@@ -393,7 +393,7 @@ describe("the owner", () => {
 
   test("cannot hand the job to someone else or undelete it", async () => {
     for (const fields of [
-      { sender_id: cast.stranger.userId },
+      { poster_id: cast.stranger.userId },
       { deleted_at: null },
       { outcome_requested_at: null },
     ]) {
@@ -410,7 +410,7 @@ describe("the owner", () => {
       .from("jobs")
       .insert({
         ...jobPayload(crypto.randomUUID()),
-        sender_id: cast.owner.userId,
+        poster_id: cast.owner.userId,
         status: "assigned",
       })
       .select("id")

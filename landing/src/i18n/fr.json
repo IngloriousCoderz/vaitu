@@ -46,7 +46,7 @@
   "trust": [
     {
       "title": "Une réputation gagnée sur le terrain",
-      "body": "Les points viennent des missions réalisées et des avis des organisateurs, pas du nombre de candidatures."
+      "body": "Les points viennent des missions réalisées et des avis des annonceurs, pas du nombre de candidatures."
     },
     {
       "title": "Vos accords, vos conditions",
@@ -54,7 +54,7 @@
     },
     {
       "title": "Coordonnées protégées",
-      "body": "Vos coordonnées ne sont visibles que par les organisateurs des événements auxquels vous candidatez."
+      "body": "Vos coordonnées ne sont visibles que par les annonceurs des missions auxquelles vous candidatez."
     },
     {
       "title": "Signaler et bloquer",
@@ -80,7 +80,7 @@
     },
     {
       "question": "Comment se contacter ?",
-      "answer": "Les organisateurs voient le site et le téléphone des candidats, et contactent directement la personne choisie. Vaitu n'a pas de messagerie."
+      "answer": "Les annonceurs voient le site et le téléphone des candidats, et contactent directement la personne choisie. Vaitu n'a pas de messagerie."
     },
     {
       "question": "Vaitu gère-t-il les paiements ou les contrats ?",
@@ -106,15 +106,15 @@
       },
       "data": {
         "title": "Ce que nous collectons",
-        "body": "Votre e-mail, votre nom et votre mot de passe (conservé chiffré). Ce que vous ajoutez au profil : téléphone, site web, pays, photo, métiers, régions et langue. Ce que vous publiez : les événements et leurs photos, y compris les noms de clients saisis. Vos candidatures, avis, statistiques, signalements et blocages. Un identifiant d'appareil pour les notifications push, et des statistiques d'utilisation uniquement si vous les autorisez. La rémunération que vous proposez, les montants que vous confirmez et leur règlement."
+        "body": "Votre e-mail, votre nom et votre mot de passe (conservé chiffré). Ce que vous ajoutez au profil : téléphone, site web, pays, photo, métiers, régions et langue. Ce que vous publiez : les missions et leurs photos, y compris les noms de clients saisis. Vos candidatures, avis, statistiques, signalements et blocages. Un identifiant d'appareil pour les notifications push, et des statistiques d'utilisation uniquement si vous les autorisez. La rémunération que vous proposez, les montants que vous confirmez et leur règlement."
       },
       "voice": {
         "title": "Messages vocaux",
-        "body": "Si vous décrivez un événement à la voix, l'enregistrement est envoyé à notre prestataire de transcription, puis le texte à un prestataire d'IA pour remplir le formulaire. Nous ne conservons jamais ni l'enregistrement ni le texte. Évitez d'en dire plus sur vos clients que ce que la mission exige."
+        "body": "Si vous décrivez une mission à la voix, l'enregistrement est envoyé à notre prestataire de transcription, puis le texte à un prestataire d'IA pour remplir le formulaire. Nous ne conservons jamais ni l'enregistrement ni le texte. Évitez d'en dire plus sur vos clients que ce que la mission exige."
       },
       "visible": {
         "title": "Qui voit quoi",
-        "body": "Les événements ouverts sont publics, même pour les personnes sans compte. Quand vous candidatez, l'organisateur voit votre nom, vos coordonnées, votre message, votre niveau, vos badges et vos avis. Les avis n'indiquent pas le nom de leur auteur."
+        "body": "Les missions ouvertes sont publiques, même pour les personnes sans compte. Quand vous candidatez, l'annonceur voit votre nom, vos coordonnées, votre message, votre niveau, vos badges et vos avis. Les avis n'indiquent pas le nom de leur auteur."
       },
       "providers": {
         "title": "Nos prestataires",
@@ -122,7 +122,7 @@
       },
       "keeping": {
         "title": "Pourquoi et combien de temps",
-        "body": "Nous utilisons vos données pour fournir le service auquel vous vous êtes inscrit, pour le sécuriser et, avec votre accord uniquement, pour des statistiques. Nous les conservons jusqu'à la suppression de votre compte. La désactivation les conserve, pour que vous puissiez revenir. La suppression retire le compte, le profil, les fichiers et les événements, tandis que les avis et l'historique des missions restent sans votre nom, sous [Utilisateur supprimé], car ils font partie de l'historique d'autres personnes. Nous vous envoyons des e-mails sur vos missions et candidatures, et sur les nouvelles missions de vos métiers : choisissez lesquels dans les Préférences, ou utilisez le lien de chaque e-mail."
+        "body": "Nous utilisons vos données pour fournir le service auquel vous vous êtes inscrit, pour le sécuriser et, avec votre accord uniquement, pour des statistiques. Nous les conservons jusqu'à la suppression de votre compte. La désactivation les conserve, pour que vous puissiez revenir. La suppression retire le compte, le profil, les fichiers et les missions, tandis que les avis et l'historique des missions restent sans votre nom, sous [Utilisateur supprimé], car ils font partie de l'historique d'autres personnes. Nous vous envoyons des e-mails sur vos missions et candidatures, et sur les nouvelles missions de vos métiers : choisissez lesquels dans les Préférences, ou utilisez le lien de chaque e-mail."
       },
       "rights": {
         "title": "Vos droits",

@@ -1,4 +1,4 @@
--- Vaitu · initial schema. Access is ownership: jobs.sender_id,
+-- Vaitu · initial schema. Access is ownership: jobs.poster_id,
 -- applications.applicant_id.
 -- - profiles is own-row only; the poster's name comes from job_poster_name(),
 -- an applicant's contact details from applicant_profiles().
@@ -154,8 +154,8 @@ grant execute on function public.touch_login() to authenticated;
 
 create table public.jobs (
   id uuid primary key default gen_random_uuid(),
-  -- Null once the sender erased their account: the row is anonymous history.
-  sender_id uuid references public.profiles (id) on delete set null,
+  -- Null once the poster erased their account: the row is anonymous history.
+  poster_id uuid references public.profiles (id) on delete set null,
   category text not null default 'wedding'
     check (category in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office')),
   profession text not null,
@@ -184,7 +184,7 @@ create table public.jobs (
   ) stored
 );
 
-create index jobs_sender_id_idx on public.jobs (sender_id);
+create index jobs_poster_id_idx on public.jobs (poster_id);
 create index jobs_browse_idx on public.jobs (status, region, job_date);
 create index jobs_category_idx on public.jobs (category);
 create index jobs_job_type_idx on public.jobs (job_type);
@@ -234,13 +234,13 @@ create table public.app_config (
 );
 
 insert into public.app_config (key, value, description) values
-  ('points_per_completed_job', 20, 'Points per job the organizer confirmed as done.'),
+  ('points_per_completed_job', 20, 'Points per job the poster confirmed as done.'),
   ('review_good_min_stars', 4, 'Stars from which a review counts as good.'),
   ('review_poor_max_stars', 2, 'Stars up to which a review counts as poor.'),
   ('points_per_good_review', 5, 'Points per good review.'),
   ('points_per_poor_review', -10, 'Points per poor review.'),
   ('points_per_dropout', -15, 'Points per job withdrawn from after winning it.'),
-  ('points_per_no_show', -30, 'Points per job the organizer reported as a no-show.'),
+  ('points_per_no_show', -30, 'Points per job the poster reported as a no-show.'),
   ('tier_bronze_min_points', 25, 'Minimum points for bronze tier.'),
   ('tier_silver_min_points', 100, 'Minimum points for silver tier.'),
   ('tier_gold_min_points', 250, 'Minimum points for gold tier.'),
@@ -306,7 +306,7 @@ begin
     raise exception 'Job does not exist.';
   end if;
 
-  if v_job.sender_id = new.applicant_id then
+  if v_job.poster_id = new.applicant_id then
     raise exception 'You cannot apply to your own job.';
   end if;
 
@@ -314,7 +314,7 @@ begin
     raise exception 'Job does not exist.';
   end if;
 
-  if public.are_blocked(v_job.sender_id, new.applicant_id) then
+  if public.are_blocked(v_job.poster_id, new.applicant_id) then
     raise exception 'You cannot apply to this job.';
   end if;
 
@@ -324,7 +324,7 @@ begin
 
   if not exists (
     select 1 from public.profiles
-    where id = v_job.sender_id and is_active
+    where id = v_job.poster_id and is_active
   ) then
     raise exception 'The account behind this job has been deactivated.';
   end if;
@@ -393,7 +393,7 @@ security definer
 set search_path = public
 as $$
 declare
-  v_sender_id uuid;
+  v_poster_id uuid;
 begin
   if tg_op = 'INSERT' then
     if new.status is distinct from 'pending' then
@@ -415,17 +415,17 @@ begin
     raise exception 'You cannot change this application status.';
   end if;
 
-  -- A decision taken after the assignment is the sender's: a withdrawing
+  -- A decision taken after the assignment is the poster's: a withdrawing
   -- winner must not undo it.
   if current_setting('vaitu.assigning', true) is distinct from 'on' then
     new.status_before_assign := null;
   end if;
 
-  select sender_id into v_sender_id
+  select poster_id into v_poster_id
   from public.jobs
   where id = new.job_id;
 
-  if auth.uid() = v_sender_id
+  if auth.uid() = v_poster_id
     and current_setting('vaitu.assigning', true) = 'on'
     and new.status in ('selected', 'rejected') then
     return new;
@@ -433,7 +433,7 @@ begin
 
   -- The winner's job is theirs: taking it back would also stop them from
   -- saying whether they were paid.
-  if auth.uid() = v_sender_id
+  if auth.uid() = v_poster_id
     and old.status <> 'selected'
     and new.status in ('pending', 'shortlisted', 'rejected') then
     return new;
@@ -483,10 +483,10 @@ security definer
 set search_path = public
 as $$
 declare
-  v_sender_id uuid;
+  v_poster_id uuid;
   v_status text;
 begin
-  select sender_id into v_sender_id
+  select poster_id into v_poster_id
   from public.jobs
   where id = p_job_id and deleted_at is null;
 
@@ -494,8 +494,8 @@ begin
     raise exception 'Job does not exist.';
   end if;
 
-  if v_sender_id <> auth.uid() then
-    raise exception 'Only the job owner can assign a winner.';
+  if v_poster_id <> auth.uid() then
+    raise exception 'Only the poster can assign a winner.';
   end if;
 
   select status into v_status
@@ -580,7 +580,7 @@ begin
   where id = v_application.job_id;
 
   perform public.notify_user(
-    v_job.sender_id,
+    v_job.poster_id,
     'application_withdrawn',
     v_job.id,
     null,
@@ -669,10 +669,10 @@ set search_path = public
 as $$
   select p.full_name
   from public.jobs e
-  join public.profiles p on p.id = e.sender_id
+  join public.profiles p on p.id = e.poster_id
   where e.id = p_job_id
     and e.deleted_at is null
-    and (e.status <> 'open' or p.is_active or e.sender_id = auth.uid());
+    and (e.status <> 'open' or p.is_active or e.poster_id = auth.uid());
 $$;
 
 grant execute on function public.job_poster_name(uuid) to anon, authenticated;
@@ -691,7 +691,7 @@ create policy "Users can update their own profile"
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
--- What an organizer needs to contact an applicant, and nothing else of their
+-- What a poster needs to contact an applicant, and nothing else of their
 -- profile: a policy would hand over the whole row.
 create function public.applicant_profiles(p_application_ids uuid[])
 returns table (
@@ -712,7 +712,7 @@ as $$
   join public.profiles p on p.id = a.applicant_id
   where a.id = any (p_application_ids)
     and a.status <> 'withdrawn'
-    and e.sender_id = auth.uid()
+    and e.poster_id = auth.uid()
     and e.deleted_at is null;
 $$;
 
@@ -727,39 +727,39 @@ create policy "Anyone can view open jobs"
   using (
     status = 'open'
     and deleted_at is null
-    and public.is_active_profile(sender_id)
-    and not public.are_blocked(auth.uid(), sender_id)
+    and public.is_active_profile(poster_id)
+    and not public.are_blocked(auth.uid(), poster_id)
   );
 
 create policy "Anyone can view closed jobs"
   on public.jobs for select to anon, authenticated
   using (status <> 'open' and deleted_at is null);
 
-create policy "Senders can view their own jobs"
+create policy "Posters can view their own jobs"
   on public.jobs for select to authenticated
-  using (sender_id = auth.uid() and deleted_at is null);
+  using (poster_id = auth.uid() and deleted_at is null);
 
 -- Status moves only through the functions: a job posted or marked
 -- assigned by hand would count as a handoff without anyone doing the job.
 create policy "Users can create their own jobs"
   on public.jobs for insert to authenticated
   with check (
-    sender_id = auth.uid()
+    poster_id = auth.uid()
     and status = 'open'
     and deleted_at is null
     and outcome_requested_at is null
     and public.is_active_profile(auth.uid())
   );
 
-create policy "Senders can update their own jobs"
+create policy "Posters can update their own jobs"
   on public.jobs for update to authenticated
   using (
-    sender_id = auth.uid()
+    poster_id = auth.uid()
     and deleted_at is null
     and public.is_active_profile(auth.uid())
   )
   with check (
-    sender_id = auth.uid()
+    poster_id = auth.uid()
     and public.is_active_profile(auth.uid())
   );
 
@@ -767,13 +767,13 @@ create policy "Applicants can view their own applications"
   on public.applications for select to authenticated
   using (applicant_id = auth.uid());
 
-create policy "Senders can view applications to their jobs"
+create policy "Posters can view applications to their jobs"
   on public.applications for select to authenticated
   using (
     exists (
       select 1 from public.jobs e
       where e.id = applications.job_id
-        and e.sender_id = auth.uid()
+        and e.poster_id = auth.uid()
     )
   );
 
@@ -786,13 +786,13 @@ create policy "Applicants can update their own applications"
   using (applicant_id = auth.uid())
   with check (applicant_id = auth.uid());
 
-create policy "Senders can update applications to their jobs"
+create policy "Posters can update applications to their jobs"
   on public.applications for update to authenticated
   using (
     exists (
       select 1 from public.jobs e
       where e.id = applications.job_id
-        and e.sender_id = auth.uid()
+        and e.poster_id = auth.uid()
     )
   );
 
@@ -815,7 +815,7 @@ as $$
   select distinct e.region
   from public.jobs e
   where e.status = 'open'
-    and (auth.uid() is null or e.sender_id <> auth.uid())
+    and (auth.uid() is null or e.poster_id <> auth.uid())
     and (cardinality(job_types) = 0 or e.job_type = any (job_types))
 $$;
 
@@ -953,7 +953,7 @@ as $$
 begin
   perform public.notify_user(
     (
-      select sender_id from public.jobs where id = new.job_id
+      select poster_id from public.jobs where id = new.job_id
     ),
     'application_received',
     new.job_id,
@@ -1014,7 +1014,7 @@ begin
   from public.applications a
   where a.job_id = new.id
     and a.status in ('pending', 'selected')
-    and a.applicant_id <> new.sender_id;
+    and a.applicant_id <> new.poster_id;
   return new;
 end;
 $$;
@@ -1056,10 +1056,10 @@ begin
 
   perform public.notify_user(p.id, 'new_job', new.id)
   from public.profiles p
-  where p.id <> new.sender_id
+  where p.id <> new.poster_id
     and p.is_active
     and p.has_new_job_alerts
-    and not public.are_blocked(p.id, new.sender_id)
+    and not public.are_blocked(p.id, new.poster_id)
     and new.profession = any (p.professions)
     and (
       cardinality(p.interested_job_types) = 0
@@ -1078,9 +1078,9 @@ create trigger trg_job_created
   for each row execute function public.vaitu_on_job_created();
 
 
--- What the organizer reports once the job date has come: whether the winner
+-- What the poster reports once the job date has come: whether the winner
 -- did the job, and how well. One review per job, written once, and only by the
--- organizer: nothing in here is the winner's to change.
+-- poster: nothing in here is the winner's to change.
 create table public.job_reviews (
   application_id uuid primary key references public.applications (id) on delete cascade,
   outcome text not null check (outcome in ('completed', 'no_show', 'cancelled')),
@@ -1103,7 +1103,7 @@ create policy "Both sides of a job can read its review"
       from public.applications a
       join public.jobs e on e.id = a.job_id
       where a.id = job_reviews.application_id
-        and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
+        and (a.applicant_id = auth.uid() or e.poster_id = auth.uid())
     )
   );
 
@@ -1137,8 +1137,8 @@ begin
   from public.jobs
   where id = v_application.job_id and deleted_at is null;
 
-  if not found or v_job.sender_id is distinct from auth.uid() then
-    raise exception 'Only the job owner can review this job.';
+  if not found or v_job.poster_id is distinct from auth.uid() then
+    raise exception 'Only the poster can review this job.';
   end if;
 
   if v_application.status <> 'selected' then
@@ -1192,9 +1192,9 @@ begin
             select 1 from public.job_reviews r where r.application_id = a.id
           )
       )
-    returning e.id, e.sender_id
+    returning e.id, e.poster_id
   loop
-    perform public.notify_user(v_due.sender_id, 'job_outcome_due', v_due.id);
+    perform public.notify_user(v_due.poster_id, 'job_outcome_due', v_due.id);
     perform public.notify_user(a.applicant_id, 'settlement_due', v_due.id, a.id)
     from public.applications a
     join public.job_agreements g on g.application_id = a.id
@@ -1209,7 +1209,7 @@ $$;
 
 -- What a job pays. Apart from jobs, which anyone can read and realtime
 -- broadcasts: a client must not be able to find what their photographer keeps.
--- What the colleague earns, never the client's price or the sender's margin.
+-- What the colleague earns, never the client's price or the poster's margin.
 create table public.job_pay (
   job_id uuid primary key references public.jobs (id) on delete cascade,
   kind text not null default 'to_agree' check (kind in ('fixed', 'range', 'to_agree')),
@@ -1229,25 +1229,25 @@ create policy "Signed-in users read the pay of jobs they can see"
   on public.job_pay for select to authenticated
   using (exists (select 1 from public.jobs e where e.id = job_id));
 
-create policy "Senders write the pay of their own jobs"
+create policy "Posters write the pay of their own jobs"
   on public.job_pay for all to authenticated
   using (
     exists (
       select 1 from public.jobs e
-      where e.id = job_id and e.sender_id = auth.uid()
+      where e.id = job_id and e.poster_id = auth.uid()
     )
   )
   with check (
     exists (
       select 1 from public.jobs e
-      where e.id = job_id and e.sender_id = auth.uid()
+      where e.id = job_id and e.poster_id = auth.uid()
     )
   );
 
 revoke all on public.job_pay from anon, authenticated;
 grant select, insert, update on public.job_pay to authenticated;
 
--- What the organizer and the winner say they agreed. The organizer proposes,
+-- What the poster and the winner say they agreed. The poster proposes,
 -- the winner confirms, and a confirmed amount no longer changes.
 create table public.job_agreements (
   application_id uuid primary key references public.applications (id) on delete cascade,
@@ -1269,7 +1269,7 @@ create policy "Both sides of a job can read its agreement"
       from public.applications a
       join public.jobs e on e.id = a.job_id
       where a.id = job_agreements.application_id
-        and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
+        and (a.applicant_id = auth.uid() or e.poster_id = auth.uid())
     )
   );
 
@@ -1327,11 +1327,11 @@ begin
   join public.jobs e on e.id = a.job_id
   where a.id = p_application_id
     and a.status = 'selected'
-    and e.sender_id = auth.uid()
+    and e.poster_id = auth.uid()
     and e.deleted_at is null;
 
   if not found then
-    raise exception 'Only the job owner can propose this agreement.';
+    raise exception 'Only the poster can propose this agreement.';
   end if;
 
   perform public.record_job_agreement(p_application_id, p_amount);
@@ -1356,10 +1356,10 @@ security definer
 set search_path = public
 as $$
 declare
-  v_sender_id uuid;
+  v_poster_id uuid;
   v_job_id uuid;
 begin
-  select e.sender_id, e.id into v_sender_id, v_job_id
+  select e.poster_id, e.id into v_poster_id, v_job_id
   from public.applications a
   join public.jobs e on e.id = a.job_id
   where a.id = p_application_id
@@ -1381,7 +1381,7 @@ begin
   end if;
 
   perform public.notify_user(
-    v_sender_id,
+    v_poster_id,
     case when p_is_confirmed then 'agreement_confirmed' else 'agreement_rejected' end,
     v_job_id
   );
@@ -1395,7 +1395,7 @@ grant execute on function public.answer_job_agreement(uuid, boolean) to authenti
 -- original professional and sometimes the colleague who did the job.
 create table public.job_settlements (
   application_id uuid not null references public.applications (id) on delete cascade,
-  role text not null check (role in ('organizer', 'winner')),
+  role text not null check (role in ('poster', 'winner')),
   is_settled boolean not null,
   answered_at timestamptz not null default now(),
   primary key (application_id, role)
@@ -1411,7 +1411,7 @@ create policy "Both sides of a job can read its settlement"
       from public.applications a
       join public.jobs e on e.id = a.job_id
       where a.id = job_settlements.application_id
-        and (a.applicant_id = auth.uid() or e.sender_id = auth.uid())
+        and (a.applicant_id = auth.uid() or e.poster_id = auth.uid())
     )
   );
 
@@ -1445,7 +1445,7 @@ begin
   where id = v_application.job_id and deleted_at is null;
 
   v_role := case
-    when v_job.sender_id = auth.uid() then 'organizer'
+    when v_job.poster_id = auth.uid() then 'poster'
     when v_application.applicant_id = auth.uid() then 'winner'
   end;
 
@@ -1476,10 +1476,10 @@ begin
 
   if not p_is_settled then
     perform public.notify_user(
-      case when v_role = 'organizer' then v_application.applicant_id else v_job.sender_id end,
+      case when v_role = 'poster' then v_application.applicant_id else v_job.poster_id end,
       'settlement_contested',
       v_job.id,
-      case when v_role = 'organizer' then p_application_id end
+      case when v_role = 'poster' then p_application_id end
     );
   end if;
 end;
@@ -1495,7 +1495,7 @@ select cron.schedule(
 
 -- Security definer: a record must count all its history, not the part RLS shows
 -- you. You can read your own, that of people applying to your jobs, and that
--- of organizers you might work with.
+-- of posters you might work with.
 create or replace function public.can_read_reputation(p_profile_id uuid)
 returns boolean
 language sql
@@ -1510,7 +1510,7 @@ as $$
       join public.jobs e on e.id = a.job_id
       where a.applicant_id = p_profile_id
         and a.status <> 'withdrawn'
-        and e.sender_id = auth.uid()
+        and e.poster_id = auth.uid()
         and e.deleted_at is null
     )
     or (
@@ -1518,7 +1518,7 @@ as $$
       and exists (
         select 1
         from public.jobs e
-        where e.sender_id = p_profile_id
+        where e.poster_id = p_profile_id
           and e.status = 'open'
           and e.deleted_at is null
       )
@@ -1527,7 +1527,7 @@ as $$
       select 1
       from public.applications a
       join public.jobs e on e.id = a.job_id
-      where e.sender_id = p_profile_id
+      where e.poster_id = p_profile_id
         and a.applicant_id = auth.uid()
         and a.status <> 'withdrawn'
         and e.deleted_at is null
@@ -1597,7 +1597,7 @@ as $$
       (
         select count(*)
         from public.jobs handed
-        where handed.sender_id = counted.profile_id and handed.status = 'assigned'
+        where handed.poster_id = counted.profile_id and handed.status = 'assigned'
       ) as handoffs,
       issues.payment_issues,
       greatest(
@@ -1622,8 +1622,8 @@ as $$
         and s.answered_at < now()
           - make_interval(days => (config.c ->> 'settlement_reply_days')::int)
         and (
-          (s.role = 'winner' and e.sender_id = counted.profile_id)
-          or (s.role = 'organizer' and a.applicant_id = counted.profile_id)
+          (s.role = 'winner' and e.poster_id = counted.profile_id)
+          or (s.role = 'poster' and a.applicant_id = counted.profile_id)
         )
         and not exists (
           select 1 from public.job_settlements other
@@ -1772,11 +1772,11 @@ begin
   if not exists (
     select 1 from public.jobs
     where id = p_job_id
-      and sender_id = auth.uid()
+      and poster_id = auth.uid()
       and deleted_at is null
       and public.is_active_profile(auth.uid())
   ) then
-    raise exception 'Only the job owner can delete this job.';
+    raise exception 'Only the poster can delete this job.';
   end if;
 
   perform public.retire_job(p_job_id);
@@ -1815,10 +1815,10 @@ begin
       and not exists (
         select 1 from public.job_reviews r where r.application_id = a.id
       )
-    returning e.id as job_id, e.sender_id
+    returning e.id as job_id, e.poster_id
   loop
     perform public.notify_user(
-      v_abandoned.sender_id,
+      v_abandoned.poster_id,
       'application_withdrawn',
       v_abandoned.job_id,
       null,
@@ -1837,7 +1837,7 @@ begin
 
   perform public.retire_job(id)
   from public.jobs
-  where sender_id = p_user_id
+  where poster_id = p_user_id
     and status = 'open'
     and deleted_at is null;
 end;
@@ -2089,8 +2089,8 @@ begin
     and e.status = 'open'
     and a.status in ('pending', 'shortlisted')
     and (
-      (e.sender_id = auth.uid() and a.applicant_id = p_user_id)
-      or (e.sender_id = p_user_id and a.applicant_id = auth.uid())
+      (e.poster_id = auth.uid() and a.applicant_id = p_user_id)
+      or (e.poster_id = p_user_id and a.applicant_id = auth.uid())
     );
   perform set_config('vaitu.withdrawing', 'off', true);
 end;
@@ -2129,7 +2129,7 @@ begin
 
   perform public.retire_job(id)
   from public.jobs
-  where sender_id = old.id
+  where poster_id = old.id
     and deleted_at is null;
 
   update public.notifications
@@ -2282,21 +2282,21 @@ create policy "Users can update their own ics"
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can list their own job images"
+create policy "Posters can list their own job images"
   on storage.objects for select to authenticated
   using (
     bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can upload job images"
+create policy "Posters can upload job images"
   on storage.objects for insert to authenticated
   with check (
     bucket_id = 'job-images'
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can update own job images"
+create policy "Posters can update own job images"
   on storage.objects for update to authenticated
   using (
     bucket_id = 'job-images'
@@ -2307,7 +2307,7 @@ create policy "Senders can update own job images"
     and split_part(name, '/', 1) = auth.uid()::text
   );
 
-create policy "Senders can delete own job images"
+create policy "Posters can delete own job images"
   on storage.objects for delete to authenticated
   using (
     bucket_id = 'job-images'

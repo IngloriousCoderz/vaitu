@@ -297,7 +297,7 @@
   },
   "onboarding": {
     "title": "Complétez votre profil",
-    "subtitle": "Dites-nous où vous êtes pour que les organisateurs vous trouvent.",
+    "subtitle": "Dites-nous où vous êtes pour que les annonceurs vous trouvent.",
     "skip": "Plus tard"
   },
   "jobs": {
@@ -471,7 +471,7 @@
         "application_rejected": "Vous n'avez pas été sélectionné",
         "job_updated": "Une mission à laquelle vous avez postulé a changé",
         "job_closed": "Une mission à laquelle vous avez postulé est close",
-        "job_reviewed": "L'organisateur a fait le point sur votre mission",
+        "job_reviewed": "L'annonceur a fait le point sur votre mission",
         "job_cancelled": "Une mission a été annulée",
         "agreement_proposed": "Un montant à confirmer",
         "agreement_confirmed": "Un montant a été confirmé",
@@ -510,7 +510,7 @@
       },
       "apply": {
         "question": "Comment candidater ?",
-        "answer": "Ouvrez une mission et expliquez à l'organisateur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom et un site web, une page sociale ou un numéro de téléphone, et vous pouvez candidater jusqu'à la date limite."
+        "answer": "Ouvrez une mission et expliquez à l'annonceur pourquoi vous êtes la bonne personne. Votre profil doit indiquer votre nom et un site web, une page sociale ou un numéro de téléphone, et vous pouvez candidater jusqu'à la date limite."
       },
       "choose": {
         "question": "Comment choisir un candidat ?",
@@ -518,7 +518,7 @@
       },
       "contact": {
         "question": "Comment se contacter ?",
-        "answer": "L'organisateur voit le site web ou la page sociale et le numéro de téléphone de chaque candidat, et contacte la personne retenue par ce biais. Vaitu n'a pas de messagerie."
+        "answer": "L'annonceur voit le site web ou la page sociale et le numéro de téléphone de chaque candidat, et contacte la personne retenue par ce biais. Vaitu n'a pas de messagerie."
       },
       "payments": {
         "question": "Vaitu gère-t-il les paiements ou les contrats ?",
@@ -526,11 +526,11 @@
       },
       "changeMind": {
         "question": "Puis-je changer d'avis ?",
-        "answer": "Oui. Les candidats peuvent se retirer, même après avoir été retenus, et l'organisateur choisit alors quelqu'un d'autre. Les organisateurs peuvent modifier leurs missions et rouvrir une mission fermée ou attribuée."
+        "answer": "Oui. Les candidats peuvent se retirer, même après avoir été retenus, et l'annonceur choisit alors quelqu'un d'autre. Les annonceurs peuvent modifier leurs missions et rouvrir une mission fermée ou attribuée."
       },
       "ranks": {
         "question": "Que sont les niveaux ?",
-        "answer": "Vous gagnez des points avec les missions réalisées et les avis des organisateurs, et vous en perdez en abandonnant une mission obtenue ou en ne vous présentant pas. Ils vous font passer par les niveaux bronze, argent et or. Quand vous candidatez, les organisateurs voient votre niveau, vos avis et vos badges."
+        "answer": "Vous gagnez des points avec les missions réalisées et les avis des annonceurs, et vous en perdez en abandonnant une mission obtenue ou en ne vous présentant pas. Ils vous font passer par les niveaux bronze, argent et or. Quand vous candidatez, les annonceurs voient votre niveau, vos avis et vos badges."
       },
       "notifications": {
         "question": "Comment fonctionnent les notifications ?",
@@ -570,7 +570,7 @@
     "clock": "Candidatures closes dans {{time}}"
   },
   "detail": {
-    "organizedBy": "Organisé par {{name}}",
+    "postedBy": "Publié par {{name}}",
     "reviewApplications": "Voir les candidatures reçues",
     "closed": "Les candidatures sont closes pour cette mission.",
     "sent": "Candidature envoyée !",
@@ -579,9 +579,9 @@
     "applyTitle": "Candidater à cette mission",
     "completeFirst": "Complétez votre profil (votre nom, plus un site web, une page sociale ou un numéro de téléphone) avant de candidater.",
     "completeProfile": "Compléter le profil",
-    "forwarded_one": "Seul {{count}} nom sera transmis à l'organisateur.",
-    "forwarded_other": "Seuls {{count}} noms seront transmis à l'organisateur.",
-    "forwarded_many": "Seuls {{count}} noms seront transmis à l'organisateur.",
+    "forwarded_one": "Seul {{count}} nom sera transmis à l'annonceur.",
+    "forwarded_other": "Seuls {{count}} noms seront transmis à l'annonceur.",
+    "forwarded_many": "Seuls {{count}} noms seront transmis à l'annonceur.",
     "motivation": "Pourquoi êtes-vous le candidat idéal pour cette mission ?",
     "motivationPlaceholder": "Racontez votre histoire…",
     "sending": "Envoi…",
@@ -592,8 +592,8 @@
     "googleCalendar": "Google Agenda",
     "downloadIcs": "Télécharger le .ics",
     "yourMotivation": "Votre motivation",
-    "withdrawWinnerConfirm": "Vous retirer de cette mission ? L'organisateur devra choisir un autre gagnant, et abandonner une mission obtenue vous coûte des points.",
-    "withdrawConfirm": "Voulez-vous vraiment retirer votre candidature ? L'organisateur ne la verra plus.",
+    "withdrawWinnerConfirm": "Vous retirer de cette mission ? L'annonceur devra choisir un autre gagnant, et abandonner une mission obtenue vous coûte des points.",
+    "withdrawConfirm": "Voulez-vous vraiment retirer votre candidature ? L'annonceur ne la verra plus.",
     "yesWithdraw": "Oui, retirer",
     "withdrawing": "Retrait…",
     "withdraw": "Retirer la candidature",
@@ -614,7 +614,7 @@
       "jobClosed": "{{title}} a été clôturé",
       "newJob": "Nouvelle mission pour votre métier : {{title}}",
       "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
-      "jobReviewed": "L'organisateur a donné son retour sur {{title}}",
+      "jobReviewed": "L'annonceur a donné son retour sur {{title}}",
       "jobCancelled": "{{title}} a été annulé",
       "agreementProposed": "Confirmez le montant convenu pour {{title}}",
       "agreementConfirmed": "Le montant pour {{title}} a été confirmé",
@@ -643,12 +643,12 @@
   },
   "reputation": {
     "badgesTitle": "Badges",
-    "yourReview": "Le retour de l'organisateur",
+    "yourReview": "Le retour de l'annonceur",
     "ratingLabel": "Note",
     "rating": "★ {{rating}} ({{count}})",
     "ratingRequired": "Choisissez une note",
     "howDidItGo": "Comment s'est passée la mission ?",
-    "commentLabel": "Commentaire (facultatif) : d'autres organisateurs le liront",
+    "commentLabel": "Commentaire (facultatif) : d'autres annonceurs le liront",
     "submit": "Envoyer le retour",
     "outcome": {
       "completed": "La mission a été réalisée",
@@ -750,12 +750,12 @@
     "propose": "Demander confirmation",
     "waiting": "En attente de la confirmation de {{amount}}.",
     "confirmed": "Convenu et confirmé par les deux : {{amount}}.",
-    "confirmQuestion": "L'organisateur indique que vous avez convenu de {{amount}}. Est-ce exact ?",
+    "confirmQuestion": "L'annonceur indique que vous avez convenu de {{amount}}. Est-ce exact ?",
     "yesAgreed": "Oui, c'est exact",
     "notAgreed": "Non, ce n'est pas ce que nous avons convenu",
-    "rejectedOrganizer": "Il a répondu que {{amount}} n'est pas le montant convenu. Parlez-en et saisissez le bon montant.",
-    "rejectedWinner": "Vous avez répondu que {{amount}} n'est pas le montant convenu. L'organisateur peut saisir un nouveau montant.",
-    "noneWinner": "L'organisateur n'a pas encore saisi le montant convenu.",
+    "rejectedPoster": "Il a répondu que {{amount}} n'est pas le montant convenu. Parlez-en et saisissez le bon montant.",
+    "rejectedWinner": "Vous avez répondu que {{amount}} n'est pas le montant convenu. L'annonceur peut saisir un nouveau montant.",
+    "noneWinner": "L'annonceur n'a pas encore saisi le montant convenu.",
     "settledQuestion": "L'argent a-t-il été réglé comme convenu ?",
     "settledYes": "Oui",
     "settledNo": "Non",

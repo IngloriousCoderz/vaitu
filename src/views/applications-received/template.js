@@ -388,7 +388,7 @@ export const ApplicationsReceived = {
               <p class=${styles.motivation}>${item.motivation}</p>
               ${when(item.status === "selected", () =>
                 JobDeal.render({
-                  role: "organizer",
+                  role: "poster",
                   agreement: item.job_agreements,
                   settlements: item.job_settlements,
                   isSettlementDue: isSettlementOpen({

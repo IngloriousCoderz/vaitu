@@ -21,7 +21,7 @@ export const JobDeal = {
   /**
    * The amount both sides agreed, and later whether it was settled.
    * @param {{
-   *   role: "organizer" | "winner",
+   *   role: "poster" | "winner",
    *   agreement?: { amount: number, currency: string, status: string } | null,
    *   settlements?: { role: string, is_settled: boolean }[],
    *   isSettlementDue: boolean,
@@ -60,7 +60,7 @@ export const JobDeal = {
           () => nothing,
         )}
         ${when(
-          status === "proposed" && role === "organizer",
+          status === "proposed" && role === "poster",
           () => html`<p>${t("deal.waiting", { amount })}</p>`,
         )}
         ${when(
@@ -92,8 +92,8 @@ export const JobDeal = {
           () =>
             html`<p>
               ${t(
-                role === "organizer"
-                  ? "deal.rejectedOrganizer"
+                role === "poster"
+                  ? "deal.rejectedPoster"
                   : "deal.rejectedWinner",
                 { amount },
               )}
@@ -104,9 +104,7 @@ export const JobDeal = {
           () => html`<p>${t("deal.noneWinner")}</p>`,
         )}
         ${when(
-          role === "organizer" &&
-            status !== "confirmed" &&
-            status !== "proposed",
+          role === "poster" && status !== "confirmed" && status !== "proposed",
           () => html`
             ${Input.render({
               id: "deal-amount",

@@ -12,7 +12,7 @@ The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pro
 - **Voice-to-form**: instead of filling in the whole job form by hand, record a voice message and the fields are filled in automatically. See [Voice AI](docs/voice-ai.md).
 - **PWA and native apps**: runs in the browser as a PWA and as a hybrid Android/iOS app via Capacitor.
 - **Notifications**: a bell in the app, and pushes to the browser and the phone even when the app is closed, for new jobs, applications, decisions and changes to jobs. See [Notifications](docs/notifications.md).
-- **Reputation**: organizers report how a job went and review the winner, which earns ranks and badges they see on applicants. See [Reputation](docs/reputation.md).
+- **Reputation**: posters report how a job went and review the winner, which earns ranks and badges they see on applicants. See [Reputation](docs/reputation.md).
 
 Vaitu started with wedding photographers in mind, and is expanding to other trades and kinds of job, such as sound technicians at a festival or cleaners looking after apartments, houses and offices.
 
@@ -43,7 +43,7 @@ You need [pnpm](https://pnpm.io/), Docker Desktop (running) and the Supabase CLI
 
    ```sh
    supabase start            # first run pulls images, takes a few minutes
-   supabase db reset --yes   # applies migrations + seed (sender + 11 jobs)
+   supabase db reset --yes   # applies migrations + seed (poster + 11 jobs)
    ```
 
 3. **Configure the frontend env**: copy the API URL and publishable key from `supabase status` into `.env.local` (not committed):

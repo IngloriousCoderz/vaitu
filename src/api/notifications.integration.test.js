@@ -27,7 +27,7 @@ describe("notifications feed", () => {
 
   beforeAll(async () => {
     jobId = await createJobAs(ANTONY, crypto.randomUUID())
-    applicationId = await applyAsSender(jobId)
+    applicationId = await applyAsPoster(jobId)
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
@@ -200,7 +200,7 @@ describe("notifications feed", () => {
     "rejecting notifies the applicant too",
     async () => {
       rejectedJobId = await createJobAs(ANTONY, crypto.randomUUID())
-      const rejectedId = await applyAsSender(rejectedJobId)
+      const rejectedId = await applyAsPoster(rejectedJobId)
       await signIn(ANTONY)
       const { error: rejectError } = await supabase
         .from("applications")
@@ -231,7 +231,7 @@ describe("withdrawal notification", () => {
   })
 
   test(
-    "withdrawing tells the job's owner who withdrew",
+    "withdrawing tells the poster who withdrew",
     async () => {
       await signIn(GIADA)
       const {
@@ -271,7 +271,7 @@ describe("withdrawal notification", () => {
   )
 })
 
-async function applyAsSender(jobId) {
+async function applyAsPoster(jobId) {
   await signIn(GIADA)
   const {
     data: { user },

@@ -53,10 +53,10 @@ async function apply(jobId, applicant) {
   return data.id
 }
 
-async function winJob(organizer, applicant, { jobDate = PAST_DATE } = {}) {
-  const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+async function winJob(poster, applicant, { jobDate = PAST_DATE } = {}) {
+  const jobId = await createJobAs(poster.login, crypto.randomUUID())
   const applicationId = await apply(jobId, applicant)
-  await signIn(organizer.login)
+  await signIn(poster.login)
   const { error: shortlistError } = await supabase
     .from("applications")
     .update({ status: "shortlisted" })
@@ -96,18 +96,18 @@ describe("app_config", () => {
 })
 
 describe("reputation", () => {
-  let organizer
+  let poster
   let worker
   let stranger
 
   beforeAll(async () => {
-    organizer = await account("organizer")
+    poster = await account("poster")
     worker = await account("worker")
     stranger = await account("stranger")
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
-    await deleteSignedUpUser(organizer.userId)
+    await deleteSignedUpUser(poster.userId)
     await deleteSignedUpUser(worker.userId)
     await deleteSignedUpUser(stranger.userId)
     await signOut()
@@ -121,7 +121,7 @@ describe("reputation", () => {
   test(
     "applying alone earns nothing",
     async () => {
-      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+      const jobId = await createJobAs(poster.login, crypto.randomUUID())
       await apply(jobId, worker)
       const stats = await statsOfWorker()
       expect(stats.points).toBe(0)
@@ -132,9 +132,9 @@ describe("reputation", () => {
   )
 
   test(
-    "only the organizer reviews, and only once the date has come",
+    "only the poster reviews, and only once the date has come",
     async () => {
-      const future = await winJob(organizer, worker, {
+      const future = await winJob(poster, worker, {
         jobDate: "2099-01-01",
       })
       const review = {
@@ -144,16 +144,14 @@ describe("reputation", () => {
         comment: "Great",
       }
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       await expect(submitJobReview(review)).rejects.toThrow("date has come")
 
       await setJobDate(future.jobId, PAST_DATE)
       await signIn(worker.login)
-      await expect(submitJobReview(review)).rejects.toThrow(
-        "Only the job owner",
-      )
+      await expect(submitJobReview(review)).rejects.toThrow("Only the poster")
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       expect(await submitJobReview(review)).toBe(true)
       await expect(submitJobReview(review)).rejects.toThrow()
 
@@ -176,8 +174,8 @@ describe("reputation", () => {
   test(
     "a reviewed job cannot be withdrawn from, and its review survives deletion",
     async () => {
-      const job = await winJob(organizer, worker)
-      await signIn(organizer.login)
+      const job = await winJob(poster, worker)
+      await signIn(poster.login)
       await submitJobReview({
         application_id: job.applicationId,
         outcome: "completed",
@@ -191,7 +189,7 @@ describe("reputation", () => {
       )
       const before = await statsOfWorker()
 
-      await signIn(organizer.login)
+      await signIn(poster.login)
       await deleteJob(job.jobId)
       await expect(fetchJobDetail(job.jobId)).rejects.toThrow()
 
@@ -209,8 +207,8 @@ describe("reputation", () => {
   test(
     "deleting wipes what the job says",
     async () => {
-      const job = await winJob(organizer, worker)
-      await signIn(organizer.login)
+      const job = await winJob(poster, worker)
+      await signIn(poster.login)
       await deleteJob(job.jobId)
 
       const row = await readJobAsService(job.jobId)
@@ -235,7 +233,7 @@ describe("reputation", () => {
   test(
     "a job nobody applied to is simply gone",
     async () => {
-      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+      const jobId = await createJobAs(poster.login, crypto.randomUUID())
       await deleteJob(jobId)
       expect(await readJobAsService(jobId)).toBeNull()
     },
@@ -253,7 +251,7 @@ describe("reputation", () => {
   )
 
   test(
-    "an organizer reads the whole record of someone applying to them",
+    "a poster reads the whole record of someone applying to them",
     async () => {
       const jobId = await createJobAs(stranger.login, crypto.randomUUID())
       await apply(jobId, worker)
@@ -272,8 +270,8 @@ describe("reputation", () => {
     "reporting a no-show needs no rating and costs points, never below zero",
     async () => {
       const flaky = await account("flaky")
-      const job = await winJob(organizer, flaky)
-      await signIn(organizer.login)
+      const job = await winJob(poster, flaky)
+      await signIn(poster.login)
       await submitJobReview({
         application_id: job.applicationId,
         outcome: "no_show",
@@ -291,8 +289,8 @@ describe("reputation", () => {
   test(
     "a bad rating cannot be stored",
     async () => {
-      const job = await winJob(organizer, worker)
-      await signIn(organizer.login)
+      const job = await winJob(poster, worker)
+      await signIn(poster.login)
       await expect(
         submitJobReview({
           application_id: job.applicationId,
@@ -310,7 +308,7 @@ describe("reputation", () => {
     async () => {
       const dropper = await account("dropper")
       for (let round = 0; round < 2; round++) {
-        const job = await winJob(organizer, dropper, {
+        const job = await winJob(poster, dropper, {
           jobDate: "2099-01-01",
         })
         await signIn(dropper.login)
@@ -329,7 +327,7 @@ describe("reputation", () => {
     async () => {
       const quitter = await account("quitter")
       for (let round = 0; round < 3; round++) {
-        const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+        const jobId = await createJobAs(poster.login, crypto.randomUUID())
         const id = await apply(jobId, quitter)
         await withdrawApplication(id)
       }
@@ -342,12 +340,12 @@ describe("reputation", () => {
   )
 
   test(
-    "a past job with no review asks the organizer once",
+    "a past job with no review asks the poster once",
     async () => {
-      const job = await winJob(organizer, worker)
+      const job = await winJob(poster, worker)
       await runAsService("request_job_outcomes")
       await runAsService("request_job_outcomes")
-      await signIn(organizer.login)
+      await signIn(poster.login)
       const asked = (await fetchMyNotifications()).filter(
         (note) => note.type === "job_outcome_due" && note.job_id === job.jobId,
       )
@@ -386,7 +384,7 @@ describe("reputation", () => {
         expect(error).toBeNull()
       }
 
-      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+      const jobId = await createJobAs(poster.login, crypto.randomUUID())
 
       async function isAlerted(person) {
         await signIn(person.login)
@@ -410,8 +408,8 @@ describe("reputation", () => {
   test(
     "users cannot flip their own record",
     async () => {
-      await signIn(organizer.login)
-      const jobId = await createJobAs(organizer.login, crypto.randomUUID())
+      await signIn(poster.login)
+      const jobId = await createJobAs(poster.login, crypto.randomUUID())
       const { error: undelete } = await supabase
         .from("jobs")
         .update({ deleted_at: null })
