@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, test } from "vitest"
 
-import { SEEKER, SENDER, signIn, signOut } from "../testing/index.js"
+import { ANTONY, GIADA, signIn, signOut } from "../testing/index.js"
 import { supabase } from "./client.js"
 import { deletePushToken, savePushToken } from "./push.js"
 
@@ -17,13 +17,13 @@ async function ownTokens() {
 
 describe("push tokens", () => {
   afterAll(async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     await deletePushToken(token)
     await signOut()
   })
 
   test("a device is filed under whoever signed in there", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     await savePushToken(token, "web")
     expect(await ownTokens()).toEqual([{ token, platform: "web" }])
 
@@ -32,21 +32,21 @@ describe("push tokens", () => {
   })
 
   test("the next user of the device takes it over", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     await savePushToken(token, "web")
     expect(await ownTokens()).toHaveLength(1)
 
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     expect(await ownTokens()).toHaveLength(0)
   })
 
   test("only the platforms push-notify knows how to word for", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     await expect(savePushToken(`${token}-other`, "windows")).rejects.toThrow()
   })
 
   test("nobody files a device signed out, or writes the table directly", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { error: insertError } = await supabase.from("push_tokens").insert({
       token: `${token}-direct`,
       user_id: (await supabase.auth.getUser()).data.user.id,

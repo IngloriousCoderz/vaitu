@@ -184,9 +184,9 @@ iOS also needs, once the Apple Developer account is active:
 `supabase/seed-local.sql` already gives the trigger the local function URL and key.
 
 In a browser the service worker only exists in a build, so try it with
-`pnpm build && pnpm preview`. Sign in as `sender@vaitu.local`, allow
-notifications and close the tab. Then, as `seeker@vaitu.local` in another
-browser, apply to one of the sender's events. On Android, sign in as the
-sender with `pnpm mobile:android`, allow notifications and leave the app.
+`pnpm build && pnpm preview`. Sign in as `giada@vaitu.local`, allow
+notifications and close the tab. Then, as `antony@vaitu.local` in another
+browser, apply to one of Giada's events. On Android, sign in as Giada with
+`pnpm mobile:android`, allow notifications and leave the app.
 
 Next: [Reputation](reputation.md).

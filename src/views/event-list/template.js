@@ -125,48 +125,57 @@ export const EventList = {
               })}
             </span>`,
             onClose: onCloseFilters,
-            children: html`
-              ${when(
-                showTypes,
-                () => html`
-                  <h3 class=${styles.filterTitle}>${t("events.type")}</h3>
-                  ${api.render("jobTypesFilter")}
-                `,
-              )}
-              <h3 class=${styles.filterTitle}>${t("events.profession")}</h3>
-              ${this.renderChipRow({
-                items: professions,
-                isActive: (profession) =>
-                  activeProfessions.includes(profession.id),
-                onSelect: onToggleProfession,
-                getLabel: (profession) => t(profession.label),
-              })}
-              ${sections.map(
-                (section) => html`
-                  <h3 class=${styles.filterTitle}>${section.title}</h3>
-                  ${this.renderChipRow({
-                    items: section.options,
-                    isActive: (option) => activeDetails.includes(option.id),
-                    onSelect: onToggleDetail,
-                    getLabel: (option) => t(option.label),
-                  })}
-                `,
-              )}
-              <h3 class=${styles.filterTitle}>${t("events.region")}</h3>
-              ${this.renderChipRow({
-                items: regions,
-                isActive: (region) => region.id === activeRegion,
-                onSelect: onSelectRegion,
-                getLabel: (region) => t(region.label),
-              })}
-              <h3 class=${styles.filterTitle}>${t("events.period")}</h3>
-              ${this.renderChipRow({
-                items: periods,
-                isActive: (period) => period.id === activePeriod,
-                onSelect: onSelectPeriod,
-                getLabel: (period) => t(period.label),
-              })}
-            `,
+            children: Flex.render({
+              direction: "column",
+              gap: "lg",
+              children: [
+                when(showTypes, () =>
+                  this.renderFilterField({
+                    title: t("events.type"),
+                    control: api.render("jobTypesFilter"),
+                  }),
+                ),
+                this.renderFilterField({
+                  title: t("events.profession"),
+                  control: this.renderChipRow({
+                    items: professions,
+                    isActive: (profession) =>
+                      activeProfessions.includes(profession.id),
+                    onSelect: onToggleProfession,
+                    getLabel: (profession) => t(profession.label),
+                  }),
+                }),
+                ...sections.map((section) =>
+                  this.renderFilterField({
+                    title: section.title,
+                    control: this.renderChipRow({
+                      items: section.options,
+                      isActive: (option) => activeDetails.includes(option.id),
+                      onSelect: onToggleDetail,
+                      getLabel: (option) => t(option.label),
+                    }),
+                  }),
+                ),
+                this.renderFilterField({
+                  title: t("events.region"),
+                  control: this.renderChipRow({
+                    items: regions,
+                    isActive: (region) => region.id === activeRegion,
+                    onSelect: onSelectRegion,
+                    getLabel: (region) => t(region.label),
+                  }),
+                }),
+                this.renderFilterField({
+                  title: t("events.period"),
+                  control: this.renderChipRow({
+                    items: periods,
+                    isActive: (period) => period.id === activePeriod,
+                    onSelect: onSelectPeriod,
+                    getLabel: (period) => t(period.label),
+                  }),
+                }),
+              ],
+            }),
             actions: Button.render({
               children: t("events.clearAll"),
               variant: "ghost",
@@ -280,6 +289,15 @@ export const EventList = {
         })}
       </div>
     `
+  },
+
+  renderFilterField({ title, control }) {
+    return Flex.render({
+      element: "section",
+      direction: "column",
+      gap: "sm",
+      children: [html`<h3 class=${styles.filterTitle}>${title}</h3>`, control],
+    })
   },
 
   renderChipRow({ items, isActive, onSelect, getLabel }) {

@@ -1,17 +1,19 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import {
+  ANTONY,
   createEventAs,
   deleteSignedUpUser,
   issueErasureLink,
+  PASSWORD,
   readAsService,
   readEventAsService,
   runAsService,
-  SEEKER,
   setEventDate,
   signIn,
   signOut,
   signUp,
+  updateAsService,
   userExists,
 } from "../testing/index.js"
 import { supabase } from "./client.js"
@@ -32,12 +34,13 @@ const FUTURE_DATE = "2099-01-01"
 const FIVE_STARS = 5
 const REPORTS_LIMIT = 5
 const VOICE_LIMIT = 3
+const UNLIMITED_MINUTES = 1000000
 
 async function account(label) {
   const id = crypto.randomUUID()
   const email = `vitest-${label}-${id}@vaitu.local`
   const userId = await signUp({ email, fullName: `Vitest ${label}` })
-  return { userId, login: { email, password: SEEKER.password } }
+  return { userId, login: { email, password: PASSWORD } }
 }
 
 async function apply(eventId, applicant) {
@@ -291,7 +294,7 @@ describe("reporting", () => {
     "stores the report, limits it per day, and hides it from clients",
     async () => {
       const reporter = await account("reporter")
-      const eventId = await createEventAs(SEEKER, crypto.randomUUID())
+      const eventId = await createEventAs(ANTONY, crypto.randomUUID())
       await signIn(reporter.login)
       const report = {
         target_type: "event",
@@ -374,6 +377,63 @@ describe("the daily voice allowance", () => {
           p_kind: "parse",
         }),
       ).toBe(true)
+
+      await deleteSignedUpUser(talker.userId)
+      await signOut()
+    },
+    TEST_TIMEOUT_MS,
+  )
+})
+
+describe("the daily voice budget", () => {
+  test(
+    "pauses transcription for everyone once today's minutes are used",
+    async () => {
+      const talker = await account("budget")
+      const [config] = await readAsService(
+        "app_config",
+        "key",
+        "voice_daily_minutes",
+      )
+      const setMinutes = (value) =>
+        updateAsService("app_config", "key", "voice_daily_minutes", { value })
+
+      try {
+        await setMinutes(0)
+        expect(await runAsService("voice_budget_reached", {})).toBe(true)
+        await signIn(talker.login)
+        expect(await invoke("transcribe-audio", new Blob(["clip"]))).toEqual({
+          status: 429,
+          payload: { error: "voice_paused" },
+        })
+        expect(
+          await readAsService("voice_usage", "user_id", talker.userId),
+        ).toEqual([])
+
+        await setMinutes(UNLIMITED_MINUTES)
+        expect(await runAsService("voice_budget_reached", {})).toBe(false)
+      } finally {
+        await setMinutes(config.value)
+      }
+
+      await runAsService("record_voice_seconds", {
+        p_user_id: talker.userId,
+        p_seconds: 30,
+      })
+      await runAsService("record_voice_seconds", {
+        p_user_id: talker.userId,
+        p_seconds: 31.5,
+      })
+      const [usage] = await readAsService(
+        "voice_usage",
+        "user_id",
+        talker.userId,
+      )
+      expect(usage).toMatchObject({
+        kind: "transcribe",
+        uses: 0,
+        seconds: 61.5,
+      })
 
       await deleteSignedUpUser(talker.userId)
       await signOut()

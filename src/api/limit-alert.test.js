@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { alertOnLimit } from "../../supabase/functions/_shared/limit-alert.ts"
+import {
+  alertOnce,
+  alertOnLimit,
+} from "../../supabase/functions/_shared/limit-alert.ts"
 
 function steps(isClaimed = true) {
   return {
@@ -50,5 +53,19 @@ describe("alertOnLimit", () => {
       "Resend 500",
     )
     expect(given.release).toHaveBeenCalledWith("deepgram-limit")
+  })
+})
+
+describe("alertOnce", () => {
+  it("sends under its own key, once a day", async () => {
+    const given = steps()
+    expect(await alertOnce("voice-budget", "Paused", "Used up", given)).toBe(
+      true,
+    )
+    expect(given.claim).toHaveBeenCalledWith("voice-budget")
+    expect(given.send).toHaveBeenCalledWith(
+      "Paused",
+      expect.stringContaining("Used up"),
+    )
   })
 })

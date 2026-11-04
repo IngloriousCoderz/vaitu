@@ -15,6 +15,27 @@ describe("errorKey", () => {
     )
   })
 
+  it("says the bot check failed when Supabase Auth rejects the token", () => {
+    expect(
+      errorKey(
+        {
+          code: "captcha_failed",
+          message: "captcha protection: request disallowed",
+        },
+        "errors.login",
+      ),
+    ).toBe("errors.captcha")
+  })
+
+  it("asks for another password when Supabase Auth finds it leaked", () => {
+    expect(
+      errorKey(
+        { code: "weak_password", message: "Password is known to be weak" },
+        "errors.signup",
+      ),
+    ).toBe("errors.weakPassword")
+  })
+
   it("keeps the error's own message, else the fallback", () => {
     expect(errorKey(new Error("errors.voiceLimit"), "errors.save")).toBe(
       "errors.voiceLimit",

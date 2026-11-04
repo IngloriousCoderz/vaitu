@@ -364,15 +364,17 @@ export async function transcribeAudio(blob) {
     `transcribe-audio?locale=${currentLocale()}`,
     { body: blob, headers: { "Content-Type": blob.type || "audio/webm" } },
   )
-  if (error) throw voiceError(error)
+  if (error) throw await voiceError(error)
   return data?.transcript ?? null
 }
 
-// The daily allowance is the one failure people can do something about.
-function voiceError(error) {
-  return error.context?.status === STATUS_TOO_MANY_REQUESTS
-    ? new Error("errors.voiceLimit")
-    : error
+// The daily limits are the failures people can do something about.
+async function voiceError(error) {
+  if (error.context?.status !== STATUS_TOO_MANY_REQUESTS) return error
+  const body = await error.context.json().catch(() => null)
+  return new Error(
+    body?.error === "voice_paused" ? "errors.voicePaused" : "errors.voiceLimit",
+  )
 }
 
 export async function fetchMyFeedDefaults() {
@@ -407,7 +409,7 @@ export async function parseEvent(transcript, { job_type, job_types }) {
   const { data, error } = await supabase.functions.invoke("parse-event", {
     body: { transcript, job_type, job_types },
   })
-  if (error) throw voiceError(error)
+  if (error) throw await voiceError(error)
   return data?.fields ?? {}
 }
 

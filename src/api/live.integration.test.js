@@ -3,9 +3,9 @@ import { afterAll, expect, test, vi } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
+  ANTONY,
   createEventAs,
-  SEEKER,
-  SENDER,
+  GIADA,
   signIn,
   signOut,
 } from "../testing/index.js"
@@ -19,7 +19,7 @@ let eventId = null
 
 afterAll(async () => {
   if (eventId) {
-    await signIn(SENDER)
+    await signIn(GIADA)
     await deleteEvent(eventId)
   }
   await signOut()
@@ -28,8 +28,8 @@ afterAll(async () => {
 test(
   "a change to a table the entity reads reloads it",
   async () => {
-    eventId = await createEventAs(SENDER, crypto.randomUUID())
-    await signIn(SEEKER)
+    eventId = await createEventAs(GIADA, crypto.randomUUID())
+    await signIn(ANTONY)
 
     const load = vi.fn()
     const store = createStore({

@@ -100,6 +100,17 @@ set `ALERT_FROM`, such as `Vaitu <alerts@vaitu.net>`.
 - Each user has `voice_daily_limit` transcriptions and parses a day, in
   `app_config`. A failed attempt is given back. Above the limit the functions
   answer `429 voice_limit` without calling a provider.
+- Everyone together has `voice_daily_minutes` of transcription a day, the
+  ceiling on the Deepgram bill however many accounts there are. Each
+  transcription adds the duration Deepgram reports to `voice_usage.seconds`.
+  Once the minutes are used, `transcribe-audio` answers `429 voice_paused`
+  until midnight UTC, and `ALERT_EMAIL` hears about it once a day. Raise the
+  number in `app_config` with no release.
+- `transcribe-audio` takes at most 3 MB. The app records 2 minutes at most, at
+  64 kbps, so it stays under 1 MB; the cap keeps a direct call from sending
+  most of an hour of low-bitrate audio.
+- Parsing has no shared budget: the models are free, so abuse can only run
+  out OpenRouter's free allowance, which the limit alerts report.
 - Local Whisper was evaluated and dropped: worse on Italian proper nouns
   plus a ~150MB model download per device.
 

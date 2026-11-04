@@ -264,8 +264,11 @@
     "saveReview": "Impossibile salvare la recensione",
     "parseFailed": "Non siamo riusciti a compilare i campi dal tuo messaggio. Compilali tu, per favore.",
     "voiceLimit": "Hai usato i messaggi vocali gratuiti di oggi. Compila l'evento da solo o riprova domani.",
+    "voicePaused": "I messaggi vocali sono sospesi per oggi. Compila l'evento da solo o riprova domani.",
     "eraseAccount": "Non siamo riusciti a eliminare l'account. Riprova.",
-    "offline": "Sei offline. Riprova quando torni online."
+    "offline": "Sei offline. Riprova quando torni online.",
+    "captcha": "Non siamo riusciti a verificare che tu sia una persona. Riprova.",
+    "weakPassword": "Questa password è comparsa in una fuga di dati o è troppo facile da indovinare. Scegline un'altra."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",

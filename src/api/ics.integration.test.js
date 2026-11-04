@@ -2,9 +2,9 @@ import { afterAll, expect, test } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
+  ANTONY,
+  GIADA,
   removeStoredFile,
-  SEEKER,
-  SENDER,
   signIn,
   signOut,
 } from "../testing/index.js"
@@ -28,7 +28,7 @@ test(
   "a signed-in user gets an expiring link to their calendar file",
   async () => {
     const applicationId = crypto.randomUUID()
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -61,13 +61,13 @@ test(
 test(
   "another account cannot upload into someone else's folder",
   async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const {
       data: { user },
     } = await supabase.auth.getUser()
     const path = `${user.id}/${crypto.randomUUID()}.ics`
 
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { error } = await supabase.storage
       .from("event-ics")
       .upload(path, new Blob([ICS], { type: "text/calendar" }), {

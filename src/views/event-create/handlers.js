@@ -22,6 +22,7 @@ import { startTick, stopTick } from "../../api/ticker.js"
 import { createImageFile } from "../../common/image.js"
 import {
   APPLICATION_DEADLINE_LEAD_DAYS,
+  AUDIO_BITS_PER_SECOND,
   AUDIO_MAX_SECONDS,
   COVER_IMAGES,
   COVER_INDEX,
@@ -61,6 +62,11 @@ import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
 
 const NO_ROOM = 0
+const SHOWN_VOICE_ERRORS = [
+  "errors.voiceLimit",
+  "errors.voicePaused",
+  "errors.noAudio",
+]
 
 // Module scope, not the entity: the recorder is not serializable.
 let mediaRecorder = null
@@ -203,9 +209,10 @@ export const audioRecord = handleAsync("audioRecord", {
       : ""
     mediaStream = stream
     audioChunks = []
-    mediaRecorder = mimeType
-      ? new MediaRecorder(stream, { mimeType })
-      : new MediaRecorder(stream)
+    mediaRecorder = new MediaRecorder(stream, {
+      ...(mimeType ? { mimeType } : {}),
+      audioBitsPerSecond: AUDIO_BITS_PER_SECOND,
+    })
     mediaRecorder.ondataavailable = (e) => {
       if (e.data.size) audioChunks.push(e.data)
     }
@@ -336,10 +343,9 @@ export const audioProcess = handleAsync("audioProcess", {
   error(entity, err) {
     entity.is_transcribing = false
     entity.audio_transcript = null
-    entity.audio_error =
-      err?.message === "errors.voiceLimit" || err?.message === "errors.noAudio"
-        ? err.message
-        : "errors.transcriptionFailed"
+    entity.audio_error = SHOWN_VOICE_ERRORS.includes(err?.message)
+      ? err.message
+      : "errors.transcriptionFailed"
   },
 })
 
@@ -425,10 +431,9 @@ export const audioParse = handleAsync("audioParse", {
   error(entity, err) {
     entity.is_parsing = false
     if (entity.is_voice_wait_dismissed) return
-    entity.audio_error =
-      err?.message === "errors.voiceLimit"
-        ? "errors.voiceLimit"
-        : "errors.parseFailed"
+    entity.audio_error = SHOWN_VOICE_ERRORS.includes(err?.message)
+      ? err.message
+      : "errors.parseFailed"
   },
 })
 

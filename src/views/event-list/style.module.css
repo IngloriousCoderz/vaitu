@@ -62,7 +62,7 @@
   display: flex;
   gap: 0.5625rem;
   overflow-x: auto;
-  padding: 0.875rem 0.125rem var(--iw-space-1);
+  padding: 0.125rem;
   scrollbar-width: none;
 }
 
@@ -80,6 +80,7 @@
 
 .activeRow {
   align-items: center;
+  padding-block: 0.875rem var(--iw-space-1);
 }
 
 .chipRemove {
@@ -130,7 +131,7 @@ button:global(.iw-button.iw-button-secondary).filterActive {
   font-family: var(--vtitle-font);
   font-weight: var(--vtitle-weight);
   font-size: var(--iw-font-size-lg);
-  margin: 0.875rem 0 0;
+  margin: 0;
 }
 
 .listEnd {

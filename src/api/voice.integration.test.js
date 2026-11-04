@@ -1,6 +1,6 @@
 import { afterAll, expect, test } from "vitest"
 
-import { SEEKER, signIn, signOut } from "../testing/index.js"
+import { ANTONY, signIn, signOut } from "../testing/index.js"
 import { supabase } from "./client.js"
 
 const TEST_TIMEOUT_MS = 60000
@@ -12,7 +12,7 @@ afterAll(async () => {
 test(
   "transcription refuses an empty recording",
   async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     expect(await invoke("transcribe-audio", new Blob([]))).toEqual({
       status: 400,
       payload: { error: "audio is required" },
@@ -24,7 +24,7 @@ test(
 test(
   "parsing refuses a missing transcript",
   async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     expect(await invoke("parse-event", {})).toEqual({
       status: 400,
       payload: { error: "transcript is required" },

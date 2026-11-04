@@ -31,16 +31,27 @@ export function isLimitStatus(service: string, status: number) {
 export async function alertOnLimit(
   service: string,
   status: number,
-  { claim, release, send }: AlertSteps,
+  steps: AlertSteps,
 ) {
   if (!isLimitStatus(service, status)) return false
-  const key = `${service}-limit`
+  return await alertOnce(
+    `${service}-limit`,
+    `Vaitu: ${service} limit reached (${status})`,
+    `${service} answered ${status}. ${WHAT_STOPS[service]}`,
+    steps,
+  )
+}
+
+/** @returns whether an email went out: at most one a day per key. */
+export async function alertOnce(
+  key: string,
+  subject: string,
+  text: string,
+  { claim, release, send }: AlertSteps,
+) {
   if (!(await claim(key))) return false
   try {
-    await send(
-      `Vaitu: ${service} limit reached (${status})`,
-      `${service} answered ${status}. ${WHAT_STOPS[service]}\n\nThis alert is sent at most once a day.`,
-    )
+    await send(subject, `${text}\n\nThis alert is sent at most once a day.`)
     return true
   } catch (err) {
     await release(key)

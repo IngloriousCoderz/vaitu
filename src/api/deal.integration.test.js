@@ -2,9 +2,10 @@ import { createClient } from "@supabase/supabase-js"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import {
+  ANTONY,
   createEventAs,
   deleteSignedUpUser,
-  SEEKER,
+  PASSWORD,
   setEventDate,
   signIn,
   signOut,
@@ -35,7 +36,7 @@ async function account(label) {
   const id = crypto.randomUUID()
   const email = `vitest-${label}-${id}@vaitu.local`
   const userId = await signUp({ email, fullName: `Vitest ${label}` })
-  return { userId, login: { email, password: SEEKER.password } }
+  return { userId, login: { email, password: PASSWORD } }
 }
 
 async function winJob(organizer, winner, { amount, eventDate = PAST_DATE }) {
@@ -100,7 +101,7 @@ describe("what a job pays", () => {
   test(
     "signed-in users see it, on the event and on the edit form",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { event } = await fetchEventDetail(eventId)
       expect(event.pay).toMatchObject({ kind: "fixed", currency: "EUR" })
       expect(Number(event.pay.amount_min)).toBe(AGREED)
@@ -140,7 +141,7 @@ describe("what a job pays", () => {
   test(
     "only the sender can change it",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { error } = await supabase
         .from("event_pay")
         .update({ amount_min: 1 })

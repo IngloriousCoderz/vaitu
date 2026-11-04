@@ -48,8 +48,9 @@ change something, build again, and switch to another tab and back.
    - iOS: in Xcode, target **App** → **General** → **Identity**: **Build**
      (and **Version** for the version users see).
 2. **Build with the production backend.** `.env.local` must point at the
-   cloud project when you run `pnpm mobile:sync`, because the Supabase URL is
-   baked in at build time (see [Mobile](mobile.md#running-the-native-apps)).
+   cloud project when you run `pnpm mobile:sync`, and hold the Turnstile site
+   key in `VITE_TURNSTILE_SITE_KEY`, because both are baked in at build time
+   (see [Mobile](mobile.md#running-the-native-apps)).
 3. **Upload and submit.** In Android Studio use **Build → Generate Signed
    App Bundle** and upload it to Google Play Console. In Xcode use
    **Product → Archive** and upload it to App Store Connect.

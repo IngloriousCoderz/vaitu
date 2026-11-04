@@ -2,11 +2,12 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import { defaultTiers, tiersFromConfig } from "../common/tiers.js"
 import {
+  ANTONY,
   createEventAs,
   deleteSignedUpUser,
+  PASSWORD,
   readEventAsService,
   runAsService,
-  SEEKER,
   setEventDate,
   signIn,
   signOut,
@@ -34,7 +35,7 @@ async function account(label) {
   const id = crypto.randomUUID()
   const email = `vitest-${label}-${id}@vaitu.local`
   const userId = await signUp({ email, fullName: `Vitest ${label}` })
-  return { userId, login: { email, password: SEEKER.password } }
+  return { userId, login: { email, password: PASSWORD } }
 }
 
 async function apply(eventId, applicant) {
@@ -76,7 +77,7 @@ describe("claim_alert", () => {
     expect(await runAsService("claim_alert", { p_key: key })).toBe(true)
     expect(await runAsService("claim_alert", { p_key: key })).toBe(false)
 
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { error } = await supabase.rpc("claim_alert", { p_key: key })
     expect(error?.message).toContain("permission denied")
     const { error: readError } = await supabase.from("alert_log").select("key")

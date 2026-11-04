@@ -108,6 +108,21 @@ Providers → Email), so that link is how a new account gets its session; CORS
 on the REST and Auth gateways is open by default and echoes the request
 origin, which the preflight checks confirm is working.
 
+Under Authentication → Attack Protection:
+
+- **CAPTCHA protection** → on, provider Turnstile, with the widget's secret
+  key. Supabase Auth then refuses a signup, login or resend without a valid
+  token. Turn it on only once a build with `VITE_TURNSTILE_SITE_KEY` is live
+  on the web and in the stores, or older apps can no longer log in.
+
+Under Authentication → Rate Limits, keep the emails sent per hour well under
+Resend's 100 a day, since confirmations share them with notifications (see
+[Notifications](notifications.md#the-daily-limit)).
+
+The Turnstile widget lives in the Cloudflare dashboard. Its hostnames must
+include `app.vaitu.net` and `localhost`, which is where the Android and iOS
+apps run.
+
 ## Frontend
 
 The frontend is the Vercel project `inglorious-vaitu`, served at
@@ -123,6 +138,10 @@ notifications in the PWA files no token, and the PWA measures nothing.
 `VITE_SITE_URL` is the landing site, where the app links to the privacy policy
 and terms. It is required.
 
+`VITE_TURNSTILE_SITE_KEY` is the Turnstile widget's public site key. Without
+it, the app sends no CAPTCHA token, which only works while CAPTCHA protection
+is off in Supabase.
+
 `VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
 "Job type missing?" link is hidden. To add a job type, extend
 `SETTINGS_BY_PROFESSION` in `src/data/event-taxonomy.js` and its copy in
@@ -133,7 +152,7 @@ new category: `events_category_check` lists them all, as described in
 
 ```bash
 # Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL,
-# VITE_SITE_URL and the
+# VITE_SITE_URL, VITE_TURNSTILE_SITE_KEY and the
 # six VITE_FIREBASE_*
 # set in Project Settings → Environment Variables (Production), then redeploy
 pnpm build          # emits dist/

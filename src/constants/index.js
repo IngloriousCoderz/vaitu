@@ -12,7 +12,7 @@ export const REQUEST_TIMEOUT_MS = 15000
 export const PUSH_DECLINE_KEY = "vaitu-push-declined"
 export const PUSH_TOKEN_KEY = "vaitu-push-token"
 export const ANALYTICS_CONSENT_KEY = "vaitu-analytics-consent"
-export const MIN_PASSWORD_LENGTH = 6
+export const MIN_PASSWORD_LENGTH = 10
 export const MIN_TEXT_LENGTH = 1
 export const DEFAULT_MAX_APPLICANTS = 5
 export const DEFAULT_EVENT_CATEGORY = "wedding"
@@ -67,6 +67,8 @@ export const TENTHS_PER_STAR = 10
 export const NO_RATING = 0
 export const PERCENT_MAX = 100
 export const AUDIO_MAX_SECONDS = 120
+// transcribe-audio refuses more than MAX_AUDIO_BYTES, which this keeps clear of.
+export const AUDIO_BITS_PER_SECOND = 64000
 export const MAX_EVENT_IMAGES = 6
 export const IMAGE_MAX_BYTES = 5242880
 export const MIN_PHOTOS_TO_NAVIGATE = 2

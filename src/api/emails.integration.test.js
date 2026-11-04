@@ -2,13 +2,13 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
+  ANTONY,
   createEventAs,
   deleteOwnedEvent,
+  GIADA,
   localServiceRoleKey,
   readAsService,
   runAsService,
-  SEEKER,
-  SENDER,
   signIn,
   signOut,
   updateAsService,
@@ -56,10 +56,10 @@ describe("notification emails", () => {
   }, TEST_TIMEOUT_MS)
 
   async function applied() {
-    const eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    const eventId = await createEventAs(ANTONY, crypto.randomUUID())
     eventIds.push(eventId)
     organizerId = await currentUserId()
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { error } = await supabase.from("applications").insert({
       event_id: eventId,
       applicant_id: await currentUserId(),
@@ -135,7 +135,7 @@ describe("notification emails", () => {
   )
 
   test("nobody else can read the tokens", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { data, error } = await supabase.from("email_tokens").select("token")
     expect(data ?? []).toEqual([])
     expect(error).not.toBeNull()

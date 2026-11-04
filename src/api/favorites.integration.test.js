@@ -3,7 +3,7 @@ import { afterAll, expect, test } from "vitest"
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
   deleteSignedUpUser,
-  SEEKER,
+  PASSWORD,
   signIn,
   signOut,
   signUp,
@@ -30,7 +30,7 @@ test(
     const email = `vitest-${id}@vaitu.local`
     userId = await signUp({ email, fullName: `Vitest ${id}` })
 
-    await signIn({ email, password: SEEKER.password })
+    await signIn({ email, password: PASSWORD })
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: [],
       interested_job_types: [],

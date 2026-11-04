@@ -6,7 +6,7 @@ import {
   coupleTitle,
   deleteSignedUpUser,
   eventPayload,
-  SEEKER,
+  PASSWORD,
   signIn,
   signOut,
   signUp,
@@ -24,7 +24,7 @@ test("a new account can create an event", async () => {
   const email = `vitest-${id}@vaitu.local`
   const fullName = `Vitest ${id}`
   userId = await signUp({ email, fullName: fullName })
-  await signIn({ email, password: SEEKER.password })
+  await signIn({ email, password: PASSWORD })
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")

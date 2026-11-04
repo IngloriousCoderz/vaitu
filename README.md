@@ -59,7 +59,7 @@ You need [pnpm](https://pnpm.io/), Docker Desktop (running) and the Supabase CLI
    pnpm dev
    ```
 
-   Open the local URL it prints and sign in as `sender@vaitu.local` / `test1234`.
+   Open the local URL it prints and sign in as `giada@vaitu.local` / `vaitu-local`.
 
 ## Documentation
 

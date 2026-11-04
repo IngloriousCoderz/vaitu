@@ -9,16 +9,22 @@ import {
   upstreamError,
 } from "npm:@inglorious/supabase@^0.2.0/edge"
 
-import { alertProviderLimit } from "../_shared/alerts.ts"
+import { alertProviderLimit, alertVoiceBudget } from "../_shared/alerts.ts"
 import { admin } from "../_shared/supabase.ts"
 import {
   claimVoiceUse,
+  recordVoiceSeconds,
   releaseVoiceUse,
+  voiceBudgetReached,
   voiceLimitReached,
+  voicePaused,
 } from "../_shared/voice-limit.ts"
 import { deepgramLanguage } from "./language.ts"
 
-const MAX_AUDIO_BYTES = 10 * 1024 * 1024
+// The app records at most 2 minutes at 64 kbps, under 1 MB. Deepgram bills by
+// the minute, and 10 MB of low-bitrate audio would be most of an hour.
+const MAX_AUDIO_BYTES = 3 * 1024 * 1024
+const UNKNOWN_DURATION_SECONDS = 120
 
 // The recording only passes through here, in memory: it is never stored.
 serve(
@@ -34,6 +40,10 @@ serve(
       return json({ error: "audio is too large" }, STATUS_CODE.ContentTooLarge)
     }
 
+    if (await voiceBudgetReached()) {
+      await alertVoiceBudget()
+      return voicePaused()
+    }
     if (!(await claimVoiceUse(user.id, "transcribe")))
       return voiceLimitReached()
 
@@ -62,6 +72,10 @@ serve(
     }
 
     const result = await dg.json()
+    await recordVoiceSeconds(
+      user.id,
+      Number(result?.metadata?.duration) || UNKNOWN_DURATION_SECONDS,
+    )
     const [channel] = result?.results?.channels ?? []
     const [alternative] = channel?.alternatives ?? []
     const transcript: string = alternative?.transcript ?? ""

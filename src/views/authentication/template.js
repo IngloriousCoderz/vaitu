@@ -1,11 +1,13 @@
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
+import { CAPTCHA_ELEMENT_ID } from "../../api/captcha.js"
 import { Page } from "../../common/page/index.js"
 import { ConfirmStep } from "./confirm-step.js"
 import { EmailStep } from "./email-step.js"
 import { LoginStep } from "./login-step.js"
 import { SignupStep } from "./signup-step.js"
+import styles from "./style.module.css"
 
 export const Authentication = {
   render(props, api) {
@@ -30,6 +32,7 @@ export const Authentication = {
           ${when(entity.step === "confirm", () =>
             ConfirmStep.render({ entity, isBusy, ...callbacks }),
           )}
+          <div id=${CAPTCHA_ELEMENT_ID} class=${styles.captcha}></div>
         `,
       ],
     })

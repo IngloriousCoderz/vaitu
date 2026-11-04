@@ -264,8 +264,11 @@
     "saveReview": "Impossible d'enregistrer l'avis",
     "parseFailed": "Nous n'avons pas pu remplir les champs à partir de votre message. Veuillez les remplir vous-même.",
     "voiceLimit": "Vous avez utilisé vos messages vocaux gratuits du jour. Remplissez l'événement vous-même ou réessayez demain.",
+    "voicePaused": "Les messages vocaux sont suspendus pour aujourd'hui. Remplissez l'événement vous-même ou réessayez demain.",
     "eraseAccount": "Nous n'avons pas pu supprimer le compte. Veuillez réessayer.",
-    "offline": "Vous êtes hors ligne. Réessayez une fois la connexion revenue."
+    "offline": "Vous êtes hors ligne. Réessayez une fois la connexion revenue.",
+    "captcha": "Nous n'avons pas pu vérifier que vous êtes une personne. Veuillez réessayer.",
+    "weakPassword": "Ce mot de passe est apparu dans une fuite de données ou est trop facile à deviner. Veuillez en choisir un autre."
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",

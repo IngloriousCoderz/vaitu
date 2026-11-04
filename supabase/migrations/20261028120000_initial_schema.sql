@@ -256,6 +256,7 @@ insert into public.app_config (key, value, description) values
   ('settlement_reply_days', 14, 'Days to contradict a report of not settling before it counts.'),
   ('badge_payment_issues_min', 2, 'Payment issues for the Payment Issues badge.'),
   ('voice_daily_limit', 3, 'Voice messages a user can transcribe, and parse, per day.'),
+  ('voice_daily_minutes', 120, 'Minutes of audio everyone together can transcribe per day.'),
   ('reports_daily_limit', 5, 'Reports a user can send per day.');
 
 
@@ -2149,6 +2150,7 @@ create table public.voice_usage (
   day date not null default current_date,
   kind text not null check (kind in ('transcribe', 'parse')),
   uses integer not null default 1,
+  seconds numeric not null default 0,
   primary key (user_id, day, kind)
 );
 
@@ -2186,6 +2188,34 @@ as $$
   update public.voice_usage
   set uses = greatest(uses - 1, 0)
   where user_id = p_user_id and day = current_date and kind = p_kind;
+$$;
+
+-- Deepgram bills by the minute, and fake accounts multiply the daily limit.
+create or replace function public.voice_budget_reached()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(sum(seconds), 0) >= coalesce(
+    (select value * 60 from public.app_config where key = 'voice_daily_minutes'),
+    0
+  )
+  from public.voice_usage
+  where day = current_date;
+$$;
+
+create or replace function public.record_voice_seconds(p_user_id uuid, p_seconds numeric)
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  insert into public.voice_usage (user_id, kind, uses, seconds)
+  values (p_user_id, 'transcribe', 0, greatest(p_seconds, 0))
+  on conflict (user_id, day, kind) do update
+    set seconds = public.voice_usage.seconds + excluded.seconds;
 $$;
 
 select cron.schedule(

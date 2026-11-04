@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
+  ANTONY,
   createEventAs,
   deleteOwnedEvent,
-  SEEKER,
-  SENDER,
+  GIADA,
   signIn,
   signOut,
 } from "../testing/index.js"
@@ -26,7 +26,7 @@ describe("notifications feed", () => {
   let rejectedEventId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    eventId = await createEventAs(ANTONY, crypto.randomUUID())
     applicationId = await applyAsSender(eventId)
   }, TEST_TIMEOUT_MS)
 
@@ -39,7 +39,7 @@ describe("notifications feed", () => {
   test(
     "an application shows up on the owner's bell with the applicant's name",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const items = await fetchMyNotifications()
       const received = items.find(
         (item) =>
@@ -57,7 +57,7 @@ describe("notifications feed", () => {
   test(
     "one user's feed is never another user's",
     async () => {
-      await signIn(SENDER)
+      await signIn(GIADA)
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -76,7 +76,7 @@ describe("notifications feed", () => {
   test(
     "shortlisting and choosing notifies the applicant",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { error: shortlistError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
@@ -88,7 +88,7 @@ describe("notifications feed", () => {
       })
       if (winnerError) throw winnerError
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       const items = await fetchMyNotifications()
       expect(items.some((item) => item.type === "application_selected")).toBe(
         true,
@@ -100,7 +100,7 @@ describe("notifications feed", () => {
   test(
     "marking one read empties exactly that row from the unread count",
     async () => {
-      await signIn(SENDER)
+      await signIn(GIADA)
       const before = await fetchMyNotifications()
       const unreadRows = before.filter(
         (item) => !item.is_read && item.event_id === eventId,
@@ -120,7 +120,7 @@ describe("notifications feed", () => {
   test(
     "marking all read is exactly what it says",
     async () => {
-      await signIn(SENDER)
+      await signIn(GIADA)
       const before = await fetchMyNotifications()
       expect(before.length).toBeGreaterThan(0)
 
@@ -150,7 +150,7 @@ describe("notifications feed", () => {
   test(
     "read is the only column a recipient can write",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const [item] = await fetchMyNotifications()
       expect(item).toBeTruthy()
 
@@ -166,11 +166,11 @@ describe("notifications feed", () => {
   test(
     "only the triggers write notifications",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      await signIn(SENDER)
+      await signIn(GIADA)
       const { error } = await supabase.rpc("notify_user", {
         p_user: user.id,
         p_type: "event_closed",
@@ -183,14 +183,14 @@ describe("notifications feed", () => {
   test(
     "editing the event notifies the live applicants",
     async () => {
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { error: editError } = await supabase
         .from("events")
         .update({ details: "Updated for the notifications test." })
         .eq("id", eventId)
       if (editError) throw editError
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       const items = await fetchMyNotifications()
       expect(items.some((item) => item.type === "event_updated")).toBe(true)
     },
@@ -200,16 +200,16 @@ describe("notifications feed", () => {
   test(
     "rejecting notifies the applicant too",
     async () => {
-      rejectedEventId = await createEventAs(SEEKER, crypto.randomUUID())
+      rejectedEventId = await createEventAs(ANTONY, crypto.randomUUID())
       const rejectedId = await applyAsSender(rejectedEventId)
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { error: rejectError } = await supabase
         .from("applications")
         .update({ status: "rejected" })
         .eq("id", rejectedId)
       if (rejectError) throw rejectError
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       const items = await fetchMyNotifications()
       expect(items.some((item) => item.type === "application_rejected")).toBe(
         true,
@@ -223,7 +223,7 @@ describe("withdrawal notification", () => {
   let eventId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    eventId = await createEventAs(ANTONY, crypto.randomUUID())
   }, TEST_TIMEOUT_MS)
 
   afterAll(async () => {
@@ -234,7 +234,7 @@ describe("withdrawal notification", () => {
   test(
     "withdrawing tells the event's owner who withdrew",
     async () => {
-      await signIn(SENDER)
+      await signIn(GIADA)
       const {
         data: { user },
       } = await supabase.auth.getUser()
@@ -258,7 +258,7 @@ describe("withdrawal notification", () => {
       const { error: reapplyError } = await apply()
       if (reapplyError) throw reapplyError
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const items = await fetchMyNotifications()
       const row = items.find(
         (item) =>
@@ -273,7 +273,7 @@ describe("withdrawal notification", () => {
 })
 
 async function applyAsSender(eventId) {
-  await signIn(SENDER)
+  await signIn(GIADA)
   const {
     data: { user },
   } = await supabase.auth.getUser()

@@ -1,7 +1,7 @@
 import { afterAll, expect, test } from "vitest"
 
 import { supabase } from "../../api/client.js"
-import { deleteCheckEmailLimit, SEEKER } from "../../testing/index.js"
+import { ANTONY, deleteCheckEmailLimit } from "../../testing/index.js"
 
 const ATTEMPT_LIMIT = 20
 const TEST_TIMEOUT_MS = 60000
@@ -16,7 +16,7 @@ test(
   "an existing account is reported",
   async () => {
     const ip = forwardedFor()
-    const { data, error } = await checkEmail(SEEKER.email, ip)
+    const { data, error } = await checkEmail(ANTONY.email, ip)
     expect(error).toBeNull()
     expect(data).toEqual({ exists: true })
   },

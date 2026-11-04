@@ -2,13 +2,13 @@ import { afterAll, describe, expect, test } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
+  ANTONY,
   coupleTitle,
   createEventAs,
   deleteOwnedEvent,
   deleteOwnedEventByTitle,
   eventPayload,
-  SEEKER,
-  SENDER,
+  GIADA,
   signIn,
   signOut,
 } from "../testing/index.js"
@@ -45,7 +45,7 @@ test(
   "a signed-in user can create an event",
   async () => {
     testUuid = crypto.randomUUID()
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     await createEvent(eventPayload(testUuid))
 
     const mine = await fetchMyEvents()
@@ -78,14 +78,14 @@ describe("deleting an event", () => {
     "another account cannot delete it",
     async () => {
       ownedUuid = crypto.randomUUID()
-      ownedEventId = await createEventAs(SEEKER, ownedUuid)
+      ownedEventId = await createEventAs(ANTONY, ownedUuid)
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       await expect(deleteEvent(ownedEventId)).rejects.toThrow(
         "Only the event owner",
       )
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const mine = await fetchMyEvents()
       expect(
         mine.some((event) => event.id === ownedEventId),
@@ -116,15 +116,15 @@ describe("editing an event", () => {
     async () => {
       ownedUuid = crypto.randomUUID()
       const payload = eventPayload(ownedUuid)
-      ownedEventId = await createEventAs(SEEKER, ownedUuid)
+      ownedEventId = await createEventAs(ANTONY, ownedUuid)
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       await updateEvent(ownedEventId, {
         ...payload,
         title: `Hijack ${ownedUuid}`,
       })
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const row = await fetchEventForEdit(ownedEventId)
       expect(row.title).toBe(payload.title)
     },
@@ -134,7 +134,7 @@ describe("editing an event", () => {
 
 describe("an event's category", () => {
   const insert = async (id, category) => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -183,10 +183,10 @@ describe("the feed", () => {
     async () => {
       ownedUuid = crypto.randomUUID()
       const region = `Vitest ${ownedUuid}`
-      ownedEventId = await createEventAs(SEEKER, ownedUuid, undefined, {
+      ownedEventId = await createEventAs(ANTONY, ownedUuid, undefined, {
         region,
       })
-      await signIn(SENDER)
+      await signIn(GIADA)
 
       const feed = {
         jobTypes: ["wedding_photographer"],
@@ -223,7 +223,7 @@ describe("the feed", () => {
         region,
       )
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       expect(await fetchOpenEventRegions()).not.toContain(region)
     },
     TEST_TIMEOUT_MS,

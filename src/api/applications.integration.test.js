@@ -2,12 +2,13 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import {
+  ANTONY,
   createEventAs,
   deleteOwnedEvent,
   deleteSignedUpUser,
+  GIADA,
+  PASSWORD,
   pastDeadline,
-  SEEKER,
-  SENDER,
   signIn,
   signOut,
   signUp,
@@ -29,7 +30,7 @@ describe("applying and choosing a winner", () => {
   let eventId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    eventId = await createEventAs(ANTONY, crypto.randomUUID())
   })
 
   afterAll(async () => {
@@ -38,19 +39,19 @@ describe("applying and choosing a winner", () => {
   })
 
   test("the owner cannot apply to their own event", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { error } = await apply(eventId, MOTIVATION)
     expect(error.message).toContain("You cannot apply to your own event")
   })
 
   test("someone else can apply to that event", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { error } = await apply(eventId, MOTIVATION)
     expect(error).toBeNull()
   })
 
   test("the owner can see that application", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { data, error } = await supabase
       .from("applications")
       .select("id, motivation")
@@ -58,17 +59,17 @@ describe("applying and choosing a winner", () => {
     expect(error).toBeNull()
     expect(data).toEqual([{ id: expect.any(String), motivation: MOTIVATION }])
     const applicants = await fetchApplicants([data[0].id])
-    expect(applicants[data[0].id].full_name).toBe("Test Sender")
+    expect(applicants[data[0].id].full_name).toBe("Giada Cazzola")
   })
 
   test("a pending application cannot win", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { error } = await assignWinner(eventId, await applicationId(eventId))
     expect(error.message).toContain("Winner must come from the shortlist")
   })
 
   test("the owner shortlists the application", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const id = await applicationId(eventId)
     const { error } = await supabase
       .from("applications")
@@ -86,13 +87,13 @@ describe("applying and choosing a winner", () => {
   })
 
   test("the applicant cannot assign the winner", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { error } = await assignWinner(eventId, await applicationId(eventId))
     expect(error.message).toContain("Only the event owner can assign a winner")
   })
 
   test("the owner assigns the winner", async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const id = await applicationId(eventId)
     const { error } = await assignWinner(eventId, id)
     expect(error).toBeNull()
@@ -114,7 +115,7 @@ describe("applying and choosing a winner", () => {
   })
 
   test("the winner withdrawing reopens the event", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     const id = await applicationId(eventId)
     await withdrawApplication(id)
 
@@ -148,22 +149,22 @@ describe("a passed deadline", () => {
 
   test("a new application is refused", async () => {
     const eventId = await createEventAs(
-      SEEKER,
+      ANTONY,
       crypto.randomUUID(),
       pastDeadline(),
     )
     eventIds.push(eventId)
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { error } = await apply(eventId, MOTIVATION)
     expect(error.message).toContain("Application deadline has passed")
   })
 
   test("the winner withdrawing after the deadline leaves the event assigned", async () => {
-    const eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    const eventId = await createEventAs(ANTONY, crypto.randomUUID())
     eventIds.push(eventId)
-    await signIn(SENDER)
+    await signIn(GIADA)
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const id = await shortlist(eventId)
     expect((await assignWinner(eventId, id)).error).toBeNull()
 
@@ -173,7 +174,7 @@ describe("a passed deadline", () => {
       .eq("id", eventId)
     expect(deadlineError).toBeNull()
 
-    await signIn(SENDER)
+    await signIn(GIADA)
     await withdrawApplication(id)
     const { data: event, error: eventError } = await supabase
       .from("events")
@@ -195,11 +196,11 @@ describe("the shortlist after the winner withdraws", () => {
     const id = crypto.randomUUID()
     const email = `vitest-${id}@vaitu.local`
     userId = await signUp({ email, fullName: `Vitest ${id}` })
-    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    eventId = await createEventAs(ANTONY, crypto.randomUUID())
 
-    await signIn({ email, password: SEEKER.password })
+    await signIn({ email, password: PASSWORD })
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-    await signIn(SENDER)
+    await signIn(GIADA)
     winnerUserId = (await supabase.auth.getUser()).data.user.id
   }, TEST_TIMEOUT_MS)
 
@@ -210,10 +211,10 @@ describe("the shortlist after the winner withdraws", () => {
   }, TEST_TIMEOUT_MS)
 
   async function assignSender({ shortlistOther = true } = {}) {
-    await signIn(SENDER)
+    await signIn(GIADA)
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
 
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const winnerId = await applicationIdFor(eventId, winnerUserId)
     otherId = await applicationIdFor(eventId, userId)
     await setStatus(winnerId, "shortlisted")
@@ -228,10 +229,10 @@ describe("the shortlist after the winner withdraws", () => {
     async () => {
       const winnerId = await assignSender()
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       await withdrawApplication(winnerId)
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       expect(await statusOf(otherId)).toBe("shortlisted")
     },
     TEST_TIMEOUT_MS,
@@ -244,10 +245,10 @@ describe("the shortlist after the winner withdraws", () => {
       await setStatus(otherId, "pending")
       await setStatus(otherId, "rejected")
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       await withdrawApplication(winnerId)
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       expect(await statusOf(otherId)).toBe("rejected")
     },
     TEST_TIMEOUT_MS,
@@ -258,7 +259,7 @@ describe("withdrawing an application", () => {
   let eventId = null
 
   beforeAll(async () => {
-    eventId = await createEventAs(SEEKER, crypto.randomUUID())
+    eventId = await createEventAs(ANTONY, crypto.randomUUID())
   })
 
   afterAll(async () => {
@@ -267,7 +268,7 @@ describe("withdrawing an application", () => {
   })
 
   test("a pending application can be withdrawn", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
     await withdrawApplication(await applicationId(eventId))
 
@@ -281,7 +282,7 @@ describe("withdrawing an application", () => {
   })
 
   test("a withdrawn application cannot come back or be withdrawn twice", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { data: withdrawn } = await supabase
       .from("applications")
       .select("id")
@@ -292,7 +293,7 @@ describe("withdrawing an application", () => {
 
     await expect(withdrawApplication(withdrawn.id)).rejects.toThrow()
 
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { error } = await supabase
       .from("applications")
       .update({ status: "shortlisted" })
@@ -301,7 +302,7 @@ describe("withdrawing an application", () => {
   })
 
   test("applications cannot be deleted from the client", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { error } = await supabase
       .from("applications")
       .delete()
@@ -310,11 +311,11 @@ describe("withdrawing an application", () => {
   })
 
   test("a shortlisted application can be withdrawn", async () => {
-    await signIn(SENDER)
+    await signIn(GIADA)
     expect((await apply(eventId, MOTIVATION)).error).toBeNull()
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     await shortlist(eventId)
-    await signIn(SENDER)
+    await signIn(GIADA)
     await withdrawApplication(await applicationId(eventId))
 
     const { data, error } = await supabase
@@ -341,10 +342,10 @@ describe("an event that is not open", () => {
   test(
     "a closed event refuses a new application",
     async () => {
-      eventId = await createEventAs(SEEKER, crypto.randomUUID())
+      eventId = await createEventAs(ANTONY, crypto.randomUUID())
       await updateAsService("events", "id", eventId, { status: "closed" })
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       const { error } = await apply(eventId, MOTIVATION)
       expect(error.message).toContain("Event is not open for applications")
     },
@@ -375,20 +376,20 @@ describe("the shortlist cap", () => {
       const email = `vitest-${id}@vaitu.local`
       userId = await signUp({ email, fullName: `Vitest ${id}` })
 
-      eventId = await createEventAs(SEEKER, crypto.randomUUID(), undefined, {
+      eventId = await createEventAs(ANTONY, crypto.randomUUID(), undefined, {
         max_applicants: SHORTLIST_CAP,
       })
 
-      await signIn(SENDER)
+      await signIn(GIADA)
       const {
         data: { user: sender },
       } = await supabase.auth.getUser()
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
 
-      await signIn({ email, password: SEEKER.password })
+      await signIn({ email, password: PASSWORD })
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { error: firstError } = await supabase
         .from("applications")
         .update({ status: "shortlisted" })
@@ -419,8 +420,8 @@ describe("the applicant's own status", () => {
   test(
     "the applicant cannot shortlist or select themselves",
     async () => {
-      eventId = await createEventAs(SEEKER, crypto.randomUUID())
-      await signIn(SENDER)
+      eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      await signIn(GIADA)
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
       const id = await applicationId(eventId)
 
@@ -479,15 +480,15 @@ describe("someone else's application", () => {
   test(
     "another account cannot read it",
     async () => {
-      eventId = await createEventAs(SEEKER, crypto.randomUUID())
-      await signIn(SENDER)
+      eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      await signIn(GIADA)
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
       const id = await applicationId(eventId)
 
       const accountId = crypto.randomUUID()
       const email = `vitest-${accountId}@vaitu.local`
       userId = await signUp({ email, fullName: `Vitest ${accountId}` })
-      await signIn({ email, password: SEEKER.password })
+      await signIn({ email, password: PASSWORD })
 
       const { data: rows, error } = await supabase
         .from("applications")
@@ -497,7 +498,7 @@ describe("someone else's application", () => {
       expect(rows).toEqual([])
       await expect(fetchReceivedDetail(id)).rejects.toThrow()
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const { data: owned, error: ownedError } = await supabase
         .from("applications")
         .select("motivation")
@@ -524,8 +525,8 @@ describe("applying twice", () => {
   test(
     "the same account cannot apply twice",
     async () => {
-      eventId = await createEventAs(SEEKER, crypto.randomUUID())
-      await signIn(SENDER)
+      eventId = await createEventAs(ANTONY, crypto.randomUUID())
+      await signIn(GIADA)
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
 
       const { error } = await apply(eventId, MOTIVATION)
@@ -551,13 +552,13 @@ describe("rewriting an application", () => {
   test(
     "only the applicant's motivation and the status can change",
     async () => {
-      eventId = await createEventAs(SEEKER, crypto.randomUUID())
+      eventId = await createEventAs(ANTONY, crypto.randomUUID())
       otherEventId = await createEventAs(
-        SEEKER,
+        ANTONY,
         crypto.randomUUID(),
         pastDeadline(),
       )
-      await signIn(SENDER)
+      await signIn(GIADA)
       expect((await apply(eventId, MOTIVATION)).error).toBeNull()
       const id = await applicationId(eventId)
 
@@ -569,7 +570,7 @@ describe("rewriting an application", () => {
 
       expect(await updateMotivation(id, `${MOTIVATION}, edited`)).toBe(true)
 
-      await signIn(SEEKER)
+      await signIn(ANTONY)
       const {
         data: { user: owner },
       } = await supabase.auth.getUser()

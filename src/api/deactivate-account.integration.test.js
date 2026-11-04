@@ -1,12 +1,13 @@
 import { afterAll, expect, test } from "vitest"
 
 import {
+  ANTONY,
   coupleTitle,
   createEventAs,
   deleteSignedUpUser,
   eventPayload,
-  SEEKER,
-  SENDER,
+  GIADA,
+  PASSWORD,
   signIn,
   signOut,
   signUp,
@@ -29,7 +30,7 @@ let senderEventId = null
 afterAll(async () => {
   try {
     if (senderEventId) {
-      await signIn(SENDER)
+      await signIn(GIADA)
       await deleteEvent(senderEventId)
     }
     if (userId) await deleteSignedUpUser(userId)
@@ -53,7 +54,7 @@ test(
 test(
   "the activity stamps are not the user's to write",
   async () => {
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -81,7 +82,7 @@ test(
     const email = `vitest-${id}@vaitu.local`
     userId = await signUp({ email, fullName: `Vitest ${id}` })
 
-    await signIn({ email, password: SEEKER.password })
+    await signIn({ email, password: PASSWORD })
     await createEvent(eventPayload(id))
     const created = (await fetchMyEvents()).find(
       (event) => event.title === coupleTitle(id),
@@ -96,10 +97,10 @@ test(
     expect(assignedEvent).toBeTruthy()
 
     const appliedId = crypto.randomUUID()
-    senderEventId = await createEventAs(SENDER, appliedId)
-    await signIn({ email, password: SEEKER.password })
+    senderEventId = await createEventAs(GIADA, appliedId)
+    await signIn({ email, password: PASSWORD })
 
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const {
       data: { user: applicant },
     } = await supabase.auth.getUser()
@@ -116,7 +117,7 @@ test(
       .single()
     expect(sentApplication).toBeTruthy()
 
-    await signIn({ email, password: SEEKER.password })
+    await signIn({ email, password: PASSWORD })
     await updateApplicationStatus(sentApplication.id, "shortlisted")
     const { error: assignError } = await supabase.rpc("assign_winner", {
       p_event_id: assignedEvent.id,
@@ -128,11 +129,11 @@ test(
     )
     expect(selectedEvent?.status).toBe("assigned")
 
-    await signIn(SENDER)
+    await signIn(GIADA)
     const {
       data: { user: sender },
     } = await supabase.auth.getUser()
-    await signIn({ email, password: SEEKER.password })
+    await signIn({ email, password: PASSWORD })
 
     const result = await invoke("deactivate-account", { user_id: sender.id })
     expect(result).toEqual({ status: 200, payload: { deactivated: true } })
@@ -146,7 +147,7 @@ test(
     expect(profile.is_active).toBe(false)
     expect(profile.deactivated_at).toBeTruthy()
 
-    await signIn(SEEKER)
+    await signIn(ANTONY)
     const { data: orphaned, error: orphanedError } = await supabase
       .from("applications")
       .select("id")
@@ -167,7 +168,7 @@ test(
 
     await signOut()
 
-    await signIn(SENDER)
+    await signIn(GIADA)
     const { data: publicEvent, error: eventError } = await supabase
       .from("events")
       .select("id")
@@ -183,7 +184,7 @@ test(
     expect(receivedError).toBeNull()
     expect(received).toEqual([])
 
-    await signIn({ email, password: SEEKER.password })
+    await signIn({ email, password: PASSWORD })
     const { data: isReactivated, error: touchError } =
       await supabase.rpc("touch_login")
     expect(touchError).toBeNull()
@@ -219,7 +220,7 @@ test(
       .eq("applicant_id", userId)
     expect(count).toBe(0)
 
-    await signIn(SENDER)
+    await signIn(GIADA)
     await deleteEvent(senderEventId)
     senderEventId = null
 
@@ -236,7 +237,7 @@ test(
     const email = `vitest-${id}@vaitu.local`
     const imageOwnerId = await signUp({ email, fullName: `Vitest ${id}` })
     try {
-      await signIn({ email, password: SEEKER.password })
+      await signIn({ email, password: PASSWORD })
       const image = await uploadEventImage(
         new File([new Uint8Array([1])], "venue.png", { type: "image/png" }),
       )

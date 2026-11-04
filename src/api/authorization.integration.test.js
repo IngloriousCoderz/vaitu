@@ -4,10 +4,10 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import {
   deleteSignedUpUser,
   eventPayload,
+  PASSWORD,
   readAsService,
   readEventAsService,
   removeStoredFile,
-  SEEKER,
   setEventDate,
   signUp,
   updateAsService,
@@ -57,7 +57,7 @@ async function actor(label) {
   const db = client()
   const { error } = await db.auth.signInWithPassword({
     email,
-    password: SEEKER.password,
+    password: PASSWORD,
   })
   if (error) throw error
   return { userId, db }
@@ -209,7 +209,9 @@ describe("internal functions", () => {
     ["record_job_agreement", { p_application_id: cast.jobId, p_amount: 1 }],
     ["claim_voice_use", { p_user_id: cast.winner.userId, p_kind: "parse" }],
     ["release_voice_use", { p_user_id: cast.winner.userId, p_kind: "parse" }],
-    ["account_exists", { p_email: "sender@vaitu.local" }],
+    ["voice_budget_reached", {}],
+    ["record_voice_seconds", { p_user_id: cast.winner.userId, p_seconds: 1 }],
+    ["account_exists", { p_email: "giada@vaitu.local" }],
     ["check_email_rate_limit", { p_ip_hash: "vitest" }],
     ["claim_alert", { p_key: "vitest" }],
     ["email_recipients", { p_user_ids: [cast.winner.userId] }],

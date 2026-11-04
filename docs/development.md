@@ -28,6 +28,11 @@ This picks up where [Getting started](../README.md#getting-started) leaves off: 
 device, replace `127.0.0.1` with your computer LAN IP (see
 [Mobile](mobile.md)) — the emulator uses `10.0.2.2` instead.
 
+Keep `VITE_TURNSTILE_SITE_KEY=` empty there: the local stack has no CAPTCHA,
+and an empty key makes the app skip Turnstile. To see the widget at work, run
+`pnpm dev` with Cloudflare's test key `1x00000000000000000000AA`, which always
+passes.
+
 ### Run the app
 
 Three terminals:
@@ -53,9 +58,11 @@ talks to. Edge functions always talk to the local database (see
 ### Test accounts (seed)
 
 There is one kind of account: it can post events and apply to other people's.
+Both seeded accounts have the password `vaitu-local`, as do the accounts the
+tests sign up.
 
-- `sender@vaitu.local` / `test1234` (owns the seeded events)
-- `seeker@vaitu.local` / `test1234` (profile pre-filled, can apply right away)
+- `giada@vaitu.local`, Giada Cazzola, posted the seeded events.
+- `antony@vaitu.local`, Matteo Antony Mistretta, can apply to them right away.
 
 ### Migrations
 

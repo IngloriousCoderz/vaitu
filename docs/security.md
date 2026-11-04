@@ -15,6 +15,12 @@ and what stays open on purpose.
   and only the ones the app calls are granted to `authenticated`.
 - **Edge functions** check the session, or the service role for the ones only
   the database calls (`push-notify`, `send-emails`).
+- **Turnstile** on signup, login and resending the confirmation: Supabase Auth
+  checks the token, so a script can't make accounts in bulk. See
+  [Deploying](deploying.md#dashboard-settings-that-no-migration-can-set).
+- **Daily limits** on what costs money or reaches other people: voice
+  messages per user and in total (see [Voice AI](voice-ai.md#notes)), reports
+  per user, and emails per day.
 - **Security headers** in `vercel.json`: a content security policy, HSTS,
   `nosniff`, no framing, a referrer policy and a permissions policy that only
   allows the microphone.
@@ -60,7 +66,7 @@ production headers, and runs two scans in Docker at once:
 
 - **App** (passive): crawls the pages, including the routes only JavaScript
   reaches, and checks headers, cookies and what the pages expose.
-- **REST API** (active): signed in as `seeker@vaitu.local`, it sends injection
+- **REST API** (active): signed in as `antony@vaitu.local`, it sends injection
   and other attacks to every table and function PostgREST lists for that user.
   The command checks that the session really reached the API: otherwise the
   scan only covers a signed-out visitor, and it fails.
@@ -107,6 +113,8 @@ These are known and accepted. The scan ignores the ones it reports.
 | `check-email` tells whether an email has an account                      | The login flow needs it. It is limited to 20 checks per IP every 15 minutes.                                                                                                                                 |
 | Anyone holding another device's push token can move it to their account  | The token only lives on that device, the taker only receives that device's pushes, and the next login there takes it back. Blocking it would break switching accounts on a phone.                            |
 | Organizers see an applicant's phone, website and country                 | That is how they get in touch.                                                                                                                                                                               |
+| Someone determined can still make a few accounts by hand                 | Turnstile stops scripts, not people. The shared voice budget caps what they cost, and reports and blocking handle what they post.                                                                            |
+| Reputation can be faked with a second account                            | Reviews come from whoever posted the job, so an organizer can review their own second account. Nothing yet weighs a review by who wrote it.                                                                  |
 | HSTS without `preload`                                                   | Preloading binds the whole domain to HTTPS for good, and is hard to undo.                                                                                                                                    |
 | Analytics and push sign-up are not exercised by the local checks         | Their policy entries follow Google's and Firebase's documented domains. After changing the policy, accept analytics and turn on push on production, and look for "Refused to" errors in the browser console. |
 

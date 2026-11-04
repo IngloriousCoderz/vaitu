@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://utzdcnnjxulwlsuhzjaq.supabase.co https://*.google-analytics.com https://*.googletagmanager.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' https://utzdcnnjxulwlsuhzjaq.supabase.co wss://utzdcnnjxulwlsuhzjaq.supabase.co https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' https://*.googletagmanager.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://utzdcnnjxulwlsuhzjaq.supabase.co https://*.google-analytics.com https://*.googletagmanager.com; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' https://utzdcnnjxulwlsuhzjaq.supabase.co wss://utzdcnnjxulwlsuhzjaq.supabase.co https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://challenges.cloudflare.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
         },
         {
           "key": "Strict-Transport-Security",

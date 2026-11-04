@@ -128,7 +128,7 @@ If the app can't reach them, check in order:
 
    curl -X POST http://$LAN_IP:54321/functions/v1/check-email \
      -H "apikey: $VITE_SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-     -d '{"email":"sender@vaitu.local"}'
+     -d '{"email":"giada@vaitu.local"}'
    # expect: {"exists":true}
    ```
 

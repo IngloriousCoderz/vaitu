@@ -38,6 +38,12 @@
   margin: var(--iw-space-3) 0 0;
 }
 
+.captcha {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--iw-space-4);
+}
+
 .submit:disabled {
   opacity: 0.6;
   cursor: default;

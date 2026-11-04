@@ -9,7 +9,7 @@ const BUILD = path.join(OUT, "dist")
 const ZAP_IMAGE = "ghcr.io/zaproxy/zaproxy:stable"
 const DOCKER_HOST = "host.docker.internal"
 const PREVIEW_PORT = 4173
-const TEST_ACCOUNT = { email: "seeker@vaitu.local", password: "test1234" }
+const TEST_ACCOUNT = { email: "antony@vaitu.local", password: "vaitu-local" }
 const POLL_MS = 500
 const POLL_TRIES = 60
 

@@ -9,8 +9,11 @@ import { DAY_MS } from "../constants/index.js"
 
 const DEADLINE_IN_DAYS = 7
 
-export const SENDER = { email: "sender@vaitu.local", password: "test1234" }
-export const SEEKER = { email: "seeker@vaitu.local", password: "test1234" }
+// Every account has this password: the two in supabase/seed.sql and those the
+// tests sign up.
+export const PASSWORD = "vaitu-local"
+export const GIADA = { email: "giada@vaitu.local", password: PASSWORD }
+export const ANTONY = { email: "antony@vaitu.local", password: PASSWORD }
 
 export async function signIn(account) {
   const { error } = await supabase.auth.signInWithPassword(account)
@@ -60,12 +63,12 @@ export async function createEventAs(account, id, deadline, fields) {
 }
 
 export async function deleteOwnedEvent(eventId) {
-  await signIn(SEEKER)
+  await signIn(ANTONY)
   await deleteEvent(eventId)
 }
 
 export async function deleteOwnedEventByTitle(title) {
-  await signIn(SEEKER)
+  await signIn(ANTONY)
   const eventId = await ownedEventId(title)
   if (!eventId) return
   await deleteEvent(eventId)
@@ -132,7 +135,7 @@ export async function runAsService(fn, params) {
 export async function signUp({ email, fullName }) {
   const { data, error } = await supabase.auth.signUp({
     email,
-    password: SEEKER.password,
+    password: PASSWORD,
     options: { data: { full_name: fullName } },
   })
   if (error) throw error
