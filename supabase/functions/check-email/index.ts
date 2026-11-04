@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 
 import { STATUS_CODE } from "jsr:@std/http@1/status"
-import { json, serve } from "npm:@inglorious/supabase@^0.2.0/edge"
+import { clientIp, json, serve } from "npm:@inglorious/supabase@^0.4.0/edge"
 
 import { admin } from "../_shared/supabase.ts"
 
@@ -17,7 +17,7 @@ serve(
 
     const { data: allowed, error: rateError } = await db.rpc(
       "check_email_rate_limit",
-      { p_ip_hash: await hashIp(clientIp(req)) },
+      { p_ip_hash: await hashIp(clientIp(req) ?? "unknown") },
     )
     if (rateError) throw rateError
     if (!allowed) {
@@ -44,19 +44,6 @@ serve(
   },
   { fallbackError: "check failed" },
 )
-
-// Cloudflare sets cf-connecting-ip itself; the first x-forwarded-for entry is
-// whatever the caller sent, so trusting it first lets anyone skip the limit.
-function clientIp(req: Request) {
-  const connecting = req.headers.get("cf-connecting-ip")
-  if (connecting) return connecting
-  const forwarded = req.headers.get("x-forwarded-for")
-  if (forwarded) {
-    const [client] = forwarded.split(",")
-    return client.trim()
-  }
-  return "unknown"
-}
 
 async function hashIp(value: string) {
   const digest = await crypto.subtle.digest(

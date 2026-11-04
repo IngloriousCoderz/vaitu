@@ -1,4 +1,4 @@
-import { env } from "npm:@inglorious/supabase@^0.2.0/edge"
+import { env } from "npm:@inglorious/supabase@^0.4.0/edge"
 import { createClient } from "npm:@supabase/supabase-js@2"
 
 export function admin() {

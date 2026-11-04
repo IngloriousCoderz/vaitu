@@ -1,6 +1,6 @@
 import { decodeBase64 } from "jsr:@std/encoding@1/base64"
 import { encodeBase64Url } from "jsr:@std/encoding@1/base64url"
-import { env, upstreamError } from "npm:@inglorious/supabase@^0.2.0/edge"
+import { env, upstreamError } from "npm:@inglorious/supabase@^0.4.0/edge"
 
 interface ServiceAccount {
   project_id: string

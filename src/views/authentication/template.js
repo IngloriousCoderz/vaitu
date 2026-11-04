@@ -1,8 +1,8 @@
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { CAPTCHA_ELEMENT_ID } from "../../api/captcha.js"
 import { Page } from "../../common/page/index.js"
+import { CAPTCHA_ELEMENT_ID } from "../../constants/index.js"
 import { ConfirmStep } from "./confirm-step.js"
 import { EmailStep } from "./email-step.js"
 import { LoginStep } from "./login-step.js"

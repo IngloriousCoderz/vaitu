@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 
 import { STATUS_CODE } from "jsr:@std/http@1/status"
-import { currentUser, json, serve } from "npm:@inglorious/supabase@^0.2.0/edge"
+import { currentUser, json, serve } from "npm:@inglorious/supabase@^0.4.0/edge"
 
 import { sha256Hex } from "../_shared/erasure.ts"
 import { admin } from "../_shared/supabase.ts"

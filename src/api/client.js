@@ -1,6 +1,8 @@
+import { createCaptcha } from "@inglorious/supabase"
 import { createClient } from "@supabase/supabase-js"
 
-import { SUPABASE_API_PORT } from "../constants/index.js"
+import { CAPTCHA_ELEMENT_ID, SUPABASE_API_PORT } from "../constants/index.js"
+import { currentLocale } from "../i18n/index.js"
 
 export const isSignupConfirmation = readSignupConfirmation()
 
@@ -8,6 +10,12 @@ export const supabase = createClient(
   supabaseUrl(),
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 )
+
+export const captcha = createCaptcha({
+  siteKey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
+  element: CAPTCHA_ELEMENT_ID,
+  language: currentLocale,
+})
 
 function supabaseUrl() {
   const baked = import.meta.env.VITE_SUPABASE_URL

@@ -1,3 +1,4 @@
+import { CaptchaError } from "@inglorious/supabase"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { errorKey } from "./errors.js"
@@ -25,6 +26,12 @@ describe("errorKey", () => {
         "errors.login",
       ),
     ).toBe("errors.captcha")
+  })
+
+  it("says the bot check failed when the widget did", () => {
+    expect(errorKey(new CaptchaError("timeout"), "errors.login")).toBe(
+      "errors.captcha",
+    )
   })
 
   it("asks for another password when Supabase Auth finds it leaked", () => {

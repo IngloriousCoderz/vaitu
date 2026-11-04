@@ -78,7 +78,7 @@ stack running.
      currentUser,
      json,
      serve,
-   } from "npm:@inglorious/supabase@^0.2.0/edge"
+   } from "npm:@inglorious/supabase@^0.4.0/edge"
 
    import { admin } from "../_shared/supabase.ts"
 

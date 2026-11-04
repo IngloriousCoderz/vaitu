@@ -4,7 +4,7 @@ import {
   isLocalStack,
   sendEmail as sendOne,
   sendEmails as sendBatch,
-} from "npm:@inglorious/supabase@^0.2.0/edge"
+} from "npm:@inglorious/supabase@^0.4.0/edge"
 
 const DEFAULT_FROM = "Vaitu <onboarding@resend.dev>"
 

@@ -1,8 +1,7 @@
 import { handleAsync } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
-import { captchaToken, prepareCaptcha } from "../../api/captcha.js"
-import { supabase } from "../../api/client.js"
+import { captcha, supabase } from "../../api/client.js"
 import { errorKey } from "../../api/errors.js"
 import { setOnboardingDue, writeUser } from "../../api/session.js"
 import {
@@ -106,7 +105,7 @@ export const emailCheck = handleAsync("emailCheck", {
     const { data, error } = await Promise.race([call, timeout])
     if (error) throw error
     const mode = data.exists ? "login" : "signup"
-    prepareCaptcha(mode)
+    captcha.prepare(mode)
     return { mode, email: clean }
   },
   success(entity, { mode, email }) {
@@ -130,7 +129,7 @@ export const login = handleAsync("login", {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: { captchaToken: await captchaToken("login") },
+      options: { captchaToken: await captcha.token("login") },
     })
     if (error) throw error
     const { data: profile, error: profileError } = await supabase
@@ -179,7 +178,7 @@ export const signup = handleAsync("signup", {
       options: {
         data: { full_name: full_name.trim() },
         emailRedirectTo: confirmationRedirect(),
-        captchaToken: await captchaToken("signup"),
+        captchaToken: await captcha.token("signup"),
       },
     })
     if (error) throw error
@@ -213,7 +212,7 @@ export const resend = handleAsync("resend", {
       email,
       options: {
         emailRedirectTo: confirmationRedirect(),
-        captchaToken: await captchaToken("resend"),
+        captchaToken: await captcha.token("resend"),
       },
     })
     if (error) throw error

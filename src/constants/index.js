@@ -67,6 +67,7 @@ export const TENTHS_PER_STAR = 10
 export const NO_RATING = 0
 export const PERCENT_MAX = 100
 export const AUDIO_MAX_SECONDS = 120
+export const CAPTCHA_ELEMENT_ID = "captcha"
 // transcribe-audio refuses more than MAX_AUDIO_BYTES, which this keeps clear of.
 export const AUDIO_BITS_PER_SECOND = 64000
 export const MAX_EVENT_IMAGES = 6
