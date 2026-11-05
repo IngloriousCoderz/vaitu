@@ -30,6 +30,15 @@ const config: CapacitorConfig = {
       initialViewportFitValueHint: "cover",
     },
   },
+  experimental: {
+    ios: {
+      spm: {
+        packageOptions: {
+          "@capacitor-firebase/messaging": { symlink: true },
+        },
+      },
+    },
+  },
 }
 
 export default config
