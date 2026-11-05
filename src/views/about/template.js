@@ -96,6 +96,10 @@ export const template = {
               >${t("about.terms")}</a
             >
           </p>
+
+          <p class=${styles.version}>
+            Vaitu ${import.meta.env.VITE_APP_VERSION}
+          </p>
         `,
       ],
     })

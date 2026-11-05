@@ -9,8 +9,15 @@ import { VitePWA } from "vite-plugin-pwa"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const { version } = JSON.parse(
+  readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
+)
 
 export default defineConfig(({ mode }) => ({
+  define: {
+    "import.meta.env.VITE_APP_VERSION": JSON.stringify(version),
+  },
+
   plugins: [
     VitePWA({
       injectRegister: false,

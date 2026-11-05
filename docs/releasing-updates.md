@@ -40,20 +40,27 @@ change something, build again, and switch to another tab and back.
 
 ### Releasing a new build
 
-1. **Raise the build number.** It must go up with every upload, and it is
-   what the minimum is compared against (the version name is just for
-   display):
-   - Android: `versionCode` in `android/app/build.gradle` (and `versionName`
-     for the version users see).
-   - iOS: in Xcode, target **App** → **General** → **Identity**: **Build**
-     (and **Version** for the version users see).
-2. **Build with the production backend.** `.env.local` must point at the
-   cloud project when you run `pnpm mobile:sync`, and hold the Turnstile site
-   key in `VITE_TURNSTILE_SITE_KEY`, because both are baked in at build time
-   (see [Mobile](mobile.md#running-the-native-apps)).
+The version users see comes from `package.json`, the same on the web, Android
+and iOS (the About page shows it). The build number is shared by both native
+apps: it must go up with every upload, and it is what the minimum is compared
+against.
+
+1. **Describe each change** as you make it with `pnpm changeset`. When a
+   release is due, `pnpm release:version` raises the version in
+   `package.json` from those notes and adds them to `CHANGELOG.md`, which is
+   also the "What's New" text for the stores. Skip this step to upload another
+   build of the same version, for example to TestFlight.
+2. **Run `pnpm mobile:release`.** It copies the version into both native
+   projects, raises the shared build number by one, then builds with the
+   production backend and syncs. The backend is baked in at build time, so
+   this build reads `.env` and ignores `.env.local`: every value it needs,
+   including `VITE_TURNSTILE_SITE_KEY`, must be in `.env`. Commit what it
+   changed.
 3. **Upload and submit.** In Android Studio use **Build → Generate Signed
    App Bundle** and upload it to Google Play Console. In Xcode use
-   **Product → Archive** and upload it to App Store Connect.
+   **Product → Archive**, then **Distribute App → Custom → App Store
+   Connect → Upload**, and untick **Manage Version and Build Number**, so
+   the store gets the build number the project has.
 4. **Wait** for review and for the release to go live.
 
 At this point the update is optional: the stores offer it, and users take it

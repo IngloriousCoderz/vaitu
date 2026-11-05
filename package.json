@@ -1,6 +1,6 @@
 {
   "name": "vaitu",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "private": true,
   "description": "Find wedding work",
@@ -22,6 +22,7 @@
     "vault:push": "node scripts/push-vault-secrets.mjs",
     "secrets:push": "node scripts/push-function-secrets.mjs",
     "build": "vite build",
+    "build:release": "node --env-file-if-exists=.env node_modules/vite/bin/vite.js build",
     "landing": "pnpm --dir landing dev",
     "preview": "vite preview",
     "cap": "cap",
@@ -32,6 +33,9 @@
     "mobile:android": "pnpm build && cap run android",
     "mobile:ios:dev": "CAP_LIVE=1 cap run ios",
     "mobile:android:dev": "CAP_LIVE=1 cap run android",
+    "mobile:release": "node scripts/native-version.mjs && pnpm build:release && cap sync",
+    "changeset": "changeset",
+    "release:version": "changeset version",
     "assets:compose": "node scripts/compose-logo-assets.mjs",
     "assets": "pnpm assets:compose && capacitor-assets generate --ios --android",
     "prepare": "husky"
@@ -60,6 +64,7 @@
     "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/ios": "^8.6.0",
+    "@changesets/cli": "^3.0.3",
     "@inglorious/eslint-config": "^1.2.0",
     "@inglorious/vite-plugin-hmr": "^1.1.0",
     "@vite-pwa/assets-generator": "^2.0.0",
