@@ -52,7 +52,7 @@
     "@inglorious/motion": "^9.0.18",
     "@inglorious/store": "^12.1.1",
     "@inglorious/supabase": "^0.4.0",
-    "@inglorious/ui": "^9.15.2",
+    "@inglorious/ui": "^9.15.3",
     "@inglorious/utils": "^5.1.0",
     "@inglorious/web": "^6.15.0",
     "@supabase/supabase-js": "^2.118.0",

@@ -64,39 +64,8 @@ lerna-debug.log*
 .qodo
 
 
-# Skills
-.adal/
-.agent/
-.agents/
-.augment/
-.claude/
-.cline/
-.codebuddy/
-.commandcode/
-.continue/
-.crush/
-.cursor/
-.factory/
-.goose/
-.iflow/
-.junie/
-.kilocode/
-.kiro/
-.kode/
-.mcpjam/
-.mux/
-.neovate/
-.openhands/
-.pi/
-.pochi/
-.qoder/
-.qwen/
-.roo/
-.trae/
-.vibe/
-.windsurf/
-.zencoder/
-skills/
+# Agent skills
+/.*/skills/
 
 # Landing page build output
 landing/dist
