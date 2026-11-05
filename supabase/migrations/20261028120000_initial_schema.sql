@@ -2240,7 +2240,7 @@ create policy "Anyone reads the minimum app versions"
   using (true);
 
 insert into public.app_versions (platform, min_build, store_url) values
-  ('ios', 1, null),
+  ('ios', 1, 'https://apps.apple.com/app/id6830630579'),
   ('android', 1, 'https://play.google.com/store/apps/details?id=it.ingloriouscoderz.vaitu');
 
 

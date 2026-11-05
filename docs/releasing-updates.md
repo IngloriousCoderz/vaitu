@@ -108,9 +108,9 @@ The code is in `src/native-update.js` and `src/common/update-required/`.
 `store_url` is in the table so it can be fixed without a release:
 
 - Android: `https://play.google.com/store/apps/details?id=it.ingloriouscoderz.vaitu`
-- iOS: `https://apps.apple.com/app/id<ID>`, with the numeric id from App Store
-  Connect. Until it's set, the iOS page tells users to update from the App
-  Store without a button.
+- iOS: `https://apps.apple.com/app/id6830630579`, the Apple ID from App
+  Store Connect (App Information). With no link, the iOS page tells users to
+  update from the App Store without a button.
 
 ### Trying it locally
 
