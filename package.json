@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@capacitor-firebase/analytics": "^8.5.2",
-    "@capacitor-firebase/messaging": "^8.5.2",
+    "@capacitor-firebase/messaging": "^8.6.0",
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
     "@capacitor/share": "^8.0.3",

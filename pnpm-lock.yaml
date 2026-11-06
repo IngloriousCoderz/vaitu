@@ -170,8 +170,8 @@ importers:
         specifier: ^8.5.2
         version: 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
       '@capacitor-firebase/messaging':
-        specifier: ^8.5.2
-        version: 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
+        specifier: ^8.6.0
+        version: 8.6.0(@capacitor/core@8.6.0)(firebase@12.19.0)
       '@capacitor/app':
         specifier: ^8.1.2
         version: 8.1.2(@capacitor/core@8.6.0)
@@ -186,7 +186,7 @@ importers:
         version: 2.0.8
       '@inglorious/firebase':
         specifier: ^0.1.0
-        version: 0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)
+        version: 0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.6.0(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)
       '@inglorious/i18n':
         specifier: ^2.0.0
         version: 2.0.0(typescript@7.0.2)
@@ -826,8 +826,8 @@ packages:
       firebase:
         optional: true
 
-  '@capacitor-firebase/messaging@8.5.2':
-    resolution: {integrity: sha512-6EFxNeU/9teXdlQMmlHdjVqAMq+rr2po8oxLflvGuA6Xy+LPKbKccvamShXnTLjGO30beD6YmERNv5k9SxeGvg==}
+  '@capacitor-firebase/messaging@8.6.0':
+    resolution: {integrity: sha512-DRx4O/naR/tguHAbSlhsm66x/XUKn0IM3KfKcn6lx0pPTGucSfGjJUbSztJmvv5vSwJpUU39tTWUboFe4IVpQA==}
     peerDependencies:
       '@capacitor/core': '>=8.0.0'
       firebase: ^12.6.0
@@ -5018,7 +5018,7 @@ snapshots:
     optionalDependencies:
       firebase: 12.19.0
 
-  '@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)':
+  '@capacitor-firebase/messaging@8.6.0(@capacitor/core@8.6.0)(firebase@12.19.0)':
     dependencies:
       '@capacitor/core': 8.6.0
     optionalDependencies:
@@ -5732,13 +5732,13 @@ snapshots:
       eslint-plugin-simple-import-sort: 14.0.0(eslint@10.13.0(jiti@2.7.0))
       globals: 17.13.0
 
-  '@inglorious/firebase@0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)':
+  '@inglorious/firebase@0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.6.0(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)':
     dependencies:
       '@capacitor/core': 8.6.0
       firebase: 12.19.0
     optionalDependencies:
       '@capacitor-firebase/analytics': 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
-      '@capacitor-firebase/messaging': 8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0)
+      '@capacitor-firebase/messaging': 8.6.0(@capacitor/core@8.6.0)(firebase@12.19.0)
 
   '@inglorious/i18n@2.0.0(typescript@7.0.2)':
     dependencies:
