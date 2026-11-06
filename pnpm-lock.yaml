@@ -185,8 +185,8 @@ importers:
         specifier: ^2.0.8
         version: 2.0.8
       '@inglorious/firebase':
-        specifier: ^0.1.0
-        version: 0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)
+        specifier: ^0.1.1
+        version: 0.1.1(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)
       '@inglorious/i18n':
         specifier: ^2.0.0
         version: 2.0.0(typescript@7.0.2)
@@ -1429,9 +1429,9 @@ packages:
       eslint-plugin-tailwindcss:
         optional: true
 
-  '@inglorious/firebase@0.1.0':
-    resolution: {integrity: sha512-vqe76K886FJGJkZTx2kce9tDMSZ3G8iHF3jYjlZFjgWzLUUs09K+HT+yQZvMFUMmVW0K5V2flC1kV2J4n+6a/w==}
-    engines: {node: '>= 22'}
+  '@inglorious/firebase@0.1.1':
+    resolution: {integrity: sha512-fos1qjlgvIvuhKGm2tJmrxWgqLpdUBGnW++V/FMWpzuekqTuAwA0G7ZiLfRkQVdRePs37VxSs4ZvaL7aFCzQbQ==}
+    engines: {node: '>= 26'}
     peerDependencies:
       '@capacitor-firebase/analytics': ^8.5.2
       '@capacitor-firebase/messaging': ^8.5.2
@@ -5732,7 +5732,7 @@ snapshots:
       eslint-plugin-simple-import-sort: 14.0.0(eslint@10.13.0(jiti@2.7.0))
       globals: 17.13.0
 
-  '@inglorious/firebase@0.1.0(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)':
+  '@inglorious/firebase@0.1.1(@capacitor-firebase/analytics@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor-firebase/messaging@8.5.2(@capacitor/core@8.6.0)(firebase@12.19.0))(@capacitor/core@8.6.0)(firebase@12.19.0)':
     dependencies:
       '@capacitor/core': 8.6.0
       firebase: 12.19.0
