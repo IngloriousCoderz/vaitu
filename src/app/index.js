@@ -87,10 +87,10 @@ export const App = {
     const pushPrompt = api.getEntity("pushPrompt")
     const analytics = api.getEntity("analytics")
 
-    if (api.getEntity("appVersion").isUpdateRequired) {
+    if (api.getEntity("nativeUpdate").isUpdateRequired) {
       return this.renderShell({
         content: html`<section class=${styles.page}>
-          ${api.render("appVersion")}
+          ${api.render("nativeUpdate")}
         </section>`,
       })
     }

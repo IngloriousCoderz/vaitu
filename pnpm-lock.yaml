@@ -192,22 +192,22 @@ importers:
         version: 2.0.0(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.18
-        version: 9.0.18(@inglorious/web@6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
+        version: 9.0.18(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
       '@inglorious/store':
         specifier: ^12.1.1
         version: 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/supabase':
-        specifier: ^0.4.0
-        version: 0.4.0(@supabase/supabase-js@2.118.0)
+        specifier: ^0.5.0
+        version: 0.5.0(@supabase/supabase-js@2.118.0)
       '@inglorious/ui':
         specifier: ^9.15.4
-        version: 9.15.4(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
+        version: 9.15.4(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
       '@inglorious/utils':
         specifier: ^5.1.0
         version: 5.1.0
       '@inglorious/web':
-        specifier: ^6.15.0
-        version: 6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+        specifier: ^6.18.0
+        version: 6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
       '@supabase/supabase-js':
         specifier: ^2.118.0
         version: 2.118.0
@@ -1459,8 +1459,8 @@ packages:
     peerDependencies:
       '@inglorious/utils': ^5.1.0
 
-  '@inglorious/supabase@0.4.0':
-    resolution: {integrity: sha512-o2dxgmYksOuChkwqjN+HxUxKrwJeFMW880seonlJ2yahgNT07AMg/eDLkNATwZX0NG+2sCPmRYyoUXxb2FXAEQ==}
+  '@inglorious/supabase@0.5.0':
+    resolution: {integrity: sha512-oMtksxP0zZ6dsuxXT1qY4TUhp3J+Gal3BWs6jywami2gOu9rnb3/g/jL7yf0TD608GI1zqVy4lu+dwXWbBomjA==}
     engines: {node: '>= 26'}
     peerDependencies:
       '@supabase/supabase-js': ^2.118.0
@@ -1477,17 +1477,21 @@ packages:
     resolution: {integrity: sha512-SmK15U5QV01XpBIKw5CMMHBN5rxSZZ2tUESCDuBaN48+Pal0G49L0btWHWTkK81fn9VhAHRemvzTI0JcNT/wCQ==}
     engines: {node: '>= 22'}
 
+  '@inglorious/utils@5.3.0':
+    resolution: {integrity: sha512-bN6KdMjIrc3Vdc73hNjSWqLrSUnGWapjsQepQVA80lRadTiLRE7p4plspnQkWf6xxHX9n/a1IoQALbWjB7drLw==}
+    engines: {node: '>= 26'}
+
   '@inglorious/vite-plugin-hmr@1.1.0':
     resolution: {integrity: sha512-a/mnVc85xXFJBZpclEvKAhdoF7UNqrBvHiXsrlz8LMRAA8/rwJh0XgIBEuBVvpYPYe1t981LDC24ThCFPb+SHA==}
     engines: {node: '>= 22'}
     peerDependencies:
       vite: ^7.1.3 || ^8.0.0
 
-  '@inglorious/web@6.15.0':
-    resolution: {integrity: sha512-k5tdfrVbQnVC6MRwG6bP0UsjVTke81L2fsCp4CjQCnLqndqjfkbsC3djLkxO2KQXtznuTCc00+r/WJd2s154dw==}
+  '@inglorious/web@6.18.0':
+    resolution: {integrity: sha512-bmOzFZokKol9/Zpe4epY8YDeiBnTgBvpihQdLPwSt3O30c5lJTTDgqUs/Ju+mDSvxcZmhVfj55zueOL0EwkuCg==}
     engines: {node: '>= 26'}
     peerDependencies:
-      '@inglorious/store': ^12.1.1
+      '@inglorious/store': ^12.3.0
 
   '@ionic/cli-framework-output@2.2.8':
     resolution: {integrity: sha512-TshtaFQsovB4NWRBydbNFawql6yul7d5bMiW1WYYf17hd99V6xdDdk3vtF51bw6sLkxON3bDQpWsnUc9/hVo3g==}
@@ -5746,26 +5750,28 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@inglorious/motion@9.0.18(@inglorious/web@6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
+  '@inglorious/motion@9.0.18(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
     dependencies:
-      '@inglorious/web': 6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
 
   '@inglorious/store@12.1.1(@inglorious/utils@5.1.0)':
     dependencies:
       '@inglorious/utils': 5.1.0
       mutative: 1.3.0
 
-  '@inglorious/supabase@0.4.0(@supabase/supabase-js@2.118.0)':
+  '@inglorious/supabase@0.5.0(@supabase/supabase-js@2.118.0)':
     dependencies:
       '@supabase/supabase-js': 2.118.0
 
-  '@inglorious/ui@9.15.4(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
+  '@inglorious/ui@9.15.4(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0
-      '@inglorious/web': 6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
+      '@inglorious/web': 6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))
 
   '@inglorious/utils@5.1.0': {}
+
+  '@inglorious/utils@5.3.0': {}
 
   '@inglorious/vite-plugin-hmr@1.1.0(vite@8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))':
     dependencies:
@@ -5773,10 +5779,10 @@ snapshots:
       magic-string: 1.4.5
       vite: 8.3.5(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
 
-  '@inglorious/web@6.15.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))':
+  '@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
-      '@inglorious/utils': 5.1.0
+      '@inglorious/utils': 5.3.0
       '@lit-labs/ssr-client': 1.1.8
       lit-html: 3.3.3
 

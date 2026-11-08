@@ -1,9 +1,6 @@
 import { App } from "@capacitor/app"
-import { isNative } from "@inglorious/web/mobile"
+import { watchNativeUpdate } from "@inglorious/web/native-update"
 
 import { store } from "./store"
 
-if (isNative()) {
-  store.notify("#appVersion:check")
-  App.addListener("resume", () => store.notify("#appVersion:check"))
-}
+watchNativeUpdate(App, store)

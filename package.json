@@ -51,10 +51,10 @@
     "@inglorious/i18n": "^2.0.0",
     "@inglorious/motion": "^9.0.18",
     "@inglorious/store": "^12.1.1",
-    "@inglorious/supabase": "^0.4.0",
+    "@inglorious/supabase": "^0.5.0",
     "@inglorious/ui": "^9.15.4",
     "@inglorious/utils": "^5.1.0",
-    "@inglorious/web": "^6.15.0",
+    "@inglorious/web": "^6.18.0",
     "@supabase/supabase-js": "^2.118.0",
     "firebase": "^12.19.0",
     "fix-webm-duration": "^1.0.6"
