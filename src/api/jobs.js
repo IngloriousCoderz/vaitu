@@ -14,7 +14,7 @@ import {
   ONE_MINUTE,
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
-import { GENRE_CATEGORIES } from "../data/job-taxonomy.js"
+import { GENRE_SETTINGS } from "../data/job-taxonomy.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
 import { currentLocale, t } from "../i18n/index.js"
 import {
@@ -41,7 +41,7 @@ export function toViewModel(row) {
   const region = canonicalRegion(row.region)
   const base = {
     id: row.id,
-    category: row.category,
+    setting: row.setting,
     profession: row.profession,
     status: row.status,
     region,
@@ -67,7 +67,7 @@ export function toViewModel(row) {
     year,
   }
 
-  if (GENRE_CATEGORIES.includes(row.category)) {
+  if (GENRE_SETTINGS.includes(row.setting)) {
     return {
       ...base,
       title: row.title,
@@ -79,7 +79,7 @@ export function toViewModel(row) {
     }
   }
 
-  if (row.category !== "wedding") {
+  if (row.setting !== "wedding") {
     return {
       ...base,
       title: row.title,
@@ -124,7 +124,7 @@ export async function fetchJobDetail(id) {
   const { data: job, error } = await supabase
     .from("jobs")
     .select(
-      "id, category, profession, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
+      "id, setting, profession, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
     )
     .eq("id", id)
     .single()
@@ -187,7 +187,7 @@ export async function fetchMyJobs() {
   const { data: jobs, error } = await supabase
     .from("jobs")
     .select(
-      "id, category, profession, title, location, region, job_date, application_deadline, status, created_at, image_urls, details",
+      "id, setting, profession, title, location, region, job_date, application_deadline, status, created_at, image_urls, details",
     )
     .eq("poster_id", user.id)
     .order("job_date", { ascending: true })
@@ -236,7 +236,7 @@ async function savePay(job_id, pay) {
 }
 
 const FEED_JOB_COLUMNS =
-  "id, category, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details"
+  "id, setting, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details"
 
 /**
  * One page of the jobs a feed query matches (see feedQuery in
@@ -264,7 +264,7 @@ export async function fetchOpenJobsPage(feed, { from, to }) {
   if (feed.details.length) {
     query = query.or(
       [
-        `category.not.in.(${feed.details.flatMap((d) => d.categories).join(",")})`,
+        `setting.not.in.(${feed.details.flatMap((d) => d.settings).join(",")})`,
         ...feed.details.flatMap((d) =>
           d.values.map((value) => `details->${d.key}.cs.["${value}"]`),
         ),
@@ -374,7 +374,7 @@ export async function fetchJobForEdit(job_id) {
   const { data, error } = await supabase
     .from("jobs")
     .select(
-      "id, category, profession, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, description, job_pay(kind, amount_min, amount_max, currency)",
+      "id, setting, profession, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, description, job_pay(kind, amount_min, amount_max, currency)",
     )
     .eq("id", job_id)
     .eq("poster_id", user.id)

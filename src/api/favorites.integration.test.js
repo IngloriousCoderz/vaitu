@@ -24,7 +24,7 @@ afterAll(async () => {
 }, TEST_TIMEOUT_MS)
 
 test(
-  "the feed defaults are the regions and categories saved on the profile",
+  "the feed defaults are the regions and settings saved on the profile",
   async () => {
     const id = crypto.randomUUID()
     const email = `vitest-${id}@vaitu.local`

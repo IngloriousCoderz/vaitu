@@ -10,23 +10,23 @@ import {
   filterSections,
   filterSectionsFor,
   hasDetail,
-} from "./categories.js"
+} from "./job-settings.js"
 
 const jobType = jobTypeById
 
 describe("filterSections", () => {
-  it("offers every wedding style and every music genre when no category is picked", () => {
+  it("offers every wedding style and every music genre when no setting is picked", () => {
     const [style, genre, ...others] = filterSections([])
     expect(others).toEqual([])
-    expect(style.categories).toEqual(["wedding"])
+    expect(style.settings).toEqual(["wedding"])
     expect(style.title).toBe("Wedding style")
     expect(style.options).toEqual(options(weddingStyles))
-    expect(genre.categories).toEqual(["festival", "concert"])
+    expect(genre.settings).toEqual(["festival", "concert"])
     expect(genre.title).toBe("Music genre")
     expect(genre.options).toEqual(options(musicGenres))
   })
 
-  it("offers only the sections of the picked categories", () => {
+  it("offers only the sections of the picked settings", () => {
     expect(filterSections(["festival"]).map((s) => s.id)).toEqual(["genres"])
   })
 })

@@ -4,7 +4,7 @@ import { t } from "../i18n/index.js"
 import { firstError, normalizeJob, normalizePay, validateJob } from "./jobs.js"
 
 const validWedding = {
-  category: "wedding",
+  setting: "wedding",
   profession: "photographer",
   title: "Ada & Grace",
   location: "Villa",
@@ -17,13 +17,13 @@ const validWedding = {
 
 const validFestival = {
   ...validWedding,
-  category: "festival",
+  setting: "festival",
   details: { headliner: "Nina" },
 }
 
 const validApartment = {
   ...validWedding,
-  category: "apartment",
+  setting: "apartment",
   profession: "cleaner",
   title: "Deep clean",
   details: {},
@@ -62,7 +62,7 @@ describe("normalizeJob", () => {
 
   it("defaults the fields a brand new row needs", () => {
     expect(normalizeJob({})).toMatchObject({
-      category: "wedding",
+      setting: "wedding",
       max_applicants: 5,
       details: {},
     })
@@ -181,7 +181,7 @@ describe("validateJob", () => {
     expect(
       validateJob({
         ...validFestival,
-        category: "concert",
+        setting: "concert",
         profession: "musician",
         details: { headliner: "Nina", genres: ["classical"] },
       }),
@@ -199,7 +199,7 @@ describe("validateJob", () => {
       Object.keys(
         validateJob({
           ...validFestival,
-          category: "concert",
+          setting: "concert",
           profession: "dj",
         }),
       ),
@@ -248,10 +248,10 @@ describe("validateJob", () => {
     ).toEqual({})
   })
 
-  it("rejects a category it knows nothing about", () => {
-    const reunion = { ...validWedding, category: "reunion", details: {} }
+  it("rejects a setting it knows nothing about", () => {
+    const reunion = { ...validWedding, setting: "reunion", details: {} }
     expect(inWords(validateJob(reunion))).toEqual({
-      category: "Pick a category",
+      setting: "Pick a setting",
     })
   })
 })

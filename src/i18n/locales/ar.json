@@ -86,6 +86,14 @@
       "pop": "بوب",
       "classical": "كلاسيكية"
     },
+    "setting": {
+      "wedding": "حفلات الزفاف",
+      "festival": "المهرجانات",
+      "concert": "الحفلات الموسيقية",
+      "apartment": "الشقق",
+      "house": "المنازل",
+      "office": "المكاتب"
+    },
     "profession": {
       "photographer": "تصوير فوتوغرافي",
       "videographer": "تصوير فيديو",
@@ -217,7 +225,7 @@
     "pickStyle": "اختر أسلوبًا",
     "addHeadliner": "أضف الفنان الرئيسي",
     "pickGenre": "اختر نوعًا",
-    "pickCategory": "اختر فئة",
+    "pickSetting": "اختر المجال",
     "addTitle": "أضف عنوانًا",
     "addLocation": "أضف مكانًا",
     "addCountry": "أضف دولة",
@@ -341,7 +349,8 @@
     "results_few": "{{count}} أعمال",
     "results_many": "{{count}} عملًا",
     "results_other": "{{count}} عمل",
-    "profession": "المجال"
+    "profession": "المهنة",
+    "setting": "السياق"
   },
   "myJobs": {
     "title": "أعمالي",

@@ -19,6 +19,8 @@ import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
+const ONE_SETTING = 1
+
 export const template = {
   render(props, api) {
     return this.renderJobList(props, api)
@@ -33,8 +35,10 @@ export const template = {
       wonJobIds,
       status,
       error,
-      category,
+      setting,
       showTypes,
+      settings,
+      activeSettings,
       professions,
       activeProfessions,
       sections,
@@ -50,6 +54,7 @@ export const template = {
       activePeriod,
       isFiltersVisible,
       onSearch,
+      onToggleSetting,
       onToggleProfession,
       onToggleDetail,
       onRemoveFilter,
@@ -69,7 +74,7 @@ export const template = {
 
     return Page.render({
       variant: "sticky",
-      category,
+      setting,
       wide: true,
       children: [
         html`
@@ -114,6 +119,18 @@ export const template = {
                   this.renderFilterField({
                     title: t("jobs.type"),
                     control: api.render("jobTypesFilter"),
+                  }),
+                ),
+                when(settings.length > ONE_SETTING, () =>
+                  this.renderFilterField({
+                    title: t("jobs.setting"),
+                    control: this.renderChipRow({
+                      items: settings,
+                      isActive: (setting) =>
+                        activeSettings.includes(setting.id),
+                      onSelect: onToggleSetting,
+                      getLabel: (setting) => t(setting.label),
+                    }),
                   }),
                 ),
                 this.renderFilterField({

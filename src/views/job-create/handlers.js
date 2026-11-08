@@ -53,7 +53,7 @@ import {
 } from "../../data/regions/resolve.js"
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
-import { categoryById, hasDetail } from "../job-list/categories.js"
+import { hasDetail, settingById } from "../job-list/job-settings.js"
 import { localToday } from "../job-list/query.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
@@ -157,13 +157,13 @@ export function detailToggle(entity, { field, value }) {
 }
 
 export function jobTypeSelect(entity, { value }, api) {
-  const { category, profession } = jobTypeById(value)
-  const isSameCategory = getFieldValue(entity, "category", "") === category
-  Form.fieldChange(entity, { path: "category", value: category })
+  const { setting, profession } = jobTypeById(value)
+  const isSameSetting = getFieldValue(entity, "setting", "") === setting
+  Form.fieldChange(entity, { path: "setting", value: setting })
   Form.fieldChange(entity, { path: "profession", value: profession })
   entity.error = null
-  if (isSameCategory) {
-    if (category === "wedding" && !hasDetail({ category, profession })) {
+  if (isSameSetting) {
+    if (setting === "wedding" && !hasDetail({ setting, profession })) {
       Form.fieldChange(entity, { path: "details.styles", value: undefined })
     }
     return
@@ -181,7 +181,7 @@ export function jobTypeOptionsSync(entity, _, api) {
   const mine = api.getEntity("jobList")?.professions ?? []
   const options = jobTypesFor([...mine])
   const current = jobTypeId(
-    getFieldValue(entity, "category", ""),
+    getFieldValue(entity, "setting", ""),
     getFieldValue(entity, "profession", ""),
   )
   const isOffered = options.some((option) => option.id === current)
@@ -336,7 +336,7 @@ export const audioProcess = handleAsync("audioProcess", {
     entity.audio_transcript = transcript || null
     if (transcript && !entity.is_voice_wait_dismissed) {
       const job_type = jobTypeId(
-        getFieldValue(entity, "category", ""),
+        getFieldValue(entity, "setting", ""),
         getFieldValue(entity, "profession", ""),
       )
       const mine = api.getEntity("jobList")?.professions ?? []
@@ -377,13 +377,13 @@ export const audioParse = handleAsync("audioParse", {
       jobTypeSelect(entity, { value: fields.job_type }, api)
       api.notify("#jobTypeCreate:valueSet", fields.job_type)
     }
-    const category = categoryById(getFieldValue(entity, "category", ""))
+    const setting = settingById(getFieldValue(entity, "setting", ""))
     const details = mergeParsedDetails(
-      category,
+      setting,
       getFieldValue(entity, "details", {}),
       fields.details,
     )
-    if (category.title_from.input && fields.title) {
+    if (setting.title_from.input && fields.title) {
       Form.fieldChange(entity, { path: "title", value: fields.title })
     }
     if (typeof fields.description === "string" && fields.description) {
@@ -660,7 +660,7 @@ export const save = handleAsync("save", {
         ? new Date(job.application_deadline).toISOString()
         : job.application_deadline
     const payload = {
-      category: job.category,
+      setting: job.setting,
       profession: job.profession,
       title: job.title,
       location: job.location,
@@ -714,7 +714,7 @@ export const editLoad = handleAsync("editLoad", {
     const country = row.country ?? ""
     const region = regionForCountry(row.country, row.region)
     entity.values = {
-      category: row.category ?? "wedding",
+      setting: row.setting ?? "wedding",
       profession: row.profession ?? "",
       title: row.title ?? "",
       location: row.location ?? "",

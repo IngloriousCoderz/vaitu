@@ -2,14 +2,14 @@ import { DEFAULT_CURRENCY } from "../../data/currencies.js"
 
 /**
  * The form's details with what the voice message said on top. Only the fields
- * this category has, and only values it allows.
- * @param {{ createFields: { field: string, type: string, options?: { value: string }[] }[] }} category
+ * this setting has, and only values it allows.
+ * @param {{ createFields: { field: string, type: string, options?: { value: string }[] }[] }} setting
  * @param {Record<string, string | string[]>} current
  * @param {Record<string, unknown>} [parsed]
  */
-export function mergeParsedDetails(category, current, parsed = {}) {
+export function mergeParsedDetails(setting, current, parsed = {}) {
   const details = { ...current }
-  for (const { field, type, options } of category.createFields) {
+  for (const { field, type, options } of setting.createFields) {
     const value = parsed[field]
     if (type === "chips") {
       const picked = allowed(options, [value].flat())

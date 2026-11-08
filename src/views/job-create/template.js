@@ -32,7 +32,7 @@ import {
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { currentLocale, t } from "../../i18n/index.js"
-import { categoryById, hasDetail } from "../job-list/categories.js"
+import { hasDetail, settingById } from "../job-list/job-settings.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
@@ -65,20 +65,20 @@ export const template = {
     api,
   ) {
     const busy = entity.status === "saving"
-    const categoryId = getFieldValue(entity, "category", "wedding")
+    const settingId = getFieldValue(entity, "setting", "wedding")
     const profession = getFieldValue(entity, "profession", "")
     const details = getFieldValue(entity, "details", {})
     const country = getFieldValue(entity, "country", "")
-    const category = categoryById(categoryId)
-    const identityFields = category.createFields.filter(
+    const setting = settingById(settingId)
+    const identityFields = setting.createFields.filter(
       (spec) => spec.section === "identity",
     )
-    const title_is_derived = !category.title_from.input
+    const title_is_derived = !setting.title_from.input
 
     return Page.render({
       variant: "document",
       read: true,
-      category: categoryId,
+      setting: settingId,
       children: [
         this.renderVoiceWait({ entity, onVoiceWaitDismiss }),
         html`
@@ -102,11 +102,10 @@ export const template = {
           )}
           ${when(!title_is_derived, () =>
             this.renderTextField({
-              label: category.titleLabel ?? t("fields.title"),
+              label: setting.titleLabel ?? t("fields.title"),
               field: "title",
               value: getFieldValue(entity, "title", ""),
-              placeholder:
-                category.titlePlaceholder ?? t("create.titleExample"),
+              placeholder: setting.titlePlaceholder ?? t("create.titleExample"),
               error: t(getFieldError(entity, "title")),
               isRequired: true,
               onField,
@@ -117,7 +116,7 @@ export const template = {
             field: "location",
             value: getFieldValue(entity, "location", ""),
             placeholder:
-              category.locationPlaceholder ?? t("create.locationExample"),
+              setting.locationPlaceholder ?? t("create.locationExample"),
             error: t(getFieldError(entity, "location")),
             isRequired: true,
             onField,
@@ -140,21 +139,21 @@ export const template = {
               }),
           )}
           ${when(
-            hasDetail({ category: categoryId, profession }),
+            hasDetail({ setting: settingId, profession }),
             () => html`
               <div class=${styles.field}>
                 ${this.renderDetailChips({
-                  spec: category.createFields.find(
-                    (spec) => spec.field === category.detailField,
+                  spec: setting.createFields.find(
+                    (spec) => spec.field === setting.detailField,
                   ),
                   value: getFieldValue(
                     entity,
-                    `details.${category.detailField}`,
+                    `details.${setting.detailField}`,
                     [],
                   ),
                   error: getFieldError(
                     entity,
-                    `details.${category.detailField}`,
+                    `details.${setting.detailField}`,
                   ),
                   onDetailToggle,
                 })}

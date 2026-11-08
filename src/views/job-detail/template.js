@@ -74,7 +74,7 @@ export const template = {
     return Page.render({
       variant: "document",
       wide: true,
-      category: job?.category ?? "wedding",
+      setting: job?.setting ?? "wedding",
       children: [
         Lightbox.render({
           images: photos,

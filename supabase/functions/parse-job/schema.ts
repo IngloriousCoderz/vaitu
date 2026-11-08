@@ -39,7 +39,7 @@ export const JOB_TYPES_WITHOUT_STYLE = [
 ]
 
 // null means free text, a list the values that can be picked, any number of them.
-export const DETAILS_BY_CATEGORY: Record<
+export const DETAILS_BY_SETTING: Record<
   string,
   Record<string, string[] | null>
 > = {
@@ -57,7 +57,7 @@ export const DETAILS_BY_CATEGORY: Record<
 
 export const JOB_TYPES = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
   ([profession, settings]) =>
-    settings.map((category) => `${category}_${profession}`),
+    settings.map((setting) => `${setting}_${profession}`),
 )
 
 export const CURRENCIES = [
@@ -218,7 +218,7 @@ export const CURRENCIES = [
   "ZWG",
 ]
 
-export const TITLED_CATEGORIES = [
+export const TITLED_SETTINGS = [
   "festival",
   "concert",
   "apartment",
@@ -280,7 +280,7 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "description": string | null,
   "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": string | null } | null
 }
-A job type is its category, an underscore and the profession. "details" depends on the category:
+A job type is its setting, an underscore and the profession. "details" depends on the setting:
 - wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(WEDDING_STYLES)})[] }
 - festival, concert: { "headliner": string | null, "genres": (${oneOf(MUSIC_GENRES)})[] }
 - apartment, house, office: {}
@@ -308,7 +308,7 @@ function oneOf(values: string[]) {
 }
 
 // The model's answer is never trusted: whatever is not a valid value for the
-// chosen job type's category is dropped here.
+// chosen job type's setting is dropped here.
 export function toJobFields(
   answer: Record<string, unknown>,
   jobTypes: string[],
@@ -317,17 +317,17 @@ export function toJobFields(
   const job_type = jobTypes.includes(answer?.job_type as string)
     ? (answer.job_type as string)
     : current
-  const [category] = (job_type ?? "").split("_")
+  const [setting] = (job_type ?? "").split("_")
   return {
     job_type,
-    title: TITLED_CATEGORIES.includes(category) ? text(answer?.title) : null,
+    title: TITLED_SETTINGS.includes(setting) ? text(answer?.title) : null,
     location: text(answer?.location),
     country: text(answer?.country),
     region: text(answer?.region),
     job_date: date(answer?.job_date),
     application_deadline: localDatetime(answer?.application_deadline),
     max_applicants: places(answer?.max_applicants),
-    details: withoutStyle(job_type, details(category, answer?.details)),
+    details: withoutStyle(job_type, details(setting, answer?.details)),
     description:
       text(answer?.description)?.slice(0, DESCRIPTION_MAX_LENGTH) ?? null,
     pay: pay(answer?.pay),
@@ -355,9 +355,9 @@ function amount(value: unknown) {
   return typeof value === "number" && value >= NO_AMOUNT ? value : null
 }
 
-function details(category: string, answer: unknown) {
+function details(setting: string, answer: unknown) {
   const given = (answer ?? {}) as Record<string, unknown>
-  const fields = DETAILS_BY_CATEGORY[category] ?? {}
+  const fields = DETAILS_BY_SETTING[setting] ?? {}
   return Object.fromEntries(
     Object.entries(fields).map(([field, allowed]) => [
       field,

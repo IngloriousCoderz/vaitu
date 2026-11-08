@@ -3,13 +3,13 @@ import { describe, expect, it } from "vitest"
 import {
   CURRENCIES,
   DESCRIPTION_MAX_LENGTH,
-  DETAILS_BY_CATEGORY,
+  DETAILS_BY_SETTING,
   JOB_TYPES,
   JOB_TYPES_WITHOUT_STYLE,
   MUSIC_GENRES,
   offeredJobTypes,
   systemPrompt,
-  TITLED_CATEGORIES,
+  TITLED_SETTINGS,
   todayOf,
   toJobFields,
   WEDDING_STYLES,
@@ -21,7 +21,7 @@ import {
   musicGenres,
   weddingStyles,
 } from "../../data/job-taxonomy.js"
-import { categories, hasDetail } from "../job-list/categories.js"
+import { hasDetail, settings } from "../job-list/job-settings.js"
 
 describe("parse-job's copies", () => {
   it("knows every job type, style and genre", () => {
@@ -36,23 +36,23 @@ describe("parse-job's copies", () => {
     expect(JOB_TYPES_WITHOUT_STYLE).toEqual(
       jobTypes
         .filter(
-          (jobType) => jobType.category === "wedding" && !hasDetail(jobType),
+          (jobType) => jobType.setting === "wedding" && !hasDetail(jobType),
         )
         .map((jobType) => jobType.id),
     )
   })
 
   it("asks for the fields the create form has", () => {
-    for (const category of categories) {
-      const fields = Object.entries(DETAILS_BY_CATEGORY[category.id])
+    for (const setting of settings) {
+      const fields = Object.entries(DETAILS_BY_SETTING[setting.id])
       expect(fields).toEqual(
-        category.createFields.map((spec) => [
+        setting.createFields.map((spec) => [
           spec.field,
           spec.options?.map((option) => option.value) ?? null,
         ]),
       )
-      expect(TITLED_CATEGORIES.includes(category.id)).toBe(
-        Boolean(category.title_from.input),
+      expect(TITLED_SETTINGS.includes(setting.id)).toBe(
+        Boolean(setting.title_from.input),
       )
     }
   })

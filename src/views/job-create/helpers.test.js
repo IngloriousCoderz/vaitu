@@ -19,7 +19,7 @@ describe("droppedImageUrls", () => {
 })
 
 describe("mergeParsedDetails", () => {
-  const category = {
+  const setting = {
     createFields: [
       { field: "headliner" },
       {
@@ -30,10 +30,10 @@ describe("mergeParsedDetails", () => {
     ],
   }
 
-  it("fills the category's fields, over what the form had", () => {
+  it("fills the setting's fields, over what the form had", () => {
     expect(
       mergeParsedDetails(
-        category,
+        setting,
         { headliner: "Old" },
         { headliner: " Ada ", genres: ["techno", "house", "techno"] },
       ),
@@ -43,19 +43,19 @@ describe("mergeParsedDetails", () => {
   it("keeps what the form had when the message says nothing", () => {
     expect(
       mergeParsedDetails(
-        category,
+        setting,
         { headliner: "Old", genres: ["house"] },
         { headliner: null, genres: [] },
       ),
     ).toEqual({ headliner: "Old", genres: ["house"] })
-    expect(mergeParsedDetails(category, { headliner: "Old" })).toEqual({
+    expect(mergeParsedDetails(setting, { headliner: "Old" })).toEqual({
       headliner: "Old",
     })
   })
 
-  it("skips other categories' fields and values off the list", () => {
+  it("skips other settings' fields and values off the list", () => {
     expect(
-      mergeParsedDetails(category, {}, { styles: ["film"], genres: ["polka"] }),
+      mergeParsedDetails(setting, {}, { styles: ["film"], genres: ["polka"] }),
     ).toEqual({})
   })
 })

@@ -10,7 +10,7 @@ const genreFilter = {
   options: musicGenres,
 }
 
-export const categories = [
+export const settings = [
   {
     id: "wedding",
     detailField: "styles",
@@ -58,14 +58,14 @@ export const categories = [
       },
     ],
   },
-  showCategory("festival"),
-  showCategory("concert"),
-  propertyCategory("apartment"),
-  propertyCategory("house"),
-  propertyCategory("office"),
+  showSetting("festival"),
+  showSetting("concert"),
+  propertySetting("apartment"),
+  propertySetting("house"),
+  propertySetting("office"),
 ]
 
-function showCategory(id) {
+function showSetting(id) {
   return {
     id,
     detailField: "genres",
@@ -94,7 +94,7 @@ function showCategory(id) {
   }
 }
 
-function propertyCategory(id) {
+function propertySetting(id) {
   return {
     id,
     filters: [],
@@ -113,20 +113,20 @@ function propertyCategory(id) {
   }
 }
 
-export function categoryById(id) {
-  return categories.find((c) => c.id === id) ?? categories[FIRST_INDEX]
+export function settingById(id) {
+  return settings.find((c) => c.id === id) ?? settings[FIRST_INDEX]
 }
 
-export function filterSections(categoryIds) {
-  const scoped = categoryIds.length
-    ? categories.filter((category) => categoryIds.includes(category.id))
-    : categories
-  const dimensions = new Set(scoped.flatMap((category) => category.filters))
+export function filterSections(settingIds) {
+  const scoped = settingIds.length
+    ? settings.filter((setting) => settingIds.includes(setting.id))
+    : settings
+  const dimensions = new Set(scoped.flatMap((setting) => setting.filters))
   return [...dimensions].map((dimension) => ({
     id: dimension.id,
-    categories: categories
-      .filter((category) => category.filters.includes(dimension))
-      .map((category) => category.id),
+    settings: settings
+      .filter((setting) => setting.filters.includes(dimension))
+      .map((setting) => setting.id),
     title: dimension.title,
     options: dimension.options.map((option) => ({
       id: option.value,
@@ -138,18 +138,18 @@ export function filterSections(categoryIds) {
 export function filterSectionsFor(jobTypes) {
   const detailed = jobTypes.filter(hasDetail)
   if (jobTypes.length && !detailed.length) return []
-  return filterSections(detailed.map((jobType) => jobType.category))
+  return filterSections(detailed.map((jobType) => jobType.setting))
 }
 
-export function hasDetail({ category, profession }) {
-  const { detailField, professionsWithoutDetail } = categoryById(category)
+export function hasDetail({ setting, profession }) {
+  const { detailField, professionsWithoutDetail } = settingById(setting)
   return Boolean(detailField) && !professionsWithoutDetail?.includes(profession)
 }
 
 export function detailAppliesTo(value, jobType) {
   return (
     hasDetail(jobType) &&
-    categoryById(jobType.category).filters.some((dimension) =>
+    settingById(jobType.setting).filters.some((dimension) =>
       dimension.options.some((option) => option.value === value),
     )
   )

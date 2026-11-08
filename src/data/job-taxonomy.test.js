@@ -4,12 +4,13 @@ import {
   availableJobTypes,
   interestsFor,
   jobTypesFor,
+  offeredSettings,
   professions,
 } from "./job-taxonomy.js"
 
 describe("availableJobTypes", () => {
   it("offers weddings only, and only the trades that work them", () => {
-    expect(availableJobTypes.map((type) => type.category)).toEqual(
+    expect(availableJobTypes.map((type) => type.setting)).toEqual(
       availableJobTypes.map(() => "wedding"),
     )
     expect(professions.map((profession) => profession.id)).toEqual([
@@ -35,6 +36,26 @@ describe("jobTypesFor", () => {
   it("offers every job type without a trade on offer", () => {
     expect(ids([])).toEqual(everything)
     expect(ids(["cleaner"])).toEqual(everything)
+  })
+
+  it("narrows to the picked settings, and ignores those not on offer", () => {
+    const inSettings = (professionIds, settingIds) =>
+      jobTypesFor(professionIds, settingIds).map((type) => type.id)
+    expect(inSettings(["photographer"], ["wedding"])).toEqual([
+      "wedding_photographer",
+    ])
+    expect(inSettings([], ["wedding"])).toEqual(everything)
+    expect(inSettings(["photographer"], ["festival"])).toEqual([
+      "wedding_photographer",
+    ])
+  })
+})
+
+describe("offeredSettings", () => {
+  it("lists the settings on offer, weddings only for now", () => {
+    expect(offeredSettings).toEqual([
+      { id: "wedding", label: "taxonomy.setting.wedding" },
+    ])
   })
 })
 

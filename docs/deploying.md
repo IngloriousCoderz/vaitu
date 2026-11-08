@@ -58,12 +58,12 @@ instead of a new file. `db push` skips that file, so run the equivalent SQL once
 on production, in the dashboard's SQL Editor:
 
 ```sql
-alter table public.jobs drop constraint jobs_category_check;
-alter table public.jobs add constraint jobs_category_check
-  check (category in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office'));
+alter table public.jobs drop constraint jobs_setting_check;
+alter table public.jobs add constraint jobs_setting_check
+  check (setting in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office'));
 ```
 
-That is the statement for adding a category; the first line is for a constraint
+That is the statement for adding a setting; the first line is for a constraint
 that already exists. `supabase db diff --linked` then shows whether production
 matches the migrations. Data stays in place, unless the change itself removes it.
 
@@ -147,7 +147,7 @@ is off in Supabase.
 `SETTINGS_BY_PROFESSION` in `src/data/job-taxonomy.js` and its copy in
 `supabase/functions/parse-job/schema.ts`, and translate its `taxonomy.jobType`
 label in every locale. No schema change is needed unless the job type brings a
-new category: `jobs_category_check` lists them all, as described in
+new setting: `jobs_setting_check` lists them all, as described in
 [Small schema changes](#small-schema-changes).
 
 ```bash

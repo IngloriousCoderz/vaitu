@@ -76,6 +76,14 @@
       "pop": "ポップ",
       "classical": "クラシック"
     },
+    "setting": {
+      "wedding": "結婚式",
+      "festival": "フェスティバル",
+      "concert": "コンサート",
+      "apartment": "アパート",
+      "house": "一戸建て",
+      "office": "オフィス"
+    },
     "profession": {
       "photographer": "写真",
       "videographer": "映像",
@@ -207,7 +215,7 @@
     "pickStyle": "スタイルを選んでください",
     "addHeadliner": "ヘッドライナーを入力してください",
     "pickGenre": "ジャンルを選んでください",
-    "pickCategory": "カテゴリーを選んでください",
+    "pickSetting": "場面を選んでください",
     "addTitle": "タイトルを入力してください",
     "addLocation": "会場を入力してください",
     "addCountry": "国を入力してください",
@@ -318,7 +326,8 @@
     "noneMatch": "検索に一致する仕事はまだありません。",
     "orderBy": "並べ替え",
     "results_other": "仕事{{count}}件",
-    "profession": "職種"
+    "profession": "職種",
+    "setting": "場面"
   },
   "myJobs": {
     "title": "自分の仕事",

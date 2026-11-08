@@ -80,6 +80,14 @@
       "pop": "Pop",
       "classical": "Classica"
     },
+    "setting": {
+      "wedding": "Matrimoni",
+      "festival": "Festival",
+      "concert": "Concerti",
+      "apartment": "Appartamenti",
+      "house": "Case",
+      "office": "Uffici"
+    },
     "profession": {
       "photographer": "Fotografia",
       "videographer": "Video",
@@ -143,7 +151,7 @@
     "shortlistSize": "Posti in shortlist",
     "shortlistSizeHint": "Tutti possono candidarsi. Questi sono i posti per chi metti in shortlist prima di scegliere.",
     "professions": "Di cosa ti occupi",
-    "professionsHint": "Il tuo feed mostra di default i lavori di questi settori. Non sceglierne nessuno per vederli tutti.",
+    "professionsHint": "Il tuo feed mostra di default i lavori di queste professioni. Non sceglierne nessuno per vederli tutti.",
     "jobTitle": "Cosa c'è da fare",
     "phone": "Telefono",
     "phoneOptional": "Telefono (facoltativo)",
@@ -211,7 +219,7 @@
     "pickStyle": "Scegli uno stile",
     "addHeadliner": "Inserisci un headliner",
     "pickGenre": "Scegli un genere",
-    "pickCategory": "Scegli una categoria",
+    "pickSetting": "Scegli un ambito",
     "addTitle": "Inserisci un titolo",
     "addLocation": "Inserisci una location",
     "addCountry": "Inserisci un paese",
@@ -329,7 +337,8 @@
     "results_one": "{{count}} lavoro",
     "results_other": "{{count}} lavori",
     "results_many": "{{count}} lavori",
-    "profession": "Settore"
+    "profession": "Professione",
+    "setting": "Ambito"
   },
   "myJobs": {
     "title": "I miei lavori",
@@ -473,7 +482,7 @@
         "applied": "Lavori a cui ti sei candidato",
         "payments": "Importi e pagamenti"
       },
-      "newJobsHint": "I nuovi lavori seguono i mestieri e le regioni del tuo feed qui sopra: scegli almeno un mestiere per riceverli. Le altre email arrivano in pochi minuti, raggruppate. Le email essenziali sull'account vengono sempre inviate.",
+      "newJobsHint": "I nuovi lavori seguono le professioni e le regioni del tuo feed qui sopra: scegli almeno una professione per riceverli. Le altre email arrivano in pochi minuti, raggruppate. Le email essenziali sull'account vengono sempre inviate.",
       "types": {
         "application_received": "Qualcuno si è candidato al tuo lavoro",
         "application_withdrawn": "Un candidato si è ritirato",
@@ -513,7 +522,7 @@
       },
       "audience": {
         "question": "A chi è rivolta?",
-        "answer": "Professionisti che lavorano ai matrimoni e devono passare un lavoro che non possono accettare: fotografi, videomaker, musicisti, DJ, wedding planner e truccatori. Seguiranno altri settori."
+        "answer": "Professionisti che lavorano ai matrimoni e devono passare un lavoro che non possono accettare: fotografi, videomaker, musicisti, DJ, wedding planner e truccatori. Seguiranno altre professioni."
       },
       "publish": {
         "question": "Come pubblico un lavoro?",
@@ -545,7 +554,7 @@
       },
       "notifications": {
         "question": "Come funzionano le notifiche?",
-        "answer": "L'app ti avvisa di nuovi lavori per i tuoi mestieri e le tue regioni, nuove candidature, decisioni e modifiche ai lavori a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e gestire avvisi ed email nelle Preferenze."
+        "answer": "L'app ti avvisa di nuovi lavori per le tue professioni e le tue regioni, nuove candidature, decisioni e modifiche ai lavori a cui ti sei candidato. Puoi anche consentire le notifiche push sul tuo dispositivo e gestire avvisi ed email nelle Preferenze."
       },
       "leave": {
         "question": "Come lascio Vaitu?",
@@ -627,7 +636,7 @@
       "applicationWithdrawn": "{{name}} ha ritirato la candidatura per {{title}}",
       "jobUpdated": "{{title}} è stato aggiornato!",
       "jobClosed": "{{title}} è stato chiuso",
-      "newJob": "Nuovo lavoro per il tuo mestiere: {{title}}",
+      "newJob": "Nuovo lavoro per la tua professione: {{title}}",
       "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
       "jobReviewed": "L'inserzionista ha dato un riscontro su {{title}}",
       "jobCancelled": "{{title}} è stato annullato",

@@ -5,7 +5,6 @@ import {
   MINUTE_MS,
 } from "../../constants/index.js"
 import { sameRegion } from "../../data/regions/resolve.js"
-import { filterSections } from "./categories.js"
 import {
   DEFAULT_SORT,
   jobTypesInScope,
@@ -13,6 +12,7 @@ import {
   professionsInScope,
   regionInEffect,
 } from "./helpers.js"
+import { filterSections } from "./job-settings.js"
 
 // Which open jobs each status shows. Won jobs are assigned, not open: "all"
 // and "won" add them separately, until the day of the job.
@@ -41,7 +41,7 @@ const SORT_ORDERS = {
  * ask for every spelling of its region.
  * @returns {{
  *   jobTypes: string[],
- *   details: { key: string, categories: string[], values: string[] }[],
+ *   details: { key: string, settings: string[], values: string[] }[],
  *   regions: string[] | null,
  *   dateFrom: string | null,
  *   dateTo: string | null,
@@ -60,6 +60,7 @@ export function feedQuery({
   types,
   details,
   interests,
+  activeSettings = [],
   activeProfessions,
   myProfessions,
   region,
@@ -79,11 +80,12 @@ export function feedQuery({
       details,
       interests,
       professionsInScope(activeProfessions, myProfessions),
+      activeSettings,
     ),
     details: filterSections([])
       .map((section) => ({
         key: section.id,
-        categories: section.categories,
+        settings: section.settings,
         values: details.filter((value) =>
           section.options.some((option) => option.id === value),
         ),

@@ -17,7 +17,6 @@ import {
   activeRegionAfterChange,
   regionFilterItems,
 } from "../../data/regions/resolve.js"
-import { detailAppliesTo } from "./categories.js"
 import {
   DEFAULT_SORT,
   defaultRegion,
@@ -25,6 +24,7 @@ import {
   jobTypesInScope,
   professionsInScope,
 } from "./helpers.js"
+import { detailAppliesTo } from "./job-settings.js"
 import { feedQuery, localToday } from "./query.js"
 
 export function search(entity, query) {
@@ -46,8 +46,17 @@ export function jobTypesSet(entity, { value }, api) {
   fetchRegions(entity, api, "reset")
 }
 
+export function settingToggle(entity, settingId, api) {
+  entity.activeSettings = toggled(entity.activeSettings, settingId)
+  reachChange(entity, api)
+}
+
 export function professionToggle(entity, professionId, api) {
   entity.activeProfessions = toggled(entity.activeProfessions, professionId)
+  reachChange(entity, api)
+}
+
+function reachChange(entity, api) {
   const available = jobTypesInReach(entity)
   entity.activeTypes = entity.activeTypes.filter((id) =>
     available.some((jobType) => jobType.id === id),
@@ -96,6 +105,7 @@ export function sortSelect(entity, payload, api) {
 
 export function filtersClear(entity, _, api) {
   entity.activeTypes = []
+  entity.activeSettings = []
   entity.activeProfessions = []
   entity.activeDetails = []
   entity.activeRegion = null
@@ -231,6 +241,7 @@ function fetchRegions(entity, api, then) {
         [...entity.activeProfessions],
         [...entity.professions],
       ),
+      [...entity.activeSettings],
     ),
     wonJobIds: [...entity.wonJobIds],
     today: localToday(),
@@ -240,6 +251,7 @@ function fetchRegions(entity, api, then) {
 function jobTypesInReach(entity) {
   return jobTypesFor(
     professionsInScope([...entity.activeProfessions], [...entity.professions]),
+    [...entity.activeSettings],
   )
 }
 
@@ -268,6 +280,7 @@ function fetchPage(entity, api, { mode, from, to }) {
       types: [...entity.activeTypes],
       details: [...entity.activeDetails],
       interests: [...entity.interests],
+      activeSettings: [...entity.activeSettings],
       activeProfessions: [...entity.activeProfessions],
       myProfessions: [...entity.professions],
       region: entity.activeRegion,

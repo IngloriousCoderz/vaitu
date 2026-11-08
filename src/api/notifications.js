@@ -10,7 +10,7 @@ export async function fetchMyNotifications() {
   const { data, error } = await supabase
     .from("notifications")
     .select(
-      "id, type, is_read, created_at, job_id, application_id, applicant_name, job_title, jobs(id, title, status, category)",
+      "id, type, is_read, created_at, job_id, application_id, applicant_name, job_title, jobs(id, title, status, setting)",
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })

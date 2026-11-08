@@ -7,7 +7,7 @@ import {
   NO_DAYS_LEFT,
   WEEK_DAYS,
 } from "../../constants/index.js"
-import { GENRE_CATEGORIES, jobTypeId } from "../../data/job-taxonomy.js"
+import { GENRE_SETTINGS, jobTypeId } from "../../data/job-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
@@ -21,7 +21,7 @@ export function monogram(title) {
 }
 
 export function jobMonogram(job) {
-  if (job.category === "wedding") return monogram(job.title)
+  if (job.setting === "wedding") return monogram(job.title)
   return job.title.at(FIRST_INDEX)?.toUpperCase() ?? ""
 }
 
@@ -60,12 +60,12 @@ export function jobSubtitle(job) {
 }
 
 export function jobTag(job) {
-  const kind = GENRE_CATEGORIES.includes(job.category) ? "genre" : "style"
+  const kind = GENRE_SETTINGS.includes(job.setting) ? "genre" : "style"
   return job.filterValues
     .map((value) => t(`taxonomy.${kind}.${value}`, { defaultValue: value }))
     .join(", ")
 }
 
 export function jobTypeLabel(job) {
-  return t(`taxonomy.jobType.${jobTypeId(job.category, job.profession)}`)
+  return t(`taxonomy.jobType.${jobTypeId(job.setting, job.profession)}`)
 }

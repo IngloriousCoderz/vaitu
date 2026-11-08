@@ -17,7 +17,7 @@ the app's may get a poor transcript.
 
 ## One schema, every job type
 
-`parse-job/schema.ts` holds the fields each category has: a wedding has
+`parse-job/schema.ts` holds the fields each setting has: a wedding has
 spouses and a style, a festival or concert a name, a headliner and a genre, and an
 apartment, house or office job a title and nothing else. The app sends the job
 type the form is on and those it offers. The model keeps the first unless the

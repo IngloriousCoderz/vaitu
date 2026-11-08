@@ -8,7 +8,7 @@ Styles load in this order, and later rules win at equal specificity:
 2. `@inglorious/ui/all.css`, imported once at the top of `src/main.js`: the
    package's reset, tokens and every component's styles.
 3. `src/styles/*.css`: the Vaitu theme (`.iw-theme-vaitu` on `<body>`) and the
-   per-category skins.
+   per-setting skins.
 4. Each view's `style.module.css`, imported by the view that uses it.
 
 To customize a component, override its `--iw-*` tokens in

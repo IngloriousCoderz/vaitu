@@ -18,7 +18,7 @@ export async function fetchMyApplications() {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, created_at, jobs!inner(id, category, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details)",
+      "id, status, created_at, jobs!inner(id, setting, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details)",
     )
     .eq("applicant_id", user.id)
     .neq("status", "withdrawn")
@@ -68,7 +68,7 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), jobs!inner(id, category, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency))",
+      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), jobs!inner(id, setting, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency))",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)

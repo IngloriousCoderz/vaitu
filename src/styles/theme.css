@@ -1,5 +1,5 @@
 :root,
-[data-category="wedding"] {
+[data-setting="wedding"] {
   --vbg: #f6f3ea;
   --vsurface: #fffdf7;
   --vink: #22301f;
@@ -10,8 +10,8 @@
   --vmuted-text: #606455;
 }
 
-[data-category="festival"],
-[data-category="concert"] {
+[data-setting="festival"],
+[data-setting="concert"] {
   --vbg: #e8dfc7;
   --vsurface: #faf8f2;
   --vink: #262233;
@@ -22,9 +22,9 @@
   --vmuted-text: #595365;
 }
 
-[data-category="apartment"],
-[data-category="house"],
-[data-category="office"] {
+[data-setting="apartment"],
+[data-setting="house"],
+[data-setting="office"] {
   --vbg: #e6efec;
   --vsurface: #f8fbfa;
   --vink: #17302c;

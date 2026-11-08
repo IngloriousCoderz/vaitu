@@ -78,6 +78,14 @@
       "pop": "Pop",
       "classical": "Classical"
     },
+    "setting": {
+      "wedding": "Weddings",
+      "festival": "Festivals",
+      "concert": "Concerts",
+      "apartment": "Apartments",
+      "house": "Houses",
+      "office": "Offices"
+    },
     "profession": {
       "photographer": "Photography",
       "videographer": "Video",
@@ -141,7 +149,7 @@
     "shortlistSize": "Shortlist size",
     "shortlistSizeHint": "Everyone can apply. This is how many of them you can shortlist before choosing.",
     "professions": "What you do",
-    "professionsHint": "Your feed shows jobs in these trades by default. Pick none to see all of them.",
+    "professionsHint": "Your feed shows jobs in these professions by default. Pick none to see all of them.",
     "jobTitle": "What needs doing",
     "phone": "Phone",
     "phoneOptional": "Phone (optional)",
@@ -152,7 +160,7 @@
     "jobTypesHint": "Your feed shows these by default. Leave it empty to see all of them.",
     "jobTypeRequest": "Job type missing? Ask us to add it",
     "jobTypeRequestSubject": "New job type for Vaitu",
-    "jobTypeRequestBody": "Job type I'd like added:\n\nMy trade:\n",
+    "jobTypeRequestBody": "Job type I'd like added:\n\nMy profession:\n",
     "favoriteRegionsHint": "Your feed shows these by default. Leave it empty to see all of them."
   },
   "jobStatuses": {
@@ -209,7 +217,7 @@
     "pickStyle": "Pick a style",
     "addHeadliner": "Add a headliner",
     "pickGenre": "Pick a genre",
-    "pickCategory": "Pick a category",
+    "pickSetting": "Pick a setting",
     "addTitle": "Add a title",
     "addLocation": "Add a location",
     "addCountry": "Add a country",
@@ -323,7 +331,8 @@
     "orderBy": "Order by",
     "results_one": "{{count}} job",
     "results_other": "{{count}} jobs",
-    "profession": "Trade"
+    "profession": "Profession",
+    "setting": "Setting"
   },
   "myJobs": {
     "title": "My jobs",
@@ -465,7 +474,7 @@
         "applied": "Jobs you applied to",
         "payments": "Amounts and payments"
       },
-      "newJobsHint": "New jobs follow the trades and regions in your feed above: choose at least one trade to get them. Other emails arrive within minutes, grouped together. Essential account emails are always sent.",
+      "newJobsHint": "New jobs follow the professions and regions in your feed above: choose at least one profession to get them. Other emails arrive within minutes, grouped together. Essential account emails are always sent.",
       "types": {
         "application_received": "Someone applied to your job",
         "application_withdrawn": "An applicant withdrew",
@@ -505,7 +514,7 @@
       },
       "audience": {
         "question": "Who is it for?",
-        "answer": "Professionals who work at weddings and need to pass on a job they can't take: photographers, videographers, musicians, DJs, planners and make-up artists. Other trades will follow."
+        "answer": "Professionals who work at weddings and need to pass on a job they can't take: photographers, videographers, musicians, DJs, planners and make-up artists. Other professions will follow."
       },
       "publish": {
         "question": "How do I publish a job?",
@@ -537,7 +546,7 @@
       },
       "notifications": {
         "question": "How do notifications work?",
-        "answer": "The app tells you about new jobs for your trades and regions, new applications, decisions and changes to jobs you applied to. You can also allow push notifications on your device, and manage alerts and emails in Preferences."
+        "answer": "The app tells you about new jobs for your professions and regions, new applications, decisions and changes to jobs you applied to. You can also allow push notifications on your device, and manage alerts and emails in Preferences."
       },
       "leave": {
         "question": "How do I leave?",
@@ -615,7 +624,7 @@
       "applicationWithdrawn": "{{name}} withdrew their application to {{title}}",
       "jobUpdated": "{{title}} has updates!",
       "jobClosed": "{{title}} was closed",
-      "newJob": "New job that matches your trade: {{title}}",
+      "newJob": "New job that matches your profession: {{title}}",
       "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
       "jobReviewed": "The poster reported on {{title}}",
       "jobCancelled": "{{title}} was cancelled",

@@ -51,7 +51,7 @@ export const template = {
     return Page.render({
       variant: "document",
       wide: true,
-      category: application?.category ?? "wedding",
+      setting: application?.setting ?? "wedding",
       children: [
         html`
           ${LoadStatus.render({

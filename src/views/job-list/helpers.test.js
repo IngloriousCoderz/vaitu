@@ -66,6 +66,7 @@ describe("activeFilters", () => {
   it("lists what is on, in the sheet's order", () => {
     const active = activeFilters({
       types: ["festival_dj"],
+      settings: ["wedding"],
       professions: ["cleaner"],
       details: ["techno"],
       region: "Sicily",
@@ -74,6 +75,7 @@ describe("activeFilters", () => {
     })
     expect(active.map(({ kind, id }) => `${kind}:${id}`)).toEqual([
       "type:festival_dj",
+      "setting:wedding",
       "profession:cleaner",
       "detail:techno",
       "region:Sicily",

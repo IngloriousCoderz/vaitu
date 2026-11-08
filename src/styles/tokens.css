@@ -1,10 +1,10 @@
-[data-category],
-[data-category] * {
+[data-setting],
+[data-setting] * {
   transition: var(--iw-transition-slow);
 }
 
 :root,
-[data-category="wedding"] {
+[data-setting="wedding"] {
   --vlogo-dot: #e0813e;
   --vchip-border: #cfc7ae;
   --vchip-active-bg: #647257;
@@ -48,8 +48,8 @@
   --vinput-font-size: var(--iw-font-size-base);
 }
 
-[data-category="festival"],
-[data-category="concert"] {
+[data-setting="festival"],
+[data-setting="concert"] {
   --vchip-border: #c3bccd;
   --vchip-active-bg: #6d28d9;
   --vchip-active-text: #f4f1ea;
@@ -69,9 +69,9 @@
   --iw-color-text-muted: var(--vmuted-text);
 }
 
-[data-category="apartment"],
-[data-category="house"],
-[data-category="office"] {
+[data-setting="apartment"],
+[data-setting="house"],
+[data-setting="office"] {
   --vchip-border: #b8cbc6;
   --vchip-active-bg: #0f766e;
   --vchip-active-text: #f4f8f7;

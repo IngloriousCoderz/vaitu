@@ -4,12 +4,12 @@ import { readUserId } from "../../api/session.js"
 import {
   interestsFor,
   jobTypeById,
+  offeredSettings,
   professions,
 } from "../../data/job-taxonomy.js"
 import { regionFilterItems } from "../../data/regions/resolve.js"
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { filterSectionsFor } from "./categories.js"
 import {
   detailToggle,
   filtersClear,
@@ -39,6 +39,7 @@ import {
   regionInEffect,
   statuses,
 } from "./helpers.js"
+import { filterSectionsFor } from "./job-settings.js"
 import { template } from "./template.js"
 
 const ONE_INTEREST = 1
@@ -72,6 +73,7 @@ export const JobList = {
   create(entity) {
     entity.query ??= ""
     entity.activeTypes ??= []
+    entity.activeSettings ??= []
     entity.activeProfessions ??= []
     entity.activeDetails ??= []
     entity.activeRegion ??= null
@@ -115,17 +117,22 @@ export const JobList = {
       entity.activeProfessions,
       entity.professions,
     )
-    const interests = interestsFor(entity.interests, inScope)
+    const interests = interestsFor(
+      entity.interests,
+      inScope,
+      entity.activeSettings,
+    )
     const scope = jobTypesInScope(
       entity.activeTypes,
       entity.activeDetails,
       entity.interests,
       inScope,
+      entity.activeSettings,
     )
-    const settings = [
-      ...new Set(scope.map((id) => jobTypeById(id)?.category).filter(Boolean)),
+    const scopedSettings = [
+      ...new Set(scope.map((id) => jobTypeById(id)?.setting).filter(Boolean)),
     ]
-    const [onlySetting, ...otherSettings] = settings
+    const [onlySetting, ...otherSettings] = scopedSettings
     return this.renderJobList(
       {
         jobs: entity.jobs,
@@ -135,8 +142,10 @@ export const JobList = {
         wonJobIds: entity.wonJobIds,
         status: entity.status,
         error: entity.error,
-        category: otherSettings.length ? undefined : onlySetting,
+        setting: otherSettings.length ? undefined : onlySetting,
         showTypes: interests.length !== ONE_INTEREST,
+        settings: offeredSettings,
+        activeSettings: entity.activeSettings,
         professions,
         activeProfessions: entity.activeProfessions,
         sections: filterSectionsFor(scope.map(jobTypeById).filter(Boolean)),
@@ -158,11 +167,14 @@ export const JobList = {
           api.notify(`#${id}:search`, value)
           searchSoon(api, id)
         },
+        onToggleSetting: (settingId) =>
+          api.notify(`#${id}:settingToggle`, settingId),
         onToggleProfession: (professionId) =>
           api.notify(`#${id}:professionToggle`, professionId),
         onToggleDetail: (value) => api.notify(`#${id}:detailToggle`, value),
         onRemoveFilter: ({ kind, id: value }) => {
           if (kind === "type") api.notify(`#${id}:typeToggle`, value)
+          if (kind === "setting") api.notify(`#${id}:settingToggle`, value)
           if (kind === "profession") {
             api.notify(`#${id}:professionToggle`, value)
           }
@@ -207,6 +219,7 @@ function regionsOf(entity) {
 function filtersOn(entity) {
   return activeFilters({
     types: entity.activeTypes,
+    settings: entity.activeSettings,
     professions: entity.activeProfessions,
     details: entity.activeDetails,
     region: entity.activeRegion,

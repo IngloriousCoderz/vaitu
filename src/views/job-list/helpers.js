@@ -2,10 +2,11 @@ import {
   interestsFor,
   jobTypeById,
   jobTypesFor,
+  offeredSettings,
   professions as allProfessions,
 } from "../../data/job-taxonomy.js"
 import { uniqueRegions } from "../../data/regions/resolve.js"
-import { detailAppliesTo, filterSections } from "./categories.js"
+import { detailAppliesTo, filterSections } from "./job-settings.js"
 
 export const statuses = [
   { id: "all", label: "jobStatuses.all" },
@@ -40,8 +41,14 @@ export function distinctRegions(regions) {
  * The job types a feed asks for: the picked ones and those of each picked style
  * or genre, else your interests, else all of the trades in scope.
  */
-export function jobTypesInScope(types, details, interests, professions) {
-  const available = jobTypesFor(professions)
+export function jobTypesInScope(
+  types,
+  details,
+  interests,
+  professions,
+  settings = [],
+) {
+  const available = jobTypesFor(professions, settings)
   const fromDetails = details.flatMap((value) =>
     available
       .filter((jobType) => detailAppliesTo(value, jobType))
@@ -49,7 +56,7 @@ export function jobTypesInScope(types, details, interests, professions) {
   )
   const picked = [...new Set([...types, ...fromDetails])]
   if (picked.length) return picked
-  const interesting = interestsFor(interests, professions)
+  const interesting = interestsFor(interests, professions, settings)
   if (interesting.length) return interesting
   return available.map((jobType) => jobType.id)
 }
@@ -68,6 +75,7 @@ export function regionInEffect(activeRegion, favoriteRegions) {
 
 export function activeFilters({
   types,
+  settings = [],
   professions,
   details,
   region,
@@ -83,6 +91,11 @@ export function activeFilters({
       kind: "type",
       id,
       label: jobTypeById(id)?.label ?? id,
+    })),
+    ...settings.map((id) => ({
+      kind: "setting",
+      id,
+      label: offeredSettings.find((option) => option.id === id)?.label ?? id,
     })),
     ...professions.map((id) => ({
       kind: "profession",

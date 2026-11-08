@@ -1,5 +1,5 @@
 import {
-  DEFAULT_JOB_CATEGORY,
+  DEFAULT_JOB_SETTING,
   DEFAULT_MAX_APPLICANTS,
   DESCRIPTION_MAX_LENGTH,
   MIN_TEXT_LENGTH,
@@ -35,7 +35,7 @@ const DETAIL_VALIDATORS = {
 /** @param {Record<string, any>} [payload] */
 export function normalizeJob(payload = {}) {
   return {
-    category: payload.category ?? DEFAULT_JOB_CATEGORY,
+    setting: payload.setting ?? DEFAULT_JOB_SETTING,
     profession: payload.profession,
     title: payload.title?.trim(),
     location: payload.location?.trim(),
@@ -75,17 +75,17 @@ export function normalizePay(pay = {}) {
 
 export function validateJob(values = {}) {
   const errors = {}
-  const category = values.category ?? DEFAULT_JOB_CATEGORY
+  const setting = values.setting ?? DEFAULT_JOB_SETTING
   const details = values.details ?? {}
 
   fail(
     errors,
-    "category",
-    DETAIL_VALIDATORS[category] ? undefined : "validation.pickCategory",
+    "setting",
+    DETAIL_VALIDATORS[setting] ? undefined : "validation.pickSetting",
   )
   if (
-    DETAIL_VALIDATORS[category] &&
-    !jobTypeById(jobTypeId(category, values.profession))
+    DETAIL_VALIDATORS[setting] &&
+    !jobTypeById(jobTypeId(setting, values.profession))
   ) {
     fail(errors, "profession", "validation.pickJobType")
   }
@@ -128,7 +128,7 @@ export function validateJob(values = {}) {
 
   validatePay(errors, values.pay)
 
-  const validateDetails = DETAIL_VALIDATORS[category]
+  const validateDetails = DETAIL_VALIDATORS[setting]
   if (validateDetails) {
     const detailErrors = validateDetails(
       typeof details === "object" && details !== null ? details : {},

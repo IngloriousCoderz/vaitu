@@ -80,6 +80,14 @@
       "pop": "Pop",
       "classical": "Classique"
     },
+    "setting": {
+      "wedding": "Mariages",
+      "festival": "Festivals",
+      "concert": "Concerts",
+      "apartment": "Appartements",
+      "house": "Maisons",
+      "office": "Bureaux"
+    },
     "profession": {
       "photographer": "Photographie",
       "videographer": "Vidéo",
@@ -211,7 +219,7 @@
     "pickStyle": "Choisissez un style",
     "addHeadliner": "Saisissez une tête d'affiche",
     "pickGenre": "Choisissez un genre",
-    "pickCategory": "Choisissez une catégorie",
+    "pickSetting": "Choisissez un cadre",
     "addTitle": "Saisissez un titre",
     "addLocation": "Saisissez un lieu",
     "addCountry": "Saisissez un pays",
@@ -329,7 +337,8 @@
     "results_one": "{{count}} mission",
     "results_other": "{{count}} missions",
     "results_many": "{{count}} missions",
-    "profession": "Métier"
+    "profession": "Métier",
+    "setting": "Cadre"
   },
   "myJobs": {
     "title": "Mes missions",

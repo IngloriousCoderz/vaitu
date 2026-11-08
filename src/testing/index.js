@@ -31,7 +31,7 @@ export function pastDeadline() {
 
 export function jobPayload(id, deadline) {
   return {
-    category: "wedding",
+    setting: "wedding",
     profession: "photographer",
     title: `Vitest ${id}`,
     location: "Florence",

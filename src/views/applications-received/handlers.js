@@ -123,7 +123,7 @@ export const load = handleAsync("load", {
     const { data: job, error: jobError } = await supabase
       .from("jobs")
       .select(
-        "id, category, title, profession, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
+        "id, setting, title, profession, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
       )
       .eq("id", job_id)
       .single()

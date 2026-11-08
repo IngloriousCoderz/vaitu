@@ -12,7 +12,7 @@ import {
   signIn,
   signOut,
 } from "../testing/index.js"
-import { categories } from "../views/job-list/categories.js"
+import { settings } from "../views/job-list/job-settings.js"
 import { supabase } from "./client.js"
 import {
   createJob,
@@ -136,15 +136,15 @@ describe("editing a job", () => {
   )
 })
 
-describe("a job's category", () => {
-  const insert = async (id, category) => {
+describe("a job's setting", () => {
+  const insert = async (id, setting) => {
     await signIn(ANTONY)
     const {
       data: { user },
     } = await supabase.auth.getUser()
     return supabase
       .from("jobs")
-      .insert({ ...jobPayload(id), category, poster_id: user.id })
+      .insert({ ...jobPayload(id), setting, poster_id: user.id })
       .select("id")
       .single()
   }
@@ -154,8 +154,8 @@ describe("a job's category", () => {
   test(
     "can be any the app offers, and nothing else",
     async () => {
-      for (const { id: category } of categories) {
-        const { data, error } = await insert(crypto.randomUUID(), category)
+      for (const { id: setting } of settings) {
+        const { data, error } = await insert(crypto.randomUUID(), setting)
         expect(error).toBeNull()
         await deleteOwnedJob(data.id)
       }
@@ -197,7 +197,7 @@ describe("the feed", () => {
         details: [
           {
             key: "styles",
-            categories: ["wedding"],
+            settings: ["wedding"],
             values: ["film", "editorial"],
           },
         ],

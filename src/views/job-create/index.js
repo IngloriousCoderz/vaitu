@@ -8,7 +8,7 @@ import {
 import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { validateJob } from "../../validation/jobs.js"
-import { categoryById } from "../job-list/categories.js"
+import { settingById } from "../job-list/job-settings.js"
 import * as handlers from "./handlers.js"
 import {
   clearJobImages,
@@ -44,7 +44,7 @@ export const JobCreate = {
   create(entity) {
     entity.editing_job_id ??= null
     entity.initialValues = {
-      category: "wedding",
+      setting: "wedding",
       profession: "photographer",
       title: "",
       location: "",
@@ -102,7 +102,7 @@ export const JobCreate = {
     entity.error = null
     api.notify(`#${entity.id}:save`, {
       editing_job_id: entity.editing_job_id,
-      category: values.category,
+      setting: values.setting,
       profession: values.profession,
       title,
       location: values.location,
@@ -196,7 +196,7 @@ function syncComboboxErrors(entity, api) {
 }
 
 function jobTitle(values) {
-  const title_from = categoryById(values.category).title_from
+  const title_from = settingById(values.setting).title_from
   if (title_from.input) return values.title
   const details = values.details ?? {}
   return title_from.fields

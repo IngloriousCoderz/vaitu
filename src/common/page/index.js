@@ -6,7 +6,7 @@ import styles from "./style.module.css"
 export const Page = {
   render({
     variant = "document",
-    category = "wedding",
+    setting = "wedding",
     align = "left",
     wide = false,
     read = false,
@@ -28,7 +28,7 @@ export const Page = {
       ]
         .filter(Boolean)
         .join(" "),
-      "data-category": category,
+      "data-setting": setting,
       children: [
         Container.render({
           maxWidth: "xl",

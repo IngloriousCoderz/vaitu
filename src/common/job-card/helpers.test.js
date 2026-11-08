@@ -60,11 +60,11 @@ describe("monogram", () => {
 
 describe("jobMonogram", () => {
   it("pairs a couple's initials, and takes one letter from any other title", () => {
-    expect(jobMonogram({ category: "wedding", title: "Ada & Grace" })).toBe(
+    expect(jobMonogram({ setting: "wedding", title: "Ada & Grace" })).toBe(
       "A&G",
     )
     expect(
-      jobMonogram({ category: "apartment", title: "deep clean, bilocale" }),
+      jobMonogram({ setting: "apartment", title: "deep clean, bilocale" }),
     ).toBe("D")
   })
 })

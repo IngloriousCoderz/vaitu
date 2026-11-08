@@ -77,7 +77,7 @@ export const Card = {
       <article
         class=${cardClass}
         style=${style}
-        data-category=${job.category}
+        data-setting=${job.setting}
         @click=${onOpen ? () => onOpen(job.id) : null}
       >
         <div class=${styles.thumb} style="background:${thumbGradient(job.hue)}">

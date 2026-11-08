@@ -156,10 +156,10 @@ create table public.jobs (
   id uuid primary key default gen_random_uuid(),
   -- Null once the poster erased their account: the row is anonymous history.
   poster_id uuid references public.profiles (id) on delete set null,
-  category text not null default 'wedding'
-    check (category in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office')),
+  setting text not null default 'wedding'
+    check (setting in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office')),
   profession text not null,
-  job_type text generated always as (category || '_' || profession) stored,
+  job_type text generated always as (setting || '_' || profession) stored,
   title text not null,
   location text not null,
   country text not null,
@@ -187,7 +187,7 @@ create table public.jobs (
 
 create index jobs_poster_id_idx on public.jobs (poster_id);
 create index jobs_browse_idx on public.jobs (status, region, job_date);
-create index jobs_category_idx on public.jobs (category);
+create index jobs_setting_idx on public.jobs (setting);
 create index jobs_job_type_idx on public.jobs (job_type);
 create index jobs_search_idx on public.jobs
   using gin (search_text extensions.gin_trgm_ops);
@@ -824,7 +824,7 @@ grant execute on function public.open_job_regions(text[])
 revoke delete, update on public.jobs from anon, authenticated;
 grant insert on public.jobs to authenticated;
 grant update (
-  category,
+  setting,
   profession,
   title,
   location,

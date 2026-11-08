@@ -7,7 +7,7 @@ export const weddingStyles = [
   { value: "fine_art", label: "taxonomy.style.fine_art" },
 ]
 
-export const GENRE_CATEGORIES = ["festival", "concert"]
+export const GENRE_SETTINGS = ["festival", "concert"]
 
 export const musicGenres = [
   { value: "house", label: "taxonomy.genre.house" },
@@ -34,16 +34,16 @@ const SETTINGS_BY_PROFESSION = {
 
 // Launch is weddings only. The other settings stay defined, so they can come
 // back with one line and jobs already posted in them still display.
-const OFFERED_CATEGORIES = ["wedding"]
+const OFFERED_SETTINGS = ["wedding"]
 
 export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
   ([profession, settings]) =>
-    settings.map((category) => {
-      const id = jobTypeId(category, profession)
+    settings.map((setting) => {
+      const id = jobTypeId(setting, profession)
       return {
         id,
         value: id,
-        category,
+        setting,
         profession,
         label: `taxonomy.jobType.${id}`,
       }
@@ -51,29 +51,49 @@ export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
 )
 
 export const availableJobTypes = jobTypes.filter((jobType) =>
-  OFFERED_CATEGORIES.includes(jobType.category),
+  OFFERED_SETTINGS.includes(jobType.setting),
 )
+
+export const offeredSettings = OFFERED_SETTINGS.map((id) => ({
+  id,
+  label: `taxonomy.setting.${id}`,
+}))
 
 export const professions = [
   ...new Set(availableJobTypes.map((jobType) => jobType.profession)),
 ].map((id) => ({ id, label: `taxonomy.profession.${id}` }))
 
-export function jobTypeId(category, profession) {
-  return `${category}_${profession}`
+export function jobTypeId(setting, profession) {
+  return `${setting}_${profession}`
 }
 
 export function jobTypeById(id) {
   return jobTypes.find((jobType) => jobType.id === id)
 }
 
-export function jobTypesFor(professionIds) {
-  const picked = availableJobTypes.filter((jobType) =>
-    professionIds.includes(jobType.profession),
+/**
+ * The offered job types in these settings and professions. Without a setting
+ * on offer, all settings; without a profession practised there, all of the
+ * settings' professions.
+ */
+export function jobTypesFor(professionIds, settingIds = []) {
+  const inSettings = withFallback(
+    availableJobTypes.filter((jobType) => settingIds.includes(jobType.setting)),
+    availableJobTypes,
   )
-  return picked.length ? picked : availableJobTypes
+  return withFallback(
+    inSettings.filter((jobType) => professionIds.includes(jobType.profession)),
+    inSettings,
+  )
 }
 
-export function interestsFor(interests, professionIds) {
-  const available = jobTypesFor(professionIds).map((jobType) => jobType.id)
+export function interestsFor(interests, professionIds, settingIds = []) {
+  const available = jobTypesFor(professionIds, settingIds).map(
+    (jobType) => jobType.id,
+  )
   return interests.filter((id) => available.includes(id))
+}
+
+function withFallback(picked, all) {
+  return picked.length ? picked : all
 }
