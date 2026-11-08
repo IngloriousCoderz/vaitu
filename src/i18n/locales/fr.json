@@ -611,6 +611,9 @@
     "withdraw": "Retirer la candidature",
     "bookedVia": "Réservé via Vaitu"
   },
+  "toasts": {
+    "won": "Le travail est à vous !"
+  },
   "notifications": {
     "error": "Impossible de charger les notifications",
     "title": "Notifications",

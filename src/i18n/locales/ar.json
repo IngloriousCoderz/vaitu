@@ -641,6 +641,9 @@
     "withdraw": "سحب الطلب",
     "bookedVia": "تم الحجز عبر Vaitu"
   },
+  "toasts": {
+    "won": "حصلت على العمل!"
+  },
   "notifications": {
     "error": "تعذّر تحميل الإشعارات",
     "title": "الإشعارات",

@@ -588,6 +588,9 @@
     "withdraw": "応募を取り下げる",
     "bookedVia": "Vaitu で予約"
   },
+  "toasts": {
+    "won": "仕事が決まりました！"
+  },
   "notifications": {
     "error": "通知を読み込めませんでした",
     "title": "通知",

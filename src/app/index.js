@@ -115,7 +115,7 @@ export const App = {
              using auto side margins, handed to a flex column, suppresses
              stretch and shrink-wraps to its content width. -->
         <section class=${styles.page}>${api.render(router.route)}</section>
-        ${api.render("safety")}
+        ${api.render("safety")} ${api.render("toasts")}
       `,
       tabbar: this.renderTabbar(api, chrome),
       fab: when(chrome.hasFab, () =>

@@ -10,6 +10,7 @@ import { LanguageSelect } from "../common/language-select/index.js"
 import { Notifications } from "../common/notifications/index.js"
 import { PushPrompt } from "../common/push-prompt/index.js"
 import { Safety } from "../common/safety/index.js"
+import { Toasts } from "../common/toasts/index.js"
 import { TranslatedCombobox } from "../common/translated-combobox/index.js"
 import { NativeUpdate } from "../common/update-required/index.js"
 import { I18n } from "../i18n/index.js"
@@ -58,6 +59,7 @@ export const store = createStore({
     ],
     Profile: [Profile, livePage(["applications"])],
     Notifications: [Notifications, liveSession(["notifications"])],
+    Toasts,
 
     JobCreate,
     CoverCropper,

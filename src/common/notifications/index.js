@@ -1,3 +1,4 @@
+import trophyOutline from "@iconify-icons/material-symbols/trophy-outline"
 import { handleAsync } from "@inglorious/store/async"
 import { optimistic } from "@inglorious/store/optimistic"
 import { pageRouteChange } from "@inglorious/web/router"
@@ -9,10 +10,23 @@ import {
   markNotificationRead,
 } from "../../api/notifications.js"
 import { NO_UNREAD, WIDE_QUERY } from "../../constants/index.js"
+import { t } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
-import { template } from "./template.js"
+import { feedLine, template } from "./template.js"
 
 const ONE_NOTIFICATION = 1
+const WON_TOAST_MS = 10000
+// Good news is success, bad news a warning, everything else info.
+const TOAST_COLORS = {
+  application_selected: "success",
+  agreement_confirmed: "success",
+  application_received: "success",
+  application_rejected: "warning",
+  application_withdrawn: "warning",
+  job_cancelled: "warning",
+  agreement_rejected: "warning",
+  settlement_contested: "warning",
+}
 
 const load = handleAsync("load", {
   start(entity) {
@@ -20,7 +34,13 @@ const load = handleAsync("load", {
     entity.error = null
   },
   run: fetchMyNotifications,
-  success(entity, items) {
+  success(entity, items, api) {
+    if (entity.knownIds && !isInboxOpen(entity)) {
+      for (const item of arrivals(items, entity.knownIds)) {
+        api.notify("#toasts:show", toastFor(item))
+      }
+    }
+    entity.knownIds = items.map((item) => item.id)
     entity.items = items
     entity.unread = items.filter((item) => !item.is_read).length
     entity.status = "ready"
@@ -88,6 +108,34 @@ export function pathFor(item) {
   return item.job_id ? paths.job(item.job_id) : paths.jobs
 }
 
+// The unread notifications the last load did not have. The first load only
+// learns what is there: what was waiting before the app opened is not news.
+export function arrivals(items, knownIds) {
+  const known = new Set(knownIds)
+  return items.filter((item) => !item.is_read && !known.has(item.id))
+}
+
+export function toastFor(item) {
+  const isWon = item.type === "application_selected"
+  return {
+    title: isWon ? t("toasts.won") : undefined,
+    message: feedLine(item),
+    color: TOAST_COLORS[item.type] ?? "info",
+    icon: isWon ? trophyOutline : undefined,
+    duration: isWon ? WON_TOAST_MS : undefined,
+    notificationId: item.id,
+    path: pathFor(item),
+  }
+}
+
+function isInboxOpen(entity) {
+  return (
+    entity.isPanelOpen ||
+    (typeof window !== "undefined" &&
+      window.location.pathname === paths.notifications)
+  )
+}
+
 export const Notifications = {
   ...template,
   ...load,
@@ -98,6 +146,7 @@ export const Notifications = {
     entity.status ??= "idle"
     entity.error ??= null
     entity.isPanelOpen ??= false
+    entity.knownIds ??= null
 
     if (typeof window !== "undefined") {
       const id = entity.id
@@ -171,6 +220,7 @@ export const Notifications = {
   },
 
   sessionEnd(entity) {
+    entity.knownIds = null
     entity.isPanelOpen = false
     entity.items = []
     entity.unread = 0

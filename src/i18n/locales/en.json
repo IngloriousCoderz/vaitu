@@ -599,6 +599,9 @@
     "withdraw": "Withdraw application",
     "bookedVia": "Booked via Vaitu"
   },
+  "toasts": {
+    "won": "You got the job!"
+  },
   "notifications": {
     "error": "Could not load notifications",
     "title": "Notifications",

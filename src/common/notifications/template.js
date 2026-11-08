@@ -186,7 +186,7 @@ function renderFeedItem({ item, onOpenRow, index }) {
   })
 }
 
-function feedLine(item) {
+export function feedLine(item) {
   const title = item.job_title ?? ""
   switch (item.type) {
     case "application_received":

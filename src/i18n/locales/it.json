@@ -611,6 +611,9 @@
     "withdraw": "Ritira la candidatura",
     "bookedVia": "Prenotato tramite Vaitu"
   },
+  "toasts": {
+    "won": "Hai ottenuto il lavoro!"
+  },
   "notifications": {
     "error": "Impossibile caricare le notifiche",
     "title": "Notifiche",

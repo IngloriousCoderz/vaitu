@@ -29,6 +29,10 @@ const config: CapacitorConfig = {
     SystemBars: {
       initialViewportFitValueHint: "cover",
     },
+    // In the foreground the app shows the news as a toast: only the badge.
+    FirebaseMessaging: {
+      presentationOptions: ["badge"],
+    },
   },
   experimental: {
     ios: {

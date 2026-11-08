@@ -16,7 +16,7 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from "../../api/notifications.js"
-import { Notifications, pathFor } from "./index.js"
+import { arrivals, Notifications, pathFor, toastFor } from "./index.js"
 import { NotificationsPanel } from "./template.js"
 
 beforeEach(() => {
@@ -109,6 +109,85 @@ describe("Notifications.load", () => {
     await vi.waitFor(() => expect(entity.status).toBe("error"))
 
     expect(entity.error).toBe("network gone")
+  })
+})
+
+describe("Notifications arriving while the app is open", () => {
+  it("toasts only what is new and unread, never on the first load", async () => {
+    const entity = { id: "notifications" }
+    Notifications.create(entity)
+    const toasts = []
+    const api = recordingApi(entity, toasts)
+    fetchMyNotifications.mockResolvedValue([notification()])
+
+    Notifications.load(entity, undefined, api)
+    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+    expect(toasts).toEqual([])
+
+    fetchMyNotifications.mockResolvedValue([
+      notification({
+        id: "n3",
+        type: "application_selected",
+        application_id: "a1",
+      }),
+      notification({ id: "n2", is_read: true }),
+      notification(),
+    ])
+    entity.status = "loading"
+    Notifications.load(entity, undefined, api)
+    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+
+    expect(toasts).toHaveLength(1)
+    expect(toasts[0]).toMatchObject({
+      color: "success",
+      icon: expect.objectContaining({ body: expect.any(String) }),
+      notificationId: "n3",
+      path: "/applications/a1",
+    })
+  })
+
+  it("stays quiet while the inbox is open", async () => {
+    const entity = { id: "notifications" }
+    Notifications.create(entity)
+    entity.knownIds = []
+    entity.isPanelOpen = true
+    const toasts = []
+    fetchMyNotifications.mockResolvedValue([notification()])
+
+    Notifications.load(entity, undefined, recordingApi(entity, toasts))
+    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+
+    expect(toasts).toEqual([])
+  })
+})
+
+describe("arrivals", () => {
+  it("keeps the unread notifications it has not seen", () => {
+    const items = [
+      notification({ id: "a" }),
+      notification({ id: "b", is_read: true }),
+      notification({ id: "c" }),
+    ]
+    expect(arrivals(items, ["c"]).map((item) => item.id)).toEqual(["a"])
+  })
+})
+
+describe("toastFor", () => {
+  it("colours the news by what it means", () => {
+    expect(toastFor(notification({ type: "job_cancelled" })).color).toBe(
+      "warning",
+    )
+    expect(toastFor(notification({ type: "application_received" })).color).toBe(
+      "success",
+    )
+    expect(toastFor(notification({ type: "application_rejected" })).color).toBe(
+      "warning",
+    )
+    expect(toastFor(notification({ type: "job_closed" }))).toMatchObject({
+      color: "info",
+      icon: undefined,
+      duration: undefined,
+    })
   })
 })
 
@@ -300,6 +379,17 @@ describe("NotificationsPanel.render", () => {
     expect(closed).toContain("drawer(closed)")
   })
 })
+
+function recordingApi(entity, toasts) {
+  const api = {
+    notify(event, payload) {
+      if (event === "#toasts:show") return toasts.push(payload)
+      const name = event.slice(1).split(":")[1]
+      Notifications[name]?.(entity, payload, api)
+    },
+  }
+  return api
+}
 
 function makeApi(entity) {
   const api = {
