@@ -22,7 +22,11 @@ describe("mergeParsedDetails", () => {
   const category = {
     createFields: [
       { field: "headliner" },
-      { field: "genre", options: [{ value: "techno" }] },
+      {
+        field: "genres",
+        type: "chips",
+        options: [{ value: "techno" }, { value: "house" }],
+      },
     ],
   }
 
@@ -31,15 +35,19 @@ describe("mergeParsedDetails", () => {
       mergeParsedDetails(
         category,
         { headliner: "Old" },
-        { headliner: " Ada ", genre: "techno" },
+        { headliner: " Ada ", genres: ["techno", "house", "techno"] },
       ),
-    ).toEqual({ headliner: "Ada", genre: "techno" })
+    ).toEqual({ headliner: "Ada", genres: ["techno", "house"] })
   })
 
   it("keeps what the form had when the message says nothing", () => {
     expect(
-      mergeParsedDetails(category, { headliner: "Old" }, { headliner: null }),
-    ).toEqual({ headliner: "Old" })
+      mergeParsedDetails(
+        category,
+        { headliner: "Old", genres: ["house"] },
+        { headliner: null, genres: [] },
+      ),
+    ).toEqual({ headliner: "Old", genres: ["house"] })
     expect(mergeParsedDetails(category, { headliner: "Old" })).toEqual({
       headliner: "Old",
     })
@@ -47,7 +55,7 @@ describe("mergeParsedDetails", () => {
 
   it("skips other categories' fields and values off the list", () => {
     expect(
-      mergeParsedDetails(category, {}, { style: "film", genre: "polka" }),
+      mergeParsedDetails(category, {}, { styles: ["film"], genres: ["polka"] }),
     ).toEqual({})
   })
 })

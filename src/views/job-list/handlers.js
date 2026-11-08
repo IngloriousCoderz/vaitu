@@ -122,7 +122,7 @@ export const load = handleAsync("load", {
   },
   async run() {
     const [{ appliedMap, wonJobIds }, defaults] = await Promise.all([
-      fetchMyApplicationMap(),
+      fetchMyApplicationMap(localToday()),
       fetchMyFeedDefaults(),
     ])
     return {

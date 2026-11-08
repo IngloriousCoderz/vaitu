@@ -3,7 +3,7 @@ import { musicGenres, weddingStyles } from "../../data/job-taxonomy.js"
 import { t } from "../../i18n/index.js"
 
 const genreFilter = {
-  id: "genre",
+  id: "genres",
   get title() {
     return t("filters.musicGenre")
   },
@@ -13,11 +13,11 @@ const genreFilter = {
 export const categories = [
   {
     id: "wedding",
-    detailSelect: "styleCreate",
+    detailField: "styles",
     professionsWithoutDetail: ["planner", "makeup_artist"],
     filters: [
       {
-        id: "style",
+        id: "styles",
         get title() {
           return t("filters.weddingStyle")
         },
@@ -48,11 +48,11 @@ export const categories = [
         section: "identity",
       },
       {
-        field: "style",
+        field: "styles",
         get label() {
           return t("fields.style")
         },
-        type: "select",
+        type: "chips",
         options: weddingStyles,
         section: "style",
       },
@@ -68,7 +68,7 @@ export const categories = [
 function showCategory(id) {
   return {
     id,
-    detailSelect: "genreCreate",
+    detailField: "genres",
     filters: [genreFilter],
     title_from: { input: true },
     createFields: [
@@ -82,11 +82,11 @@ function showCategory(id) {
         section: "identity",
       },
       {
-        field: "genre",
+        field: "genres",
         get label() {
           return t("fields.genre")
         },
-        type: "select",
+        type: "chips",
         options: musicGenres,
         section: "style",
       },
@@ -142,10 +142,8 @@ export function filterSectionsFor(jobTypes) {
 }
 
 export function hasDetail({ category, profession }) {
-  const { detailSelect, professionsWithoutDetail } = categoryById(category)
-  return (
-    Boolean(detailSelect) && !professionsWithoutDetail?.includes(profession)
-  )
+  const { detailField, professionsWithoutDetail } = categoryById(category)
+  return Boolean(detailField) && !professionsWithoutDetail?.includes(profession)
 }
 
 export function detailAppliesTo(value, jobType) {

@@ -20,7 +20,6 @@ const WON_TOAST_MS = 10000
 const TOAST_COLORS = {
   application_selected: "success",
   agreement_confirmed: "success",
-  application_received: "success",
   application_rejected: "warning",
   application_withdrawn: "warning",
   job_cancelled: "warning",

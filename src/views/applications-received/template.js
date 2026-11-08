@@ -219,14 +219,18 @@ export const template = {
       [t("received.status"), translatedValue("status.", recap.status)],
       [t("fields.jobType"), recap.jobType],
       ...(recap.names ? [[t("received.names"), recap.names]] : []),
-      ...(recap.style
+      ...(recap.styles.length
         ? [
             [
               t("received.style"),
-              translatedValue(
-                ["taxonomy.style.", "taxonomy.genre."],
-                recap.style,
-              ),
+              recap.styles
+                .map((value) =>
+                  translatedValue(
+                    ["taxonomy.style.", "taxonomy.genre."],
+                    value,
+                  ),
+                )
+                .join(", "),
             ],
           ]
         : []),

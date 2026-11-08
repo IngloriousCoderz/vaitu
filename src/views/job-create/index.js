@@ -164,6 +164,8 @@ export const JobCreate = {
           ),
         onDetailField: ({ field, value }) =>
           api.notify(`#${id}:detailFieldSet`, { field, value }),
+        onDetailToggle: ({ field, value }) =>
+          api.notify(`#${id}:detailToggle`, { field, value }),
         onRecordStart: () => api.notify(`#${id}:audioRecord`),
         onRecordStop: () => api.notify(`#${id}:audioRecordStop`),
         onCancelAudio: () => api.notify(`#${id}:audioCancel`),
@@ -191,8 +193,6 @@ export const JobCreate = {
 function syncComboboxErrors(entity, api) {
   api.notify("#countryCreate:errorSet", getFieldError(entity, "country"))
   api.notify("#regionCreate:errorSet", getFieldError(entity, "region"))
-  api.notify("#styleCreate:errorSet", getFieldError(entity, "details.style"))
-  api.notify("#genreCreate:errorSet", getFieldError(entity, "details.genre"))
 }
 
 function jobTitle(values) {
@@ -223,8 +223,6 @@ function open(entity, { job_id } = {}, api) {
   clearPendingAudio()
   api.notify("#countryCreate:valueSet", "")
   api.notify("#regionCreate:valueSet", "")
-  api.notify("#styleCreate:valueSet", "")
-  api.notify("#genreCreate:valueSet", "")
   if (!job_id) handlers.jobTypeOptionsSync(entity, null, api)
   if (job_id) api.notify(`#${entity.id}:editLoad`, job_id)
 }

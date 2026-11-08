@@ -183,7 +183,7 @@ describe("validateJob", () => {
         ...validFestival,
         category: "concert",
         profession: "musician",
-        details: { headliner: "Nina", genre: "classical" },
+        details: { headliner: "Nina", genres: ["classical"] },
       }),
     ).toEqual({})
   })
@@ -219,14 +219,14 @@ describe("validateJob", () => {
       inWords(
         validateJob({
           ...validWedding,
-          details: { ...validWedding.details, style: "x" },
+          details: { ...validWedding.details, styles: ["classic", "x"] },
         }).details,
       ),
-    ).toEqual({ style: "Pick a style" })
+    ).toEqual({ styles: "Pick a style" })
     expect(
       validateJob({
         ...validWedding,
-        details: { ...validWedding.details, style: "classic" },
+        details: { ...validWedding.details, styles: ["classic", "film"] },
       }),
     ).toEqual({})
   })
@@ -236,14 +236,14 @@ describe("validateJob", () => {
       inWords(
         validateJob({
           ...validFestival,
-          details: { headliner: "Nina", genre: "x" },
+          details: { headliner: "Nina", genres: "jazz" },
         }).details,
       ),
-    ).toEqual({ genre: "Pick a genre" })
+    ).toEqual({ genres: "Pick a genre" })
     expect(
       validateJob({
         ...validFestival,
-        details: { headliner: "Nina", genre: "jazz" },
+        details: { headliner: "Nina", genres: ["jazz"] },
       }),
     ).toEqual({})
   })

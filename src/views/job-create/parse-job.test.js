@@ -110,7 +110,7 @@ describe("toJobFields", () => {
     details: {
       spouse_first_name_1: "Giulia",
       spouse_first_name_2: "Marco",
-      style: "reportage",
+      styles: ["reportage", "film", "polka"],
       headliner: "Not a wedding field",
     },
   }
@@ -128,7 +128,7 @@ describe("toJobFields", () => {
       details: {
         spouse_first_name_1: "Giulia",
         spouse_first_name_2: "Marco",
-        style: "reportage",
+        styles: ["reportage", "film"],
       },
       description: null,
       pay: null,
@@ -140,13 +140,13 @@ describe("toJobFields", () => {
       {
         job_type: "festival_dj",
         title: "Sundance Beats",
-        details: { headliner: "Ada", genre: "techno", style: "film" },
+        details: { headliner: "Ada", genres: ["techno"], styles: ["film"] },
       },
       JOB_TYPES,
       null,
     )
     expect(fields.title).toBe("Sundance Beats")
-    expect(fields.details).toEqual({ headliner: "Ada", genre: "techno" })
+    expect(fields.details).toEqual({ headliner: "Ada", genres: ["techno"] })
   })
 
   it("keeps a concert's fields and name", () => {
@@ -154,13 +154,13 @@ describe("toJobFields", () => {
       {
         job_type: "concert_musician",
         title: "Notte Rock",
-        details: { headliner: "Ada", genre: "rock" },
+        details: { headliner: "Ada", genres: "rock" },
       },
       JOB_TYPES,
       null,
     )
     expect(fields.title).toBe("Notte Rock")
-    expect(fields.details).toEqual({ headliner: "Ada", genre: "rock" })
+    expect(fields.details).toEqual({ headliner: "Ada", genres: ["rock"] })
   })
 
   it("drops the style of a wedding job that has none", () => {
@@ -170,7 +170,7 @@ describe("toJobFields", () => {
         details: {
           spouse_first_name_1: "Ada",
           spouse_first_name_2: "Tom",
-          style: "film",
+          styles: ["film"],
         },
       },
       JOB_TYPES,
@@ -179,7 +179,7 @@ describe("toJobFields", () => {
     expect(fields.details).toEqual({
       spouse_first_name_1: "Ada",
       spouse_first_name_2: "Tom",
-      style: null,
+      styles: [],
     })
   })
 
@@ -188,7 +188,7 @@ describe("toJobFields", () => {
       {
         job_type: "house_cleaner",
         title: "Deep clean",
-        details: { style: "film" },
+        details: { styles: ["film"] },
       },
       JOB_TYPES,
       null,
@@ -199,11 +199,11 @@ describe("toJobFields", () => {
 
   it("drops a value that is not on its list", () => {
     const fields = toJobFields(
-      { job_type: "festival_dj", details: { genre: "polka" } },
+      { job_type: "festival_dj", details: { genres: ["polka"] } },
       JOB_TYPES,
       null,
     )
-    expect(fields.details.genre).toBeNull()
+    expect(fields.details.genres).toEqual([])
   })
 
   it("stays on the form's job type when the answer is not an offered one", () => {

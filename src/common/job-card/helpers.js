@@ -60,11 +60,10 @@ export function jobSubtitle(job) {
 }
 
 export function jobTag(job) {
-  if (!job.filterValue) return ""
   const kind = GENRE_CATEGORIES.includes(job.category) ? "genre" : "style"
-  return t(`taxonomy.${kind}.${job.filterValue}`, {
-    defaultValue: job.filterValue,
-  })
+  return job.filterValues
+    .map((value) => t(`taxonomy.${kind}.${value}`, { defaultValue: value }))
+    .join(", ")
 }
 
 export function jobTypeLabel(job) {

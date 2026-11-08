@@ -71,7 +71,7 @@ export function toViewModel(row) {
     return {
       ...base,
       title: row.title,
-      filterValue: row.details.genre,
+      filterValues: row.details.genres ?? [],
       facts: [
         { label: "fields.headliner", value: row.details.headliner },
         ...(region ? [{ label: "fields.region", value: region }] : []),
@@ -83,7 +83,7 @@ export function toViewModel(row) {
     return {
       ...base,
       title: row.title,
-      filterValue: null,
+      filterValues: [],
       facts: region ? [{ label: "fields.region", value: region }] : [],
     }
   }
@@ -92,7 +92,7 @@ export function toViewModel(row) {
   return {
     ...base,
     title: couple,
-    filterValue: row.details.style,
+    filterValues: row.details.styles ?? [],
     facts: [
       { label: "facts.spouses", value: couple },
       ...(region ? [{ label: "fields.region", value: region }] : []),
@@ -265,8 +265,8 @@ export async function fetchOpenJobsPage(feed, { from, to }) {
     query = query.or(
       [
         `category.not.in.(${feed.details.flatMap((d) => d.categories).join(",")})`,
-        ...feed.details.map(
-          (d) => `details->>${d.key}.in.(${d.values.join(",")})`,
+        ...feed.details.flatMap((d) =>
+          d.values.map((value) => `details->${d.key}.cs.["${value}"]`),
         ),
       ].join(","),
     )

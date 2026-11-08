@@ -144,6 +144,18 @@ export function detailFieldSet(entity, { field, value }) {
   entity.error = null
 }
 
+export function detailToggle(entity, { field, value }) {
+  const picked = getFieldValue(entity, `details.${field}`, [])
+  const next = picked.includes(value)
+    ? picked.filter((item) => item !== value)
+    : [...picked, value]
+  Form.fieldChange(entity, {
+    path: `details.${field}`,
+    value: next.length ? next : undefined,
+  })
+  entity.error = null
+}
+
 export function jobTypeSelect(entity, { value }, api) {
   const { category, profession } = jobTypeById(value)
   const isSameCategory = getFieldValue(entity, "category", "") === category
@@ -152,8 +164,7 @@ export function jobTypeSelect(entity, { value }, api) {
   entity.error = null
   if (isSameCategory) {
     if (category === "wedding" && !hasDetail({ category, profession })) {
-      Form.fieldChange(entity, { path: "details.style", value: undefined })
-      api.notify("#styleCreate:valueSet", "")
+      Form.fieldChange(entity, { path: "details.styles", value: undefined })
     }
     return
   }
@@ -162,8 +173,6 @@ export function jobTypeSelect(entity, { value }, api) {
   entity.isValid = true
   api.notify("#countryCreate:errorSet", null)
   api.notify("#regionCreate:errorSet", null)
-  api.notify("#styleCreate:valueSet", "")
-  api.notify("#genreCreate:valueSet", "")
 }
 
 // New jobs start on the poster's first job type. An edit keeps its own, even if
@@ -430,8 +439,6 @@ export const audioParse = handleAsync("audioParse", {
     }
     api.notify("#countryCreate:valueSet", country)
     api.notify("#regionCreate:valueSet", region)
-    api.notify("#styleCreate:valueSet", details.style ?? "")
-    api.notify("#genreCreate:valueSet", details.genre ?? "")
     if (
       typeof fields.job_date === "string" &&
       /^\d{4}-\d{2}-\d{2}$/.test(fields.job_date)
@@ -737,8 +744,6 @@ export const editLoad = handleAsync("editLoad", {
     entity.voice_description = null
     api.notify("#countryCreate:valueSet", country)
     api.notify("#regionCreate:valueSet", region)
-    api.notify("#styleCreate:valueSet", row.details?.style ?? "")
-    api.notify("#genreCreate:valueSet", row.details?.genre ?? "")
     jobTypeOptionsSync(entity, null, api)
   },
   error(entity, err) {

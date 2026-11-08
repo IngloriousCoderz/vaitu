@@ -42,7 +42,7 @@ export function jobPayload(id, deadline) {
       deadline ??
       new Date(Date.now() + DEADLINE_IN_DAYS * DAY_MS).toISOString(),
     details: {
-      style: "editorial",
+      styles: ["editorial"],
       spouse_first_name_1: `Ada${id}`,
       spouse_first_name_2: `Ben${id}`,
     },

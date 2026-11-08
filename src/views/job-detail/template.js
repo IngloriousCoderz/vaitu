@@ -127,7 +127,7 @@ export const template = {
                           wrap: "wrap",
                           children: [
                             Chip.render({ children: jobTypeLabel(job) }),
-                            when(job.filterValue, () =>
+                            when(job.filterValues.length, () =>
                               Chip.render({ children: jobTag(job) }),
                             ),
                           ],

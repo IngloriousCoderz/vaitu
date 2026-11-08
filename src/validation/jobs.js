@@ -158,6 +158,10 @@ function oneOf(options, value) {
   return options.some((option) => option.value === value)
 }
 
+function allOf(options, values) {
+  return Array.isArray(values) && values.every((value) => oneOf(options, value))
+}
+
 function fail(errors, field, message) {
   if (message) errors[field] = message
 }
@@ -178,8 +182,8 @@ function validateWeddingDetails(details) {
     "spouse_first_name_2",
     requiredText(details.spouse_first_name_2, "validation.addName"),
   )
-  if (details.style && !oneOf(weddingStyles, details.style)) {
-    fail(errors, "style", "validation.pickStyle")
+  if (details.styles !== undefined && !allOf(weddingStyles, details.styles)) {
+    fail(errors, "styles", "validation.pickStyle")
   }
   return errors
 }
@@ -191,8 +195,8 @@ function validateShowDetails(details) {
     "headliner",
     requiredText(details.headliner, "validation.addHeadliner"),
   )
-  if (details.genre && !oneOf(musicGenres, details.genre)) {
-    fail(errors, "genre", "validation.pickGenre")
+  if (details.genres !== undefined && !allOf(musicGenres, details.genres)) {
+    fail(errors, "genres", "validation.pickGenre")
   }
   return errors
 }

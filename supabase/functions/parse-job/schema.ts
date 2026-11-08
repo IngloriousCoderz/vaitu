@@ -38,7 +38,7 @@ export const JOB_TYPES_WITHOUT_STYLE = [
   "wedding_makeup_artist",
 ]
 
-// null means free text, a list the only values allowed.
+// null means free text, a list the values that can be picked, any number of them.
 export const DETAILS_BY_CATEGORY: Record<
   string,
   Record<string, string[] | null>
@@ -46,10 +46,10 @@ export const DETAILS_BY_CATEGORY: Record<
   wedding: {
     spouse_first_name_1: null,
     spouse_first_name_2: null,
-    style: WEDDING_STYLES,
+    styles: WEDDING_STYLES,
   },
-  festival: { headliner: null, genre: MUSIC_GENRES },
-  concert: { headliner: null, genre: MUSIC_GENRES },
+  festival: { headliner: null, genres: MUSIC_GENRES },
+  concert: { headliner: null, genres: MUSIC_GENRES },
   apartment: {},
   house: {},
   office: {},
@@ -281,18 +281,18 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its category, an underscore and the profession. "details" depends on the category:
-- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "style": ${oneOf(WEDDING_STYLES)} | null }
-- festival, concert: { "headliner": string | null, "genre": ${oneOf(MUSIC_GENRES)} | null }
+- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(WEDDING_STYLES)})[] }
+- festival, concert: { "headliner": string | null, "genres": (${oneOf(MUSIC_GENRES)})[] }
 - apartment, house, office: {}
 Rules:
 - ${keep}
 - title: null for a wedding; the festival's or concert's name for a festival or concert; for apartment, house and office, a short description of the work, in the transcript's language.
-- style: null for ${oneOf(JOB_TYPES_WITHOUT_STYLE)}.
+- styles, genres: every one that was said, [] when none was. styles: [] for ${oneOf(JOB_TYPES_WITHOUT_STYLE)}.
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
 - pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max. null when no amount is said.
 - currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
-- Values from a list must be one of the listed values, or null.
+- Values from a list must be among the listed values.
 - application_deadline: when applications close, in local time. Resolve weekdays and relative days ("next Friday", "tomorrow") from today; use 23:59 when only a day is said. null when no deadline is said.
 - max_applicants: how many applicants the poster will shortlist before choosing one ("I'll pick among 3", "a shortlist of five"). Not the number of people the job needs. null when not said.
 - description: everything else the colleague taking the job should know that no other key holds, never repeating the date, deadline, shortlist size, place or pay (requests, equipment, constraints, timings, the client's wishes), as short bullet points, one per line, each starting with "- ". Rewrite what was said into clear, correct sentences in the transcript's language, dropping hesitations, repetitions and small talk. Never include phone numbers, email addresses, street addresses or surnames: this is published. null when nothing is left to say.
@@ -359,19 +359,26 @@ function details(category: string, answer: unknown) {
   const given = (answer ?? {}) as Record<string, unknown>
   const fields = DETAILS_BY_CATEGORY[category] ?? {}
   return Object.fromEntries(
-    Object.entries(fields).map(([field, allowed]) => {
-      const value = text(given[field])
-      return [field, !allowed || allowed.includes(value ?? "") ? value : null]
-    }),
+    Object.entries(fields).map(([field, allowed]) => [
+      field,
+      allowed ? picked(allowed, given[field]) : text(given[field]),
+    ]),
   )
+}
+
+function picked(allowed: string[], value: unknown) {
+  const values = [value]
+    .flat()
+    .filter((item): item is string => allowed.includes(item as string))
+  return [...new Set(values)]
 }
 
 function withoutStyle(
   job_type: string | null,
-  fields: Record<string, string | null>,
+  fields: Record<string, string | string[] | null>,
 ) {
   return JOB_TYPES_WITHOUT_STYLE.includes(job_type ?? "")
-    ? { ...fields, style: null }
+    ? { ...fields, styles: [] }
     : fields
 }
 

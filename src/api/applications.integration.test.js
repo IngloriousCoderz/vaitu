@@ -126,7 +126,7 @@ describe("applying and choosing a winner", () => {
 
   test("the winner still finds the job in the feed", async () => {
     await signIn(GIADA)
-    const { appliedMap, wonJobIds } = await fetchMyApplicationMap()
+    const { appliedMap, wonJobIds } = await fetchMyApplicationMap(localToday())
     expect(wonJobIds).toContain(jobId)
     const jobs = async (status) => {
       const feed = feedQuery({

@@ -27,7 +27,7 @@ describe("filterSections", () => {
   })
 
   it("offers only the sections of the picked categories", () => {
-    expect(filterSections(["festival"]).map((s) => s.id)).toEqual(["genre"])
+    expect(filterSections(["festival"]).map((s) => s.id)).toEqual(["genres"])
   })
 })
 
@@ -37,15 +37,15 @@ describe("filterSectionsFor", () => {
 
   it("offers no wedding style to planners and make-up artists", () => {
     expect(ids("wedding_planner", "wedding_makeup_artist")).toEqual([])
-    expect(ids("wedding_planner", "wedding_photographer")).toEqual(["style"])
+    expect(ids("wedding_planner", "wedding_photographer")).toEqual(["styles"])
   })
 
   it("offers the genre once for festivals and concerts", () => {
-    expect(ids("festival_musician", "concert_musician")).toEqual(["genre"])
+    expect(ids("festival_musician", "concert_musician")).toEqual(["genres"])
   })
 
   it("offers everything without a job type", () => {
-    expect(ids()).toEqual(["style", "genre"])
+    expect(ids()).toEqual(["styles", "genres"])
   })
 })
 

@@ -87,9 +87,9 @@ describe("feedQuery", () => {
   it("groups the picked styles and genres by the detail they filter", () => {
     expect(query({ details: ["editorial", "techno", "jazz"] }).details).toEqual(
       [
-        { key: "style", categories: ["wedding"], values: ["editorial"] },
+        { key: "styles", categories: ["wedding"], values: ["editorial"] },
         {
-          key: "genre",
+          key: "genres",
           categories: ["festival", "concert"],
           values: ["techno", "jazz"],
         },

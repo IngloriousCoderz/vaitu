@@ -1,6 +1,7 @@
 import closeIcon from "@iconify-icons/material-symbols/close"
 import micOutline from "@iconify-icons/material-symbols/mic-outline"
 import { Button } from "@inglorious/ui/button"
+import { ChipPicker } from "@inglorious/ui/chip-picker"
 import { CropDialog } from "@inglorious/ui/crop-dialog"
 import { Dialog } from "@inglorious/ui/dialog"
 import { Flex } from "@inglorious/ui/flex"
@@ -16,6 +17,7 @@ import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
+import { ErrorLabel } from "../../common/error-label/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
 import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
@@ -46,6 +48,7 @@ export const template = {
       entity,
       onField,
       onDetailField,
+      onDetailToggle,
       onSave,
       onRecordStart,
       onRecordStop,
@@ -140,7 +143,21 @@ export const template = {
             hasDetail({ category: categoryId, profession }),
             () => html`
               <div class=${styles.field}>
-                ${api.render(category.detailSelect)}
+                ${this.renderDetailChips({
+                  spec: category.createFields.find(
+                    (spec) => spec.field === category.detailField,
+                  ),
+                  value: getFieldValue(
+                    entity,
+                    `details.${category.detailField}`,
+                    [],
+                  ),
+                  error: getFieldError(
+                    entity,
+                    `details.${category.detailField}`,
+                  ),
+                  onDetailToggle,
+                })}
               </div>
             `,
           )}
@@ -605,6 +622,22 @@ export const template = {
       },
       api,
     )
+  },
+
+  renderDetailChips({ spec, value, error, onDetailToggle }) {
+    return html`
+      ${ChipPicker.render({
+        label: spec.label,
+        options: spec.options.map((option) => ({
+          value: option.value,
+          label: t(option.label),
+        })),
+        value,
+        onToggle: (picked) =>
+          onDetailToggle({ field: spec.field, value: picked }),
+      })}
+      ${ErrorLabel.render({ error })}
+    `
   },
 
   renderDetailField({ spec, details, error, onDetailField }) {

@@ -1,5 +1,5 @@
 {
-  "git": { "deploymentEnabled": { "*": false, "main": true } },
+  "git": { "deploymentEnabled": { "**": false, "main": true } },
   "framework": null,
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm build",

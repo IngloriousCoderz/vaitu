@@ -192,8 +192,6 @@ create index jobs_job_type_idx on public.jobs (job_type);
 create index jobs_search_idx on public.jobs
   using gin (search_text extensions.gin_trgm_ops);
 create index jobs_details_gin_idx on public.jobs using gin (details);
-create index jobs_details_style_idx on public.jobs ((details ->> 'style'));
-create index jobs_details_genre_idx on public.jobs ((details ->> 'genre'));
 
 
 create table public.applications (

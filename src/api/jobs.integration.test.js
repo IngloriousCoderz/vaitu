@@ -195,7 +195,11 @@ describe("the feed", () => {
       const feed = {
         jobTypes: ["wedding_photographer"],
         details: [
-          { key: "style", categories: ["wedding"], values: ["editorial"] },
+          {
+            key: "styles",
+            categories: ["wedding"],
+            values: ["film", "editorial"],
+          },
         ],
         regions: [region],
         dateFrom: null,

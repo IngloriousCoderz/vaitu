@@ -34,19 +34,22 @@ export async function fetchMyApplications() {
 
 /**
  * Your live applications as the feed needs them: the application of each job
- * you applied to, and the jobs you won.
+ * you applied to, and the jobs you won, for jobs from today on. Past ones
+ * never show in the feed, and every id goes into its URL.
+ * @param {string} today - Local date, YYYY-MM-DD.
  * @returns {Promise<{ appliedMap: Record<string, string>, wonJobIds: string[] }>}
  */
-export async function fetchMyApplicationMap() {
+export async function fetchMyApplicationMap(today) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return { appliedMap: {}, wonJobIds: [] }
   const { data, error } = await supabase
     .from("applications")
-    .select("id,job_id,status")
+    .select("id,job_id,status,jobs!inner(job_date)")
     .eq("applicant_id", user.id)
     .neq("status", "withdrawn")
+    .gte("jobs.job_date", today)
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
   return {

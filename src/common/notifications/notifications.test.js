@@ -178,7 +178,7 @@ describe("toastFor", () => {
       "warning",
     )
     expect(toastFor(notification({ type: "application_received" })).color).toBe(
-      "success",
+      "info",
     )
     expect(toastFor(notification({ type: "application_rejected" })).color).toBe(
       "warning",

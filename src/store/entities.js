@@ -1,9 +1,5 @@
 import { countries } from "../data/countries.js"
-import {
-  availableJobTypes,
-  musicGenres,
-  weddingStyles,
-} from "../data/job-taxonomy.js"
+import { availableJobTypes } from "../data/job-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 import { favoriteRegionOptions, regionOption } from "../data/regions/resolve.js"
 import { languages } from "../i18n/index.js"
@@ -48,8 +44,6 @@ export const entities = {
   jobTypesOnboarding: jobTypesSelect("onboarding", "fields.jobTypes"),
   jobTypesPreferences: jobTypesSelect("preferences", "fields.jobTypes"),
   jobTypesFilter: jobTypesSelect("jobList"),
-  styleCreate: detailSelect("style", weddingStyles, "fields.style"),
-  genreCreate: detailSelect("genre", musicGenres, "fields.genre"),
   favoriteRegionOnboarding: favoriteRegionsSelect(
     "onboarding",
     "favoriteRegionsSet",
@@ -113,17 +107,6 @@ function jobTypesSelect(targetId, label = "") {
     label,
     isMulti: true,
     placeholder: "combobox.allJobTypes",
-  }
-}
-
-function detailSelect(field, options, label) {
-  return {
-    type: "TranslatedCombobox",
-    label,
-    isFullWidth: true,
-    options,
-    changeEvent: "#jobCreate:detailFieldSet",
-    changePayload: { field },
   }
 }
 
