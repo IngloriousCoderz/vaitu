@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["55926AF5G4.it.ingloriouscoderz.vaitu"],
+        "components": [
+          { "#": "*access_token*", "exclude": true },
+          { "/": "/onboarding*", "exclude": true },
+          { "/": "/unsubscribe*", "exclude": true },
+          { "/": "*" }
+        ]
+      }
+    ]
+  }
+}

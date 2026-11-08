@@ -54,10 +54,12 @@ import {
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
 import { categoryById, hasDetail } from "../job-list/categories.js"
+import { localToday } from "../job-list/query.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
 
 const NO_ROOM = 0
+const TEXT_START = 0
 const SHOWN_VOICE_ERRORS = [
   "errors.voiceLimit",
   "errors.voicePaused",
@@ -350,7 +352,7 @@ export const audioParse = handleAsync("audioParse", {
     entity.is_parsing = true
   },
   run({ text, form }) {
-    return parseJob(text, form)
+    return parseJob(text, { ...form, today: localToday() })
   },
   success(entity, fields, api) {
     entity.is_parsing = false
@@ -368,6 +370,17 @@ export const audioParse = handleAsync("audioParse", {
     )
     if (category.title_from.input && fields.title) {
       Form.fieldChange(entity, { path: "title", value: fields.title })
+    }
+    if (typeof fields.description === "string" && fields.description) {
+      Form.fieldChange(entity, {
+        path: "description",
+        value: withVoiceDescription(
+          getFieldValue(entity, "description", ""),
+          entity.voice_description,
+          fields.description,
+        ),
+      })
+      entity.voice_description = fields.description
     }
     Form.fieldChange(entity, { path: "details", value: details })
     const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
@@ -422,6 +435,15 @@ export const audioParse = handleAsync("audioParse", {
         value: fields.job_date,
       })
       autofillDeadline(entity)
+    }
+    if (
+      typeof fields.application_deadline === "string" &&
+      fields.application_deadline.length === DATETIME_LOCAL_LENGTH
+    ) {
+      Form.fieldChange(entity, {
+        path: "application_deadline",
+        value: fields.application_deadline,
+      })
     }
   },
   error(entity, err) {
@@ -630,6 +652,7 @@ export const save = handleAsync("save", {
       max_applicants: Number(job.max_applicants) || DEFAULT_MAX_APPLICANTS,
       image_urls: photos.image_urls,
       details: job.details,
+      description: job.description,
       pay: job.pay,
     }
     let saved
@@ -682,6 +705,7 @@ export const editLoad = handleAsync("editLoad", {
       application_deadline: toLocalInput(row.application_deadline),
       max_applicants: row.max_applicants ?? DEFAULT_MAX_APPLICANTS,
       details: row.details ?? {},
+      description: row.description ?? "",
       ...payToForm(row.job_pay),
     }
     entity.errors = {}
@@ -698,6 +722,7 @@ export const editLoad = handleAsync("editLoad", {
     entity.is_audio_open = false
     entity.audio_transcript = null
     entity.audio_error = null
+    entity.voice_description = null
     api.notify("#countryCreate:valueSet", country)
     api.notify("#regionCreate:valueSet", region)
     api.notify("#styleCreate:valueSet", row.details?.style ?? "")
@@ -854,4 +879,14 @@ function writeJob(job, payload) {
   return job.editing_job_id
     ? updateJob(job.editing_job_id, payload)
     : createJob(payload)
+}
+
+// A new recording replaces the description the last one wrote, and keeps
+// whatever the poster typed before it.
+function withVoiceDescription(current, previous, next) {
+  const typed =
+    previous && current.endsWith(previous)
+      ? current.slice(TEXT_START, -previous.length).trimEnd()
+      : current.trimEnd()
+  return typed ? `${typed}\n${next}` : next
 }

@@ -10,6 +10,7 @@ import { Input } from "@inglorious/ui/input"
 import { Progress } from "@inglorious/ui/progress"
 import { RadioGroup } from "@inglorious/ui/radio-group"
 import { Select } from "@inglorious/ui/select"
+import { Textarea } from "@inglorious/ui/textarea"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
@@ -172,6 +173,19 @@ export const template = {
             onField,
           })}
           ${this.renderPay({ entity, onField })}
+          <div class=${styles.field}>
+            ${Textarea.render({
+              id: "create-description",
+              label: t("fields.description"),
+              hint: t("fields.descriptionHint"),
+              value: getFieldValue(entity, "description", ""),
+              error: t(getFieldError(entity, "description")),
+              rows: 4,
+              isAutoSize: true,
+              isFullWidth: true,
+              onChange: (value) => onField({ field: "description", value }),
+            })}
+          </div>
           ${this.renderImages({
             entity,
             busy,

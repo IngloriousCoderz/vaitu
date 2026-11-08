@@ -32,7 +32,13 @@ export const landing = {
           <p class="eyebrow">${c.eyebrow}</p>
           <h1>${c.headline}</h1>
           <p class="lede">${c.lede}</p>
-          <a class="cta" href=${`${APP_URL}/${lang}`}>${c.cta}</a>
+          <a
+            class="cta"
+            href=${`${APP_URL}/${lang}`}
+            target="_blank"
+            rel="noopener"
+            >${c.cta}</a
+          >
           <p class="note">${c.ctaNote}</p>
           <p class="name">${c.nameOrigin}</p>
         </section>
@@ -101,7 +107,13 @@ export const landing = {
 
         <section class="closing">
           <h2>${c.closing}</h2>
-          <a class="cta" href=${`${APP_URL}/${lang}`}>${c.cta}</a>
+          <a
+            class="cta"
+            href=${`${APP_URL}/${lang}`}
+            target="_blank"
+            rel="noopener"
+            >${c.cta}</a
+          >
         </section>
       </main>
 

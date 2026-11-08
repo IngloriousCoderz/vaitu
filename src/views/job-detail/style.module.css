@@ -98,6 +98,26 @@
   color: var(--vmuted-text);
 }
 
+.description {
+  margin: var(--iw-space-4) 0;
+}
+
+.descriptionTitle {
+  margin: 0 0 var(--iw-space-1);
+  font-size: var(--iw-font-size-sm);
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.descriptionText {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.descriptionLine {
+  display: block;
+  min-height: 1lh;
+}
+
 .countdown {
   font-size: var(--iw-font-size-sm);
   font-weight: var(--iw-font-weight-bold);

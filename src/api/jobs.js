@@ -53,6 +53,7 @@ export function toViewModel(row) {
     ),
     place: [row.location, region].filter(Boolean).join(" • "),
     imageUrls: row.image_urls ?? [],
+    description: row.description ?? null,
     pay: row.job_pay ?? null,
     daysLeft: Math.ceil(
       (new Date(row.application_deadline).getTime() - Date.now()) / DAY_MS,
@@ -123,7 +124,7 @@ export async function fetchJobDetail(id) {
   const { data: job, error } = await supabase
     .from("jobs")
     .select(
-      "id, category, profession, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details",
+      "id, category, profession, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
     )
     .eq("id", id)
     .single()
@@ -313,7 +314,7 @@ export async function fetchJobForEdit(job_id) {
   const { data, error } = await supabase
     .from("jobs")
     .select(
-      "id, category, profession, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
+      "id, category, profession, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, description, job_pay(kind, amount_min, amount_max, currency)",
     )
     .eq("id", job_id)
     .eq("poster_id", user.id)
@@ -402,9 +403,9 @@ export async function fetchMyFeedDefaults() {
  * @param {{ job_type: string, job_types: string[] }} form - The job type the
  *   form is on, and those it offers: the only ones the answer can pick.
  */
-export async function parseJob(transcript, { job_type, job_types }) {
+export async function parseJob(transcript, { job_type, job_types, today }) {
   const { data, error } = await supabase.functions.invoke("parse-job", {
-    body: { transcript, job_type, job_types },
+    body: { transcript, job_type, job_types, today },
   })
   if (error) throw await voiceError(error)
   return data?.fields ?? {}

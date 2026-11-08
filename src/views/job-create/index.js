@@ -54,6 +54,7 @@ export const JobCreate = {
       application_deadline: "",
       max_applicants: DEFAULT_MAX_APPLICANTS,
       details: {},
+      description: "",
       ...payToForm(null),
     }
     Form.create(entity)
@@ -75,6 +76,7 @@ export const JobCreate = {
     entity.is_voice_wait_dismissed ??= false
     entity.audio_elapsed ??= NO_TIME_RECORDED
     entity.audio_transcript ??= null
+    entity.voice_description ??= null
     entity.audio_error ??= null
     entity.status ??= "idle"
     entity.error ??= null
@@ -109,6 +111,7 @@ export const JobCreate = {
       job_date: values.job_date,
       application_deadline: values.application_deadline,
       max_applicants: Number(values.max_applicants),
+      description: values.description,
       pay: payFromForm(values),
       cover_url: entity.cover_url,
       gallery_urls: [...(entity.gallery_urls ?? [])],

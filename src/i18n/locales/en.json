@@ -121,6 +121,8 @@
     "otherRegions": "Other regions"
   },
   "fields": {
+    "description": "What else should they know",
+    "descriptionHint": "Requests, equipment, anything else the colleague should know. Optional.",
     "spouse1": "Spouse 1 first name",
     "spouse2": "Spouse 2 first name",
     "style": "Style",
@@ -195,6 +197,7 @@
     "update": "Update"
   },
   "validation": {
+    "descriptionTooLong": "Keep it under 2000 characters",
     "addName": "Add a name",
     "pickStyle": "Pick a style",
     "addHeadliner": "Add a headliner",
@@ -559,6 +562,7 @@
     "clock": "Applications close in {{time}}"
   },
   "detail": {
+    "description": "About the job",
     "postedBy": "Posted by {{name}}",
     "reviewApplications": "Review the applications you received",
     "closed": "Applications are closed for this job.",

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   CURRENCIES,
+  DESCRIPTION_MAX_LENGTH,
   DETAILS_BY_CATEGORY,
   JOB_TYPES,
   JOB_TYPES_WITHOUT_STYLE,
@@ -9,9 +10,11 @@ import {
   offeredJobTypes,
   systemPrompt,
   TITLED_CATEGORIES,
+  todayOf,
   toJobFields,
   WEDDING_STYLES,
 } from "../../../supabase/functions/parse-job/schema.ts"
+import { DESCRIPTION_MAX_LENGTH as APP_DESCRIPTION_MAX_LENGTH } from "../../constants/index.js"
 import { CURRENCIES as APP_CURRENCIES } from "../../data/currencies.js"
 import {
   jobTypes,
@@ -26,6 +29,7 @@ describe("parse-job's copies", () => {
     expect(WEDDING_STYLES).toEqual(weddingStyles.map((o) => o.value))
     expect(MUSIC_GENRES).toEqual(musicGenres.map((o) => o.value))
     expect(CURRENCIES).toEqual(APP_CURRENCIES)
+    expect(DESCRIPTION_MAX_LENGTH).toBe(APP_DESCRIPTION_MAX_LENGTH)
   })
 
   it("knows which wedding jobs have no style", () => {
@@ -74,10 +78,24 @@ describe("systemPrompt", () => {
     expect(prompt).not.toContain('"wedding_dj"')
   })
 
+  it("says which weekday today is, for relative dates", () => {
+    expect(systemPrompt("2026-11-01", JOB_TYPES, null)).toContain(
+      "Today is Sunday 2026-11-01.",
+    )
+  })
+
   it("asks to keep the form's job type when there is one", () => {
     expect(systemPrompt("2026-11-01", JOB_TYPES, "wedding_dj")).toContain(
       'The form is set to "wedding_dj"',
     )
+  })
+})
+
+describe("todayOf", () => {
+  it("trusts the client's date, and falls back to the server's", () => {
+    expect(todayOf("2026-11-13")).toBe("2026-11-13")
+    expect(todayOf("tomorrow")).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(todayOf(undefined)).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 })
 
@@ -105,11 +123,13 @@ describe("toJobFields", () => {
       country: "Italy",
       region: "Tuscany",
       job_date: "2027-06-12",
+      application_deadline: null,
       details: {
         spouse_first_name_1: "Giulia",
         spouse_first_name_2: "Marco",
         style: "reportage",
       },
+      description: null,
       pay: null,
     })
   })
@@ -225,6 +245,29 @@ describe("toJobFields", () => {
     expect(pay(null)).toBeNull()
   })
 
+  it("keeps a local deadline, and drops anything else", () => {
+    const deadline = (given) =>
+      toJobFields({ application_deadline: given }, JOB_TYPES, null)
+        .application_deadline
+    expect(deadline("2026-11-13T15:30")).toBe("2026-11-13T15:30")
+    expect(deadline("2026-11-13")).toBeNull()
+    expect(deadline("2026-11-13T15:30:00Z")).toBeNull()
+    expect(deadline("next Friday")).toBeNull()
+  })
+
+  it("keeps the description, trimmed and capped", () => {
+    const description = (given) =>
+      toJobFields({ description: given }, JOB_TYPES, null).description
+    expect(description("  - Bring a fan\n- Cruelty-free makeup  ")).toBe(
+      "- Bring a fan\n- Cruelty-free makeup",
+    )
+    expect(description("x".repeat(DESCRIPTION_MAX_LENGTH + 1))).toHaveLength(
+      DESCRIPTION_MAX_LENGTH,
+    )
+    expect(description("   ")).toBeNull()
+    expect(description(42)).toBeNull()
+  })
+
   it("drops a malformed date, and survives a useless answer", () => {
     expect(
       toJobFields({ job_date: "June 12" }, JOB_TYPES, null).job_date,
@@ -236,7 +279,9 @@ describe("toJobFields", () => {
       country: null,
       region: null,
       job_date: null,
+      application_deadline: null,
       details: {},
+      description: null,
       pay: null,
     })
   })

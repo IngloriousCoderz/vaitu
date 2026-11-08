@@ -16,7 +16,12 @@ import {
   releaseVoiceUse,
   voiceLimitReached,
 } from "../_shared/voice-limit.ts"
-import { offeredJobTypes, systemPrompt, toJobFields } from "./schema.ts"
+import {
+  offeredJobTypes,
+  systemPrompt,
+  todayOf,
+  toJobFields,
+} from "./schema.ts"
 
 // Free models get withdrawn or rate-limited without notice: OpenRouter moves
 // down this list when one fails, and openrouter/free picks any that is free.
@@ -31,7 +36,12 @@ const MAX_TRANSCRIPT_LENGTH = 5000
 
 serve(
   async (req) => {
-    const { transcript, job_type, job_types } = await req.json()
+    const {
+      transcript,
+      job_type,
+      job_types,
+      today: localToday,
+    } = await req.json()
     if (!transcript || typeof transcript !== "string") {
       return json({ error: "transcript is required" }, STATUS_CODE.BadRequest)
     }
@@ -47,7 +57,7 @@ serve(
 
     const offered = offeredJobTypes(job_types)
     const current = offered.includes(job_type) ? job_type : null
-    const [today] = new Date().toISOString().split("T")
+    const today = todayOf(localToday)
 
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",

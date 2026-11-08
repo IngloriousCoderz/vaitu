@@ -123,6 +123,8 @@
     "otherRegions": "Autres régions"
   },
   "fields": {
+    "description": "Que faut-il savoir d'autre",
+    "descriptionHint": "Demandes, matériel, tout ce que le collègue doit savoir. Facultatif.",
     "spouse1": "Prénom du premier époux",
     "spouse2": "Prénom du second époux",
     "style": "Style",
@@ -197,6 +199,7 @@
     "update": "Mettre à jour"
   },
   "validation": {
+    "descriptionTooLong": "Restez sous les 2000 caractères",
     "addName": "Saisissez un prénom",
     "pickStyle": "Choisissez un style",
     "addHeadliner": "Saisissez une tête d'affiche",
@@ -570,6 +573,7 @@
     "clock": "Candidatures closes dans {{time}}"
   },
   "detail": {
+    "description": "À propos du travail",
     "postedBy": "Publié par {{name}}",
     "reviewApplications": "Voir les candidatures reçues",
     "closed": "Les candidatures sont closes pour cette mission.",

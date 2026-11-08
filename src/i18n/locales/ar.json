@@ -129,6 +129,8 @@
     "otherRegions": "مناطق أخرى"
   },
   "fields": {
+    "description": "ما الذي يجب معرفته أيضًا",
+    "descriptionHint": "الطلبات والمعدات وكل ما يجب أن يعرفه الزميل. اختياري.",
     "spouse1": "الاسم الأول للشريك 1",
     "spouse2": "الاسم الأول للشريك 2",
     "style": "الأسلوب",
@@ -203,6 +205,7 @@
     "update": "تحديث"
   },
   "validation": {
+    "descriptionTooLong": "اجعله أقل من 2000 حرف",
     "addName": "أضف اسمًا",
     "pickStyle": "اختر أسلوبًا",
     "addHeadliner": "أضف الفنان الرئيسي",
@@ -597,6 +600,7 @@
     "clock": "يُغلق التقديم بعد {{time}}"
   },
   "detail": {
+    "description": "عن العمل",
     "postedBy": "نشره {{name}}",
     "reviewApplications": "راجع الطلبات التي تلقيتها",
     "closed": "التقديم مغلق لهذا العمل.",

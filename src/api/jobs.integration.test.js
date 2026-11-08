@@ -46,7 +46,10 @@ test(
   async () => {
     testUuid = crypto.randomUUID()
     await signIn(ANTONY)
-    await createJob(jobPayload(testUuid))
+    await createJob({
+      ...jobPayload(testUuid),
+      description: "  - Bring a fan\n- Cruelty-free makeup  ",
+    })
 
     const mine = await fetchMyJobs()
     const created = mine.find((job) => job.title === coupleTitle(testUuid))
@@ -55,6 +58,9 @@ test(
       `job ${coupleTitle(testUuid)} not found among ${mine.length} jobs`,
     ).toBeTruthy()
     jobId = created.id
+    expect((await fetchJobForEdit(jobId)).description).toBe(
+      "- Bring a fan\n- Cruelty-free makeup",
+    )
   },
   TEST_TIMEOUT_MS,
 )

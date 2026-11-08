@@ -132,6 +132,26 @@ export const template = {
                             ),
                           ],
                         })}
+                        ${when(
+                          job.description,
+                          () => html`
+                            <section class=${styles.description}>
+                              <h3 class=${styles.descriptionTitle}>
+                                ${t("detail.description")}
+                              </h3>
+                              <p class=${styles.descriptionText}>
+                                ${job.description
+                                  .split("\n")
+                                  .map(
+                                    (line) =>
+                                      html`<span class=${styles.descriptionLine}
+                                        >${line}</span
+                                      >`,
+                                  )}
+                              </p>
+                            </section>
+                          `,
+                        )}
                         ${this.renderGallery(job, onPhotoOpen)}
                         ${this.renderFacts(job)}
                         <p class=${styles.poster}>

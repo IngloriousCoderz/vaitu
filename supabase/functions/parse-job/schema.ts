@@ -226,13 +226,32 @@ export const TITLED_CATEGORIES = [
   "office",
 ]
 
+export const DESCRIPTION_MAX_LENGTH = 2000
+
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+const LOCAL_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
+const WEEKDAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+]
 const NO_AMOUNT = 0
 
 export function offeredJobTypes(requested: unknown) {
   if (!Array.isArray(requested)) return JOB_TYPES
   const offered = JOB_TYPES.filter((id) => requested.includes(id))
   return offered.length ? offered : JOB_TYPES
+}
+
+// The client's own date, when it sends a valid one: "next Friday" is relative
+// to where the user is, not to the server's UTC day.
+export function todayOf(given: unknown) {
+  const [utcToday] = new Date().toISOString().split("T")
+  return typeof given === "string" && ISO_DATE.test(given) ? given : utcToday
 }
 
 export function systemPrompt(
@@ -245,7 +264,7 @@ export function systemPrompt(
     : "Pick the listed job type the transcript describes, or null when it does not say."
 
   return `A professional is passing on a job they cannot take. You extract the job's data from their voice transcript, which can be in any language.
-Today is ${today}.
+Today is ${weekday(today)} ${today}.
 Respond with JSON only, no other text, using exactly these keys (null when unknown):
 {
   "job_type": ${jobTypes.map((id) => `"${id}"`).join(" | ")} | null,
@@ -254,7 +273,9 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "country": string | null,
   "region": string | null,
   "job_date": "YYYY-MM-DD" | null,
+  "application_deadline": "YYYY-MM-DDTHH:MM" | null,
   "details": object,
+  "description": string | null,
   "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its category, an underscore and the profession. "details" depends on the category:
@@ -270,7 +291,13 @@ Rules:
 - pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max. null when no amount is said.
 - currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
 - Values from a list must be one of the listed values, or null.
+- application_deadline: when applications close, in local time. Resolve weekdays and relative days ("next Friday", "tomorrow") from today; use 23:59 when only a day is said. null when no deadline is said.
+- description: everything else the colleague taking the job should know that no other key holds, never repeating the date, deadline, place or pay (requests, equipment, constraints, timings, the client's wishes), as short bullet points, one per line, each starting with "- ". Rewrite what was said into clear, correct sentences in the transcript's language, dropping hesitations, repetitions and small talk. Never include phone numbers, email addresses, street addresses or surnames: this is published. null when nothing is left to say.
 - job_date: use the stated year when given, otherwise the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day and month can be determined.`
+}
+
+function weekday(isoDate: string) {
+  return WEEKDAYS[new Date(`${isoDate}T00:00:00Z`).getUTCDay()]
 }
 
 function oneOf(values: string[]) {
@@ -295,7 +322,10 @@ export function toJobFields(
     country: text(answer?.country),
     region: text(answer?.region),
     job_date: date(answer?.job_date),
+    application_deadline: localDatetime(answer?.application_deadline),
     details: withoutStyle(job_type, details(category, answer?.details)),
+    description:
+      text(answer?.description)?.slice(0, DESCRIPTION_MAX_LENGTH) ?? null,
     pay: pay(answer?.pay),
   }
 }
@@ -347,4 +377,8 @@ function text(value: unknown) {
 
 function date(value: unknown) {
   return typeof value === "string" && ISO_DATE.test(value) ? value : null
+}
+
+function localDatetime(value: unknown) {
+  return typeof value === "string" && LOCAL_DATETIME.test(value) ? value : null
 }

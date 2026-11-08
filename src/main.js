@@ -1,6 +1,7 @@
 import "@inglorious/ui/all.css"
 import "./pwa"
 import "./native-update"
+import "./app-links"
 import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./styles/list-stagger.css"

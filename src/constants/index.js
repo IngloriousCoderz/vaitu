@@ -14,6 +14,7 @@ export const PUSH_TOKEN_KEY = "vaitu-push-token"
 export const ANALYTICS_CONSENT_KEY = "vaitu-analytics-consent"
 export const MIN_PASSWORD_LENGTH = 10
 export const MIN_TEXT_LENGTH = 1
+export const DESCRIPTION_MAX_LENGTH = 2000
 export const DEFAULT_MAX_APPLICANTS = 5
 export const DEFAULT_JOB_CATEGORY = "wedding"
 export const CLOSING_MAX_DAYS = 1

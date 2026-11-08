@@ -123,6 +123,8 @@
     "otherRegions": "Altre regioni"
   },
   "fields": {
+    "description": "Cos'altro c'è da sapere",
+    "descriptionHint": "Richieste, attrezzatura, tutto quello che il collega deve sapere. Facoltativo.",
     "spouse1": "Nome del primo sposo",
     "spouse2": "Nome del secondo sposo",
     "style": "Stile",
@@ -134,7 +136,7 @@
     "websiteExample": "tuo-sito.it",
     "website": "Sito web o pagina social",
     "title": "Titolo",
-    "location": "Luogo",
+    "location": "Location",
     "jobDate": "Data",
     "deadline": "Scadenza candidature",
     "shortlistSize": "Posti in shortlist",
@@ -197,13 +199,14 @@
     "update": "Aggiorna"
   },
   "validation": {
+    "descriptionTooLong": "Resta sotto i 2000 caratteri",
     "addName": "Inserisci un nome",
     "pickStyle": "Scegli uno stile",
     "addHeadliner": "Inserisci un headliner",
     "pickGenre": "Scegli un genere",
     "pickCategory": "Scegli una categoria",
     "addTitle": "Inserisci un titolo",
-    "addLocation": "Inserisci un luogo",
+    "addLocation": "Inserisci una location",
     "addCountry": "Inserisci un paese",
     "addRegion": "Inserisci una regione",
     "pickDate": "Scegli una data",
@@ -351,7 +354,7 @@
     "status": "Stato",
     "names": "Nomi",
     "style": "Stile",
-    "location": "Luogo",
+    "location": "Location",
     "jobDate": "Data",
     "deadline": "Scadenza candidature",
     "shortlist": "Shortlist",
@@ -370,7 +373,7 @@
     "newTitle": "Nuovo lavoro",
     "editTitle": "Modifica lavoro",
     "titleExample": "Es. Sundance Beats",
-    "locationExample": "Nome del luogo",
+    "locationExample": "Nome della location",
     "regionExample": "Es. Toscana",
     "saveChanges": "Salva modifiche",
     "saveJob": "Salva lavoro",
@@ -570,6 +573,7 @@
     "clock": "Le candidature chiudono tra {{time}}"
   },
   "detail": {
+    "description": "Dettagli del lavoro",
     "postedBy": "Pubblicato da {{name}}",
     "reviewApplications": "Rivedi le candidature ricevute",
     "closed": "Le candidature per questo lavoro sono chiuse.",

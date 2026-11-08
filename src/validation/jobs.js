@@ -1,6 +1,7 @@
 import {
   DEFAULT_JOB_CATEGORY,
   DEFAULT_MAX_APPLICANTS,
+  DESCRIPTION_MAX_LENGTH,
   MIN_TEXT_LENGTH,
 } from "../constants/index.js"
 import { CURRENCIES, DEFAULT_CURRENCY } from "../data/currencies.js"
@@ -44,6 +45,7 @@ export function normalizeJob(payload = {}) {
     application_deadline: payload.application_deadline,
     max_applicants: payload.max_applicants ?? DEFAULT_MAX_APPLICANTS,
     details: { ...(payload.details ?? {}) },
+    description: payload.description?.trim() || null,
     ...("image_urls" in payload && {
       image_urls: [...(payload.image_urls ?? [])],
     }),
@@ -95,6 +97,13 @@ export function validateJob(values = {}) {
   )
   fail(errors, "country", requiredText(values.country, "validation.addCountry"))
   fail(errors, "region", requiredText(values.region, "validation.addRegion"))
+  fail(
+    errors,
+    "description",
+    (values.description ?? "").trim().length > DESCRIPTION_MAX_LENGTH
+      ? "validation.descriptionTooLong"
+      : undefined,
+  )
   fail(
     errors,
     "job_date",

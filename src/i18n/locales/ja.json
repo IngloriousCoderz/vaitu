@@ -119,6 +119,8 @@
     "otherRegions": "その他の地域"
   },
   "fields": {
+    "description": "ほかに伝えておくこと",
+    "descriptionHint": "要望、機材など、引き受ける人が知っておくべきこと。任意です。",
     "spouse1": "パートナー1の名前",
     "spouse2": "パートナー2の名前",
     "style": "スタイル",
@@ -193,6 +195,7 @@
     "update": "アップデート"
   },
   "validation": {
+    "descriptionTooLong": "2000文字以内にしてください",
     "addName": "名前を入力してください",
     "pickStyle": "スタイルを選んでください",
     "addHeadliner": "ヘッドライナーを入力してください",
@@ -549,6 +552,7 @@
     "clock": "応募締切まであと{{time}}"
   },
   "detail": {
+    "description": "仕事の詳細",
     "postedBy": "投稿者：{{name}}",
     "reviewApplications": "受け取った応募を確認する",
     "closed": "この仕事の応募は締め切られました。",

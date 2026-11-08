@@ -54,7 +54,7 @@
     "@inglorious/supabase": "^0.5.0",
     "@inglorious/ui": "^9.16.0",
     "@inglorious/utils": "^5.1.0",
-    "@inglorious/web": "^6.18.0",
+    "@inglorious/web": "^6.19.0",
     "@supabase/supabase-js": "^2.118.0",
     "firebase": "^12.19.0",
     "fix-webm-duration": "^1.0.6"

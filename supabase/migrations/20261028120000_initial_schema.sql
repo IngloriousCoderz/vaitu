@@ -169,6 +169,7 @@ create table public.jobs (
   max_applicants integer not null default 5 check (max_applicants > 0),
   status text not null default 'open' check (status in ('open', 'closed', 'assigned')),
   details jsonb not null default '{}'::jsonb,
+  description text check (char_length(description) <= 2000),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   image_urls text[] not null default '{}',
@@ -834,6 +835,7 @@ grant update (
   application_deadline,
   max_applicants,
   details,
+  description,
   updated_at,
   image_urls
 ) on public.jobs to authenticated;
@@ -1021,7 +1023,7 @@ $$;
 
 create trigger trg_job_changed
   after update of title, location, country, region, job_date,
-                   application_deadline, details, status
+                   application_deadline, details, description, status
   on public.jobs
   for each row
   when (
@@ -1034,6 +1036,7 @@ create trigger trg_job_changed
     or old.job_date is distinct from new.job_date
     or old.application_deadline is distinct from new.application_deadline
     or old.details is distinct from new.details
+    or old.description is distinct from new.description
     or old.status is distinct from new.status
     )
   )
@@ -1757,6 +1760,7 @@ begin
       title = '',
       location = '',
       details = '{}'::jsonb,
+      description = null,
       image_urls = '{}'
   where id = p_job_id;
 end;
