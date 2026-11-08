@@ -124,6 +124,7 @@ describe("toJobFields", () => {
       region: "Tuscany",
       job_date: "2027-06-12",
       application_deadline: null,
+      max_applicants: null,
       details: {
         spouse_first_name_1: "Giulia",
         spouse_first_name_2: "Marco",
@@ -255,6 +256,15 @@ describe("toJobFields", () => {
     expect(deadline("next Friday")).toBeNull()
   })
 
+  it("keeps a shortlist size of one or more", () => {
+    const places = (given) =>
+      toJobFields({ max_applicants: given }, JOB_TYPES, null).max_applicants
+    expect(places(3)).toBe(3)
+    expect(places(0)).toBeNull()
+    expect(places(2.5)).toBeNull()
+    expect(places("five")).toBeNull()
+  })
+
   it("keeps the description, trimmed and capped", () => {
     const description = (given) =>
       toJobFields({ description: given }, JOB_TYPES, null).description
@@ -280,6 +290,7 @@ describe("toJobFields", () => {
       region: null,
       job_date: null,
       application_deadline: null,
+      max_applicants: null,
       details: {},
       description: null,
       pay: null,

@@ -59,6 +59,10 @@ import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
 
 const NO_ROOM = 0
+// WebKit records WebM but cannot play it back from a blob, so Apple devices
+// record MP4. Elsewhere WebM keeps the duration fix below.
+const RECORDING_TYPES = ["audio/webm", "audio/mp4"]
+const WEBKIT_RECORDING_TYPES = ["audio/mp4", "audio/webm"]
 const TEXT_START = 0
 const SHOWN_VOICE_ERRORS = [
   "errors.voiceLimit",
@@ -202,9 +206,11 @@ export const audioRecord = handleAsync("audioRecord", {
       )
     }
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    const mimeType = MediaRecorder.isTypeSupported("audio/webm")
-      ? "audio/webm"
-      : ""
+    const preferred = navigator.vendor?.startsWith("Apple")
+      ? WEBKIT_RECORDING_TYPES
+      : RECORDING_TYPES
+    const mimeType =
+      preferred.find((type) => MediaRecorder.isTypeSupported(type)) ?? ""
     mediaStream = stream
     audioChunks = []
     mediaRecorder = new MediaRecorder(stream, {
@@ -435,6 +441,12 @@ export const audioParse = handleAsync("audioParse", {
         value: fields.job_date,
       })
       autofillDeadline(entity)
+    }
+    if (Number.isInteger(fields.max_applicants)) {
+      Form.fieldChange(entity, {
+        path: "max_applicants",
+        value: fields.max_applicants,
+      })
     }
     if (
       typeof fields.application_deadline === "string" &&

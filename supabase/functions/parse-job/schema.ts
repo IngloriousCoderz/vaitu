@@ -240,6 +240,7 @@ const WEEKDAYS = [
   "Saturday",
 ]
 const NO_AMOUNT = 0
+const MIN_PLACES = 1
 
 export function offeredJobTypes(requested: unknown) {
   if (!Array.isArray(requested)) return JOB_TYPES
@@ -274,6 +275,7 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "region": string | null,
   "job_date": "YYYY-MM-DD" | null,
   "application_deadline": "YYYY-MM-DDTHH:MM" | null,
+  "max_applicants": integer | null,
   "details": object,
   "description": string | null,
   "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": string | null } | null
@@ -292,7 +294,8 @@ Rules:
 - currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
 - Values from a list must be one of the listed values, or null.
 - application_deadline: when applications close, in local time. Resolve weekdays and relative days ("next Friday", "tomorrow") from today; use 23:59 when only a day is said. null when no deadline is said.
-- description: everything else the colleague taking the job should know that no other key holds, never repeating the date, deadline, place or pay (requests, equipment, constraints, timings, the client's wishes), as short bullet points, one per line, each starting with "- ". Rewrite what was said into clear, correct sentences in the transcript's language, dropping hesitations, repetitions and small talk. Never include phone numbers, email addresses, street addresses or surnames: this is published. null when nothing is left to say.
+- max_applicants: how many applicants the poster will shortlist before choosing one ("I'll pick among 3", "a shortlist of five"). Not the number of people the job needs. null when not said.
+- description: everything else the colleague taking the job should know that no other key holds, never repeating the date, deadline, shortlist size, place or pay (requests, equipment, constraints, timings, the client's wishes), as short bullet points, one per line, each starting with "- ". Rewrite what was said into clear, correct sentences in the transcript's language, dropping hesitations, repetitions and small talk. Never include phone numbers, email addresses, street addresses or surnames: this is published. null when nothing is left to say.
 - job_date: use the stated year when given, otherwise the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day and month can be determined.`
 }
 
@@ -323,6 +326,7 @@ export function toJobFields(
     region: text(answer?.region),
     job_date: date(answer?.job_date),
     application_deadline: localDatetime(answer?.application_deadline),
+    max_applicants: places(answer?.max_applicants),
     details: withoutStyle(job_type, details(category, answer?.details)),
     description:
       text(answer?.description)?.slice(0, DESCRIPTION_MAX_LENGTH) ?? null,
@@ -381,4 +385,10 @@ function date(value: unknown) {
 
 function localDatetime(value: unknown) {
   return typeof value === "string" && LOCAL_DATETIME.test(value) ? value : null
+}
+
+function places(value: unknown) {
+  return Number.isInteger(value) && (value as number) >= MIN_PLACES
+    ? (value as number)
+    : null
 }
