@@ -13,7 +13,13 @@ const nodeFiles = [
 
 export default [
   {
-    ignores: ["android/**", "ios/**", "dist/**", "landing/dist/**"],
+    ignores: [
+      "android/**",
+      "ios/**",
+      "dist/**",
+      "landing/dist/**",
+      ".security-scan/**",
+    ],
   },
   ...shared,
   ...nodeOnly.map((config) => ({ ...config, files: nodeFiles })),
