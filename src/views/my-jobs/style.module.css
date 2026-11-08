@@ -21,7 +21,7 @@
 
 .count {
   font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .rowActions {

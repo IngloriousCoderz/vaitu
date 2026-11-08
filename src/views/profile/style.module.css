@@ -12,7 +12,7 @@
 .email {
   margin: var(--iw-space-1) 0 0.625rem;
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .tierBlock {
@@ -20,7 +20,7 @@
 }
 
 .tierMedal {
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .tierMedal[data-tier="bronze"] {
@@ -63,14 +63,14 @@
 
 .progressLabel {
   font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 :global(.iw-flex.iw-flex-gap-none).progressRow {
   position: relative;
   gap: 0.125rem;
   font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .progressRow button.ranksHelp {
@@ -98,7 +98,7 @@
 :global(.iw-flex.iw-flex-gap-none).field {
   gap: 0.375rem;
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   text-align: start;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .row dt {
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .row dd {
@@ -123,7 +123,7 @@
 }
 
 .rowLink {
-  color: var(--vaccent);
+  color: var(--vemphasis);
   text-decoration: none;
 }
 
@@ -162,5 +162,5 @@ button.stat {
 .statLabel {
   font-size: var(--iw-font-size-xs);
   letter-spacing: 0.033em;
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }

@@ -12,7 +12,7 @@
   flex-direction: column;
   gap: 0.375rem;
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   margin-top: var(--iw-space-3);
 }
 
@@ -89,7 +89,7 @@
 }
 
 .recapRow dt {
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .recapRow dd {
@@ -147,7 +147,7 @@
 
 .chevron {
   display: flex;
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   transition: transform var(--iw-transition-normal);
 }
 
@@ -194,7 +194,7 @@
 
 .rejectButton {
   border: 1px solid var(--vchip-border);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .name {
@@ -205,7 +205,7 @@
 }
 
 .metaLink {
-  color: var(--vaccent);
+  color: var(--vemphasis);
   text-decoration: underline;
   text-underline-offset: 0.125rem;
 }
@@ -226,7 +226,7 @@
 }
 
 .metaRow {
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .motivation {

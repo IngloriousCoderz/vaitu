@@ -12,7 +12,7 @@
 .sectionHint {
   margin: 0 0 var(--iw-space-4);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .legend {
@@ -53,7 +53,7 @@
   z-index: 1;
   text-align: center;
   font-weight: var(--iw-font-weight-medium);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   background: var(--vbg);
 }
 
@@ -61,7 +61,7 @@
   margin: var(--iw-space-4) 0 0;
   font-size: var(--iw-font-size-sm);
   font-weight: var(--iw-font-weight-medium);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .notificationCheck {

@@ -52,6 +52,7 @@ export const Card = {
           <h2 class=${styles.couple}>${job.title}</h2>
           ${Badge.render({
             children: deadlineBadge(job),
+            color: tone === "assigned" ? "success" : undefined,
             shape: "pill",
             className: [styles.badge, toneClass[tone]]
               .filter(Boolean)

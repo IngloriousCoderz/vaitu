@@ -10,7 +10,7 @@ const colors = {
   rejected: "error",
   open: "success",
   closed: "default",
-  assigned: "info",
+  assigned: "success",
 }
 
 export const StatusChip = {

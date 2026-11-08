@@ -26,5 +26,5 @@
 
 .deal .hint {
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }

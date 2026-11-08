@@ -9,7 +9,7 @@
 .subtitle {
   margin: 0.375rem 0 var(--iw-space-5);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   text-align: center;
 }
 
@@ -18,7 +18,7 @@
   flex-direction: column;
   gap: 0.375rem;
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   margin-bottom: var(--iw-space-3);
 }
 

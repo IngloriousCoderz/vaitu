@@ -112,6 +112,10 @@ export const template = {
                             html`<h2 class=${styles.title}>${job.title}</h2>`,
                             Badge.render({
                               children: deadlineBadge(job),
+                              color:
+                                deadlineTone(job) === "assigned"
+                                  ? "success"
+                                  : undefined,
                               shape: "pill",
                               className: detailToneClass(job),
                             }),
@@ -401,7 +405,7 @@ export const template = {
 
 function detailToneClass(job) {
   const tone = deadlineTone(job)
-  return tone ? toneClass[tone] : ""
+  return toneClass[tone] ?? ""
 }
 
 function formatClock(totalSeconds) {

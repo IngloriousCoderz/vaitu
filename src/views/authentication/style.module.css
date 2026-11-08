@@ -9,14 +9,14 @@
 .subtitle {
   margin: 0.375rem 0 var(--iw-space-5);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   text-align: center;
 }
 
 :global(.iw-flex.iw-flex-gap-none).field {
   gap: 0.375rem;
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .step {

@@ -7,11 +7,11 @@
 [data-category="wedding"] {
   --vlogo-dot: #e0813e;
   --vchip-border: #cfc7ae;
-  --vchip-active-bg: #6b7a5e;
+  --vchip-active-bg: #647257;
   --vchip-active-text: #f6f3ea;
   --vbadge-bg: #dde3d2;
   --vbadge-text: #4a5a48;
-  --vtag-text: #9a6b4f;
+  --vtag-text: #8b5d42;
   --vtag-border: #d8cfbc;
   --vtitle-font: Georgia, "Times New Roman", serif;
   --vtitle-weight: var(--iw-font-weight-normal);
@@ -64,6 +64,9 @@
   --iw-color-primary: var(--vaccent);
   --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
   --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
+  --iw-color-primary-emphasis: var(--vemphasis);
+  --iw-color-text-secondary: var(--vemphasis);
+  --iw-color-text-muted: var(--vmuted-text);
 }
 
 [data-category="apartment"],
@@ -79,4 +82,7 @@
   --iw-color-primary: var(--vaccent);
   --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
   --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
+  --iw-color-primary-emphasis: var(--vemphasis);
+  --iw-color-text-secondary: var(--vemphasis);
+  --iw-color-text-muted: var(--vmuted-text);
 }

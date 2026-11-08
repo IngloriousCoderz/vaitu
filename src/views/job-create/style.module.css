@@ -86,7 +86,7 @@
 
 .audioLabel {
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .player {
@@ -115,13 +115,13 @@
 .timer {
   font-size: var(--iw-font-size-sm);
   font-variant-numeric: tabular-nums;
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   margin: 0;
 }
 
 .hint {
   font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   margin: 0;
 }
 
@@ -137,7 +137,7 @@
 
 .transcribing {
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   margin: 0;
 }
 
@@ -155,7 +155,7 @@
 .photoHint {
   margin: var(--iw-space-1) 0 var(--iw-space-3);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .galleryLabel {

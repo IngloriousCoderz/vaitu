@@ -74,7 +74,7 @@
 .meta {
   margin: 0.125rem 0 var(--iw-space-2);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .tagRow {

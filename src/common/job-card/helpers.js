@@ -35,6 +35,7 @@ export function deadlineBadge(job) {
 }
 
 export function deadlineTone(job) {
+  if (job.status === "assigned") return "assigned"
   if (job.daysLeft <= NO_DAYS_LEFT) return "closed"
   if (job.daysLeft <= CLOSING_MAX_DAYS) return "closing"
   return null

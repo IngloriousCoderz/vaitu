@@ -200,8 +200,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0(@supabase/supabase-js@2.118.0)
       '@inglorious/ui':
-        specifier: ^9.15.4
-        version: 9.15.4(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
+        specifier: ^9.16.0
+        version: 9.16.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))
       '@inglorious/utils':
         specifier: ^5.1.0
         version: 5.1.0
@@ -1465,13 +1465,13 @@ packages:
     peerDependencies:
       '@supabase/supabase-js': ^2.118.0
 
-  '@inglorious/ui@9.15.4':
-    resolution: {integrity: sha512-pcu+CaqAN3dF5Aoe2+Ju7mp6obzvZxI8FvjpBtAvGxyU5tFWRGCXZgEq+kjzqBJEanTSO9YwmW0zTXlGKXgQLQ==}
+  '@inglorious/ui@9.16.0':
+    resolution: {integrity: sha512-BaRaeUB6oU+daXuxfoQBXxJAgZlgaieJRZWe9tJNvlGtvNZmdCYYCTP3CO0KxKbR3jH2Q6cnz2EjFa+O9Q2zTA==}
     engines: {node: '>= 26'}
     peerDependencies:
-      '@inglorious/store': ^12.2.0
-      '@inglorious/utils': ^5.2.0
-      '@inglorious/web': ^6.16.0
+      '@inglorious/store': ^12.3.0
+      '@inglorious/utils': ^5.3.0
+      '@inglorious/web': ^6.18.0
 
   '@inglorious/utils@5.1.0':
     resolution: {integrity: sha512-SmK15U5QV01XpBIKw5CMMHBN5rxSZZ2tUESCDuBaN48+Pal0G49L0btWHWTkK81fn9VhAHRemvzTI0JcNT/wCQ==}
@@ -5763,7 +5763,7 @@ snapshots:
     dependencies:
       '@supabase/supabase-js': 2.118.0
 
-  '@inglorious/ui@9.15.4(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
+  '@inglorious/ui@9.16.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0))(@inglorious/utils@5.1.0)(@inglorious/web@6.18.0(@inglorious/store@12.1.1(@inglorious/utils@5.1.0)))':
     dependencies:
       '@inglorious/store': 12.1.1(@inglorious/utils@5.1.0)
       '@inglorious/utils': 5.1.0

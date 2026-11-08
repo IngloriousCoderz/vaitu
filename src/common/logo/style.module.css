@@ -13,7 +13,7 @@
   font-family: var(--vtitle-font);
   font-size: var(--iw-font-size-2xl);
   letter-spacing: 0.05em;
-  color: var(--vaccent);
+  color: var(--vemphasis);
   font-weight: var(--vtitle-weight);
   line-height: 1;
 }

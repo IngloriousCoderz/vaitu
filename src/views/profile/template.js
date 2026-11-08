@@ -78,7 +78,7 @@ export const template = {
                     src: profile.avatar_url || "",
                     alt: profile.full_name ?? "",
                     initials: initials(profile.full_name),
-                    size: "lg",
+                    size: "2xl",
                     backgroundColor:
                       "linear-gradient(135deg, #6b7a5e, #24402f)",
                     textColor: "#fffdf7",

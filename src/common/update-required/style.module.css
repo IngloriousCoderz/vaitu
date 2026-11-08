@@ -17,5 +17,5 @@
 .subtitle {
   margin: 0 0 var(--iw-space-3);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }

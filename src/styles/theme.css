@@ -6,6 +6,8 @@
   --vmuted: #8a8f7f;
   --vline: #e3dcc9;
   --vaccent: #6b7a5e;
+  --vemphasis: #59674c;
+  --vmuted-text: #606455;
 }
 
 [data-category="festival"],
@@ -16,6 +18,8 @@
   --vmuted: #7c7689;
   --vline: #d3cec2;
   --vaccent: #6d28d9;
+  --vemphasis: #6b24d6;
+  --vmuted-text: #595365;
 }
 
 [data-category="apartment"],
@@ -27,6 +31,8 @@
   --vmuted: #6e807c;
   --vline: #cfdcd8;
   --vaccent: #0f766e;
+  --vemphasis: #006962;
+  --vmuted-text: #50615e;
 }
 
 .iw-theme-vaitu {
@@ -56,8 +62,8 @@
   );
 
   --iw-color-text: var(--vink);
-  --iw-color-text-secondary: var(--vaccent);
-  --iw-color-text-muted: var(--vmuted);
+  --iw-color-text-secondary: var(--vemphasis);
+  --iw-color-text-muted: var(--vmuted-text);
 
   --iw-color-border: var(--vline);
   --iw-color-border-focus: #86b7fe;
@@ -65,6 +71,37 @@
   --iw-color-primary-hover: color-mix(in srgb, var(--vaccent) 88%, black);
   --iw-color-primary-active: color-mix(in srgb, var(--vaccent) 78%, black);
   --iw-color-primary-text: var(--iw-color-white);
+  --iw-color-primary-emphasis: var(--vemphasis);
+
+  --iw-color-success: #428253;
+  --iw-color-success-hover: #337345;
+  --iw-color-success-active: #26673a;
+  --iw-color-success-text: var(--iw-color-white);
+  --iw-color-success-emphasis: #195c30;
+
+  --iw-color-warning: #9e6a02;
+  --iw-color-warning-hover: #8b5d00;
+  --iw-color-warning-active: #7c5304;
+  --iw-color-warning-text: var(--iw-color-white);
+  --iw-color-warning-emphasis: #704900;
+
+  --iw-color-error: #c4503c;
+  --iw-color-error-hover: #b3402d;
+  --iw-color-error-active: #a53321;
+  --iw-color-error-text: var(--iw-color-white);
+  --iw-color-error-emphasis: #962412;
+
+  --iw-color-info: #457aa1;
+  --iw-color-info-hover: #366b91;
+  --iw-color-info-active: #2a6085;
+  --iw-color-info-text: var(--iw-color-white);
+  --iw-color-info-emphasis: #1e5479;
+
+  --iw-color-secondary: #606455;
+  --iw-color-secondary-hover: #535748;
+  --iw-color-secondary-active: #474b3d;
+  --iw-color-secondary-text: var(--iw-color-white);
+  --iw-color-secondary-emphasis: #606455;
   --iw-color-accent: #6f42c1;
   --iw-color-accent-hover: #5a32a3;
   --iw-color-accent-active: #4328a4;

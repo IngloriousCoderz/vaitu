@@ -1,7 +1,7 @@
 .subtitle {
   margin: 0 0.125rem var(--iw-space-4);
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 :global(.iw-flex.iw-flex-padding-none).hero {
@@ -13,7 +13,7 @@
 }
 
 .heroMedal {
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .bronzeMedal {
@@ -41,7 +41,7 @@
 
 .heroLabel {
   font-size: var(--iw-font-size-xs);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
 }
 
 .progressTrack {
@@ -130,7 +130,7 @@
 
 :global(.iw-flex.iw-flex-gap-none).howRow {
   font-size: var(--iw-font-size-sm);
-  color: var(--vmuted);
+  color: var(--vmuted-text);
   gap: 0.375rem;
 }
 
@@ -140,7 +140,7 @@
   flex-shrink: 0;
   border-radius: var(--iw-radius-full);
   background: var(--vbg);
-  color: var(--vaccent);
+  color: var(--vemphasis);
 }
 
 .howText strong {

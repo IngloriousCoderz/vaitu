@@ -33,7 +33,8 @@ describe("deadline", () => {
   it("tones a closed or closing deadline and leaves the rest unmarked", () => {
     expect(deadlineTone({ daysLeft: 0 })).toBe("closed")
     expect(deadlineTone({ daysLeft: CLOSING_MAX_DAYS })).toBe("closing")
-    expect(deadlineTone({ status: "assigned", daysLeft: WEEK_DAYS })).toBe(null)
+    expect(deadlineTone({ status: "assigned", daysLeft: 0 })).toBe("assigned")
+    expect(deadlineTone({ daysLeft: WEEK_DAYS })).toBe(null)
   })
 })
 
