@@ -41,7 +41,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@capacitor-firebase/analytics": "^8.5.2",
+    "@capacitor-firebase/analytics": "^8.6.0",
     "@capacitor-firebase/messaging": "^8.6.0",
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
@@ -55,13 +55,13 @@
     "@inglorious/ui": "^9.16.0",
     "@inglorious/utils": "^5.1.0",
     "@inglorious/web": "^6.19.0",
-    "@supabase/supabase-js": "^2.118.0",
-    "firebase": "^12.19.0",
+    "@supabase/supabase-js": "^2.119.0",
+    "firebase": "^13.2.0",
     "fix-webm-duration": "^1.0.6"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",
-    "@capacitor/assets": "^3.0.5",
+    "@capacitor/assets": "^4.0.0",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/ios": "^8.6.0",
     "@changesets/cli": "^3.0.3",
@@ -76,7 +76,7 @@
     "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5",
+    "vite": "^8.3.6",
     "vite-plugin-image-optimizer": "^2.0.3",
     "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.1.0",
