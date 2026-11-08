@@ -142,12 +142,13 @@ and terms. It is required.
 it, the app sends no CAPTCHA token, which only works while CAPTCHA protection
 is off in Supabase.
 
-`VITE_CONTACT_EMAIL` receives the requests for new job types. Without it, the
-"Job type missing?" link is hidden. To add a job type, extend
+`VITE_CONTACT_EMAIL` receives the requests for new professions. Without it, the
+"Profession missing?" link is hidden. To add a profession or a setting, extend
 `SETTINGS_BY_PROFESSION` in `src/data/job-taxonomy.js` and its copy in
-`supabase/functions/parse-job/schema.ts`, and translate its `taxonomy.jobType`
-label in every locale. No schema change is needed unless the job type brings a
-new setting: `jobs_setting_check` lists them all, as described in
+`supabase/functions/parse-job/schema.ts`, and translate the new
+`taxonomy.profession` or `taxonomy.setting` label in every locale. To offer a
+setting, add it to `OFFERED_SETTINGS`. No schema change is needed unless the
+setting is new: `jobs_setting_check` lists them all, as described in
 [Small schema changes](#small-schema-changes).
 
 ```bash

@@ -13,7 +13,7 @@ import {
   jobMonogram,
   jobSubtitle,
   jobTag,
-  jobTypeLabel,
+  jobTypeTags,
   thumbGradient,
 } from "./helpers.js"
 import styles from "./style.module.css"
@@ -61,7 +61,7 @@ export const Card = {
         </div>
         <p class=${styles.meta}>${jobSubtitle(job)}</p>
         <div class=${styles.tagRow}>
-          ${Chip.render({ children: jobTypeLabel(job) })}
+          ${jobTypeTags(job).map((tag) => Chip.render({ children: tag }))}
           ${when(job.filterValues.length, () => Chip.render({ children: jobTag(job) }))}
           ${when(job.pay && job.pay.kind !== "to_agree", () =>
             Chip.render({ children: formatPay(job.pay), color: "info" }),
@@ -109,6 +109,6 @@ export {
   jobMonogram,
   jobSubtitle,
   jobTag,
-  jobTypeLabel,
+  jobTypeTags,
   thumbGradient,
 } from "./helpers.js"

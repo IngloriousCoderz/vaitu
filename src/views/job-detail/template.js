@@ -19,7 +19,7 @@ import {
   jobMonogram,
   jobSubtitle,
   jobTag,
-  jobTypeLabel,
+  jobTypeTags,
   thumbGradient,
 } from "../../common/job-card/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
@@ -126,7 +126,9 @@ export const template = {
                           gap: "sm",
                           wrap: "wrap",
                           children: [
-                            Chip.render({ children: jobTypeLabel(job) }),
+                            ...jobTypeTags(job).map((tag) =>
+                              Chip.render({ children: tag }),
+                            ),
                             when(job.filterValues.length, () =>
                               Chip.render({ children: jobTag(job) }),
                             ),

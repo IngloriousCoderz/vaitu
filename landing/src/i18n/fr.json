@@ -1,10 +1,10 @@
 {
-  "title": "Vaitu : confiez à un collègue la mission que vous ne pouvez pas assurer",
-  "description": "Vous avez une mission mais ne pouvez pas l'assurer ? Publiez-la sur Vaitu : des collègues de votre métier candidatent et vous choisissez qui y va.",
+  "title": "Vaitu : confiez les missions que vous ne pouvez pas assurer, trouvez celles que vous pouvez",
+  "description": "Une mission que vous ne pouvez pas assurer ? Confiez-la à un collègue. Vous cherchez du travail ? Prenez les missions que vos collègues confient.",
   "languageLabel": "Langue",
   "eyebrow": "Pour ceux qui travaillent sur des mariages",
   "headline": "Vous ne pouvez pas y être ? Dites à un collègue : « vai tu ».",
-  "lede": "Vaitu permet aux professionnels de transmettre à des collègues les missions qu'ils ne peuvent pas assurer. Vous publiez la mission, des collègues candidatent, et vous choisissez à qui la confier.",
+  "lede": "Vaitu permet aux professionnels du mariage de confier les missions qu'ils ne peuvent pas assurer et de trouver celles qu'ils peuvent. Celui qui confie la mission choisit qui y va.",
   "cta": "Commencer",
   "ctaNote": "Publier, candidater et choisir : c'est gratuit, pour toujours.",
   "nameOrigin": "Le nom vient de l'italien « vai tu », « vas-y toi » : ce qu'on dit à un collègue en lui passant une mission.",
@@ -61,8 +61,8 @@
       "body": "Vous pouvez signaler des contenus et bloquer les personnes de votre choix."
     }
   ],
-  "tradesTitle": "Quels métiers",
-  "trades": [
+  "professionsTitle": "Quels métiers",
+  "professions": [
     "Photographie",
     "Vidéo",
     "Musique",
@@ -91,7 +91,7 @@
       "answer": "Écrivez-nous : nous ajoutons de nouveaux métiers."
     }
   ],
-  "closing": "La prochaine mission que vous ne pouvez pas assurer, confiez-la à un collègue.",
+  "closing": "Confiez les missions que vous ne pouvez pas assurer. Prenez celles que vos collègues confient.",
   "credits": "Idée de Giada Joey Cazzola. Développé par Matteo Antony Mistretta.",
   "privacy": "Confidentialité",
   "terms": "Conditions",

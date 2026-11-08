@@ -1,10 +1,10 @@
 {
-  "title": "Vaitu: passa a un collega il lavoro che non puoi fare",
-  "description": "Hai un lavoro ma non puoi farlo? Pubblicalo su Vaitu: i colleghi del tuo settore si candidano e scegli tu chi ci va.",
+  "title": "Vaitu: passa i lavori che non puoi fare, trova quelli che puoi fare",
+  "description": "Hai un lavoro ma non puoi farlo? Passalo a un collega. Cerchi lavoro? Prendi quelli che i colleghi passano.",
   "languageLabel": "Lingua",
   "eyebrow": "Per chi lavora ai matrimoni",
   "headline": "Non puoi esserci più? Di' a un collega: “vai tu”.",
-  "lede": "Vaitu è il posto in cui i professionisti passano ai colleghi i lavori che non possono fare. Pubblichi il lavoro, i colleghi si candidano e scegli tu a chi affidarlo.",
+  "lede": "Vaitu è il posto in cui i professionisti dei matrimoni passano i lavori che non possono fare e trovano quelli che possono fare. Chi passa il lavoro sceglie chi ci va.",
   "cta": "Inizia",
   "ctaNote": "Pubblicare, candidarsi e scegliere è gratis, per sempre.",
   "nameOrigin": "Il nome viene da “vai tu”, ovvero quello che dici a un collega quando gli passi un lavoro.",
@@ -16,7 +16,7 @@
     },
     {
       "title": "I colleghi si candidano",
-      "body": "Chi fa il tuo mestiere nella zona riceve un avviso e ti dice perché è la persona giusta."
+      "body": "Chi fa la tua professione nella zona riceve un avviso e ti dice perché è la persona giusta."
     },
     {
       "title": "Scegli chi ci va",
@@ -36,7 +36,7 @@
     {
       "title": "Quando cerchi lavoro",
       "points": [
-        "Scegli mestieri e regioni e ricevi un avviso quando c'è un lavoro adatto",
+        "Scegli professioni e regioni e ricevi un avviso quando c'è un lavoro adatto",
         "Candidati con un profilo già compilato",
         "Costruisci una reputazione fatta di lavori veri"
       ]
@@ -61,8 +61,8 @@
       "body": "Puoi segnalare contenuti e bloccare chi non vuoi incontrare."
     }
   ],
-  "tradesTitle": "Per quali mestieri",
-  "trades": [
+  "professionsTitle": "Per quali professioni",
+  "professions": [
     "Fotografia",
     "Video",
     "Musica",
@@ -71,7 +71,7 @@
     "Make-up"
   ],
   "earlyTitle": "Siamo all'inizio.",
-  "earlyBody": "All'inizio i lavori saranno pochi. Scegli mestieri e regioni e ti avviseremo quando ne arriva uno adatto a te.",
+  "earlyBody": "All'inizio i lavori saranno pochi. Scegli professioni e regioni e ti avviseremo quando ne arriva uno adatto a te.",
   "faqTitle": "Domande frequenti",
   "faq": [
     {
@@ -87,11 +87,11 @@
       "answer": "No: compenso e condizioni li concordate tra voi."
     },
     {
-      "question": "Il mio mestiere non c'è. Che faccio?",
-      "answer": "Scrivici: stiamo aggiungendo nuovi mestieri."
+      "question": "La mia professione non c'è. Che faccio?",
+      "answer": "Scrivici: stiamo aggiungendo nuove professioni."
     }
   ],
-  "closing": "Il prossimo lavoro che non puoi fare, passalo a un collega.",
+  "closing": "Passa i lavori che non puoi fare. Prendi quelli che passano i colleghi.",
   "credits": "Idea di Giada Joey Cazzola. Sviluppo di Matteo Antony Mistretta.",
   "privacy": "Privacy",
   "terms": "Termini",
@@ -106,7 +106,7 @@
       },
       "data": {
         "title": "Quali dati raccogliamo",
-        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, mestieri, regioni e lingua. Ciò che pubblichi: lavori e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti. Il compenso che offri, gli importi che confermi e se sono stati regolati."
+        "body": "Email, nome e password (conservata cifrata). Ciò che aggiungi al profilo: telefono, sito web, paese, foto, professioni, regioni e lingua. Ciò che pubblichi: lavori e relative foto, compresi i nomi dei clienti che inserisci. Candidature, recensioni, statistiche, segnalazioni e blocchi. Un identificativo del dispositivo per le notifiche push, e statistiche d'uso solo se le consenti. Il compenso che offri, gli importi che confermi e se sono stati regolati."
       },
       "voice": {
         "title": "Messaggi vocali",
@@ -122,7 +122,7 @@
       },
       "keeping": {
         "title": "Perché e per quanto tempo",
-        "body": "Usiamo i tuoi dati per fornire il servizio a cui ti sei iscritto, per mantenerlo sicuro e, solo con il tuo consenso, per le statistiche. Li conserviamo finché non elimini l'account. La disattivazione li conserva, così puoi tornare. L'eliminazione rimuove account, profilo, file e lavori, mentre recensioni e storico dei lavori restano senza il tuo nome, come [Utente eliminato], perché fanno parte della storia di altre persone. Ti inviamo email sui tuoi lavori e candidature e sui nuovi lavori per i tuoi mestieri: scegli quali nelle Preferenze, o usa il link in ogni email."
+        "body": "Usiamo i tuoi dati per fornire il servizio a cui ti sei iscritto, per mantenerlo sicuro e, solo con il tuo consenso, per le statistiche. Li conserviamo finché non elimini l'account. La disattivazione li conserva, così puoi tornare. L'eliminazione rimuove account, profilo, file e lavori, mentre recensioni e storico dei lavori restano senza il tuo nome, come [Utente eliminato], perché fanno parte della storia di altre persone. Ti inviamo email sui tuoi lavori e candidature e sui nuovi lavori per le tue professioni: scegli quali nelle Preferenze, o usa il link in ogni email."
       },
       "rights": {
         "title": "I tuoi diritti",

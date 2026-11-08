@@ -6,7 +6,7 @@
     "profile": "Profilo",
     "preferences": "Preferenze",
     "about": "Informazioni",
-    "newJob": "Nuovo lavoro",
+    "newJob": "Passa un lavoro",
     "toggle": "Apri o chiudi la navigazione",
     "collapse": "Comprimi la barra laterale",
     "expand": "Espandi la barra laterale",
@@ -98,29 +98,6 @@
       "electrician": "Impianti elettrici",
       "planner": "Wedding planning",
       "makeup_artist": "Make-up"
-    },
-    "jobType": {
-      "wedding_photographer": "Fotografia di matrimonio",
-      "festival_photographer": "Fotografia di festival",
-      "wedding_videographer": "Video di matrimonio",
-      "festival_videographer": "Video di festival",
-      "wedding_musician": "Musica per matrimoni",
-      "festival_musician": "Musica per festival",
-      "wedding_dj": "DJ per matrimoni",
-      "festival_dj": "DJ per festival",
-      "festival_sound_technician": "Audio per festival",
-      "apartment_cleaner": "Pulizia appartamenti",
-      "house_cleaner": "Pulizia case",
-      "office_cleaner": "Pulizia uffici",
-      "apartment_electrician": "Impianti elettrici in appartamento",
-      "house_electrician": "Impianti elettrici in casa",
-      "office_electrician": "Impianti elettrici in ufficio",
-      "concert_photographer": "Fotografia di concerti",
-      "concert_videographer": "Video di concerti",
-      "concert_musician": "Musica per concerti",
-      "concert_sound_technician": "Audio per concerti",
-      "wedding_planner": "Wedding planning",
-      "wedding_makeup_artist": "Make-up per matrimoni"
     }
   },
   "filters": {
@@ -159,7 +136,6 @@
     "phoneOptional": "Telefono (facoltativo)",
     "phoneExample": "+39 333 123 4567",
     "phoneHint": "Lo vede solo chi ha pubblicato i lavori a cui ti candidi.",
-    "jobType": "Tipo di lavoro",
     "settings": "Ambiti che ti interessano",
     "settingsHint": "Il tuo feed mostra di default i lavori di questi ambiti. Non sceglierne nessuno per vederli tutti.",
     "professionRequest": "Manca la tua professione? Chiedici di aggiungerla",
@@ -316,7 +292,7 @@
   },
   "onboarding": {
     "title": "Completa il tuo profilo",
-    "subtitle": "Dicci dove sei, così gli inserzionisti possono trovarti.",
+    "subtitle": "Dicci dove lavori, così ti avvisiamo dei lavori in zona e i colleghi possono trovarti.",
     "skip": "Salta per ora"
   },
   "jobs": {
@@ -332,6 +308,7 @@
     "filtersOn_one": "Filtri, {{count}} attivo",
     "filtersOn_other": "Filtri, {{count}} attivi",
     "filtersOn_many": "Filtri, {{count}} attivi",
+    "none": "Ancora nessun lavoro. Attiva le notifiche e ti avviseremo quando ne arriva uno.",
     "noneMatch": "Nessun lavoro corrisponde alla tua ricerca.",
     "orderBy": "Ordina per",
     "results_one": "{{count}} lavoro",
@@ -342,7 +319,7 @@
   },
   "myJobs": {
     "title": "I miei lavori",
-    "none": "Non hai ancora pubblicato lavori.",
+    "none": "Non hai ancora passato nessun lavoro. Quando non puoi farne uno, tocca + e ci andrà un collega.",
     "edit": "Modifica lavoro",
     "delete": "Elimina lavoro",
     "deleteConfirm": "Eliminare questo lavoro e tutte le sue candidature?",
@@ -353,7 +330,7 @@
   },
   "applications": {
     "title": "Le mie candidature",
-    "none": "Non ti sei ancora candidato a nessun lavoro.",
+    "none": "Non ti sei ancora candidato a nessun lavoro. Trovane uno in Lavori, o attiva le notifiche per sapere quando ne arrivano di nuovi.",
     "noneWithStatus": "Nessuna candidatura con questo stato."
   },
   "received": {

@@ -7,7 +7,7 @@ import {
   NO_DAYS_LEFT,
   WEEK_DAYS,
 } from "../../constants/index.js"
-import { GENRE_SETTINGS, jobTypeId } from "../../data/job-taxonomy.js"
+import { GENRE_SETTINGS } from "../../data/job-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
@@ -66,6 +66,10 @@ export function jobTag(job) {
     .join(", ")
 }
 
-export function jobTypeLabel(job) {
-  return t(`taxonomy.jobType.${jobTypeId(job.setting, job.profession)}`)
+/** A job's setting and profession, as two tags. */
+export function jobTypeTags(job) {
+  return [
+    t(`taxonomy.setting.${job.setting}`),
+    t(`taxonomy.profession.${job.profession}`),
+  ]
 }

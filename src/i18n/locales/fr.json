@@ -6,7 +6,7 @@
     "profile": "Profil",
     "preferences": "Préférences",
     "about": "À propos",
-    "newJob": "Nouvelle mission",
+    "newJob": "Confier une mission",
     "toggle": "Ouvrir ou fermer la navigation",
     "collapse": "Réduire la barre latérale",
     "expand": "Développer la barre latérale",
@@ -98,29 +98,6 @@
       "electrician": "Électricité",
       "planner": "Organisation d'événements",
       "makeup_artist": "Maquillage"
-    },
-    "jobType": {
-      "wedding_photographer": "Photographie de mariage",
-      "festival_photographer": "Photographie de festival",
-      "wedding_videographer": "Vidéo de mariage",
-      "festival_videographer": "Vidéo de festival",
-      "wedding_musician": "Musique de mariage",
-      "festival_musician": "Musique de festival",
-      "wedding_dj": "DJ de mariage",
-      "festival_dj": "DJ de festival",
-      "festival_sound_technician": "Son de festival",
-      "apartment_cleaner": "Ménage d'appartements",
-      "house_cleaner": "Ménage de maisons",
-      "office_cleaner": "Ménage de bureaux",
-      "apartment_electrician": "Électricité en appartement",
-      "house_electrician": "Électricité en maison",
-      "office_electrician": "Électricité de bureaux",
-      "concert_photographer": "Photographie de concert",
-      "concert_videographer": "Vidéo de concert",
-      "concert_musician": "Musique de concert",
-      "concert_sound_technician": "Son de concert",
-      "wedding_planner": "Organisation de mariage",
-      "wedding_makeup_artist": "Maquillage de mariage"
     }
   },
   "filters": {
@@ -159,7 +136,6 @@
     "phoneOptional": "Téléphone (facultatif)",
     "phoneExample": "+33 6 12 34 56 78",
     "phoneHint": "Visible uniquement par les personnes dont vous postulez aux missions.",
-    "jobType": "Type de mission",
     "settings": "Cadres qui vous intéressent",
     "settingsHint": "Votre fil affiche par défaut les missions dans ces cadres. N'en choisissez aucun pour toutes les voir.",
     "professionRequest": "Votre métier manque ? Demandez-nous de l'ajouter",
@@ -316,7 +292,7 @@
   },
   "onboarding": {
     "title": "Complétez votre profil",
-    "subtitle": "Dites-nous où vous êtes pour que les annonceurs vous trouvent.",
+    "subtitle": "Dites-nous où vous travaillez : vous serez prévenu des missions proches et vos collègues pourront vous trouver.",
     "skip": "Plus tard"
   },
   "jobs": {
@@ -332,6 +308,7 @@
     "filtersOn_one": "Filtres, {{count}} actif",
     "filtersOn_other": "Filtres, {{count}} actifs",
     "filtersOn_many": "Filtres, {{count}} actifs",
+    "none": "Pas encore de missions. Activez les notifications et nous vous préviendrons dès qu'une arrive.",
     "noneMatch": "Aucune mission ne correspond à votre recherche.",
     "orderBy": "Trier par",
     "results_one": "{{count}} mission",
@@ -342,7 +319,7 @@
   },
   "myJobs": {
     "title": "Mes missions",
-    "none": "Vous n'avez encore publié aucune mission.",
+    "none": "Vous n'avez encore confié aucune mission. Quand vous ne pouvez pas en assurer une, touchez + et un collègue ira à votre place.",
     "edit": "Modifier la mission",
     "delete": "Supprimer la mission",
     "deleteConfirm": "Supprimer cette mission et toutes ses candidatures ?",
@@ -353,7 +330,7 @@
   },
   "applications": {
     "title": "Mes candidatures",
-    "none": "Vous n'avez encore candidaté à aucune mission.",
+    "none": "Vous n'avez encore candidaté à aucune mission. Trouvez-en une dans Missions, ou activez les notifications pour être prévenu des nouvelles.",
     "noneWithStatus": "Aucune candidature avec ce statut."
   },
   "received": {

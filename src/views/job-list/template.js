@@ -207,7 +207,8 @@ export const template = {
               error,
               isLoading: status === "loading" && !jobs.length,
               isEmpty: !jobs.length,
-              emptyText: t("jobs.noneMatch"),
+              emptyText:
+                active.length || query ? t("jobs.noneMatch") : t("jobs.none"),
               content: () =>
                 jobs.map((job, index) =>
                   Card.render({

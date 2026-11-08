@@ -6,7 +6,7 @@
     "profile": "マイページ",
     "preferences": "設定",
     "about": "Vaituについて",
-    "newJob": "新しい仕事",
+    "newJob": "仕事を引き継ぐ",
     "toggle": "ナビゲーションを切り替え",
     "collapse": "サイドバーを折りたたむ",
     "expand": "サイドバーを展開",
@@ -94,29 +94,6 @@
       "electrician": "電気工事",
       "planner": "イベント企画",
       "makeup_artist": "メイク"
-    },
-    "jobType": {
-      "wedding_photographer": "結婚式の写真撮影",
-      "festival_photographer": "フェスティバルの写真撮影",
-      "wedding_videographer": "結婚式の映像撮影",
-      "festival_videographer": "フェスティバルの映像撮影",
-      "wedding_musician": "結婚式の音楽",
-      "festival_musician": "フェスティバルの音楽",
-      "wedding_dj": "結婚式のDJ",
-      "festival_dj": "フェスティバルのDJ",
-      "festival_sound_technician": "フェスティバルの音響",
-      "apartment_cleaner": "アパート・マンションの清掃",
-      "house_cleaner": "一戸建ての清掃",
-      "office_cleaner": "オフィスの清掃",
-      "apartment_electrician": "アパート・マンションの電気工事",
-      "house_electrician": "一戸建ての電気工事",
-      "office_electrician": "オフィスの電気工事",
-      "concert_photographer": "コンサートの写真撮影",
-      "concert_videographer": "コンサートの映像撮影",
-      "concert_musician": "コンサートの音楽",
-      "concert_sound_technician": "コンサートの音響",
-      "wedding_planner": "ウェディングプランニング",
-      "wedding_makeup_artist": "ブライダルメイク"
     }
   },
   "filters": {
@@ -155,7 +132,6 @@
     "phoneOptional": "電話番号（任意）",
     "phoneExample": "090-1234-5678",
     "phoneHint": "応募先の仕事を投稿した人にのみ表示されます。",
-    "jobType": "仕事の種類",
     "settings": "興味のある場面",
     "settingsHint": "フィードには最初にこれらの場面の仕事が表示されます。何も選ばなければすべて表示されます。",
     "professionRequest": "職種が見つかりませんか?追加をご依頼ください",
@@ -309,7 +285,7 @@
   },
   "onboarding": {
     "title": "プロフィールを完成させましょう",
-    "subtitle": "投稿者があなたを見つけられるよう、活動地域を教えてください。",
+    "subtitle": "活動している地域を教えてください。近くの仕事をお知らせし、同業者もあなたを見つけられます。",
     "skip": "あとで"
   },
   "jobs": {
@@ -323,6 +299,7 @@
     "filters": "フィルター",
     "removeFilter": "フィルターを解除：{{label}}",
     "filtersOn_other": "フィルター（{{count}}件適用中）",
+    "none": "まだ仕事はありません。通知をオンにすると、新しい仕事が出たときにお知らせします。",
     "noneMatch": "検索に一致する仕事はまだありません。",
     "orderBy": "並べ替え",
     "results_other": "仕事{{count}}件",
@@ -331,7 +308,7 @@
   },
   "myJobs": {
     "title": "自分の仕事",
-    "none": "まだ仕事を投稿していません。",
+    "none": "まだ仕事を引き継いでいません。担当できない仕事があれば＋をタップして、同業者に任せましょう。",
     "edit": "仕事を編集",
     "delete": "仕事を削除",
     "deleteConfirm": "この仕事とすべての応募を削除しますか？",
@@ -340,7 +317,7 @@
   },
   "applications": {
     "title": "自分の応募",
-    "none": "まだどの仕事にも応募していません。",
+    "none": "まだどの仕事にも応募していません。「仕事」から探すか、通知をオンにして新しい仕事のお知らせを受け取りましょう。",
     "noneWithStatus": "この状態の応募はありません。"
   },
   "received": {

@@ -217,7 +217,8 @@ export const template = {
     const photos = recap.image_urls ?? []
     const rows = [
       [t("received.status"), translatedValue("status.", recap.status)],
-      [t("fields.jobType"), recap.jobType],
+      [t("fields.setting"), recap.setting],
+      [t("fields.profession"), recap.profession],
       ...(recap.names ? [[t("received.names"), recap.names]] : []),
       ...(recap.styles.length
         ? [

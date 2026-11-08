@@ -1,10 +1,10 @@
 {
-  "title": "Vaitu: pass on the jobs you can't take to a colleague",
-  "description": "Booked for a job you can't do? Publish it on Vaitu: colleagues in your trade apply, and you choose who goes.",
+  "title": "Vaitu: pass on the jobs you can't take, find the ones you can",
+  "description": "Booked for a job you can't do? Pass it to a colleague. Looking for work? Take the jobs colleagues pass on.",
   "languageLabel": "Language",
   "eyebrow": "For people who work at weddings",
   "headline": "Can't make it? Tell a colleague: “vai tu”.",
-  "lede": "Vaitu is where professionals hand off jobs they can't take. You publish the job, colleagues apply, and you choose who to pass it to.",
+  "lede": "Vaitu is where wedding professionals pass on the jobs they can't take, and find the ones they can. Whoever passes a job on chooses who goes.",
   "cta": "Get started",
   "ctaNote": "Publishing, applying and choosing are free, always.",
   "nameOrigin": "The name comes from the Italian “vai tu”, “you go”: what you tell a colleague when you pass them a job.",
@@ -16,7 +16,7 @@
     },
     {
       "title": "Colleagues apply",
-      "body": "People in your trade and area get an alert, and tell you why they're right for it."
+      "body": "People in your profession and area get an alert, and tell you why they're right for it."
     },
     {
       "title": "Choose who goes",
@@ -36,7 +36,7 @@
     {
       "title": "When you're looking for work",
       "points": [
-        "Choose your trades and regions, and get an alert when a job fits",
+        "Choose your professions and regions, and get an alert when a job fits",
         "Apply with a profile that's already filled in",
         "Build a reputation made of real jobs"
       ]
@@ -61,8 +61,8 @@
       "body": "You can report content and block anyone you don't want to deal with."
     }
   ],
-  "tradesTitle": "Which trades",
-  "trades": [
+  "professionsTitle": "Which professions",
+  "professions": [
     "Photography",
     "Video",
     "Music",
@@ -71,7 +71,7 @@
     "Make-up"
   ],
   "earlyTitle": "We're just getting started.",
-  "earlyBody": "There won't be many jobs at first. Choose your trades and regions, and we'll let you know when one fits.",
+  "earlyBody": "There won't be many jobs at first. Choose your professions and regions, and we'll let you know when one fits.",
   "faqTitle": "Questions",
   "faq": [
     {
@@ -87,11 +87,11 @@
       "answer": "No: you agree the fee and terms between yourselves."
     },
     {
-      "question": "My trade isn't listed. What now?",
-      "answer": "Write to us: we're adding new trades."
+      "question": "My profession isn't listed. What now?",
+      "answer": "Write to us: we're adding new professions."
     }
   ],
-  "closing": "The next job you can't take, pass it to a colleague.",
+  "closing": "Pass on the jobs you can't take. Take the ones colleagues pass on.",
   "credits": "Idea by Giada Joey Cazzola. Built by Matteo Antony Mistretta.",
   "privacy": "Privacy",
   "terms": "Terms",
@@ -106,7 +106,7 @@
       },
       "data": {
         "title": "What we collect",
-        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, trades, regions and language. What you publish: jobs and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them. The pay you offer, the amounts you confirm and whether they were settled."
+        "body": "Your email, name and password (stored encrypted). What you add to your profile: phone, website, country, photo, professions, regions and language. What you publish: jobs and their photos, including any client names you enter. Your applications, reviews, stats, reports and blocks. A device token for push notifications, and usage statistics only if you allow them. The pay you offer, the amounts you confirm and whether they were settled."
       },
       "voice": {
         "title": "Voice messages",
@@ -122,7 +122,7 @@
       },
       "keeping": {
         "title": "Why, and for how long",
-        "body": "We use your data to run the service you signed up for, to keep it safe, and for statistics only with your consent. We keep it until you delete your account. Deactivating keeps it, so you can come back. Deleting removes your account, profile, files and jobs, while reviews and past job records stay without your name, as [Deleted User], because they are part of other people's history. We email you about your jobs and applications, and about new jobs for your trades: choose which in Preferences, or use the link in each email."
+        "body": "We use your data to run the service you signed up for, to keep it safe, and for statistics only with your consent. We keep it until you delete your account. Deactivating keeps it, so you can come back. Deleting removes your account, profile, files and jobs, while reviews and past job records stay without your name, as [Deleted User], because they are part of other people's history. We email you about your jobs and applications, and about new jobs for your professions: choose which in Preferences, or use the link in each email."
       },
       "rights": {
         "title": "Your rights",

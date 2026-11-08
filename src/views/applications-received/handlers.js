@@ -10,7 +10,7 @@ import {
   fetchProfileStats,
   submitJobReview,
 } from "../../api/reputation.js"
-import { jobTypeLabel } from "../../common/job-card/index.js"
+import { jobTypeTags } from "../../common/job-card/index.js"
 import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
@@ -161,9 +161,11 @@ export const load = handleAsync("load", {
     entity.job_status = job.status
     entity.job_deadline = job.application_deadline
     entity.max_applicants = job.max_applicants
+    const [setting, profession] = jobTypeTags(job)
     entity.job_recap = {
       status: job.status,
-      jobType: jobTypeLabel(job),
+      setting,
+      profession,
       location: [job.location, canonicalRegion(job.region), job.country]
         .filter(Boolean)
         .join(", "),

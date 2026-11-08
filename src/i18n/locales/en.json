@@ -6,7 +6,7 @@
     "profile": "Profile",
     "preferences": "Preferences",
     "about": "About",
-    "newJob": "New job",
+    "newJob": "Pass a job on",
     "toggle": "Toggle navigation",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
@@ -96,29 +96,6 @@
       "electrician": "Electrical work",
       "planner": "Event planning",
       "makeup_artist": "Make-up"
-    },
-    "jobType": {
-      "wedding_photographer": "Wedding photography",
-      "festival_photographer": "Festival photography",
-      "wedding_videographer": "Wedding video",
-      "festival_videographer": "Festival video",
-      "wedding_musician": "Wedding music",
-      "festival_musician": "Festival music",
-      "wedding_dj": "Wedding DJ",
-      "festival_dj": "Festival DJ",
-      "festival_sound_technician": "Festival sound",
-      "apartment_cleaner": "Apartment cleaning",
-      "house_cleaner": "House cleaning",
-      "office_cleaner": "Office cleaning",
-      "apartment_electrician": "Apartment electrical work",
-      "house_electrician": "House electrical work",
-      "office_electrician": "Office electrical work",
-      "concert_photographer": "Concert photography",
-      "concert_videographer": "Concert video",
-      "concert_musician": "Concert music",
-      "concert_sound_technician": "Concert sound",
-      "wedding_planner": "Wedding planning",
-      "wedding_makeup_artist": "Wedding make-up"
     }
   },
   "filters": {
@@ -157,7 +134,6 @@
     "phoneOptional": "Phone (optional)",
     "phoneExample": "+39 333 123 4567",
     "phoneHint": "Only shown to the people whose jobs you apply for.",
-    "jobType": "Job type",
     "settings": "Settings you're interested in",
     "settingsHint": "Your feed shows jobs in these settings by default. Pick none to see all of them.",
     "professionRequest": "Profession missing? Ask us to add it",
@@ -312,7 +288,7 @@
   },
   "onboarding": {
     "title": "Complete your profile",
-    "subtitle": "Tell us where you are so posters can find you.",
+    "subtitle": "Tell us where you work, so you hear about jobs nearby and colleagues can find you.",
     "skip": "Skip for now"
   },
   "jobs": {
@@ -327,6 +303,7 @@
     "removeFilter": "Remove filter: {{label}}",
     "filtersOn_one": "Filters, {{count}} on",
     "filtersOn_other": "Filters, {{count}} on",
+    "none": "No jobs yet. Turn on notifications and we'll tell you when one comes up.",
     "noneMatch": "No jobs match your search yet.",
     "orderBy": "Order by",
     "results_one": "{{count}} job",
@@ -336,7 +313,7 @@
   },
   "myJobs": {
     "title": "My jobs",
-    "none": "You haven't posted any job yet.",
+    "none": "You haven't passed on any job yet. When you can't take one, tap + and a colleague can go instead.",
     "edit": "Edit job",
     "delete": "Delete job",
     "deleteConfirm": "Delete this job and all its applications?",
@@ -346,7 +323,7 @@
   },
   "applications": {
     "title": "My Applications",
-    "none": "You haven't applied for any job yet.",
+    "none": "You haven't applied for any job yet. Find one in Jobs, or turn on notifications to hear about new ones.",
     "noneWithStatus": "Nothing with this status."
   },
   "received": {

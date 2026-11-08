@@ -85,9 +85,9 @@ export const landing = {
         </section>
 
         <section>
-          <h2>${c.tradesTitle}</h2>
-          <ul class="trades">
-            ${c.trades.map((trade) => html`<li>${trade}</li>`)}
+          <h2>${c.professionsTitle}</h2>
+          <ul class="professions">
+            ${c.professions.map((profession) => html`<li>${profession}</li>`)}
           </ul>
           <p class="early"><strong>${c.earlyTitle}</strong> ${c.earlyBody}</p>
         </section>

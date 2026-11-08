@@ -46,7 +46,6 @@ export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
         value: id,
         setting,
         profession,
-        label: `taxonomy.jobType.${id}`,
       }
     }),
 )
