@@ -35,6 +35,7 @@ const SETTINGS_BY_PROFESSION = {
 // Launch is weddings only. The other settings stay defined, so they can come
 // back with one line and jobs already posted in them still display.
 const OFFERED_SETTINGS = ["wedding"]
+const FIRST_SETTING = 0
 
 export const jobTypes = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
   ([profession, settings]) =>
@@ -58,6 +59,17 @@ export const offeredSettings = OFFERED_SETTINGS.map((id) => ({
   id,
   label: `taxonomy.setting.${id}`,
 }))
+
+export const DEFAULT_SETTING = OFFERED_SETTINGS[FIRST_SETTING]
+
+export function settingOption(id) {
+  return { value: id, label: `taxonomy.setting.${id}` }
+}
+
+/** A job type as a picker lists it once its setting is picked: by its profession. */
+export function professionOption(jobType) {
+  return { ...jobType, label: `taxonomy.profession.${jobType.profession}` }
+}
 
 export const professions = [
   ...new Set(availableJobTypes.map((jobType) => jobType.profession)),
@@ -85,13 +97,6 @@ export function jobTypesFor(professionIds, settingIds = []) {
     inSettings.filter((jobType) => professionIds.includes(jobType.profession)),
     inSettings,
   )
-}
-
-export function interestsFor(interests, professionIds, settingIds = []) {
-  const available = jobTypesFor(professionIds, settingIds).map(
-    (jobType) => jobType.id,
-  )
-  return interests.filter((id) => available.includes(id))
 }
 
 function withFallback(picked, all) {

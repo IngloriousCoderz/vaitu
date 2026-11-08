@@ -131,9 +131,7 @@ describe("applying and choosing a winner", () => {
     const jobs = async (status) => {
       const feed = feedQuery({
         query: "",
-        types: [],
         details: [],
-        interests: [],
         activeProfessions: [],
         myProfessions: [],
         region: null,

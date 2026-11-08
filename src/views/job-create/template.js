@@ -19,8 +19,8 @@ import { getFieldError, getFieldValue } from "@inglorious/web/form"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
-import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
+import { ProfessionRequest } from "../../common/profession-request/index.js"
 import {
   AUDIO_MAX_SECONDS,
   COVER_IMAGES,
@@ -89,8 +89,9 @@ export const template = {
             onCancelAudio,
             onRemoveAudio,
           })}
+          <div class=${styles.field}>${api.render("settingCreate")}</div>
           <div class=${styles.field}>
-            ${api.render("jobTypeCreate")} ${JobTypeRequest.render()}
+            ${api.render("jobTypeCreate")} ${ProfessionRequest.render()}
           </div>
           ${identityFields.map((spec) =>
             this.renderDetailField({

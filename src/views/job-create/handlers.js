@@ -46,7 +46,15 @@ import {
   currencyAfterCountryChange,
   DEFAULT_CURRENCY,
 } from "../../data/currencies.js"
-import { jobTypeById, jobTypeId, jobTypesFor } from "../../data/job-taxonomy.js"
+import {
+  DEFAULT_SETTING,
+  jobTypeById,
+  jobTypeId,
+  jobTypesFor,
+  offeredSettings,
+  professionOption,
+  settingOption,
+} from "../../data/job-taxonomy.js"
 import {
   regionAfterCountryChange,
   regionForCountry,
@@ -175,21 +183,34 @@ export function jobTypeSelect(entity, { value }, api) {
   api.notify("#regionCreate:errorSet", null)
 }
 
-// New jobs start on the poster's first job type. An edit keeps its own, even if
-// the poster has since changed trade.
+// A new job in a setting keeps its profession when the setting has it.
+export function settingSelect(entity, { value }, api) {
+  const profession = getFieldValue(entity, "profession", "")
+  const options = settingJobTypes(api, value)
+  const kept = options.find((option) => option.profession === profession)
+  const [first] = options
+  jobTypeSelect(entity, { value: (kept ?? first).id }, api)
+  jobTypeOptionsSync(entity, null, api)
+}
+
+// New jobs start on the poster's first profession in the setting. An edit
+// keeps its own, even if the poster has since changed profession.
 export function jobTypeOptionsSync(entity, _, api) {
-  const mine = api.getEntity("jobList")?.professions ?? []
-  const options = jobTypesFor([...mine])
-  const current = jobTypeId(
-    getFieldValue(entity, "setting", ""),
-    getFieldValue(entity, "profession", ""),
-  )
+  const setting = getFieldValue(entity, "setting", "") || DEFAULT_SETTING
+  const options = settingJobTypes(api, setting)
+  const current = jobTypeId(setting, getFieldValue(entity, "profession", ""))
+  const isSettingOffered = offeredSettings.some(({ id }) => id === setting)
+  api.notify("#settingCreate:optionsSet", [
+    ...(isSettingOffered ? [] : [settingOption(setting)]),
+    ...offeredSettings.map(({ id }) => settingOption(id)),
+  ])
+  api.notify("#settingCreate:valueSet", setting)
   const isOffered = options.some((option) => option.id === current)
   if (entity.editing_job_id) {
     const own = jobTypeById(current)
     api.notify(
       "#jobTypeCreate:optionsSet",
-      isOffered || !own ? options : [own, ...options],
+      isOffered || !own ? options : [professionOption(own), ...options],
     )
     api.notify("#jobTypeCreate:valueSet", current)
     return
@@ -375,7 +396,7 @@ export const audioParse = handleAsync("audioParse", {
     if (!fields || typeof fields !== "object") return
     if (fields.job_type && jobTypeById(fields.job_type)) {
       jobTypeSelect(entity, { value: fields.job_type }, api)
-      api.notify("#jobTypeCreate:valueSet", fields.job_type)
+      jobTypeOptionsSync(entity, null, api)
     }
     const setting = settingById(getFieldValue(entity, "setting", ""))
     const details = mergeParsedDetails(
@@ -906,4 +927,9 @@ function withVoiceDescription(current, previous, next) {
       ? current.slice(TEXT_START, -previous.length).trimEnd()
       : current.trimEnd()
   return typed ? `${typed}\n${next}` : next
+}
+
+function settingJobTypes(api, setting) {
+  const mine = api.getEntity("jobList")?.professions ?? []
+  return jobTypesFor([...mine], [setting]).map(professionOption)
 }

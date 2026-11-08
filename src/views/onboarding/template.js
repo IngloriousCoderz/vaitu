@@ -1,15 +1,13 @@
 import { Button } from "@inglorious/ui/button"
-import { ChipPicker } from "@inglorious/ui/chip-picker"
 import { Input } from "@inglorious/ui/input"
 import { html } from "@inglorious/web"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { ErrorLabel } from "../../common/error-label/index.js"
+import { FeedInterests } from "../../common/feed-interests/index.js"
 import { FormActions } from "../../common/form-actions/index.js"
-import { JobTypeRequest } from "../../common/job-type-request/index.js"
 import { Page } from "../../common/page/index.js"
-import { professions } from "../../data/job-taxonomy.js"
 import { t } from "../../i18n/index.js"
 import styles from "./style.module.css"
 
@@ -33,24 +31,11 @@ export const template = {
           <p class=${styles.subtitle}>${t("onboarding.subtitle")}</p>
 
           <div class=${styles.field}>
-            ${ChipPicker.render({
-              label: t("fields.professions"),
-              hint: t("fields.professionsHint"),
-              options: professions.map(({ id, label }) => ({
-                value: id,
-                label: t(label),
-              })),
-              value: getFieldValue(entity, "professions", []),
+            ${FeedInterests.render({
+              professions: getFieldValue(entity, "professions", []),
               isDisabled: saving,
-              onToggle: onToggleProfession,
+              onToggleProfession,
             })}
-          </div>
-
-          <div class=${styles.field}>
-            ${api.render("jobTypesOnboarding")}
-            <p class=${styles.hint}>
-              ${t("fields.jobTypesHint")} ${JobTypeRequest.render()}
-            </p>
           </div>
 
           <div

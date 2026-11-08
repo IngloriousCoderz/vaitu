@@ -5,7 +5,7 @@ import { t } from "../../i18n/index.js"
 import { mailtoUrl } from "../profile.js"
 import styles from "./style.module.css"
 
-export const JobTypeRequest = {
+export const ProfessionRequest = {
   render() {
     const email = import.meta.env.VITE_CONTACT_EMAIL
     return when(
@@ -14,10 +14,10 @@ export const JobTypeRequest = {
         <a
           class=${styles.link}
           href=${mailtoUrl(email, {
-            subject: t("fields.jobTypeRequestSubject"),
-            body: t("fields.jobTypeRequestBody"),
+            subject: t("fields.professionRequestSubject"),
+            body: t("fields.professionRequestBody"),
           })}
-          >${t("fields.jobTypeRequest")}</a
+          >${t("fields.professionRequest")}</a
         >
       `,
     )

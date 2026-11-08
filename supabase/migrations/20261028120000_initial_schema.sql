@@ -55,7 +55,7 @@ create table public.profiles (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   favorite_regions text[] not null default '{}',
-  interested_job_types text[] not null default '{}',
+  interested_settings text[] not null default '{}',
   professions text[] not null default '{}',
   locale text,
   avatar_url text,
@@ -67,10 +67,10 @@ create table public.profiles (
   has_new_job_alerts boolean not null default true
 );
 
-comment on column public.profiles.interested_job_types is
-  'Job types the feed shows by default. Empty means all of them.';
+comment on column public.profiles.interested_settings is
+  'Settings the feed shows by default. Empty means all of them.';
 comment on column public.profiles.professions is
-  'Trades the feed shows by default. Empty means every trade.';
+  'Professions the feed shows by default. Empty means every profession.';
 comment on column public.profiles.is_active is
   'False after the user deactivates; true again on the next successful login.';
 comment on column public.profiles.last_login_at is
@@ -847,7 +847,7 @@ grant update (
   phone,
   country,
   favorite_regions,
-  interested_job_types,
+  interested_settings,
   professions,
   locale,
   avatar_url,
@@ -1064,8 +1064,8 @@ begin
     and not public.are_blocked(p.id, new.poster_id)
     and new.profession = any (p.professions)
     and (
-      cardinality(p.interested_job_types) = 0
-      or new.job_type = any (p.interested_job_types)
+      cardinality(p.interested_settings) = 0
+      or new.setting = any (p.interested_settings)
     )
     and (
       cardinality(p.favorite_regions) = 0

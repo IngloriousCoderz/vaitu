@@ -7,9 +7,9 @@ import {
 import { sameRegion } from "../../data/regions/resolve.js"
 import {
   DEFAULT_SORT,
+  inScope,
   jobTypesInScope,
   periods,
-  professionsInScope,
   regionInEffect,
 } from "./helpers.js"
 import { filterSections } from "./job-settings.js"
@@ -57,10 +57,9 @@ const SORT_ORDERS = {
  */
 export function feedQuery({
   query,
-  types,
   details,
-  interests,
   activeSettings = [],
+  mySettings = [],
   activeProfessions,
   myProfessions,
   region,
@@ -76,11 +75,9 @@ export function feedQuery({
   const days = periods.find((item) => item.id === period)?.days ?? null
   return {
     jobTypes: jobTypesInScope(
-      types,
       details,
-      interests,
-      professionsInScope(activeProfessions, myProfessions),
-      activeSettings,
+      inScope(activeSettings, mySettings),
+      inScope(activeProfessions, myProfessions),
     ),
     details: filterSections([])
       .map((section) => ({

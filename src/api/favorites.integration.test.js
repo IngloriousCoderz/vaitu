@@ -33,7 +33,7 @@ test(
     await signIn({ email, password: PASSWORD })
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: [],
-      interested_job_types: [],
+      interested_settings: [],
       professions: [],
     })
 
@@ -41,14 +41,14 @@ test(
       .from("profiles")
       .update({
         favorite_regions: ["Tuscany", "Provence"],
-        interested_job_types: ["wedding_photographer"],
+        interested_settings: ["wedding"],
         professions: ["cleaner"],
       })
       .eq("id", userId)
     expect(error).toBeNull()
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: ["Tuscany", "Provence"],
-      interested_job_types: ["wedding_photographer"],
+      interested_settings: ["wedding"],
       professions: ["cleaner"],
     })
   },
@@ -61,7 +61,7 @@ test(
     await signOut()
     expect(await fetchMyFeedDefaults()).toEqual({
       favorite_regions: [],
-      interested_job_types: [],
+      interested_settings: [],
       professions: [],
     })
   },

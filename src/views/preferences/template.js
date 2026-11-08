@@ -1,16 +1,14 @@
 import { Button } from "@inglorious/ui/button"
 import { Checkbox } from "@inglorious/ui/checkbox"
-import { ChipPicker } from "@inglorious/ui/chip-picker"
 import { Flex } from "@inglorious/ui/flex"
 import { Switch } from "@inglorious/ui/switch"
 import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { ErrorAlert } from "../../common/error-alert/index.js"
-import { JobTypeRequest } from "../../common/job-type-request/index.js"
+import { FeedInterests } from "../../common/feed-interests/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { professions } from "../../data/job-taxonomy.js"
 import {
   ALL_TYPES,
   isMuted,
@@ -29,6 +27,7 @@ export const template = {
       entity,
       isAnalyticsOn,
       onToggleProfession,
+      onToggleSetting,
       onNotificationToggle,
       onAnalyticsToggle,
       onUnblock,
@@ -50,22 +49,13 @@ export const template = {
               direction: "column",
               gap: "lg",
               children: [
-                ChipPicker.render({
-                  label: t("fields.professions"),
-                  hint: t("fields.professionsHint"),
-                  options: professions.map(({ id, label }) => ({
-                    value: id,
-                    label: t(label),
-                  })),
-                  value: entity.professions,
-                  onToggle: onToggleProfession,
+                FeedInterests.render({
+                  professions: entity.professions,
+                  settings: entity.interested_settings,
+                  hasSettings: true,
+                  onToggleProfession,
+                  onToggleSetting,
                 }),
-                html`<div>
-                  ${api.render("jobTypesPreferences")}
-                  <p class=${styles.sectionHint}>
-                    ${t("fields.jobTypesHint")} ${JobTypeRequest.render()}
-                  </p>
-                </div>`,
                 html`<div>
                   ${api.render("favoriteRegionPreferences")}
                   <p class=${styles.sectionHint}>

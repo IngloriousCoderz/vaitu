@@ -1,6 +1,4 @@
 import {
-  interestsFor,
-  jobTypeById,
   jobTypesFor,
   offeredSettings,
   professions as allProfessions,
@@ -38,31 +36,22 @@ export function distinctRegions(regions) {
 }
 
 /**
- * The job types a feed asks for: the picked ones and those of each picked style
- * or genre, else your interests, else all of the trades in scope.
+ * The job types a feed asks for: those of the settings and professions in
+ * scope, narrowed to the ones the picked styles and genres apply to.
  */
-export function jobTypesInScope(
-  types,
-  details,
-  interests,
-  professions,
-  settings = [],
-) {
+export function jobTypesInScope(details, settings, professions) {
   const available = jobTypesFor(professions, settings)
-  const fromDetails = details.flatMap((value) =>
-    available
-      .filter((jobType) => detailAppliesTo(value, jobType))
-      .map((jobType) => jobType.id),
+  const fromDetails = available.filter((jobType) =>
+    details.some((value) => detailAppliesTo(value, jobType)),
   )
-  const picked = [...new Set([...types, ...fromDetails])]
-  if (picked.length) return picked
-  const interesting = interestsFor(interests, professions, settings)
-  if (interesting.length) return interesting
-  return available.map((jobType) => jobType.id)
+  return (fromDetails.length ? fromDetails : available).map(
+    (jobType) => jobType.id,
+  )
 }
 
-export function professionsInScope(activeProfessions, professions = []) {
-  return activeProfessions.length ? activeProfessions : professions
+/** What the feed picks, else what the profile does. */
+export function inScope(active, mine = []) {
+  return active.length ? active : mine
 }
 
 export function defaultRegion(favoriteRegions) {
@@ -74,7 +63,6 @@ export function regionInEffect(activeRegion, favoriteRegions) {
 }
 
 export function activeFilters({
-  types,
   settings = [],
   professions,
   details,
@@ -87,11 +75,6 @@ export function activeFilters({
   const regionItem = regions.find((item) => item.id === region)
   const periodItem = periods.find((item) => item.id === period)
   return [
-    ...types.map((id) => ({
-      kind: "type",
-      id,
-      label: jobTypeById(id)?.label ?? id,
-    })),
     ...settings.map((id) => ({
       kind: "setting",
       id,

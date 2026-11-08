@@ -96,8 +96,8 @@
       "sound_technician": "Audio",
       "cleaner": "Pulizie",
       "electrician": "Impianti elettrici",
-      "planner": "Organizzazione eventi",
-      "makeup_artist": "Trucco"
+      "planner": "Wedding planning",
+      "makeup_artist": "Make-up"
     },
     "jobType": {
       "wedding_photographer": "Fotografia di matrimonio",
@@ -119,8 +119,8 @@
       "concert_videographer": "Video di concerti",
       "concert_musician": "Musica per concerti",
       "concert_sound_technician": "Audio per concerti",
-      "wedding_planner": "Organizzazione di matrimoni",
-      "wedding_makeup_artist": "Trucco da sposa"
+      "wedding_planner": "Wedding planning",
+      "wedding_makeup_artist": "Make-up per matrimoni"
     }
   },
   "filters": {
@@ -152,17 +152,19 @@
     "shortlistSizeHint": "Tutti possono candidarsi. Questi sono i posti per chi metti in shortlist prima di scegliere.",
     "professions": "Di cosa ti occupi",
     "professionsHint": "Il tuo feed mostra di default i lavori di queste professioni. Non sceglierne nessuno per vederli tutti.",
+    "profession": "Professione",
+    "setting": "Ambito",
     "jobTitle": "Cosa c'è da fare",
     "phone": "Telefono",
     "phoneOptional": "Telefono (facoltativo)",
     "phoneExample": "+39 333 123 4567",
     "phoneHint": "Lo vede solo chi ha pubblicato i lavori a cui ti candidi.",
     "jobType": "Tipo di lavoro",
-    "jobTypes": "Tipi di lavoro che ti interessano",
-    "jobTypesHint": "Il tuo feed mostra questi di default. Lascia vuoto per vederli tutti.",
-    "jobTypeRequest": "Manca un tipo di lavoro? Chiedici di aggiungerlo",
-    "jobTypeRequestSubject": "Nuovo tipo di lavoro per Vaitu",
-    "jobTypeRequestBody": "Tipo di lavoro da aggiungere:\n\nDi cosa mi occupo:\n",
+    "settings": "Ambiti che ti interessano",
+    "settingsHint": "Il tuo feed mostra di default i lavori di questi ambiti. Non sceglierne nessuno per vederli tutti.",
+    "professionRequest": "Manca la tua professione? Chiedici di aggiungerla",
+    "professionRequestSubject": "Nuova professione per Vaitu",
+    "professionRequestBody": "Professione da aggiungere:\n",
     "favoriteRegionsHint": "Il tuo feed mostra questi di default. Lascia vuoto per vederli tutti."
   },
   "jobStatuses": {
@@ -192,7 +194,6 @@
     "noOptions": "Nessuna opzione",
     "noCountries": "Nessun paese trovato",
     "noRegions": "Nessuna regione trovata",
-    "allJobTypes": "Tutti i tipi di lavoro",
     "addValue": "Aggiungi \"{{term}}\"",
     "searchOrAddRegion": "Cerca o aggiungi una regione"
   },
@@ -327,7 +328,6 @@
     "period": "Periodo",
     "clearAll": "Azzera tutto",
     "filters": "Filtri",
-    "type": "Tipo di lavoro",
     "removeFilter": "Rimuovi filtro: {{label}}",
     "filtersOn_one": "Filtri, {{count}} attivo",
     "filtersOn_other": "Filtri, {{count}} attivi",
@@ -522,7 +522,7 @@
       },
       "audience": {
         "question": "A chi è rivolta?",
-        "answer": "Professionisti che lavorano ai matrimoni e devono passare un lavoro che non possono accettare: fotografi, videomaker, musicisti, DJ, wedding planner e truccatori. Seguiranno altre professioni."
+        "answer": "Professionisti che lavorano ai matrimoni e devono passare un lavoro che non possono accettare: fotografi, videomaker, musicisti, DJ, wedding planner e make-up artist. Seguiranno altre professioni."
       },
       "publish": {
         "question": "Come pubblico un lavoro?",

@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest"
 
 import {
   availableJobTypes,
-  interestsFor,
   jobTypesFor,
   offeredSettings,
+  professionOption,
   professions,
+  settingOption,
 } from "./job-taxonomy.js"
 
 describe("availableJobTypes", () => {
@@ -59,10 +60,19 @@ describe("offeredSettings", () => {
   })
 })
 
-describe("interestsFor", () => {
-  it("drops the job types of the trades no longer picked", () => {
-    const interests = ["wedding_photographer", "wedding_dj"]
-    expect(interestsFor(interests, ["dj"])).toEqual(["wedding_dj"])
-    expect(interestsFor(interests, [])).toEqual(interests)
+describe("settingOption", () => {
+  it("names a setting for a picker", () => {
+    expect(settingOption("wedding")).toEqual({
+      value: "wedding",
+      label: "taxonomy.setting.wedding",
+    })
+  })
+})
+
+describe("professionOption", () => {
+  it("names a job type by its profession", () => {
+    expect(professionOption(availableJobTypes[0]).label).toBe(
+      "taxonomy.profession.photographer",
+    )
   })
 })

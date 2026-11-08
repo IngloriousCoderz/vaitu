@@ -2,7 +2,7 @@ import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
 import { supabase } from "./client.js"
 
 const COLUMNS =
-  "interested_job_types, professions, favorite_regions, muted_email_types, muted_push_types"
+  "interested_settings, professions, favorite_regions, muted_email_types, muted_push_types"
 
 export async function fetchMyPreferences() {
   const {

@@ -2,7 +2,6 @@ import { debounce } from "@inglorious/utils/function"
 
 import { readUserId } from "../../api/session.js"
 import {
-  interestsFor,
   jobTypeById,
   offeredSettings,
   professions,
@@ -15,7 +14,6 @@ import {
   filtersClear,
   filtersClose,
   filtersToggle,
-  jobTypesSet,
   load,
   pageFetch,
   pageMore,
@@ -25,24 +23,23 @@ import {
   regionsFetch,
   search,
   searchRun,
+  settingToggle,
   sortSelect,
   statusSelect,
-  typeToggle,
 } from "./handlers.js"
 import {
   activeFilters,
   DEFAULT_SORT,
   distinctRegions,
+  inScope,
   jobTypesInScope,
   periods,
-  professionsInScope,
   regionInEffect,
   statuses,
 } from "./helpers.js"
 import { filterSectionsFor } from "./job-settings.js"
 import { template } from "./template.js"
 
-const ONE_INTEREST = 1
 const SEARCH_DELAY_MS = 300
 
 const searchSoon = debounce(
@@ -53,8 +50,7 @@ const searchSoon = debounce(
 export const JobList = {
   search,
   searchRun,
-  typeToggle,
-  jobTypesSet,
+  settingToggle,
   professionToggle,
   detailToggle,
   periodSelect,
@@ -72,7 +68,6 @@ export const JobList = {
 
   create(entity) {
     entity.query ??= ""
-    entity.activeTypes ??= []
     entity.activeSettings ??= []
     entity.activeProfessions ??= []
     entity.activeDetails ??= []
@@ -90,7 +85,7 @@ export const JobList = {
     entity.appliedMap ??= {}
     entity.wonJobIds ??= []
     entity.favoriteRegions ??= []
-    entity.interests ??= []
+    entity.settings ??= []
     entity.professions ??= []
     entity.status ??= "loading"
     entity.error ??= null
@@ -113,21 +108,10 @@ export const JobList = {
 
   render(entity, api) {
     const id = entity.id
-    const inScope = professionsInScope(
-      entity.activeProfessions,
-      entity.professions,
-    )
-    const interests = interestsFor(
-      entity.interests,
-      inScope,
-      entity.activeSettings,
-    )
     const scope = jobTypesInScope(
-      entity.activeTypes,
       entity.activeDetails,
-      entity.interests,
-      inScope,
-      entity.activeSettings,
+      inScope(entity.activeSettings, entity.settings),
+      inScope(entity.activeProfessions, entity.professions),
     )
     const scopedSettings = [
       ...new Set(scope.map((id) => jobTypeById(id)?.setting).filter(Boolean)),
@@ -143,7 +127,6 @@ export const JobList = {
         status: entity.status,
         error: entity.error,
         setting: otherSettings.length ? undefined : onlySetting,
-        showTypes: interests.length !== ONE_INTEREST,
         settings: offeredSettings,
         activeSettings: entity.activeSettings,
         professions,
@@ -173,7 +156,6 @@ export const JobList = {
           api.notify(`#${id}:professionToggle`, professionId),
         onToggleDetail: (value) => api.notify(`#${id}:detailToggle`, value),
         onRemoveFilter: ({ kind, id: value }) => {
-          if (kind === "type") api.notify(`#${id}:typeToggle`, value)
           if (kind === "setting") api.notify(`#${id}:settingToggle`, value)
           if (kind === "profession") {
             api.notify(`#${id}:professionToggle`, value)
@@ -218,7 +200,6 @@ function regionsOf(entity) {
 
 function filtersOn(entity) {
   return activeFilters({
-    types: entity.activeTypes,
     settings: entity.activeSettings,
     professions: entity.activeProfessions,
     details: entity.activeDetails,

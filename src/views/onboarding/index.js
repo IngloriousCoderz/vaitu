@@ -17,7 +17,6 @@ export const Onboarding = {
       country: "",
       website: "",
       phone: "",
-      interested_job_types: [],
       professions: [],
       favorite_regions: [],
     }

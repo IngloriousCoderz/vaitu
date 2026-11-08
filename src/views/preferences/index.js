@@ -16,7 +16,7 @@ export const Preferences = {
   ...template,
 
   create(entity) {
-    entity.interested_job_types ??= []
+    entity.interested_settings ??= []
     entity.professions ??= []
     entity.favorite_regions ??= []
     entity.muted_email_types ??= []
@@ -41,6 +41,8 @@ export const Preferences = {
         isAnalyticsOn: api.getEntity("analytics")?.consent === "granted",
         onToggleProfession: (professionId) =>
           api.notify(`#${id}:professionToggle`, professionId),
+        onToggleSetting: (settingId) =>
+          api.notify(`#${id}:settingToggle`, settingId),
         onNotificationToggle: (payload) =>
           api.notify(`#${id}:notificationToggle`, payload),
         onAnalyticsToggle: (isOn) =>

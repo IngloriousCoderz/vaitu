@@ -4,31 +4,23 @@ import { errorKey } from "../../api/errors.js"
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { fetchMyBlocks, unblockUser } from "../../api/safety.js"
 import { readUserId } from "../../api/session.js"
-import { interestsFor, jobTypesFor } from "../../data/job-taxonomy.js"
 import { withMuted } from "../../data/notification-types.js"
 import {
   favoriteRegionOptions,
   uniqueRegions,
 } from "../../data/regions/resolve.js"
 
-// The new list itself: the save runs after this draft is revoked.
-export function jobTypesSet(entity, { value }, api) {
-  entity.interested_job_types = value
-  api.notify(`#${entity.id}:save`, { interested_job_types: value })
+// The new lists themselves: the save runs after this draft is revoked.
+export function professionToggle(entity, professionId, api) {
+  const professions = toggled(entity.professions, professionId)
+  entity.professions = professions
+  api.notify(`#${entity.id}:save`, { professions })
 }
 
-export function professionToggle(entity, professionId, api) {
-  const professions = entity.professions.includes(professionId)
-    ? entity.professions.filter((id) => id !== professionId)
-    : [...entity.professions, professionId]
-  const interested_job_types = interestsFor(
-    entity.interested_job_types,
-    professions,
-  )
-  entity.professions = professions
-  entity.interested_job_types = interested_job_types
-  jobTypesSync(entity, professions, interested_job_types, api)
-  api.notify(`#${entity.id}:save`, { professions, interested_job_types })
+export function settingToggle(entity, settingId, api) {
+  const interested_settings = toggled(entity.interested_settings, settingId)
+  entity.interested_settings = interested_settings
+  api.notify(`#${entity.id}:save`, { interested_settings })
 }
 
 export function favoriteRegionsSet(entity, { value }, api) {
@@ -72,14 +64,8 @@ export const load = handleAsync("load", {
   success(entity, preferences, api) {
     entity.status = "ready"
     entity.blocks = preferences.blocks
-    entity.interested_job_types = preferences.interested_job_types ?? []
+    entity.interested_settings = preferences.interested_settings ?? []
     entity.professions = preferences.professions ?? []
-    jobTypesSync(
-      entity,
-      [...entity.professions],
-      [...entity.interested_job_types],
-      api,
-    )
     entity.favorite_regions = preferences.favorite_regions ?? []
     entity.muted_email_types = preferences.muted_email_types ?? []
     entity.muted_push_types = preferences.muted_push_types ?? []
@@ -100,7 +86,7 @@ export const save = handleAsync("save", {
   },
   success(entity, fields, api) {
     if (
-      fields.interested_job_types ||
+      fields.interested_settings ||
       fields.professions ||
       fields.favorite_regions
     ) {
@@ -141,7 +127,8 @@ export const localeSave = handleAsync("localeSave", {
   },
 })
 
-function jobTypesSync(entity, professions, interests, api) {
-  api.notify("#jobTypesPreferences:optionsSet", jobTypesFor(professions))
-  api.notify("#jobTypesPreferences:valueSet", interests)
+function toggled(list, value) {
+  return list.includes(value)
+    ? list.filter((item) => item !== value)
+    : [...list, value]
 }

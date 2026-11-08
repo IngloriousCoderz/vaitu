@@ -36,7 +36,6 @@ export const template = {
       status,
       error,
       setting,
-      showTypes,
       settings,
       activeSettings,
       professions,
@@ -115,12 +114,6 @@ export const template = {
               direction: "column",
               gap: "lg",
               children: [
-                when(showTypes, () =>
-                  this.renderFilterField({
-                    title: t("jobs.type"),
-                    control: api.render("jobTypesFilter"),
-                  }),
-                ),
                 when(settings.length > ONE_SETTING, () =>
                   this.renderFilterField({
                     title: t("jobs.setting"),

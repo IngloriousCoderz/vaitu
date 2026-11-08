@@ -3,7 +3,6 @@ import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
 import { errorKey } from "../../api/errors.js"
-import { interestsFor, jobTypesFor } from "../../data/job-taxonomy.js"
 import {
   favoriteRegionOptions,
   uniqueRegions,
@@ -32,23 +31,8 @@ export function favoriteOptionsSync(entity, _, api) {
   )
 }
 
-export function jobTypesSet(entity, { value }) {
-  Form.fieldChange(entity, { path: "interested_job_types", value })
-}
-
-export function professionToggle(entity, professionId, api) {
-  const current = getFieldValue(entity, "professions", [])
-  const professions = current.includes(professionId)
-    ? current.filter((id) => id !== professionId)
-    : [...current, professionId]
-  const interests = interestsFor(
-    getFieldValue(entity, "interested_job_types", []),
-    professions,
-  )
-  Form.fieldChange(entity, { path: "professions", value: professions })
-  Form.fieldChange(entity, { path: "interested_job_types", value: interests })
-  api.notify("#jobTypesOnboarding:optionsSet", jobTypesFor(professions))
-  api.notify("#jobTypesOnboarding:valueSet", interests)
+export function professionToggle(entity, professionId) {
+  fieldToggle(entity, "professions", professionId)
 }
 
 export const skip = handleAsync("skip", {
@@ -85,7 +69,6 @@ export function saveSubmit(entity, _, api) {
   // Copied: the save runs after this draft is revoked.
   api.notify(`#${entity.id}:save`, {
     ...entity.values,
-    interested_job_types: [...entity.values.interested_job_types],
     professions: [...entity.values.professions],
     favorite_regions: [...entity.values.favorite_regions],
   })
@@ -96,14 +79,7 @@ export const save = handleAsync("save", {
     entity.status = "saving"
     entity.error = null
   },
-  async run({
-    country,
-    website,
-    phone,
-    interested_job_types,
-    professions,
-    favorite_regions,
-  }) {
+  async run({ country, website, phone, professions, favorite_regions }) {
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -120,7 +96,6 @@ export const save = handleAsync("save", {
               ? site
               : `https://${site}`,
         phone: (phone ?? "").trim(),
-        interested_job_types,
         professions,
         favorite_regions,
         onboarded_at: new Date().toISOString(),
@@ -145,4 +120,14 @@ function validateOnboarding(values) {
   const errors = {}
   if (!(values.country ?? "").trim()) errors.country = "Pick a country"
   return errors
+}
+
+function fieldToggle(entity, field, value) {
+  const current = getFieldValue(entity, field, [])
+  Form.fieldChange(entity, {
+    path: field,
+    value: current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value],
+  })
 }

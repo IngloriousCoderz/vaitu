@@ -1,5 +1,10 @@
 import { countries } from "../data/countries.js"
-import { availableJobTypes } from "../data/job-taxonomy.js"
+import {
+  availableJobTypes,
+  offeredSettings,
+  professionOption,
+  settingOption,
+} from "../data/job-taxonomy.js"
 import { italianRegions } from "../data/regions/index.js"
 import { favoriteRegionOptions, regionOption } from "../data/regions/resolve.js"
 import { languages } from "../i18n/index.js"
@@ -36,14 +41,20 @@ export const entities = {
     label: "fields.region",
     isRequired: true,
   }),
+  settingCreate: {
+    type: "TranslatedCombobox",
+    isSearchable: true,
+    isFullWidth: true,
+    label: "fields.setting",
+    isRequired: true,
+    options: offeredSettings.map(({ id }) => settingOption(id)),
+    changeEvent: "#jobCreate:settingSelect",
+  },
   jobTypeCreate: {
     ...jobTypeSelect("jobCreate", "jobTypeSelect"),
-    label: "fields.jobType",
+    label: "fields.profession",
     isRequired: true,
   },
-  jobTypesOnboarding: jobTypesSelect("onboarding", "fields.jobTypes"),
-  jobTypesPreferences: jobTypesSelect("preferences", "fields.jobTypes"),
-  jobTypesFilter: jobTypesSelect("jobList"),
   favoriteRegionOnboarding: favoriteRegionsSelect(
     "onboarding",
     "favoriteRegionsSet",
@@ -95,18 +106,9 @@ function jobTypeSelect(targetId, targetEvent) {
     type: "TranslatedCombobox",
     isSearchable: true,
     isFullWidth: true,
-    options: availableJobTypes,
+    options: availableJobTypes.map(professionOption),
     changeEvent: `#${targetId}:${targetEvent}`,
     changePayload: { field: "job_type" },
-  }
-}
-
-function jobTypesSelect(targetId, label = "") {
-  return {
-    ...jobTypeSelect(targetId, "jobTypesSet"),
-    label,
-    isMulti: true,
-    placeholder: "combobox.allJobTypes",
   }
 }
 

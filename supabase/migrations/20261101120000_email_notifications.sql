@@ -36,7 +36,7 @@ create index notifications_unemailed_idx on public.notifications (created_at)
   where emailed_at is null;
 
 -- Whoever turned off both channels gets no row at all, not even in the bell:
--- on a busy trade that would be a feed of jobs they asked not to hear about.
+-- in a busy profession that would be a feed of jobs they asked not to hear about.
 create or replace function public.vaitu_on_job_created()
 returns trigger
 language plpgsql
@@ -59,8 +59,8 @@ begin
     and not public.are_blocked(p.id, new.poster_id)
     and new.profession = any (p.professions)
     and (
-      cardinality(p.interested_job_types) = 0
-      or new.job_type = any (p.interested_job_types)
+      cardinality(p.interested_settings) = 0
+      or new.setting = any (p.interested_settings)
     )
     and (
       cardinality(p.favorite_regions) = 0

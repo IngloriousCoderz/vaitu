@@ -5,9 +5,9 @@ import { feedQuery, localToday } from "./query.js"
 
 const defaults = {
   query: "",
-  types: [],
   details: [],
-  interests: [],
+  activeSettings: [],
+  mySettings: [],
   activeProfessions: [],
   myProfessions: [],
   region: null,
@@ -57,31 +57,24 @@ describe("feedQuery", () => {
     expect(scope("won")).toMatchObject({ openJobs: "none", wonJobIds: ["w"] })
   })
 
-  it("scopes the job types to the picked ones, a style's, or the interests", () => {
-    expect(query({ interests: ["wedding_dj"] }).jobTypes).toEqual([
-      "wedding_dj",
-    ])
-    expect(query({ types: ["wedding_photographer"] }).jobTypes).toEqual([
-      "wedding_photographer",
-    ])
+  it("scopes the job types to the picked settings, or else yours, and a style's", () => {
+    expect(query({ mySettings: ["wedding"] }).jobTypes).toEqual(
+      availableJobTypes.map((jobType) => jobType.id),
+    )
+    expect(
+      query({ activeSettings: ["wedding"], activeProfessions: ["dj"] })
+        .jobTypes,
+    ).toEqual(["wedding_dj"])
     expect(query({ details: ["editorial"] }).jobTypes).toContain("wedding_dj")
   })
 
-  it("scopes the job types to the picked trades, or else your own", () => {
+  it("scopes the job types to the picked professions, or else your own", () => {
     expect(query({ myProfessions: ["planner"] }).jobTypes).toEqual([
       "wedding_planner",
     ])
     expect(
       query({ myProfessions: ["planner"], activeProfessions: ["dj"] }).jobTypes,
     ).toEqual(["wedding_dj"])
-  })
-
-  it("ignores the interests the trades in scope don't work on", () => {
-    const picked = { interests: ["wedding_dj"], myProfessions: ["dj"] }
-    expect(query(picked).jobTypes).toEqual(["wedding_dj"])
-    expect(
-      query({ ...picked, activeProfessions: ["planner"] }).jobTypes,
-    ).toEqual(["wedding_planner"])
   })
 
   it("groups the picked styles and genres by the detail they filter", () => {

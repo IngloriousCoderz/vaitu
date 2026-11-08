@@ -438,7 +438,7 @@ async function voiceError(error) {
 export async function fetchMyFeedDefaults() {
   const none = {
     favorite_regions: [],
-    interested_job_types: [],
+    interested_settings: [],
     professions: [],
   }
   const {
@@ -447,13 +447,13 @@ export async function fetchMyFeedDefaults() {
   if (!user) return none
   const { data, error } = await supabase
     .from("profiles")
-    .select("favorite_regions, interested_job_types, professions")
+    .select("favorite_regions, interested_settings, professions")
     .eq("id", user.id)
     .single()
   if (error) return none
   return {
     favorite_regions: data?.favorite_regions ?? [],
-    interested_job_types: data?.interested_job_types ?? [],
+    interested_settings: data?.interested_settings ?? [],
     professions: data?.professions ?? [],
   }
 }
