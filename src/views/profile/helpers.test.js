@@ -1,16 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { displayWebsite, initials } from "./helpers.js"
-
-describe("initials", () => {
-  it("uses the first and last words, and a question mark when the name is empty", () => {
-    expect(initials("Ada")).toBe("A")
-    expect(initials("Ada Grace")).toBe("AG")
-    expect(initials("  Ada   Grace Hopper  ")).toBe("AH")
-    expect(initials("")).toBe("?")
-    expect(initials(null)).toBe("?")
-  })
-})
+import { displayWebsite } from "./helpers.js"
 
 describe("displayWebsite", () => {
   it("adds https when the address has no scheme", () => {

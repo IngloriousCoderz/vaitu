@@ -23,6 +23,7 @@ import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { formatPay } from "../../common/pay.js"
 import { telUrl } from "../../common/profile.js"
+import { ProfileAvatar } from "../../common/profile-avatar/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import {
@@ -326,6 +327,12 @@ export const template = {
           @click=${() => onToggle(item.id)}
           aria-expanded=${expanded}
         >
+          ${ProfileAvatar.render({
+            name: applicant.full_name,
+            src: applicant.avatar_url,
+            size: "lg",
+            alt: "",
+          })}
           <span class=${styles.name}
             >${applicant.full_name ?? t("common.deletedUser")}</span
           >

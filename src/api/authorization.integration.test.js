@@ -387,6 +387,7 @@ describe("the owner", () => {
         website: null,
         phone: null,
         country: null,
+        avatar_url: null,
       },
     ])
   })

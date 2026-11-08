@@ -98,7 +98,7 @@ All fixed, in the initial migration and in production.
 | No security headers                                                                      | Framing the app, and no limit on where scripts could load from                       |
 
 Calendars now go out as links that expire after a day, and applicants'
-contact details come from `applicant_profiles()`.
+contact details and photo come from `applicant_profiles()`.
 
 ## What stays open
 

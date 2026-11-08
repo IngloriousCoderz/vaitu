@@ -2,7 +2,6 @@ import addOutline from "@iconify-icons/material-symbols/add-outline"
 import menuOutline from "@iconify-icons/material-symbols/menu-outline"
 import notificationsOutline from "@iconify-icons/material-symbols/notifications-outline"
 import { AppBar } from "@inglorious/ui/app-bar"
-import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Flex } from "@inglorious/ui/flex"
 import { Icon } from "@inglorious/ui/icon"
@@ -16,13 +15,13 @@ import { Logo } from "../common/logo/index.js"
 import { NotificationsPanel, pathFor } from "../common/notifications/index.js"
 import notificationStyles from "../common/notifications/style.module.css"
 import { OfflineBar } from "../common/offline-bar/index.js"
+import { ProfileAvatar } from "../common/profile-avatar/index.js"
 import { PromptBar } from "../common/prompt-bar/index.js"
 import { ReactivatedBar } from "../common/reactivated-bar/index.js"
 import { UpdateBar } from "../common/update-bar/index.js"
 import { NO_UNREAD, NOTIFICATION_BADGE_MAX } from "../constants/index.js"
 import { t } from "../i18n/index.js"
 import { paths } from "../routes"
-import { initials } from "../views/profile/helpers.js"
 import { AppDrawer } from "./drawer/index.js"
 import { Fab } from "./fab/index.js"
 import styles from "./style.module.css"
@@ -290,13 +289,11 @@ export const App = {
           ariaLabel: t("nav.profileOf", { name }),
           className: styles.avatarButton,
           onClick: () => api.notify("#router:navigate", paths.profile),
-          children: Avatar.render({
-            src: profile?.avatar_url || "",
-            alt: name,
-            initials: initials(name),
+          children: ProfileAvatar.render({
+            name,
+            src: profile?.avatar_url,
             size: "sm",
-            backgroundColor: "linear-gradient(135deg, #6b7a5e, #24402f)",
-            textColor: "#fffdf7",
+            alt: "",
           }),
         }),
       ],

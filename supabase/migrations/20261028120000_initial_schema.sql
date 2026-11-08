@@ -1,7 +1,7 @@
 -- Vaitu · initial schema. Access is ownership: jobs.poster_id,
 -- applications.applicant_id.
 -- - profiles is own-row only; the poster's name comes from job_poster_name(),
--- an applicant's contact details from applicant_profiles().
+-- an applicant's contact details and photo from applicant_profiles().
 -- - Deadlines close jobs through close_expired_jobs() on pg_cron: triggers
 -- cannot fire on time.
 -- - Job policies must NOT select profiles under RLS: it recurses through the
@@ -692,22 +692,23 @@ create policy "Users can update their own profile"
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
--- What a poster needs to contact an applicant, and nothing else of their
--- profile: a policy would hand over the whole row.
+-- What a poster needs to recognise and contact an applicant, and nothing
+-- else of their profile: a policy would hand over the whole row.
 create function public.applicant_profiles(p_application_ids uuid[])
 returns table (
   application_id uuid,
   full_name text,
   website text,
   phone text,
-  country text
+  country text,
+  avatar_url text
 )
 language sql
 stable
 security definer
 set search_path = public
 as $$
-  select a.id, p.full_name, p.website, p.phone, p.country
+  select a.id, p.full_name, p.website, p.phone, p.country, p.avatar_url
   from public.applications a
   join public.jobs e on e.id = a.job_id
   join public.profiles p on p.id = a.applicant_id

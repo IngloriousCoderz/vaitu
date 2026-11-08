@@ -1,6 +1,5 @@
 import helpOutline from "@iconify-icons/material-symbols/help-outline"
 import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-leaderboard-outline"
-import { Avatar } from "@inglorious/ui/avatar"
 import { Button } from "@inglorious/ui/button"
 import { Card } from "@inglorious/ui/card"
 import { CropDialog } from "@inglorious/ui/crop-dialog"
@@ -18,11 +17,12 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { telUrl } from "../../common/profile.js"
+import { ProfileAvatar } from "../../common/profile-avatar/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
-import { displayWebsite, initials } from "./helpers.js"
+import { displayWebsite } from "./helpers.js"
 import styles from "./style.module.css"
 
 export const template = {
@@ -74,14 +74,10 @@ export const template = {
                 align: "center",
                 gap: "sm",
                 children: [
-                  Avatar.render({
-                    src: profile.avatar_url || "",
-                    alt: profile.full_name ?? "",
-                    initials: initials(profile.full_name),
+                  ProfileAvatar.render({
+                    name: profile.full_name,
+                    src: profile.avatar_url,
                     size: "2xl",
-                    backgroundColor:
-                      "linear-gradient(135deg, #6b7a5e, #24402f)",
-                    textColor: "#fffdf7",
                   }),
                   Button.render({
                     children:
