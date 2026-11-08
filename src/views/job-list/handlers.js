@@ -3,8 +3,8 @@ import { handleAsync } from "@inglorious/store/async"
 import { fetchMyApplicationMap } from "../../api/applications.js"
 import { errorKey } from "../../api/errors.js"
 import {
+  fetchFeedRegions,
   fetchMyFeedDefaults,
-  fetchOpenJobRegions,
   fetchOpenJobsPage,
 } from "../../api/jobs.js"
 import {
@@ -83,6 +83,11 @@ export function periodSelect(entity, periodId, api) {
   refetch(entity, api)
 }
 
+export function statusSelect(entity, statusId, api) {
+  entity.activeStatus = statusId
+  refetch(entity, api)
+}
+
 export function sortSelect(entity, payload, api) {
   entity.activeSort =
     typeof payload === "string" ? payload : (payload?.value ?? DEFAULT_SORT)
@@ -95,6 +100,7 @@ export function filtersClear(entity, _, api) {
   entity.activeDetails = []
   entity.activeRegion = null
   entity.activePeriod = "all"
+  entity.activeStatus = "all"
   jobTypesFilterSync(entity, api)
   fetchRegions(entity, api, "reset")
 }
@@ -115,12 +121,13 @@ export const load = handleAsync("load", {
     entity.error = null
   },
   async run() {
-    const [appliedMap, defaults] = await Promise.all([
+    const [{ appliedMap, wonJobIds }, defaults] = await Promise.all([
       fetchMyApplicationMap(),
       fetchMyFeedDefaults(),
     ])
     return {
       appliedMap,
+      wonJobIds,
       favoriteRegions: defaults.favorite_regions,
       interests: defaults.interested_job_types,
       professions: defaults.professions,
@@ -128,10 +135,11 @@ export const load = handleAsync("load", {
   },
   success(
     entity,
-    { appliedMap, favoriteRegions, interests, professions },
+    { appliedMap, wonJobIds, favoriteRegions, interests, professions },
     api,
   ) {
     entity.appliedMap = appliedMap
+    entity.wonJobIds = wonJobIds
     entity.interests = interests
     entity.professions = professions
     entity.favoriteRegions = favoriteRegions
@@ -146,12 +154,12 @@ export const load = handleAsync("load", {
 })
 
 export const regionsFetch = handleAsync("regionsFetch", {
-  async run({ request, jobTypes, then }) {
+  async run({ request, jobTypes, wonJobIds, today, then }) {
     try {
       return {
         request,
         then,
-        regions: await fetchOpenJobRegions(jobTypes),
+        regions: await fetchFeedRegions(jobTypes, { wonJobIds, today }),
       }
     } catch (error) {
       return { request, then, error }
@@ -224,6 +232,8 @@ function fetchRegions(entity, api, then) {
         [...entity.professions],
       ),
     ),
+    wonJobIds: [...entity.wonJobIds],
+    today: localToday(),
   })
 }
 
@@ -266,6 +276,9 @@ function fetchPage(entity, api, { mode, from, to }) {
       regions: [...entity.regions],
       sort: entity.activeSort,
       today: localToday(),
+      status: entity.activeStatus,
+      appliedJobIds: Object.keys(entity.appliedMap),
+      wonJobIds: [...entity.wonJobIds],
     }),
   })
 }

@@ -46,6 +46,7 @@
   },
   "badge": {
     "assigned": "تم الإسناد",
+    "assignedToYou": "مُسند إليك",
     "closed": "مغلق",
     "closing": "يغلق قريبًا",
     "daysLeft_zero": "لا أيام متبقية",
@@ -161,6 +162,12 @@
     "jobTypeRequestSubject": "نوع عمل جديد في Vaitu",
     "jobTypeRequestBody": "نوع العمل المطلوب إضافته:\n\nمجال عملي:\n",
     "favoriteRegionsHint": "تعرض صفحتك هذه الأنواع افتراضيًا. اتركها فارغة لرؤيتها كلها."
+  },
+  "jobStatuses": {
+    "all": "الكل",
+    "open": "مفتوحة",
+    "applied": "تقدّمت إليها",
+    "won": "مُسندة إليّ"
   },
   "periods": {
     "all": "كل التواريخ",
@@ -312,6 +319,7 @@
     "skip": "تخطَّ الآن"
   },
   "jobs": {
+    "status": "الحالة",
     "title": "الأعمال",
     "search": "ابحث عن أعمال حسب المدينة أو الأسلوب أو النوع…",
     "feedPreferences": "تفضيلات الصفحة",

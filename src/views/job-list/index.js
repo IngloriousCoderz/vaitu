@@ -1,5 +1,6 @@
 import { debounce } from "@inglorious/utils/function"
 
+import { readUserId } from "../../api/session.js"
 import {
   interestsFor,
   jobTypeById,
@@ -25,6 +26,7 @@ import {
   search,
   searchRun,
   sortSelect,
+  statusSelect,
   typeToggle,
 } from "./handlers.js"
 import {
@@ -35,6 +37,7 @@ import {
   periods,
   professionsInScope,
   regionInEffect,
+  statuses,
 } from "./helpers.js"
 import { template } from "./template.js"
 
@@ -54,6 +57,7 @@ export const JobList = {
   professionToggle,
   detailToggle,
   periodSelect,
+  statusSelect,
   regionSelect,
   sortSelect,
   filtersToggle,
@@ -72,6 +76,7 @@ export const JobList = {
     entity.activeDetails ??= []
     entity.activeRegion ??= null
     entity.activePeriod ??= "all"
+    entity.activeStatus ??= "all"
     entity.activeSort ??= DEFAULT_SORT
     entity.isFiltersVisible ??= false
     entity.jobs ??= []
@@ -81,6 +86,7 @@ export const JobList = {
     entity.regionsRequest ??= 0
     entity.regions ??= []
     entity.appliedMap ??= {}
+    entity.wonJobIds ??= []
     entity.favoriteRegions ??= []
     entity.interests ??= []
     entity.professions ??= []
@@ -126,6 +132,7 @@ export const JobList = {
         total: entity.total,
         isLoadingMore: entity.isLoadingMore,
         appliedMap: entity.appliedMap,
+        wonJobIds: entity.wonJobIds,
         status: entity.status,
         error: entity.error,
         category: otherSettings.length ? undefined : onlySetting,
@@ -136,6 +143,9 @@ export const JobList = {
         active: filtersOn(entity),
         regions: regionsOf(entity),
         periods,
+        statuses,
+        activeStatus: entity.activeStatus,
+        isStatusVisible: Boolean(readUserId()),
         query: entity.query,
         activeDetails: entity.activeDetails,
         activeRegion: regionInEffect(
@@ -159,6 +169,7 @@ export const JobList = {
           if (kind === "detail") api.notify(`#${id}:detailToggle`, value)
           if (kind === "region") api.notify(`#${id}:regionSelect`, null)
           if (kind === "period") api.notify(`#${id}:periodSelect`, "all")
+          if (kind === "status") api.notify(`#${id}:statusSelect`, "all")
         },
         onSelectRegion: (region) => api.notify(`#${id}:regionSelect`, region),
         onCloseFilters: () => api.notify(`#${id}:filtersClose`),
@@ -168,6 +179,8 @@ export const JobList = {
         },
         onSelectPeriod: (periodId) =>
           api.notify(`#${id}:periodSelect`, periodId),
+        onSelectStatus: (statusId) =>
+          api.notify(`#${id}:statusSelect`, statusId),
         onClearFilters: () => api.notify(`#${id}:filtersClear`),
         onPageMore: () => api.notify(`#${id}:pageMore`),
         onOpenJob: (job_id) => {
@@ -198,6 +211,7 @@ function filtersOn(entity) {
     details: entity.activeDetails,
     region: entity.activeRegion,
     period: entity.activePeriod,
+    status: entity.activeStatus,
     regions: regionsOf(entity),
   })
 }

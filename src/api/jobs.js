@@ -144,6 +144,9 @@ export async function fetchJobDetail(id) {
     job: {
       ...view,
       pay: session ? await fetchJobPay(id) : null,
+      applicationStatus: session
+        ? await fetchMyApplicationStatus(id, session.user.id)
+        : null,
       posterId: job.poster_id,
       max_applicants: job.max_applicants,
       application_deadline: job.application_deadline,
@@ -163,6 +166,17 @@ export async function fetchJobDetail(id) {
     },
     posterName: posterName ?? "",
   }
+}
+
+async function fetchMyApplicationStatus(job_id, applicant_id) {
+  const { data, error } = await supabase
+    .from("applications")
+    .select("status")
+    .eq("job_id", job_id)
+    .eq("applicant_id", applicant_id)
+    .maybeSingle()
+  if (error) throw error
+  return data?.status ?? null
 }
 
 export async function fetchMyJobs() {
@@ -221,28 +235,30 @@ async function savePay(job_id, pay) {
   if (error) throw error
 }
 
-const OPEN_JOB_COLUMNS =
-  "id, category, profession, title, location, region, job_date, application_deadline, created_at, image_urls, details"
+const FEED_JOB_COLUMNS =
+  "id, category, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details"
 
 /**
- * One page of the open jobs a feed query matches (see feedQuery in
- * views/job-list), with how many it matches in all. Your own are left out:
- * they live in My jobs.
+ * One page of the jobs a feed query matches (see feedQuery in
+ * views/job-list), with how many it matches in all: open jobs, and the ones
+ * you won until their day. Your own are left out: they live in My jobs.
  * @param {ReturnType<typeof import("../views/job-list/query.js").feedQuery>} feed
  * @param {{ from: number, to: number }} range - Row indexes, both inclusive.
  */
 export async function fetchOpenJobsPage(feed, { from, to }) {
   if (feed.regions?.length === NO_ROWS) return { jobs: [], total: NO_ROWS }
+  const scope = scopeFilter(feed.scope)
+  if (!scope) return { jobs: [], total: NO_ROWS }
   const userId = readUserId()
   let query = supabase
     .from("jobs")
     .select(
       userId
-        ? `${OPEN_JOB_COLUMNS}, job_pay(${PAY_COLUMNS})`
-        : OPEN_JOB_COLUMNS,
+        ? `${FEED_JOB_COLUMNS}, job_pay(${PAY_COLUMNS})`
+        : FEED_JOB_COLUMNS,
       { count: "exact" },
     )
-    .eq("status", "open")
+    .or(scope)
   if (userId) query = query.neq("poster_id", userId)
   if (feed.jobTypes.length) query = query.in("job_type", feed.jobTypes)
   if (feed.details.length) {
@@ -273,17 +289,61 @@ export async function fetchOpenJobsPage(feed, { from, to }) {
   return { jobs: data.map(toViewModel), total: count ?? NO_ROWS }
 }
 
+// The feed's status filter as one PostgREST `or`, or null when it can match
+// nothing, such as "applied" before any application.
+function scopeFilter({ openJobs, appliedJobIds, wonJobIds, wonFrom }) {
+  const applied = appliedJobIds.join(",")
+  const parts = []
+  if (openJobs === "all") parts.push("status.eq.open")
+  if (openJobs === "notApplied") {
+    parts.push(
+      applied ? `and(status.eq.open,id.not.in.(${applied}))` : "status.eq.open",
+    )
+  }
+  if (openJobs === "applied" && applied) {
+    parts.push(`and(status.eq.open,id.in.(${applied}))`)
+  }
+  if (wonJobIds.length) {
+    parts.push(
+      `and(status.eq.assigned,id.in.(${wonJobIds.join(",")}),job_date.gte.${wonFrom})`,
+    )
+  }
+  return parts.length ? parts.join(",") : null
+}
+
 /**
- * Every region the feed could show a job in, as stored: open jobs other
- * than your own, of these job types (all of them when empty).
- * @param {string[]} jobTypes
+ * Every region the feed could show a job in with no filters, as stored: open
+ * jobs other than your own, and the ones you won until their day, of these
+ * job types (all of them when empty).
+ * @param {string[]} [jobTypes]
+ * @param {{ wonJobIds?: string[], today?: string }} [won]
  */
-export async function fetchOpenJobRegions(jobTypes = []) {
-  const { data, error } = await supabase
-    .rpc("open_job_regions", { job_types: jobTypes })
-    .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
-  if (error) throw error
-  return data
+export async function fetchFeedRegions(
+  jobTypes = [],
+  { wonJobIds = [], today } = {},
+) {
+  const [open, won] = await Promise.all([
+    supabase
+      .rpc("open_job_regions", { job_types: jobTypes })
+      .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS)),
+    wonJobIds.length ? wonJobRegions(jobTypes, wonJobIds, today) : null,
+  ])
+  if (open.error) throw open.error
+  if (won?.error) throw won.error
+  return [
+    ...new Set([...open.data, ...(won?.data ?? []).map((row) => row.region)]),
+  ]
+}
+
+function wonJobRegions(jobTypes, wonJobIds, today) {
+  let query = supabase
+    .from("jobs")
+    .select("region")
+    .eq("status", "assigned")
+    .in("id", wonJobIds)
+  if (today) query = query.gte("job_date", today)
+  if (jobTypes.length) query = query.in("job_type", jobTypes)
+  return query.abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
 }
 
 function escapeLike(text) {

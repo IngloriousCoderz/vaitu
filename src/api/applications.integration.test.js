@@ -14,13 +14,16 @@ import {
   signUp,
   updateAsService,
 } from "../testing/index.js"
+import { feedQuery, localToday } from "../views/job-list/query.js"
 import {
   fetchApplicants,
+  fetchMyApplicationMap,
   fetchReceivedDetail,
   updateMotivation,
   withdrawApplication,
 } from "./applications.js"
 import { supabase } from "./client.js"
+import { fetchFeedRegions, fetchJobDetail, fetchOpenJobsPage } from "./jobs.js"
 
 const MOTIVATION = "Available the whole day"
 const TEST_TIMEOUT_MS = REQUEST_TIMEOUT_MS + 5000
@@ -112,6 +115,49 @@ describe("applying and choosing a winner", () => {
     expect(jobError).toBeNull()
     expect(application.status).toBe("selected")
     expect(job.status).toBe("assigned")
+  })
+
+  test("the winner sees the job is theirs", async () => {
+    await signIn(GIADA)
+    const { job } = await fetchJobDetail(jobId)
+    expect(job.status).toBe("assigned")
+    expect(job.applicationStatus).toBe("selected")
+  })
+
+  test("the winner still finds the job in the feed", async () => {
+    await signIn(GIADA)
+    const { appliedMap, wonJobIds } = await fetchMyApplicationMap()
+    expect(wonJobIds).toContain(jobId)
+    const jobs = async (status) => {
+      const feed = feedQuery({
+        query: "",
+        types: [],
+        details: [],
+        interests: [],
+        activeProfessions: [],
+        myProfessions: [],
+        region: null,
+        period: "all",
+        favoriteRegions: [],
+        regions: [],
+        sort: "created_desc",
+        today: localToday(),
+        status,
+        appliedJobIds: Object.keys(appliedMap),
+        wonJobIds,
+      })
+      const page = await fetchOpenJobsPage(feed, { from: 0, to: 199 })
+      return page.jobs
+    }
+    const all = await jobs("all")
+    expect(all.find((job) => job.id === jobId)?.status).toBe("assigned")
+    expect(
+      await fetchFeedRegions([], { wonJobIds, today: localToday() }),
+    ).toContain(all.find((job) => job.id === jobId).region)
+    const ids = async (status) => (await jobs(status)).map((job) => job.id)
+    expect(await ids("won")).toContain(jobId)
+    expect(await ids("open")).not.toContain(jobId)
+    expect(await ids("applied")).not.toContain(jobId)
   })
 
   test("the winner withdrawing reopens the job", async () => {

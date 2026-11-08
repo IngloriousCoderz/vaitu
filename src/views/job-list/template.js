@@ -30,6 +30,7 @@ export const template = {
       total,
       isLoadingMore,
       appliedMap,
+      wonJobIds,
       status,
       error,
       category,
@@ -40,6 +41,9 @@ export const template = {
       active,
       regions,
       periods,
+      statuses,
+      activeStatus,
+      isStatusVisible,
       query,
       activeDetails,
       activeRegion,
@@ -53,6 +57,7 @@ export const template = {
       onSelectRegion,
       onOpenPreferences,
       onSelectPeriod,
+      onSelectStatus,
       onClearFilters,
       onOpenJob,
       onPageMore,
@@ -150,6 +155,17 @@ export const template = {
                     getLabel: (period) => t(period.label),
                   }),
                 }),
+                when(isStatusVisible, () =>
+                  this.renderFilterField({
+                    title: t("jobs.status"),
+                    control: this.renderChipRow({
+                      items: statuses,
+                      isActive: (item) => item.id === activeStatus,
+                      onSelect: onSelectStatus,
+                      getLabel: (item) => t(item.label),
+                    }),
+                  }),
+                ),
               ],
             }),
             actions: Button.render({
@@ -185,8 +201,12 @@ export const template = {
               content: () =>
                 jobs.map((job, index) =>
                   Card.render({
-                    job,
-                    isApplied: Boolean(appliedMap[job.id]),
+                    job: wonJobIds.includes(job.id)
+                      ? { ...job, applicationStatus: "selected" }
+                      : job,
+                    isApplied:
+                      Boolean(appliedMap[job.id]) &&
+                      !wonJobIds.includes(job.id),
                     onOpen: onOpenJob,
                     cover: true,
                     className: `vaitu-list-item ${styles.tile}`,

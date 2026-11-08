@@ -46,6 +46,7 @@
   },
   "badge": {
     "assigned": "決定済み",
+    "assignedToYou": "あなたに決定",
     "closed": "締切",
     "closing": "まもなく締切",
     "daysLeft_other": "残り{{count}}日",
@@ -151,6 +152,12 @@
     "jobTypeRequestSubject": "Vaituへの仕事の種類の追加依頼",
     "jobTypeRequestBody": "追加してほしい仕事の種類:\n\n私の職種:\n",
     "favoriteRegionsHint": "フィードには最初にこれらが表示されます。空欄のままにするとすべて表示されます。"
+  },
+  "jobStatuses": {
+    "all": "すべて",
+    "open": "募集中",
+    "applied": "応募済み",
+    "won": "自分に決定"
   },
   "periods": {
     "all": "すべての日程",
@@ -297,6 +304,7 @@
     "skip": "あとで"
   },
   "jobs": {
+    "status": "状況",
     "title": "仕事",
     "search": "都市・スタイル・ジャンルで仕事を検索…",
     "feedPreferences": "フィードの設定",

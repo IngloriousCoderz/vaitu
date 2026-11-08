@@ -46,6 +46,7 @@
   },
   "badge": {
     "assigned": "ASSIGNED",
+    "assignedToYou": "ASSIGNED TO YOU",
     "closed": "CLOSED",
     "closing": "CLOSING",
     "daysLeft_one": "{{count}} DAY LEFT",
@@ -153,6 +154,12 @@
     "jobTypeRequestSubject": "New job type for Vaitu",
     "jobTypeRequestBody": "Job type I'd like added:\n\nMy trade:\n",
     "favoriteRegionsHint": "Your feed shows these by default. Leave it empty to see all of them."
+  },
+  "jobStatuses": {
+    "all": "All",
+    "open": "Open",
+    "applied": "Applied",
+    "won": "Assigned to me"
   },
   "periods": {
     "all": "All dates",
@@ -300,6 +307,7 @@
     "skip": "Skip for now"
   },
   "jobs": {
+    "status": "Status",
     "title": "Jobs",
     "search": "Find jobs by city, style or genre…",
     "feedPreferences": "Feed preferences",

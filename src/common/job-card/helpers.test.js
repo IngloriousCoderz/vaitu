@@ -18,6 +18,18 @@ describe("deadline", () => {
     expect(deadlineBadge(job)).toBe("ASSIGNED")
   })
 
+  it("tells the winner the job is theirs", () => {
+    const job = {
+      status: "assigned",
+      applicationStatus: "selected",
+      daysLeft: WEEK_DAYS,
+    }
+    expect(deadlineBadge(job)).toBe("ASSIGNED TO YOU")
+    expect(deadlineBadge({ ...job, applicationStatus: "rejected" })).toBe(
+      "ASSIGNED",
+    )
+  })
+
   it("closes the badge at the deadline and marks the last day as closing", () => {
     expect(deadlineBadge({ daysLeft: 0 })).toBe("CLOSED")
     expect(deadlineBadge({ daysLeft: -1 })).toBe("CLOSED")

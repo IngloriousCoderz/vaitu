@@ -7,6 +7,13 @@ import {
 import { uniqueRegions } from "../../data/regions/resolve.js"
 import { detailAppliesTo, filterSections } from "./categories.js"
 
+export const statuses = [
+  { id: "all", label: "jobStatuses.all" },
+  { id: "open", label: "jobStatuses.open" },
+  { id: "applied", label: "jobStatuses.applied" },
+  { id: "won", label: "jobStatuses.won" },
+]
+
 export const periods = [
   { id: "all", days: null, label: "periods.all" },
   { id: "week", days: 7, label: "periods.week" },
@@ -65,6 +72,7 @@ export function activeFilters({
   details,
   region,
   period,
+  status = "all",
   regions,
 }) {
   const detailOptions = filterSections([]).flatMap((section) => section.options)
@@ -98,5 +106,14 @@ export function activeFilters({
     ...(period === "all" || !periodItem
       ? []
       : [{ kind: "period", id: period, label: periodItem.label }]),
+    ...(status === "all"
+      ? []
+      : [
+          {
+            kind: "status",
+            id: status,
+            label: statuses.find((item) => item.id === status)?.label ?? status,
+          },
+        ]),
   ]
 }

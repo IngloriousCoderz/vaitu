@@ -17,9 +17,9 @@ import { supabase } from "./client.js"
 import {
   createJob,
   deleteJob,
+  fetchFeedRegions,
   fetchJobForEdit,
   fetchMyJobs,
-  fetchOpenJobRegions,
   fetchOpenJobsPage,
   updateJob,
 } from "./jobs.js"
@@ -202,6 +202,12 @@ describe("the feed", () => {
         dateTo: null,
         search: `ada${ownedUuid}`.toLowerCase(),
         order: [["created_at", false]],
+        scope: {
+          openJobs: "all",
+          appliedJobIds: [],
+          wonJobIds: [],
+          wonFrom: "2000-01-01",
+        },
       }
       const page = await fetchOpenJobsPage(feed, { from: 0, to: 23 })
       expect(page.jobs.map((job) => job.id)).toEqual([ownedJobId])
@@ -219,16 +225,12 @@ describe("the feed", () => {
       )
       expect(otherTrade.total).toBe(0)
 
-      expect(await fetchOpenJobRegions()).toContain(region)
-      expect(await fetchOpenJobRegions(["wedding_photographer"])).toContain(
-        region,
-      )
-      expect(await fetchOpenJobRegions(["office_cleaner"])).not.toContain(
-        region,
-      )
+      expect(await fetchFeedRegions()).toContain(region)
+      expect(await fetchFeedRegions(["wedding_photographer"])).toContain(region)
+      expect(await fetchFeedRegions(["office_cleaner"])).not.toContain(region)
 
       await signIn(ANTONY)
-      expect(await fetchOpenJobRegions()).not.toContain(region)
+      expect(await fetchFeedRegions()).not.toContain(region)
     },
     TEST_TIMEOUT_MS,
   )

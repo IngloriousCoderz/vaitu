@@ -32,7 +32,29 @@ describe("feedQuery", () => {
       dateTo: null,
       search: "",
       order: [["created_at", false]],
+      scope: {
+        openJobs: "all",
+        appliedJobIds: [],
+        wonJobIds: [],
+        wonFrom: "2026-10-28",
+      },
     })
+  })
+
+  it("shows open jobs and won ones, narrowed by status", () => {
+    const ids = { appliedJobIds: ["a", "w"], wonJobIds: ["w"] }
+    const scope = (status) => query({ ...ids, status }).scope
+    expect(scope("all")).toMatchObject({ openJobs: "all", wonJobIds: ["w"] })
+    expect(scope("open")).toMatchObject({
+      openJobs: "notApplied",
+      wonJobIds: [],
+    })
+    expect(scope("applied")).toMatchObject({
+      openJobs: "applied",
+      appliedJobIds: ["a", "w"],
+      wonJobIds: [],
+    })
+    expect(scope("won")).toMatchObject({ openJobs: "none", wonJobIds: ["w"] })
   })
 
   it("scopes the job types to the picked ones, a style's, or the interests", () => {

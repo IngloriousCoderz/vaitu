@@ -46,6 +46,7 @@
   },
   "badge": {
     "assigned": "ASSEGNATO",
+    "assignedToYou": "ASSEGNATO A TE",
     "closed": "CHIUSO",
     "closing": "IN CHIUSURA",
     "daysLeft_one": "MANCA {{count}} GIORNO",
@@ -155,6 +156,12 @@
     "jobTypeRequestSubject": "Nuovo tipo di lavoro per Vaitu",
     "jobTypeRequestBody": "Tipo di lavoro da aggiungere:\n\nDi cosa mi occupo:\n",
     "favoriteRegionsHint": "Il tuo feed mostra questi di default. Lascia vuoto per vederli tutti."
+  },
+  "jobStatuses": {
+    "all": "Tutti",
+    "open": "Aperti",
+    "applied": "Candidato",
+    "won": "Assegnati a me"
   },
   "periods": {
     "all": "Tutte le date",
@@ -304,6 +311,7 @@
     "skip": "Salta per ora"
   },
   "jobs": {
+    "status": "Stato",
     "title": "Lavori",
     "search": "Cerca lavori per città, stile o genere…",
     "feedPreferences": "Preferenze del feed",

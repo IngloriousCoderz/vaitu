@@ -14,6 +14,15 @@ import {
   regionInEffect,
 } from "./helpers.js"
 
+// Which open jobs each status shows. Won jobs are assigned, not open: "all"
+// and "won" add them separately, until the day of the job.
+const OPEN_JOBS_BY_STATUS = {
+  all: "all",
+  open: "notApplied",
+  applied: "applied",
+  won: "none",
+}
+
 const SORT_ORDERS = {
   created_desc: [["created_at", false]],
   created_asc: [["created_at", true]],
@@ -38,6 +47,12 @@ const SORT_ORDERS = {
  *   dateTo: string | null,
  *   search: string,
  *   order: [string, boolean][],
+ *   scope: {
+ *     openJobs: "all" | "notApplied" | "applied" | "none",
+ *     appliedJobIds: string[],
+ *     wonJobIds: string[],
+ *     wonFrom: string,
+ *   },
  * }} Empty job types mean all of them, null regions every region, and an empty list of regions none.
  */
 export function feedQuery({
@@ -53,6 +68,9 @@ export function feedQuery({
   regions,
   sort,
   today,
+  status = "all",
+  appliedJobIds = [],
+  wonJobIds = [],
 }) {
   const days = periods.find((item) => item.id === period)?.days ?? null
   return {
@@ -80,6 +98,12 @@ export function feedQuery({
     dateTo: days === null ? null : addDays(today, days),
     search: plain(query),
     order: SORT_ORDERS[sort] ?? SORT_ORDERS[DEFAULT_SORT],
+    scope: {
+      openJobs: OPEN_JOBS_BY_STATUS[status] ?? OPEN_JOBS_BY_STATUS.all,
+      appliedJobIds,
+      wonJobIds: status === "all" || status === "won" ? wonJobIds : [],
+      wonFrom: today,
+    },
   }
 }
 

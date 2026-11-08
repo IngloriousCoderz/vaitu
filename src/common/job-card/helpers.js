@@ -26,7 +26,13 @@ export function jobMonogram(job) {
 }
 
 export function deadlineBadge(job) {
-  if (job.status === "assigned") return t("badge.assigned")
+  if (job.status === "assigned") {
+    return t(
+      job.applicationStatus === "selected"
+        ? "badge.assignedToYou"
+        : "badge.assigned",
+    )
+  }
   if (job.daysLeft <= NO_DAYS_LEFT) return t("badge.closed")
   if (job.daysLeft <= CLOSING_MAX_DAYS) return t("badge.closing")
   if (job.daysLeft < WEEK_DAYS)

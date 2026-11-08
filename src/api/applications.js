@@ -32,19 +32,29 @@ export async function fetchMyApplications() {
   }))
 }
 
+/**
+ * Your live applications as the feed needs them: the application of each job
+ * you applied to, and the jobs you won.
+ * @returns {Promise<{ appliedMap: Record<string, string>, wonJobIds: string[] }>}
+ */
 export async function fetchMyApplicationMap() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) return {}
+  if (!user) return { appliedMap: {}, wonJobIds: [] }
   const { data, error } = await supabase
     .from("applications")
-    .select("id,job_id")
+    .select("id,job_id,status")
     .eq("applicant_id", user.id)
     .neq("status", "withdrawn")
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
-  return Object.fromEntries(data.map((row) => [row.job_id, row.id]))
+  return {
+    appliedMap: Object.fromEntries(data.map((row) => [row.job_id, row.id])),
+    wonJobIds: data
+      .filter((row) => row.status === "selected")
+      .map((row) => row.job_id),
+  }
 }
 
 export async function fetchApplicationDetail(application_id) {

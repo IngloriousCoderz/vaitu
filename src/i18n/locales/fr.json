@@ -46,6 +46,7 @@
   },
   "badge": {
     "assigned": "ATTRIBUÉ",
+    "assignedToYou": "ATTRIBUÉ À VOUS",
     "closed": "FERMÉ",
     "closing": "BIENTÔT FERMÉ",
     "daysLeft_one": "PLUS QUE {{count}} JOUR",
@@ -155,6 +156,12 @@
     "jobTypeRequestSubject": "Nouveau type de mission pour Vaitu",
     "jobTypeRequestBody": "Type de mission à ajouter :\n\nMon métier :\n",
     "favoriteRegionsHint": "Votre fil les affiche par défaut. Laissez vide pour tous les voir."
+  },
+  "jobStatuses": {
+    "all": "Tous",
+    "open": "Ouverts",
+    "applied": "Candidaté",
+    "won": "Attribués à moi"
   },
   "periods": {
     "all": "Toutes les dates",
@@ -304,6 +311,7 @@
     "skip": "Plus tard"
   },
   "jobs": {
+    "status": "Statut",
     "title": "Missions",
     "search": "Chercher par ville, style ou genre…",
     "feedPreferences": "Préférences du fil",
