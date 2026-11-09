@@ -4,9 +4,13 @@
   "languageLabel": "Lingua",
   "eyebrow": "Per chi lavora ai matrimoni",
   "headline": "Non puoi esserci più? Di' a un collega: “vai tu”.",
-  "lede": "Vaitu è il posto in cui i professionisti dei matrimoni passano i lavori che non possono fare e trovano quelli che possono fare. Chi passa il lavoro sceglie chi ci va.",
+  "lede": "Vaitu è il posto in cui i professionisti dei matrimoni passano i lavori che non possono fare e trovano quelli che possono fare.",
+  "highlights": [
+    "Non puoi esserci? I colleghi si candidano e scegli tu chi ci va",
+    "Cerchi lavoro? Ricevi un avviso quando ce n'è uno adatto",
+    "Pubblicare, candidarsi e scegliere è gratis, per sempre"
+  ],
   "cta": "Inizia",
-  "ctaNote": "Pubblicare, candidarsi e scegliere è gratis, per sempre.",
   "nameOrigin": "Il nome viene da “vai tu”, ovvero quello che dici a un collega quando gli passi un lavoro.",
   "howTitle": "Come funziona",
   "steps": [
@@ -23,6 +27,22 @@
       "body": "Confronta i candidati, contatta chi preferisci e accordatevi direttamente."
     }
   ],
+  "pointsTitle": "Punti e livelli",
+  "pointsBody": "Ogni lavoro che fai ti fa guadagnare punti, e le recensioni ne aggiungono o ne tolgono. I punti ti danno un livello, che chi pubblica vede quando ti candidi.",
+  "pointsRules": {
+    "perCompletedJob": "per ogni lavoro fatto",
+    "perGoodReview": "per ogni recensione da {{stars}}★ in su",
+    "perPoorReview": "per ogni recensione da {{stars}}★ in giù",
+    "perDropout": "per ogni lavoro lasciato dopo averlo ottenuto",
+    "perNoShow": "per ogni mancata presenza",
+    "perPaymentIssue": "per ogni segnalazione di compenso concordato non pagato"
+  },
+  "tiers": {
+    "bronze": "Bronzo",
+    "silver": "Argento",
+    "gold": "Oro"
+  },
+  "tierFrom": "da {{points}} punti",
   "sidesTitle": "Utile da entrambe le parti",
   "sides": [
     {
@@ -72,11 +92,38 @@
   ],
   "earlyTitle": "Siamo all'inizio.",
   "earlyBody": "All'inizio i lavori saranno pochi. Scegli professioni e regioni e ti avviseremo quando ne arriva uno adatto a te.",
+  "aboutTitle": "Chi siamo",
+  "about": {
+    "intro": "Dietro a Vaitu ci siamo noi due: Giada e Matteo Antony. Una coppia nella vita e, oggi, soci in questa avventura.",
+    "people": [
+      {
+        "id": "giada",
+        "name": "Giada",
+        "title": "Sono {{name}}, fotografa, e il progetto è nato da una mia idea.",
+        "body": "Ho immaginato Vaitu partendo da un problema reale. Il mio obiettivo era tanto semplice quanto ambizioso: trasformare la solidarietà tra colleghi in qualcosa di facile, sicuro e immediato."
+      },
+      {
+        "id": "matteo",
+        "name": "Matteo Antony",
+        "title": "Lui è {{name}}, lo sviluppatore e il cuore tecnico.",
+        "body": "Se l'idea è stata la scintilla, è lui ad averla resa reale. Con la sua competenza e la passione per la tecnologia, ha trasformato un'esigenza umana in un'app fluida, intuitiva e pensata davvero per le persone."
+      }
+    ],
+    "visionTitle": "La nostra visione",
+    "vision": [
+      "Crediamo in un modo di lavorare più flessibile, umano e solidale, dove aiutarsi non sia l'eccezione, ma la normalità.",
+      "Oggi Vaitu siamo noi, che l'abbiamo sognato e costruito, ma soprattutto siete voi: una community che sceglie di coprirsi le spalle a vicenda, di scambiarsi il favore giusto al momento giusto e di rendere il lavoro un po' più leggero."
+    ]
+  },
   "faqTitle": "Domande frequenti",
   "faq": [
     {
       "question": "Quanto costa?",
       "answer": "Pubblicare un lavoro, candidarsi e scegliere chi ci va è gratis, e lo resterà sempre. Più avanti potremmo aggiungere extra facoltativi a pagamento."
+    },
+    {
+      "question": "Come funzionano i punti?",
+      "answer": "Guadagni {{perCompletedJob}} punti per ogni lavoro fatto e {{perGoodReview}} per ogni recensione positiva. Le recensioni negative, lasciare un lavoro ottenuto e le mancate presenze tolgono punti. A {{bronze}}, {{silver}} e {{gold}} punti raggiungi Bronzo, Argento e Oro."
     },
     {
       "question": "Come ci mettiamo in contatto?",

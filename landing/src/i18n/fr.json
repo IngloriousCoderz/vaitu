@@ -4,9 +4,13 @@
   "languageLabel": "Langue",
   "eyebrow": "Pour ceux qui travaillent sur des mariages",
   "headline": "Vous ne pouvez pas y être ? Dites à un collègue : « vai tu ».",
-  "lede": "Vaitu permet aux professionnels du mariage de confier les missions qu'ils ne peuvent pas assurer et de trouver celles qu'ils peuvent. Celui qui confie la mission choisit qui y va.",
+  "lede": "Vaitu permet aux professionnels du mariage de confier les missions qu'ils ne peuvent pas assurer et de trouver celles qu'ils peuvent.",
+  "highlights": [
+    "Indisponible ? Des collègues candidatent et vous choisissez qui y va",
+    "Vous cherchez du travail ? Recevez une alerte quand une mission convient",
+    "Publier, candidater et choisir est gratuit, pour toujours"
+  ],
   "cta": "Commencer",
-  "ctaNote": "Publier, candidater et choisir : c'est gratuit, pour toujours.",
   "nameOrigin": "Le nom vient de l'italien « vai tu », « vas-y toi » : ce qu'on dit à un collègue en lui passant une mission.",
   "howTitle": "Comment ça marche",
   "steps": [
@@ -23,6 +27,22 @@
       "body": "Comparez les candidats, contactez celui que vous préférez et mettez-vous d'accord directement."
     }
   ],
+  "pointsTitle": "Points et rangs",
+  "pointsBody": "Chaque mission réalisée rapporte des points, et les avis en ajoutent ou en retirent. Vos points vous donnent un rang, visible quand vous candidatez.",
+  "pointsRules": {
+    "perCompletedJob": "par mission réalisée",
+    "perGoodReview": "par avis de {{stars}}★ ou plus",
+    "perPoorReview": "par avis de {{stars}}★ ou moins",
+    "perDropout": "par mission abandonnée après l'avoir obtenue",
+    "perNoShow": "par absence",
+    "perPaymentIssue": "par signalement de montant convenu non payé"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Argent",
+    "gold": "Or"
+  },
+  "tierFrom": "dès {{points}} points",
   "sidesTitle": "Utile des deux côtés",
   "sides": [
     {
@@ -72,11 +92,38 @@
   ],
   "earlyTitle": "Nous débutons.",
   "earlyBody": "Les missions seront peu nombreuses au début. Choisissez vos métiers et régions, et nous vous préviendrons lorsqu'une mission convient.",
+  "aboutTitle": "Qui sommes-nous",
+  "about": {
+    "intro": "Derrière Vaitu, il y a nous : Giada et Matteo Antony. Un couple dans la vie et, aujourd'hui, associés dans cette aventure.",
+    "people": [
+      {
+        "id": "giada",
+        "name": "Giada",
+        "title": "Je suis {{name}}, photographe et à l'origine du projet.",
+        "body": "J'ai imaginé Vaitu à partir d'un problème réel. Mon objectif était aussi simple qu'ambitieux : transformer la solidarité entre collègues en quelque chose de facile, sûr et immédiat."
+      },
+      {
+        "id": "matteo",
+        "name": "Matteo Antony",
+        "title": "Lui, c'est {{name}}, le développeur et le cœur technique.",
+        "body": "Si l'idée a été l'étincelle, c'est lui qui l'a rendue réelle. Avec son savoir-faire et sa passion pour la technologie, il a traduit un besoin humain en une application fluide, intuitive et vraiment pensée pour les personnes."
+      }
+    ],
+    "visionTitle": "Notre vision",
+    "vision": [
+      "Nous croyons en une façon de travailler plus flexible, humaine et solidaire, où s'entraider n'est pas l'exception, mais la norme.",
+      "Aujourd'hui, Vaitu, c'est nous qui l'avons rêvé et construit, mais c'est surtout vous : une communauté qui choisit de se serrer les coudes, de se rendre le bon service au bon moment et de rendre le travail un peu plus léger."
+    ]
+  },
   "faqTitle": "Questions",
   "faq": [
     {
       "question": "Combien ça coûte ?",
       "answer": "Publier une mission, candidater et choisir qui y va est gratuit, et le restera toujours. Plus tard, nous pourrons ajouter des options payantes facultatives."
+    },
+    {
+      "question": "Comment fonctionnent les points ?",
+      "answer": "Vous gagnez {{perCompletedJob}} points par mission réalisée et {{perGoodReview}} par avis positif. Les avis négatifs, l'abandon d'une mission obtenue et les absences en retirent. À {{bronze}}, {{silver}} et {{gold}} points, vous atteignez Bronze, Argent et Or."
     },
     {
       "question": "Comment se contacter ?",

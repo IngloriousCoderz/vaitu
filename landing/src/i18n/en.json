@@ -4,9 +4,13 @@
   "languageLabel": "Language",
   "eyebrow": "For people who work at weddings",
   "headline": "Can't make it? Tell a colleague: “vai tu”.",
-  "lede": "Vaitu is where wedding professionals pass on the jobs they can't take, and find the ones they can. Whoever passes a job on chooses who goes.",
+  "lede": "Vaitu is where wedding professionals pass on the jobs they can't take, and find the ones they can.",
+  "highlights": [
+    "Can't make it? Colleagues apply and you choose who goes",
+    "Looking for work? Get an alert when a job fits",
+    "Publishing, applying and choosing are free, always"
+  ],
   "cta": "Get started",
-  "ctaNote": "Publishing, applying and choosing are free, always.",
   "nameOrigin": "The name comes from the Italian “vai tu”, “you go”: what you tell a colleague when you pass them a job.",
   "howTitle": "How it works",
   "steps": [
@@ -23,6 +27,22 @@
       "body": "Compare applicants, contact the one you prefer and agree the details directly."
     }
   ],
+  "pointsTitle": "Points and ranks",
+  "pointsBody": "Every job you do earns points, and reviews add or take some away. Your points give you a rank, and posters see it when you apply.",
+  "pointsRules": {
+    "perCompletedJob": "per job done",
+    "perGoodReview": "per review of {{stars}}★ or more",
+    "perPoorReview": "per review of {{stars}}★ or less",
+    "perDropout": "per job dropped after winning it",
+    "perNoShow": "per no-show",
+    "perPaymentIssue": "per report of not paying what you agreed"
+  },
+  "tiers": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold"
+  },
+  "tierFrom": "from {{points}} points",
   "sidesTitle": "Useful on both sides",
   "sides": [
     {
@@ -72,11 +92,38 @@
   ],
   "earlyTitle": "We're just getting started.",
   "earlyBody": "There won't be many jobs at first. Choose your professions and regions, and we'll let you know when one fits.",
+  "aboutTitle": "About us",
+  "about": {
+    "intro": "Behind Vaitu are the two of us: Giada and Matteo Antony. A couple in life and, today, partners in this adventure.",
+    "people": [
+      {
+        "id": "giada",
+        "name": "Giada",
+        "title": "I'm {{name}}, a photographer and the one who came up with the project.",
+        "body": "I imagined Vaitu starting from a real problem. My goal was as simple as it was ambitious: to turn solidarity between colleagues into something easy, safe and immediate."
+      },
+      {
+        "id": "matteo",
+        "name": "Matteo Antony",
+        "title": "He's {{name}}, the developer and the technical heart.",
+        "body": "If the idea was the spark, he's the one who made it real. With his skill and his passion for technology, he turned a human need into an app that is smooth, intuitive and truly made for people."
+      }
+    ],
+    "visionTitle": "Our vision",
+    "vision": [
+      "We believe in a more flexible, human and supportive way of working, where helping each other isn't the exception but the norm.",
+      "Today Vaitu is us, who dreamed it up and built it, but above all it's you: a community that chooses to have each other's backs, to trade the right favour at the right time, and to make work a little lighter."
+    ]
+  },
   "faqTitle": "Questions",
   "faq": [
     {
       "question": "How much does it cost?",
       "answer": "Publishing a job, applying and choosing who goes are free, and always will be. Later we may add optional paid extras."
+    },
+    {
+      "question": "How do points work?",
+      "answer": "You earn {{perCompletedJob}} points for each job done and {{perGoodReview}} for each good review. Poor reviews, dropping a job you won and no-shows take points away. At {{bronze}}, {{silver}} and {{gold}} points you reach Bronze, Silver and Gold."
     },
     {
       "question": "How do we get in touch?",

@@ -1,9 +1,21 @@
 import { html } from "@inglorious/web"
 
 import { Footer, Header } from "../components/layout.js"
+import {
+  fill,
+  GOOD_REVIEW_MIN_STARS,
+  POINTS,
+  POOR_REVIEW_MAX_STARS,
+  signed,
+  TIERS,
+} from "../points.js"
 import { copy, localeOf, pageHead } from "../site.js"
 
 const APP_URL = import.meta.env.VITE_APP_URL
+const PROFILES = {
+  giada: "https://www.instagram.com/giadajoey.studio",
+  matteo: "https://www.linkedin.com/in/antonymistretta",
+}
 
 export const metadata = (entity) => {
   const { title, description } = copy(entity)
@@ -32,6 +44,9 @@ export const landing = {
           <p class="eyebrow">${c.eyebrow}</p>
           <h1>${c.headline}</h1>
           <p class="lede">${c.lede}</p>
+          <ul class="highlights">
+            ${c.highlights.map((highlight) => html`<li>${highlight}</li>`)}
+          </ul>
           <a
             class="cta"
             href=${`${APP_URL}/${lang}`}
@@ -39,11 +54,10 @@ export const landing = {
             rel="noopener"
             >${c.cta}</a
           >
-          <p class="note">${c.ctaNote}</p>
           <p class="name">${c.nameOrigin}</p>
         </section>
 
-        <section class="band">
+        <section class="band deep">
           <h2>${c.howTitle}</h2>
           <ol class="steps">
             ${c.steps.map(
@@ -54,6 +68,7 @@ export const landing = {
                 </li>`,
             )}
           </ol>
+          ${renderPoints(c)}
         </section>
 
         <section>
@@ -92,6 +107,20 @@ export const landing = {
           <p class="early"><strong>${c.earlyTitle}</strong> ${c.earlyBody}</p>
         </section>
 
+        <section class="band deep about">
+          <h2>${c.aboutTitle}</h2>
+          <div class="story">
+            <p>${c.about.intro}</p>
+            ${c.about.people.map(
+              (person) =>
+                html`<h3>${renderName(person)}</h3>
+                  <p>${person.body}</p>`,
+            )}
+            <h3>${c.about.visionTitle}</h3>
+            ${c.about.vision.map((paragraph) => html`<p>${paragraph}</p>`)}
+          </div>
+        </section>
+
         <section class="band">
           <h2>${c.faqTitle}</h2>
           <div class="faq">
@@ -99,7 +128,7 @@ export const landing = {
               (item) =>
                 html`<details>
                   <summary>${item.question}</summary>
-                  <p>${item.answer}</p>
+                  <p>${fill(item.answer, { ...POINTS, ...TIERS })}</p>
                 </details>`,
             )}
           </div>
@@ -120,4 +149,42 @@ export const landing = {
       ${Footer.render(entity)}
     `
   },
+}
+
+function renderPoints(c) {
+  const stars = {
+    perGoodReview: GOOD_REVIEW_MIN_STARS,
+    perPoorReview: POOR_REVIEW_MAX_STARS,
+  }
+  return html`
+    <div class="points">
+      <div>
+        <h3>${c.pointsTitle}</h3>
+        <p>${c.pointsBody}</p>
+      </div>
+      <ul class="rules">
+        ${Object.entries(POINTS).map(
+          ([key, points]) =>
+            html`<li>
+              <strong>${signed(points)}</strong>
+              ${fill(c.pointsRules[key], { stars: stars[key] })}
+            </li>`,
+        )}
+      </ul>
+      <ul class="tiers">
+        ${Object.entries(TIERS).map(
+          ([tier, points]) =>
+            html`<li class=${tier}>
+              <strong>${c.tiers[tier]}</strong>
+              ${fill(c.tierFrom, { points })}
+            </li>`,
+        )}
+      </ul>
+    </div>
+  `
+}
+
+function renderName({ id, name, title }) {
+  const [before, after] = title.split("{{name}}")
+  return html`${before}<a href=${PROFILES[id]}>${name}</a>${after}`
 }
