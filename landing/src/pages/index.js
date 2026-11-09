@@ -110,14 +110,24 @@ export const landing = {
         <section class="band deep about">
           <h2>${c.aboutTitle}</h2>
           <div class="story">
-            <p>${c.about.intro}</p>
-            ${c.about.people.map(
-              (person) =>
-                html`<h3>${renderName(person)}</h3>
-                  <p>${person.body}</p>`,
-            )}
-            <h3>${c.about.visionTitle}</h3>
-            ${c.about.vision.map((paragraph) => html`<p>${paragraph}</p>`)}
+            <img
+              class="portrait"
+              src="/images/giada-matteo.webp"
+              alt=${c.about.photoAlt}
+              width="720"
+              height="900"
+              loading="lazy"
+            />
+            <div class="story-text">
+              <p>${c.about.intro}</p>
+              ${c.about.people.map(
+                (person) =>
+                  html`<h3>${renderName(person)}</h3>
+                    <p>${person.body}</p>`,
+              )}
+              <h3>${c.about.visionTitle}</h3>
+              ${c.about.vision.map((paragraph) => html`<p>${paragraph}</p>`)}
+            </div>
           </div>
         </section>
 
