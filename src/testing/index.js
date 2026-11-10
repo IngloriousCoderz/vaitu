@@ -118,6 +118,11 @@ export async function userExists(userId) {
   return Boolean(data?.user)
 }
 
+export async function insertAsService(table, rows) {
+  const { error } = await serviceRoleClient().from(table).insert(rows)
+  if (error) throw error
+}
+
 export async function updateAsService(table, column, value, fields) {
   const { error } = await serviceRoleClient()
     .from(table)

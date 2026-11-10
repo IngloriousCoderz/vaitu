@@ -35,6 +35,11 @@ lists which tables each one reads, and `src/api/live.js` wires them to
 Supabase Realtime. A tap on a row marks it read and opens what it is about
 (`pathFor`).
 
+A notification only points to a job or an application, which keep their own
+state, so old ones go: `purge_old_rows()` runs nightly on `pg_cron` and deletes
+read notifications after 30 days and any after 90. It also clears expired
+erasure links and keeps a week of `pg_cron`'s own log.
+
 ## Pushes
 
 ### Asking

@@ -59,7 +59,9 @@ from a clean checkout of `HEAD`, so uncommitted changes never ship. It signs
 the zip with your private key and uploads it with the service role key, which
 it asks the Supabase CLI for, as `pnpm vault:push` does. It is the
 `inglorious-live-update` command from `@inglorious/supabase`, which
-`build:release` and `live:keys` use too.
+`build:release` and `live:keys` use too. The bucket keeps the new bundle and
+the one before, for a device still downloading it; older ones are deleted, since
+a bundle that fails rolls back to the code built into the app.
 
 Every push to `main` does it, from `.husky/pre-push`, which reads git's refs
 first:
