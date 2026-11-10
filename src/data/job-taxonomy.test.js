@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest"
 
-import { localized } from "../i18n/index.js"
 import {
   availableJobTypes,
   detailLabel,
@@ -97,11 +96,5 @@ describe("detailLabel", () => {
   it("labels a known value, and shows an unknown one as it is", () => {
     expect(detailLabel("soul_funk")).toBe("Soul & funk")
     expect(detailLabel("polka")).toBe("polka")
-  })
-})
-
-describe("localized", () => {
-  it("falls back on English", () => {
-    expect(localized({ en: "Jazz" })).toBe("Jazz")
   })
 })

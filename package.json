@@ -54,7 +54,7 @@
     "@capawesome/capacitor-live-update": "^8.8.1",
     "@iconify-icons/material-symbols": "^2.0.8",
     "@inglorious/firebase": "^0.1.1",
-    "@inglorious/i18n": "^2.0.0",
+    "@inglorious/i18n": "^2.1.0",
     "@inglorious/motion": "^9.0.18",
     "@inglorious/store": "^12.3.0",
     "@inglorious/supabase": "^0.7.0",

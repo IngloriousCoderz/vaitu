@@ -191,8 +191,8 @@ importers:
         specifier: ^0.1.1
         version: 0.1.1(@capacitor-firebase/analytics@8.6.0(@capacitor/core@8.6.0)(firebase@13.2.0))(@capacitor-firebase/messaging@8.6.0(@capacitor/core@8.6.0)(firebase@13.2.0))(@capacitor/core@8.6.0)(firebase@13.2.0)
       '@inglorious/i18n':
-        specifier: ^2.0.0
-        version: 2.0.0(typescript@7.0.2)
+        specifier: ^2.1.0
+        version: 2.1.0(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.18
         version: 9.0.18(@inglorious/web@6.21.0(@inglorious/store@12.3.0(@inglorious/utils@5.1.0)))
@@ -1485,8 +1485,8 @@ packages:
       '@capacitor-firebase/messaging':
         optional: true
 
-  '@inglorious/i18n@2.0.0':
-    resolution: {integrity: sha512-XPHYKHJC0YPupZntqZvgB6Wff8ox4nXzrtdq2cKUos9OcqQRHSMC39UCsvYdo+voT37paqXWVdth90jXw2xqLA==}
+  '@inglorious/i18n@2.1.0':
+    resolution: {integrity: sha512-BBs+9mJo6t3nNHokiWMHYfGneQFmBvgwAbOiyW9ixOMCM9x1ee9GKJXpY2Kb5eTPa3Isnk0G98pm08m75MKNYg==}
     engines: {node: '>= 26'}
 
   '@inglorious/motion@9.0.18':
@@ -3035,8 +3035,9 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  i18next@26.5.11:
-    resolution: {integrity: sha512-Wc0klBPKxqZ2tL2qdAnF8xvvnWgr1IMGSY2ikTiAvaFVbz7xiFARtkoU4RidBDw1SyziGROp0qxu6qnJ7l2Wug==}
+  i18next@27.0.1:
+    resolution: {integrity: sha512-KaE5ozP8UUeVpOJIwMVbbnpRKpyYQuxd9ZbseJoDzezE3nvLnZZQn20pkzyIJwPI2Uet/Qs3WzPTG812f6F/Eg==}
+    engines: {node: '>=22'}
     peerDependencies:
       typescript: ^5 || ^6 || ^7
     peerDependenciesMeta:
@@ -5723,9 +5724,9 @@ snapshots:
       '@capacitor-firebase/analytics': 8.6.0(@capacitor/core@8.6.0)(firebase@13.2.0)
       '@capacitor-firebase/messaging': 8.6.0(@capacitor/core@8.6.0)(firebase@13.2.0)
 
-  '@inglorious/i18n@2.0.0(typescript@7.0.2)':
+  '@inglorious/i18n@2.1.0(typescript@7.0.2)':
     dependencies:
-      i18next: 26.5.11(typescript@7.0.2)
+      i18next: 27.0.1(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -7302,7 +7303,7 @@ snapshots:
 
   husky@9.1.7: {}
 
-  i18next@26.5.11(typescript@7.0.2):
+  i18next@27.0.1(typescript@7.0.2):
     optionalDependencies:
       typescript: 7.0.2
 
