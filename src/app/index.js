@@ -75,6 +75,15 @@ const DRAWER_PATHS = {
   about: paths.about,
 }
 
+/** The top-level pages: back from one closes the app on Android. */
+export const ROOT_PATHS = [
+  ...new Set([
+    "/",
+    ...Object.values(TAB_PATHS),
+    ...Object.values(DRAWER_PATHS),
+  ]),
+]
+
 export const App = {
   render(_, api) {
     const router = api.getEntity("router")
@@ -310,7 +319,10 @@ export const App = {
       onCollapseToggle: () => api.notify("#shell:drawerCollapseToggle"),
       onNavigate: (id) => {
         api.notify("#shell:drawerClose")
-        api.notify("#router:navigate", DRAWER_PATHS[id] ?? paths.jobs)
+        api.notify("#router:navigate", {
+          to: DRAWER_PATHS[id] ?? paths.jobs,
+          replace: true,
+        })
       },
     })
   },
@@ -322,7 +334,10 @@ export const App = {
       value: chrome.tab,
       isHidden: chrome.isHidden,
       onNavigate: (value) =>
-        api.notify("#router:navigate", TAB_PATHS[value] ?? paths.jobs),
+        api.notify("#router:navigate", {
+          to: TAB_PATHS[value] ?? paths.jobs,
+          replace: true,
+        }),
     })
   },
 
