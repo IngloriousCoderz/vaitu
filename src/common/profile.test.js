@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { isProfileComplete, mailtoUrl, telUrl } from "./profile.js"
+import {
+  isProfileComplete,
+  mailtoUrl,
+  telUrl,
+  websiteLabel,
+} from "./profile.js"
 
 const complete = {
   full_name: "Ada Grace",
@@ -34,5 +39,15 @@ describe("telUrl", () => {
     expect(telUrl("+39 333 000 0000")).toBe("tel:+393330000000")
     expect(telUrl("")).toBeNull()
     expect(telUrl(null)).toBeNull()
+  })
+})
+
+describe("websiteLabel", () => {
+  it("shows the address without its scheme, www or trailing slash", () => {
+    expect(websiteLabel("https://www.example.com/")).toBe("example.com")
+    expect(websiteLabel(" HTTP://instagram.com/ada.photo ")).toBe(
+      "instagram.com/ada.photo",
+    )
+    expect(websiteLabel(null)).toBe("")
   })
 })

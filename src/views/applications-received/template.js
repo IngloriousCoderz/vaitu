@@ -22,7 +22,7 @@ import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { formatPay, isUnpaid } from "../../common/pay.js"
-import { telUrl } from "../../common/profile.js"
+import { telUrl, websiteLabel } from "../../common/profile.js"
 import { ProfileAvatar } from "../../common/profile-avatar/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
@@ -365,7 +365,9 @@ export const template = {
                       rel="noopener"
                     >
                       ${Icon.render({ icon: globeOutline, size: "lg" })}
-                      <span>${applicant.website}</span>
+                      <span class=${styles.linkText}
+                        >${websiteLabel(applicant.website)}</span
+                      >
                     </a>
                   `,
                 )}

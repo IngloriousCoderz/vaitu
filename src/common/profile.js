@@ -6,6 +6,15 @@ export function isProfileComplete(profile) {
   )
 }
 
+/** A website as people read it: no scheme, no "www.", no trailing slash. */
+export function websiteLabel(url) {
+  return (url ?? "")
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/\/$/, "")
+}
+
 export function telUrl(phone) {
   const number = (phone ?? "").replace(/\s/g, "")
   return number ? `tel:${number}` : null

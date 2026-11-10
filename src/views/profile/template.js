@@ -16,7 +16,7 @@ import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { telUrl } from "../../common/profile.js"
+import { telUrl, websiteLabel } from "../../common/profile.js"
 import { ProfileAvatar } from "../../common/profile-avatar/index.js"
 import { progressLabel, tierProgress } from "../../common/tiers.js"
 import { NO_POINTS } from "../../constants/index.js"
@@ -230,7 +230,7 @@ export const template = {
                   <dl class=${styles.rows}>
                     ${this.renderRow(
                       t("fields.website"),
-                      displayWebsite(profile.website),
+                      websiteLabel(profile.website),
                       displayWebsite(profile.website) || null,
                     )}
                     ${this.renderRow(

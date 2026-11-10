@@ -229,6 +229,17 @@
   color: var(--vmuted-text);
 }
 
+.links .metaLink {
+  max-width: 100%;
+}
+
+.linkText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .motivation {
   margin: 0 0 var(--iw-space-3);
   font-size: var(--iw-font-size-sm);

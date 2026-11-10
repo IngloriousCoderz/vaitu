@@ -114,12 +114,17 @@
 }
 
 .row dt {
+  flex-shrink: 0;
   color: var(--vmuted-text);
 }
 
 .row dd {
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
   font-weight: var(--iw-font-weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rowLink {
