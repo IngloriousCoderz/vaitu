@@ -31,6 +31,14 @@ export const sorts = [
   { value: "deadline_desc", label: "sorts.deadlineFarthest" },
 ]
 
+/**
+ * The count and the order picker stay while a new search loads over the jobs
+ * on screen, and wait for the first ones.
+ */
+export function hasResultsBar(status, jobCount) {
+  return status === "ready" || (status === "loading" && Boolean(jobCount))
+}
+
 export function distinctRegions(regions) {
   return uniqueRegions(regions).sort((a, b) => a.localeCompare(b))
 }

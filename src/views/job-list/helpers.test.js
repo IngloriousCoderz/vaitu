@@ -5,6 +5,7 @@ import {
   activeFilters,
   defaultRegion,
   distinctRegions,
+  hasResultsBar,
   inScope,
   jobTypesInScope,
   regionInEffect,
@@ -43,6 +44,18 @@ describe("the default region", () => {
     expect(defaultRegion(["Tuscany"])).toBe("mine")
     expect(regionInEffect(null, ["Tuscany"])).toBe("mine")
     expect(regionInEffect("Sicily", ["Tuscany"])).toBe("Sicily")
+  })
+})
+
+describe("hasResultsBar", () => {
+  it("stays while a new search loads over the jobs on screen", () => {
+    expect(hasResultsBar("ready", 0)).toBe(true)
+    expect(hasResultsBar("loading", 3)).toBe(true)
+  })
+
+  it("waits for the first jobs, and goes on an error", () => {
+    expect(hasResultsBar("loading", 0)).toBe(false)
+    expect(hasResultsBar("error", 3)).toBe(false)
   })
 })
 

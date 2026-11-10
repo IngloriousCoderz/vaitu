@@ -17,6 +17,7 @@ import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { LIST_STAGGER_CAP } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
+import { hasResultsBar } from "./helpers.js"
 import styles from "./style.module.css"
 
 const ONE_SETTING = 1
@@ -69,7 +70,7 @@ export const template = {
     api,
   ) {
     const hasMore = status === "ready" && jobs.length < total
-    const showResultsBar = status === "ready" || status === "saving"
+    const showResultsBar = hasResultsBar(status, jobs.length)
 
     return Page.render({
       variant: "sticky",
