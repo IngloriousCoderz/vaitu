@@ -24,8 +24,8 @@ const COLORS = {
   warm: "#b4532a",
 }
 const FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
-const LOGO_WIDTH = 129
-const LOGO_HEIGHT = 36
+const LOGO_WIDTH = 153
+const LOGO_HEIGHT = 48
 const HTML_ESCAPES: Record<string, string> = {
   "&": "&amp;",
   "<": "&lt;",
