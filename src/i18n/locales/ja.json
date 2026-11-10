@@ -59,36 +59,6 @@
     "goToJobs": "仕事一覧へ"
   },
   "taxonomy": {
-    "style": {
-      "editorial": "エディトリアル",
-      "documentary": "ドキュメンタリー",
-      "reportage": "ルポルタージュ",
-      "classic": "クラシック",
-      "film": "フィルム",
-      "fine_art": "ファインアート"
-    },
-    "moment": {
-      "ceremony": "挙式",
-      "aperitivo": "アペリティーボ",
-      "dinner": "ディナー",
-      "party": "パーティー"
-    },
-    "genre": {
-      "house": "ハウス",
-      "techno": "テクノ",
-      "indie": "インディー",
-      "jazz": "ジャズ",
-      "electronic": "エレクトロニック",
-      "rock": "ロック",
-      "pop": "ポップ",
-      "classical": "クラシック",
-      "acoustic": "アコースティック",
-      "swing": "スウィング",
-      "soul_funk": "ソウル・ファンク",
-      "latin": "ラテン",
-      "italian": "イタリアン",
-      "country": "カントリー"
-    },
     "setting": {
       "wedding": "結婚式",
       "festival": "フェスティバル",
@@ -351,7 +321,6 @@
     "noneReceived": "受け取った応募はありません。",
     "status": "状態",
     "names": "名前",
-    "style": "スタイル",
     "location": "会場",
     "jobDate": "日付",
     "deadline": "応募締切",

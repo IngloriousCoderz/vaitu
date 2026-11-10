@@ -31,7 +31,7 @@ import {
 } from "../../constants/index.js"
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
-import { currentLocale, t } from "../../i18n/index.js"
+import { currentLocale, localized, t } from "../../i18n/index.js"
 import { detailsFor, settingById } from "../job-list/job-settings.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
@@ -620,7 +620,7 @@ export const template = {
         label: detail.label,
         options: detail.options.map((option) => ({
           value: option.value,
-          label: t(option.label),
+          label: localized(option.labels),
         })),
         value,
         onToggle: (picked) =>

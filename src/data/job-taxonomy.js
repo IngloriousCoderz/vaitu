@@ -1,16 +1,17 @@
 import taxonomy from "../../supabase/functions/_shared/job-taxonomy.json"
+import { localized } from "../i18n/index.js"
 
-const LABEL_GROUPS = { styles: "style", moments: "moment", genres: "genre" }
-
-export const weddingStyles = optionsOf("styles")
-export const weddingMoments = optionsOf("moments")
-export const musicGenres = optionsOf("genres")
+export const weddingStyles = taxonomy.options.styles
+export const weddingMoments = taxonomy.options.moments
+export const musicGenres = taxonomy.options.genres
 
 export const GENRE_SETTINGS = ["festival", "concert"]
 
 /** The detail fields a job can have, and every value they can hold. */
 export const DETAIL_FIELDS = Object.keys(taxonomy.options)
-export const detailOptions = DETAIL_FIELDS.flatMap(optionsOf)
+export const detailOptions = DETAIL_FIELDS.flatMap(
+  (field) => taxonomy.options[field],
+)
 
 /** By setting, each detail's professions: null when every profession has it. */
 export const detailsBySetting = taxonomy.detailsBySetting
@@ -59,6 +60,12 @@ export const professions = [
   ...new Set(availableJobTypes.map((jobType) => jobType.profession)),
 ].map((id) => ({ id, label: `taxonomy.profession.${id}` }))
 
+/** A detail value's label, like a genre's, or the value itself when unknown. */
+export function detailLabel(value) {
+  const option = detailOptions.find((item) => item.value === value)
+  return option ? localized(option.labels) : value
+}
+
 export function jobTypeId(setting, profession) {
   return `${setting}_${profession}`
 }
@@ -85,11 +92,4 @@ export function jobTypesFor(professionIds, settingIds = []) {
 
 function withFallback(picked, all) {
   return picked.length ? picked : all
-}
-
-function optionsOf(field) {
-  return taxonomy.options[field].map((value) => ({
-    value,
-    label: `taxonomy.${LABEL_GROUPS[field]}.${value}`,
-  }))
 }

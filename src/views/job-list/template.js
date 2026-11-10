@@ -143,7 +143,7 @@ export const template = {
                       items: section.options,
                       isActive: (option) => activeDetails.includes(option.id),
                       onSelect: onToggleDetail,
-                      getLabel: (option) => t(option.label),
+                      getLabel: (option) => option.label,
                     }),
                   }),
                 ),

@@ -63,36 +63,6 @@
     "goToJobs": "Voir les missions"
   },
   "taxonomy": {
-    "style": {
-      "editorial": "Éditorial",
-      "documentary": "Documentaire",
-      "reportage": "Reportage",
-      "classic": "Classique",
-      "film": "Argentique",
-      "fine_art": "Fine art"
-    },
-    "moment": {
-      "ceremony": "Cérémonie",
-      "aperitivo": "Vin d'honneur",
-      "dinner": "Dîner",
-      "party": "Soirée dansante"
-    },
-    "genre": {
-      "house": "House",
-      "techno": "Techno",
-      "indie": "Indie",
-      "jazz": "Jazz",
-      "electronic": "Électronique",
-      "rock": "Rock",
-      "pop": "Pop",
-      "classical": "Classique",
-      "acoustic": "Acoustique",
-      "swing": "Swing",
-      "soul_funk": "Soul et funk",
-      "latin": "Latino",
-      "italian": "Italienne",
-      "country": "Country"
-    },
     "setting": {
       "wedding": "Mariages",
       "festival": "Festivals",
@@ -364,7 +334,6 @@
     "noneReceived": "Aucune candidature reçue.",
     "status": "Statut",
     "names": "Noms",
-    "style": "Style",
     "location": "Lieu",
     "jobDate": "Date",
     "deadline": "Date limite de candidature",

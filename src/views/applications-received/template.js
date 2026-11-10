@@ -33,7 +33,9 @@ import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
 } from "../../constants/index.js"
+import { detailLabel } from "../../data/job-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
+import { detailsFor } from "../job-list/job-settings.js"
 import { isReviewDue } from "./helpers.js"
 import styles from "./style.module.css"
 
@@ -221,21 +223,12 @@ export const template = {
       [t("fields.setting"), recap.setting],
       [t("fields.profession"), recap.profession],
       ...(recap.names ? [[t("received.names"), recap.names]] : []),
-      ...(recap.styles.length
-        ? [
-            [
-              t("received.style"),
-              recap.styles
-                .map((value) =>
-                  translatedValue(
-                    ["taxonomy.style.", "taxonomy.genre."],
-                    value,
-                  ),
-                )
-                .join(", "),
-            ],
-          ]
-        : []),
+      ...detailsFor(recap.job_type).flatMap((detail) => {
+        const values = recap.details[detail.id] ?? []
+        return values.length
+          ? [[detail.label, values.map(detailLabel).join(", ")]]
+          : []
+      }),
       [t("received.location"), recap.location || "—"],
       [t("received.jobDate"), formatDay(recap.job_date)],
       [t("received.deadline"), formatDeadline(recap.application_deadline)],
@@ -660,8 +653,7 @@ function prettyValue(value) {
   return value.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
 }
 
-function translatedValue(prefixes, value) {
+function translatedValue(prefix, value) {
   if (!value) return "—"
-  const keys = [prefixes].flat().map((prefix) => `${prefix}${value}`)
-  return t(keys, { defaultValue: prettyValue(value) })
+  return t(`${prefix}${value}`, { defaultValue: prettyValue(value) })
 }

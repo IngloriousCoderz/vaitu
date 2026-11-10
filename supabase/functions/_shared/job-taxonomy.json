@@ -12,29 +12,250 @@
   },
   "options": {
     "styles": [
-      "editorial",
-      "documentary",
-      "reportage",
-      "classic",
-      "film",
-      "fine_art"
+      {
+        "value": "editorial",
+        "labels": {
+          "en": "Editorial",
+          "it": "Editoriale",
+          "fr": "Éditorial",
+          "ar": "تحريري",
+          "ja": "エディトリアル"
+        }
+      },
+      {
+        "value": "documentary",
+        "labels": {
+          "en": "Documentary",
+          "it": "Documentaristico",
+          "fr": "Documentaire",
+          "ar": "وثائقي",
+          "ja": "ドキュメンタリー"
+        }
+      },
+      {
+        "value": "reportage",
+        "labels": {
+          "en": "Reportage",
+          "it": "Reportage",
+          "fr": "Reportage",
+          "ar": "ريبورتاج",
+          "ja": "ルポルタージュ"
+        }
+      },
+      {
+        "value": "classic",
+        "labels": {
+          "en": "Classic",
+          "it": "Classico",
+          "fr": "Classique",
+          "ar": "كلاسيكي",
+          "ja": "クラシック"
+        }
+      },
+      {
+        "value": "film",
+        "labels": {
+          "en": "Film",
+          "it": "Pellicola",
+          "fr": "Argentique",
+          "ar": "فيلم",
+          "ja": "フィルム"
+        }
+      },
+      {
+        "value": "fine_art",
+        "labels": {
+          "en": "Fine Art",
+          "it": "Fine Art",
+          "fr": "Fine art",
+          "ar": "فن تشكيلي",
+          "ja": "ファインアート"
+        }
+      }
     ],
-    "moments": ["ceremony", "aperitivo", "dinner", "party"],
+    "moments": [
+      {
+        "value": "ceremony",
+        "labels": {
+          "en": "Ceremony",
+          "it": "Cerimonia",
+          "fr": "Cérémonie",
+          "ar": "المراسم",
+          "ja": "挙式"
+        }
+      },
+      {
+        "value": "aperitivo",
+        "labels": {
+          "en": "Aperitivo",
+          "it": "Aperitivo",
+          "fr": "Vin d'honneur",
+          "ar": "المقبلات",
+          "ja": "アペリティーボ"
+        }
+      },
+      {
+        "value": "dinner",
+        "labels": {
+          "en": "Dinner",
+          "it": "Cena",
+          "fr": "Dîner",
+          "ar": "العشاء",
+          "ja": "ディナー"
+        }
+      },
+      {
+        "value": "party",
+        "labels": {
+          "en": "Party",
+          "it": "Festa",
+          "fr": "Soirée dansante",
+          "ar": "الحفلة",
+          "ja": "パーティー"
+        }
+      }
+    ],
     "genres": [
-      "house",
-      "techno",
-      "indie",
-      "jazz",
-      "electronic",
-      "rock",
-      "pop",
-      "classical",
-      "acoustic",
-      "swing",
-      "soul_funk",
-      "latin",
-      "italian",
-      "country"
+      {
+        "value": "house",
+        "labels": {
+          "en": "House",
+          "it": "House",
+          "fr": "House",
+          "ar": "هاوس",
+          "ja": "ハウス"
+        }
+      },
+      {
+        "value": "techno",
+        "labels": {
+          "en": "Techno",
+          "it": "Techno",
+          "fr": "Techno",
+          "ar": "تكنو",
+          "ja": "テクノ"
+        }
+      },
+      {
+        "value": "indie",
+        "labels": {
+          "en": "Indie",
+          "it": "Indie",
+          "fr": "Indie",
+          "ar": "إندي",
+          "ja": "インディー"
+        }
+      },
+      {
+        "value": "jazz",
+        "labels": {
+          "en": "Jazz",
+          "it": "Jazz",
+          "fr": "Jazz",
+          "ar": "جاز",
+          "ja": "ジャズ"
+        }
+      },
+      {
+        "value": "electronic",
+        "labels": {
+          "en": "Electronic",
+          "it": "Elettronica",
+          "fr": "Électronique",
+          "ar": "إلكتروني",
+          "ja": "エレクトロニック"
+        }
+      },
+      {
+        "value": "rock",
+        "labels": {
+          "en": "Rock",
+          "it": "Rock",
+          "fr": "Rock",
+          "ar": "روك",
+          "ja": "ロック"
+        }
+      },
+      {
+        "value": "pop",
+        "labels": {
+          "en": "Pop",
+          "it": "Pop",
+          "fr": "Pop",
+          "ar": "بوب",
+          "ja": "ポップ"
+        }
+      },
+      {
+        "value": "classical",
+        "labels": {
+          "en": "Classical",
+          "it": "Classica",
+          "fr": "Classique",
+          "ar": "كلاسيكية",
+          "ja": "クラシック"
+        }
+      },
+      {
+        "value": "acoustic",
+        "labels": {
+          "en": "Acoustic",
+          "it": "Acustica",
+          "fr": "Acoustique",
+          "ar": "أكوستيك",
+          "ja": "アコースティック"
+        }
+      },
+      {
+        "value": "swing",
+        "labels": {
+          "en": "Swing",
+          "it": "Swing",
+          "fr": "Swing",
+          "ar": "سوينغ",
+          "ja": "スウィング"
+        }
+      },
+      {
+        "value": "soul_funk",
+        "labels": {
+          "en": "Soul & funk",
+          "it": "Soul e funk",
+          "fr": "Soul et funk",
+          "ar": "سول وفانك",
+          "ja": "ソウル・ファンク"
+        }
+      },
+      {
+        "value": "latin",
+        "labels": {
+          "en": "Latin",
+          "it": "Latina",
+          "fr": "Latino",
+          "ar": "لاتيني",
+          "ja": "ラテン"
+        }
+      },
+      {
+        "value": "italian",
+        "labels": {
+          "en": "Italian",
+          "it": "Italiana",
+          "fr": "Italienne",
+          "ar": "إيطالي",
+          "ja": "イタリアン"
+        }
+      },
+      {
+        "value": "country",
+        "labels": {
+          "en": "Country",
+          "it": "Country",
+          "fr": "Country",
+          "ar": "كانتري",
+          "ja": "カントリー"
+        }
+      }
     ]
   },
   "detailsBySetting": {
@@ -43,7 +264,11 @@
       "moments": ["musician", "dj"],
       "genres": ["musician", "dj"]
     },
-    "festival": { "genres": null },
-    "concert": { "genres": null }
+    "festival": {
+      "genres": null
+    },
+    "concert": {
+      "genres": null
+    }
   }
 }

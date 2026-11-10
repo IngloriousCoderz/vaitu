@@ -5,7 +5,7 @@ import {
   weddingMoments,
   weddingStyles,
 } from "../../data/job-taxonomy.js"
-import { t } from "../../i18n/index.js"
+import { localized, t } from "../../i18n/index.js"
 
 const styleDetail = {
   id: "styles",
@@ -176,7 +176,7 @@ function sectionsOf(details) {
     title: detail.title,
     options: detail.options.map((option) => ({
       id: option.value,
-      label: option.label,
+      label: localized(option.labels),
     })),
   }))
 }

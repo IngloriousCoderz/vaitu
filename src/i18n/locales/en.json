@@ -61,36 +61,6 @@
     "goToJobs": "Go to jobs"
   },
   "taxonomy": {
-    "style": {
-      "editorial": "Editorial",
-      "documentary": "Documentary",
-      "reportage": "Reportage",
-      "classic": "Classic",
-      "film": "Film",
-      "fine_art": "Fine Art"
-    },
-    "moment": {
-      "ceremony": "Ceremony",
-      "aperitivo": "Aperitivo",
-      "dinner": "Dinner",
-      "party": "Party"
-    },
-    "genre": {
-      "house": "House",
-      "techno": "Techno",
-      "indie": "Indie",
-      "jazz": "Jazz",
-      "electronic": "Electronic",
-      "rock": "Rock",
-      "pop": "Pop",
-      "classical": "Classical",
-      "acoustic": "Acoustic",
-      "swing": "Swing",
-      "soul_funk": "Soul & funk",
-      "latin": "Latin",
-      "italian": "Italian",
-      "country": "Country"
-    },
     "setting": {
       "wedding": "Weddings",
       "festival": "Festivals",
@@ -357,7 +327,6 @@
     "noneReceived": "No applications received.",
     "status": "Status",
     "names": "Names",
-    "style": "Style",
     "location": "Location",
     "jobDate": "Date",
     "deadline": "Application deadline",

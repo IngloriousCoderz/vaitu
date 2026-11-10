@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest"
 
+import { localized } from "../i18n/index.js"
 import {
   availableJobTypes,
+  detailLabel,
+  detailOptions,
   jobTypesFor,
   offeredSettings,
   professionOption,
@@ -74,5 +77,31 @@ describe("professionOption", () => {
     expect(professionOption(availableJobTypes[0]).label).toBe(
       "taxonomy.profession.photographer",
     )
+  })
+})
+
+describe("detailOptions", () => {
+  const locales = Object.keys(import.meta.glob("../i18n/locales/*.json"))
+    .map((path) => path.match(/(\w+)\.json$/)[1])
+    .sort()
+
+  it.each(detailOptions.map((option) => [option.value, option]))(
+    "%s has a label in every locale",
+    (_, option) => {
+      expect(Object.keys(option.labels).sort()).toEqual(locales)
+    },
+  )
+})
+
+describe("detailLabel", () => {
+  it("labels a known value, and shows an unknown one as it is", () => {
+    expect(detailLabel("soul_funk")).toBe("Soul & funk")
+    expect(detailLabel("polka")).toBe("polka")
+  })
+})
+
+describe("localized", () => {
+  it("falls back on English", () => {
+    expect(localized({ en: "Jazz" })).toBe("Jazz")
   })
 })

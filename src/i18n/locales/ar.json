@@ -69,36 +69,6 @@
     "goToJobs": "الذهاب إلى الأعمال"
   },
   "taxonomy": {
-    "style": {
-      "editorial": "تحريري",
-      "documentary": "وثائقي",
-      "reportage": "ريبورتاج",
-      "classic": "كلاسيكي",
-      "film": "فيلم",
-      "fine_art": "فن تشكيلي"
-    },
-    "moment": {
-      "ceremony": "المراسم",
-      "aperitivo": "المقبلات",
-      "dinner": "العشاء",
-      "party": "الحفلة"
-    },
-    "genre": {
-      "house": "هاوس",
-      "techno": "تكنو",
-      "indie": "إندي",
-      "jazz": "جاز",
-      "electronic": "إلكتروني",
-      "rock": "روك",
-      "pop": "بوب",
-      "classical": "كلاسيكية",
-      "acoustic": "أكوستيك",
-      "swing": "سوينغ",
-      "soul_funk": "سول وفانك",
-      "latin": "لاتيني",
-      "italian": "إيطالي",
-      "country": "كانتري"
-    },
     "setting": {
       "wedding": "حفلات الزفاف",
       "festival": "المهرجانات",
@@ -379,7 +349,6 @@
     "noneReceived": "لم تُستلم أي طلبات.",
     "status": "الحالة",
     "names": "الأسماء",
-    "style": "الأسلوب",
     "location": "المكان",
     "jobDate": "التاريخ",
     "deadline": "آخر موعد للتقديم",

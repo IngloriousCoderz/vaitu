@@ -4,7 +4,13 @@ import taxonomy from "../_shared/job-taxonomy.json" with { type: "json" }
 // Copies of the app's create form: a function cannot import app source.
 // src/views/job-create/parse-job.test.js fails when they drift.
 
-const { styles, moments, genres } = taxonomy.options
+const OPTIONS: Record<string, string[]> = Object.fromEntries(
+  Object.entries(taxonomy.options).map(([field, options]) => [
+    field,
+    options.map((option) => option.value),
+  ]),
+)
+const { styles, moments, genres } = OPTIONS
 
 const TEXT_FIELDS: Record<string, string[]> = {
   wedding: ["spouse_first_name_1", "spouse_first_name_2"],
@@ -19,7 +25,6 @@ const DETAILS: Record<
   string,
   Record<string, string[] | null>
 > = taxonomy.detailsBySetting
-const OPTIONS: Record<string, string[]> = taxonomy.options
 
 // Details only some professions have, by setting. The others are for everyone.
 export const DETAIL_PROFESSIONS: Record<

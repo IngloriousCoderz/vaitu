@@ -63,36 +63,6 @@
     "goToJobs": "Vai ai lavori"
   },
   "taxonomy": {
-    "style": {
-      "editorial": "Editoriale",
-      "documentary": "Documentaristico",
-      "reportage": "Reportage",
-      "classic": "Classico",
-      "film": "Pellicola",
-      "fine_art": "Fine Art"
-    },
-    "moment": {
-      "ceremony": "Cerimonia",
-      "aperitivo": "Aperitivo",
-      "dinner": "Cena",
-      "party": "Festa"
-    },
-    "genre": {
-      "house": "House",
-      "techno": "Techno",
-      "indie": "Indie",
-      "jazz": "Jazz",
-      "electronic": "Elettronica",
-      "rock": "Rock",
-      "pop": "Pop",
-      "classical": "Classica",
-      "acoustic": "Acustica",
-      "swing": "Swing",
-      "soul_funk": "Soul e funk",
-      "latin": "Latina",
-      "italian": "Italiana",
-      "country": "Country"
-    },
     "setting": {
       "wedding": "Matrimoni",
       "festival": "Festival",
@@ -364,7 +334,6 @@
     "noneReceived": "Nessuna candidatura ricevuta.",
     "status": "Stato",
     "names": "Nomi",
-    "style": "Stile",
     "location": "Location",
     "jobDate": "Data",
     "deadline": "Scadenza candidature",

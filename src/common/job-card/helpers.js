@@ -7,7 +7,7 @@ import {
   NO_DAYS_LEFT,
   WEEK_DAYS,
 } from "../../constants/index.js"
-import { detailOptions } from "../../data/job-taxonomy.js"
+import { detailLabel } from "../../data/job-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
@@ -60,12 +60,7 @@ export function jobSubtitle(job) {
 }
 
 export function jobTag(job) {
-  return job.filterValues
-    .map((value) => {
-      const option = detailOptions.find((item) => item.value === value)
-      return option ? t(option.label) : value
-    })
-    .join(", ")
+  return job.filterValues.map(detailLabel).join(", ")
 }
 
 /** A job's setting and profession, as two tags. */

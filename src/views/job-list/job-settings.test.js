@@ -85,5 +85,5 @@ describe("detailAppliesTo", () => {
 })
 
 function options(list) {
-  return list.map((option) => ({ id: option.value, label: option.label }))
+  return list.map((option) => ({ id: option.value, label: option.labels.en }))
 }

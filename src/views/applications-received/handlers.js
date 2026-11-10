@@ -177,7 +177,8 @@ export const load = handleAsync("load", {
         job.details?.spouse_first_name_1 && job.details?.spouse_first_name_2
           ? `${job.details.spouse_first_name_1} & ${job.details.spouse_first_name_2}`
           : (job.details?.headliner ?? null),
-      styles: job.details?.styles ?? job.details?.genres ?? [],
+      job_type: { setting: job.setting, profession: job.profession },
+      details: { ...job.details },
     }
     entity.items = items
     const due = items.find((item) => isReviewDue(item, job.job_date))
