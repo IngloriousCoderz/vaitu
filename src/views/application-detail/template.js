@@ -28,6 +28,7 @@ export const template = {
     onField,
     onSave,
     onAskWithdraw,
+    onApplyAgain,
     onWithdraw,
     onCancelWithdraw,
     onGoogleCalendar,
@@ -37,6 +38,7 @@ export const template = {
     onDealSettle,
   }) {
     const { application, status, error } = entity
+    const isWithdrawn = application?.applicationStatus === "withdrawn"
     const isBusy = status === "saving" || status === "withdrawing"
     const motivation = getFieldValue(entity, "motivation", "")
     const canSave = application && !isBusy
@@ -72,6 +74,28 @@ export const template = {
                   <div class=${styles.statusRow}>
                     ${StatusChip.render({ status: application.applicationStatus })}
                   </div>
+                  ${when(
+                    isWithdrawn,
+                    () => html`
+                      <p class=${styles.withdrawnNote}>
+                        ${
+                          application.status === "open"
+                            ? t("application.withdrawnOpen")
+                            : t("application.withdrawn")
+                        }
+                      </p>
+                      ${when(application.status === "open", () =>
+                        Button.render({
+                          children: t("application.applyAgain"),
+                          color: "primary",
+                          shape: "pill",
+                          size: "md",
+                          isFullWidth: true,
+                          onClick: onApplyAgain,
+                        }),
+                      )}
+                    `,
+                  )}
                   ${when(
                     application.applicationStatus === "selected" &&
                       !isUnpaid(application.pay),
@@ -161,7 +185,7 @@ export const template = {
                     error: error && status !== "loading" ? error : null,
                     className: styles.error,
                   })}
-                  ${when(!application.review, () =>
+                  ${when(!application.review && !isWithdrawn, () =>
                     Button.render({
                       children: t("application.withdraw"),
                       color: "error",

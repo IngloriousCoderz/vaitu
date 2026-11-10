@@ -39,6 +39,7 @@
     "shortlisted": "In shortlist",
     "selected": "Selezionata",
     "rejected": "Rifiutata",
+    "withdrawn": "Ritirata",
     "open": "Aperto",
     "closed": "Chiuso",
     "assigned": "Assegnato",
@@ -258,6 +259,7 @@
     "loadJobs": "Impossibile caricare i lavori",
     "deleteJob": "Impossibile eliminare il lavoro",
     "loadApplication": "Impossibile caricare la candidatura",
+    "applicationGone": "Questa candidatura non è disponibile: il lavoro è stato rimosso, oppure appartiene a un altro account.",
     "save": "Salvataggio non riuscito",
     "withdraw": "Impossibile ritirare la candidatura",
     "checkEmail": "Impossibile verificare l'email",
@@ -611,7 +613,10 @@
     "yesWithdraw": "Sì, ritira",
     "withdrawing": "Ritiro in corso…",
     "withdraw": "Ritira la candidatura",
-    "bookedVia": "Prenotato tramite Vaitu"
+    "bookedVia": "Prenotato tramite Vaitu",
+    "withdrawn": "Hai ritirato questa candidatura.",
+    "withdrawnOpen": "Hai ritirato questa candidatura. Il lavoro è ancora aperto: puoi candidarti di nuovo.",
+    "applyAgain": "Candidati di nuovo"
   },
   "toasts": {
     "won": "Hai ottenuto il lavoro!"

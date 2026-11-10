@@ -39,6 +39,7 @@
     "shortlisted": "Shortlisted",
     "selected": "Selected",
     "rejected": "Rejected",
+    "withdrawn": "Withdrawn",
     "open": "Open",
     "closed": "Closed",
     "assigned": "Assigned",
@@ -254,6 +255,7 @@
     "loadJobs": "Failed to load jobs",
     "deleteJob": "Failed to delete job",
     "loadApplication": "Failed to load application",
+    "applicationGone": "This application isn't available: its job was removed, or it belongs to another account.",
     "save": "Failed to save",
     "withdraw": "Failed to withdraw",
     "checkEmail": "Could not check email",
@@ -599,7 +601,10 @@
     "yesWithdraw": "Yes, withdraw",
     "withdrawing": "Withdrawing…",
     "withdraw": "Withdraw application",
-    "bookedVia": "Booked via Vaitu"
+    "bookedVia": "Booked via Vaitu",
+    "withdrawn": "You withdrew this application.",
+    "withdrawnOpen": "You withdrew this application. The job is still open, so you can apply again.",
+    "applyAgain": "Apply again"
   },
   "toasts": {
     "won": "You got the job!"

@@ -97,7 +97,7 @@ export const JobCreate = {
     const values = entity.values
     // Copied while `values` is still a live draft: the save reads it after the
     // batch, when the draft is revoked.
-    const details = { ...(values.details ?? {}) }
+    const details = JSON.parse(JSON.stringify(values.details ?? {}))
     const title = jobTitle(values)
     entity.error = null
     api.notify(`#${entity.id}:save`, {

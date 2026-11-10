@@ -8,6 +8,7 @@ const colors = {
   shortlisted: "info",
   selected: "success",
   rejected: "error",
+  withdrawn: "default",
   open: "success",
   closed: "default",
   assigned: "success",

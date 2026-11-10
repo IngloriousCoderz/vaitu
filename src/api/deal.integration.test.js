@@ -255,6 +255,9 @@ describe("what they agreed, and whether it was settled", () => {
     async () => {
       const job = await winJob(poster, winner, { amount: AGREED })
       await signIn(stranger.login)
+      await expect(fetchApplicationDetail(job.applicationId)).rejects.toThrow(
+        "errors.applicationGone",
+      )
       await expect(proposeAgreement(job.applicationId, 1)).rejects.toThrow(
         "Only the poster",
       )

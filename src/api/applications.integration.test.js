@@ -17,6 +17,7 @@ import {
 import { feedQuery, localToday } from "../views/job-list/query.js"
 import {
   fetchApplicants,
+  fetchApplicationDetail,
   fetchMyApplicationMap,
   fetchReceivedDetail,
   updateMotivation,
@@ -180,6 +181,10 @@ describe("applying and choosing a winner", () => {
       withdrawn_from: "selected",
     })
     expect(job.status).toBe("open")
+
+    const detail = await fetchApplicationDetail(id)
+    expect(detail.applicationStatus).toBe("withdrawn")
+    expect(detail.status).toBe("open")
   })
 })
 

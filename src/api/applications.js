@@ -72,9 +72,9 @@ export async function fetchApplicationDetail(application_id) {
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
-    .neq("status", "withdrawn")
-    .single()
+    .maybeSingle()
   if (error) throw error
+  if (!data) throw new Error("errors.applicationGone")
   return {
     ...toViewModel(data.jobs),
     application_id: data.id,

@@ -39,6 +39,7 @@
     "shortlisted": "Présélectionnée",
     "selected": "Retenue",
     "rejected": "Refusée",
+    "withdrawn": "Retirée",
     "open": "Ouvert",
     "closed": "Fermé",
     "assigned": "Attribué",
@@ -258,6 +259,7 @@
     "loadJobs": "Impossible de charger les missions",
     "deleteJob": "Impossible de supprimer la mission",
     "loadApplication": "Impossible de charger la candidature",
+    "applicationGone": "Cette candidature n'est pas disponible : la mission a été supprimée, ou elle appartient à un autre compte.",
     "save": "L'enregistrement a échoué",
     "withdraw": "Impossible de retirer la candidature",
     "checkEmail": "Impossible de vérifier l'e-mail",
@@ -611,7 +613,10 @@
     "yesWithdraw": "Oui, retirer",
     "withdrawing": "Retrait…",
     "withdraw": "Retirer la candidature",
-    "bookedVia": "Réservé via Vaitu"
+    "bookedVia": "Réservé via Vaitu",
+    "withdrawn": "Vous avez retiré cette candidature.",
+    "withdrawnOpen": "Vous avez retiré cette candidature. La mission est toujours ouverte : vous pouvez postuler à nouveau.",
+    "applyAgain": "Postuler à nouveau"
   },
   "toasts": {
     "won": "Le travail est à vous !"

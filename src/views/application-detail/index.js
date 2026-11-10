@@ -64,6 +64,8 @@ export const ApplicationDetail = {
           api.notify(`#${id}:fieldSet`, { field, value }),
         onSave: () => api.notify(`#${id}:saveSubmit`),
         onAskWithdraw: () => api.notify(`#${id}:withdrawAsk`),
+        onApplyAgain: () =>
+          api.notify("#router:navigate", paths.job(entity.application.id)),
         onGoogleCalendar: (url) => window.open(url, "_blank", "noopener"),
         onDownloadIcs: (title, ics) => {
           void (async () => {

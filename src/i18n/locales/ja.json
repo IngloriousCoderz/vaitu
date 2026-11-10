@@ -39,6 +39,7 @@
     "shortlisted": "候補",
     "selected": "選出",
     "rejected": "不採用",
+    "withdrawn": "取り下げ済み",
     "open": "募集中",
     "closed": "締切",
     "assigned": "決定済み",
@@ -251,6 +252,7 @@
     "loadJobs": "仕事を読み込めませんでした",
     "deleteJob": "仕事を削除できませんでした",
     "loadApplication": "応募を読み込めませんでした",
+    "applicationGone": "この応募は表示できません。仕事が削除されたか、別のアカウントの応募です。",
     "save": "保存できませんでした",
     "withdraw": "取り下げられませんでした",
     "checkEmail": "メールアドレスを確認できませんでした",
@@ -588,7 +590,10 @@
     "yesWithdraw": "取り下げる",
     "withdrawing": "取り下げ中…",
     "withdraw": "応募を取り下げる",
-    "bookedVia": "Vaitu で予約"
+    "bookedVia": "Vaitu で予約",
+    "withdrawn": "この応募は取り下げました。",
+    "withdrawnOpen": "この応募は取り下げました。仕事はまだ募集中なので、もう一度応募できます。",
+    "applyAgain": "もう一度応募する"
   },
   "toasts": {
     "won": "仕事が決まりました！"

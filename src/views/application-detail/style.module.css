@@ -66,3 +66,9 @@
     margin-top: var(--iw-space-5);
   }
 }
+
+.withdrawnNote {
+  margin: 0 0 var(--iw-space-4);
+  color: var(--vmuted-text);
+  font-size: var(--iw-font-size-sm);
+}
