@@ -326,6 +326,20 @@ describe("withdrawing an application", () => {
     expect(data).toEqual([])
   })
 
+  test("applying again after withdrawing twice still shows the job", async () => {
+    await signIn(GIADA)
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
+    await withdrawApplication(await applicationId(jobId))
+
+    const { job } = await fetchJobDetail(jobId)
+    expect(job.applicationStatus).toBeNull()
+
+    expect((await apply(jobId, MOTIVATION)).error).toBeNull()
+    const { job: applied } = await fetchJobDetail(jobId)
+    expect(applied.applicationStatus).toBe("pending")
+    await withdrawApplication(await applicationId(jobId))
+  })
+
   test("a withdrawn application cannot come back or be withdrawn twice", async () => {
     await signIn(GIADA)
     const { data: withdrawn } = await supabase

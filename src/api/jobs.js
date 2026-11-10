@@ -172,6 +172,7 @@ async function fetchMyApplicationStatus(job_id, applicant_id) {
     .select("status")
     .eq("job_id", job_id)
     .eq("applicant_id", applicant_id)
+    .neq("status", "withdrawn")
     .maybeSingle()
   if (error) throw error
   return data?.status ?? null
