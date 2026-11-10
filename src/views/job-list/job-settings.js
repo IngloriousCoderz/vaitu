@@ -1,11 +1,43 @@
 import { FIRST_INDEX } from "../../constants/index.js"
-import { musicGenres, weddingStyles } from "../../data/job-taxonomy.js"
+import {
+  musicGenres,
+  weddingMoments,
+  weddingStyles,
+} from "../../data/job-taxonomy.js"
 import { t } from "../../i18n/index.js"
 
-const genreFilter = {
+const PHOTO_PROFESSIONS = ["photographer", "videographer"]
+const MUSIC_PROFESSIONS = ["musician", "dj"]
+
+const styleDetail = {
+  id: "styles",
+  get title() {
+    return t("filters.weddingStyle")
+  },
+  get label() {
+    return t("fields.style")
+  },
+  options: weddingStyles,
+}
+
+const momentDetail = {
+  id: "moments",
+  get title() {
+    return t("filters.weddingMoment")
+  },
+  get label() {
+    return t("fields.moments")
+  },
+  options: weddingMoments,
+}
+
+const genreDetail = {
   id: "genres",
   get title() {
     return t("filters.musicGenre")
+  },
+  get label() {
+    return t("fields.genre")
   },
   options: musicGenres,
 }
@@ -13,16 +45,10 @@ const genreFilter = {
 export const settings = [
   {
     id: "wedding",
-    detailField: "styles",
-    professionsWithoutDetail: ["planner", "makeup_artist"],
-    filters: [
-      {
-        id: "styles",
-        get title() {
-          return t("filters.weddingStyle")
-        },
-        options: weddingStyles,
-      },
+    details: [
+      { detail: styleDetail, professions: PHOTO_PROFESSIONS },
+      { detail: momentDetail, professions: MUSIC_PROFESSIONS },
+      { detail: genreDetail, professions: MUSIC_PROFESSIONS },
     ],
     title_from: {
       fields: ["spouse_first_name_1", "spouse_first_name_2"],
@@ -47,15 +73,6 @@ export const settings = [
         isRequired: true,
         section: "identity",
       },
-      {
-        field: "styles",
-        get label() {
-          return t("fields.style")
-        },
-        type: "chips",
-        options: weddingStyles,
-        section: "style",
-      },
     ],
   },
   showSetting("festival"),
@@ -68,8 +85,7 @@ export const settings = [
 function showSetting(id) {
   return {
     id,
-    detailField: "genres",
-    filters: [genreFilter],
+    details: [{ detail: genreDetail }],
     title_from: { input: true },
     createFields: [
       {
@@ -81,15 +97,6 @@ function showSetting(id) {
         isRequired: true,
         section: "identity",
       },
-      {
-        field: "genres",
-        get label() {
-          return t("fields.genre")
-        },
-        type: "chips",
-        options: musicGenres,
-        section: "style",
-      },
     ],
   }
 }
@@ -97,7 +104,7 @@ function showSetting(id) {
 function propertySetting(id) {
   return {
     id,
-    filters: [],
+    details: [],
     title_from: { input: true },
     get titleLabel() {
       return t("fields.jobTitle")
@@ -121,36 +128,49 @@ export function filterSections(settingIds) {
   const scoped = settingIds.length
     ? settings.filter((setting) => settingIds.includes(setting.id))
     : settings
-  const dimensions = new Set(scoped.flatMap((setting) => setting.filters))
-  return [...dimensions].map((dimension) => ({
-    id: dimension.id,
+  return sectionsOf(
+    new Set(
+      scoped.flatMap((setting) => setting.details.map(({ detail }) => detail)),
+    ),
+  )
+}
+
+export function filterSectionsFor(jobTypes) {
+  if (!jobTypes.length) return filterSections([])
+  return sectionsOf(new Set(jobTypes.flatMap(detailsFor)))
+}
+
+/** The pickers a job of this setting and profession has, like styles or genres. */
+export function detailsFor({ setting, profession }) {
+  return settingById(setting)
+    .details.filter(
+      ({ professions }) => !professions || professions.includes(profession),
+    )
+    .map(({ detail }) => detail)
+}
+
+export function hasDetail(jobType) {
+  return Boolean(detailsFor(jobType).length)
+}
+
+export function detailAppliesTo(value, jobType) {
+  return detailsFor(jobType).some((detail) =>
+    detail.options.some((option) => option.value === value),
+  )
+}
+
+function sectionsOf(details) {
+  return [...details].map((detail) => ({
+    id: detail.id,
     settings: settings
-      .filter((setting) => setting.filters.includes(dimension))
+      .filter((setting) =>
+        setting.details.some((entry) => entry.detail === detail),
+      )
       .map((setting) => setting.id),
-    title: dimension.title,
-    options: dimension.options.map((option) => ({
+    title: detail.title,
+    options: detail.options.map((option) => ({
       id: option.value,
       label: option.label,
     })),
   }))
-}
-
-export function filterSectionsFor(jobTypes) {
-  const detailed = jobTypes.filter(hasDetail)
-  if (jobTypes.length && !detailed.length) return []
-  return filterSections(detailed.map((jobType) => jobType.setting))
-}
-
-export function hasDetail({ setting, profession }) {
-  const { detailField, professionsWithoutDetail } = settingById(setting)
-  return Boolean(detailField) && !professionsWithoutDetail?.includes(profession)
-}
-
-export function detailAppliesTo(value, jobType) {
-  return (
-    hasDetail(jobType) &&
-    settingById(jobType.setting).filters.some((dimension) =>
-      dimension.options.some((option) => option.value === value),
-    )
-  )
 }

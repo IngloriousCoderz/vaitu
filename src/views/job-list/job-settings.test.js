@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   jobTypeById,
   musicGenres,
+  weddingMoments,
   weddingStyles,
 } from "../../data/job-taxonomy.js"
 import {
@@ -15,13 +16,15 @@ import {
 const jobType = jobTypeById
 
 describe("filterSections", () => {
-  it("offers every wedding style and every music genre when no setting is picked", () => {
-    const [style, genre, ...others] = filterSections([])
+  it("offers every style, part of the day and genre when no setting is picked", () => {
+    const [style, moment, genre, ...others] = filterSections([])
     expect(others).toEqual([])
     expect(style.settings).toEqual(["wedding"])
     expect(style.title).toBe("Wedding style")
     expect(style.options).toEqual(options(weddingStyles))
-    expect(genre.settings).toEqual(["festival", "concert"])
+    expect(moment.settings).toEqual(["wedding"])
+    expect(moment.options).toEqual(options(weddingMoments))
+    expect(genre.settings).toEqual(["wedding", "festival", "concert"])
     expect(genre.title).toBe("Music genre")
     expect(genre.options).toEqual(options(musicGenres))
   })
@@ -44,8 +47,12 @@ describe("filterSectionsFor", () => {
     expect(ids("festival_musician", "concert_musician")).toEqual(["genres"])
   })
 
+  it("offers parts of the day and genres for music at weddings, not styles", () => {
+    expect(ids("wedding_dj", "festival_dj")).toEqual(["moments", "genres"])
+  })
+
   it("offers everything without a job type", () => {
-    expect(ids()).toEqual(["styles", "genres"])
+    expect(ids()).toEqual(["styles", "moments", "genres"])
   })
 })
 
@@ -61,11 +68,18 @@ describe("hasDetail", () => {
 
 describe("detailAppliesTo", () => {
   it("knows which job types a style or genre filters", () => {
-    expect(detailAppliesTo("editorial", jobType("wedding_dj"))).toBe(true)
+    expect(detailAppliesTo("editorial", jobType("wedding_photographer"))).toBe(
+      true,
+    )
+    expect(detailAppliesTo("editorial", jobType("wedding_dj"))).toBe(false)
     expect(detailAppliesTo("editorial", jobType("wedding_planner"))).toBe(false)
     expect(detailAppliesTo("techno", jobType("festival_dj"))).toBe(true)
     expect(detailAppliesTo("techno", jobType("concert_musician"))).toBe(true)
-    expect(detailAppliesTo("techno", jobType("wedding_dj"))).toBe(false)
+    expect(detailAppliesTo("techno", jobType("wedding_dj"))).toBe(true)
+    expect(detailAppliesTo("ceremony", jobType("wedding_musician"))).toBe(true)
+    expect(detailAppliesTo("ceremony", jobType("festival_musician"))).toBe(
+      false,
+    )
     expect(detailAppliesTo("polka", jobType("festival_dj"))).toBe(false)
   })
 })

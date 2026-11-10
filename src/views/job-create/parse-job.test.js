@@ -3,15 +3,16 @@ import { describe, expect, it } from "vitest"
 import {
   CURRENCIES,
   DESCRIPTION_MAX_LENGTH,
+  DETAIL_PROFESSIONS,
   DETAILS_BY_SETTING,
   JOB_TYPES,
-  JOB_TYPES_WITHOUT_STYLE,
   MUSIC_GENRES,
   offeredJobTypes,
   systemPrompt,
   TITLED_SETTINGS,
   todayOf,
   toJobFields,
+  WEDDING_MOMENTS,
   WEDDING_STYLES,
 } from "../../../supabase/functions/parse-job/schema.ts"
 import { DESCRIPTION_MAX_LENGTH as APP_DESCRIPTION_MAX_LENGTH } from "../../constants/index.js"
@@ -19,38 +20,45 @@ import { CURRENCIES as APP_CURRENCIES } from "../../data/currencies.js"
 import {
   jobTypes,
   musicGenres,
+  weddingMoments,
   weddingStyles,
 } from "../../data/job-taxonomy.js"
-import { hasDetail, settings } from "../job-list/job-settings.js"
+import { detailsFor, settings } from "../job-list/job-settings.js"
 
 describe("parse-job's copies", () => {
   it("knows every job type, style and genre", () => {
     expect(JOB_TYPES).toEqual(jobTypes.map((jobType) => jobType.id))
     expect(WEDDING_STYLES).toEqual(weddingStyles.map((o) => o.value))
+    expect(WEDDING_MOMENTS).toEqual(weddingMoments.map((o) => o.value))
     expect(MUSIC_GENRES).toEqual(musicGenres.map((o) => o.value))
     expect(CURRENCIES).toEqual(APP_CURRENCIES)
     expect(DESCRIPTION_MAX_LENGTH).toBe(APP_DESCRIPTION_MAX_LENGTH)
   })
 
-  it("knows which wedding jobs have no style", () => {
-    expect(JOB_TYPES_WITHOUT_STYLE).toEqual(
-      jobTypes
-        .filter(
-          (jobType) => jobType.setting === "wedding" && !hasDetail(jobType),
-        )
-        .map((jobType) => jobType.id),
-    )
+  it("knows which professions each detail is for", () => {
+    for (const jobType of jobTypes) {
+      const limits = DETAIL_PROFESSIONS[jobType.setting] ?? {}
+      const fields = settings
+        .find((setting) => setting.id === jobType.setting)
+        .details.map(({ detail }) => detail.id)
+        .filter((field) => limits[field]?.includes(jobType.profession) ?? true)
+      expect(detailsFor(jobType).map((detail) => detail.id)).toEqual(fields)
+    }
   })
 
   it("asks for the fields the create form has", () => {
     for (const setting of settings) {
       const fields = Object.entries(DETAILS_BY_SETTING[setting.id])
-      expect(fields).toEqual(
-        setting.createFields.map((spec) => [
+      expect(fields).toEqual([
+        ...setting.createFields.map((spec) => [
           spec.field,
           spec.options?.map((option) => option.value) ?? null,
         ]),
-      )
+        ...setting.details.map(({ detail }) => [
+          detail.id,
+          detail.options.map((option) => option.value),
+        ]),
+      ])
       expect(TITLED_SETTINGS.includes(setting.id)).toBe(
         Boolean(setting.title_from.input),
       )
@@ -129,6 +137,8 @@ describe("toJobFields", () => {
         spouse_first_name_1: "Giulia",
         spouse_first_name_2: "Marco",
         styles: ["reportage", "film"],
+        moments: [],
+        genres: [],
       },
       description: null,
       pay: null,
@@ -163,23 +173,29 @@ describe("toJobFields", () => {
     expect(fields.details).toEqual({ headliner: "Ada", genres: ["rock"] })
   })
 
-  it("drops the style of a wedding job that has none", () => {
-    const fields = toJobFields(
-      {
-        job_type: "wedding_makeup_artist",
-        details: {
-          spouse_first_name_1: "Ada",
-          spouse_first_name_2: "Tom",
-          styles: ["film"],
-        },
-      },
-      JOB_TYPES,
-      null,
-    )
-    expect(fields.details).toEqual({
+  it("drops the details a wedding profession doesn't have", () => {
+    const answer = {
+      spouse_first_name_1: "Ada",
+      spouse_first_name_2: "Tom",
+      styles: ["film"],
+      moments: ["ceremony", "brunch"],
+      genres: ["jazz"],
+    }
+    const details = (job_type) =>
+      toJobFields({ job_type, details: answer }, JOB_TYPES, null).details
+    expect(details("wedding_makeup_artist")).toEqual({
       spouse_first_name_1: "Ada",
       spouse_first_name_2: "Tom",
       styles: [],
+      moments: [],
+      genres: [],
+    })
+    expect(details("wedding_dj")).toEqual({
+      spouse_first_name_1: "Ada",
+      spouse_first_name_2: "Tom",
+      styles: [],
+      moments: ["ceremony"],
+      genres: ["jazz"],
     })
   })
 

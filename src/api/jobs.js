@@ -14,7 +14,7 @@ import {
   ONE_MINUTE,
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
-import { GENRE_SETTINGS } from "../data/job-taxonomy.js"
+import { DETAIL_FIELDS, GENRE_SETTINGS } from "../data/job-taxonomy.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
 import { currentLocale, t } from "../i18n/index.js"
 import {
@@ -65,13 +65,13 @@ export function toViewModel(row) {
       HASH_SEED,
     ),
     year,
+    filterValues: DETAIL_FIELDS.flatMap((field) => row.details[field] ?? []),
   }
 
   if (GENRE_SETTINGS.includes(row.setting)) {
     return {
       ...base,
       title: row.title,
-      filterValues: row.details.genres ?? [],
       facts: [
         { label: "fields.headliner", value: row.details.headliner },
         ...(region ? [{ label: "fields.region", value: region }] : []),
@@ -83,7 +83,6 @@ export function toViewModel(row) {
     return {
       ...base,
       title: row.title,
-      filterValues: [],
       facts: region ? [{ label: "fields.region", value: region }] : [],
     }
   }
@@ -92,7 +91,6 @@ export function toViewModel(row) {
   return {
     ...base,
     title: couple,
-    filterValues: row.details.styles ?? [],
     facts: [
       { label: "facts.spouses", value: couple },
       ...(region ? [{ label: "fields.region", value: region }] : []),

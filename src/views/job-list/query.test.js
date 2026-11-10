@@ -65,7 +65,12 @@ describe("feedQuery", () => {
       query({ activeSettings: ["wedding"], activeProfessions: ["dj"] })
         .jobTypes,
     ).toEqual(["wedding_dj"])
-    expect(query({ details: ["editorial"] }).jobTypes).toContain("wedding_dj")
+    expect(query({ details: ["editorial"] }).jobTypes).toContain(
+      "wedding_photographer",
+    )
+    expect(query({ details: ["editorial"] }).jobTypes).not.toContain(
+      "wedding_dj",
+    )
   })
 
   it("scopes the job types to the picked professions, or else your own", () => {
@@ -77,17 +82,18 @@ describe("feedQuery", () => {
     ).toEqual(["wedding_dj"])
   })
 
-  it("groups the picked styles and genres by the detail they filter", () => {
-    expect(query({ details: ["editorial", "techno", "jazz"] }).details).toEqual(
-      [
-        { key: "styles", settings: ["wedding"], values: ["editorial"] },
-        {
-          key: "genres",
-          settings: ["festival", "concert"],
-          values: ["techno", "jazz"],
-        },
-      ],
-    )
+  it("groups the picked details by the field they filter", () => {
+    expect(
+      query({ details: ["editorial", "ceremony", "techno", "jazz"] }).details,
+    ).toEqual([
+      { key: "styles", settings: ["wedding"], values: ["editorial"] },
+      { key: "moments", settings: ["wedding"], values: ["ceremony"] },
+      {
+        key: "genres",
+        settings: ["wedding", "festival", "concert"],
+        values: ["techno", "jazz"],
+      },
+    ])
   })
 
   it("asks for every stored spelling of a region, and of each favorite", () => {

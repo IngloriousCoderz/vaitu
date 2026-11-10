@@ -31,12 +31,24 @@ export const MUSIC_GENRES = [
   "rock",
   "pop",
   "classical",
+  "acoustic",
+  "swing",
+  "soul_funk",
+  "latin",
+  "italian",
+  "country",
 ]
 
-export const JOB_TYPES_WITHOUT_STYLE = [
-  "wedding_planner",
-  "wedding_makeup_artist",
-]
+export const WEDDING_MOMENTS = ["ceremony", "aperitivo", "dinner", "party"]
+
+// Details only some professions have, by setting. The others are for everyone.
+export const DETAIL_PROFESSIONS: Record<string, Record<string, string[]>> = {
+  wedding: {
+    styles: ["photographer", "videographer"],
+    moments: ["musician", "dj"],
+    genres: ["musician", "dj"],
+  },
+}
 
 // null means free text, a list the values that can be picked, any number of them.
 export const DETAILS_BY_SETTING: Record<
@@ -47,6 +59,8 @@ export const DETAILS_BY_SETTING: Record<
     spouse_first_name_1: null,
     spouse_first_name_2: null,
     styles: WEDDING_STYLES,
+    moments: WEDDING_MOMENTS,
+    genres: MUSIC_GENRES,
   },
   festival: { headliner: null, genres: MUSIC_GENRES },
   concert: { headliner: null, genres: MUSIC_GENRES },
@@ -281,13 +295,13 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "pay": { "kind": "fixed" | "range" | "unpaid", "amount_min": number | null, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its setting, an underscore and the profession. "details" depends on the setting:
-- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(WEDDING_STYLES)})[] }
+- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(WEDDING_STYLES)})[], "moments": (${oneOf(WEDDING_MOMENTS)})[], "genres": (${oneOf(MUSIC_GENRES)})[] }
 - festival, concert: { "headliner": string | null, "genres": (${oneOf(MUSIC_GENRES)})[] }
 - apartment, house, office: {}
 Rules:
 - ${keep}
 - title: null for a wedding; the festival's or concert's name for a festival or concert; for apartment, house and office, a short description of the work, in the transcript's language.
-- styles, genres: every one that was said, [] when none was. styles: [] for ${oneOf(JOB_TYPES_WITHOUT_STYLE)}.
+- styles, moments, genres: every one that was said, [] when none was. moments: the parts of the wedding day the job covers.${detailRules(jobTypes)}
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
 - pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max; "unpaid", with no amounts, when the job is said to be unpaid, a favour or an exchange. null when no amount is said.
@@ -327,7 +341,7 @@ export function toJobFields(
     job_date: date(answer?.job_date),
     application_deadline: localDatetime(answer?.application_deadline),
     max_applicants: places(answer?.max_applicants),
-    details: withoutStyle(job_type, details(setting, answer?.details)),
+    details: forProfession(job_type, details(setting, answer?.details)),
     description:
       text(answer?.description)?.slice(0, DESCRIPTION_MAX_LENGTH) ?? null,
     pay: pay(answer?.pay),
@@ -376,13 +390,34 @@ function picked(allowed: string[], value: unknown) {
   return [...new Set(values)]
 }
 
-function withoutStyle(
+function detailRules(jobTypes: string[]) {
+  return Object.entries(DETAIL_PROFESSIONS)
+    .filter(([setting]) => jobTypes.some((id) => id.startsWith(`${setting}_`)))
+    .map(
+      ([setting, fields]) =>
+        ` For ${setting}: ${Object.entries(fields)
+          .map(
+            ([field, professions]) => `${field} only for ${oneOf(professions)}`,
+          )
+          .join("; ")}; [] otherwise.`,
+    )
+    .join("")
+}
+
+function forProfession(
   job_type: string | null,
   fields: Record<string, string | string[] | null>,
 ) {
-  return JOB_TYPES_WITHOUT_STYLE.includes(job_type ?? "")
-    ? { ...fields, styles: [] }
-    : fields
+  if (!job_type) return fields
+  const [setting] = job_type.split("_")
+  const profession = job_type.slice(setting.length + 1)
+  const limited = Object.entries(DETAIL_PROFESSIONS[setting] ?? {}).filter(
+    ([, professions]) => !professions.includes(profession),
+  )
+  return {
+    ...fields,
+    ...Object.fromEntries(limited.map(([field]) => [field, []])),
+  }
 }
 
 function text(value: unknown) {

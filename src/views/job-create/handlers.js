@@ -61,7 +61,7 @@ import {
 } from "../../data/regions/resolve.js"
 import { paths } from "../../routes.js"
 import { randomId } from "../../text/index.js"
-import { hasDetail, settingById } from "../job-list/job-settings.js"
+import { detailsFor, settingById } from "../job-list/job-settings.js"
 import { localToday } from "../job-list/query.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
@@ -171,8 +171,13 @@ export function jobTypeSelect(entity, { value }, api) {
   Form.fieldChange(entity, { path: "profession", value: profession })
   entity.error = null
   if (isSameSetting) {
-    if (setting === "wedding" && !hasDetail({ setting, profession })) {
-      Form.fieldChange(entity, { path: "details.styles", value: undefined })
+    const kept = detailsFor({ setting, profession }).map((detail) => detail.id)
+    for (const { detail } of settingById(setting).details) {
+      if (kept.includes(detail.id)) continue
+      Form.fieldChange(entity, {
+        path: `details.${detail.id}`,
+        value: undefined,
+      })
     }
     return
   }
@@ -400,7 +405,13 @@ export const audioParse = handleAsync("audioParse", {
     }
     const setting = settingById(getFieldValue(entity, "setting", ""))
     const details = mergeParsedDetails(
-      setting,
+      {
+        createFields: setting.createFields,
+        details: detailsFor({
+          setting: setting.id,
+          profession: getFieldValue(entity, "profession", ""),
+        }),
+      },
       getFieldValue(entity, "details", {}),
       fields.details,
     )

@@ -32,7 +32,7 @@ import {
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { currentLocale, t } from "../../i18n/index.js"
-import { hasDetail, settingById } from "../job-list/job-settings.js"
+import { detailsFor, settingById } from "../job-list/job-settings.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
@@ -139,23 +139,13 @@ export const template = {
                 onField,
               }),
           )}
-          ${when(
-            hasDetail({ setting: settingId, profession }),
-            () => html`
+          ${detailsFor({ setting: settingId, profession }).map(
+            (detail) => html`
               <div class=${styles.field}>
                 ${this.renderDetailChips({
-                  spec: setting.createFields.find(
-                    (spec) => spec.field === setting.detailField,
-                  ),
-                  value: getFieldValue(
-                    entity,
-                    `details.${setting.detailField}`,
-                    [],
-                  ),
-                  error: getFieldError(
-                    entity,
-                    `details.${setting.detailField}`,
-                  ),
+                  detail,
+                  value: getFieldValue(entity, `details.${detail.id}`, []),
+                  error: getFieldError(entity, `details.${detail.id}`),
                   onDetailToggle,
                 })}
               </div>
@@ -624,17 +614,17 @@ export const template = {
     )
   },
 
-  renderDetailChips({ spec, value, error, onDetailToggle }) {
+  renderDetailChips({ detail, value, error, onDetailToggle }) {
     return html`
       ${ChipPicker.render({
-        label: spec.label,
-        options: spec.options.map((option) => ({
+        label: detail.label,
+        options: detail.options.map((option) => ({
           value: option.value,
           label: t(option.label),
         })),
         value,
         onToggle: (picked) =>
-          onDetailToggle({ field: spec.field, value: picked }),
+          onDetailToggle({ field: detail.id, value: picked }),
       })}
       ${ErrorLabel.render({ error })}
     `

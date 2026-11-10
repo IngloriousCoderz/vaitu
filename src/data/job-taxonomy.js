@@ -7,6 +7,13 @@ export const weddingStyles = [
   { value: "fine_art", label: "taxonomy.style.fine_art" },
 ]
 
+export const weddingMoments = [
+  { value: "ceremony", label: "taxonomy.moment.ceremony" },
+  { value: "aperitivo", label: "taxonomy.moment.aperitivo" },
+  { value: "dinner", label: "taxonomy.moment.dinner" },
+  { value: "party", label: "taxonomy.moment.party" },
+]
+
 export const GENRE_SETTINGS = ["festival", "concert"]
 
 export const musicGenres = [
@@ -18,6 +25,20 @@ export const musicGenres = [
   { value: "rock", label: "taxonomy.genre.rock" },
   { value: "pop", label: "taxonomy.genre.pop" },
   { value: "classical", label: "taxonomy.genre.classical" },
+  { value: "acoustic", label: "taxonomy.genre.acoustic" },
+  { value: "swing", label: "taxonomy.genre.swing" },
+  { value: "soul_funk", label: "taxonomy.genre.soul_funk" },
+  { value: "latin", label: "taxonomy.genre.latin" },
+  { value: "italian", label: "taxonomy.genre.italian" },
+  { value: "country", label: "taxonomy.genre.country" },
+]
+
+/** The detail fields a job can have, and every value they can hold. */
+export const DETAIL_FIELDS = ["styles", "moments", "genres"]
+export const detailOptions = [
+  ...weddingStyles,
+  ...weddingMoments,
+  ...musicGenres,
 ]
 
 const SETTINGS_BY_PROFESSION = {

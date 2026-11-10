@@ -2,25 +2,31 @@ import { DEFAULT_CURRENCY } from "../../data/currencies.js"
 
 /**
  * The form's details with what the voice message said on top. Only the fields
- * this setting has, and only values it allows.
- * @param {{ createFields: { field: string, type: string, options?: { value: string }[] }[] }} setting
+ * this job has, and only values it allows.
+ * @param {{
+ *   createFields: { field: string, options?: { value: string }[] }[],
+ *   details?: { id: string, options: { value: string }[] }[],
+ * }} form
  * @param {Record<string, string | string[]>} current
  * @param {Record<string, unknown>} [parsed]
  */
-export function mergeParsedDetails(setting, current, parsed = {}) {
-  const details = { ...current }
-  for (const { field, type, options } of setting.createFields) {
+export function mergeParsedDetails(
+  { createFields, details = [] },
+  current,
+  parsed = {},
+) {
+  const merged = { ...current }
+  for (const { field, options } of createFields) {
     const value = parsed[field]
-    if (type === "chips") {
-      const picked = allowed(options, [value].flat())
-      if (picked.length) details[field] = picked
-      continue
-    }
     if (typeof value !== "string" || !value.trim()) continue
     if (options && !options.some((option) => option.value === value)) continue
-    details[field] = value.trim()
+    merged[field] = value.trim()
   }
-  return details
+  for (const { id, options } of details) {
+    const picked = allowed(options, [parsed[id]].flat())
+    if (picked.length) merged[id] = picked
+  }
+  return merged
 }
 
 export function payFromForm(values) {

@@ -9,6 +9,7 @@ import {
   jobTypeById,
   jobTypeId,
   musicGenres,
+  weddingMoments,
   weddingStyles,
 } from "../data/job-taxonomy.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
@@ -187,6 +188,15 @@ function validateWeddingDetails(details) {
   )
   if (details.styles !== undefined && !allOf(weddingStyles, details.styles)) {
     fail(errors, "styles", "validation.pickStyle")
+  }
+  if (
+    details.moments !== undefined &&
+    !allOf(weddingMoments, details.moments)
+  ) {
+    fail(errors, "moments", "validation.pickMoment")
+  }
+  if (details.genres !== undefined && !allOf(musicGenres, details.genres)) {
+    fail(errors, "genres", "validation.pickGenre")
   }
   return errors
 }

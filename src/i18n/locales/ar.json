@@ -76,6 +76,12 @@
       "film": "فيلم",
       "fine_art": "فن تشكيلي"
     },
+    "moment": {
+      "ceremony": "المراسم",
+      "aperitivo": "المقبلات",
+      "dinner": "العشاء",
+      "party": "الحفلة"
+    },
     "genre": {
       "house": "هاوس",
       "techno": "تكنو",
@@ -84,7 +90,13 @@
       "electronic": "إلكتروني",
       "rock": "روك",
       "pop": "بوب",
-      "classical": "كلاسيكية"
+      "classical": "كلاسيكية",
+      "acoustic": "أكوستيك",
+      "swing": "سوينغ",
+      "soul_funk": "سول وفانك",
+      "latin": "لاتيني",
+      "italian": "إيطالي",
+      "country": "كانتري"
     },
     "setting": {
       "wedding": "حفلات الزفاف",
@@ -108,6 +120,7 @@
   },
   "filters": {
     "weddingStyle": "أسلوب الزفاف",
+    "weddingMoment": "فترة اليوم",
     "musicGenre": "النوع الموسيقي",
     "allRegions": "كل المناطق",
     "myRegions": "مناطقي",
@@ -120,6 +133,7 @@
     "spouse1": "الاسم الأول للشريك 1",
     "spouse2": "الاسم الأول للشريك 2",
     "style": "الأسلوب",
+    "moments": "فترات اليوم",
     "headliner": "الفنان الرئيسي",
     "genre": "النوع",
     "country": "الدولة",
@@ -200,6 +214,7 @@
     "descriptionTooLong": "اجعله أقل من 2000 حرف",
     "addName": "أضف اسمًا",
     "pickStyle": "اختر أسلوبًا",
+    "pickMoment": "اختر فترة",
     "addHeadliner": "أضف الفنان الرئيسي",
     "pickGenre": "اختر نوعًا",
     "pickSetting": "اختر المجال",

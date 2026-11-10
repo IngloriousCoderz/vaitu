@@ -70,6 +70,12 @@
       "film": "Pellicola",
       "fine_art": "Fine Art"
     },
+    "moment": {
+      "ceremony": "Cerimonia",
+      "aperitivo": "Aperitivo",
+      "dinner": "Cena",
+      "party": "Festa"
+    },
     "genre": {
       "house": "House",
       "techno": "Techno",
@@ -78,7 +84,13 @@
       "electronic": "Elettronica",
       "rock": "Rock",
       "pop": "Pop",
-      "classical": "Classica"
+      "classical": "Classica",
+      "acoustic": "Acustica",
+      "swing": "Swing",
+      "soul_funk": "Soul e funk",
+      "latin": "Latina",
+      "italian": "Italiana",
+      "country": "Country"
     },
     "setting": {
       "wedding": "Matrimoni",
@@ -102,6 +114,7 @@
   },
   "filters": {
     "weddingStyle": "Stile del matrimonio",
+    "weddingMoment": "Momento della giornata",
     "musicGenre": "Genere musicale",
     "allRegions": "Tutte le regioni",
     "myRegions": "Le mie regioni",
@@ -114,6 +127,7 @@
     "spouse1": "Nome del primo sposo",
     "spouse2": "Nome del secondo sposo",
     "style": "Stile",
+    "moments": "Momenti della giornata",
     "headliner": "Headliner",
     "genre": "Genere",
     "country": "Paese",
@@ -194,6 +208,7 @@
     "descriptionTooLong": "Resta sotto i 2000 caratteri",
     "addName": "Inserisci un nome",
     "pickStyle": "Scegli uno stile",
+    "pickMoment": "Scegli un momento",
     "addHeadliner": "Inserisci un headliner",
     "pickGenre": "Scegli un genere",
     "pickSetting": "Scegli un ambito",

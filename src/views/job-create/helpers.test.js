@@ -20,13 +20,9 @@ describe("droppedImageUrls", () => {
 
 describe("mergeParsedDetails", () => {
   const setting = {
-    createFields: [
-      { field: "headliner" },
-      {
-        field: "genres",
-        type: "chips",
-        options: [{ value: "techno" }, { value: "house" }],
-      },
+    createFields: [{ field: "headliner" }],
+    details: [
+      { id: "genres", options: [{ value: "techno" }, { value: "house" }] },
     ],
   }
 

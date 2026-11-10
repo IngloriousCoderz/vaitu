@@ -7,7 +7,7 @@ import {
   NO_DAYS_LEFT,
   WEEK_DAYS,
 } from "../../constants/index.js"
-import { GENRE_SETTINGS } from "../../data/job-taxonomy.js"
+import { detailOptions } from "../../data/job-taxonomy.js"
 import { currentLocale, t } from "../../i18n/index.js"
 
 export function monogram(title) {
@@ -60,9 +60,11 @@ export function jobSubtitle(job) {
 }
 
 export function jobTag(job) {
-  const kind = GENRE_SETTINGS.includes(job.setting) ? "genre" : "style"
   return job.filterValues
-    .map((value) => t(`taxonomy.${kind}.${value}`, { defaultValue: value }))
+    .map((value) => {
+      const option = detailOptions.find((item) => item.value === value)
+      return option ? t(option.label) : value
+    })
     .join(", ")
 }
 

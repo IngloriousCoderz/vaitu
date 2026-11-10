@@ -66,6 +66,12 @@
       "film": "フィルム",
       "fine_art": "ファインアート"
     },
+    "moment": {
+      "ceremony": "挙式",
+      "aperitivo": "アペリティーボ",
+      "dinner": "ディナー",
+      "party": "パーティー"
+    },
     "genre": {
       "house": "ハウス",
       "techno": "テクノ",
@@ -74,7 +80,13 @@
       "electronic": "エレクトロニック",
       "rock": "ロック",
       "pop": "ポップ",
-      "classical": "クラシック"
+      "classical": "クラシック",
+      "acoustic": "アコースティック",
+      "swing": "スウィング",
+      "soul_funk": "ソウル・ファンク",
+      "latin": "ラテン",
+      "italian": "イタリアン",
+      "country": "カントリー"
     },
     "setting": {
       "wedding": "結婚式",
@@ -98,6 +110,7 @@
   },
   "filters": {
     "weddingStyle": "結婚式のスタイル",
+    "weddingMoment": "時間帯",
     "musicGenre": "音楽のジャンル",
     "allRegions": "すべての地域",
     "myRegions": "お気に入りの地域",
@@ -110,6 +123,7 @@
     "spouse1": "パートナー1の名前",
     "spouse2": "パートナー2の名前",
     "style": "スタイル",
+    "moments": "担当する時間帯",
     "headliner": "ヘッドライナー",
     "genre": "ジャンル",
     "country": "国",
@@ -190,6 +204,7 @@
     "descriptionTooLong": "2000文字以内にしてください",
     "addName": "名前を入力してください",
     "pickStyle": "スタイルを選んでください",
+    "pickMoment": "時間帯を選んでください",
     "addHeadliner": "ヘッドライナーを入力してください",
     "pickGenre": "ジャンルを選んでください",
     "pickSetting": "場面を選んでください",

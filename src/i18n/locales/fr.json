@@ -70,6 +70,12 @@
       "film": "Argentique",
       "fine_art": "Fine art"
     },
+    "moment": {
+      "ceremony": "Cérémonie",
+      "aperitivo": "Vin d'honneur",
+      "dinner": "Dîner",
+      "party": "Soirée dansante"
+    },
     "genre": {
       "house": "House",
       "techno": "Techno",
@@ -78,7 +84,13 @@
       "electronic": "Électronique",
       "rock": "Rock",
       "pop": "Pop",
-      "classical": "Classique"
+      "classical": "Classique",
+      "acoustic": "Acoustique",
+      "swing": "Swing",
+      "soul_funk": "Soul et funk",
+      "latin": "Latino",
+      "italian": "Italienne",
+      "country": "Country"
     },
     "setting": {
       "wedding": "Mariages",
@@ -102,6 +114,7 @@
   },
   "filters": {
     "weddingStyle": "Style de mariage",
+    "weddingMoment": "Moment de la journée",
     "musicGenre": "Genre musical",
     "allRegions": "Toutes les régions",
     "myRegions": "Mes régions",
@@ -114,6 +127,7 @@
     "spouse1": "Prénom du premier époux",
     "spouse2": "Prénom du second époux",
     "style": "Style",
+    "moments": "Moments de la journée",
     "headliner": "Tête d'affiche",
     "genre": "Genre",
     "country": "Pays",
@@ -194,6 +208,7 @@
     "descriptionTooLong": "Restez sous les 2000 caractères",
     "addName": "Saisissez un prénom",
     "pickStyle": "Choisissez un style",
+    "pickMoment": "Choisissez un moment",
     "addHeadliner": "Saisissez une tête d'affiche",
     "pickGenre": "Choisissez un genre",
     "pickSetting": "Choisissez un cadre",
