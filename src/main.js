@@ -1,6 +1,7 @@
 import "@inglorious/ui/all.css"
 import "./pwa"
 import "./native-update"
+import "./live-update"
 import "./app-links"
 import "./styles/theme.css"
 import "./styles/tokens.css"

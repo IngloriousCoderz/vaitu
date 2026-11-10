@@ -22,7 +22,7 @@
     "vault:push": "node scripts/push-vault-secrets.mjs",
     "secrets:push": "node scripts/push-function-secrets.mjs",
     "build": "vite build",
-    "build:release": "node --env-file-if-exists=.env node_modules/vite/bin/vite.js build",
+    "build:release": "node --env-file-if-exists=.env scripts/build-release.mjs",
     "landing": "pnpm --dir landing dev",
     "preview": "vite preview",
     "cap": "cap",
@@ -36,9 +36,14 @@
     "mobile:release": "node scripts/native-version.mjs && pnpm build:release && cap sync",
     "changeset": "changeset",
     "release:version": "changeset version",
+    "live:keys": "node scripts/live-update-keys.mjs",
+    "live:release": "node scripts/live-release.mjs",
     "assets:compose": "node scripts/compose-logo-assets.mjs",
     "assets": "pnpm assets:compose && capacitor-assets generate --ios --android",
     "prepare": "husky"
+  },
+  "liveUpdate": {
+    "minBuild": 3
   },
   "dependencies": {
     "@capacitor-firebase/analytics": "^8.6.0",
@@ -46,15 +51,16 @@
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
     "@capacitor/share": "^8.0.3",
+    "@capawesome/capacitor-live-update": "^8.8.1",
     "@iconify-icons/material-symbols": "^2.0.8",
     "@inglorious/firebase": "^0.1.1",
     "@inglorious/i18n": "^2.0.0",
     "@inglorious/motion": "^9.0.18",
     "@inglorious/store": "^12.3.0",
-    "@inglorious/supabase": "^0.5.0",
+    "@inglorious/supabase": "^0.6.0",
     "@inglorious/ui": "^9.18.2",
     "@inglorious/utils": "^5.1.0",
-    "@inglorious/web": "^6.19.0",
+    "@inglorious/web": "^6.20.0",
     "@supabase/supabase-js": "^2.119.0",
     "firebase": "^13.2.0",
     "fix-webm-duration": "^1.0.6"

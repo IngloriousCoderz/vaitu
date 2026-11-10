@@ -6,9 +6,10 @@ each:
 - **The web app and the installed PWA** update themselves. Deploying the
   frontend is the whole release.
 - **The Android and iOS apps** carry their web code inside the binary, so a
-  frontend deploy never reaches them. They update through the stores, and a
-  minimum build number in the database decides when the update stops being
-  optional.
+  frontend deploy never reaches them. A signed live update replaces that code
+  without the stores; only native changes, such as a new plugin or
+  permission, go through the stores, where a minimum build number in the
+  database decides when the update stops being optional.
 
 Either way, users don't get to stay on an old version.
 
@@ -35,6 +36,73 @@ inside the native apps.
 
 To try it locally, run `pnpm build && pnpm preview` and open the app. Then
 change something, build again, and switch to another tab and back.
+
+## Native apps: live updates
+
+The web code inside the native apps updates like the PWA does, from a signed
+bundle in the public `live-updates` bucket:
+
+1. At launch, every hour and each time the app comes back to the foreground,
+   it reads `manifest.json` from the bucket.
+2. A bundle with a newer release, made for the installed build, downloads in
+   the background. The app checks its signature against the public key built
+   into it, and refuses one that doesn't match.
+3. It is applied the next time the app goes to the background. Until then
+   the "Update now" pill offers it.
+4. A bundle that doesn't start within 10 seconds is rolled back to the code
+   built into the app, and never downloaded again.
+
+### Publishing one
+
+`pnpm live:release` builds the committed code with the production `.env`,
+from a clean checkout of `HEAD`, so uncommitted changes never ship. It signs
+the zip with your private key and uploads it with the service role key, which
+it asks the Supabase CLI for, as `pnpm vault:push` does.
+
+To have every push to `main` do it, add one line at the end of
+`.husky/pre-push`, and make the hook read git's refs first:
+
+```sh
+#!/bin/sh
+refs=$(cat)
+pnpm typecheck
+pnpm test:unit
+printf '%s\n' "$refs" | node scripts/live-release.mjs --on-push
+```
+
+It publishes only when the pushed commits touch the app: not for changes to
+`landing/`, `docs/`, `supabase/` or Markdown alone. Without a key it skips,
+and says so. `git push --no-verify` skips it on purpose.
+
+### The signing key
+
+Once, before the first store build that carries live updates, run
+`pnpm live:keys`. It writes:
+
+- the private key to `~/.config/vaitu/live-update.pem`, or wherever
+  `LIVE_UPDATE_PRIVATE_KEY` points. Back it up somewhere safe, such as a
+  password manager, and never commit it. Losing it means a new store build
+  before the next live update.
+- the public key to `live-update.pub.pem`. Commit it: `capacitor.config.ts`
+  builds it into the apps.
+
+Vercel never sees the private key, so a leaked Vercel account can change the
+website but not the apps.
+
+### Which builds take a bundle
+
+Every release build is stamped with the moment it was built
+(`VITE_LIVE_UPDATE_RELEASE`), and a bundle is taken only if it is newer.
+A store build released after a bundle never goes back to it.
+
+`liveUpdate.minBuild` in `package.json` is the oldest build a bundle can run
+on. Raise it to the new build number whenever a release changes something
+native, such as a Capacitor plugin, a permission or `capacitor.config.ts`: older
+builds then keep their code until they update from the store. The first build
+with live updates is 3.
+
+Development builds (`pnpm mobile:ios`, `pnpm mobile:android`) carry no stamp,
+so they never update themselves.
 
 ## Native apps: the stores, plus a minimum build
 
@@ -131,6 +199,10 @@ to run. Typical breaking changes:
   writes;
 - tightening a constraint that an older build's writes don't meet;
 - changing what an edge function accepts or returns.
+
+Live updates shorten this: an app with a connection moves to the new code
+within one trip to the background, as the web app does. But an install that
+stays offline, or below `liveUpdate.minBuild`, keeps its old code.
 
 When a change can't stay compatible, do it in two releases:
 

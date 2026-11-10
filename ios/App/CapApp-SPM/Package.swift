@@ -12,10 +12,11 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "8.6.0"),
-        .package(name: "CapacitorFirebaseAnalytics", path: "../../../node_modules/.pnpm/@capacitor-firebase+analytics@8.5.2_@capacitor+core@8.6.0_firebase@12.19.0/node_modules/@capacitor-firebase/analytics"),
+        .package(name: "CapacitorFirebaseAnalytics", path: "../../../node_modules/.pnpm/@capacitor-firebase+analytics@8.6.0_@capacitor+core@8.6.0_firebase@13.2.0/node_modules/@capacitor-firebase/analytics"),
         .package(name: "CapacitorFirebaseMessaging", path: "symlinks/CapacitorFirebaseMessaging"),
         .package(name: "CapacitorApp", path: "../../../node_modules/.pnpm/@capacitor+app@8.1.2_@capacitor+core@8.6.0/node_modules/@capacitor/app"),
-        .package(name: "CapacitorShare", path: "../../../node_modules/.pnpm/@capacitor+share@8.0.3_@capacitor+core@8.6.0/node_modules/@capacitor/share")
+        .package(name: "CapacitorShare", path: "../../../node_modules/.pnpm/@capacitor+share@8.0.3_@capacitor+core@8.6.0/node_modules/@capacitor/share"),
+        .package(name: "CapawesomeCapacitorLiveUpdate", path: "../../../node_modules/.pnpm/@capawesome+capacitor-live-update@8.8.1_@capacitor+core@8.6.0/node_modules/@capawesome/capacitor-live-update")
     ],
     targets: [
         .target(
@@ -26,7 +27,8 @@ let package = Package(
                 .product(name: "CapacitorFirebaseAnalytics", package: "CapacitorFirebaseAnalytics"),
                 .product(name: "CapacitorFirebaseMessaging", package: "CapacitorFirebaseMessaging"),
                 .product(name: "CapacitorApp", package: "CapacitorApp"),
-                .product(name: "CapacitorShare", package: "CapacitorShare")
+                .product(name: "CapacitorShare", package: "CapacitorShare"),
+                .product(name: "CapawesomeCapacitorLiveUpdate", package: "CapawesomeCapacitorLiveUpdate")
             ]
         )
     ]

@@ -2294,7 +2294,9 @@ insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 values
   ('job-ics', 'job-ics', false, 64 * 1024, array['text/calendar']),
   ('job-images', 'job-images', true, 5 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
-  ('avatars', 'avatars', true, 2 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp'])
+  ('avatars', 'avatars', true, 2 * 1024 * 1024, array['image/jpeg', 'image/png', 'image/webp']),
+  -- The web app for the native apps, signed: only the service role writes it.
+  ('live-updates', 'live-updates', true, 50 * 1024 * 1024, array['application/zip', 'application/json'])
 on conflict (id) do update
 set public = excluded.public,
     file_size_limit = excluded.file_size_limit,

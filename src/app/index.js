@@ -82,7 +82,7 @@ export const App = {
     const chrome = CHROME[router.route] ?? DEFAULT_CHROME
 
     const shell = api.getEntity("shell")
-    const pwaUpdate = api.getEntity("pwaUpdate")
+    const update = readyUpdate(api)
     const pushPrompt = api.getEntity("pushPrompt")
     const analytics = api.getEntity("analytics")
 
@@ -98,11 +98,11 @@ export const App = {
 
     const updatebar =
       this.renderOfflineBar(api) ||
-      this.renderUpdateBar(api, pwaUpdate) ||
+      this.renderUpdateBar(api, update) ||
       this.renderReactivatedBar(api, shell)
     const pushPromptBar =
-      this.renderAnalyticsPrompt(api, analytics, pwaUpdate) ||
-      this.renderPushPrompt(api, pushPrompt, pwaUpdate)
+      this.renderAnalyticsPrompt(api, analytics, update) ||
+      this.renderPushPrompt(api, pushPrompt, update)
 
     return this.renderShell({
       appBar: when(showWide, () => this.renderAppBar(api, router.route)),
@@ -137,11 +137,9 @@ export const App = {
     return OfflineBar.render()
   },
 
-  renderUpdateBar(api, pwaUpdate) {
-    if (!pwaUpdate.isUpdateReady) return ""
-    return UpdateBar.render({
-      onRefresh: () => api.notify("#pwaUpdate:pwaUpdateApply"),
-    })
+  renderUpdateBar(api, update) {
+    if (!update) return ""
+    return UpdateBar.render({ onRefresh: () => api.notify(update.apply) })
   },
 
   renderReactivatedBar(api, shell) {
@@ -151,25 +149,25 @@ export const App = {
     })
   },
 
-  renderAnalyticsPrompt(api, analytics, pwaUpdate) {
+  renderAnalyticsPrompt(api, analytics, update) {
     if (!analytics?.isAsking) return ""
     return PromptBar.render({
       message: t("analytics.prompt"),
       askLabel: t("analytics.accept"),
       declineLabel: t("analytics.decline"),
-      isStacked: Boolean(pwaUpdate?.isUpdateReady),
+      isStacked: Boolean(update),
       onAsk: () => api.notify("#analytics:analyticsConsent", true),
       onDecline: () => api.notify("#analytics:analyticsConsent", false),
     })
   },
 
-  renderPushPrompt(api, pushPrompt, pwaUpdate) {
+  renderPushPrompt(api, pushPrompt, update) {
     if (!pushPrompt?.isOpen) return ""
     return PromptBar.render({
       message: t("push.prompt"),
       askLabel: t("push.ask"),
       declineLabel: t("push.decline"),
-      isStacked: Boolean(pwaUpdate?.isUpdateReady),
+      isStacked: Boolean(update),
       onAsk: () => api.notify("#pushPrompt:pushAsk"),
       onDecline: () => api.notify("#pushPrompt:pushDecline"),
     })
@@ -377,4 +375,15 @@ export const App = {
       ],
     })
   },
+}
+
+// The web's service worker or the native live update, whichever has a version waiting.
+function readyUpdate(api) {
+  if (api.getEntity("liveUpdate")?.isUpdateReady) {
+    return { apply: "#liveUpdate:liveUpdateApply" }
+  }
+  if (api.getEntity("pwaUpdate")?.isUpdateReady) {
+    return { apply: "#pwaUpdate:pwaUpdateApply" }
+  }
+  return null
 }

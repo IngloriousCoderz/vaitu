@@ -1,25 +1,15 @@
 import { execFileSync } from "node:child_process"
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import path from "node:path"
 
-const ref = readFileSync("supabase/.temp/project-ref", "utf8").trim()
+import { linkedProject, serviceRoleKey } from "./supabase-project.mjs"
 
-const keys = JSON.parse(
-  execFileSync(
-    "supabase",
-    ["projects", "api-keys", "--project-ref", ref, "-o", "json"],
-    { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
-  ),
-)
-const serviceRoleKey = keys.find(
-  ({ name, type }) => name === "service_role" && type === "legacy",
-)?.api_key
-if (!serviceRoleKey) throw new Error("No legacy service_role key found")
+const { ref, url } = linkedProject()
 
 const secrets = {
-  project_url: `https://${ref}.supabase.co`,
-  service_role_key: serviceRoleKey,
+  project_url: url,
+  service_role_key: serviceRoleKey(ref),
 }
 
 const sql = `do $$

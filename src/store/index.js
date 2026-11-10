@@ -1,4 +1,6 @@
+import { LiveUpdate as LiveUpdatePlugin } from "@capawesome/capacitor-live-update"
 import { createStore } from "@inglorious/store"
+import { createLiveUpdate } from "@inglorious/web/live-update"
 import { PwaUpdate } from "@inglorious/web/pwa"
 import { Router, setRoutes } from "@inglorious/web/router"
 import { NetworkStatus } from "@inglorious/web/sensors/network-status"
@@ -66,6 +68,7 @@ export const store = createStore({
     TranslatedCombobox,
     LanguageSelect,
     PwaUpdate,
+    LiveUpdate: createLiveUpdate({ plugin: LiveUpdatePlugin }),
     NetworkStatus,
     NativeUpdate,
     PushPrompt,
