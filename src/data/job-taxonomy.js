@@ -1,57 +1,21 @@
-export const weddingStyles = [
-  { value: "editorial", label: "taxonomy.style.editorial" },
-  { value: "documentary", label: "taxonomy.style.documentary" },
-  { value: "reportage", label: "taxonomy.style.reportage" },
-  { value: "classic", label: "taxonomy.style.classic" },
-  { value: "film", label: "taxonomy.style.film" },
-  { value: "fine_art", label: "taxonomy.style.fine_art" },
-]
+import taxonomy from "../../supabase/functions/_shared/job-taxonomy.json"
 
-export const weddingMoments = [
-  { value: "ceremony", label: "taxonomy.moment.ceremony" },
-  { value: "aperitivo", label: "taxonomy.moment.aperitivo" },
-  { value: "dinner", label: "taxonomy.moment.dinner" },
-  { value: "party", label: "taxonomy.moment.party" },
-]
+const LABEL_GROUPS = { styles: "style", moments: "moment", genres: "genre" }
+
+export const weddingStyles = optionsOf("styles")
+export const weddingMoments = optionsOf("moments")
+export const musicGenres = optionsOf("genres")
 
 export const GENRE_SETTINGS = ["festival", "concert"]
 
-export const musicGenres = [
-  { value: "house", label: "taxonomy.genre.house" },
-  { value: "techno", label: "taxonomy.genre.techno" },
-  { value: "indie", label: "taxonomy.genre.indie" },
-  { value: "jazz", label: "taxonomy.genre.jazz" },
-  { value: "electronic", label: "taxonomy.genre.electronic" },
-  { value: "rock", label: "taxonomy.genre.rock" },
-  { value: "pop", label: "taxonomy.genre.pop" },
-  { value: "classical", label: "taxonomy.genre.classical" },
-  { value: "acoustic", label: "taxonomy.genre.acoustic" },
-  { value: "swing", label: "taxonomy.genre.swing" },
-  { value: "soul_funk", label: "taxonomy.genre.soul_funk" },
-  { value: "latin", label: "taxonomy.genre.latin" },
-  { value: "italian", label: "taxonomy.genre.italian" },
-  { value: "country", label: "taxonomy.genre.country" },
-]
-
 /** The detail fields a job can have, and every value they can hold. */
-export const DETAIL_FIELDS = ["styles", "moments", "genres"]
-export const detailOptions = [
-  ...weddingStyles,
-  ...weddingMoments,
-  ...musicGenres,
-]
+export const DETAIL_FIELDS = Object.keys(taxonomy.options)
+export const detailOptions = DETAIL_FIELDS.flatMap(optionsOf)
 
-const SETTINGS_BY_PROFESSION = {
-  photographer: ["wedding", "festival", "concert"],
-  videographer: ["wedding", "festival", "concert"],
-  musician: ["wedding", "festival", "concert"],
-  dj: ["wedding", "festival"],
-  sound_technician: ["festival", "concert"],
-  planner: ["wedding"],
-  makeup_artist: ["wedding"],
-  cleaner: ["apartment", "house", "office"],
-  electrician: ["apartment", "house", "office"],
-}
+/** By setting, each detail's professions: null when every profession has it. */
+export const detailsBySetting = taxonomy.detailsBySetting
+
+const SETTINGS_BY_PROFESSION = taxonomy.settingsByProfession
 
 // Launch is weddings only. The other settings stay defined, so they can come
 // back with one line and jobs already posted in them still display.
@@ -121,4 +85,11 @@ export function jobTypesFor(professionIds, settingIds = []) {
 
 function withFallback(picked, all) {
   return picked.length ? picked : all
+}
+
+function optionsOf(field) {
+  return taxonomy.options[field].map((value) => ({
+    value,
+    label: `taxonomy.${LABEL_GROUPS[field]}.${value}`,
+  }))
 }

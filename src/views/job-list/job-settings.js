@@ -1,13 +1,11 @@
 import { FIRST_INDEX } from "../../constants/index.js"
 import {
+  detailsBySetting,
   musicGenres,
   weddingMoments,
   weddingStyles,
 } from "../../data/job-taxonomy.js"
 import { t } from "../../i18n/index.js"
-
-const PHOTO_PROFESSIONS = ["photographer", "videographer"]
-const MUSIC_PROFESSIONS = ["musician", "dj"]
 
 const styleDetail = {
   id: "styles",
@@ -42,14 +40,16 @@ const genreDetail = {
   options: musicGenres,
 }
 
+const detailsById = {
+  styles: styleDetail,
+  moments: momentDetail,
+  genres: genreDetail,
+}
+
 export const settings = [
   {
     id: "wedding",
-    details: [
-      { detail: styleDetail, professions: PHOTO_PROFESSIONS },
-      { detail: momentDetail, professions: MUSIC_PROFESSIONS },
-      { detail: genreDetail, professions: MUSIC_PROFESSIONS },
-    ],
+    details: detailsOf("wedding"),
     title_from: {
       fields: ["spouse_first_name_1", "spouse_first_name_2"],
       join: " & ",
@@ -85,7 +85,7 @@ export const settings = [
 function showSetting(id) {
   return {
     id,
-    details: [{ detail: genreDetail }],
+    details: detailsOf(id),
     title_from: { input: true },
     createFields: [
       {
@@ -104,7 +104,7 @@ function showSetting(id) {
 function propertySetting(id) {
   return {
     id,
-    details: [],
+    details: detailsOf(id),
     title_from: { input: true },
     get titleLabel() {
       return t("fields.jobTitle")
@@ -156,6 +156,12 @@ export function hasDetail(jobType) {
 export function detailAppliesTo(value, jobType) {
   return detailsFor(jobType).some((detail) =>
     detail.options.some((option) => option.value === value),
+  )
+}
+
+function detailsOf(settingId) {
+  return Object.entries(detailsBySetting[settingId] ?? {}).map(
+    ([field, professions]) => ({ detail: detailsById[field], professions }),
   )
 }
 

@@ -1,75 +1,58 @@
-// Copies of the app's taxonomy and create form: a function cannot import app
-// source. src/views/job-create/parse-job.test.js fails when they drift.
+import taxonomy from "../_shared/job-taxonomy.json" with { type: "json" }
 
-const SETTINGS_BY_PROFESSION = {
-  photographer: ["wedding", "festival", "concert"],
-  videographer: ["wedding", "festival", "concert"],
-  musician: ["wedding", "festival", "concert"],
-  dj: ["wedding", "festival"],
-  sound_technician: ["festival", "concert"],
-  planner: ["wedding"],
-  makeup_artist: ["wedding"],
-  cleaner: ["apartment", "house", "office"],
-  electrician: ["apartment", "house", "office"],
+// Copies of the app's create form: a function cannot import app source.
+// src/views/job-create/parse-job.test.js fails when they drift.
+
+const { styles, moments, genres } = taxonomy.options
+
+const TEXT_FIELDS: Record<string, string[]> = {
+  wedding: ["spouse_first_name_1", "spouse_first_name_2"],
+  festival: ["headliner"],
+  concert: ["headliner"],
+  apartment: [],
+  house: [],
+  office: [],
 }
 
-export const WEDDING_STYLES = [
-  "editorial",
-  "documentary",
-  "reportage",
-  "classic",
-  "film",
-  "fine_art",
-]
-
-export const MUSIC_GENRES = [
-  "house",
-  "techno",
-  "indie",
-  "jazz",
-  "electronic",
-  "rock",
-  "pop",
-  "classical",
-  "acoustic",
-  "swing",
-  "soul_funk",
-  "latin",
-  "italian",
-  "country",
-]
-
-export const WEDDING_MOMENTS = ["ceremony", "aperitivo", "dinner", "party"]
+const DETAILS: Record<
+  string,
+  Record<string, string[] | null>
+> = taxonomy.detailsBySetting
+const OPTIONS: Record<string, string[]> = taxonomy.options
 
 // Details only some professions have, by setting. The others are for everyone.
-export const DETAIL_PROFESSIONS: Record<string, Record<string, string[]>> = {
-  wedding: {
-    styles: ["photographer", "videographer"],
-    moments: ["musician", "dj"],
-    genres: ["musician", "dj"],
-  },
-}
+export const DETAIL_PROFESSIONS: Record<
+  string,
+  Record<string, string[]>
+> = Object.fromEntries(
+  Object.entries(DETAILS).map(([setting, fields]) => [
+    setting,
+    Object.fromEntries(
+      Object.entries(fields).filter(
+        (entry): entry is [string, string[]] => entry[1] !== null,
+      ),
+    ),
+  ]),
+)
 
 // null means free text, a list the values that can be picked, any number of them.
 export const DETAILS_BY_SETTING: Record<
   string,
   Record<string, string[] | null>
-> = {
-  wedding: {
-    spouse_first_name_1: null,
-    spouse_first_name_2: null,
-    styles: WEDDING_STYLES,
-    moments: WEDDING_MOMENTS,
-    genres: MUSIC_GENRES,
-  },
-  festival: { headliner: null, genres: MUSIC_GENRES },
-  concert: { headliner: null, genres: MUSIC_GENRES },
-  apartment: {},
-  house: {},
-  office: {},
-}
+> = Object.fromEntries(
+  Object.entries(TEXT_FIELDS).map(([setting, textFields]) => [
+    setting,
+    Object.fromEntries([
+      ...textFields.map((field) => [field, null]),
+      ...Object.keys(DETAILS[setting] ?? {}).map((field) => [
+        field,
+        OPTIONS[field],
+      ]),
+    ]),
+  ]),
+)
 
-export const JOB_TYPES = Object.entries(SETTINGS_BY_PROFESSION).flatMap(
+export const JOB_TYPES = Object.entries(taxonomy.settingsByProfession).flatMap(
   ([profession, settings]) =>
     settings.map((setting) => `${setting}_${profession}`),
 )
@@ -295,8 +278,8 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "pay": { "kind": "fixed" | "range" | "unpaid", "amount_min": number | null, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its setting, an underscore and the profession. "details" depends on the setting:
-- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(WEDDING_STYLES)})[], "moments": (${oneOf(WEDDING_MOMENTS)})[], "genres": (${oneOf(MUSIC_GENRES)})[] }
-- festival, concert: { "headliner": string | null, "genres": (${oneOf(MUSIC_GENRES)})[] }
+- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(styles)})[], "moments": (${oneOf(moments)})[], "genres": (${oneOf(genres)})[] }
+- festival, concert: { "headliner": string | null, "genres": (${oneOf(genres)})[] }
 - apartment, house, office: {}
 Rules:
 - ${keep}

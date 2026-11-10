@@ -3,47 +3,24 @@ import { describe, expect, it } from "vitest"
 import {
   CURRENCIES,
   DESCRIPTION_MAX_LENGTH,
-  DETAIL_PROFESSIONS,
   DETAILS_BY_SETTING,
   JOB_TYPES,
-  MUSIC_GENRES,
   offeredJobTypes,
   systemPrompt,
   TITLED_SETTINGS,
   todayOf,
   toJobFields,
-  WEDDING_MOMENTS,
-  WEDDING_STYLES,
 } from "../../../supabase/functions/parse-job/schema.ts"
 import { DESCRIPTION_MAX_LENGTH as APP_DESCRIPTION_MAX_LENGTH } from "../../constants/index.js"
 import { CURRENCIES as APP_CURRENCIES } from "../../data/currencies.js"
-import {
-  jobTypes,
-  musicGenres,
-  weddingMoments,
-  weddingStyles,
-} from "../../data/job-taxonomy.js"
-import { detailsFor, settings } from "../job-list/job-settings.js"
+import { jobTypes } from "../../data/job-taxonomy.js"
+import { settings } from "../job-list/job-settings.js"
 
 describe("parse-job's copies", () => {
-  it("knows every job type, style and genre", () => {
+  it("knows every job type, currency and length limit", () => {
     expect(JOB_TYPES).toEqual(jobTypes.map((jobType) => jobType.id))
-    expect(WEDDING_STYLES).toEqual(weddingStyles.map((o) => o.value))
-    expect(WEDDING_MOMENTS).toEqual(weddingMoments.map((o) => o.value))
-    expect(MUSIC_GENRES).toEqual(musicGenres.map((o) => o.value))
     expect(CURRENCIES).toEqual(APP_CURRENCIES)
     expect(DESCRIPTION_MAX_LENGTH).toBe(APP_DESCRIPTION_MAX_LENGTH)
-  })
-
-  it("knows which professions each detail is for", () => {
-    for (const jobType of jobTypes) {
-      const limits = DETAIL_PROFESSIONS[jobType.setting] ?? {}
-      const fields = settings
-        .find((setting) => setting.id === jobType.setting)
-        .details.map(({ detail }) => detail.id)
-        .filter((field) => limits[field]?.includes(jobType.profession) ?? true)
-      expect(detailsFor(jobType).map((detail) => detail.id)).toEqual(fields)
-    }
   })
 
   it("asks for the fields the create form has", () => {

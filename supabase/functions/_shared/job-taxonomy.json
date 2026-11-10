@@ -1,0 +1,49 @@
+{
+  "settingsByProfession": {
+    "photographer": ["wedding", "festival", "concert"],
+    "videographer": ["wedding", "festival", "concert"],
+    "musician": ["wedding", "festival", "concert"],
+    "dj": ["wedding", "festival"],
+    "sound_technician": ["festival", "concert"],
+    "planner": ["wedding"],
+    "makeup_artist": ["wedding"],
+    "cleaner": ["apartment", "house", "office"],
+    "electrician": ["apartment", "house", "office"]
+  },
+  "options": {
+    "styles": [
+      "editorial",
+      "documentary",
+      "reportage",
+      "classic",
+      "film",
+      "fine_art"
+    ],
+    "moments": ["ceremony", "aperitivo", "dinner", "party"],
+    "genres": [
+      "house",
+      "techno",
+      "indie",
+      "jazz",
+      "electronic",
+      "rock",
+      "pop",
+      "classical",
+      "acoustic",
+      "swing",
+      "soul_funk",
+      "latin",
+      "italian",
+      "country"
+    ]
+  },
+  "detailsBySetting": {
+    "wedding": {
+      "styles": ["photographer", "videographer"],
+      "moments": ["musician", "dj"],
+      "genres": ["musician", "dj"]
+    },
+    "festival": { "genres": null },
+    "concert": { "genres": null }
+  }
+}
