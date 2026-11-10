@@ -80,6 +80,27 @@ plugin, and the app gets no pushes.
 After adding or upgrading a Capacitor plugin, run `pnpm mobile:sync` so the
 native projects pick it up.
 
+## Links that open the app
+
+A link to `app.vaitu.net`, from an email or a chat, opens the installed app
+instead of the browser, and the router goes to the link's path
+(`src/app-links.js`). Sign-up confirmations (`/onboarding`) and unsubscribe
+links stay in the browser, where they work without the app.
+
+- **iOS** reads `public/.well-known/apple-app-site-association`, which
+  excludes those paths, and the app declares the domain under Signing &
+  Capabilities → Associated Domains.
+- **Android** reads `public/.well-known/assetlinks.json`, which lists the
+  SHA-256 fingerprints of the keys that sign the app: Google's app signing
+  key and your upload key, both under Test and release → App integrity → App
+  signing in Play Console. Android can't exclude paths, so the intent filter
+  in `AndroidManifest.xml` lists the ones that open the app instead.
+
+Both files are cached: a change can take a while to reach the phones, and
+Android verifies the domain when the app is installed or updated. To check
+Android: `adb shell pm get-app-links it.ingloriouscoderz.vaitu` should say
+`verified` for `app.vaitu.net`.
+
 ## Official resources
 
 - Android: https://capacitorjs.com/docs/android

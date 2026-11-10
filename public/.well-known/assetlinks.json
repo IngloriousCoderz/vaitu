@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "it.ingloriouscoderz.vaitu",
+      "sha256_cert_fingerprints": [
+        "C1:0B:65:58:71:EE:9F:A8:95:D0:1C:7B:54:60:4C:9D:66:21:56:28:84:13:8E:6A:40:18:8B:D6:D2:C1:58:07",
+        "7C:11:7C:C4:65:C7:8C:AF:59:8F:B5:C6:61:E7:C3:47:23:95:57:DE:81:47:CF:E1:D7:DA:D4:00:93:14:9F:77"
+      ]
+    }
+  }
+]
