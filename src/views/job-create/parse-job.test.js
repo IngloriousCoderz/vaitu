@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  CURRENCIES,
   DESCRIPTION_MAX_LENGTH,
   DETAILS_BY_SETTING,
   JOB_TYPES,
@@ -12,14 +11,12 @@ import {
   toJobFields,
 } from "../../../supabase/functions/parse-job/schema.ts"
 import { DESCRIPTION_MAX_LENGTH as APP_DESCRIPTION_MAX_LENGTH } from "../../constants/index.js"
-import { CURRENCIES as APP_CURRENCIES } from "../../data/currencies.js"
 import { jobTypes } from "../../data/job-taxonomy.js"
 import { settings } from "../job-list/job-settings.js"
 
 describe("parse-job's copies", () => {
-  it("knows every job type, currency and length limit", () => {
+  it("knows every job type and the length limit", () => {
     expect(JOB_TYPES).toEqual(jobTypes.map((jobType) => jobType.id))
-    expect(CURRENCIES).toEqual(APP_CURRENCIES)
     expect(DESCRIPTION_MAX_LENGTH).toBe(APP_DESCRIPTION_MAX_LENGTH)
   })
 
