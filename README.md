@@ -68,12 +68,13 @@ Read in this order: each guide assumes the ones before it.
 1. [Development](docs/development.md): the project layout, the local backend, test accounts, migrations and tests.
 2. [Styling](docs/styling.md): where styles come from and how to override a component.
 3. [Edge functions](docs/edge-functions.md): server-side code, secrets, and adding a function.
-4. [Voice AI](docs/voice-ai.md): the two providers behind voice-to-form.
-5. [Notifications](docs/notifications.md): the bell, pushes through Firebase, and setting Firebase up.
-6. [Reputation](docs/reputation.md): job reports, reviews, ranks and badges, and the history they rest on.
-7. [Moderation](docs/moderation.md): reports, blocks and how to act on them.
-8. [Analytics](docs/analytics.md): usage statistics, only with consent.
-9. [Mobile](docs/mobile.md): running the Android and iOS apps.
-10. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
-11. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.
-12. [Security](docs/security.md): how the data is guarded, the authorization tests and the ZAP scan, and what stays open on purpose.
+4. [Job taxonomy](docs/job-taxonomy.md): settings, professions and pickers, and how to change them.
+5. [Voice AI](docs/voice-ai.md): the two providers behind voice-to-form.
+6. [Notifications](docs/notifications.md): the bell, pushes through Firebase, and setting Firebase up.
+7. [Reputation](docs/reputation.md): job reports, reviews, ranks and badges, and the history they rest on.
+8. [Moderation](docs/moderation.md): reports, blocks and how to act on them.
+9. [Analytics](docs/analytics.md): usage statistics, only with consent.
+10. [Mobile](docs/mobile.md): running the Android and iOS apps.
+11. [Deploying](docs/deploying.md): pushing the backend and the frontend to production.
+12. [Releasing updates](docs/releasing-updates.md): how a new version reaches web and native users, and how to make it mandatory.
+13. [Security](docs/security.md): how the data is guarded, the authorization tests and the ZAP scan, and what stays open on purpose.

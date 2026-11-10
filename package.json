@@ -21,6 +21,7 @@
     "edge:check": "cd supabase/functions && deno check */index.ts && deno lint",
     "vault:push": "node scripts/push-vault-secrets.mjs",
     "secrets:push": "node scripts/push-function-secrets.mjs",
+    "taxonomy:snippet": "node scripts/job-taxonomy-snippet.mjs",
     "build": "vite build",
     "build:release": "inglorious-live-update build",
     "landing": "pnpm --dir landing dev",

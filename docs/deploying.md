@@ -143,13 +143,8 @@ it, the app sends no CAPTCHA token, which only works while CAPTCHA protection
 is off in Supabase.
 
 `VITE_CONTACT_EMAIL` receives the requests for new professions. Without it, the
-"Profession missing?" link is hidden. To add a profession or a setting, extend
-`SETTINGS_BY_PROFESSION` in `src/data/job-taxonomy.js` and its copy in
-`supabase/functions/parse-job/schema.ts`, and translate the new
-`taxonomy.profession` or `taxonomy.setting` label in every locale. To offer a
-setting, add it to `OFFERED_SETTINGS`. No schema change is needed unless the
-setting is new: `jobs_setting_check` lists them all, as described in
-[Small schema changes](#small-schema-changes).
+"Profession missing?" link is hidden. Adding the profession is described in
+[Job taxonomy](job-taxonomy.md#adding-a-setting-or-a-profession).
 
 ```bash
 # Vercel: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_CONTACT_EMAIL,

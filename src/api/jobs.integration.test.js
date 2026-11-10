@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, test } from "vitest"
 
 import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
+import { jobTypes } from "../data/job-taxonomy.js"
 import {
   ANTONY,
   coupleTitle,
@@ -142,9 +143,18 @@ describe("a job's setting", () => {
     const {
       data: { user },
     } = await supabase.auth.getUser()
+    const profession = jobTypes.find(
+      (jobType) => jobType.setting === setting,
+    )?.profession
     return supabase
       .from("jobs")
-      .insert({ ...jobPayload(id), setting, poster_id: user.id })
+      .insert({
+        ...jobPayload(id),
+        setting,
+        profession: profession ?? "photographer",
+        details: {},
+        poster_id: user.id,
+      })
       .select("id")
       .single()
   }

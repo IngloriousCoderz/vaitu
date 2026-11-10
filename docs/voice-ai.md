@@ -17,9 +17,10 @@ the app's may get a poor transcript.
 
 ## One schema, every job type
 
-`parse-job/schema.ts` holds the fields each setting has: a wedding has
-spouses and a style, a festival or concert a name, a headliner and a genre, and an
-apartment, house or office job a title and nothing else. The app sends the job
+`parse-job/schema.ts` builds the prompt from the [job taxonomy](job-taxonomy.md):
+a wedding has spouses, styles, parts of the day and genres, a festival or
+concert a name, a headliner and genres, and an apartment, house or office job
+a title and nothing else. The app sends the job
 type the form is on and those it offers. The model keeps the first unless the
 message clearly describes another of them, and `toJobFields` drops anything
 that isn't a valid value for the result, whatever the model answered:
@@ -32,7 +33,7 @@ that isn't a valid value for the result, whatever the model answered:
   "country": "Italy",
   "region": "Lombardy",
   "job_date": "2027-07-03",
-  "details": { "headliner": "Ada", "genre": "techno" },
+  "details": { "headliner": "Ada", "genres": ["techno"] },
   "pay": {
     "kind": "fixed",
     "amount_min": 500,

@@ -185,7 +185,7 @@ describe("notifications feed", () => {
       await signIn(ANTONY)
       const { error: editError } = await supabase
         .from("jobs")
-        .update({ details: "Updated for the notifications test." })
+        .update({ description: "Updated for the notifications test." })
         .eq("id", jobId)
       if (editError) throw editError
 
