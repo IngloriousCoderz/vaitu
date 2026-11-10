@@ -1,3 +1,5 @@
+import jobLimits from "../../supabase/functions/_shared/job-limits.json"
+
 export const MS_PER_SECOND = 1000
 export const SECONDS_PER_MINUTE = 60
 export const MINUTES_PER_HOUR = 60
@@ -14,7 +16,7 @@ export const PUSH_TOKEN_KEY = "vaitu-push-token"
 export const ANALYTICS_CONSENT_KEY = "vaitu-analytics-consent"
 export const MIN_PASSWORD_LENGTH = 10
 export const MIN_TEXT_LENGTH = 1
-export const DESCRIPTION_MAX_LENGTH = 2000
+export const DESCRIPTION_MAX_LENGTH = jobLimits.descriptionMaxLength
 export const DEFAULT_MAX_APPLICANTS = 5
 export const DEFAULT_JOB_SETTING = "wedding"
 export const CLOSING_MAX_DAYS = 1

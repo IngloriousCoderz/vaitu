@@ -1,4 +1,5 @@
 import CURRENCIES from "../_shared/currencies.json" with { type: "json" }
+import jobLimits from "../_shared/job-limits.json" with { type: "json" }
 import taxonomy from "../_shared/job-taxonomy.json" with { type: "json" }
 
 type Setting = {
@@ -53,7 +54,7 @@ export const JOB_TYPES = Object.entries(taxonomy.settingsByProfession).flatMap(
     settings.map((setting) => `${setting}_${profession}`),
 )
 
-export const DESCRIPTION_MAX_LENGTH = 2000
+export const DESCRIPTION_MAX_LENGTH = jobLimits.descriptionMaxLength
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 const LOCAL_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/

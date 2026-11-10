@@ -9,14 +9,12 @@ import {
   todayOf,
   toJobFields,
 } from "../../../supabase/functions/parse-job/schema.ts"
-import { DESCRIPTION_MAX_LENGTH as APP_DESCRIPTION_MAX_LENGTH } from "../../constants/index.js"
 import { jobTypes } from "../../data/job-taxonomy.js"
 import { settings } from "../job-list/job-settings.js"
 
 describe("parse-job's copies", () => {
-  it("knows every job type and the length limit", () => {
+  it("knows every job type", () => {
     expect(JOB_TYPES).toEqual(jobTypes.map((jobType) => jobType.id))
-    expect(DESCRIPTION_MAX_LENGTH).toBe(APP_DESCRIPTION_MAX_LENGTH)
   })
 
   it("asks for the fields the create form has", () => {

@@ -1,6 +1,9 @@
 import { afterAll, describe, expect, test } from "vitest"
 
-import { REQUEST_TIMEOUT_MS } from "../constants/index.js"
+import {
+  DESCRIPTION_MAX_LENGTH,
+  REQUEST_TIMEOUT_MS,
+} from "../constants/index.js"
 import { jobTypes } from "../data/job-taxonomy.js"
 import {
   ANTONY,
@@ -62,6 +65,24 @@ test(
     expect((await fetchJobForEdit(jobId)).description).toBe(
       "- Bring a fan\n- Cruelty-free makeup",
     )
+  },
+  TEST_TIMEOUT_MS,
+)
+
+test(
+  "the database takes a description as long as the app allows, and no longer",
+  async () => {
+    await signIn(ANTONY)
+    const saveDescription = (length) =>
+      supabase
+        .from("jobs")
+        .update({ description: "x".repeat(length) })
+        .eq("id", jobId)
+
+    expect((await saveDescription(DESCRIPTION_MAX_LENGTH)).error).toBeNull()
+    expect(
+      (await saveDescription(DESCRIPTION_MAX_LENGTH + 1)).error?.code,
+    ).toBe(CHECK_VIOLATION)
   },
   TEST_TIMEOUT_MS,
 )
