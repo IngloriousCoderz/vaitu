@@ -57,21 +57,23 @@ bundle in the public `live-updates` bucket:
 `pnpm live:release` builds the committed code with the production `.env`,
 from a clean checkout of `HEAD`, so uncommitted changes never ship. It signs
 the zip with your private key and uploads it with the service role key, which
-it asks the Supabase CLI for, as `pnpm vault:push` does.
+it asks the Supabase CLI for, as `pnpm vault:push` does. It is the
+`inglorious-live-update` command from `@inglorious/supabase`, which
+`build:release` and `live:keys` use too.
 
-To have every push to `main` do it, add one line at the end of
-`.husky/pre-push`, and make the hook read git's refs first:
+Every push to `main` does it, from `.husky/pre-push`, which reads git's refs
+first:
 
 ```sh
 #!/bin/sh
 refs=$(cat)
 pnpm typecheck
 pnpm test:unit
-printf '%s\n' "$refs" | node scripts/live-release.mjs --on-push
+printf '%s\n' "$refs" | pnpm exec inglorious-live-update release --on-push
 ```
 
 It publishes only when the pushed commits touch the app: not for changes to
-`landing/`, `docs/`, `supabase/` or Markdown alone. Without a key it skips,
+`landing/`, `docs/`, `supabase/`, `.changeset/`, `.github/` or Markdown alone. Without a key it skips,
 and says so. `git push --no-verify` skips it on purpose.
 
 ### The signing key

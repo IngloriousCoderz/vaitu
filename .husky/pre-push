@@ -2,4 +2,4 @@
 refs=$(cat)
 pnpm typecheck
 pnpm test:unit
-printf '%s\n' "$refs" | node scripts/live-release.mjs --on-push
+printf '%s\n' "$refs" | pnpm exec inglorious-live-update release --on-push
