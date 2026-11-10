@@ -93,8 +93,8 @@
   "fields": {
     "description": "What else should they know",
     "descriptionHint": "Requests, equipment, anything else the colleague should know. Optional.",
-    "spouse1": "Spouse 1 first name",
-    "spouse2": "Spouse 2 first name",
+    "spouse_first_name_1": "Spouse 1 first name",
+    "spouse_first_name_2": "Spouse 2 first name",
     "style": "Style",
     "moments": "Parts of the day",
     "headliner": "Headliner",

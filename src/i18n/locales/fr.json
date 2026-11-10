@@ -95,8 +95,8 @@
   "fields": {
     "description": "Que faut-il savoir d'autre",
     "descriptionHint": "Demandes, matériel, tout ce que le collègue doit savoir. Facultatif.",
-    "spouse1": "Prénom du premier époux",
-    "spouse2": "Prénom du second époux",
+    "spouse_first_name_1": "Prénom du premier époux",
+    "spouse_first_name_2": "Prénom du second époux",
     "style": "Style",
     "moments": "Moments de la journée",
     "headliner": "Tête d'affiche",

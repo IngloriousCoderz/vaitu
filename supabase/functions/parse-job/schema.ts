@@ -1,8 +1,14 @@
 import CURRENCIES from "../_shared/currencies.json" with { type: "json" }
 import taxonomy from "../_shared/job-taxonomy.json" with { type: "json" }
 
-// Copies of the app's create form: a function cannot import app source.
-// src/views/job-create/parse-job.test.js fails when they drift.
+type Setting = {
+  textFields: string[]
+  isTitled: boolean
+  isHome: boolean
+  details: Record<string, string[] | null>
+}
+
+const SETTINGS: Record<string, Setting> = taxonomy.settings
 
 const OPTIONS: Record<string, string[]> = Object.fromEntries(
   Object.entries(taxonomy.options).map(([field, options]) => [
@@ -10,35 +16,22 @@ const OPTIONS: Record<string, string[]> = Object.fromEntries(
     options.map((option) => option.value),
   ]),
 )
-const { styles, moments, genres } = OPTIONS
-
-const TEXT_FIELDS: Record<string, string[]> = {
-  wedding: ["spouse_first_name_1", "spouse_first_name_2"],
-  festival: ["headliner"],
-  concert: ["headliner"],
-  apartment: [],
-  house: [],
-  office: [],
-}
-
-const DETAILS: Record<
-  string,
-  Record<string, string[] | null>
-> = taxonomy.detailsBySetting
 
 // Details only some professions have, by setting. The others are for everyone.
 export const DETAIL_PROFESSIONS: Record<
   string,
   Record<string, string[]>
 > = Object.fromEntries(
-  Object.entries(DETAILS).map(([setting, fields]) => [
-    setting,
-    Object.fromEntries(
-      Object.entries(fields).filter(
-        (entry): entry is [string, string[]] => entry[1] !== null,
+  Object.entries(SETTINGS)
+    .map(([id, setting]): [string, Record<string, string[]>] => [
+      id,
+      Object.fromEntries(
+        Object.entries(setting.details).filter(
+          (entry): entry is [string, string[]] => entry[1] !== null,
+        ),
       ),
-    ),
-  ]),
+    ])
+    .filter(([, fields]) => Object.keys(fields).length),
 )
 
 // null means free text, a list the values that can be picked, any number of them.
@@ -46,14 +39,11 @@ export const DETAILS_BY_SETTING: Record<
   string,
   Record<string, string[] | null>
 > = Object.fromEntries(
-  Object.entries(TEXT_FIELDS).map(([setting, textFields]) => [
-    setting,
+  Object.entries(SETTINGS).map(([id, setting]) => [
+    id,
     Object.fromEntries([
-      ...textFields.map((field) => [field, null]),
-      ...Object.keys(DETAILS[setting] ?? {}).map((field) => [
-        field,
-        OPTIONS[field],
-      ]),
+      ...setting.textFields.map((field) => [field, null]),
+      ...Object.keys(setting.details).map((field) => [field, OPTIONS[field]]),
     ]),
   ]),
 )
@@ -62,14 +52,6 @@ export const JOB_TYPES = Object.entries(taxonomy.settingsByProfession).flatMap(
   ([profession, settings]) =>
     settings.map((setting) => `${setting}_${profession}`),
 )
-
-export const TITLED_SETTINGS = [
-  "festival",
-  "concert",
-  "apartment",
-  "house",
-  "office",
-]
 
 export const DESCRIPTION_MAX_LENGTH = 2000
 
@@ -126,15 +108,13 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "pay": { "kind": "fixed" | "range" | "unpaid", "amount_min": number | null, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its setting, an underscore and the profession. "details" depends on the setting:
-- wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(styles)})[], "moments": (${oneOf(moments)})[], "genres": (${oneOf(genres)})[] }
-- festival, concert: { "headliner": string | null, "genres": (${oneOf(genres)})[] }
-- apartment, house, office: {}
+${detailShapes()}
 Rules:
 - ${keep}
-- title: null for a wedding; the festival's or concert's name for a festival or concert; for apartment, house and office, a short description of the work, in the transcript's language.
-- styles, moments, genres: every one that was said, [] when none was. moments: the parts of the wedding day the job covers.${detailRules(jobTypes)}
+- title: ${titleRule()}
+- ${Object.keys(OPTIONS).join(", ")}: every one that was said, [] when none was. moments: the parts of the wedding day the job covers.${detailRules(jobTypes)}
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
-- For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
+- For ${and(homes())}, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
 - pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max; "unpaid", with no amounts, when the job is said to be unpaid, a favour or an exchange. null when no amount is said.
 - currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
 - Values from a list must be among the listed values.
@@ -146,6 +126,56 @@ Rules:
 
 function weekday(isoDate: string) {
   return WEEKDAYS[new Date(`${isoDate}T00:00:00Z`).getUTCDay()]
+}
+
+// Settings with the same details share a line.
+function detailShapes() {
+  const shapes = new Map<string, string[]>()
+  for (const [id, fields] of Object.entries(DETAILS_BY_SETTING)) {
+    const shape = shapeOf(fields)
+    shapes.set(shape, [...(shapes.get(shape) ?? []), id])
+  }
+  return [...shapes]
+    .map(([shape, ids]) => `- ${ids.join(", ")}: ${shape}`)
+    .join("\n")
+}
+
+function shapeOf(fields: Record<string, string[] | null>) {
+  const entries = Object.entries(fields).map(
+    ([field, allowed]) =>
+      `"${field}": ${allowed ? `(${oneOf(allowed)})[]` : "string | null"}`,
+  )
+  return entries.length ? `{ ${entries.join(", ")} }` : "{}"
+}
+
+function titleRule() {
+  const untitled = settingIds((setting) => !setting.isTitled)
+  const named = settingIds((setting) => setting.isTitled && !setting.isHome)
+  return [
+    `null for a ${or(untitled)}`,
+    `the ${or(named.map((id) => `${id}'s`))} name for a ${or(named)}`,
+    `for ${and(homes())}, a short description of the work, in the transcript's language.`,
+  ].join("; ")
+}
+
+function homes() {
+  return settingIds((setting) => setting.isHome)
+}
+
+function settingIds(isPicked: (setting: Setting) => boolean) {
+  return Object.entries(SETTINGS)
+    .filter(([, setting]) => isPicked(setting))
+    .map(([id]) => id)
+}
+
+function or(words: string[]) {
+  return words.join(" or ")
+}
+
+function and(words: string[]) {
+  return words.length > 1
+    ? `${words.slice(0, -1).join(", ")} and ${words.at(-1)}`
+    : words.join("")
 }
 
 function oneOf(values: string[]) {
@@ -165,7 +195,7 @@ export function toJobFields(
   const [setting] = (job_type ?? "").split("_")
   return {
     job_type,
-    title: TITLED_SETTINGS.includes(setting) ? text(answer?.title) : null,
+    title: SETTINGS[setting]?.isTitled ? text(answer?.title) : null,
     location: text(answer?.location),
     country: text(answer?.country),
     region: text(answer?.region),

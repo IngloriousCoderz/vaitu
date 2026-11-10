@@ -91,8 +91,8 @@
   "fields": {
     "description": "ほかに伝えておくこと",
     "descriptionHint": "要望、機材など、引き受ける人が知っておくべきこと。任意です。",
-    "spouse1": "パートナー1の名前",
-    "spouse2": "パートナー2の名前",
+    "spouse_first_name_1": "パートナー1の名前",
+    "spouse_first_name_2": "パートナー2の名前",
     "style": "スタイル",
     "moments": "担当する時間帯",
     "headliner": "ヘッドライナー",

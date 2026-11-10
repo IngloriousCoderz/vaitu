@@ -6,7 +6,6 @@ import {
   JOB_TYPES,
   offeredJobTypes,
   systemPrompt,
-  TITLED_SETTINGS,
   todayOf,
   toJobFields,
 } from "../../../supabase/functions/parse-job/schema.ts"
@@ -33,9 +32,6 @@ describe("parse-job's copies", () => {
           detail.options.map((option) => option.value),
         ]),
       ])
-      expect(TITLED_SETTINGS.includes(setting.id)).toBe(
-        Boolean(setting.title_from.input),
-      )
     }
   })
 })
@@ -64,6 +60,26 @@ describe("systemPrompt", () => {
     expect(systemPrompt("2026-11-01", JOB_TYPES, null)).toContain(
       "Today is Sunday 2026-11-01.",
     )
+  })
+
+  it("asks for each setting's details, sharing a line when they match", () => {
+    const prompt = systemPrompt("2026-11-01", JOB_TYPES, null)
+    expect(prompt).toContain(
+      '- festival, concert: { "headliner": string | null, "genres": ("house" | ',
+    )
+    expect(prompt).toContain("- apartment, house, office: {}")
+    expect(prompt).toContain(
+      "- title: null for a wedding; the festival's or concert's name for a festival or concert; for apartment, house and office, a short description",
+    )
+    expect(prompt).toContain(
+      "- For apartment, house and office, location is only the neighborhood",
+    )
+  })
+
+  it("limits details to professions only where some are", () => {
+    const prompt = systemPrompt("2026-11-01", JOB_TYPES, null)
+    expect(prompt).toContain('For wedding: styles only for "photographer"')
+    expect(prompt).not.toContain("For festival")
   })
 
   it("asks to keep the form's job type when there is one", () => {

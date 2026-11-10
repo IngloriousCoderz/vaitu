@@ -14,7 +14,7 @@ import {
   ONE_MINUTE,
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
-import { DETAIL_FIELDS, GENRE_SETTINGS } from "../data/job-taxonomy.js"
+import { DETAIL_FIELDS, settingSpecs } from "../data/job-taxonomy.js"
 import { canonicalRegion } from "../data/regions/resolve.js"
 import { currentLocale, t } from "../i18n/index.js"
 import {
@@ -68,7 +68,9 @@ export function toViewModel(row) {
     filterValues: DETAIL_FIELDS.flatMap((field) => row.details[field] ?? []),
   }
 
-  if (GENRE_SETTINGS.includes(row.setting)) {
+  const spec = settingSpecs[row.setting]
+
+  if (spec.textFields.includes("headliner")) {
     return {
       ...base,
       title: row.title,
@@ -79,7 +81,7 @@ export function toViewModel(row) {
     }
   }
 
-  if (row.setting !== "wedding") {
+  if (spec.isTitled) {
     return {
       ...base,
       title: row.title,

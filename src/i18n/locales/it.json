@@ -95,8 +95,8 @@
   "fields": {
     "description": "Cos'altro c'è da sapere",
     "descriptionHint": "Richieste, attrezzatura, tutto quello che il collega deve sapere. Facoltativo.",
-    "spouse1": "Nome del primo sposo",
-    "spouse2": "Nome del secondo sposo",
+    "spouse_first_name_1": "Nome del primo sposo",
+    "spouse_first_name_2": "Nome del secondo sposo",
     "style": "Stile",
     "moments": "Momenti della giornata",
     "headliner": "Headliner",

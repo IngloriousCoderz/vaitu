@@ -1,7 +1,7 @@
 import { FIRST_INDEX } from "../../constants/index.js"
 import {
-  detailsBySetting,
   musicGenres,
+  settingSpecs,
   weddingMoments,
   weddingStyles,
 } from "../../data/job-taxonomy.js"
@@ -46,77 +46,39 @@ const detailsById = {
   genres: genreDetail,
 }
 
-export const settings = [
-  {
-    id: "wedding",
-    details: detailsOf("wedding"),
-    title_from: {
-      fields: ["spouse_first_name_1", "spouse_first_name_2"],
-      join: " & ",
-    },
-    createFields: [
-      {
-        field: "spouse_first_name_1",
-        get label() {
-          return t("fields.spouse1")
-        },
-        type: "text",
-        isRequired: true,
-        section: "identity",
-      },
-      {
-        field: "spouse_first_name_2",
-        get label() {
-          return t("fields.spouse2")
-        },
-        type: "text",
-        isRequired: true,
-        section: "identity",
-      },
-    ],
+const NAMES_SEPARATOR = " & "
+
+export const settings = Object.entries(settingSpecs).map(([id, spec]) => ({
+  id,
+  details: Object.entries(spec.details).map(([field, professions]) => ({
+    detail: detailsById[field],
+    professions,
+  })),
+  title_from: spec.isTitled
+    ? { input: true }
+    : { fields: spec.textFields, join: NAMES_SEPARATOR },
+  createFields: spec.textFields.map(textField),
+  get titleLabel() {
+    return spec.isHome ? t("fields.jobTitle") : null
   },
-  showSetting("festival"),
-  showSetting("concert"),
-  propertySetting("apartment"),
-  propertySetting("house"),
-  propertySetting("office"),
-]
+  get titlePlaceholder() {
+    return spec.isHome ? t("create.jobTitleExample") : null
+  },
+  // Jobs are public, and this is someone's home.
+  get locationPlaceholder() {
+    return spec.isHome ? t("create.propertyLocationExample") : null
+  },
+}))
 
-function showSetting(id) {
+function textField(field) {
   return {
-    id,
-    details: detailsOf(id),
-    title_from: { input: true },
-    createFields: [
-      {
-        field: "headliner",
-        get label() {
-          return t("fields.headliner")
-        },
-        type: "text",
-        isRequired: true,
-        section: "identity",
-      },
-    ],
-  }
-}
-
-function propertySetting(id) {
-  return {
-    id,
-    details: detailsOf(id),
-    title_from: { input: true },
-    get titleLabel() {
-      return t("fields.jobTitle")
+    field,
+    get label() {
+      return t(`fields.${field}`)
     },
-    get titlePlaceholder() {
-      return t("create.jobTitleExample")
-    },
-    // Jobs are public, and this is someone's home.
-    get locationPlaceholder() {
-      return t("create.propertyLocationExample")
-    },
-    createFields: [],
+    type: "text",
+    isRequired: true,
+    section: "identity",
   }
 }
 
@@ -156,12 +118,6 @@ export function hasDetail(jobType) {
 export function detailAppliesTo(value, jobType) {
   return detailsFor(jobType).some((detail) =>
     detail.options.some((option) => option.value === value),
-  )
-}
-
-function detailsOf(settingId) {
-  return Object.entries(detailsBySetting[settingId] ?? {}).map(
-    ([field, professions]) => ({ detail: detailsById[field], professions }),
   )
 }
 

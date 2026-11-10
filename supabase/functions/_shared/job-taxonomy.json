@@ -10,6 +10,52 @@
     "cleaner": ["apartment", "house", "office"],
     "electrician": ["apartment", "house", "office"]
   },
+  "settings": {
+    "wedding": {
+      "textFields": ["spouse_first_name_1", "spouse_first_name_2"],
+      "isTitled": false,
+      "isHome": false,
+      "details": {
+        "styles": ["photographer", "videographer"],
+        "moments": ["musician", "dj"],
+        "genres": ["musician", "dj"]
+      }
+    },
+    "festival": {
+      "textFields": ["headliner"],
+      "isTitled": true,
+      "isHome": false,
+      "details": {
+        "genres": null
+      }
+    },
+    "concert": {
+      "textFields": ["headliner"],
+      "isTitled": true,
+      "isHome": false,
+      "details": {
+        "genres": null
+      }
+    },
+    "apartment": {
+      "textFields": [],
+      "isTitled": true,
+      "isHome": true,
+      "details": {}
+    },
+    "house": {
+      "textFields": [],
+      "isTitled": true,
+      "isHome": true,
+      "details": {}
+    },
+    "office": {
+      "textFields": [],
+      "isTitled": true,
+      "isHome": true,
+      "details": {}
+    }
+  },
   "options": {
     "styles": [
       {
@@ -257,18 +303,5 @@
         }
       }
     ]
-  },
-  "detailsBySetting": {
-    "wedding": {
-      "styles": ["photographer", "videographer"],
-      "moments": ["musician", "dj"],
-      "genres": ["musician", "dj"]
-    },
-    "festival": {
-      "genres": null
-    },
-    "concert": {
-      "genres": null
-    }
   }
 }

@@ -5,16 +5,18 @@ export const weddingStyles = taxonomy.options.styles
 export const weddingMoments = taxonomy.options.moments
 export const musicGenres = taxonomy.options.genres
 
-export const GENRE_SETTINGS = ["festival", "concert"]
-
 /** The detail fields a job can have, and every value they can hold. */
 export const DETAIL_FIELDS = Object.keys(taxonomy.options)
 export const detailOptions = DETAIL_FIELDS.flatMap(
   (field) => taxonomy.options[field],
 )
 
-/** By setting, each detail's professions: null when every profession has it. */
-export const detailsBySetting = taxonomy.detailsBySetting
+/**
+ * Each setting's free-text fields, whether its jobs have a title of their own
+ * or take it from those fields, whether it is someone's home, and its details
+ * with their professions (null when every profession has it).
+ */
+export const settingSpecs = taxonomy.settings
 
 const SETTINGS_BY_PROFESSION = taxonomy.settingsByProfession
 
