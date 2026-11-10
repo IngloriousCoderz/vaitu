@@ -13,6 +13,7 @@ describe("the landing page's points", () => {
     const tiers = defaultTiers()
     expect(POINTS).toEqual({
       perCompletedJob: tiers.perCompletedJob,
+      perCompletedHandoff: tiers.perCompletedHandoff,
       perGoodReview: tiers.perGoodReview,
       perPoorReview: tiers.perPoorReview,
       perDropout: tiers.perDropout,

@@ -36,7 +36,7 @@ import { hasDetail, settingById } from "../job-list/job-settings.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
-const PAY_KINDS = ["to_agree", "fixed", "range"]
+const PAY_KINDS = ["to_agree", "fixed", "range", "unpaid"]
 
 export const template = {
   render(props, api) {
@@ -263,7 +263,7 @@ export const template = {
         <p class=${styles.hint}>${t("pay.hint")}</p>
       </div>
       ${when(
-        kind !== "to_agree",
+        kind === "fixed" || kind === "range",
         () => html`
           ${this.renderTextField({
             label: kind === "range" ? t("pay.min") : t("pay.amount"),

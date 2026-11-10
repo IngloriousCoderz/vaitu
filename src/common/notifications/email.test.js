@@ -35,6 +35,7 @@ function row(fields = {}) {
     job_title: "Ada & Ben",
     job_status: "open",
     applicant_name: "Carla",
+    poster_name: "Luca",
     ...fields,
   }
 }
@@ -109,7 +110,7 @@ describe("compose", () => {
   it("uses the line itself as the subject of a single update", () => {
     const email = compose([row()], RECIPIENT, URLS)
     expect(email.to).toBe(RECIPIENT.email)
-    expect(email.subject).toBe("Carla applied to Ada & Ben!")
+    expect(email.subject).toBe("Carla applied to “Ada & Ben”!")
     expect(email.text).toContain("https://app.test/jobs/e1/applications")
     expect(email.text).toContain(
       "https://app.test/unsubscribe?token=tok&type=application_received&lang=en",
@@ -129,7 +130,7 @@ describe("compose", () => {
       URLS,
     )
     expect(email.subject).toBe("2 updates from Vaitu")
-    expect(email.text).toContain("Ada & Ben was closed")
+    expect(email.text).toContain("Luca closed “Ada & Ben”")
     expect(email.text).toContain("type=all")
   })
 
@@ -143,12 +144,42 @@ describe("compose", () => {
     expect(email.text).toContain("type=new_job")
   })
 
-  it("writes in the recipient's language, or else in English", () => {
-    expect(compose([row({ locale: "it" })], RECIPIENT, URLS).text).toContain(
-      "Apri:",
+  it("lists the updates in HTML, each with its time and a short link", () => {
+    const { html, text } = compose(
+      [row(), row({ id: "n2", type: "job_closed" })],
+      RECIPIENT,
+      URLS,
     )
-    expect(compose([row({ locale: "xx" })], RECIPIENT, URLS).text).toContain(
-      "Open:",
+    expect(text.startsWith("Here's what's new for you on Vaitu:")).toBe(true)
+    expect(text).toContain("Nov 10, 12:58 PM\nCarla applied to “Ada & Ben”!")
+    expect(html).toContain('src="https://app.test/email-logo.png"')
+    expect(html).toContain("Nov 10, 12:58 PM")
+    expect(html).toContain("Carla applied to “Ada &amp; Ben”!")
+    expect(html.match(/>Open →<\/a>/g)).toHaveLength(2)
+    expect(html).toContain(
+      'href="https://app.test/unsubscribe?token=tok&amp;type=all&amp;lang=en"',
+    )
+  })
+
+  it("escapes what people typed", () => {
+    const { html } = compose(
+      [row({ job_title: '<img src=x onerror="alert(1)">' })],
+      RECIPIENT,
+      URLS,
+    )
+    expect(html).not.toContain("<img src=x")
+    expect(html).toContain("&lt;img src=x onerror=&quot;alert(1)&quot;&gt;")
+  })
+
+  it("writes in the recipient's language, or else in English", () => {
+    const italian = compose([row({ locale: "it" })], RECIPIENT, URLS)
+    expect(italian.html).toContain('lang="it"')
+    expect(italian.html).toContain(">Apri →</a>")
+    expect(compose([row({ locale: "ar" })], RECIPIENT, URLS).html).toContain(
+      'dir="rtl"',
+    )
+    expect(compose([row({ locale: "xx" })], RECIPIENT, URLS).html).toContain(
+      ">Open →</a>",
     )
   })
 })

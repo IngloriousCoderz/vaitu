@@ -278,7 +278,7 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "max_applicants": integer | null,
   "details": object,
   "description": string | null,
-  "pay": { "kind": "fixed" | "range", "amount_min": number, "amount_max": number | null, "currency": string | null } | null
+  "pay": { "kind": "fixed" | "range" | "unpaid", "amount_min": number | null, "amount_max": number | null, "currency": string | null } | null
 }
 A job type is its setting, an underscore and the profession. "details" depends on the setting:
 - wedding: { "spouse_first_name_1": string | null, "spouse_first_name_2": string | null, "styles": (${oneOf(WEDDING_STYLES)})[] }
@@ -290,7 +290,7 @@ Rules:
 - styles, genres: every one that was said, [] when none was. styles: [] for ${oneOf(JOB_TYPES_WITHOUT_STYLE)}.
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For apartment, house and office, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
-- pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max. null when no amount is said.
+- pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max; "unpaid", with no amounts, when the job is said to be unpaid, a favour or an exchange. null when no amount is said.
 - currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
 - Values from a list must be among the listed values.
 - application_deadline: when applications close, in local time. Resolve weekdays and relative days ("next Friday", "tomorrow") from today; use 23:59 when only a day is said. null when no deadline is said.
@@ -341,6 +341,9 @@ function pay(answer: unknown) {
   const currency = CURRENCIES.includes(given.currency as string)
     ? (given.currency as string)
     : null
+  if (given.kind === "unpaid") {
+    return { kind: "unpaid", amount_min: null, amount_max: null, currency }
+  }
   if (min === null) return null
   if (given.kind === "fixed") {
     return { kind: "fixed", amount_min: min, amount_max: null, currency }
@@ -352,7 +355,7 @@ function pay(answer: unknown) {
 }
 
 function amount(value: unknown) {
-  return typeof value === "number" && value >= NO_AMOUNT ? value : null
+  return typeof value === "number" && value > NO_AMOUNT ? value : null
 }
 
 function details(setting: string, answer: unknown) {

@@ -1,42 +1,47 @@
 {
   "en": {
     "subject": "{{count}} updates from Vaitu",
+    "intro": "Here's what's new for you on Vaitu:",
     "open": "Open",
     "more": "…and {{count}} more in the app",
-    "manage": "Choose which emails you get: {{link}}",
-    "stopThese": "Stop emails like these: {{link}}",
-    "stopAll": "Stop all these emails: {{link}}"
+    "manage": "Choose which emails you get",
+    "stopThese": "Stop emails like these",
+    "stopAll": "Stop all these emails"
   },
   "it": {
     "subject": "{{count}} novità da Vaitu",
+    "intro": "Ecco le ultime novità per te su Vaitu:",
     "open": "Apri",
     "more": "…e altre {{count}} nell'app",
-    "manage": "Scegli quali email ricevere: {{link}}",
-    "stopThese": "Non ricevere più email come queste: {{link}}",
-    "stopAll": "Non ricevere più queste email: {{link}}"
+    "manage": "Scegli quali email ricevere",
+    "stopThese": "Non ricevere più email come queste",
+    "stopAll": "Non ricevere più queste email"
   },
   "fr": {
     "subject": "{{count}} nouveautés sur Vaitu",
+    "intro": "Voici les dernières nouveautés pour vous sur Vaitu :",
     "open": "Ouvrir",
     "more": "…et {{count}} de plus dans l'application",
-    "manage": "Choisissez les e-mails que vous recevez : {{link}}",
-    "stopThese": "Ne plus recevoir ce type d'e-mail : {{link}}",
-    "stopAll": "Ne plus recevoir ces e-mails : {{link}}"
+    "manage": "Choisissez les e-mails que vous recevez",
+    "stopThese": "Ne plus recevoir ce type d'e-mail",
+    "stopAll": "Ne plus recevoir ces e-mails"
   },
   "ja": {
     "subject": "Vaituからのお知らせ{{count}}件",
+    "intro": "Vaituからの最新のお知らせです。",
     "open": "開く",
     "more": "…ほか{{count}}件はアプリで",
-    "manage": "受け取るメールを選ぶ：{{link}}",
-    "stopThese": "この種類のメールを停止：{{link}}",
-    "stopAll": "これらのメールをすべて停止：{{link}}"
+    "manage": "受け取るメールを選ぶ",
+    "stopThese": "この種類のメールを停止",
+    "stopAll": "これらのメールをすべて停止"
   },
   "ar": {
     "subject": "{{count}} تحديثات من Vaitu",
+    "intro": "إليك آخر المستجدات على Vaitu:",
     "open": "فتح",
     "more": "…و{{count}} أخرى في التطبيق",
-    "manage": "اختر الرسائل التي تصلك: {{link}}",
-    "stopThese": "إيقاف الرسائل من هذا النوع: {{link}}",
-    "stopAll": "إيقاف كل هذه الرسائل: {{link}}"
+    "manage": "اختر الرسائل التي تصلك",
+    "stopThese": "إيقاف الرسائل من هذا النوع",
+    "stopAll": "إيقاف كل هذه الرسائل"
   }
 }

@@ -6,12 +6,21 @@
   "headline": "Non puoi esserci più? Di' a un collega: “vai tu”.",
   "lede": "Vaitu è il posto in cui i professionisti dei matrimoni passano i lavori che non possono fare e trovano quelli che possono fare.",
   "highlights": [
-    "Non puoi esserci? I colleghi si candidano e scegli tu chi ci va",
-    "Cerchi lavoro? Ricevi un avviso quando ce n'è uno adatto",
-    "Pubblicare, candidarsi e scegliere è gratis, per sempre"
+    {
+      "lead": "Non puoi esserci?",
+      "text": "Passa il lavoro, scegli chi ci va e, se vuoi, tieni un margine"
+    },
+    {
+      "lead": "Cerchi lavoro?",
+      "text": "Ricevi un avviso quando ce n'è uno adatto"
+    },
+    {
+      "lead": "Gratis, per sempre:",
+      "text": "pubblicare, candidarsi e scegliere"
+    }
   ],
   "cta": "Inizia",
-  "nameOrigin": "Il nome viene da “vai tu”, ovvero quello che dici a un collega quando gli passi un lavoro.",
+  "nameOrigin": "Il nome viene da “vai tu”. È quello che dici a un collega quando gli passi un lavoro.",
   "howTitle": "Come funziona",
   "steps": [
     {
@@ -28,9 +37,10 @@
     }
   ],
   "pointsTitle": "Punti e livelli",
-  "pointsBody": "Ogni lavoro che fai ti fa guadagnare punti, e le recensioni ne aggiungono o ne tolgono. I punti ti danno un livello, che chi pubblica vede quando ti candidi.",
+  "pointsBody": "Ogni lavoro che fai ti fa guadagnare punti, e anche ogni lavoro che passi e viene svolto. Le recensioni ne aggiungono o ne tolgono. I punti ti danno un livello, che chi pubblica vede quando ti candidi.",
   "pointsRules": {
     "perCompletedJob": "per ogni lavoro fatto",
+    "perCompletedHandoff": "per ogni lavoro passato e svolto",
     "perGoodReview": "per ogni recensione da {{stars}}★ in su",
     "perPoorReview": "per ogni recensione da {{stars}}★ in giù",
     "perDropout": "per ogni lavoro lasciato dopo averlo ottenuto",
@@ -48,6 +58,7 @@
     {
       "title": "Quando non puoi esserci",
       "points": [
+        "Se vuoi, tieni un margine: decidi tu quanto guadagna il collega",
         "Non deludi il cliente e non perdi la sua fiducia",
         "Scegli tu a chi affidare il lavoro",
         "Vedi livello e recensioni di chi si candida"
@@ -124,7 +135,11 @@
     },
     {
       "question": "Come funzionano i punti?",
-      "answer": "Guadagni {{perCompletedJob}} punti per ogni lavoro fatto e {{perGoodReview}} per ogni recensione positiva. Le recensioni negative, lasciare un lavoro ottenuto e le mancate presenze tolgono punti. A {{bronze}}, {{silver}} e {{gold}} punti raggiungi Bronzo, Argento e Oro."
+      "answer": "Guadagni {{perCompletedJob}} punti per ogni lavoro fatto, {{perCompletedHandoff}} per ogni lavoro che hai passato ed è stato svolto e {{perGoodReview}} per ogni recensione positiva. Le recensioni negative, lasciare un lavoro ottenuto e le mancate presenze tolgono punti. A {{bronze}}, {{silver}} e {{gold}} punti raggiungi Bronzo, Argento e Oro."
+    },
+    {
+      "question": "Posso guadagnare da un lavoro che passo?",
+      "answer": "Se vuoi, sì. Decidi tu quanto guadagna il collega, e quello che il cliente ti paga in più resta a te. Il collega vede solo il suo compenso, mai il prezzo del cliente, e Vaitu non trattiene nulla. Se tenere un margine, e accordarlo con il collega, lo decidi tu."
     },
     {
       "question": "Come ci mettiamo in contatto?",

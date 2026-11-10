@@ -223,7 +223,7 @@
     "passwordLength_many": "يجب أن تتكون كلمة المرور من {{count}} حرفًا على الأقل",
     "passwordLength_other": "يجب أن تتكون كلمة المرور من {{count}} حرف على الأقل",
     "pickJobType": "اختر نوع العمل",
-    "payAmount": "أدخل مبلغًا",
+    "payAmount": "أدخل مبلغًا أكبر من صفر",
     "payRange": "أدخل حدًا أعلى أكبر من الحد الأدنى",
     "payCurrency": "اختر عملة"
   },
@@ -428,9 +428,10 @@
     "minPoints": "{{count}}+ نقطة",
     "maxReached": "بلغت أعلى مرتبة",
     "toNext": "{{points}} حتى {{tier}}",
-    "subtitle": "اكسب نقاطًا بإنجاز الأعمال التي تفوز بها. المراتب الأعلى تظهر في ملفك الشخصي.",
+    "subtitle": "اكسب نقاطًا بإنجاز الأعمال التي تفوز بها وبتمرير أعمالك. المراتب الأعلى تظهر في ملفك الشخصي.",
     "howTitle": "كيف تعمل النقاط",
     "perCompletedJob": "لكل عمل مُنجَز",
+    "perCompletedHandoff": "لكل عمل مرّرته وتم إنجازه",
     "perGoodReview": "لكل تقييم من {{stars}}★ فأكثر",
     "perPoorReview": "لكل تقييم من {{stars}}★ فأقل",
     "perDropout": "لكل عمل تركته بعد الفوز به",
@@ -637,29 +638,31 @@
     "markAll": "وضع الكل كمقروء",
     "unreadAria": "{{count}} إشعارات غير مقروءة",
     "types": {
-      "applicationReceived": "قدّم {{name}} ترشّحه إلى {{title}}!",
-      "applicationSelected": "أخبار رائعة: تم اختيارك لـ {{title}}!",
-      "applicationRejected": "لم يتم اختيارك لـ {{title}} هذه المرة",
-      "applicationWithdrawn": "سحب {{name}} ترشّحه من {{title}}",
-      "jobUpdated": "طرأت تحديثات على {{title}}!",
-      "jobClosed": "أُغلق {{title}}",
-      "newJob": "عمل جديد يناسب مهنتك: {{title}}",
-      "jobOutcomeDue": "كيف سار {{title}}؟ أخبرنا عن العمل",
-      "jobReviewed": "قدّم ناشر العمل تقريره عن {{title}}",
-      "jobCancelled": "أُلغي {{title}}",
-      "agreementProposed": "يُرجى تأكيد المبلغ المتفق عليه لـ {{title}}",
-      "agreementConfirmed": "تم تأكيد المبلغ لـ {{title}}",
-      "agreementRejected": "لم يُؤكَّد المبلغ لـ {{title}}: يُرجى مراجعته",
-      "settlementDue": "هل سُوّي {{title}} كما اتفقتما؟",
-      "settlementContested": "يقول أحدهم إن {{title}} لم يُسوَّ كما اتُّفق: يمكنك الرد"
+      "applicationReceived": "قدّم {{name}} ترشّحه إلى «{{title}}»!",
+      "applicationSelected": "أخبار رائعة: اختارك {{name}} لـ «{{title}}»!",
+      "applicationRejected": "اختار {{name}} شخصًا آخر لـ «{{title}}» هذه المرة",
+      "applicationWithdrawn": "سحب {{name}} ترشّحه من «{{title}}»",
+      "jobUpdated": "حدّث {{name}} «{{title}}»",
+      "jobClosed": "أغلق {{name}} «{{title}}»",
+      "newJob": "نشر {{name}} عملًا يناسب مهنتك: «{{title}}»",
+      "jobOutcomeDue": "كيف سار «{{title}}»؟ أخبرنا عن العمل",
+      "jobReviewed": "قدّم {{name}} تقريره عن «{{title}}»",
+      "jobCancelled": "ألغى {{name}} «{{title}}»",
+      "agreementProposed": "يطلب منك {{name}} تأكيد المبلغ المتفق عليه لـ «{{title}}»",
+      "agreementConfirmed": "أكّد {{name}} المبلغ لـ «{{title}}»",
+      "agreementRejected": "لم يؤكّد {{name}} المبلغ لـ «{{title}}»: يُرجى مراجعته",
+      "settlementDue": "هل سُوّي «{{title}}» كما اتفقتما؟",
+      "settlementContested": "يقول أحدهم إن «{{title}}» لم يُسوَّ كما اتُّفق: يمكنك الرد",
+      "someone": "أحدهم"
     },
     "email": {
       "subject": "{{count}} تحديثات من Vaitu",
+      "intro": "إليك آخر المستجدات على Vaitu:",
       "open": "فتح",
       "more": "…و{{count}} أخرى في التطبيق",
-      "manage": "اختر الرسائل التي تصلك: {{link}}",
-      "stopThese": "إيقاف الرسائل من هذا النوع: {{link}}",
-      "stopAll": "إيقاف كل هذه الرسائل: {{link}}"
+      "manage": "اختر الرسائل التي تصلك",
+      "stopThese": "إيقاف الرسائل من هذا النوع",
+      "stopAll": "إيقاف كل هذه الرسائل"
     }
   },
   "push": {
@@ -769,12 +772,14 @@
     "max": "إلى",
     "currency": "العملة",
     "toAgree": "يُتفق عليه",
+    "unpaid": "دون أجر",
     "youEarn": "تكسب: {{pay}}",
     "signInToSee": "سجّل الدخول لمعرفة أجر هذا العمل.",
     "kinds": {
       "to_agree": "يُتفق عليه",
       "fixed": "مبلغ محدد",
-      "range": "نطاق"
+      "range": "نطاق",
+      "unpaid": "دون أجر (معروف أو تبادل)"
     }
   },
   "deal": {

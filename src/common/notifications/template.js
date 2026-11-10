@@ -14,6 +14,7 @@ import { html } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
 import { LIST_STAGGER_CAP, NO_UNREAD } from "../../constants/index.js"
+import { actorName, notificationTypes } from "../../data/notification-types.js"
 import { currentLocale, t } from "../../i18n/index.js"
 import { LoadStatus } from "../load-status/index.js"
 import { Page } from "../page/index.js"
@@ -187,45 +188,12 @@ function renderFeedItem({ item, onOpenRow, index }) {
 }
 
 export function feedLine(item) {
-  const title = item.job_title ?? ""
-  switch (item.type) {
-    case "application_received":
-      return t("notifications.types.applicationReceived", {
-        name: item.applicant_name ?? t("common.deletedUser"),
-        title,
-      })
-    case "application_selected":
-      return t("notifications.types.applicationSelected", { title })
-    case "application_rejected":
-      return t("notifications.types.applicationRejected", { title })
-    case "application_withdrawn":
-      return t("notifications.types.applicationWithdrawn", {
-        name: item.applicant_name ?? t("common.deletedUser"),
-        title,
-      })
-    case "job_closed":
-      return t("notifications.types.jobClosed", { title })
-    case "new_job":
-      return t("notifications.types.newJob", { title })
-    case "job_outcome_due":
-      return t("notifications.types.jobOutcomeDue", { title })
-    case "job_reviewed":
-      return t("notifications.types.jobReviewed", { title })
-    case "job_cancelled":
-      return t("notifications.types.jobCancelled", { title })
-    case "agreement_proposed":
-      return t("notifications.types.agreementProposed", { title })
-    case "agreement_confirmed":
-      return t("notifications.types.agreementConfirmed", { title })
-    case "agreement_rejected":
-      return t("notifications.types.agreementRejected", { title })
-    case "settlement_due":
-      return t("notifications.types.settlementDue", { title })
-    case "settlement_contested":
-      return t("notifications.types.settlementContested", { title })
-    default:
-      return t("notifications.types.jobUpdated", { title })
-  }
+  const type = notificationTypes.includes(item.type) ? item.type : "job_updated"
+  const key = type.replace(/_(\w)/g, (_, letter) => letter.toUpperCase())
+  return t(`notifications.types.${key}`, {
+    name: actorName(item) ?? t("notifications.types.someone"),
+    title: item.job_title ?? "",
+  })
 }
 
 function formatStamp(iso) {

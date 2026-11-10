@@ -28,7 +28,7 @@ const PAGE = 1000
 const STATUS_TOO_MANY_REQUESTS = 429
 
 const COLUMNS =
-  "id, user_id, type, created_at, is_read, job_id, application_id, applicant_name, job_title, jobs(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale, is_active, muted_email_types)"
+  "id, user_id, type, created_at, is_read, job_id, application_id, applicant_name, job_title, jobs(title, status, poster:profiles!jobs_poster_id_fkey(full_name)), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale, is_active, muted_email_types)"
 
 serve(
   async (req) => {
@@ -148,6 +148,7 @@ function toPending(row: any): Pending {
       one(one(row.applications)?.applicant)?.full_name ??
       row.applicant_name ??
       null,
+    poster_name: one(job?.poster)?.full_name ?? null,
     is_active: recipient?.is_active ?? false,
     muted_email_types: recipient?.muted_email_types ?? [],
     locale: recipient?.locale ?? null,

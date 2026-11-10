@@ -17,9 +17,12 @@ export async function fetchMyNotifications() {
     .limit(FEED_LIMIT)
     .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
   if (error) throw error
-  const applicants = await fetchApplicants(
-    data.map((row) => row.application_id).filter(Boolean),
-  )
+  const [applicants, posters] = await Promise.all([
+    fetchApplicants(data.map((row) => row.application_id).filter(Boolean)),
+    fetchPosterNames([
+      ...new Set(data.map((row) => row.job_id).filter(Boolean)),
+    ]),
+  ])
   return data.map((row) => ({
     id: row.id,
     type: row.type,
@@ -31,7 +34,19 @@ export async function fetchMyNotifications() {
     job_status: row.jobs?.status ?? null,
     applicant_name:
       applicants[row.application_id]?.full_name ?? row.applicant_name ?? null,
+    poster_name: posters[row.job_id] ?? null,
   }))
+}
+
+async function fetchPosterNames(job_ids) {
+  if (!job_ids.length) return {}
+  const { data, error } = await supabase.rpc("notification_poster_names", {
+    p_job_ids: job_ids,
+  })
+  if (error) throw error
+  return Object.fromEntries(
+    data.map(({ job_id, full_name }) => [job_id, full_name]),
+  )
 }
 
 export async function markNotificationRead(id) {

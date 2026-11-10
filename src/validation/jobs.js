@@ -70,6 +70,9 @@ export function normalizePay(pay = {}) {
       currency,
     }
   }
+  if (pay.kind === "unpaid") {
+    return { kind: "unpaid", amount_min: null, amount_max: null, currency }
+  }
   return { kind: "to_agree", amount_min: null, amount_max: null, currency }
 }
 
@@ -202,7 +205,7 @@ function validateShowDetails(details) {
 }
 
 function validatePay(errors, pay) {
-  if (!pay || pay.kind === "to_agree") return
+  if (!pay || pay.kind === "to_agree" || pay.kind === "unpaid") return
   if (!CURRENCIES.includes(pay.currency)) {
     fail(errors, "pay_currency", "validation.payCurrency")
   }
@@ -216,7 +219,7 @@ function validatePay(errors, pay) {
 }
 
 function isAmount(value) {
-  return Number.isFinite(value) && value >= NO_AMOUNT
+  return Number.isFinite(value) && value > NO_AMOUNT
 }
 
 function validatePropertyDetails() {

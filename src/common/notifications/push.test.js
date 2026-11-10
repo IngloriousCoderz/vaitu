@@ -34,6 +34,7 @@ function notification(fields = {}) {
     job_title: "Ada & Ben",
     job_status: "open",
     applicant_name: "Carla",
+    poster_name: "Luca",
     ...fields,
   }
 }
@@ -66,17 +67,30 @@ describe("messageFor", () => {
   it("fills the recipient's language", () => {
     expect(messageFor(notification(), "it")).toEqual({
       title: "Vaitu",
-      body: "Carla ha inviato una candidatura per Ada & Ben!",
+      body: "Carla ha inviato una candidatura per «Ada & Ben»!",
       url: "/jobs/e1/applications",
     })
   })
 
+  it("names the poster for what the poster did, and the applicant otherwise", () => {
+    const body = (fields) => messageFor(notification(fields), "it").body
+    expect(body({ type: "application_selected" })).toBe(
+      "Ottime notizie: Luca ti ha scelto per «Ada & Ben»!",
+    )
+    expect(body({ type: "agreement_confirmed" })).toBe(
+      "Carla ha confermato l'importo per «Ada & Ben»",
+    )
+    expect(body({ type: "job_updated", poster_name: null })).toBe(
+      "Qualcuno ha aggiornato «Ada & Ben»",
+    )
+  })
+
   it("falls back to English for a language it has no lines in", () => {
     expect(messageFor(notification(), "de").body).toBe(
-      "Carla applied to Ada & Ben!",
+      "Carla applied to “Ada & Ben”!",
     )
     expect(messageFor(notification(), null).body).toBe(
-      "Carla applied to Ada & Ben!",
+      "Carla applied to “Ada & Ben”!",
     )
   })
 })

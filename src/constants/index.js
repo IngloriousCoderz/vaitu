@@ -48,6 +48,7 @@ export const TIER_BRONZE_MIN_POINTS = 25
 export const TIER_SILVER_MIN_POINTS = 100
 export const TIER_GOLD_MIN_POINTS = 250
 export const POINTS_PER_COMPLETED_JOB = 20
+export const POINTS_PER_COMPLETED_HANDOFF = 10
 export const POINTS_PER_GOOD_REVIEW = 5
 export const POINTS_PER_POOR_REVIEW = -10
 export const POINTS_PER_DROPOUT = -15

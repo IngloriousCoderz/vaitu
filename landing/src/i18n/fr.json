@@ -6,12 +6,21 @@
   "headline": "Vous ne pouvez pas y être ? Dites à un collègue : « vai tu ».",
   "lede": "Vaitu permet aux professionnels du mariage de confier les missions qu'ils ne peuvent pas assurer et de trouver celles qu'ils peuvent.",
   "highlights": [
-    "Indisponible ? Des collègues candidatent et vous choisissez qui y va",
-    "Vous cherchez du travail ? Recevez une alerte quand une mission convient",
-    "Publier, candidater et choisir est gratuit, pour toujours"
+    {
+      "lead": "Indisponible ?",
+      "text": "Transmettez la mission, choisissez qui y va et gardez une marge si vous le souhaitez"
+    },
+    {
+      "lead": "Vous cherchez du travail ?",
+      "text": "Recevez une alerte quand une mission convient"
+    },
+    {
+      "lead": "Gratuit, pour toujours :",
+      "text": "publier, candidater et choisir"
+    }
   ],
   "cta": "Commencer",
-  "nameOrigin": "Le nom vient de l'italien « vai tu », « vas-y toi » : ce qu'on dit à un collègue en lui passant une mission.",
+  "nameOrigin": "Le nom vient de l'expression italienne « vai tu », qui veut dire « vas-y toi ». C'est ce qu'on dit à un collègue en lui passant une mission.",
   "howTitle": "Comment ça marche",
   "steps": [
     {
@@ -28,9 +37,10 @@
     }
   ],
   "pointsTitle": "Points et rangs",
-  "pointsBody": "Chaque mission réalisée rapporte des points, et les avis en ajoutent ou en retirent. Vos points vous donnent un rang, visible quand vous candidatez.",
+  "pointsBody": "Chaque mission réalisée rapporte des points, tout comme chaque mission transmise qui est réalisée. Les avis en ajoutent ou en retirent. Vos points vous donnent un rang, visible quand vous candidatez.",
   "pointsRules": {
     "perCompletedJob": "par mission réalisée",
+    "perCompletedHandoff": "par mission transmise et réalisée",
     "perGoodReview": "par avis de {{stars}}★ ou plus",
     "perPoorReview": "par avis de {{stars}}★ ou moins",
     "perDropout": "par mission abandonnée après l'avoir obtenue",
@@ -48,6 +58,7 @@
     {
       "title": "Quand vous ne pouvez pas y être",
       "points": [
+        "Gardez une marge si vous le souhaitez : c'est vous qui fixez ce que gagne le collègue",
         "Ne décevez pas votre client et gardez sa confiance",
         "C'est vous qui choisissez à qui confier la mission",
         "Voyez le niveau et les avis de chaque candidat"
@@ -124,7 +135,11 @@
     },
     {
       "question": "Comment fonctionnent les points ?",
-      "answer": "Vous gagnez {{perCompletedJob}} points par mission réalisée et {{perGoodReview}} par avis positif. Les avis négatifs, l'abandon d'une mission obtenue et les absences en retirent. À {{bronze}}, {{silver}} et {{gold}} points, vous atteignez Bronze, Argent et Or."
+      "answer": "Vous gagnez {{perCompletedJob}} points par mission réalisée, {{perCompletedHandoff}} par mission transmise et réalisée, et {{perGoodReview}} par avis positif. Les avis négatifs, l'abandon d'une mission obtenue et les absences en retirent. À {{bronze}}, {{silver}} et {{gold}} points, vous atteignez Bronze, Argent et Or."
+    },
+    {
+      "question": "Puis-je gagner sur une mission que je transmets ?",
+      "answer": "Si vous le souhaitez. C'est vous qui fixez ce que gagne le collègue, et ce que le client vous paie en plus vous revient. Le collègue ne voit que sa rémunération, jamais le prix du client, et Vaitu ne prend rien. Garder une marge, et la convenir avec le collègue, c'est votre choix."
     },
     {
       "question": "Comment se contacter ?",

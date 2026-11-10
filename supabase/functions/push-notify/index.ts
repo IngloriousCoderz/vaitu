@@ -29,7 +29,7 @@ serve(
       .eq("id", id)
       .is("pushed_at", null)
       .select(
-        "user_id, type, job_id, application_id, applicant_name, job_title, jobs(title, status), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale)",
+        "user_id, type, job_id, application_id, applicant_name, job_title, jobs(title, status, poster:profiles!jobs_poster_id_fkey(full_name)), applications(applicant:profiles!applications_applicant_id_fkey(full_name)), recipient:profiles!notifications_user_id_fkey(locale)",
       )
       .maybeSingle()
     if (error) throw error
@@ -53,6 +53,7 @@ serve(
           one(one(data.applications)?.applicant)?.full_name ??
           data.applicant_name ??
           null,
+        poster_name: one(job?.poster)?.full_name ?? null,
       },
       one(data.recipient)?.locale ?? null,
     )

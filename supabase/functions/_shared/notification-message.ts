@@ -11,6 +11,7 @@ export interface FeedItem {
   job_title: string | null
   job_status: string | null
   applicant_name: string | null
+  poster_name: string | null
 }
 
 export interface PushMessage {
@@ -22,6 +23,12 @@ export interface PushMessage {
 type Locale = keyof typeof wording
 
 const FALLBACK_LOCALE: Locale = "en"
+const APPLICANT_ACTIONS = new Set([
+  "application_received",
+  "application_withdrawn",
+  "agreement_confirmed",
+  "agreement_rejected",
+])
 
 export function messageFor(item: FeedItem, locale: string | null): PushMessage {
   return {
@@ -37,45 +44,24 @@ function isLocale(locale: string | null): locale is Locale {
 
 function line(item: FeedItem, locale: Locale) {
   const lines = wording[locale]
-  const title = item.job_title ?? ""
-  switch (item.type) {
-    case "application_received":
-      return fill(lines.applicationReceived, {
-        name: item.applicant_name ?? "",
-        title,
-      })
-    case "application_selected":
-      return fill(lines.applicationSelected, { title })
-    case "application_rejected":
-      return fill(lines.applicationRejected, { title })
-    case "application_withdrawn":
-      return fill(lines.applicationWithdrawn, {
-        name: item.applicant_name ?? "",
-        title,
-      })
-    case "job_closed":
-      return fill(lines.jobClosed, { title })
-    case "new_job":
-      return fill(lines.newJob, { title })
-    case "job_outcome_due":
-      return fill(lines.jobOutcomeDue, { title })
-    case "job_reviewed":
-      return fill(lines.jobReviewed, { title })
-    case "job_cancelled":
-      return fill(lines.jobCancelled, { title })
-    case "agreement_proposed":
-      return fill(lines.agreementProposed, { title })
-    case "agreement_confirmed":
-      return fill(lines.agreementConfirmed, { title })
-    case "agreement_rejected":
-      return fill(lines.agreementRejected, { title })
-    case "settlement_due":
-      return fill(lines.settlementDue, { title })
-    case "settlement_contested":
-      return fill(lines.settlementContested, { title })
-    default:
-      return fill(lines.jobUpdated, { title })
-  }
+  const key = camelCase(item.type)
+  const text =
+    key in lines ? lines[key as keyof typeof lines] : lines.jobUpdated
+  return fill(text, {
+    name: actorName(item) ?? lines.someone,
+    title: item.job_title ?? "",
+  })
+}
+
+/** Who did what the notification is about: an applicant, or the poster. */
+export function actorName(item: FeedItem) {
+  return APPLICANT_ACTIONS.has(item.type)
+    ? item.applicant_name
+    : item.poster_name
+}
+
+function camelCase(type: string) {
+  return type.replace(/_(\w)/g, (_, letter) => letter.toUpperCase())
 }
 
 function fill(line: string, values: Record<string, string>) {

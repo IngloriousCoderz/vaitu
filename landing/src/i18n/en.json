@@ -3,15 +3,24 @@
   "description": "Booked for a job you can't do? Pass it to a colleague. Looking for work? Take the jobs colleagues pass on.",
   "languageLabel": "Language",
   "eyebrow": "For people who work at weddings",
-  "headline": "Can't make it? Tell a colleague: “vai tu”.",
+  "headline": "Can't make it? Tell a colleague “vai tu”.",
   "lede": "Vaitu is where wedding professionals pass on the jobs they can't take, and find the ones they can.",
   "highlights": [
-    "Can't make it? Colleagues apply and you choose who goes",
-    "Looking for work? Get an alert when a job fits",
-    "Publishing, applying and choosing are free, always"
+    {
+      "lead": "Can't make it?",
+      "text": "Pass the job on, choose who goes, and keep a margin if you want"
+    },
+    {
+      "lead": "Looking for work?",
+      "text": "Get an alert when a job fits"
+    },
+    {
+      "lead": "Free, always:",
+      "text": "publishing, applying and choosing"
+    }
   ],
   "cta": "Get started",
-  "nameOrigin": "The name comes from the Italian “vai tu”, “you go”: what you tell a colleague when you pass them a job.",
+  "nameOrigin": "The name comes from the Italian phrase “vai tu”, meaning “you go”. It's what you tell a colleague when you pass them a job.",
   "howTitle": "How it works",
   "steps": [
     {
@@ -28,9 +37,10 @@
     }
   ],
   "pointsTitle": "Points and ranks",
-  "pointsBody": "Every job you do earns points, and reviews add or take some away. Your points give you a rank, and posters see it when you apply.",
+  "pointsBody": "Every job you do earns points, and so does every job you pass on that gets done. Reviews add or take some away. Your points give you a rank, and posters see it when you apply.",
   "pointsRules": {
     "perCompletedJob": "per job done",
+    "perCompletedHandoff": "per job you passed on that was done",
     "perGoodReview": "per review of {{stars}}★ or more",
     "perPoorReview": "per review of {{stars}}★ or less",
     "perDropout": "per job dropped after winning it",
@@ -48,6 +58,7 @@
     {
       "title": "When you can't make it",
       "points": [
+        "Keep a margin if you want: you set what the colleague earns",
         "Don't let your client down or lose their trust",
         "You decide who gets the job",
         "See each applicant's rank and reviews"
@@ -124,7 +135,11 @@
     },
     {
       "question": "How do points work?",
-      "answer": "You earn {{perCompletedJob}} points for each job done and {{perGoodReview}} for each good review. Poor reviews, dropping a job you won and no-shows take points away. At {{bronze}}, {{silver}} and {{gold}} points you reach Bronze, Silver and Gold."
+      "answer": "You earn {{perCompletedJob}} points for each job done, {{perCompletedHandoff}} for each job you passed on that was done, and {{perGoodReview}} for each good review. Poor reviews, dropping a job you won and no-shows take points away. At {{bronze}}, {{silver}} and {{gold}} points you reach Bronze, Silver and Gold."
+    },
+    {
+      "question": "Can I earn from a job I pass on?",
+      "answer": "If you want to. You set what the colleague earns, and what the client pays you beyond that is yours. The colleague sees only their pay, never the client's price, and Vaitu takes nothing. Whether to keep a margin is up to you, and so is agreeing it with the colleague."
     },
     {
       "question": "How do we get in touch?",

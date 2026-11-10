@@ -29,6 +29,7 @@ const PAST_DATE = "2020-01-01"
 const FIVE_STARS = 5
 const ONE_STAR = 1
 const COMPLETED_JOB_WITH_FIVE_STARS_POINTS = 25
+const COMPLETED_HANDOFF_POINTS = 10
 const NO_SHOW_FLOORED_POINTS = 0
 
 async function account(label) {
@@ -160,13 +161,17 @@ describe("reputation", () => {
       expect(stats.tier).toBe("bronze")
       expect(Number(stats.average_rating)).toBe(FIVE_STARS)
 
+      await signIn(worker.login)
+      const posterStats = (await fetchProfileStats([poster.userId]))[
+        poster.userId
+      ]
+      expect(posterStats.points).toBe(COMPLETED_HANDOFF_POINTS)
+
       const notes = await fetchMyNotifications()
-      expect(
-        notes.some(
-          (note) =>
-            note.type === "job_reviewed" && note.job_id === future.jobId,
-        ),
-      ).toBe(true)
+      const reviewed = notes.find(
+        (note) => note.type === "job_reviewed" && note.job_id === future.jobId,
+      )
+      expect(reviewed.poster_name).toBe("Vitest poster")
     },
     TEST_TIMEOUT_MS,
   )

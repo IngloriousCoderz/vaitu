@@ -234,6 +234,7 @@ create table public.app_config (
 
 insert into public.app_config (key, value, description) values
   ('points_per_completed_job', 20, 'Points per job the poster confirmed as done.'),
+  ('points_per_completed_handoff', 10, 'Points per job passed on that the poster confirmed as done.'),
   ('review_good_min_stars', 4, 'Stars from which a review counts as good.'),
   ('review_poor_max_stars', 2, 'Stars up to which a review counts as poor.'),
   ('points_per_good_review', 5, 'Points per good review.'),
@@ -917,6 +918,27 @@ create policy "Users delete their own notifications"
 revoke update on public.notifications from anon, authenticated;
 grant update (is_read) on public.notifications to authenticated;
 
+-- The name of who posted each job, for the jobs the caller was notified about:
+-- profiles are private, and a notification already says who it is about.
+create function public.notification_poster_names(p_job_ids uuid[])
+returns table (job_id uuid, full_name text)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select e.id, p.full_name
+  from public.jobs e
+  join public.profiles p on p.id = e.poster_id
+  where e.id = any (p_job_ids)
+    and exists (
+      select 1 from public.notifications n
+      where n.job_id = e.id and n.user_id = auth.uid()
+    );
+$$;
+
+grant execute on function public.notification_poster_names(uuid[]) to authenticated;
+
 -- Security definer, so no client writes notifications. Skips absent,
 -- deactivated and self-notified users.
 create or replace function public.notify_user(
@@ -1214,12 +1236,12 @@ $$;
 -- What the colleague earns, never the client's price or the poster's margin.
 create table public.job_pay (
   job_id uuid primary key references public.jobs (id) on delete cascade,
-  kind text not null default 'to_agree' check (kind in ('fixed', 'range', 'to_agree')),
-  amount_min numeric check (amount_min >= 0),
-  amount_max numeric check (amount_max >= 0),
+  kind text not null default 'to_agree' check (kind in ('fixed', 'range', 'to_agree', 'unpaid')),
+  amount_min numeric check (amount_min > 0),
+  amount_max numeric check (amount_max > 0),
   currency text not null default 'EUR' check (char_length(currency) = 3),
   check (
-    (kind = 'to_agree' and amount_min is null and amount_max is null)
+    (kind in ('to_agree', 'unpaid') and amount_min is null and amount_max is null)
     or (kind = 'fixed' and amount_min is not null and amount_max is null)
     or (kind = 'range' and amount_min is not null and amount_max > amount_min)
   )
@@ -1253,7 +1275,7 @@ grant select, insert, update on public.job_pay to authenticated;
 -- the winner confirms, and a confirmed amount no longer changes.
 create table public.job_agreements (
   application_id uuid primary key references public.applications (id) on delete cascade,
-  amount numeric not null check (amount >= 0),
+  amount numeric not null check (amount > 0),
   currency text not null default 'EUR' check (char_length(currency) = 3),
   status text not null default 'proposed'
     check (status in ('proposed', 'confirmed', 'rejected')),
@@ -1288,8 +1310,17 @@ security definer
 set search_path = public
 as $$
 begin
-  if p_amount < 0 then
-    raise exception 'The amount cannot be negative.';
+  if p_amount <= 0 then
+    raise exception 'The amount must be more than zero.';
+  end if;
+
+  if exists (
+    select 1
+    from public.applications a
+    join public.job_pay p on p.job_id = a.job_id
+    where a.id = p_application_id and p.kind = 'unpaid'
+  ) then
+    raise exception 'This job is unpaid.';
   end if;
 
   insert into public.job_agreements (application_id, amount, currency)
@@ -1606,6 +1637,7 @@ as $$
         0,
         issues.payment_issues * (c ->> 'points_per_payment_issue')::int
           + completed_count * (c ->> 'points_per_completed_job')::int
+          + passed.completed_handoffs * (c ->> 'points_per_completed_handoff')::int
           + good_reviews * (c ->> 'points_per_good_review')::int
           + poor_reviews * (c ->> 'points_per_poor_review')::int
           + dropouts * (c ->> 'points_per_dropout')::int
@@ -1633,6 +1665,14 @@ as $$
             and other.role <> s.role
         )
     ) issues
+    cross join lateral (
+      select count(*) as completed_handoffs
+      from public.job_reviews r
+      join public.applications a on a.id = r.application_id
+      join public.jobs e on e.id = a.job_id
+      where e.poster_id = counted.profile_id
+        and r.outcome = 'completed'
+    ) passed
   )
   select
     profile_id,

@@ -39,12 +39,16 @@ async function account(label) {
   return { userId, login: { email, password: PASSWORD } }
 }
 
-async function winJob(poster, winner, { amount, jobDate = PAST_DATE }) {
+async function winJob(
+  poster,
+  winner,
+  { amount, jobDate = PAST_DATE, pay = OFFER },
+) {
   const jobId = await createJobAs(
     poster.login,
     crypto.randomUUID(),
     undefined,
-    { pay: OFFER },
+    { pay },
   )
   await signIn(winner.login)
   const { data, error } = await supabase
@@ -216,6 +220,32 @@ describe("what they agreed, and whether it was settled", () => {
       await expect(proposeAgreement(job.applicationId, 1)).rejects.toThrow(
         "already confirmed",
       )
+    },
+    TEST_TIMEOUT_MS,
+  )
+
+  test(
+    "an agreed amount is above zero, and an unpaid job has none",
+    async () => {
+      const paid = await winJob(poster, winner, { amount: null })
+      await signIn(poster.login)
+      await expect(proposeAgreement(paid.applicationId, 0)).rejects.toThrow(
+        "more than zero",
+      )
+
+      const unpaid = await winJob(poster, winner, {
+        amount: null,
+        pay: { kind: "unpaid", currency: "EUR" },
+      })
+      await signIn(poster.login)
+      await expect(
+        proposeAgreement(unpaid.applicationId, AGREED),
+      ).rejects.toThrow("unpaid")
+      const { error } = await supabase
+        .from("job_pay")
+        .update({ kind: "fixed", amount_min: 0 })
+        .eq("job_id", unpaid.jobId)
+      expect(error?.message).toContain("check constraint")
     },
     TEST_TIMEOUT_MS,
   )

@@ -208,7 +208,7 @@
     "futureDeadline": "今日より後の締切を選んでください",
     "passwordLength_other": "パスワードは{{count}}文字以上にしてください",
     "pickJobType": "仕事の種類を選択してください",
-    "payAmount": "金額を入力してください",
+    "payAmount": "0より大きい金額を入力してください",
     "payRange": "最低額より高い最高額を入力してください",
     "payCurrency": "通貨を選んでください"
   },
@@ -395,9 +395,10 @@
     "minPoints": "{{count}}pt以上",
     "maxReached": "最高ランクに到達",
     "toNext": "{{tier}}まであと{{points}}",
-    "subtitle": "獲得した仕事をやり遂げるとポイントがたまります。上位のランクはプロフィールに表示されます。",
+    "subtitle": "獲得した仕事をやり遂げたり、自分の仕事を譲ったりするとポイントがたまります。上位のランクはプロフィールに表示されます。",
     "howTitle": "ポイントのしくみ",
     "perCompletedJob": "（仕事の完了ごと）",
+    "perCompletedHandoff": "譲った仕事が完了するごと",
     "perGoodReview": "（★{{stars}}以上のレビューごと）",
     "perPoorReview": "（★{{stars}}以下のレビューごと）",
     "perDropout": "（当選後の辞退ごと）",
@@ -585,28 +586,30 @@
     "unreadAria": "未読の通知が{{count}}件あります",
     "types": {
       "applicationReceived": "{{name}}さんが「{{title}}」に応募しました！",
-      "applicationSelected": "おめでとうございます！「{{title}}」に選ばれました！",
-      "applicationRejected": "今回は「{{title}}」は選外となりました",
+      "applicationSelected": "おめでとうございます！{{name}}さんが「{{title}}」にあなたを選びました！",
+      "applicationRejected": "今回、{{name}}さんは「{{title}}」に別の方を選びました",
       "applicationWithdrawn": "{{name}}さんが「{{title}}」への応募を取り下げました",
-      "jobUpdated": "「{{title}}」に更新があります！",
-      "jobClosed": "「{{title}}」は締め切られました",
-      "newJob": "あなたの職種に合う新しい仕事：「{{title}}」",
+      "jobUpdated": "{{name}}さんが「{{title}}」を更新しました",
+      "jobClosed": "{{name}}さんが「{{title}}」を締め切りました",
+      "newJob": "{{name}}さんがあなたの職種に合う仕事を投稿しました：「{{title}}」",
       "jobOutcomeDue": "「{{title}}」はいかがでしたか？仕事の結果を教えてください",
-      "jobReviewed": "投稿者が「{{title}}」の結果を報告しました",
-      "jobCancelled": "「{{title}}」は中止になりました",
-      "agreementProposed": "「{{title}}」で合意した金額を確認してください",
-      "agreementConfirmed": "「{{title}}」の金額が確認されました",
-      "agreementRejected": "「{{title}}」の金額は確認されませんでした。内容をご確認ください",
+      "jobReviewed": "{{name}}さんが「{{title}}」の結果を報告しました",
+      "jobCancelled": "{{name}}さんが「{{title}}」を中止しました",
+      "agreementProposed": "{{name}}さんが「{{title}}」で合意した金額の確認を求めています",
+      "agreementConfirmed": "{{name}}さんが「{{title}}」の金額を確認しました",
+      "agreementRejected": "{{name}}さんは「{{title}}」の金額を確認しませんでした。内容をご確認ください",
       "settlementDue": "「{{title}}」は合意どおりに精算されましたか？",
-      "settlementContested": "「{{title}}」が合意どおりに精算されていないとの報告があります。返答できます"
+      "settlementContested": "「{{title}}」が合意どおりに精算されていないとの報告があります。返答できます",
+      "someone": "ユーザー"
     },
     "email": {
       "subject": "Vaituからのお知らせ{{count}}件",
+      "intro": "Vaituからの最新のお知らせです。",
       "open": "開く",
       "more": "…ほか{{count}}件はアプリで",
-      "manage": "受け取るメールを選ぶ：{{link}}",
-      "stopThese": "この種類のメールを停止：{{link}}",
-      "stopAll": "これらのメールをすべて停止：{{link}}"
+      "manage": "受け取るメールを選ぶ",
+      "stopThese": "この種類のメールを停止",
+      "stopAll": "これらのメールをすべて停止"
     }
   },
   "push": {
@@ -711,12 +714,14 @@
     "max": "最高",
     "currency": "通貨",
     "toAgree": "要相談",
+    "unpaid": "無報酬",
     "youEarn": "報酬：{{pay}}",
     "signInToSee": "この仕事の報酬を見るにはサインインしてください。",
     "kinds": {
       "to_agree": "要相談",
       "fixed": "固定額",
-      "range": "金額の幅"
+      "range": "金額の幅",
+      "unpaid": "無報酬（好意や交換として）"
     }
   },
   "deal": {

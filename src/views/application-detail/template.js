@@ -11,6 +11,7 @@ import { Card } from "../../common/job-card/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
+import { isUnpaid } from "../../common/pay.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { t } from "../../i18n/index.js"
@@ -71,22 +72,25 @@ export const template = {
                   <div class=${styles.statusRow}>
                     ${StatusChip.render({ status: application.applicationStatus })}
                   </div>
-                  ${when(application.applicationStatus === "selected", () =>
-                    JobDeal.render({
-                      role: "winner",
-                      agreement: application.agreement,
-                      settlements: application.settlements,
-                      isSettlementDue: isSettlementOpen({
+                  ${when(
+                    application.applicationStatus === "selected" &&
+                      !isUnpaid(application.pay),
+                    () =>
+                      JobDeal.render({
+                        role: "winner",
                         agreement: application.agreement,
-                        status: application.applicationStatus,
-                        job_date: application.job_date,
-                        review: application.review,
+                        settlements: application.settlements,
+                        isSettlementDue: isSettlementOpen({
+                          agreement: application.agreement,
+                          status: application.applicationStatus,
+                          job_date: application.job_date,
+                          review: application.review,
+                        }),
+                        isBusy: entity.isDealBusy,
+                        error: entity.dealError,
+                        onAnswer: onDealAnswer,
+                        onSettle: onDealSettle,
                       }),
-                      isBusy: entity.isDealBusy,
-                      error: entity.dealError,
-                      onAnswer: onDealAnswer,
-                      onSettle: onDealSettle,
-                    }),
                   )}
                   ${when(application.review, () =>
                     this.renderReview(application.review, onReportReview),

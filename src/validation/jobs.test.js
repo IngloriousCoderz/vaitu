@@ -278,9 +278,10 @@ function inWords(errors) {
 describe("the pay of a job", () => {
   const withPay = (pay) => validateJob({ ...validWedding, pay })
 
-  it("can be left out, or to be agreed", () => {
+  it("can be left out, to be agreed, or unpaid", () => {
     expect(validateJob(validWedding)).toEqual({})
     expect(withPay({ kind: "to_agree" })).toEqual({})
+    expect(withPay({ kind: "unpaid" })).toEqual({})
   })
 
   it("needs an amount when it's fixed", () => {
@@ -290,6 +291,9 @@ describe("the pay of a job", () => {
     expect(withPay({ kind: "fixed", currency: "EUR" })).toHaveProperty(
       "pay_min",
     )
+    expect(
+      withPay({ kind: "fixed", amount_min: 0, currency: "EUR" }),
+    ).toHaveProperty("pay_min")
   })
 
   it("needs a top above the bottom when it's a range", () => {
@@ -314,6 +318,12 @@ describe("the pay of a job", () => {
     expect(
       normalizePay({ kind: "fixed", amount_min: 5, amount_max: 9 }).amount_max,
     ).toBeNull()
+    expect(normalizePay({ kind: "unpaid", amount_min: 5 })).toEqual({
+      kind: "unpaid",
+      amount_min: null,
+      amount_max: null,
+      currency: "EUR",
+    })
     expect(normalizePay()).toHaveProperty("kind", "to_agree")
   })
 })

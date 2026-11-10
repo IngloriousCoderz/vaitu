@@ -214,7 +214,7 @@
     "passwordLength_other": "La password deve avere almeno {{count}} caratteri",
     "passwordLength_many": "La password deve avere almeno {{count}} caratteri",
     "pickJobType": "Scegli un tipo di lavoro",
-    "payAmount": "Inserisci un importo",
+    "payAmount": "Inserisci un importo maggiore di zero",
     "payRange": "Inserisci un massimo superiore al minimo",
     "payCurrency": "Scegli una valuta"
   },
@@ -410,9 +410,10 @@
     "minPoints": "{{count}}+ pt",
     "maxReached": "Livello massimo raggiunto",
     "toNext": "{{points}} per {{tier}}",
-    "subtitle": "Guadagna punti svolgendo i lavori che ottieni. I livelli più alti compaiono sul tuo profilo.",
+    "subtitle": "Guadagna punti svolgendo i lavori che ottieni e passando i tuoi. I livelli più alti compaiono sul tuo profilo.",
     "howTitle": "Come funzionano i punti",
     "perCompletedJob": "per lavoro svolto",
+    "perCompletedHandoff": "per lavoro che hai passato ed è stato svolto",
     "perGoodReview": "per recensione da {{stars}}★ in su",
     "perPoorReview": "per recensione fino a {{stars}}★",
     "perDropout": "per lavoro abbandonato dopo averlo ottenuto",
@@ -607,29 +608,31 @@
     "markAll": "Segna tutto come letto",
     "unreadAria": "{{count}} notifiche non lette",
     "types": {
-      "applicationReceived": "{{name}} ha inviato una candidatura per {{title}}!",
-      "applicationSelected": "Ottime notizie: sei stato selezionato per {{title}}!",
-      "applicationRejected": "Questa volta non sei stato selezionato per {{title}}",
-      "applicationWithdrawn": "{{name}} ha ritirato la candidatura per {{title}}",
-      "jobUpdated": "{{title}} è stato aggiornato!",
-      "jobClosed": "{{title}} è stato chiuso",
-      "newJob": "Nuovo lavoro per la tua professione: {{title}}",
-      "jobOutcomeDue": "Com'è andato {{title}}? Raccontaci del lavoro",
-      "jobReviewed": "L'inserzionista ha dato un riscontro su {{title}}",
-      "jobCancelled": "{{title}} è stato annullato",
-      "agreementProposed": "Conferma l'importo concordato per {{title}}",
-      "agreementConfirmed": "L'importo per {{title}} è stato confermato",
-      "agreementRejected": "L'importo per {{title}} non è stato confermato: controllalo",
-      "settlementDue": "{{title}} è stato regolato come concordato?",
-      "settlementContested": "Qualcuno dice che {{title}} non è stato regolato come concordato: puoi replicare"
+      "applicationReceived": "{{name}} ha inviato una candidatura per «{{title}}»!",
+      "applicationSelected": "Ottime notizie: {{name}} ti ha scelto per «{{title}}»!",
+      "applicationRejected": "Questa volta {{name}} ha scelto qualcun altro per «{{title}}»",
+      "applicationWithdrawn": "{{name}} ha ritirato la candidatura per «{{title}}»",
+      "jobUpdated": "{{name}} ha aggiornato «{{title}}»",
+      "jobClosed": "{{name}} ha chiuso «{{title}}»",
+      "newJob": "{{name}} ha pubblicato un lavoro per la tua professione: «{{title}}»",
+      "jobOutcomeDue": "Com'è andato «{{title}}»? Raccontaci del lavoro",
+      "jobReviewed": "{{name}} ha dato un riscontro su «{{title}}»",
+      "jobCancelled": "{{name}} ha annullato «{{title}}»",
+      "agreementProposed": "{{name}} ti chiede di confermare l'importo concordato per «{{title}}»",
+      "agreementConfirmed": "{{name}} ha confermato l'importo per «{{title}}»",
+      "agreementRejected": "{{name}} non ha confermato l'importo per «{{title}}»: controllalo",
+      "settlementDue": "«{{title}}» è stato regolato come concordato?",
+      "settlementContested": "Qualcuno dice che «{{title}}» non è stato regolato come concordato: puoi replicare",
+      "someone": "Qualcuno"
     },
     "email": {
       "subject": "{{count}} novità da Vaitu",
+      "intro": "Ecco le ultime novità per te su Vaitu:",
       "open": "Apri",
       "more": "…e altre {{count}} nell'app",
-      "manage": "Scegli quali email ricevere: {{link}}",
-      "stopThese": "Non ricevere più email come queste: {{link}}",
-      "stopAll": "Non ricevere più queste email: {{link}}"
+      "manage": "Scegli quali email ricevere",
+      "stopThese": "Non ricevere più email come queste",
+      "stopAll": "Non ricevere più queste email"
     }
   },
   "push": {
@@ -736,12 +739,14 @@
     "max": "A",
     "currency": "Valuta",
     "toAgree": "Da concordare",
+    "unpaid": "Senza compenso",
     "youEarn": "Guadagni: {{pay}}",
     "signInToSee": "Accedi per vedere quanto paga questo lavoro.",
     "kinds": {
       "to_agree": "Da concordare",
       "fixed": "Importo definito",
-      "range": "Una fascia"
+      "range": "Una fascia",
+      "unpaid": "Senza compenso (un favore o uno scambio)"
     }
   },
   "deal": {

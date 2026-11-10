@@ -26,4 +26,8 @@ describe("formatPay", () => {
     )
     expect(formatPay(null)).toBe("To be agreed")
   })
+
+  it("says when a job is unpaid", () => {
+    expect(formatPay({ kind: "unpaid", currency: "EUR" })).toBe("Unpaid")
+  })
 })

@@ -29,6 +29,24 @@ export const notificationGroups = [
   },
 ]
 
+export const notificationTypes = notificationGroups.flatMap(
+  (group) => group.types,
+)
+
+const APPLICANT_ACTIONS = new Set([
+  "application_received",
+  "application_withdrawn",
+  "agreement_confirmed",
+  "agreement_rejected",
+])
+
+/** Who did what the notification is about: an applicant, or the poster. */
+export function actorName(item) {
+  return APPLICANT_ACTIONS.has(item.type)
+    ? item.applicant_name
+    : item.poster_name
+}
+
 export function isMuted(muted, type) {
   return muted.includes(ALL_TYPES) || muted.includes(type)
 }

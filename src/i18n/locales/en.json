@@ -211,7 +211,7 @@
     "passwordLength_one": "Password must be at least {{count}} character",
     "passwordLength_other": "Password must be at least {{count}} characters",
     "pickJobType": "Pick a job type",
-    "payAmount": "Enter an amount",
+    "payAmount": "Enter an amount above zero",
     "payRange": "Enter a top amount above the bottom one",
     "payCurrency": "Choose a currency"
   },
@@ -402,9 +402,10 @@
     "minPoints": "{{count}}+ pts",
     "maxReached": "Max rank reached",
     "toNext": "{{points}} to {{tier}}",
-    "subtitle": "Earn points by doing the jobs you win. Higher ranks show on your profile.",
+    "subtitle": "Earn points by doing the jobs you win, and by passing on yours. Higher ranks show on your profile.",
     "howTitle": "How points work",
     "perCompletedJob": "per job done",
+    "perCompletedHandoff": "per job you passed on that was done",
     "perGoodReview": "per review of {{stars}}★ or more",
     "perPoorReview": "per review of {{stars}}★ or less",
     "perDropout": "per job dropped after winning it",
@@ -595,29 +596,31 @@
     "markAll": "Mark all read",
     "unreadAria": "{{count}} unread notifications",
     "types": {
-      "applicationReceived": "{{name}} applied to {{title}}!",
-      "applicationSelected": "Great news: you were selected for {{title}}!",
-      "applicationRejected": "You were not selected for {{title}} this time",
-      "applicationWithdrawn": "{{name}} withdrew their application to {{title}}",
-      "jobUpdated": "{{title}} has updates!",
-      "jobClosed": "{{title}} was closed",
-      "newJob": "New job that matches your profession: {{title}}",
-      "jobOutcomeDue": "How did {{title}} go? Tell us about the job",
-      "jobReviewed": "The poster reported on {{title}}",
-      "jobCancelled": "{{title}} was cancelled",
-      "agreementProposed": "Please confirm the amount you agreed for {{title}}",
-      "agreementConfirmed": "The amount for {{title}} was confirmed",
-      "agreementRejected": "The amount for {{title}} wasn't confirmed: please check it",
-      "settlementDue": "Was {{title}} settled as you agreed?",
-      "settlementContested": "Someone says {{title}} wasn't settled as agreed: you can reply"
+      "applicationReceived": "{{name}} applied to “{{title}}”!",
+      "applicationSelected": "Great news: {{name}} chose you for “{{title}}”!",
+      "applicationRejected": "{{name}} chose someone else for “{{title}}” this time",
+      "applicationWithdrawn": "{{name}} withdrew their application to “{{title}}”",
+      "jobUpdated": "{{name}} updated “{{title}}”",
+      "jobClosed": "{{name}} closed “{{title}}”",
+      "newJob": "{{name}} posted a job that matches your profession: “{{title}}”",
+      "jobOutcomeDue": "How did “{{title}}” go? Tell us about the job",
+      "jobReviewed": "{{name}} reported on “{{title}}”",
+      "jobCancelled": "{{name}} cancelled “{{title}}”",
+      "agreementProposed": "{{name}} asks you to confirm the amount you agreed for “{{title}}”",
+      "agreementConfirmed": "{{name}} confirmed the amount for “{{title}}”",
+      "agreementRejected": "{{name}} didn't confirm the amount for “{{title}}”: please check it",
+      "settlementDue": "Was “{{title}}” settled as you agreed?",
+      "settlementContested": "Someone says “{{title}}” wasn't settled as agreed: you can reply",
+      "someone": "Someone"
     },
     "email": {
       "subject": "{{count}} updates from Vaitu",
+      "intro": "Here's what's new for you on Vaitu:",
       "open": "Open",
       "more": "…and {{count}} more in the app",
-      "manage": "Choose which emails you get: {{link}}",
-      "stopThese": "Stop emails like these: {{link}}",
-      "stopAll": "Stop all these emails: {{link}}"
+      "manage": "Choose which emails you get",
+      "stopThese": "Stop emails like these",
+      "stopAll": "Stop all these emails"
     }
   },
   "push": {
@@ -723,12 +726,14 @@
     "max": "To",
     "currency": "Currency",
     "toAgree": "To be agreed",
+    "unpaid": "Unpaid",
     "youEarn": "You earn: {{pay}}",
     "signInToSee": "Sign in to see what this job pays.",
     "kinds": {
       "to_agree": "To be agreed",
       "fixed": "A set amount",
-      "range": "A range"
+      "range": "A range",
+      "unpaid": "Unpaid (a favour or an exchange)"
     }
   },
   "deal": {

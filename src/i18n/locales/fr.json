@@ -214,7 +214,7 @@
     "passwordLength_other": "Le mot de passe doit contenir au moins {{count}} caractères",
     "passwordLength_many": "Le mot de passe doit contenir au moins {{count}} caractères",
     "pickJobType": "Choisissez un type de mission",
-    "payAmount": "Saisissez un montant",
+    "payAmount": "Saisissez un montant supérieur à zéro",
     "payRange": "Saisissez un maximum supérieur au minimum",
     "payCurrency": "Choisissez une devise"
   },
@@ -410,9 +410,10 @@
     "minPoints": "{{count}}+ pts",
     "maxReached": "Niveau maximal atteint",
     "toNext": "{{points}} avant {{tier}}",
-    "subtitle": "Gagnez des points en réalisant les missions obtenues. Les niveaux les plus élevés apparaissent sur votre profil.",
+    "subtitle": "Gagnez des points en réalisant les missions obtenues et en transmettant les vôtres. Les niveaux les plus élevés apparaissent sur votre profil.",
     "howTitle": "Comment gagner des points",
     "perCompletedJob": "par mission réalisée",
+    "perCompletedHandoff": "par mission transmise et réalisée",
     "perGoodReview": "par avis de {{stars}}★ ou plus",
     "perPoorReview": "par avis de {{stars}}★ ou moins",
     "perDropout": "par mission abandonnée après l'avoir obtenue",
@@ -607,29 +608,31 @@
     "markAll": "Tout marquer comme lu",
     "unreadAria": "{{count}} notifications non lues",
     "types": {
-      "applicationReceived": "{{name}} a postulé à {{title}} !",
-      "applicationSelected": "Bonne nouvelle : vous avez été retenu pour {{title}} !",
-      "applicationRejected": "Cette fois, vous n'avez pas été retenu pour {{title}}",
-      "applicationWithdrawn": "{{name}} a retiré sa candidature à {{title}}",
-      "jobUpdated": "{{title}} a été mis à jour !",
-      "jobClosed": "{{title}} a été clôturé",
-      "newJob": "Nouvelle mission pour votre métier : {{title}}",
-      "jobOutcomeDue": "Comment s'est passé {{title}} ? Parlez-nous de la mission",
-      "jobReviewed": "L'annonceur a donné son retour sur {{title}}",
-      "jobCancelled": "{{title}} a été annulé",
-      "agreementProposed": "Confirmez le montant convenu pour {{title}}",
-      "agreementConfirmed": "Le montant pour {{title}} a été confirmé",
-      "agreementRejected": "Le montant pour {{title}} n'a pas été confirmé : vérifiez-le",
-      "settlementDue": "{{title}} a-t-il été réglé comme convenu ?",
-      "settlementContested": "Quelqu'un indique que {{title}} n'a pas été réglé comme convenu : vous pouvez répondre"
+      "applicationReceived": "{{name}} a postulé à « {{title}} » !",
+      "applicationSelected": "Bonne nouvelle : {{name}} vous a choisi pour « {{title}} » !",
+      "applicationRejected": "Cette fois, {{name}} a choisi quelqu'un d'autre pour « {{title}} »",
+      "applicationWithdrawn": "{{name}} a retiré sa candidature à « {{title}} »",
+      "jobUpdated": "{{name}} a mis à jour « {{title}} »",
+      "jobClosed": "{{name}} a clôturé « {{title}} »",
+      "newJob": "{{name}} a publié une mission pour votre métier : « {{title}} »",
+      "jobOutcomeDue": "Comment s'est passé « {{title}} » ? Parlez-nous de la mission",
+      "jobReviewed": "{{name}} a donné son retour sur « {{title}} »",
+      "jobCancelled": "{{name}} a annulé « {{title}} »",
+      "agreementProposed": "{{name}} vous demande de confirmer le montant convenu pour « {{title}} »",
+      "agreementConfirmed": "{{name}} a confirmé le montant pour « {{title}} »",
+      "agreementRejected": "{{name}} n'a pas confirmé le montant pour « {{title}} » : vérifiez-le",
+      "settlementDue": "« {{title}} » a-t-il été réglé comme convenu ?",
+      "settlementContested": "Quelqu'un indique que « {{title}} » n'a pas été réglé comme convenu : vous pouvez répondre",
+      "someone": "Quelqu'un"
     },
     "email": {
       "subject": "{{count}} nouveautés sur Vaitu",
+      "intro": "Voici les dernières nouveautés pour vous sur Vaitu :",
       "open": "Ouvrir",
       "more": "…et {{count}} de plus dans l'application",
-      "manage": "Choisissez les e-mails que vous recevez : {{link}}",
-      "stopThese": "Ne plus recevoir ce type d'e-mail : {{link}}",
-      "stopAll": "Ne plus recevoir ces e-mails : {{link}}"
+      "manage": "Choisissez les e-mails que vous recevez",
+      "stopThese": "Ne plus recevoir ce type d'e-mail",
+      "stopAll": "Ne plus recevoir ces e-mails"
     }
   },
   "push": {
@@ -736,12 +739,14 @@
     "max": "À",
     "currency": "Devise",
     "toAgree": "À convenir",
+    "unpaid": "Non rémunéré",
     "youEarn": "Vous gagnez : {{pay}}",
     "signInToSee": "Connectez-vous pour voir ce que paie cette mission.",
     "kinds": {
       "to_agree": "À convenir",
       "fixed": "Montant fixe",
-      "range": "Une fourchette"
+      "range": "Une fourchette",
+      "unpaid": "Non rémunéré (un service ou un échange)"
     }
   },
   "deal": {

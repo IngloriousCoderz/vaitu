@@ -2,6 +2,7 @@
 // fails when they part.
 export const POINTS = {
   perCompletedJob: 20,
+  perCompletedHandoff: 10,
   perGoodReview: 5,
   perPoorReview: -10,
   perDropout: -15,

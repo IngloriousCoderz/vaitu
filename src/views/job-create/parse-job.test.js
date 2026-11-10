@@ -243,6 +243,13 @@ describe("toJobFields", () => {
     ).toBe("AUD")
     expect(pay({ kind: "range", amount_min: 400, amount_max: 300 })).toBeNull()
     expect(pay({ kind: "fixed", amount_min: "lots" })).toBeNull()
+    expect(pay({ kind: "fixed", amount_min: 0 })).toBeNull()
+    expect(pay({ kind: "unpaid", amount_min: 50 })).toEqual({
+      kind: "unpaid",
+      amount_min: null,
+      amount_max: null,
+      currency: null,
+    })
     expect(pay(null)).toBeNull()
   })
 

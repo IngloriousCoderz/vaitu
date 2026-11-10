@@ -1,4 +1,5 @@
 import cancelOutline from "@iconify-icons/material-symbols/cancel-outline"
+import handshakeOutline from "@iconify-icons/material-symbols/handshake-outline"
 import paymentsOutline from "@iconify-icons/material-symbols/payments-outline"
 import personCancelOutline from "@iconify-icons/material-symbols/person-cancel-outline"
 import socialLeaderboardOutline from "@iconify-icons/material-symbols/social-leaderboard-outline"
@@ -125,6 +126,11 @@ export const template = {
                         icon: taskAltOutline,
                         points: tiers.perCompletedJob,
                         label: t("ranks.perCompletedJob"),
+                      })}
+                      ${this.renderHowRow({
+                        icon: handshakeOutline,
+                        points: tiers.perCompletedHandoff,
+                        label: t("ranks.perCompletedHandoff"),
                       })}
                       ${this.renderHowRow({
                         icon: starOutline,

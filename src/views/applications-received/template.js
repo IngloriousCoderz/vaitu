@@ -21,7 +21,7 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { formatPay } from "../../common/pay.js"
+import { formatPay, isUnpaid } from "../../common/pay.js"
 import { telUrl } from "../../common/profile.js"
 import { ProfileAvatar } from "../../common/profile-avatar/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
@@ -177,6 +177,7 @@ export const template = {
                     max_reached,
                     confirming_assign: entity.confirming_assign === item.id,
                     assign_amount: entity.assign_amount,
+                    is_unpaid: isUnpaid(entity.pay),
                     deal_draft: entity.deal_draft,
                     is_deal_busy: entity.isDealBusy,
                     deal_error: entity.dealError,
@@ -299,6 +300,7 @@ export const template = {
     max_reached,
     confirming_assign,
     assign_amount,
+    is_unpaid,
     deal_draft,
     is_deal_busy,
     deal_error,
@@ -398,7 +400,7 @@ export const template = {
                 }),
               )}
               <p class=${styles.motivation}>${item.motivation}</p>
-              ${when(item.status === "selected", () =>
+              ${when(item.status === "selected" && !is_unpaid, () =>
                 JobDeal.render({
                   role: "poster",
                   agreement: item.job_agreements,
@@ -490,15 +492,17 @@ export const template = {
                     id: `assign-confirm-${item.id}`,
                     isOpen: confirming_assign,
                     message: t("received.assignConfirm"),
-                    children: Input.render({
-                      id: `assign-amount-${item.id}`,
-                      label: t("deal.amountLabel"),
-                      hint: t("deal.amountHint"),
-                      inputType: "number",
-                      value: assign_amount,
-                      isFullWidth: true,
-                      onChange: onAssignAmount,
-                    }),
+                    children: is_unpaid
+                      ? nothing
+                      : Input.render({
+                          id: `assign-amount-${item.id}`,
+                          label: t("deal.amountLabel"),
+                          hint: t("deal.amountHint"),
+                          inputType: "number",
+                          value: assign_amount,
+                          isFullWidth: true,
+                          onChange: onAssignAmount,
+                        }),
                     error: status === "error" ? error : null,
                     confirmLabel: t("received.yesAssign"),
                     busyLabel: t("received.assigning"),

@@ -45,7 +45,10 @@ export const landing = {
           <h1>${c.headline}</h1>
           <p class="lede">${c.lede}</p>
           <ul class="highlights">
-            ${c.highlights.map((highlight) => html`<li>${highlight}</li>`)}
+            ${c.highlights.map(
+              ({ lead, text }) =>
+                html`<li><strong>${lead}</strong> ${text}</li>`,
+            )}
           </ul>
           <a
             class="cta"
