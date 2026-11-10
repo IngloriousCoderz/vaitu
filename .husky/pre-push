@@ -1,3 +1,5 @@
 #!/bin/sh
+refs=$(cat)
 pnpm typecheck
 pnpm test:unit
+printf '%s\n' "$refs" | node scripts/live-release.mjs --on-push
