@@ -99,6 +99,12 @@ export const ApplicationDetail = {
             type: "review",
             id: entity.application_id,
           }),
+        onReportPoster: () =>
+          api.notify("#safety:safetyOpen", {
+            type: "user",
+            id: entity.application.posterId,
+            block_user_id: entity.application.posterId,
+          }),
       },
       api,
     )

@@ -34,6 +34,7 @@ export const template = {
     onGoogleCalendar,
     onDownloadIcs,
     onReportReview,
+    onReportPoster,
     onDealAnswer,
     onDealSettle,
   }) {
@@ -73,6 +74,9 @@ export const template = {
                 <div class=${styles.panel}>
                   <div class=${styles.statusRow}>
                     ${StatusChip.render({ status: application.applicationStatus })}
+                    ${when(application.posterId, () =>
+                      SafetyButton.render({ onClick: onReportPoster }),
+                    )}
                   </div>
                   ${when(
                     isWithdrawn,

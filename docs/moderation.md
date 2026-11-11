@@ -1,8 +1,8 @@
 # Moderation
 
 The stores expect a way to report content and someone acting on reports. Here
-that someone is you, in the Supabase SQL editor. Users report from a job, an
-applicant or a review; `report-content` stores a row in `reports` and emails
+that someone is you, in the Supabase SQL editor. Users report from a job, a
+poster, an applicant or a review; `report-content` stores a row in `reports` and emails
 `ALERT_EMAIL` with what you need below. A user can send 5 reports a day
 (`reports_daily_limit`).
 
