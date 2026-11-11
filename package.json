@@ -27,24 +27,66 @@
     "landing": "pnpm --dir landing dev",
     "preview": "vite preview",
     "cap": "cap",
-    "mobile:init:ios": "cap add ios",
-    "mobile:init:android": "cap add android",
+    "mobile:init:ios": "cap add ios && inglorious-capacitor assets --ios",
+    "mobile:init:android": "cap add android && inglorious-capacitor assets --android",
     "mobile:sync": "pnpm build && cap sync",
     "mobile:ios": "pnpm build && cap run ios",
     "mobile:android": "pnpm build && cap run android",
     "mobile:ios:dev": "CAP_LIVE=1 cap run ios",
     "mobile:android:dev": "CAP_LIVE=1 cap run android",
     "mobile:release": "node scripts/native-version.mjs && pnpm build:release && cap sync",
+    "mobile:assets": "inglorious-capacitor assets",
+    "capacitor:sync:after": "inglorious-capacitor configure",
     "changeset": "changeset",
     "release:version": "changeset version",
     "live:keys": "inglorious-live-update keys",
     "live:release": "inglorious-live-update release",
-    "assets:compose": "node scripts/compose-logo-assets.mjs",
-    "assets": "pnpm assets:compose && capacitor-assets generate --ios --android",
     "prepare": "husky"
   },
   "liveUpdate": {
     "minBuild": 3
+  },
+  "native": {
+    "appLinks": {
+      "domain": "app.vaitu.net",
+      "paths": [
+        "/",
+        "/jobs*",
+        "/applications*",
+        "/notifications*",
+        "/profile*",
+        "/preferences*",
+        "/ranks*"
+      ],
+      "exclude": [
+        "#*access_token*",
+        "/onboarding*",
+        "/unsubscribe*"
+      ]
+    },
+    "ios": {
+      "teamId": "55926AF5G4",
+      "swipeBack": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "Vaitu uses the microphone to record the voice message that fills in your job."
+      }
+    },
+    "android": {
+      "sha256": [
+        "C1:0B:65:58:71:EE:9F:A8:95:D0:1C:7B:54:60:4C:9D:66:21:56:28:84:13:8E:6A:40:18:8B:D6:D2:C1:58:07",
+        "7C:11:7C:C4:65:C7:8C:AF:59:8F:B5:C6:61:E7:C3:47:23:95:57:DE:81:47:CF:E1:D7:DA:D4:00:93:14:9F:77"
+      ],
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "assets": {
+      "background": "#f6f3ea",
+      "backgroundDark": "#2b2b26",
+      "iconScale": 0.75
+    }
   },
   "dependencies": {
     "@capacitor-firebase/analytics": "^8.6.0",
@@ -59,19 +101,19 @@
     "@inglorious/motion": "^9.0.18",
     "@inglorious/store": "^12.3.0",
     "@inglorious/supabase": "^0.8.0",
-    "@inglorious/ui": "^9.18.2",
+    "@inglorious/ui": "^9.19.0",
     "@inglorious/utils": "^5.1.0",
-    "@inglorious/web": "^6.21.0",
+    "@inglorious/web": "^6.22.0",
     "@supabase/supabase-js": "^2.119.0",
     "firebase": "^13.2.0",
     "fix-webm-duration": "^1.0.6"
   },
   "devDependencies": {
     "@capacitor/android": "^8.6.0",
-    "@capacitor/assets": "^4.0.0",
     "@capacitor/cli": "^8.6.0",
     "@capacitor/ios": "^8.6.0",
     "@changesets/cli": "^3.0.3",
+    "@inglorious/capacitor": "^0.1.1",
     "@inglorious/eslint-config": "^1.2.0",
     "@inglorious/vite-plugin-hmr": "^1.1.0",
     "@vite-pwa/assets-generator": "^2.0.0",
@@ -80,7 +122,6 @@
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
     "rollup-plugin-minify-template-literals": "^2.2.0",
-    "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.6",

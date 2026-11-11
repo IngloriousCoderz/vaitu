@@ -1,4 +1,4 @@
-import jobLimits from "../../supabase/functions/_shared/job-limits.json"
+import jobLimits from "../../supabase/functions/_shared/job-limits.json" with { type: "json" }
 
 export const MS_PER_SECOND = 1000
 export const SECONDS_PER_MINUTE = 60

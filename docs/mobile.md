@@ -71,14 +71,26 @@ address. Keep your computer LAN IP in `.env.local`, then rebuild.
 Find it with `ipconfig getifaddr en0` (macOS),
 `hostname -I | awk '{print $1}'` (Linux), `ipconfig` (Windows).
 
-Pushes need the Firebase files `android/app/google-services.json` and
-`ios/App/GoogleService-Info.plist` (see
+Pushes need the Firebase files `google-services.json` and
+`GoogleService-Info.plist` in the project root (see
 [Notifications](notifications.md#the-native-apps)). Without the first, the
 Android build still succeeds but logs that it skipped the google-services
 plugin, and the app gets no pushes.
 
 After adding or upgrading a Capacitor plugin, run `pnpm mobile:sync` so the
 native projects pick it up.
+
+## Native settings
+
+Don't edit `android/` and `ios/` by hand for what the `native` key in
+`package.json` covers: after every `cap sync`, `inglorious-capacitor configure`
+applies it. It sets the signing team, links that open the app, push, Analytics
+off until consent, permissions, Info.plist entries, iOS swipe back, and copies
+the Firebase files from the project root. See the
+[`@inglorious/capacitor` README](https://www.npmjs.com/package/@inglorious/capacitor).
+
+Icons and splash screens come from `public/logo.svg`, on the colours of
+`native.assets`: run `pnpm mobile:assets` after changing either.
 
 ## Links that open the app
 
@@ -87,14 +99,16 @@ instead of the browser, and the router goes to the link's path
 (`src/app-links.js`). Sign-up confirmations (`/onboarding`) and unsubscribe
 links stay in the browser, where they work without the app.
 
-- **iOS** reads `public/.well-known/apple-app-site-association`, which
-  excludes those paths, and the app declares the domain under Signing &
-  Capabilities → Associated Domains.
-- **Android** reads `public/.well-known/assetlinks.json`, which lists the
-  SHA-256 fingerprints of the keys that sign the app: Google's app signing
-  key and your upload key, both under Test and release → App integrity → App
-  signing in Play Console. Android can't exclude paths, so the intent filter
-  in `AndroidManifest.xml` lists the ones that open the app instead.
+`native.appLinks` lists the paths that open the app and the ones that stay
+in the browser; `configure` writes both platforms' settings from it.
+
+- **iOS** reads `public/.well-known/apple-app-site-association`, built from
+  `native.ios.teamId`.
+- **Android** reads `public/.well-known/assetlinks.json`, built from
+  `native.android.sha256`: the fingerprints of Google's app signing key and
+  your upload key, both under Test and release → App integrity → App signing
+  in Play Console. Android can't exclude paths, so it opens only the listed
+  ones.
 
 Both files are cached: a change can take a while to reach the phones, and
 Android verifies the domain when the app is installed or updated. To check

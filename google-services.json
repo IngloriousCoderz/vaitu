@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "455185813941",
+    "project_id": "inglorious-vaitu",
+    "storage_bucket": "inglorious-vaitu.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455185813941:android:2880d43b3852f5aa1509fc",
+        "android_client_info": {
+          "package_name": "it.ingloriouscoderz.vaitu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBPqT6EwfnsAsJN8iqLp44VP5V333rEfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

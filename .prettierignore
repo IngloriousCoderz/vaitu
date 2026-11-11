@@ -8,3 +8,6 @@ ios/
 dist/
 landing/dist/
 pnpm-lock.yaml
+
+# Written by inglorious-capacitor configure.
+public/.well-known/

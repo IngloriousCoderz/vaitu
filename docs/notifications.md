@@ -172,17 +172,14 @@ VITE_FIREBASE_VAPID_KEY=<public key of the Web Push pair>
 
 ### The native apps
 
-They read the project from `android/app/google-services.json` and
-`ios/App/GoogleService-Info.plist`, downloaded from each app's settings
-in the Firebase console. The plist must also be part of the App target in
-Xcode, or it is not bundled.
+They read the project from `google-services.json` and
+`GoogleService-Info.plist` in the project root, downloaded from each app's
+settings in the Firebase console. `cap sync` copies them into the native
+projects, along with the push capability and background mode iOS needs.
 
-iOS also needs, once the Apple Developer account is active:
-
-- the Push Notifications capability, plus Background Modes → Remote
-  notifications, on the App target;
-- an APNs key (`.p8`) from the Apple Developer site, uploaded under Project
-  settings → Cloud Messaging → Apple app configuration.
+iOS also needs, once the Apple Developer account is active, an APNs key
+(`.p8`) from the Apple Developer site, uploaded under Project settings →
+Cloud Messaging → Apple app configuration.
 
 ## Trying it locally
 
