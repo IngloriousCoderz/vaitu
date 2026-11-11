@@ -199,7 +199,8 @@
     "pickJobType": "Pick a job type",
     "payAmount": "Enter an amount above zero",
     "payRange": "Enter a top amount above the bottom one",
-    "payCurrency": "Choose a currency"
+    "payCurrency": "Choose a currency",
+    "codeInvalid": "Enter the code from the email"
   },
   "errors": {
     "notLoggedIn": "Not logged in",
@@ -246,7 +247,9 @@
     "eraseAccount": "We couldn't delete the account. Please try again.",
     "offline": "You're offline. Try again when you're back online.",
     "captcha": "We couldn't check that you're a person. Please try again.",
-    "weakPassword": "This password has appeared in a data leak or is too easy to guess. Please choose another one."
+    "weakPassword": "This password has appeared in a data leak or is too easy to guess. Please choose another one.",
+    "verify": "We couldn't confirm your email. Please try again.",
+    "codeExpired": "This code or link is wrong or has expired. Ask for a new email."
   },
   "auth": {
     "welcome": "Welcome to Vaitu",
@@ -268,10 +271,15 @@
     "pleaseWait": "Please wait…",
     "emailExample": "you@example.com",
     "checkInbox": "Check your inbox",
-    "confirmationSent": "We sent a confirmation link to <strong>{{email}}</strong>. Open it to activate your account.",
+    "confirmationSent": "We sent a code and a link to <strong>{{email}}</strong>. Enter the code, or open the link, to activate your account.",
     "confirmationResent": "Sent again. It may take a minute to arrive.",
     "resendConfirmation": "Resend email",
-    "acceptLegal": "By continuing, you accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>."
+    "acceptLegal": "By continuing, you accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>.",
+    "code": "Code",
+    "confirm": "Confirm",
+    "confirmTitle": "Confirm your email",
+    "confirmLink": "Tap the button to activate your account.",
+    "backToLogin": "Back to login"
   },
   "onboarding": {
     "title": "Complete your profile",

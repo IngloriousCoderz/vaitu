@@ -4,7 +4,7 @@ import * as handlers from "./handlers.js"
 import { clearAuthErrors } from "./handlers.js"
 import { template } from "./template.js"
 
-const { emailCheck, login, signup, resend, ...syncHandlers } = handlers
+const { emailCheck, login, signup, resend, verify, ...syncHandlers } = handlers
 
 export const Authentication = {
   ...Form,
@@ -13,6 +13,7 @@ export const Authentication = {
   ...login,
   ...signup,
   ...resend,
+  ...verify,
   ...template,
 
   create(entity) {
@@ -21,6 +22,7 @@ export const Authentication = {
       password: "",
       confirmPassword: "",
       full_name: "",
+      code: "",
     }
     Form.create(entity)
     entity.step ??= "email"
@@ -28,13 +30,14 @@ export const Authentication = {
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
     entity.isResent ??= false
+    entity.tokenHash ??= null
     entity.status ??= "idle"
     entity.error ??= null
   },
 
   routeChange(entity, payload) {
     if (payload.route !== entity.id) return
-    open(entity)
+    open(entity, payload.query?.token_hash)
   },
 
   render(entity, api) {
@@ -50,6 +53,8 @@ export const Authentication = {
           onLogin: () => api.notify(`#${id}:loginSubmit`),
           onContinue: () => api.notify(`#${id}:signupSubmit`),
           onResend: () => api.notify(`#${id}:resendSubmit`),
+          onVerifyCode: () => api.notify(`#${id}:codeSubmit`),
+          onVerifyLink: () => api.notify(`#${id}:linkSubmit`),
           onBackToEmail: () => api.notify(`#${id}:emailBack`),
           onTogglePassword: (inputId) => {
             api.notify(`#${id}:passwordToggle`)
@@ -75,8 +80,9 @@ function restoreCursor(inputId) {
   })
 }
 
-function open(entity) {
-  entity.step = "email"
+function open(entity, tokenHash) {
+  entity.step = tokenHash ? "link" : "email"
+  entity.tokenHash = tokenHash ?? null
   entity.mode = "login"
   entity.status = "idle"
   entity.error = null

@@ -3,7 +3,7 @@ import { when } from "@inglorious/web/directives/when"
 
 import { Page } from "../../common/page/index.js"
 import { CAPTCHA_ELEMENT_ID } from "../../constants/index.js"
-import { ConfirmStep } from "./confirm-step.js"
+import { ConfirmStep, LinkStep } from "./confirm-step.js"
 import { EmailStep } from "./email-step.js"
 import { LoginStep } from "./login-step.js"
 import { SignupStep } from "./signup-step.js"
@@ -31,6 +31,9 @@ export const template = {
           )}
           ${when(entity.step === "confirm", () =>
             ConfirmStep.render({ entity, isBusy, ...callbacks }),
+          )}
+          ${when(entity.step === "link", () =>
+            LinkStep.render({ entity, isBusy, ...callbacks }),
           )}
           <div id=${CAPTCHA_ELEMENT_ID} class=${styles.captcha}></div>
         `,

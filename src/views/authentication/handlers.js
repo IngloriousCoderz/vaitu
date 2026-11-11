@@ -8,12 +8,14 @@ import {
   MIN_PASSWORD_LENGTH,
   REQUEST_TIMEOUT_MS,
 } from "../../constants/index.js"
+import { currentLocale } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
 import { landingForSession } from "../../store/guards.js"
 
 const ROUTER = "router"
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const CODE = /^\d{6,10}$/
 
 export function fieldChange(entity, payload) {
   Form.fieldChange(entity, payload)
@@ -34,6 +36,7 @@ export function clearAuthErrors(entity) {
   entity.errors.password = null
   entity.errors.confirmPassword = null
   entity.errors.full_name = null
+  entity.errors.code = null
   entity.isValid = true
 }
 
@@ -84,6 +87,21 @@ export function signupSubmit(entity, _, api) {
     password: entity.values.password,
     confirmPassword: entity.values.confirmPassword,
   })
+}
+
+export function codeSubmit(entity, _, api) {
+  Form.validate(entity, { validate: validateCode })
+  if (!entity.isValid) return
+  entity.error = null
+  api.notify(`#${entity.id}:verify`, {
+    email: entity.values.email.trim().toLowerCase(),
+    token: entity.values.code.trim(),
+  })
+}
+
+export function linkSubmit(entity, _, api) {
+  entity.error = null
+  api.notify(`#${entity.id}:verify`, { token_hash: entity.tokenHash })
 }
 
 export const emailCheck = handleAsync("emailCheck", {
@@ -176,8 +194,7 @@ export const signup = handleAsync("signup", {
       email,
       password,
       options: {
-        data: { full_name: full_name.trim() },
-        emailRedirectTo: confirmationRedirect(),
+        data: { full_name: full_name.trim(), locale: currentLocale() },
         captchaToken: await captcha.token("signup"),
       },
     })
@@ -210,10 +227,7 @@ export const resend = handleAsync("resend", {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email,
-      options: {
-        emailRedirectTo: confirmationRedirect(),
-        captchaToken: await captcha.token("resend"),
-      },
+      options: { captchaToken: await captcha.token("resend") },
     })
     if (error) throw error
     return true
@@ -228,20 +242,51 @@ export const resend = handleAsync("resend", {
   },
 })
 
+export const verify = handleAsync("verify", {
+  start(entity) {
+    entity.status = "loading"
+    entity.error = null
+  },
+  async run({ email, token, token_hash }) {
+    const { data, error } = await supabase.auth.verifyOtp(
+      token_hash
+        ? { token_hash, type: "email" }
+        : { email, token, type: "email" },
+    )
+    if (error) throw error
+    return data.user
+  },
+  success(entity, user, api) {
+    entity.status = "ready"
+    entity.tokenHash = null
+    writeUser(user)
+    setOnboardingDue(true)
+    api.notify("#router:navigate", { to: paths.onboarding, replace: true })
+  },
+  error(entity, err) {
+    entity.status = "error"
+    entity.error = errorKey(err, "errors.verify")
+  },
+})
+
 export function resendSubmit(entity, _, api) {
   api.notify(`#${entity.id}:resend`, {
     email: entity.values.email.trim().toLowerCase(),
   })
 }
 
-function confirmationRedirect() {
-  return `${window.location.origin}${paths.onboarding}`
-}
-
 function validateEmail(values) {
   const errors = {}
   if (!EMAIL.test((values.email ?? "").trim())) {
     errors.email = "validation.validEmail"
+  }
+  return errors
+}
+
+function validateCode(values) {
+  const errors = {}
+  if (!CODE.test((values.code ?? "").trim())) {
+    errors.code = "validation.codeInvalid"
   }
   return errors
 }

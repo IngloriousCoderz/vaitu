@@ -1,4 +1,4 @@
-import { isSignupConfirmation, supabase } from "./client.js"
+import { supabase } from "./client.js"
 import { push } from "./push.js"
 
 // Not a store entity on purpose: a handler reading an entity inside its own
@@ -12,11 +12,6 @@ const STORAGE_KEY = "vaitu-user"
 // batch.
 
 const ONBOARDING_KEY = "vaitu-onboarding"
-
-// The confirmation link opens a new tab whose sessionStorage never saw the
-// signup, so the link itself says onboarding is owed. Set at import, before the
-// guard first runs.
-if (isSignupConfirmation) setOnboardingDue(true)
 
 /**
  * The signed-in user, or null.

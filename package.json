@@ -56,10 +56,10 @@
         "/notifications*",
         "/profile*",
         "/preferences*",
-        "/ranks*"
+        "/ranks*",
+        "/confirm*"
       ],
       "exclude": [
-        "#*access_token*",
         "/onboarding*",
         "/unsubscribe*"
       ]

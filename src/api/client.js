@@ -4,8 +4,6 @@ import { createClient } from "@supabase/supabase-js"
 import { CAPTCHA_ELEMENT_ID, SUPABASE_API_PORT } from "../constants/index.js"
 import { currentLocale } from "../i18n/index.js"
 
-export const isSignupConfirmation = readSignupConfirmation()
-
 export const supabase = createClient(
   supabaseUrl(),
   import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -26,10 +24,4 @@ function supabaseUrl() {
     !baked || baked.includes("localhost") || baked.includes("127.0.0.1")
   if (isLanHost && isLocalBaked) return `http://${host}:${SUPABASE_API_PORT}`
   return baked
-}
-
-function readSignupConfirmation() {
-  if (typeof window === "undefined") return false
-  const params = new URLSearchParams(window.location.hash.replace(/^#/, ""))
-  return params.get("type") === "signup" && params.has("access_token")
 }

@@ -202,7 +202,8 @@
     "pickJobType": "Choisissez un type de mission",
     "payAmount": "Saisissez un montant supérieur à zéro",
     "payRange": "Saisissez un maximum supérieur au minimum",
-    "payCurrency": "Choisissez une devise"
+    "payCurrency": "Choisissez une devise",
+    "codeInvalid": "Saisissez le code reçu par e-mail"
   },
   "errors": {
     "notLoggedIn": "Vous n'êtes pas connecté",
@@ -250,7 +251,9 @@
     "eraseAccount": "Nous n'avons pas pu supprimer le compte. Veuillez réessayer.",
     "offline": "Vous êtes hors ligne. Réessayez une fois la connexion revenue.",
     "captcha": "Nous n'avons pas pu vérifier que vous êtes une personne. Veuillez réessayer.",
-    "weakPassword": "Ce mot de passe est apparu dans une fuite de données ou est trop facile à deviner. Veuillez en choisir un autre."
+    "weakPassword": "Ce mot de passe est apparu dans une fuite de données ou est trop facile à deviner. Veuillez en choisir un autre.",
+    "verify": "Nous n'avons pas pu confirmer votre e-mail. Veuillez réessayer.",
+    "codeExpired": "Ce code ou ce lien est incorrect ou a expiré. Demandez un nouvel e-mail."
   },
   "auth": {
     "welcome": "Bienvenue sur Vaitu",
@@ -272,10 +275,15 @@
     "pleaseWait": "Veuillez patienter…",
     "emailExample": "vous@exemple.fr",
     "checkInbox": "Consultez votre boîte mail",
-    "confirmationSent": "Nous avons envoyé un lien de confirmation à <strong>{{email}}</strong>. Ouvrez-le pour activer votre compte.",
+    "confirmationSent": "Nous avons envoyé un code et un lien à <strong>{{email}}</strong>. Saisissez le code, ou ouvrez le lien, pour activer votre compte.",
     "confirmationResent": "Renvoyé. Cela peut prendre une minute.",
     "resendConfirmation": "Renvoyer l'e-mail",
-    "acceptLegal": "En continuant, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>."
+    "acceptLegal": "En continuant, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
+    "code": "Code",
+    "confirm": "Confirmer",
+    "confirmTitle": "Confirmez votre e-mail",
+    "confirmLink": "Appuyez sur le bouton pour activer votre compte.",
+    "backToLogin": "Retour à la connexion"
   },
   "onboarding": {
     "title": "Complétez votre profil",

@@ -196,7 +196,8 @@
     "pickJobType": "仕事の種類を選択してください",
     "payAmount": "0より大きい金額を入力してください",
     "payRange": "最低額より高い最高額を入力してください",
-    "payCurrency": "通貨を選んでください"
+    "payCurrency": "通貨を選んでください",
+    "codeInvalid": "メールに記載されたコードを入力してください"
   },
   "errors": {
     "notLoggedIn": "ログインしていません",
@@ -243,7 +244,9 @@
     "eraseAccount": "アカウントを削除できませんでした。もう一度お試しください。",
     "offline": "オフラインです。オンラインに戻ってからもう一度お試しください。",
     "captcha": "人間であることを確認できませんでした。もう一度お試しください。",
-    "weakPassword": "このパスワードはデータ漏洩で見つかったか、推測されやすいものです。別のパスワードを選んでください。"
+    "weakPassword": "このパスワードはデータ漏洩で見つかったか、推測されやすいものです。別のパスワードを選んでください。",
+    "verify": "メールアドレスを確認できませんでした。もう一度お試しください。",
+    "codeExpired": "このコードまたはリンクは正しくないか、期限切れです。新しいメールをリクエストしてください。"
   },
   "auth": {
     "welcome": "Vaituへようこそ",
@@ -265,10 +268,15 @@
     "pleaseWait": "お待ちください…",
     "emailExample": "you@example.com",
     "checkInbox": "メールを確認してください",
-    "confirmationSent": "<strong>{{email}}</strong> に確認リンクを送信しました。リンクを開いてアカウントを有効にしてください。",
+    "confirmationSent": "<strong>{{email}}</strong> にコードとリンクを送信しました。コードを入力するか、リンクを開いてアカウントを有効にしてください。",
     "confirmationResent": "再送信しました。届くまで少しかかる場合があります。",
     "resendConfirmation": "メールを再送信",
-    "acceptLegal": "続行すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。"
+    "acceptLegal": "続行すると、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意したものとみなされます。",
+    "code": "コード",
+    "confirm": "確認",
+    "confirmTitle": "メールアドレスの確認",
+    "confirmLink": "ボタンをタップしてアカウントを有効にしてください。",
+    "backToLogin": "ログインに戻る"
   },
   "onboarding": {
     "title": "プロフィールを完成させましょう",

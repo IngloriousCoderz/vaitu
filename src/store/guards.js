@@ -53,6 +53,7 @@ export function isPreLoginRoute(router) {
 export function isPreLoginPath(pathname) {
   return (
     pathname === paths.login ||
+    pathname === paths.confirm ||
     pathname === paths.onboarding ||
     pathname === paths.eraseAccount ||
     pathname === paths.unsubscribe

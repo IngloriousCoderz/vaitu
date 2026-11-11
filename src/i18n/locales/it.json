@@ -202,7 +202,8 @@
     "pickJobType": "Scegli un tipo di lavoro",
     "payAmount": "Inserisci un importo maggiore di zero",
     "payRange": "Inserisci un massimo superiore al minimo",
-    "payCurrency": "Scegli una valuta"
+    "payCurrency": "Scegli una valuta",
+    "codeInvalid": "Inserisci il codice ricevuto per email"
   },
   "errors": {
     "notLoggedIn": "Non hai effettuato l'accesso",
@@ -250,7 +251,9 @@
     "eraseAccount": "Non siamo riusciti a eliminare l'account. Riprova.",
     "offline": "Sei offline. Riprova quando torni online.",
     "captcha": "Non siamo riusciti a verificare che tu sia una persona. Riprova.",
-    "weakPassword": "Questa password è comparsa in una fuga di dati o è troppo facile da indovinare. Scegline un'altra."
+    "weakPassword": "Questa password è comparsa in una fuga di dati o è troppo facile da indovinare. Scegline un'altra.",
+    "verify": "Non siamo riusciti a confermare la tua email. Riprova.",
+    "codeExpired": "Questo codice o link è errato o scaduto. Chiedi una nuova email."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -272,10 +275,15 @@
     "pleaseWait": "Attendi…",
     "emailExample": "tu@esempio.it",
     "checkInbox": "Controlla la posta",
-    "confirmationSent": "Abbiamo inviato un link di conferma a <strong>{{email}}</strong>. Aprilo per attivare il tuo account.",
+    "confirmationSent": "Abbiamo inviato un codice e un link a <strong>{{email}}</strong>. Inserisci il codice, o apri il link, per attivare il tuo account.",
     "confirmationResent": "Inviata di nuovo. Potrebbe volerci un minuto.",
     "resendConfirmation": "Invia di nuovo",
-    "acceptLegal": "Continuando accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>."
+    "acceptLegal": "Continuando accetti i <terms>Termini di servizio</terms> e l'<privacy>Informativa sulla privacy</privacy>.",
+    "code": "Codice",
+    "confirm": "Conferma",
+    "confirmTitle": "Conferma la tua email",
+    "confirmLink": "Tocca il pulsante per attivare il tuo account.",
+    "backToLogin": "Torna all'accesso"
   },
   "onboarding": {
     "title": "Completa il tuo profilo",

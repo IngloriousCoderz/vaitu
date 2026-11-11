@@ -3,6 +3,7 @@
 
 export const routes = {
   "/login": "authentication",
+  "/confirm": "authentication",
   "/onboarding": "onboarding",
 
   "/": "jobList",
@@ -45,5 +46,6 @@ export const paths = {
   eraseAccount: "/erase-account",
   unsubscribe: "/unsubscribe",
   login: "/login",
+  confirm: "/confirm",
   onboarding: "/onboarding",
 }

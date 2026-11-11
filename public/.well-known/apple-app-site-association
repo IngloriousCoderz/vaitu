@@ -7,10 +7,6 @@
         ],
         "components": [
           {
-            "#": "*access_token*",
-            "exclude": true
-          },
-          {
             "/": "/onboarding*",
             "exclude": true
           },
@@ -38,6 +34,9 @@
           },
           {
             "/": "/ranks*"
+          },
+          {
+            "/": "/confirm*"
           }
         ]
       }

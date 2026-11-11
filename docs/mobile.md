@@ -96,8 +96,8 @@ Icons and splash screens come from `public/logo.svg`, on the colours of
 
 A link to `app.vaitu.net`, from an email or a chat, opens the installed app
 instead of the browser, and the router goes to the link's path
-(`src/app-links.js`). Sign-up confirmations (`/onboarding`) and unsubscribe
-links stay in the browser, where they work without the app.
+(`src/app-links.js`). Sign-up confirmations (`/confirm`) open the app too.
+Unsubscribe links stay in the browser, where they work without the app.
 
 `native.appLinks` lists the paths that open the app and the ones that stay
 in the browser; `configure` writes both platforms' settings from it.

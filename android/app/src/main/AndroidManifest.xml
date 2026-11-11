@@ -32,6 +32,7 @@
                 <data android:pathPrefix="/profile" />
                 <data android:pathPrefix="/preferences" />
                 <data android:pathPrefix="/ranks" />
+                <data android:pathPrefix="/confirm" />
             </intent-filter>
         </activity>
 
