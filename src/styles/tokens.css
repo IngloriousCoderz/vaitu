@@ -48,6 +48,10 @@
   --vinput-font-size: var(--iw-font-size-base);
 }
 
+:root.iw-keyboard-open {
+  --vtabbar-height: 0px;
+}
+
 [data-setting="festival"],
 [data-setting="concert"] {
   --vchip-border: #c3bccd;

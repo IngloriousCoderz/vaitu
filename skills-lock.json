@@ -1,77 +1,77 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
     "app-recipe": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/app-recipe/SKILL.md",
-      "computedHash": "58db96c2d7a0a9f2f3fc399aa5d996be8a024adffae9bbc7396333d3d37d67a2"
+      "computedHash": "d594b79758a0c6760a2b6ff6c7d7da953efa7967fd0c9f310e7d51fc48990125"
     },
     "firebase": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/firebase/SKILL.md",
-      "computedHash": "87d7ce28a67ede762c07af317c222e98f17633567b1aa596f3ef63dfdcc37d59"
+      "computedHash": "973bc53b33a6ad41d9dd76d2c73108c50ac32fb664a9143a9389e06e918f2437"
     },
     "forge": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge/SKILL.md",
-      "computedHash": "66702a0d28da89c67c7749b1bf887f48dfc2cf40276069cf78237f666774d92d"
+      "computedHash": "b69e3fd2dbcd2e7faaab572426c1d61c38c201dfe0f725eb085672fef54f1a9e"
     },
     "forge-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/forge-best-practices/SKILL.md",
-      "computedHash": "38f1c9441f82feaef1a2ba6caa3cc4c29414059aa713aacb93a947838b02b687"
+      "computedHash": "2d371e1f16adb142944db4f758e2b8a871978d1c5e3ebc7c65ceaaa53d6a9ae8"
     },
     "i18n": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/i18n/SKILL.md",
-      "computedHash": "cf6b3be3217d1ac76e23b657bd75937f25ca275b2e5a9ce13ac176d5033308b2"
+      "computedHash": "ef0a6f653bce2f812d0b5701b33b8a9a2ff8a27101ea9444318cc50ef86a345a"
     },
     "store": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/store/SKILL.md",
-      "computedHash": "21ac8c9b3ab4ef25fae9d461e3ed7773c304d8b57aaa452673bcf52a990b89f9"
+      "computedHash": "a1cc5d016fe66b7b527e146355e52406d1bb6e4b54e764897188e7a893c171cd"
     },
     "supabase": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/supabase/SKILL.md",
-      "computedHash": "46be4745be7fed638415f33d6cb1ce54b1d03d8c6ae2982ada84ed2eb8d62f3d"
+      "computedHash": "04730e4d28e1a44c60d86b63761741a30674311c30db4a9701e88a1c8b9a5319"
     },
     "ui": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui/SKILL.md",
-      "computedHash": "3d7039dd0be575198d7e918eec3199fef2983860ab40e12efba4a21965b0a718"
+      "computedHash": "f9db7b850df9546393fc4548433d3af8084fc8b6951bc5f47ed77d2ecb778fd2"
     },
     "ui-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/ui-best-practices/SKILL.md",
-      "computedHash": "a497d954c2466e0ea968e2d6e97ecee3c86d0cc5150d5a6dbe66fc543cecae39"
+      "computedHash": "57b55ccefa5d059a0322c9a452ef2a1894bc8a6ca8556c3070714c95de5ba42b"
     },
     "utils": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/utils/SKILL.md",
-      "computedHash": "51087f23f06d3b3833d729e4b7bf43904c380756e362730c16ea9607913e1bc1"
+      "computedHash": "453eac9784d1983ece809d0a6bb277f62c8bd16a06cd7f4805b505e66e21e75a"
     },
     "web": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web/SKILL.md",
-      "computedHash": "d03f79ae8811a8d319519a6b77b20f953f7b64a4b0fa3a375585971a5f063230"
+      "computedHash": "b2f2f564d2789af285a561b73f100e967cdf60a176f8d998164231aa91ee9079"
     },
     "web-best-practices": {
       "source": "IngloriousCoderz/forge-skills",
       "sourceType": "github",
       "skillPath": "skills/web-best-practices/SKILL.md",
-      "computedHash": "e6c7671ecf2245fffe60621d23f9fc73071af6f1e809293b8429fff441671ac2"
+      "computedHash": "4e9a79cc259f95463c35824d2318d5dc004dd429aea64c19a4e788e4817c2c53"
     }
   }
 }

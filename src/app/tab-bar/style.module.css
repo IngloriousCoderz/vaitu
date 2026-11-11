@@ -10,6 +10,7 @@
   view-transition-name: tab-bar;
 }
 
-.tabbar.tabbarHidden {
+.tabbar.tabbarHidden,
+:global(:root.iw-keyboard-open) .tabbar {
   transform: translateY(110%);
 }
