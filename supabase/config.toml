@@ -251,7 +251,7 @@ otp_expiry = 3600
 # sender_name = "Admin"
 
 [auth.email.template.confirmation]
-subject = "Vaitu: conferma la tua email / confirm your email"
+subject = "{{ if and .Data.locale (eq .Data.locale \"it\") }}Conferma la tua email Vaitu{{ else }}Confirm your Vaitu email{{ end }}"
 content_path = "./supabase/templates/confirmation.html"
 
 # Uncomment to customize email template
