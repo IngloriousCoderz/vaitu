@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 import { blockUser, reportContent } from "../../api/safety.js"
 import { readUserId } from "../../api/session.js"
@@ -9,48 +9,38 @@ import { template } from "./template.js"
 const [DEFAULT_REASON] = SAFETY_REASONS
 const STATUS_TOO_MANY_REQUESTS = 429
 
-const reportSend = handleAsync("reportSend", {
-  start(entity) {
-    entity.status = "sending"
-    entity.error = null
-  },
-  run: reportContent,
-  success(entity) {
-    entity.status = "sent"
-  },
-  error(entity, err) {
-    entity.status = "idle"
-    entity.error =
-      err?.context?.status === STATUS_TOO_MANY_REQUESTS
+const reportSend = handleRequest(
+  "reportSend",
+  { run: reportContent },
+  {
+    toError: (error) =>
+      error?.context?.status === STATUS_TOO_MANY_REQUESTS
         ? "safety.reportLimit"
-        : "safety.reportFailed"
+        : "safety.reportFailed",
   },
-})
+)
 
-const blockSend = handleAsync("blockSend", {
-  start(entity) {
-    entity.status = "sending"
-    entity.error = null
+const blockSend = handleRequest(
+  "blockSend",
+  {
+    run: blockUser,
+    success(entity, _, api) {
+      // The dialog closes: not the report's thanks on the way out.
+      entity.status = "idle"
+      entity.isOpen = false
+      api.notify("#jobList:load")
+      const router = api.getEntity("router")
+      if (router.route === "jobDetail") {
+        api.notify("#router:navigate", paths.jobs)
+      }
+      if (router.route === "applicationsReceived") {
+        const { job_id } = api.getEntity("applicationsReceived")
+        api.notify("#applicationsReceived:load", job_id)
+      }
+    },
   },
-  run: blockUser,
-  success(entity, _, api) {
-    entity.status = "idle"
-    entity.isOpen = false
-    api.notify("#jobList:load")
-    const router = api.getEntity("router")
-    if (router.route === "jobDetail") {
-      api.notify("#router:navigate", paths.jobs)
-    }
-    if (router.route === "applicationsReceived") {
-      const { job_id } = api.getEntity("applicationsReceived")
-      api.notify("#applicationsReceived:load", job_id)
-    }
-  },
-  error(entity) {
-    entity.status = "idle"
-    entity.error = "safety.blockFailed"
-  },
-})
+  { toError: () => "safety.blockFailed" },
+)
 
 export const Safety = {
   ...reportSend,

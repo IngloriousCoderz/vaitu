@@ -41,7 +41,7 @@ export const template = {
         LoadStatus.render({
           isError: entity.status === "error",
           error: entity.error,
-          isLoading: entity.status !== "ready",
+          isLoading: entity.status !== "success",
           content: () => html`
             <h2 class=${styles.sectionTitle}>${t("preferences.feed")}</h2>
             <p class=${styles.sectionHint}>${t("preferences.feedHint")}</p>

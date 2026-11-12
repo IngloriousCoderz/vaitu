@@ -49,4 +49,34 @@ describe("errorKey", () => {
     )
     expect(errorKey({}, "errors.save")).toBe("errors.save")
   })
+
+  it("falls back for database errors, whose messages aren't for people", () => {
+    expect(
+      errorKey(
+        {
+          code: "PGRST116",
+          message: "Cannot coerce the result to a single JSON object",
+        },
+        "errors.loadJob",
+      ),
+    ).toBe("errors.loadJob")
+    expect(
+      errorKey(
+        { code: "P0001", message: "You cannot apply to your own job." },
+        "errors.applicationFailed",
+      ),
+    ).toBe("errors.applicationFailed")
+    expect(
+      errorKey({ code: "23505", message: "duplicate key" }, "errors.save"),
+    ).toBe("errors.save")
+  })
+
+  it("keeps Supabase Auth's own messages, whose codes are words", () => {
+    expect(
+      errorKey(
+        { code: "invalid_credentials", message: "errors.invalidCredentials" },
+        "errors.login",
+      ),
+    ).toBe("errors.invalidCredentials")
+  })
 })

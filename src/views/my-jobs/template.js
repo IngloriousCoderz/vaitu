@@ -28,7 +28,8 @@ export const template = {
     onDelete,
     onCancelDelete,
   }) {
-    const { jobs, confirmingDelete, status, error } = entity
+    const { jobs, confirmingDelete, status, error, removeStatus, removeError } =
+      entity
     const isConfirmingDelete = confirmingDelete != null
 
     return Page.render({
@@ -38,7 +39,7 @@ export const template = {
         html`
           <main class="${styles.list} vaitu-list">
             ${LoadStatus.render({
-              isError: status === "error" && !isConfirmingDelete,
+              isError: status === "error",
               error,
               isLoading: status === "loading" && !jobs.length,
               isEmpty: !jobs.length,
@@ -60,9 +61,9 @@ export const template = {
           id: "delete-job-confirm",
           isOpen: isConfirmingDelete,
           message: t("myJobs.deleteConfirm"),
-          error: isConfirmingDelete && status === "error" ? error : null,
+          error: removeError,
           confirmLabel: t("myJobs.yesDelete"),
-          isBusy: status === "saving",
+          isBusy: removeStatus === "loading",
           onConfirm: () => onDelete(confirmingDelete),
           onCancel: onCancelDelete,
         }),

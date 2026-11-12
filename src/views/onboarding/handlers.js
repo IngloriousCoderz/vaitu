@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
@@ -35,32 +35,29 @@ export function professionToggle(entity, professionId) {
   fieldToggle(entity, "professions", professionId)
 }
 
-export const skip = handleAsync("skip", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
+const saveError = { toError: (error) => errorKey(error, "errors.save") }
+
+export const skip = handleRequest(
+  "skip",
+  {
+    async run() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("errors.notLoggedIn")
+      const { error } = await supabase
+        .from("profiles")
+        .update({ onboarded_at: new Date().toISOString() })
+        .eq("id", user.id)
+      if (error) throw error
+      return true
+    },
+    success(entity, _, api) {
+      api.notify("#authentication:onboardingFinish")
+    },
   },
-  async run() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error("Not logged in")
-    const { error } = await supabase
-      .from("profiles")
-      .update({ onboarded_at: new Date().toISOString() })
-      .eq("id", user.id)
-    if (error) throw error
-    return true
-  },
-  success(entity, _, api) {
-    entity.status = "ready"
-    api.notify("#authentication:onboardingFinish")
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.save")
-  },
-})
+  saveError,
+)
 
 export function saveSubmit(entity, _, api) {
   Form.validate(entity, { validate: validateOnboarding })
@@ -74,47 +71,42 @@ export function saveSubmit(entity, _, api) {
   })
 }
 
-export const save = handleAsync("save", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
+export const save = handleRequest(
+  "save",
+  {
+    async run({ country, website, phone, professions, favorite_regions }) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("errors.notLoggedIn")
+      const site = (website ?? "").trim().toLowerCase()
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          country: country.trim(),
+          website:
+            site === ""
+              ? ""
+              : /^https?:\/\//i.test(site)
+                ? site
+                : `https://${site}`,
+          phone: (phone ?? "").trim(),
+          professions,
+          favorite_regions,
+          onboarded_at: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+      if (error) throw error
+      return true
+    },
+    success(entity, _, api) {
+      api.notify("#authentication:onboardingFinish")
+      api.notify("#profile:load")
+      api.notify("#jobList:load")
+    },
   },
-  async run({ country, website, phone, professions, favorite_regions }) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error("Not logged in")
-    const site = (website ?? "").trim().toLowerCase()
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        country: country.trim(),
-        website:
-          site === ""
-            ? ""
-            : /^https?:\/\//i.test(site)
-              ? site
-              : `https://${site}`,
-        phone: (phone ?? "").trim(),
-        professions,
-        favorite_regions,
-        onboarded_at: new Date().toISOString(),
-      })
-      .eq("id", user.id)
-    if (error) throw error
-    return true
-  },
-  success(entity, _, api) {
-    entity.status = "ready"
-    api.notify("#authentication:onboardingFinish")
-    api.notify("#profile:load")
-    api.notify("#jobList:load")
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.save")
-  },
-})
+  saveError,
+)
 
 function validateOnboarding(values) {
   const errors = {}

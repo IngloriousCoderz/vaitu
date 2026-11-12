@@ -131,7 +131,7 @@ export const template = {
                       </div>
                     `,
                   ),
-                  error: status === "error" ? error : null,
+                  error: entity.saveStatus === "error" ? error : null,
                   confirmLabel: t("received.yesReopen"),
                   busyLabel: t("received.reopening"),
                   cancelLabel:
@@ -139,7 +139,7 @@ export const template = {
                       ? t("received.keepAssigned")
                       : t("received.keepClosed"),
                   tone: "primary",
-                  isBusy: status === "saving",
+                  isBusy: entity.saveStatus === "loading",
                   isDisabled:
                     deadlinePast(entity.job_deadline) &&
                     (entity.reopen_deadline ?? "").length !==
@@ -181,17 +181,21 @@ export const template = {
                     assign_amount: entity.assign_amount,
                     is_unpaid: isUnpaid(entity.pay),
                     deal_draft: entity.deal_draft,
-                    is_deal_busy: entity.isDealBusy,
+                    is_deal_busy: entity.dealStatus === "loading",
                     deal_error: entity.dealError,
                     onAssignAmount,
                     onDealDraft,
                     onDealPropose,
                     onDealSettle,
-                    status,
+                    status: entity.saveStatus,
                     error,
                     job_assigned: entity.job_status === "assigned",
                     job_date: entity.job_recap?.job_date,
-                    review: entity.review,
+                    review: {
+                      ...entity.review,
+                      status: entity.reviewStatus,
+                      error: entity.reviewError,
+                    },
                     onReviewField,
                     onReviewSubmit,
                     onReport,
@@ -207,7 +211,11 @@ export const template = {
                 ),
             })}
             ${ErrorAlert.render({
-              error: status === "error" && items.length ? error : null,
+              error:
+                (status === "error" || entity.saveStatus === "error") &&
+                items.length
+                  ? error
+                  : null,
               className: styles.error,
             })}
           </main>
@@ -503,7 +511,7 @@ export const template = {
                     busyLabel: t("received.assigning"),
                     cancelLabel: t("received.keepShortlist"),
                     tone: "primary",
-                    isBusy: status === "saving",
+                    isBusy: status === "loading",
                     onConfirm: () => onAssign(item.id),
                     onCancel: onCancelAssign,
                   })}
@@ -610,13 +618,13 @@ export const template = {
         ${ErrorAlert.render({ error: review.error })}
         ${Button.render({
           children:
-            review.status === "saving"
+            review.status === "loading"
               ? t("common.saving")
               : t("reputation.submit"),
           color: "primary",
           shape: "pill",
           size: "md",
-          isDisabled: review.status === "saving",
+          isDisabled: review.status === "loading",
           onClick: () => onReviewSubmit(item.id),
         })}
       </div>

@@ -52,7 +52,7 @@ test(
   async () => {
     await signOut()
     await expect(uploadIcsFile(crypto.randomUUID(), ICS)).rejects.toThrow(
-      "Not logged in",
+      "errors.notLoggedIn",
     )
   },
   TEST_TIMEOUT_MS,

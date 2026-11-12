@@ -26,7 +26,7 @@ import { EraseAccount } from "../views/erase-account/index.js"
 import { CoverCropper } from "../views/job-create/cover-cropper.js"
 import { JobCreate } from "../views/job-create/index.js"
 import { JobDetail } from "../views/job-detail/index.js"
-import { JobList } from "../views/job-list/index.js"
+import { JobList, searchDebounce } from "../views/job-list/index.js"
 import { MyJobs } from "../views/my-jobs/index.js"
 import { NotFound } from "../views/not-found/index.js"
 import { Onboarding } from "../views/onboarding/index.js"
@@ -47,7 +47,7 @@ export const store = createStore({
     Shell,
     I18n,
     Authentication,
-    JobList: [JobList, liveAlways(["jobs", "applications"])],
+    JobList: [JobList, searchDebounce, liveAlways(["jobs", "applications"])],
     MyJobs: [MyJobs, livePage(["jobs", "applications"])],
     JobDetail: [JobDetail, livePage(["jobs"], (e) => e.job_id)],
     ApplicationList: [ApplicationList, livePage(["applications", "jobs"])],

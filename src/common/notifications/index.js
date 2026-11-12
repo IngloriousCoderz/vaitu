@@ -1,5 +1,5 @@
 import trophyOutline from "@iconify-icons/material-symbols/trophy-outline"
-import { handleAsync } from "@inglorious/store/async"
+import { handleAsync, handleRequest } from "@inglorious/store/async"
 import { optimistic } from "@inglorious/store/optimistic"
 import { pageRouteChange } from "@inglorious/web/router"
 
@@ -27,28 +27,23 @@ const TOAST_COLORS = {
   settlement_contested: "warning",
 }
 
-const load = handleAsync("load", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
-  },
-  run: fetchMyNotifications,
-  success(entity, items, api) {
-    if (entity.knownIds && !isInboxOpen(entity)) {
-      for (const item of arrivals(items, entity.knownIds)) {
-        api.notify("#toasts:show", toastFor(item))
+const load = handleRequest(
+  "load",
+  {
+    run: fetchMyNotifications,
+    success(entity, items, api) {
+      if (entity.knownIds && !isInboxOpen(entity)) {
+        for (const item of arrivals(items, entity.knownIds)) {
+          api.notify("#toasts:show", toastFor(item))
+        }
       }
-    }
-    entity.knownIds = items.map((item) => item.id)
-    entity.items = items
-    entity.unread = items.filter((item) => !item.is_read).length
-    entity.status = "ready"
+      entity.knownIds = items.map((item) => item.id)
+      entity.items = items
+      entity.unread = items.filter((item) => !item.is_read).length
+    },
   },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "notifications.error")
-  },
-})
+  { toError: (error) => errorKey(error, "notifications.error") },
+)
 
 const readSave = optimistic(
   handleAsync("readSave", { run: (id) => markNotificationRead(id) }),
@@ -247,7 +242,7 @@ function routeOpen(entity, _payload, api) {
 }
 
 function routeClose(entity) {
-  entity.status = entity.items.length ? "ready" : "idle"
+  entity.status = entity.items.length ? "success" : "idle"
 }
 
 export { NotificationsPanel } from "./template.js"

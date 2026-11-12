@@ -14,7 +14,7 @@ export async function fetchMyApplications() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("applications")
     .select(
@@ -64,7 +64,7 @@ export async function fetchApplicationDetail(application_id) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("applications")
     .select(
@@ -150,7 +150,7 @@ export async function uploadIcsFile(application_id, ics) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const path = `${user.id}/${application_id}.ics`
   const { error } = await supabase.storage
     .from(ICS_BUCKET)

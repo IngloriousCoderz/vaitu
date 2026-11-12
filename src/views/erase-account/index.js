@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 import { supabase } from "../../api/client.js"
 import { t } from "../../i18n/index.js"
@@ -6,36 +6,31 @@ import { template } from "./template.js"
 
 const STATUS_NOT_FOUND = 404
 
-const erase = handleAsync("erase", {
-  start(entity) {
-    entity.status = "erasing"
-    entity.error = null
+const erase = handleRequest(
+  "erase",
+  {
+    async run(token) {
+      const { error } = await supabase.functions.invoke("erase-account", {
+        body: { token },
+      })
+      if (error) throw error
+      return true
+    },
   },
-  async run(token) {
-    const { error } = await supabase.functions.invoke("erase-account", {
-      body: { token },
-    })
-    if (error) throw error
-    return true
-  },
-  success(entity) {
-    entity.status = "done"
-  },
-  error(entity, err) {
-    entity.status = "ready"
-    entity.error =
-      err?.context?.status === STATUS_NOT_FOUND
+  {
+    toError: (error) =>
+      error?.context?.status === STATUS_NOT_FOUND
         ? "eraseAccount.linkExpired"
-        : "errors.eraseAccount"
+        : "errors.eraseAccount",
   },
-})
+)
 
 export const EraseAccount = {
   ...erase,
   ...template,
 
   create(entity) {
-    entity.status = "ready"
+    entity.status = "idle"
     entity.error = null
   },
 

@@ -51,9 +51,12 @@ export const ApplicationsReceived = {
     entity.pay ??= null
     entity.assign_amount ??= ""
     entity.deal_draft ??= ""
-    entity.isDealBusy ??= false
+    entity.dealStatus ??= "idle"
     entity.dealError ??= null
+    entity.reviewStatus ??= "idle"
+    entity.reviewError ??= null
     entity.status ??= "idle"
+    entity.saveStatus ??= "idle"
     entity.error ??= null
   },
 
@@ -153,6 +156,8 @@ function open(entity, job_id, api) {
   entity.max_applicants = 5
   entity.items = []
   entity.review = emptyReview()
+  entity.reviewStatus = "idle"
+  entity.reviewError = null
   entity.pay = null
   entity.assign_amount = ""
   entity.deal_draft = ""
@@ -178,5 +183,6 @@ function close(entity) {
   entity.isPhotoPreviewOpen = false
   clearReopenError(entity)
   entity.status = "idle"
+  entity.saveStatus = "idle"
   entity.error = null
 }

@@ -9,8 +9,6 @@ export function emptyReview() {
     outcome: "completed",
     rating: NO_RATING,
     comment: "",
-    status: "idle",
-    error: null,
   }
 }
 

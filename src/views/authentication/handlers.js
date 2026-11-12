@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { captcha, supabase } from "../../api/client.js"
@@ -16,6 +16,7 @@ const ROUTER = "router"
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const CODE = /^\d{6,10}$/
+const EMAIL_NOT_CONFIRMED = "emailNotConfirmed"
 
 export function fieldChange(entity, payload) {
   Form.fieldChange(entity, payload)
@@ -104,170 +105,153 @@ export function linkSubmit(entity, _, api) {
   api.notify(`#${entity.id}:verify`, { token_hash: entity.tokenHash })
 }
 
-export const emailCheck = handleAsync("emailCheck", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const emailCheck = handleRequest(
+  "emailCheck",
+  {
+    async run({ email }) {
+      const clean = email.trim().toLowerCase()
+      const timeout = new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error("Request timed out")),
+          REQUEST_TIMEOUT_MS,
+        )
+      })
+      const call = supabase.functions.invoke("check-email", {
+        body: { email: clean },
+      })
+      const { data, error } = await Promise.race([call, timeout])
+      if (error) throw error
+      const mode = data.exists ? "login" : "signup"
+      captcha.prepare(mode)
+      return { mode, email: clean }
+    },
+    success(entity, { mode, email }) {
+      entity.mode = mode
+      entity.values.email = email
+      entity.step = mode
+    },
   },
-  async run({ email }) {
-    const clean = email.trim().toLowerCase()
-    const timeout = new Promise((_, reject) => {
-      setTimeout(
-        () => reject(new Error("Request timed out")),
-        REQUEST_TIMEOUT_MS,
-      )
-    })
-    const call = supabase.functions.invoke("check-email", {
-      body: { email: clean },
-    })
-    const { data, error } = await Promise.race([call, timeout])
-    if (error) throw error
-    const mode = data.exists ? "login" : "signup"
-    captcha.prepare(mode)
-    return { mode, email: clean }
-  },
-  success(entity, { mode, email }) {
-    entity.status = "ready"
-    entity.mode = mode
-    entity.values.email = email
-    entity.step = mode
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.checkEmail")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.checkEmail") },
+)
 
-export const login = handleAsync("login", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
-  },
-  async run({ email, password }) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-      options: { captchaToken: await captcha.token("login") },
-    })
-    if (error) throw error
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("onboarded_at")
-      .eq("id", data.user.id)
-      .single()
-    if (profileError) throw profileError
-    return { user: data.user, isOnboarded: Boolean(profile.onboarded_at) }
-  },
-  success(entity, { user, isOnboarded }, api) {
-    entity.status = "ready"
-    entity.password = ""
-    writeUser(user)
-    setOnboardingDue(!isOnboarded)
-    api.notify("#jobList:load")
-    api.notify("#profile:load")
-    const router = api.getEntity(ROUTER)
-    api.notify("#router:navigate", {
-      to: isOnboarded ? landingForSession(router) : paths.onboarding,
-      replace: true,
-    })
-  },
-  error(entity, err) {
-    if (err.code === "email_not_confirmed") {
-      entity.status = "ready"
+export const login = handleRequest(
+  "login",
+  {
+    async run({ email, password }) {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+        options: { captchaToken: await captcha.token("login") },
+      })
+      if (error) throw error
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("onboarded_at")
+        .eq("id", data.user.id)
+        .single()
+      if (profileError) throw profileError
+      return { user: data.user, isOnboarded: Boolean(profile.onboarded_at) }
+    },
+    success(entity, { user, isOnboarded }, api) {
+      entity.password = ""
+      writeUser(user)
+      setOnboardingDue(!isOnboarded)
+      api.notify("#jobList:load")
+      api.notify("#profile:load")
+      const router = api.getEntity(ROUTER)
+      api.notify("#router:navigate", {
+        to: isOnboarded ? landingForSession(router) : paths.onboarding,
+        replace: true,
+      })
+    },
+    // Not an error to show: the account waits for its confirmation code.
+    error(entity, key) {
+      if (key !== EMAIL_NOT_CONFIRMED) return
+      entity.status = "idle"
       entity.error = null
       entity.password = ""
       entity.step = "confirm"
-      return
-    }
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.login")
+    },
   },
-})
+  {
+    toError: (error) =>
+      error?.code === "email_not_confirmed"
+        ? EMAIL_NOT_CONFIRMED
+        : errorKey(error, "errors.login"),
+  },
+)
 
-export const signup = handleAsync("signup", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const signup = handleRequest(
+  "signup",
+  {
+    async run({ full_name, email, password }) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: full_name.trim(), locale: currentLocale() },
+          captchaToken: await captcha.token("signup"),
+        },
+      })
+      if (error) throw error
+      return Boolean(data.session)
+    },
+    success(entity, hasSession, api) {
+      entity.password = ""
+      if (!hasSession) {
+        entity.step = "confirm"
+        return
+      }
+      setOnboardingDue(true)
+      api.notify("#router:navigate", paths.onboarding)
+    },
   },
-  async run({ full_name, email, password }) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: full_name.trim(), locale: currentLocale() },
-        captchaToken: await captcha.token("signup"),
-      },
-    })
-    if (error) throw error
-    return Boolean(data.session)
-  },
-  success(entity, hasSession, api) {
-    entity.status = "ready"
-    entity.password = ""
-    if (!hasSession) {
-      entity.step = "confirm"
-      return
-    }
-    setOnboardingDue(true)
-    api.notify("#router:navigate", paths.onboarding)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.signup")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.signup") },
+)
 
-export const resend = handleAsync("resend", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
-    entity.isResent = false
+export const resend = handleRequest(
+  "resend",
+  {
+    start(entity) {
+      entity.isResent = false
+    },
+    async run({ email }) {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { captchaToken: await captcha.token("resend") },
+      })
+      if (error) throw error
+      return true
+    },
+    success(entity) {
+      entity.isResent = true
+    },
   },
-  async run({ email }) {
-    const { error } = await supabase.auth.resend({
-      type: "signup",
-      email,
-      options: { captchaToken: await captcha.token("resend") },
-    })
-    if (error) throw error
-    return true
-  },
-  success(entity) {
-    entity.status = "ready"
-    entity.isResent = true
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.resend")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.resend") },
+)
 
-export const verify = handleAsync("verify", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const verify = handleRequest(
+  "verify",
+  {
+    async run({ email, token, token_hash }) {
+      const { data, error } = await supabase.auth.verifyOtp(
+        token_hash
+          ? { token_hash, type: "email" }
+          : { email, token, type: "email" },
+      )
+      if (error) throw error
+      return data.user
+    },
+    success(entity, user, api) {
+      entity.tokenHash = null
+      writeUser(user)
+      setOnboardingDue(true)
+      api.notify("#router:navigate", { to: paths.onboarding, replace: true })
+    },
   },
-  async run({ email, token, token_hash }) {
-    const { data, error } = await supabase.auth.verifyOtp(
-      token_hash
-        ? { token_hash, type: "email" }
-        : { email, token, type: "email" },
-    )
-    if (error) throw error
-    return data.user
-  },
-  success(entity, user, api) {
-    entity.status = "ready"
-    entity.tokenHash = null
-    writeUser(user)
-    setOnboardingDue(true)
-    api.notify("#router:navigate", { to: paths.onboarding, replace: true })
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.verify")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.verify") },
+)
 
 export function resendSubmit(entity, _, api) {
   api.notify(`#${entity.id}:resend`, {

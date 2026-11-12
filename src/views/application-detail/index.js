@@ -27,9 +27,11 @@ export const ApplicationDetail = {
     entity.initialValues = { motivation: "" }
     Form.create(entity)
     entity.isConfirmingWithdraw ??= false
-    entity.isDealBusy ??= false
+    entity.dealStatus ??= "idle"
     entity.dealError ??= null
     entity.status ??= "idle"
+    entity.saveStatus ??= "idle"
+    entity.withdrawStatus ??= "idle"
     entity.error ??= null
   },
 
@@ -131,6 +133,10 @@ function close(entity) {
   entity.application_id = null
   entity.application = null
   entity.status = "idle"
+  entity.saveStatus = "idle"
+  entity.withdrawStatus = "idle"
+  entity.dealStatus = "idle"
   entity.error = null
+  entity.dealError = null
   Form.reset(entity)
 }

@@ -33,7 +33,7 @@ export const template = {
     onBlockCancel,
   }) {
     if (!isOpen) return ""
-    const isBusy = status === "sending"
+    const isBusy = status === "loading"
     return Dialog.render({
       id: "safety",
       isOpen: true,
@@ -42,7 +42,7 @@ export const template = {
       closeLabel: t("common.close"),
       onClose,
       children: when(
-        status === "sent",
+        status === "success",
         () => html`<p role="status">${t("safety.thanks")}</p>`,
         () =>
           when(
@@ -76,7 +76,7 @@ export const template = {
           ),
       ),
       actions: when(
-        status === "sent",
+        status === "success",
         () =>
           Button.render({
             children: t("common.close"),

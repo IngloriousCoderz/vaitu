@@ -30,7 +30,7 @@ export const template = {
   renderRanks({ entity }) {
     const { status, error, tiers, mine } = entity
     const progress =
-      status === "ready" && tiers ? tierProgress(mine?.points, tiers) : null
+      status === "success" && tiers ? tierProgress(mine?.points, tiers) : null
 
     return Page.render({
       variant: "document",
@@ -113,7 +113,7 @@ export const template = {
                   ),
               })}
               ${when(
-                status === "ready" && tiers,
+                status === "success" && tiers,
                 () => html`
                   ${Flex.render({
                     direction: "column",

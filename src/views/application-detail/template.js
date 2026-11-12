@@ -40,7 +40,8 @@ export const template = {
   }) {
     const { application, status, error } = entity
     const isWithdrawn = application?.applicationStatus === "withdrawn"
-    const isBusy = status === "saving" || status === "withdrawing"
+    const isBusy =
+      entity.saveStatus === "loading" || entity.withdrawStatus === "loading"
     const motivation = getFieldValue(entity, "motivation", "")
     const canSave = application && !isBusy
     const links =
@@ -114,7 +115,7 @@ export const template = {
                           job_date: application.job_date,
                           review: application.review,
                         }),
-                        isBusy: entity.isDealBusy,
+                        isBusy: entity.dealStatus === "loading",
                         error: entity.dealError,
                         onAnswer: onDealAnswer,
                         onSettle: onDealSettle,
@@ -170,7 +171,7 @@ export const template = {
                       </div>
                       ${Button.render({
                         children:
-                          status === "saving"
+                          entity.saveStatus === "loading"
                             ? t("common.saving")
                             : t("create.saveChanges"),
                         color: "primary",
@@ -208,10 +209,10 @@ export const template = {
                       application.applicationStatus === "selected"
                         ? t("application.withdrawWinnerConfirm")
                         : t("application.withdrawConfirm"),
-                    error: status === "error" ? error : null,
+                    error: entity.withdrawStatus === "error" ? error : null,
                     confirmLabel: t("application.yesWithdraw"),
                     busyLabel: t("application.withdrawing"),
-                    isBusy: status === "withdrawing",
+                    isBusy: entity.withdrawStatus === "loading",
                     onConfirm: onWithdraw,
                     onCancel: onCancelWithdraw,
                   })}

@@ -55,7 +55,7 @@ export const template = {
     api,
   ) {
     const { profile, status, error } = entity
-    const saving = status === "saving"
+    const saving = entity.saveStatus === "loading"
     const shown = entity.isEditing ? entity.values : profile
 
     return Page.render({
@@ -81,13 +81,13 @@ export const template = {
                   }),
                   Button.render({
                     children:
-                      entity.avatarStatus === "saving"
+                      entity.avatarStatus === "loading"
                         ? t("common.saving")
                         : t("profile.changePhoto"),
                     variant: "outline",
                     shape: "pill",
                     size: "sm",
-                    isDisabled: entity.avatarStatus === "saving",
+                    isDisabled: entity.avatarStatus === "loading",
                     accept: "image/jpeg,image/png,image/webp",
                     onFileSelect: ([file]) => onPhoto(file),
                   }),
@@ -202,7 +202,7 @@ export const template = {
                         children: api.render("countryProfile"),
                       })}
                       ${ErrorAlert.render({
-                        error: status === "error" && error ? error : null,
+                        error: entity.saveStatus === "error" ? error : null,
                       })}
                       ${Button.render({
                         children: saving
@@ -281,7 +281,7 @@ export const template = {
         loadErrorText: t("errors.imageCrop"),
         error: t(entity.avatarError),
         isOpen: true,
-        isSaving: entity.avatarStatus === "saving",
+        isSaving: entity.avatarStatus === "loading",
         onCancel: onPhotoCropCancel,
         onApply: onPhotoCropApply,
       },
@@ -437,7 +437,7 @@ export const template = {
       error: entity.deactivateError,
       confirmLabel: t("profile.yesDeactivate"),
       busyLabel: t("profile.deactivating"),
-      isBusy: entity.deactivateStatus === "deactivating",
+      isBusy: entity.deactivateStatus === "loading",
       onConfirm: onDeactivate,
       onCancel: onDeactivateCancel,
     })
@@ -451,7 +451,7 @@ export const template = {
       error: entity.deleteError,
       confirmLabel: t("eraseAccount.confirm"),
       busyLabel: t("eraseAccount.erasing"),
-      isBusy: entity.deleteStatus === "deleting",
+      isBusy: entity.deleteStatus === "loading",
       onConfirm: onDelete,
       onCancel: onDeleteCancel,
     })

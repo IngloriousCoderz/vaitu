@@ -1,49 +1,44 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 import { errorKey } from "../../api/errors.js"
 import { deleteJob, fetchMyJobs } from "../../api/jobs.js"
 
 export function deleteAsk(entity, job_id) {
   entity.confirmingDelete = job_id
+  entity.removeError = null
 }
 
 export function deleteCancel(entity) {
   entity.confirmingDelete = null
 }
 
-export const load = handleAsync("load", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const load = handleRequest(
+  "load",
+  {
+    run() {
+      return fetchMyJobs()
+    },
+    success(entity, jobs) {
+      entity.jobs = jobs
+    },
   },
-  run() {
-    return fetchMyJobs()
-  },
-  success(entity, jobs) {
-    entity.status = "ready"
-    entity.jobs = jobs
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadJobs")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.loadJobs") },
+)
 
-export const jobRemove = handleAsync("jobRemove", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
+export const jobRemove = handleRequest(
+  "jobRemove",
+  {
+    run(job_id) {
+      return deleteJob(job_id)
+    },
+    success(entity, _, api) {
+      entity.confirmingDelete = null
+      api.notify(`#${entity.id}:load`)
+    },
   },
-  run(job_id) {
-    return deleteJob(job_id)
+  {
+    status: "removeStatus",
+    error: "removeError",
+    toError: (error) => errorKey(error, "errors.deleteJob"),
   },
-  success(entity, _, api) {
-    entity.status = "ready"
-    entity.confirmingDelete = null
-    api.notify(`#${entity.id}:load`)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.deleteJob")
-  },
-})
+)

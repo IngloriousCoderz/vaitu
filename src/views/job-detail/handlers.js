@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 import { Form, getFieldValue } from "@inglorious/web/form"
 
 import { supabase } from "../../api/client.js"
@@ -67,76 +67,70 @@ export function applicationSubmit(entity, _, api) {
   })
 }
 
-export const apply = handleAsync("apply", {
-  start(entity) {
-    entity.applyStatus = "sending"
-    entity.applyError = null
-  },
-  async run({ job_id, full_name, website, phone, motivation }) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) throw new Error("errors.notLoggedIn")
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({
-        full_name: full_name.trim(),
-        website: website.trim().toLowerCase(),
-        phone: phone.trim(),
+export const apply = handleRequest(
+  "apply",
+  {
+    async run({ job_id, full_name, website, phone, motivation }) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error("errors.notLoggedIn")
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: full_name.trim(),
+          website: website.trim().toLowerCase(),
+          phone: phone.trim(),
+        })
+        .eq("id", user.id)
+      if (profileError) throw profileError
+      const { error } = await supabase.from("applications").insert({
+        job_id,
+        applicant_id: user.id,
+        motivation: motivation.trim(),
       })
-      .eq("id", user.id)
-    if (profileError) throw profileError
-    const { error } = await supabase.from("applications").insert({
-      job_id,
-      applicant_id: user.id,
-      motivation: motivation.trim(),
-    })
-    if (error) {
-      if (error.code === "23505") {
-        throw new Error("errors.alreadyApplied")
+      if (error) {
+        if (error.code === "23505") {
+          throw new Error("errors.alreadyApplied")
+        }
+        throw error
       }
-      throw error
-    }
-    return true
+      return true
+    },
+    success(entity, _, api) {
+      entity.isSubmitted = true
+      api.notify("#jobList:load")
+    },
   },
-  success(entity, _, api) {
-    entity.applyStatus = "ready"
-    entity.isSubmitted = true
-    api.notify("#jobList:load")
+  {
+    status: "applyStatus",
+    error: "applyError",
+    toError: (error) => errorKey(error, "errors.applicationFailed"),
   },
-  error(entity, err) {
-    entity.applyStatus = "error"
-    entity.applyError = errorKey(err, "errors.applicationFailed")
-  },
-})
+)
 
-export const load = handleAsync("load", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const load = handleRequest(
+  "load",
+  {
+    async run(job_id) {
+      const detail = await fetchJobDetail(job_id)
+      const { posterId } = detail.job
+      const isSomeoneElses = readUserId() && posterId !== readUserId()
+      const stats = isSomeoneElses ? await fetchProfileStats([posterId]) : {}
+      return { ...detail, posterStats: stats[posterId] ?? null }
+    },
+    success(entity, { job, posterName, posterStats }, api) {
+      entity.job = job
+      entity.posterStats = posterStats
+      entity.posterName = posterName
+      if (needsClock(job)) {
+        const id = entity.id
+        startTick("clock", () => api.notify(`#${id}:clockTick`))
+      }
+    },
   },
-  async run(job_id) {
-    const detail = await fetchJobDetail(job_id)
-    const { posterId } = detail.job
-    const isSomeoneElses = readUserId() && posterId !== readUserId()
-    const stats = isSomeoneElses ? await fetchProfileStats([posterId]) : {}
-    return { ...detail, posterStats: stats[posterId] ?? null }
-  },
-  success(entity, { job, posterName, posterStats }, api) {
-    entity.status = "ready"
-    entity.job = job
-    entity.posterStats = posterStats
-    entity.posterName = posterName
-    if (needsClock(job)) {
-      const id = entity.id
-      startTick("clock", () => api.notify(`#${id}:clockTick`))
-    }
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadJob")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.loadJob") },
+)
 
 function needsClock(job) {
   if (!job?.application_deadline) return false

@@ -58,7 +58,7 @@ async function uploadImage(file, bucket) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const path = `${user.id}/${randomId()}.${extension}`
   const { error } = await supabase.storage.from(bucket).upload(path, file, {
     contentType: file.type,

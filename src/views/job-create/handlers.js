@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleAsync, handleRequest } from "@inglorious/store/async"
 import { cropImage } from "@inglorious/ui/image-cropper"
 import { Form, getFieldValue } from "@inglorious/web/form"
 import fixWebmDuration from "fix-webm-duration"
@@ -347,164 +347,166 @@ export function audioClipReady(entity, { url }, api) {
   api.notify(`#${entity.id}:audioProcess`)
 }
 
-export const audioProcess = handleAsync("audioProcess", {
-  start(entity) {
-    entity.is_transcribing = true
-    entity.is_voice_wait_dismissed = false
-    entity.audio_error = null
-  },
-  run() {
-    if (!pendingBlob) throw new Error("errors.noAudio")
-    return transcribeAudio(pendingBlob)
-  },
-  success(entity, transcript, api) {
-    entity.is_transcribing = false
-    entity.audio_transcript = transcript || null
-    if (transcript && !entity.is_voice_wait_dismissed) {
-      const job_type = jobTypeId(
-        getFieldValue(entity, "setting", ""),
-        getFieldValue(entity, "profession", ""),
-      )
-      const mine = api.getEntity("jobList")?.professions ?? []
-      api.notify(`#${entity.id}:audioParse`, {
-        text: transcript,
-        form: {
-          job_type,
-          // An edit can be on a job type the poster no longer offers.
-          job_types: [
+export const audioProcess = handleRequest(
+  "audioProcess",
+  {
+    start(entity) {
+      entity.is_voice_wait_dismissed = false
+    },
+    run() {
+      if (!pendingBlob) throw new Error("errors.noAudio")
+      return transcribeAudio(pendingBlob)
+    },
+    success(entity, transcript, api) {
+      entity.audio_transcript = transcript || null
+      if (transcript && !entity.is_voice_wait_dismissed) {
+        const job_type = jobTypeId(
+          getFieldValue(entity, "setting", ""),
+          getFieldValue(entity, "profession", ""),
+        )
+        const mine = api.getEntity("jobList")?.professions ?? []
+        api.notify(`#${entity.id}:audioParse`, {
+          text: transcript,
+          form: {
             job_type,
-            ...jobTypesFor([...mine]).map((jobType) => jobType.id),
-          ],
-        },
-      })
-    }
-  },
-  error(entity, err) {
-    entity.is_transcribing = false
-    entity.audio_transcript = null
-    entity.audio_error = SHOWN_VOICE_ERRORS.includes(err?.message)
-      ? err.message
-      : "errors.transcriptionFailed"
-  },
-})
-
-export const audioParse = handleAsync("audioParse", {
-  start(entity) {
-    entity.is_parsing = true
-  },
-  run({ text, form }) {
-    return parseJob(text, { ...form, today: localToday() })
-  },
-  success(entity, fields, api) {
-    entity.is_parsing = false
-    if (entity.is_voice_wait_dismissed) return
-    if (!fields || typeof fields !== "object") return
-    if (fields.job_type && jobTypeById(fields.job_type)) {
-      jobTypeSelect(entity, { value: fields.job_type }, api)
-      jobTypeOptionsSync(entity, null, api)
-    }
-    const setting = settingById(getFieldValue(entity, "setting", ""))
-    const details = mergeParsedDetails(
-      {
-        createFields: setting.createFields,
-        details: detailsFor({
-          setting: setting.id,
-          profession: getFieldValue(entity, "profession", ""),
-        }),
-      },
-      getFieldValue(entity, "details", {}),
-      fields.details,
-    )
-    if (setting.title_from.input && fields.title) {
-      Form.fieldChange(entity, { path: "title", value: fields.title })
-    }
-    if (typeof fields.description === "string" && fields.description) {
-      Form.fieldChange(entity, {
-        path: "description",
-        value: withVoiceDescription(
-          getFieldValue(entity, "description", ""),
-          entity.voice_description,
-          fields.description,
-        ),
-      })
-      entity.voice_description = fields.description
-    }
-    Form.fieldChange(entity, { path: "details", value: details })
-    const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
-    if (fields.pay) {
-      const pay = { ...fields.pay, currency: fields.pay.currency ?? currency }
-      for (const [path, value] of Object.entries(payToForm(pay))) {
-        Form.fieldChange(entity, { path, value })
+            // An edit can be on a job type the poster no longer offers.
+            job_types: [
+              job_type,
+              ...jobTypesFor([...mine]).map((jobType) => jobType.id),
+            ],
+          },
+        })
       }
-    }
-    const previousCountry = getFieldValue(entity, "country", "")
-    if (typeof fields.location === "string" && fields.location.trim()) {
-      Form.fieldChange(entity, {
-        path: "location",
-        value: fields.location.trim(),
-      })
-    }
-    if (typeof fields.country === "string" && fields.country.trim()) {
-      Form.fieldChange(entity, {
-        path: "country",
-        value: fields.country.trim(),
-      })
-    }
-    if (typeof fields.region === "string" && fields.region.trim()) {
-      Form.fieldChange(entity, {
-        path: "region",
-        value: fields.region.trim(),
-      })
-    }
-    const country = getFieldValue(entity, "country", "")
-    const region = regionAfterCountryChange(
-      previousCountry,
-      country,
-      getFieldValue(entity, "region", ""),
-    )
-    Form.fieldChange(entity, { path: "region", value: region })
-    if (!fields.pay?.currency) {
-      Form.fieldChange(entity, {
-        path: "pay_currency",
-        value: currencyAfterCountryChange(previousCountry, country, currency),
-      })
-    }
-    api.notify("#countryCreate:valueSet", country)
-    api.notify("#regionCreate:valueSet", region)
-    if (
-      typeof fields.job_date === "string" &&
-      /^\d{4}-\d{2}-\d{2}$/.test(fields.job_date)
-    ) {
-      Form.fieldChange(entity, {
-        path: "job_date",
-        value: fields.job_date,
-      })
-      autofillDeadline(entity)
-    }
-    if (Number.isInteger(fields.max_applicants)) {
-      Form.fieldChange(entity, {
-        path: "max_applicants",
-        value: fields.max_applicants,
-      })
-    }
-    if (
-      typeof fields.application_deadline === "string" &&
-      fields.application_deadline.length === DATETIME_LOCAL_LENGTH
-    ) {
-      Form.fieldChange(entity, {
-        path: "application_deadline",
-        value: fields.application_deadline,
-      })
-    }
+    },
+    error(entity) {
+      entity.audio_transcript = null
+    },
   },
-  error(entity, err) {
-    entity.is_parsing = false
-    if (entity.is_voice_wait_dismissed) return
-    entity.audio_error = SHOWN_VOICE_ERRORS.includes(err?.message)
-      ? err.message
-      : "errors.parseFailed"
+  {
+    status: "transcribeStatus",
+    error: "audio_error",
+    toError: (error) => voiceError(error, "errors.transcriptionFailed"),
   },
-})
+)
+
+export const audioParse = handleRequest(
+  "audioParse",
+  {
+    run({ text, form }) {
+      return parseJob(text, { ...form, today: localToday() })
+    },
+    success(entity, fields, api) {
+      if (entity.is_voice_wait_dismissed) return
+      if (!fields || typeof fields !== "object") return
+      if (fields.job_type && jobTypeById(fields.job_type)) {
+        jobTypeSelect(entity, { value: fields.job_type }, api)
+        jobTypeOptionsSync(entity, null, api)
+      }
+      const setting = settingById(getFieldValue(entity, "setting", ""))
+      const details = mergeParsedDetails(
+        {
+          createFields: setting.createFields,
+          details: detailsFor({
+            setting: setting.id,
+            profession: getFieldValue(entity, "profession", ""),
+          }),
+        },
+        getFieldValue(entity, "details", {}),
+        fields.details,
+      )
+      if (setting.title_from.input && fields.title) {
+        Form.fieldChange(entity, { path: "title", value: fields.title })
+      }
+      if (typeof fields.description === "string" && fields.description) {
+        Form.fieldChange(entity, {
+          path: "description",
+          value: withVoiceDescription(
+            getFieldValue(entity, "description", ""),
+            entity.voice_description,
+            fields.description,
+          ),
+        })
+        entity.voice_description = fields.description
+      }
+      Form.fieldChange(entity, { path: "details", value: details })
+      const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
+      if (fields.pay) {
+        const pay = { ...fields.pay, currency: fields.pay.currency ?? currency }
+        for (const [path, value] of Object.entries(payToForm(pay))) {
+          Form.fieldChange(entity, { path, value })
+        }
+      }
+      const previousCountry = getFieldValue(entity, "country", "")
+      if (typeof fields.location === "string" && fields.location.trim()) {
+        Form.fieldChange(entity, {
+          path: "location",
+          value: fields.location.trim(),
+        })
+      }
+      if (typeof fields.country === "string" && fields.country.trim()) {
+        Form.fieldChange(entity, {
+          path: "country",
+          value: fields.country.trim(),
+        })
+      }
+      if (typeof fields.region === "string" && fields.region.trim()) {
+        Form.fieldChange(entity, {
+          path: "region",
+          value: fields.region.trim(),
+        })
+      }
+      const country = getFieldValue(entity, "country", "")
+      const region = regionAfterCountryChange(
+        previousCountry,
+        country,
+        getFieldValue(entity, "region", ""),
+      )
+      Form.fieldChange(entity, { path: "region", value: region })
+      if (!fields.pay?.currency) {
+        Form.fieldChange(entity, {
+          path: "pay_currency",
+          value: currencyAfterCountryChange(previousCountry, country, currency),
+        })
+      }
+      api.notify("#countryCreate:valueSet", country)
+      api.notify("#regionCreate:valueSet", region)
+      if (
+        typeof fields.job_date === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(fields.job_date)
+      ) {
+        Form.fieldChange(entity, {
+          path: "job_date",
+          value: fields.job_date,
+        })
+        autofillDeadline(entity)
+      }
+      if (Number.isInteger(fields.max_applicants)) {
+        Form.fieldChange(entity, {
+          path: "max_applicants",
+          value: fields.max_applicants,
+        })
+      }
+      if (
+        typeof fields.application_deadline === "string" &&
+        fields.application_deadline.length === DATETIME_LOCAL_LENGTH
+      ) {
+        Form.fieldChange(entity, {
+          path: "application_deadline",
+          value: fields.application_deadline,
+        })
+      }
+    },
+    // Nobody is waiting for it any more: no error to show.
+    error(entity) {
+      if (entity.is_voice_wait_dismissed) entity.audio_error = null
+    },
+  },
+  {
+    status: "parseStatus",
+    error: "audio_error",
+    toError: (error) => voiceError(error, "errors.parseFailed"),
+  },
+)
 
 export function clearJobImages(entity) {
   closeCrop(entity)
@@ -588,7 +590,7 @@ export function coverCropOpen(entity, { file, rect = null } = {}, api) {
   cropSessionFile = file
   entity.cropPreviewUrl = URL.createObjectURL(file)
   entity.isCropOpen = true
-  entity.isCropSaving = false
+  entity.cropStatus = "idle"
   api.notify(`#${COVER_CROPPER}:srcChange`, {
     src: entity.cropPreviewUrl,
     rect,
@@ -596,193 +598,190 @@ export function coverCropOpen(entity, { file, rect = null } = {}, api) {
 }
 
 export function coverCropCancel(entity) {
-  if (entity.isCropSaving) return
+  if (entity.cropStatus === "loading") return
   closeCrop(entity)
 }
 
-export const coverCropEdit = handleAsync("coverCropEdit", {
-  start(entity) {
-    entity.image_error = null
+export const coverCropEdit = handleRequest(
+  "coverCropEdit",
+  {
+    async run({ id, url, rect = null }) {
+      const sourceFile = pendingSourceFile(id)
+      if (sourceFile instanceof File) return { file: sourceFile, rect }
+      if (!url) throw new Error("errors.imageCrop")
+      let response
+      try {
+        response = await fetch(url)
+      } catch {
+        throw new Error("errors.imageCrop")
+      }
+      if (!response.ok) throw new Error("errors.imageCrop")
+      const blob = await response.blob()
+      const type = blob.type || IMAGE_JPEG_TYPE
+      if (!imageExtension(type)) throw new Error("errors.imageType")
+      return { file: createImageFile(blob, "cover.jpg"), rect: null }
+    },
+    success(entity, crop, api) {
+      coverCropOpen(entity, crop, api)
+    },
   },
-  async run({ id, url, rect = null }) {
-    const sourceFile = pendingSourceFile(id)
-    if (sourceFile instanceof File) return { file: sourceFile, rect }
-    if (!url) throw new Error("errors.imageCrop")
-    let response
-    try {
-      response = await fetch(url)
-    } catch {
-      throw new Error("errors.imageCrop")
-    }
-    if (!response.ok) throw new Error("errors.imageCrop")
-    const blob = await response.blob()
-    const type = blob.type || IMAGE_JPEG_TYPE
-    if (!imageExtension(type)) throw new Error("errors.imageType")
-    return { file: createImageFile(blob, "cover.jpg"), rect: null }
+  {
+    status: "coverEditStatus",
+    error: "image_error",
+    toError: (error) => errorKey(error, "errors.imageCrop"),
   },
-  success(entity, crop, api) {
-    coverCropOpen(entity, crop, api)
-  },
-  error(entity, err) {
-    entity.image_error = errorKey(err, "errors.imageCrop")
-  },
-})
+)
 
-export const coverCropConfirm = handleAsync("coverCropConfirm", {
-  start(entity) {
-    entity.isCropSaving = true
-    entity.cropError = null
+export const coverCropConfirm = handleRequest(
+  "coverCropConfirm",
+  {
+    async run({ rect }) {
+      const file = cropSessionFile
+      if (!file || !rect) throw new Error("errors.imageCrop")
+      try {
+        const blob = await cropImage(file, rect, {
+          maxWidth: COVER_OUTPUT_WIDTH,
+          maxHeight: COVER_OUTPUT_HEIGHT,
+        })
+        return { blob, sourceFile: file, rect }
+      } catch {
+        throw new Error("errors.imageCrop")
+      }
+    },
+    success(entity, { blob, sourceFile, rect }) {
+      const file = createImageFile(blob, "cover.jpg")
+      revokePreview(entity.pending_cover)
+      entity.cover_url = null
+      const id = randomId()
+      rememberPendingFiles(id, { file, sourceFile })
+      entity.pending_cover = {
+        id,
+        previewUrl: URL.createObjectURL(file),
+        rect,
+      }
+      entity.image_error = null
+      closeCrop(entity)
+    },
   },
-  async run({ rect }) {
-    const file = cropSessionFile
-    if (!file || !rect) throw new Error("errors.imageCrop")
-    try {
-      const blob = await cropImage(file, rect, {
-        maxWidth: COVER_OUTPUT_WIDTH,
-        maxHeight: COVER_OUTPUT_HEIGHT,
-      })
-      return { blob, sourceFile: file, rect }
-    } catch {
-      throw new Error("errors.imageCrop")
-    }
+  {
+    status: "cropStatus",
+    error: "cropError",
+    toError: (error) => errorKey(error, "errors.imageCrop"),
   },
-  success(entity, { blob, sourceFile, rect }) {
-    const file = createImageFile(blob, "cover.jpg")
-    revokePreview(entity.pending_cover)
-    entity.cover_url = null
-    const id = randomId()
-    rememberPendingFiles(id, { file, sourceFile })
-    entity.pending_cover = {
-      id,
-      previewUrl: URL.createObjectURL(file),
-      rect,
-    }
-    entity.image_error = null
-    closeCrop(entity)
-  },
-  error(entity, err) {
-    entity.cropError = errorKey(err, "errors.imageCrop")
-  },
-  finally(entity) {
-    entity.isCropSaving = false
-  },
-})
+)
 
 export function audioRemove(entity) {
   releaseRecorder()
   clearPendingAudio()
   entity.is_recording = false
   entity.is_audio_open = false
-  entity.is_transcribing = false
-  entity.is_parsing = false
+  entity.transcribeStatus = "idle"
+  entity.parseStatus = "idle"
   entity.audio_preview_url = null
   entity.audio_transcript = null
   entity.audio_error = null
 }
 
-export const save = handleAsync("save", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
+export const save = handleRequest(
+  "save",
+  {
+    async run(job) {
+      const photos = await savedImageUrls(job)
+      const deadlineIso =
+        job.application_deadline.length === DATETIME_LOCAL_LENGTH
+          ? new Date(job.application_deadline).toISOString()
+          : job.application_deadline
+      const payload = {
+        setting: job.setting,
+        profession: job.profession,
+        title: job.title,
+        location: job.location,
+        country: job.country,
+        region: job.region,
+        job_date: job.job_date,
+        application_deadline: deadlineIso,
+        max_applicants: Number(job.max_applicants) || DEFAULT_MAX_APPLICANTS,
+        image_urls: photos.image_urls,
+        details: job.details,
+        description: job.description,
+        pay: job.pay,
+      }
+      let saved
+      try {
+        saved = await writeJob(job, payload)
+      } catch (err) {
+        await forgetImages(photos.uploadedPaths)
+        throw err
+      }
+      await forgetImages(droppedImagePaths(job, photos.image_urls))
+      return saved
+    },
+    success(entity, _, api) {
+      clearPendingAudio()
+      clearJobImages(entity)
+      entity.audio_preview_url = null
+      api.notify("#jobList:load")
+      api.notify(
+        "#router:navigate",
+        entity.editing_job_id ? paths.job(entity.editing_job_id) : paths.myJobs,
+      )
+    },
   },
-  async run(job) {
-    const photos = await savedImageUrls(job)
-    const deadlineIso =
-      job.application_deadline.length === DATETIME_LOCAL_LENGTH
-        ? new Date(job.application_deadline).toISOString()
-        : job.application_deadline
-    const payload = {
-      setting: job.setting,
-      profession: job.profession,
-      title: job.title,
-      location: job.location,
-      country: job.country,
-      region: job.region,
-      job_date: job.job_date,
-      application_deadline: deadlineIso,
-      max_applicants: Number(job.max_applicants) || DEFAULT_MAX_APPLICANTS,
-      image_urls: photos.image_urls,
-      details: job.details,
-      description: job.description,
-      pay: job.pay,
-    }
-    let saved
-    try {
-      saved = await writeJob(job, payload)
-    } catch (err) {
-      await forgetImages(photos.uploadedPaths)
-      throw err
-    }
-    await forgetImages(droppedImagePaths(job, photos.image_urls))
-    return saved
+  {
+    status: "saveStatus",
+    toError: (error) => errorKey(error, "errors.saveJob"),
   },
-  success(entity, _, api) {
-    entity.status = "ready"
-    clearPendingAudio()
-    clearJobImages(entity)
-    entity.audio_preview_url = null
-    api.notify("#jobList:load")
-    api.notify(
-      "#router:navigate",
-      entity.editing_job_id ? paths.job(entity.editing_job_id) : paths.myJobs,
-    )
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.saveJob")
-  },
-})
+)
 
-export const editLoad = handleAsync("editLoad", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const editLoad = handleRequest(
+  "editLoad",
+  {
+    run(job_id) {
+      return fetchJobForEdit(job_id)
+    },
+    success(entity, row, api) {
+      const country = row.country ?? ""
+      const region = regionForCountry(row.country, row.region)
+      entity.values = {
+        setting: row.setting ?? "wedding",
+        profession: row.profession ?? "",
+        title: row.title ?? "",
+        location: row.location ?? "",
+        country,
+        region,
+        job_date: row.job_date ?? "",
+        application_deadline: toLocalInput(row.application_deadline),
+        max_applicants: row.max_applicants ?? DEFAULT_MAX_APPLICANTS,
+        details: row.details ?? {},
+        description: row.description ?? "",
+        ...payToForm(row.job_pay),
+      }
+      entity.errors = {}
+      entity.isValid = true
+      const photos = [...(row.image_urls ?? [])]
+      entity.cover_url = photos[COVER_INDEX] ?? null
+      entity.gallery_urls = photos.slice(COVER_IMAGES)
+      entity.loaded_image_urls = photos
+      entity.pending_cover = null
+      entity.pending_gallery = []
+      entity.image_error = null
+      entity.audio_preview_url = null
+      entity.is_recording = false
+      entity.is_audio_open = false
+      entity.audio_transcript = null
+      entity.audio_error = null
+      entity.voice_description = null
+      api.notify("#countryCreate:valueSet", country)
+      api.notify("#regionCreate:valueSet", region)
+      jobTypeOptionsSync(entity, null, api)
+    },
   },
-  run(job_id) {
-    return fetchJobForEdit(job_id)
-  },
-  success(entity, row, api) {
-    entity.status = "ready"
-    const country = row.country ?? ""
-    const region = regionForCountry(row.country, row.region)
-    entity.values = {
-      setting: row.setting ?? "wedding",
-      profession: row.profession ?? "",
-      title: row.title ?? "",
-      location: row.location ?? "",
-      country,
-      region,
-      job_date: row.job_date ?? "",
-      application_deadline: toLocalInput(row.application_deadline),
-      max_applicants: row.max_applicants ?? DEFAULT_MAX_APPLICANTS,
-      details: row.details ?? {},
-      description: row.description ?? "",
-      ...payToForm(row.job_pay),
-    }
-    entity.errors = {}
-    entity.isValid = true
-    const photos = [...(row.image_urls ?? [])]
-    entity.cover_url = photos[COVER_INDEX] ?? null
-    entity.gallery_urls = photos.slice(COVER_IMAGES)
-    entity.loaded_image_urls = photos
-    entity.pending_cover = null
-    entity.pending_gallery = []
-    entity.image_error = null
-    entity.audio_preview_url = null
-    entity.is_recording = false
-    entity.is_audio_open = false
-    entity.audio_transcript = null
-    entity.audio_error = null
-    entity.voice_description = null
-    api.notify("#countryCreate:valueSet", country)
-    api.notify("#regionCreate:valueSet", region)
-    jobTypeOptionsSync(entity, null, api)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadJob")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.loadJob") },
+)
+
+function voiceError(error, fallback) {
+  return SHOWN_VOICE_ERRORS.includes(error?.message) ? error.message : fallback
+}
 
 function shiftDate(dateStr, days) {
   const [year, month, day] = dateStr.split("-").map(Number)
@@ -878,7 +877,7 @@ function closeCrop(entity) {
   entity.isCropOpen = false
   entity.cropPreviewUrl = null
   entity.cropError = null
-  entity.isCropSaving = false
+  entity.cropStatus = "idle"
 }
 
 async function forgetImages(paths) {

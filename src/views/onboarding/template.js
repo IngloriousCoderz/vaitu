@@ -20,7 +20,7 @@ export const template = {
     { entity, onField, onToggleProfession, onSave, onSkip },
     api,
   ) {
-    const saving = entity.status === "saving"
+    const saving = entity.status === "loading"
     const countryError = getFieldError(entity, "country")
 
     return Page.render({

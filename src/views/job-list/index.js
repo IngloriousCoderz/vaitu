@@ -1,4 +1,4 @@
-import { debounce } from "@inglorious/utils/function"
+import { withDebounce } from "@inglorious/web/decorators/with-debounce"
 
 import { readUserId } from "../../api/session.js"
 import {
@@ -42,10 +42,8 @@ import { template } from "./template.js"
 
 const SEARCH_DELAY_MS = 300
 
-const searchSoon = debounce(
-  (api, id) => api.notify(`#${id}:searchRun`),
-  SEARCH_DELAY_MS,
-)
+// Composed by the store: a search runs once typing pauses.
+export const searchDebounce = withDebounce(SEARCH_DELAY_MS, ["searchRun"])
 
 export const JobList = {
   search,
@@ -79,8 +77,6 @@ export const JobList = {
     entity.jobs ??= []
     entity.total ??= 0
     entity.isLoadingMore ??= false
-    entity.request ??= 0
-    entity.regionsRequest ??= 0
     entity.regions ??= []
     entity.appliedMap ??= {}
     entity.wonJobIds ??= []
@@ -148,7 +144,7 @@ export const JobList = {
         isFiltersVisible: entity.isFiltersVisible,
         onSearch: (value) => {
           api.notify(`#${id}:search`, value)
-          searchSoon(api, id)
+          api.notify(`#${id}:searchRun`)
         },
         onToggleSetting: (settingId) =>
           api.notify(`#${id}:settingToggle`, settingId),

@@ -14,14 +14,14 @@ export const template = {
   },
 
   renderUnsubscribe({ status, error, type, isLinkValid, onUnsubscribe }) {
-    const isStopping = status === "stopping"
+    const isStopping = status === "loading"
     return Page.render({
       variant: "document",
       read: true,
       children: [
         html`<h1 class=${styles.title}>${t("unsubscribe.title")}</h1>`,
         when(
-          status === "done",
+          status === "success",
           () => html`<p role="status">${t("unsubscribe.done")}</p>`,
           () => html`
             <p class=${styles.question}>${question(type)}</p>

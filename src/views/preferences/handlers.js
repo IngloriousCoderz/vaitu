@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleAsync, handleRequest } from "@inglorious/store/async"
 
 import { errorKey } from "../../api/errors.js"
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
@@ -49,74 +49,78 @@ export function favoriteOptionsSync(entity, _, api) {
   )
 }
 
-export const load = handleAsync("load", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const load = handleRequest(
+  "load",
+  {
+    async run() {
+      const [preferences, blocks] = await Promise.all([
+        fetchMyPreferences(),
+        fetchMyBlocks(),
+      ])
+      return { ...preferences, blocks }
+    },
+    success(entity, preferences, api) {
+      entity.blocks = preferences.blocks
+      entity.interested_settings = preferences.interested_settings ?? []
+      entity.professions = preferences.professions ?? []
+      entity.favorite_regions = preferences.favorite_regions ?? []
+      entity.muted_email_types = preferences.muted_email_types ?? []
+      entity.muted_push_types = preferences.muted_push_types ?? []
+      favoriteOptionsSync(entity, null, api)
+    },
   },
-  async run() {
-    const [preferences, blocks] = await Promise.all([
-      fetchMyPreferences(),
-      fetchMyBlocks(),
-    ])
-    return { ...preferences, blocks }
-  },
-  success(entity, preferences, api) {
-    entity.status = "ready"
-    entity.blocks = preferences.blocks
-    entity.interested_settings = preferences.interested_settings ?? []
-    entity.professions = preferences.professions ?? []
-    entity.favorite_regions = preferences.favorite_regions ?? []
-    entity.muted_email_types = preferences.muted_email_types ?? []
-    entity.muted_push_types = preferences.muted_push_types ?? []
-    favoriteOptionsSync(entity, null, api)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadPreferences")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.loadPreferences") },
+)
 
-export const save = handleAsync("save", {
-  start(entity) {
-    entity.saveError = null
+// Each toggle saves its own fields: every call counts.
+export const save = handleRequest(
+  "save",
+  {
+    run(fields) {
+      return savePreferences(fields)
+    },
+    success(entity, fields, api) {
+      if (
+        fields.interested_settings ||
+        fields.professions ||
+        fields.favorite_regions
+      ) {
+        api.notify("#jobList:load")
+      }
+    },
+    error(entity, _, api) {
+      api.notify(`#${entity.id}:load`)
+    },
   },
-  run(fields) {
-    return savePreferences(fields)
+  {
+    status: "saveStatus",
+    error: "saveError",
+    toError: (error) => errorKey(error, "errors.savePreferences"),
+    isLatestOnly: false,
   },
-  success(entity, fields, api) {
-    if (
-      fields.interested_settings ||
-      fields.professions ||
-      fields.favorite_regions
-    ) {
+)
+
+export const unblock = handleRequest(
+  "unblock",
+  {
+    async run(user_id) {
+      await unblockUser(user_id)
+      return user_id
+    },
+    success(entity, user_id, api) {
+      entity.blocks = entity.blocks.filter(
+        (block) => block.blocked_id !== user_id,
+      )
       api.notify("#jobList:load")
-    }
+    },
   },
-  error(entity, err, api) {
-    entity.saveError = errorKey(err, "errors.savePreferences")
-    api.notify(`#${entity.id}:load`)
+  {
+    status: "unblockStatus",
+    error: "saveError",
+    toError: () => "safety.unblockFailed",
+    isLatestOnly: false,
   },
-})
-
-export const unblock = handleAsync("unblock", {
-  start(entity) {
-    entity.saveError = null
-  },
-  async run(user_id) {
-    await unblockUser(user_id)
-    return user_id
-  },
-  success(entity, user_id, api) {
-    entity.blocks = entity.blocks.filter(
-      (block) => block.blocked_id !== user_id,
-    )
-    api.notify("#jobList:load")
-  },
-  error(entity) {
-    entity.saveError = "safety.unblockFailed"
-  },
-})
+)
 
 export const localeSave = handleAsync("localeSave", {
   run(locale) {

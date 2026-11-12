@@ -356,7 +356,7 @@ export async function createJob(payload) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("jobs")
     .insert({ ...row, poster_id: user.id, status: "open" })
@@ -371,7 +371,7 @@ export async function fetchJobForEdit(job_id) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("jobs")
     .select(

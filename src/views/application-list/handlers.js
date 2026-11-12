@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 import { fetchMyApplications } from "../../api/applications.js"
 import { errorKey } from "../../api/errors.js"
@@ -7,20 +7,15 @@ export function statusFilterSelect(entity, status_filter) {
   entity.status_filter = status_filter
 }
 
-export const load = handleAsync("load", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
+export const load = handleRequest(
+  "load",
+  {
+    run() {
+      return fetchMyApplications()
+    },
+    success(entity, applications) {
+      entity.applications = applications
+    },
   },
-  run() {
-    return fetchMyApplications()
-  },
-  success(entity, applications) {
-    entity.status = "ready"
-    entity.applications = applications
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadApplications")
-  },
-})
+  { toError: (error) => errorKey(error, "errors.loadApplications") },
+)

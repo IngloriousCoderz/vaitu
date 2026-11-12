@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 import { Form } from "@inglorious/web/form"
 
 import { answerSettlement, proposeAgreement } from "../../api/agreements.js"
@@ -46,13 +46,13 @@ export function photoStep(entity, delta) {
 
 export function reviewFieldSet(entity, { field, value }) {
   entity.review[field] = value
-  entity.review.error = null
+  entity.reviewError = null
 }
 
 export function reviewSubmit(entity, application_id, api) {
   const { outcome, rating, comment } = entity.review
   if (outcome === "completed" && rating === NO_RATING) {
-    entity.review.error = "reputation.ratingRequired"
+    entity.reviewError = "reputation.ratingRequired"
     return
   }
   api.notify(`#${entity.id}:jobReview`, {
@@ -112,223 +112,215 @@ export function reopenSubmit(entity, _, api) {
   })
 }
 
-export const load = handleAsync("load", {
-  start(entity) {
-    entity.status = "loading"
-    entity.error = null
-  },
-  async run(job_id) {
-    if (!job_id) throw new Error("errors.noJobForApplications")
+export const load = handleRequest(
+  "load",
+  {
+    async run(job_id) {
+      if (!job_id) throw new Error("errors.noJobForApplications")
 
-    const { data: job, error: jobError } = await supabase
-      .from("jobs")
-      .select(
-        "id, setting, title, profession, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
-      )
-      .eq("id", job_id)
-      .single()
-    if (jobError) throw jobError
-    const { data: items, error } = await supabase
-      .from("applications")
-      .select(
-        "id, status, motivation, created_at, applicant_id, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled)",
-      )
-      .eq("job_id", job_id)
-      .neq("status", "withdrawn")
-      .order("created_at", { ascending: true })
-      .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
-    if (error) throw error
-    const applicantIds = items.map((item) => item.applicant_id).filter(Boolean)
-    const [stats, reviews, applicants] = await Promise.all([
-      fetchProfileStats(applicantIds),
-      fetchProfileReviews(applicantIds),
-      fetchApplicants(items.map((item) => item.id)),
-    ])
-    return {
-      job,
-      items: items.map((item) => ({
-        ...item,
-        applicant: applicants[item.id] ?? null,
-        stats: stats[item.applicant_id] ?? null,
-        reviews: reviews[item.applicant_id] ?? [],
-      })),
-    }
-  },
-  success(entity, { job, items }) {
-    entity.status = "ready"
-    entity.job_title = job.title
-    entity.pay = job.job_pay ?? null
-    entity.job_status = job.status
-    entity.job_deadline = job.application_deadline
-    entity.max_applicants = job.max_applicants
-    const [setting, profession] = jobTypeTags(job)
-    entity.job_recap = {
-      status: job.status,
-      setting,
-      profession,
-      location: [job.location, canonicalRegion(job.region), job.country]
+      const { data: job, error: jobError } = await supabase
+        .from("jobs")
+        .select(
+          "id, setting, title, profession, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
+        )
+        .eq("id", job_id)
+        .single()
+      if (jobError) throw jobError
+      const { data: items, error } = await supabase
+        .from("applications")
+        .select(
+          "id, status, motivation, created_at, applicant_id, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled)",
+        )
+        .eq("job_id", job_id)
+        .neq("status", "withdrawn")
+        .order("created_at", { ascending: true })
+        .abortSignal(AbortSignal.timeout(REQUEST_TIMEOUT_MS))
+      if (error) throw error
+      const applicantIds = items
+        .map((item) => item.applicant_id)
         .filter(Boolean)
-        .join(", "),
-      job_date: job.job_date,
-      application_deadline: job.application_deadline,
-      created_at: job.created_at,
-      image_urls: [...(job.image_urls ?? [])],
-      names:
-        job.details?.spouse_first_name_1 && job.details?.spouse_first_name_2
-          ? `${job.details.spouse_first_name_1} & ${job.details.spouse_first_name_2}`
-          : (job.details?.headliner ?? null),
-      job_type: { setting: job.setting, profession: job.profession },
-      details: { ...job.details },
-    }
-    entity.items = items
-    const due = items.find((item) => isReviewDue(item, job.job_date))
-    if (due) entity.expanded_application_id ??= due.id
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadApplications")
-  },
-})
-
-export const statusSet = handleAsync("statusSet", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
-  },
-  async run({ application_id, status }) {
-    const { error } = await supabase
-      .from("applications")
-      .update({ status })
-      .eq("id", application_id)
-    if (error) throw error
-    return { application_id, status }
-  },
-  // Applied at once: realtime reloads the list too, but can lag or drop
-  // (Android WebView).
-  success(entity, { application_id, status }) {
-    entity.status = "ready"
-    entity.items = entity.items.map((item) =>
-      item.id === application_id ? { ...item, status } : item,
-    )
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.update")
-  },
-})
-
-export const dealPropose = handleAsync("dealPropose", {
-  start(entity) {
-    entity.isDealBusy = true
-    entity.dealError = null
-  },
-  run({ application_id, amount }) {
-    return proposeAgreement(application_id, Number(amount))
-  },
-  success(entity, _, api) {
-    entity.isDealBusy = false
-    entity.deal_draft = ""
-    api.notify(`#${entity.id}:load`, entity.job_id)
-  },
-  error(entity) {
-    entity.isDealBusy = false
-    entity.dealError = "errors.update"
-  },
-})
-
-export const dealSettle = handleAsync("dealSettle", {
-  start(entity) {
-    entity.isDealBusy = true
-    entity.dealError = null
-  },
-  run({ application_id, isSettled }) {
-    return answerSettlement(application_id, isSettled)
-  },
-  success(entity, _, api) {
-    entity.isDealBusy = false
-    api.notify(`#${entity.id}:load`, entity.job_id)
-  },
-  error(entity) {
-    entity.isDealBusy = false
-    entity.dealError = "errors.update"
-  },
-})
-
-export const jobReview = handleAsync("jobReview", {
-  start(entity) {
-    entity.review.status = "saving"
-    entity.review.error = null
-  },
-  run(fields) {
-    return submitJobReview(fields)
-  },
-  success(entity, _, api) {
-    entity.review = emptyReview()
-    api.notify(`#${entity.id}:load`, entity.job_id)
-  },
-  error(entity, err) {
-    entity.review.status = "idle"
-    entity.review.error = errorKey(err, "errors.saveReview")
-  },
-})
-
-export const winnerAssign = handleAsync("winnerAssign", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
-  },
-  async run({ job_id, application_id, amount }) {
-    const { error } = await supabase.rpc("assign_winner", {
-      p_job_id: job_id,
-      p_application_id: application_id,
-      p_agreed_amount: amount === "" ? null : Number(amount),
-    })
-    if (error) throw error
-    return job_id
-  },
-  success(entity, job_id, api) {
-    entity.status = "ready"
-    entity.confirming_assign = null
-    api.notify(`#${entity.id}:load`, job_id)
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.assignWinner")
-  },
-})
-
-export const jobReopen = handleAsync("jobReopen", {
-  start(entity) {
-    entity.status = "saving"
-    entity.error = null
-  },
-  async run({ job_id, application_deadline }) {
-    const patch = { status: "open" }
-    if (application_deadline) {
-      const iso =
-        application_deadline.length === DATETIME_LOCAL_LENGTH
-          ? new Date(application_deadline).toISOString()
-          : application_deadline
-      if (new Date(iso).getTime() <= Date.now()) {
-        throw new Error("validation.futureDeadline")
+      const [stats, reviews, applicants] = await Promise.all([
+        fetchProfileStats(applicantIds),
+        fetchProfileReviews(applicantIds),
+        fetchApplicants(items.map((item) => item.id)),
+      ])
+      return {
+        job,
+        items: items.map((item) => ({
+          ...item,
+          applicant: applicants[item.id] ?? null,
+          stats: stats[item.applicant_id] ?? null,
+          reviews: reviews[item.applicant_id] ?? [],
+        })),
       }
-      patch.application_deadline = iso
-    }
-    const { error } = await supabase.from("jobs").update(patch).eq("id", job_id)
-    if (error) throw error
-    return job_id
+    },
+    success(entity, { job, items }) {
+      entity.job_title = job.title
+      entity.pay = job.job_pay ?? null
+      entity.job_status = job.status
+      entity.job_deadline = job.application_deadline
+      entity.max_applicants = job.max_applicants
+      const [setting, profession] = jobTypeTags(job)
+      entity.job_recap = {
+        status: job.status,
+        setting,
+        profession,
+        location: [job.location, canonicalRegion(job.region), job.country]
+          .filter(Boolean)
+          .join(", "),
+        job_date: job.job_date,
+        application_deadline: job.application_deadline,
+        created_at: job.created_at,
+        image_urls: [...(job.image_urls ?? [])],
+        names:
+          job.details?.spouse_first_name_1 && job.details?.spouse_first_name_2
+            ? `${job.details.spouse_first_name_1} & ${job.details.spouse_first_name_2}`
+            : (job.details?.headliner ?? null),
+        job_type: { setting: job.setting, profession: job.profession },
+        details: { ...job.details },
+      }
+      entity.items = items
+      const due = items.find((item) => isReviewDue(item, job.job_date))
+      if (due) entity.expanded_application_id ??= due.id
+    },
   },
-  success(entity, job_id, api) {
-    entity.status = "ready"
-    entity.confirming_reopen = false
-    entity.reopen_deadline = ""
-    api.notify(`#${entity.id}:load`, job_id)
+  { toError: (error) => errorKey(error, "errors.loadApplications") },
+)
+
+// Each changes another application: every call counts.
+export const statusSet = handleRequest(
+  "statusSet",
+  {
+    async run({ application_id, status }) {
+      const { error } = await supabase
+        .from("applications")
+        .update({ status })
+        .eq("id", application_id)
+      if (error) throw error
+      return { application_id, status }
+    },
+    // Applied at once: realtime reloads the list too, but can lag or drop
+    // (Android WebView).
+    success(entity, { application_id, status }) {
+      entity.items = entity.items.map((item) =>
+        item.id === application_id ? { ...item, status } : item,
+      )
+    },
   },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.reopenJob")
+  {
+    status: "saveStatus",
+    toError: (error) => errorKey(error, "errors.update"),
+    isLatestOnly: false,
   },
-})
+)
+
+const dealError = {
+  status: "dealStatus",
+  error: "dealError",
+  toError: () => "errors.update",
+}
+
+export const dealPropose = handleRequest(
+  "dealPropose",
+  {
+    run({ application_id, amount }) {
+      return proposeAgreement(application_id, Number(amount))
+    },
+    success(entity, _, api) {
+      entity.deal_draft = ""
+      api.notify(`#${entity.id}:load`, entity.job_id)
+    },
+  },
+  dealError,
+)
+
+export const dealSettle = handleRequest(
+  "dealSettle",
+  {
+    run({ application_id, isSettled }) {
+      return answerSettlement(application_id, isSettled)
+    },
+    success(entity, _, api) {
+      api.notify(`#${entity.id}:load`, entity.job_id)
+    },
+  },
+  dealError,
+)
+
+export const jobReview = handleRequest(
+  "jobReview",
+  {
+    run(fields) {
+      return submitJobReview(fields)
+    },
+    success(entity, _, api) {
+      entity.review = emptyReview()
+      api.notify(`#${entity.id}:load`, entity.job_id)
+    },
+  },
+  {
+    status: "reviewStatus",
+    error: "reviewError",
+    toError: (error) => errorKey(error, "errors.saveReview"),
+  },
+)
+
+export const winnerAssign = handleRequest(
+  "winnerAssign",
+  {
+    async run({ job_id, application_id, amount }) {
+      const { error } = await supabase.rpc("assign_winner", {
+        p_job_id: job_id,
+        p_application_id: application_id,
+        p_agreed_amount: amount === "" ? null : Number(amount),
+      })
+      if (error) throw error
+      return job_id
+    },
+    success(entity, job_id, api) {
+      entity.confirming_assign = null
+      api.notify(`#${entity.id}:load`, job_id)
+    },
+  },
+  {
+    status: "saveStatus",
+    toError: (error) => errorKey(error, "errors.assignWinner"),
+  },
+)
+
+export const jobReopen = handleRequest(
+  "jobReopen",
+  {
+    async run({ job_id, application_deadline }) {
+      const patch = { status: "open" }
+      if (application_deadline) {
+        const iso =
+          application_deadline.length === DATETIME_LOCAL_LENGTH
+            ? new Date(application_deadline).toISOString()
+            : application_deadline
+        if (new Date(iso).getTime() <= Date.now()) {
+          throw new Error("validation.futureDeadline")
+        }
+        patch.application_deadline = iso
+      }
+      const { error } = await supabase
+        .from("jobs")
+        .update(patch)
+        .eq("id", job_id)
+      if (error) throw error
+      return job_id
+    },
+    success(entity, job_id, api) {
+      entity.confirming_reopen = false
+      entity.reopen_deadline = ""
+      api.notify(`#${entity.id}:load`, job_id)
+    },
+  },
+  {
+    status: "saveStatus",
+    toError: (error) => errorKey(error, "errors.reopenJob"),
+  },
+)
 
 export function clearReopenError(entity) {
   if (!entity.errors) return

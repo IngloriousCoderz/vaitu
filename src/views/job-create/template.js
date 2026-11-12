@@ -64,7 +64,7 @@ export const template = {
     },
     api,
   ) {
-    const busy = entity.status === "saving"
+    const busy = entity.saveStatus === "loading"
     const settingId = getFieldValue(entity, "setting", "wedding")
     const profession = getFieldValue(entity, "profession", "")
     const details = getFieldValue(entity, "details", {})
@@ -307,7 +307,8 @@ export const template = {
     return Dialog.render({
       id: "voice-wait",
       isOpen:
-        (entity.is_transcribing || entity.is_parsing) &&
+        (entity.transcribeStatus === "loading" ||
+          entity.parseStatus === "loading") &&
         !entity.is_voice_wait_dismissed,
       size: "sm",
       children: Flex.render({
@@ -323,7 +324,7 @@ export const template = {
           })}
           <p class=${styles.voiceWaitStep} role="status">
             ${
-              entity.is_transcribing
+              entity.transcribeStatus === "loading"
                 ? t("create.transcribing")
                 : t("create.filling")
             }
@@ -353,8 +354,8 @@ export const template = {
     if (
       !entity.is_audio_open &&
       !entity.is_recording &&
-      !entity.is_transcribing &&
-      !entity.is_parsing &&
+      entity.transcribeStatus !== "loading" &&
+      entity.parseStatus !== "loading" &&
       !entity.audio_preview_url &&
       !entity.audio_error
     )
@@ -402,7 +403,7 @@ export const template = {
               () => html`
                 <audio controls src=${src} class=${styles.player}></audio>
                 ${when(
-                  entity.is_transcribing,
+                  entity.transcribeStatus === "loading",
                   () => html`
                     <p class=${styles.transcribing}>
                       ${t("create.transcribing")}
@@ -410,7 +411,7 @@ export const template = {
                   `,
                   () =>
                     when(
-                      entity.is_parsing,
+                      entity.parseStatus === "loading",
                       () => html`
                         <p class=${styles.transcribing}>
                           ${t("create.filling")}
@@ -606,7 +607,7 @@ export const template = {
         loadErrorText: t("errors.imageCrop"),
         error: t(entity.cropError),
         isOpen: true,
-        isSaving: entity.isCropSaving,
+        isSaving: entity.cropStatus === "loading",
         onCancel: onCropCancel,
         onApply: onCropConfirm,
       },

@@ -58,13 +58,17 @@ describe("Notifications.create", () => {
 
 describe("Notifications.panelOpen", () => {
   it("opens the drawer and refreshes the feed in the same hand", async () => {
-    const entity = { id: "notifications", isPanelOpen: false, status: "ready" }
+    const entity = {
+      id: "notifications",
+      isPanelOpen: false,
+      status: "success",
+    }
     fetchMyNotifications.mockResolvedValue([notification()])
     const api = makeApi(entity)
     Notifications.panelOpen(entity, undefined, api)
     expect(entity.isPanelOpen).toBe(true)
     expect(entity.status).toBe("loading")
-    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+    await vi.waitFor(() => expect(entity.status).toBe("success"))
     expect(entity.unread).toBe(1)
   })
 
@@ -91,7 +95,7 @@ describe("Notifications.load", () => {
     ])
 
     Notifications.load(entity, undefined, makeApi(entity))
-    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+    await vi.waitFor(() => expect(entity.status).toBe("success"))
 
     expect(entity.items).toHaveLength(2)
     expect(entity.unread).toBe(1)
@@ -121,7 +125,7 @@ describe("Notifications arriving while the app is open", () => {
     fetchMyNotifications.mockResolvedValue([notification()])
 
     Notifications.load(entity, undefined, api)
-    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+    await vi.waitFor(() => expect(entity.status).toBe("success"))
     expect(toasts).toEqual([])
 
     fetchMyNotifications.mockResolvedValue([
@@ -135,7 +139,7 @@ describe("Notifications arriving while the app is open", () => {
     ])
     entity.status = "loading"
     Notifications.load(entity, undefined, api)
-    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+    await vi.waitFor(() => expect(entity.status).toBe("success"))
 
     expect(toasts).toHaveLength(1)
     expect(toasts[0]).toMatchObject({
@@ -155,7 +159,7 @@ describe("Notifications arriving while the app is open", () => {
     fetchMyNotifications.mockResolvedValue([notification()])
 
     Notifications.load(entity, undefined, recordingApi(entity, toasts))
-    await vi.waitFor(() => expect(entity.status).toBe("ready"))
+    await vi.waitFor(() => expect(entity.status).toBe("success"))
 
     expect(toasts).toEqual([])
   })
@@ -197,7 +201,7 @@ describe("Notifications.readSet", () => {
       id: "notifications",
       items: [notification()],
       unread: 1,
-      status: "ready",
+      status: "success",
     }
     Notifications.readSet(entity, "n1", makeApi(entity))
 
@@ -211,7 +215,7 @@ describe("Notifications.readSet", () => {
       id: "notifications",
       items: [notification()],
       unread: 1,
-      status: "ready",
+      status: "success",
     }
     markNotificationRead.mockRejectedValue(new Error("offline"))
     Notifications.readSet(entity, "n1", makeApi(entity))
@@ -227,7 +231,7 @@ describe("Notifications.readSet on a read row", () => {
       id: "notifications",
       items: [notification({ is_read: true })],
       unread: 0,
-      status: "ready",
+      status: "success",
     }
     Notifications.readSet(entity, "n1", makeApi(entity))
 
@@ -258,7 +262,7 @@ describe("Notifications.readAll", () => {
       id: "notifications",
       items: [notification(), notification({ id: "n2", type: "job_updated" })],
       unread: 2,
-      status: "ready",
+      status: "success",
     }
     Notifications.readAll(entity, undefined, makeApi(entity))
 
@@ -272,7 +276,7 @@ describe("Notifications.readAll", () => {
       id: "notifications",
       items: [notification(), notification({ id: "n2" })],
       unread: 2,
-      status: "ready",
+      status: "success",
     }
     markAllNotificationsRead.mockRejectedValue(new Error("offline"))
     Notifications.readAll(entity, undefined, makeApi(entity))
@@ -289,7 +293,7 @@ describe("Notifications.sessionEnd", () => {
       id: "notifications",
       items: [notification()],
       unread: 1,
-      status: "ready",
+      status: "success",
       error: "whatever",
       isPanelOpen: true,
     }
@@ -358,7 +362,7 @@ describe("NotificationsPanel.render", () => {
         notification({ id: "n2", is_read: true, type: "job_updated" }),
       ],
       unread: 1,
-      status: "ready",
+      status: "success",
       isPanelOpen: true,
     }
     const open = NotificationsPanel.render({

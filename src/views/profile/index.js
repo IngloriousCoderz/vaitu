@@ -54,6 +54,8 @@ export const Profile = {
     entity.avatarPreviewUrl ??= null
     entity.isAvatarCropOpen ??= false
     entity.status ??= "idle"
+    entity.saveStatus ??= "idle"
+    entity.logoutStatus ??= "idle"
     entity.error ??= null
   },
 
@@ -101,6 +103,7 @@ function open(entity, _, api) {
 
 function close(entity) {
   entity.status = "idle"
+  entity.saveStatus = "idle"
   entity.error = null
   entity.isEditing = false
   closeAvatarCrop(entity)

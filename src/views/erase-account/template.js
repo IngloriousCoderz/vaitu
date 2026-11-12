@@ -13,14 +13,14 @@ export const template = {
   },
 
   renderEraseAccount({ status, error, hasToken, onErase }) {
-    const isErasing = status === "erasing"
+    const isErasing = status === "loading"
     return Page.render({
       variant: "document",
       read: true,
       children: [
         html`<h1 class=${styles.title}>${t("eraseAccount.title")}</h1>`,
         when(
-          status === "done",
+          status === "success",
           () => html`<p role="status">${t("eraseAccount.done")}</p>`,
           () => html`
             <p class=${styles.warning}>${t("eraseAccount.warning")}</p>

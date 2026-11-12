@@ -6,7 +6,7 @@ export async function fetchMyNotifications() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("notifications")
     .select(
@@ -53,7 +53,7 @@ export async function markNotificationRead(id) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("notifications")
     .update({ is_read: true })
@@ -70,7 +70,7 @@ export async function markAllNotificationsRead() {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not logged in")
+  if (!user) throw new Error("errors.notLoggedIn")
   const { data, error } = await supabase
     .from("notifications")
     .update({ is_read: true })

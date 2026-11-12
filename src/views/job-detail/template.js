@@ -317,7 +317,7 @@ export const template = {
     onSubmit,
     onCompleteProfile,
   }) {
-    const sending = entity.applyStatus === "sending"
+    const sending = entity.applyStatus === "loading"
     const motivation = getFieldValue(entity, "motivation", "")
     const canSubmit = profileComplete && !sending
 

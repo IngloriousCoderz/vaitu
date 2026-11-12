@@ -1,4 +1,4 @@
-import { handleAsync } from "@inglorious/store/async"
+import { handleRequest } from "@inglorious/store/async"
 
 import { fetchMyApplicationMap } from "../../api/applications.js"
 import { errorKey } from "../../api/errors.js"
@@ -111,112 +111,106 @@ export function pageMore(entity, _, api) {
   })
 }
 
-export const load = handleAsync("load", {
-  start(entity) {
-    if (!entity.jobs.length) entity.status = "loading"
-    entity.error = null
-  },
-  async run() {
-    const [{ appliedMap, wonJobIds }, defaults] = await Promise.all([
-      fetchMyApplicationMap(localToday()),
-      fetchMyFeedDefaults(),
-    ])
-    return {
-      appliedMap,
-      wonJobIds,
-      favoriteRegions: defaults.favorite_regions,
-      settings: defaults.interested_settings,
-      professions: defaults.professions,
-    }
-  },
-  success(
-    entity,
-    { appliedMap, wonJobIds, favoriteRegions, settings, professions },
-    api,
-  ) {
-    entity.appliedMap = appliedMap
-    entity.wonJobIds = wonJobIds
-    entity.settings = settings
-    entity.professions = professions
-    entity.favoriteRegions = favoriteRegions
-    api.notify("#jobCreate:jobTypeOptionsSync")
-    fetchRegions(entity, api, "refresh")
-  },
-  error(entity, err) {
-    entity.status = "error"
-    entity.error = errorKey(err, "errors.loadJobs")
-  },
-})
-
-export const regionsFetch = handleAsync("regionsFetch", {
-  async run({ request, jobTypes, wonJobIds, today, then }) {
-    try {
+export const load = handleRequest(
+  "load",
+  {
+    start(entity) {
+      if (!entity.jobs.length) entity.status = "loading"
+    },
+    async run() {
+      const [{ appliedMap, wonJobIds }, defaults] = await Promise.all([
+        fetchMyApplicationMap(localToday()),
+        fetchMyFeedDefaults(),
+      ])
       return {
-        request,
+        appliedMap,
+        wonJobIds,
+        favoriteRegions: defaults.favorite_regions,
+        settings: defaults.interested_settings,
+        professions: defaults.professions,
+      }
+    },
+    success(
+      entity,
+      { appliedMap, wonJobIds, favoriteRegions, settings, professions },
+      api,
+    ) {
+      entity.appliedMap = appliedMap
+      entity.wonJobIds = wonJobIds
+      entity.settings = settings
+      entity.professions = professions
+      entity.favoriteRegions = favoriteRegions
+      api.notify("#jobCreate:jobTypeOptionsSync")
+      fetchRegions(entity, api, "refresh")
+    },
+    error(entity) {
+      entity.status = "error"
+    },
+  },
+  { status: "loadStatus", toError: loadError },
+)
+
+export const regionsFetch = handleRequest(
+  "regionsFetch",
+  {
+    start(entity, { then }) {
+      if (then === "reset") entity.status = "loading"
+    },
+    async run({ then, jobTypes, wonJobIds, today }) {
+      return {
         then,
         regions: await fetchFeedRegions(jobTypes, { wonJobIds, today }),
       }
-    } catch (error) {
-      return { request, then, error }
-    }
-  },
-  success(entity, { request, then, regions, error }, api) {
-    if (request !== entity.regionsRequest) return
-    if (error) {
+    },
+    success(entity, { then, regions }, api) {
+      entity.regions = regions
+      keepRegion(entity)
+      if (then === "refresh") {
+        fetchPage(entity, api, {
+          mode: "refresh",
+          from: FIRST_INDEX,
+          to: Math.max(entity.jobs.length, FEED_PAGE_SIZE) - LAST_INDEX_OFFSET,
+        })
+      } else {
+        refetch(entity, api)
+      }
+      api.notify("#preferences:favoriteOptionsSync")
+      api.notify("#onboarding:favoriteOptionsSync")
+    },
+    error(entity) {
       entity.status = "error"
-      entity.error = errorKey(error, "errors.loadJobs")
-      return
-    }
-    entity.regions = regions
-    keepRegion(entity)
-    if (then === "refresh") {
-      fetchPage(entity, api, {
-        mode: "refresh",
-        from: FIRST_INDEX,
-        to: Math.max(entity.jobs.length, FEED_PAGE_SIZE) - LAST_INDEX_OFFSET,
-      })
-    } else {
-      refetch(entity, api)
-    }
-    api.notify("#preferences:favoriteOptionsSync")
-    api.notify("#onboarding:favoriteOptionsSync")
+    },
   },
-})
+  { status: "regionsStatus", toError: loadError },
+)
 
-export const pageFetch = handleAsync("pageFetch", {
-  start(entity, { mode }) {
-    if (mode === "reset") entity.status = "loading"
-    if (mode === "more") entity.isLoadingMore = true
-    entity.error = null
-  },
-  async run({ request, mode, feed, from, to }) {
-    try {
-      const page = await fetchOpenJobsPage(feed, { from, to })
-      return { request, mode, ...page }
-    } catch (error) {
-      return { request, mode, error }
-    }
-  },
-  success(entity, { request, mode, jobs, total, error }) {
-    if (request !== entity.request) return
-    entity.isLoadingMore = false
-    if (error) {
+export const pageFetch = handleRequest(
+  "pageFetch",
+  {
+    start(entity, { mode }) {
+      if (mode === "reset") entity.status = "loading"
+      if (mode === "more") entity.isLoadingMore = true
+    },
+    async run({ mode, feed, from, to }) {
+      return { mode, ...(await fetchOpenJobsPage(feed, { from, to })) }
+    },
+    success(entity, { mode, jobs, total }) {
+      entity.isLoadingMore = false
+      entity.status = "ready"
+      entity.total = total
+      entity.jobs = mode === "more" ? appended(entity.jobs, jobs) : jobs
+    },
+    error(entity) {
+      entity.isLoadingMore = false
       entity.status = "error"
-      entity.error = errorKey(error, "errors.loadJobs")
-      return
-    }
-    entity.status = "ready"
-    entity.total = total
-    entity.jobs = mode === "more" ? appended(entity.jobs, jobs) : jobs
+    },
   },
-})
+  { status: "pageStatus", toError: loadError },
+)
 
 // Copies: the runs read them after this draft is revoked.
 function fetchRegions(entity, api, then) {
-  entity.regionsRequest += 1
-  if (then === "reset") entity.status = "loading"
   api.notify(`#${entity.id}:regionsFetch`, {
-    request: entity.regionsRequest,
     then,
     jobTypes: jobTypesInScope(
       [...entity.activeDetails],
@@ -237,9 +231,7 @@ function refetch(entity, api) {
 }
 
 function fetchPage(entity, api, { mode, from, to }) {
-  entity.request += 1
   api.notify(`#${entity.id}:pageFetch`, {
-    request: entity.request,
     mode,
     from,
     to,
@@ -261,6 +253,10 @@ function fetchPage(entity, api, { mode, from, to }) {
       wonJobIds: [...entity.wonJobIds],
     }),
   })
+}
+
+function loadError(error) {
+  return errorKey(error, "errors.loadJobs")
 }
 
 function appended(jobs, page) {

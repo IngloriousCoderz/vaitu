@@ -17,6 +17,8 @@ export const MyJobs = {
     entity.confirmingDelete ??= null
     entity.status ??= "idle"
     entity.error ??= null
+    entity.removeStatus ??= "idle"
+    entity.removeError ??= null
   },
 
   routeChange: pageRouteChange({ open, close }),
