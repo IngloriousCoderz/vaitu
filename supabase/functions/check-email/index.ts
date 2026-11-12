@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 
 import { STATUS_CODE } from "jsr:@std/http@1/status"
-import { clientIp, json, serve } from "npm:@inglorious/supabase@^0.4.0/edge"
+import { clientIp, json, serve } from "npm:@inglorious/supabase@^0.10.0/edge"
 
 import { admin } from "../_shared/supabase.ts"
 

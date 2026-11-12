@@ -258,6 +258,10 @@ content_path = "./supabase/templates/confirmation.html"
 subject = "{{ if and .Data.locale (eq .Data.locale \"it\") }}Il tuo codice per Vaitu{{ else }}Your Vaitu code{{ end }}"
 content_path = "./supabase/templates/recovery.html"
 
+[auth.email.template.magic_link]
+subject = "{{ if and .Data.locale (eq .Data.locale \"it\") }}Il tuo codice di accesso a Vaitu{{ else }}Your Vaitu sign-in code{{ end }}"
+content_path = "./supabase/templates/magic_link.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"

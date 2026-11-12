@@ -1,13 +1,17 @@
 import "jsr:@supabase/functions-js@2/edge-runtime.d.ts"
 
 import { STATUS_CODE } from "jsr:@std/http@1/status"
-import { currentUser, json, serve } from "npm:@inglorious/supabase@^0.4.0/edge"
+import {
+  currentUser,
+  eraseUser,
+  json,
+  serve,
+} from "npm:@inglorious/supabase@^0.10.0/edge"
 
 import { sha256Hex } from "../_shared/erasure.ts"
 import { admin } from "../_shared/supabase.ts"
 
 const USER_BUCKETS = ["avatars", "job-images", "job-ics"]
-const LIST_PAGE = 100
 
 // By the link in the deactivation email, which works signed out, or as the
 // signed-in user. The database keeps the anonymous history: see
@@ -35,32 +39,8 @@ serve(
       userId = user.id
     }
 
-    for (const bucket of USER_BUCKETS) {
-      await removeFolder(db, bucket, userId)
-    }
-
-    const { error } = await db.auth.admin.deleteUser(userId)
-    if (error) throw error
-
+    await eraseUser(db, userId, { buckets: USER_BUCKETS })
     return json({ erased: true })
   },
   { fallbackError: "erase failed" },
 )
-
-async function removeFolder(
-  db: ReturnType<typeof admin>,
-  bucket: string,
-  folder: string,
-) {
-  while (true) {
-    const { data, error } = await db.storage
-      .from(bucket)
-      .list(folder, { limit: LIST_PAGE })
-    if (error) throw error
-    if (!data.length) return
-    const { error: removeError } = await db.storage
-      .from(bucket)
-      .remove(data.map((file) => `${folder}/${file.name}`))
-    if (removeError) throw removeError
-  }
-}

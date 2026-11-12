@@ -292,7 +292,9 @@
     "resetTitle": "Scegli una nuova password",
     "resetSent": "Abbiamo mandato un codice a <strong>{{email}}</strong>. Inseriscilo con la nuova password.",
     "newPassword": "Nuova password",
-    "resetSubmit": "Salva e accedi"
+    "resetSubmit": "Salva e accedi",
+    "codeOffer": "Mandami un codice via email",
+    "signInCodeSent": "Abbiamo mandato un codice di accesso a <strong>{{email}}</strong>."
   },
   "onboarding": {
     "title": "Completa il tuo profilo",

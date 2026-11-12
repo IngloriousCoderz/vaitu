@@ -292,7 +292,9 @@
     "resetTitle": "Choisissez un nouveau mot de passe",
     "resetSent": "Nous avons envoyé un code à <strong>{{email}}</strong>. Saisissez-le avec votre nouveau mot de passe.",
     "newPassword": "Nouveau mot de passe",
-    "resetSubmit": "Enregistrer et se connecter"
+    "resetSubmit": "Enregistrer et se connecter",
+    "codeOffer": "M'envoyer plutôt un code par e-mail",
+    "signInCodeSent": "Nous avons envoyé un code de connexion à <strong>{{email}}</strong>."
   },
   "onboarding": {
     "title": "Complétez votre profil",

@@ -12,12 +12,21 @@ const auth = supabaseAuth(supabase, {
 
 /**
  * Supabase Auth as the sign-in screen needs it: the email check gives up
- * after a while and says when it is rate-limited, and signing in tells
- * whether the account still owes its onboarding, which decides where the app
- * goes next.
+ * after a while and says when it is rate-limited, signing in tells whether
+ * the account still owes its onboarding, which decides where the app goes
+ * next, and a sign-in code never creates an account, which only sign-up does,
+ * with a name and the terms accepted.
  */
 export const authAdapter = {
   ...auth,
+
+  sendCode,
+
+  resendCode(email, purpose) {
+    return purpose === "signIn"
+      ? sendCode(email)
+      : auth.resendCode(email, purpose)
+  },
 
   accountExists(email) {
     return Promise.race([auth.accountExists(email), timeout()])
@@ -25,6 +34,11 @@ export const authAdapter = {
 
   async signIn(email, password) {
     return withOnboarding(await auth.signIn(email, password))
+  },
+
+  async verifyCode(email, code, purpose) {
+    const user = await auth.verifyCode(email, code, purpose)
+    return purpose === "signIn" ? withOnboarding(user) : user
   },
 
   async updatePassword(password) {
@@ -37,6 +51,17 @@ export const authAdapter = {
     }
     return auth.errorCode(error)
   },
+}
+
+async function sendCode(email) {
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+      captchaToken: await captcha.token("sendCode"),
+    },
+  })
+  if (error) throw error
 }
 
 async function withOnboarding(user) {

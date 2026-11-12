@@ -285,7 +285,9 @@
     "resetTitle": "新しいパスワードを決める",
     "resetSent": "<strong>{{email}}</strong> にコードを送りました。新しいパスワードと一緒に入力してください。",
     "newPassword": "新しいパスワード",
-    "resetSubmit": "保存してログイン"
+    "resetSubmit": "保存してログイン",
+    "codeOffer": "代わりにメールでコードを受け取る",
+    "signInCodeSent": "<strong>{{email}}</strong> にログインコードを送りました。"
   },
   "onboarding": {
     "title": "プロフィールを完成させましょう",

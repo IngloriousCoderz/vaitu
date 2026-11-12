@@ -300,7 +300,9 @@
     "resetTitle": "اختر كلمة مرور جديدة",
     "resetSent": "أرسلنا رمزًا إلى <strong>{{email}}</strong>. أدخله مع كلمة المرور الجديدة.",
     "newPassword": "كلمة المرور الجديدة",
-    "resetSubmit": "حفظ وتسجيل الدخول"
+    "resetSubmit": "حفظ وتسجيل الدخول",
+    "codeOffer": "أرسل لي رمزًا بالبريد بدلًا من ذلك",
+    "signInCodeSent": "أرسلنا رمز تسجيل الدخول إلى <strong>{{email}}</strong>."
   },
   "onboarding": {
     "title": "أكمل ملفك الشخصي",

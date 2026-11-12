@@ -6,7 +6,7 @@ import {
   env,
   json,
   serve,
-} from "npm:@inglorious/supabase@^0.4.0/edge"
+} from "npm:@inglorious/supabase@^0.10.0/edge"
 
 import { sendEmail } from "../_shared/email.ts"
 import { admin } from "../_shared/supabase.ts"

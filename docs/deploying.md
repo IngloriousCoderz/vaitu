@@ -110,8 +110,9 @@ origin, which the preflight checks confirm is working.
 
 The emails carry the codes the app asks for. The local stack reads them from
 `supabase/templates` through `config.toml`; the cloud project doesn't, so paste
-them under Authentication → Emails: `confirmation.html` as **Confirm signup**
-and `recovery.html` as **Reset password**, with the subjects in `config.toml`.
+them under Authentication → Emails: `confirmation.html` as **Confirm signup**,
+`recovery.html` as **Reset password** and `magic_link.html` as **Magic Link**,
+with the subjects in `config.toml` (without the backslashes before the quotes).
 Without the second, a password reset sends a link instead of the code the app
 waits for.
 
