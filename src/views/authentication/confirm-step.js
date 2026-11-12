@@ -11,7 +11,15 @@ import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
 export const ConfirmStep = {
-  render({ entity, isBusy, onField, onVerifyCode, onResend, onBackToEmail }) {
+  render({
+    entity,
+    isBusy,
+    error,
+    onField,
+    onVerifyCode,
+    onResend,
+    onBackToEmail,
+  }) {
     return html`
       <div class=${styles.step} key="confirm">
         <form
@@ -54,13 +62,13 @@ export const ConfirmStep = {
             })}
           </div>
           ${when(
-            entity.isResent,
+            entity.isCodeResent,
             () =>
               html`<p class=${styles.subtitle}>
                 ${t("auth.confirmationResent")}
               </p>`,
           )}
-          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
+          ${ErrorAlert.render({ error, className: styles.error })}
           ${FormActions.render({
             children: [
               SubmitButton.render({ isBusy, label: t("auth.confirm") }),
@@ -83,7 +91,7 @@ export const ConfirmStep = {
 }
 
 export const LinkStep = {
-  render({ entity, isBusy, onVerifyLink, onBackToEmail }) {
+  render({ isBusy, error, onVerifyLink, onBackToEmail }) {
     return html`
       <div class=${styles.step} key="link">
         <form
@@ -97,11 +105,11 @@ export const LinkStep = {
         >
           <h2 class=${styles.title}>${t("auth.confirmTitle")}</h2>
           <p class=${styles.subtitle}>${t("auth.confirmLink")}</p>
-          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
+          ${ErrorAlert.render({ error, className: styles.error })}
           ${FormActions.render({
             children: [
               SubmitButton.render({ isBusy, label: t("auth.confirm") }),
-              when(entity.error, () =>
+              when(error, () =>
                 Button.render({
                   children: t("auth.backToLogin"),
                   variant: "ghost",

@@ -108,6 +108,13 @@ Providers → Email), so that link is how a new account gets its session; CORS
 on the REST and Auth gateways is open by default and echoes the request
 origin, which the preflight checks confirm is working.
 
+The emails carry the codes the app asks for. The local stack reads them from
+`supabase/templates` through `config.toml`; the cloud project doesn't, so paste
+them under Authentication → Emails: `confirmation.html` as **Confirm signup**
+and `recovery.html` as **Reset password**, with the subjects in `config.toml`.
+Without the second, a password reset sends a link instead of the code the app
+waits for.
+
 Under Authentication → Attack Protection:
 
 - **CAPTCHA protection** → on, provider Turnstile, with the widget's secret

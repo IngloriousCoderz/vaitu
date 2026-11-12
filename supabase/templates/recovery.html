@@ -1,0 +1,20 @@
+{{ if and .Data.locale (eq .Data.locale "it") }}
+<h2>Scegli una nuova password</h2>
+<p>Inserisci questo codice in Vaitu, con la tua nuova password:</p>
+<p style="font-size: 28px; font-weight: bold; letter-spacing: 6px">
+  {{ .Token }}
+</p>
+<p>
+  Se non l'hai chiesto tu, ignora questa email: la tua password resta quella di
+  prima.
+</p>
+{{ else }}
+<h2>Choose a new password</h2>
+<p>Enter this code in Vaitu, with your new password:</p>
+<p style="font-size: 28px; font-weight: bold; letter-spacing: 6px">
+  {{ .Token }}
+</p>
+<p>
+  If you didn't ask for it, ignore this email: your password stays as it is.
+</p>
+{{ end }}

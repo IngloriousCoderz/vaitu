@@ -16,6 +16,7 @@ export const SignupStep = {
   render({
     entity,
     isBusy,
+    error,
     onField,
     onContinue,
     onBackToEmail,
@@ -114,7 +115,7 @@ export const SignupStep = {
               },
             })}
           </p>
-          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
+          ${ErrorAlert.render({ error, className: styles.error })}
           ${FormActions.render({
             children: SubmitButton.render({
               isBusy,

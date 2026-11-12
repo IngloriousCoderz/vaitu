@@ -9,7 +9,7 @@ import styles from "./style.module.css"
 import { SubmitButton } from "./submit-button"
 
 export const EmailStep = {
-  render({ entity, isBusy, onField, onCheckEmail }, api) {
+  render({ entity, isBusy, error, onField, onCheckEmail }, api) {
     return html`
       <div class=${styles.step} key="email">
         <form
@@ -41,7 +41,7 @@ export const EmailStep = {
               spellcheck: "false",
             })}
           </div>
-          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
+          ${ErrorAlert.render({ error, className: styles.error })}
           ${FormActions.render({
             children: SubmitButton.render({
               isBusy,
