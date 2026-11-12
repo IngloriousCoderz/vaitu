@@ -5,8 +5,8 @@ import { supabase } from "../../api/client.js"
 import { errorKey } from "../../api/errors.js"
 import { fetchJobDetail } from "../../api/jobs.js"
 import { fetchProfileStats } from "../../api/reputation.js"
-import { readUserId } from "../../api/session.js"
 import { startTick } from "../../api/ticker.js"
+import { signedInId } from "../../common/session/index.js"
 import {
   DAY_MS,
   FIRST_INDEX,
@@ -54,7 +54,7 @@ export function prefill(entity, profile) {
 }
 
 export function applicationSubmit(entity, _, api) {
-  if (!readUserId()) {
+  if (!signedInId(api)) {
     api.notify("#router:navigate", paths.login)
     return
   }
@@ -112,10 +112,11 @@ export const apply = handleRequest(
 export const load = handleRequest(
   "load",
   {
-    async run(job_id) {
+    async run(job_id, api) {
+      const userId = signedInId(api)
       const detail = await fetchJobDetail(job_id)
       const { posterId } = detail.job
-      const isSomeoneElses = readUserId() && posterId !== readUserId()
+      const isSomeoneElses = userId && posterId !== userId
       const stats = isSomeoneElses ? await fetchProfileStats([posterId]) : {}
       return { ...detail, posterStats: stats[posterId] ?? null }
     },

@@ -1,8 +1,8 @@
 import { realtimeSource } from "@inglorious/supabase"
 import { withLiveReload } from "@inglorious/web/decorators/with-live-reload"
 
+import { signedInId } from "../common/session/index.js"
 import { supabase } from "./client.js"
-import { readUserId } from "./session.js"
 
 const source = realtimeSource(supabase)
 
@@ -18,7 +18,7 @@ export function livePage(tables, payload) {
     tables,
     payload,
     isLive: (entity, api) =>
-      readUserId() != null && api.getEntity("router")?.route === entity.id,
+      signedInId(api) != null && api.getEntity("router")?.route === entity.id,
   })
 }
 
@@ -27,7 +27,11 @@ export function livePage(tables, payload) {
  * @param {string[]} tables
  */
 export function liveSession(tables) {
-  return withLiveReload({ source, tables, isLive: () => readUserId() != null })
+  return withLiveReload({
+    source,
+    tables,
+    isLive: (entity, api) => signedInId(api) != null,
+  })
 }
 
 /**

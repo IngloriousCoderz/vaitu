@@ -7,6 +7,7 @@ import {
   fetchMyFeedDefaults,
   fetchOpenJobsPage,
 } from "../../api/jobs.js"
+import { signedInId } from "../../common/session/index.js"
 import {
   FEED_PAGE_SIZE,
   FIRST_INDEX,
@@ -191,8 +192,9 @@ export const pageFetch = handleRequest(
       if (mode === "reset") entity.status = "loading"
       if (mode === "more") entity.isLoadingMore = true
     },
-    async run({ mode, feed, from, to }) {
-      return { mode, ...(await fetchOpenJobsPage(feed, { from, to })) }
+    async run({ mode, feed, from, to }, api) {
+      const page = await fetchOpenJobsPage(feed, { from, to }, signedInId(api))
+      return { mode, ...page }
     },
     success(entity, { mode, jobs, total }) {
       entity.isLoadingMore = false

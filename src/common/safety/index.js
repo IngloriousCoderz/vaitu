@@ -1,9 +1,9 @@
 import { handleRequest } from "@inglorious/store/async"
 
 import { blockUser, reportContent } from "../../api/safety.js"
-import { readUserId } from "../../api/session.js"
 import { SAFETY_REASONS } from "../../constants/index.js"
 import { paths } from "../../routes.js"
+import { signedInId } from "../session/index.js"
 import { template } from "./template.js"
 
 const [DEFAULT_REASON] = SAFETY_REASONS
@@ -63,7 +63,7 @@ export const Safety = {
    * @param {object} api
    */
   safetyOpen(entity, target, api) {
-    if (!readUserId()) {
+    if (!signedInId(api)) {
       api.notify("#router:navigate", paths.login)
       return
     }

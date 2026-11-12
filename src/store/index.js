@@ -1,9 +1,11 @@
+import { Share as SharePlugin } from "@capacitor/share"
 import { LiveUpdate as LiveUpdatePlugin } from "@capawesome/capacitor-live-update"
 import { createStore } from "@inglorious/store"
 import { createLiveUpdate } from "@inglorious/web/live-update"
 import { PwaUpdate } from "@inglorious/web/pwa"
 import { Router, setRoutes } from "@inglorious/web/router"
 import { NetworkStatus } from "@inglorious/web/sensors/network-status"
+import { createShare } from "@inglorious/web/share"
 
 import { liveAlways, livePage, liveSession } from "../api/live.js"
 import { Shell } from "../app/shell.js"
@@ -12,6 +14,7 @@ import { LanguageSelect } from "../common/language-select/index.js"
 import { Notifications } from "../common/notifications/index.js"
 import { PushPrompt } from "../common/push-prompt/index.js"
 import { Safety } from "../common/safety/index.js"
+import { Session } from "../common/session/index.js"
 import { Toasts } from "../common/toasts/index.js"
 import { TranslatedCombobox } from "../common/translated-combobox/index.js"
 import { NativeUpdate } from "../common/update-required/index.js"
@@ -44,6 +47,7 @@ setRoutes(routes)
 export const store = createStore({
   types: {
     Router,
+    Session,
     Shell,
     I18n,
     Authentication,
@@ -72,6 +76,8 @@ export const store = createStore({
     NetworkStatus,
     NativeUpdate,
     PushPrompt,
+    // The share sheet in the app, a download for files in a browser.
+    Share: createShare({ plugin: SharePlugin }),
     AnalyticsConsent,
     NotFound,
     Onboarding,

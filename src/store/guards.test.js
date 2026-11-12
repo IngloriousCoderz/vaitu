@@ -1,11 +1,14 @@
+import { createStore } from "@inglorious/store"
 import { describe, expect, it, vi } from "vitest"
 
+import { Session } from "../common/session/index.js"
 import { paths } from "../routes.js"
 import {
   isPreLoginPath,
   isPreLoginRoute,
   landingForSession,
   routeGuard,
+  sessionChange,
   signInTarget,
 } from "./guards.js"
 
@@ -53,16 +56,11 @@ describe("pre-login routes", () => {
 describe("routeGuard, signed out", () => {
   function guard(route, path, { isOnboardingDue }) {
     const notify = vi.fn()
-    const originalWindow = globalThis.window
-    globalThis.window = {
-      localStorage: { getItem: () => null },
-      sessionStorage: { getItem: () => (isOnboardingDue ? "due" : null) },
-    }
-    try {
-      routeGuard({}, { route, path }, { notify })
-    } finally {
-      globalThis.window = originalWindow
-    }
+    routeGuard(
+      { session: { user: null, isOnboardingDue } },
+      { route, path },
+      { notify },
+    )
     return notify
   }
 
@@ -94,25 +92,50 @@ describe("routeGuard, signed out", () => {
 describe("routeGuard, signed in", () => {
   it("sends a visitor who opens the sign-in page back where they were headed", () => {
     const notify = vi.fn()
-    const originalWindow = globalThis.window
-    globalThis.window = {
-      localStorage: { getItem: () => JSON.stringify({ id: "user-1" }) },
-      sessionStorage: { getItem: () => null },
-    }
-    try {
-      routeGuard(
-        {},
-        {
-          route: "authentication",
-          path: paths.login,
-          query: { from: "/profile" },
-        },
-        { notify, getEntity: () => ({ route: "jobList", query: {} }) },
-      )
-    } finally {
-      globalThis.window = originalWindow
-    }
+    routeGuard(
+      { session: { user: { id: "user-1" }, isOnboardingDue: false } },
+      {
+        route: "authentication",
+        path: paths.login,
+        query: { from: "/profile" },
+      },
+      { notify },
+    )
     expect(notify).toHaveBeenCalledWith("#router:navigate", "/profile")
+  })
+})
+
+describe("the guard in a store", () => {
+  it("lets a new account onto onboarding in the update that signs it in", () => {
+    const store = createStore({
+      types: { Session, Guard: { sessionChange, routeChange: routeGuard } },
+      entities: {
+        session: { type: "Session" },
+        router: { type: "Guard", query: {} },
+      },
+      updateMode: "manual",
+    })
+    store.update()
+    const notify = vi.spyOn(store._api, "notify")
+
+    store.notify("sessionChange", {
+      user: { id: "user-1", email: "a@b.c" },
+      isOnboardingDue: true,
+    })
+    store.notify("routeChange", {
+      route: "onboarding",
+      path: paths.onboarding,
+    })
+    store.update()
+
+    expect(store.getEntity("router").session).toEqual({
+      user: { id: "user-1", email: "a@b.c" },
+      isOnboardingDue: true,
+    })
+    expect(notify).not.toHaveBeenCalledWith(
+      "#router:navigate",
+      expect.anything(),
+    )
   })
 })
 

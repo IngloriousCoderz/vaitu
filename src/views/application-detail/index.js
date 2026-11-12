@@ -1,5 +1,3 @@
-import { Capacitor } from "@capacitor/core"
-import { Share } from "@capacitor/share"
 import { Form } from "@inglorious/web/form"
 import { pageRouteChange } from "@inglorious/web/router"
 
@@ -72,16 +70,7 @@ export const ApplicationDetail = {
         onDownloadIcs: (title, ics) => {
           void (async () => {
             const url = await uploadIcsFile(entity.application_id, ics)
-            if (Capacitor.isNativePlatform()) {
-              await Share.share({ title, url, dialogTitle: title })
-              return
-            }
-            const link = document.createElement("a")
-            link.href = url
-            link.download = `${title}.ics`
-            document.body.appendChild(link)
-            link.click()
-            link.remove()
+            api.notify("#share:share", { title, url, fileName: `${title}.ics` })
           })().catch(() => {})
         },
         onWithdraw: () => api.notify(`#${id}:withdraw`, entity.application_id),

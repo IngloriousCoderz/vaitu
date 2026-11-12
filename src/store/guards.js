@@ -1,11 +1,8 @@
 import { Router, safePath } from "@inglorious/web/router"
 
-import { isOnboardingDue, readUser } from "../api/session.js"
 import { paths } from "../routes"
 
-// Reads localStorage, not the store: a guard firing inside a sign-in's batch
-// would still see the visitor signed out. Deny-by-default: a new route needs a
-// session unless opted out.
+// Deny-by-default: a new route needs a session unless opted out.
 
 const PRE_LOGIN_ROUTES = new Set(["authentication", "onboarding"])
 // The links in the deactivation and notification emails work signed out.
@@ -64,18 +61,18 @@ export function isPreLoginPath(pathname) {
  * Turns the visitor away from a route they may not see, or from a pre-login one
  * they have no reason to be on. Navigates rather than returning a verdict, so
  * nothing downstream renders a page that is about to be replaced.
- * @param {object} entity - The router entity.
+ * @param {object} entity - The router entity, with the `session` it was told of.
  * @param {{route: string, path: string, query?: object}} payload - The resolved route.
  * @param {object} api - The application API.
  */
 export function routeGuard(entity, payload, api) {
-  const user = readUser()
+  const { user, isOnboardingDue } = entity.session ?? {}
 
   if (PUBLIC_ROUTES.has(payload.route)) return
 
   if (!user) {
     if (payload.route === "authentication") return
-    if (payload.route === "onboarding" && isOnboardingDue()) return
+    if (payload.route === "onboarding" && isOnboardingDue) return
     api.notify("#router:navigate", signInTarget(payload.path))
     return
   }
@@ -83,7 +80,7 @@ export function routeGuard(entity, payload, api) {
   if (!isPreLogin(payload.route)) return
 
   if (payload.route === "onboarding") {
-    if (!isOnboardingDue()) {
+    if (!isOnboardingDue) {
       api.notify("#router:navigate", { to: paths.jobs, replace: true })
     }
     return
@@ -92,8 +89,19 @@ export function routeGuard(entity, payload, api) {
   api.notify("#router:navigate", landingForSession(payload))
 }
 
+/**
+ * Keeps what the session announces: the guard runs in the same update as a
+ * sign-in's navigation, when the session entity still shows the visitor signed
+ * out.
+ * @param {object} entity - The router entity.
+ * @param {{user?: object | null, isOnboardingDue?: boolean}} change
+ */
+export function sessionChange(entity, change) {
+  entity.session = { ...entity.session, ...change }
+}
+
 export const guards = {
-  Router: [Router, { routeChange: routeGuard }],
+  Router: [Router, { sessionChange, routeChange: routeGuard }],
 }
 
 function isPreLogin(route) {

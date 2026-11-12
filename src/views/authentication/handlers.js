@@ -1,6 +1,6 @@
 import { Form } from "@inglorious/web/form"
 
-import { setOnboardingDue, writeUser } from "../../api/session.js"
+import { sessionUser } from "../../common/session/index.js"
 import { MIN_PASSWORD_LENGTH } from "../../constants/index.js"
 import { currentLocale } from "../../i18n/index.js"
 import { paths } from "../../routes.js"
@@ -35,7 +35,7 @@ export function clearAuthErrors(entity) {
 }
 
 export function onboardingFinish(entity, _, api) {
-  setOnboardingDue(false)
+  api.notify("sessionChange", { isOnboardingDue: false })
   api.notify("#router:navigate", paths.jobs)
 }
 
@@ -93,8 +93,7 @@ export function resetFormSubmit(entity, _, api) {
 // where the visitor was heading.
 export function signedIn(entity, { user, isNew }, api) {
   const isOnboardingDue = isNew || !user.isOnboarded
-  writeUser(user)
-  setOnboardingDue(isOnboardingDue)
+  api.notify("sessionChange", { user: sessionUser(user), isOnboardingDue })
   Form.reset(entity)
   if (!isNew) {
     api.notify("#jobList:load")

@@ -10,7 +10,6 @@ import { when } from "@inglorious/web/directives/when"
 import { getFieldError, getFieldValue } from "@inglorious/web/form"
 
 import { countdownLabel, isApplicationClosed } from "../../api/jobs.js"
-import { readUserId } from "../../api/session.js"
 import { Badges } from "../../common/badges/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import {
@@ -51,6 +50,7 @@ export const template = {
 
   renderJobDetail({
     entity,
+    isSignedIn,
     profileComplete,
     onOpenJobs,
     onField,
@@ -158,7 +158,7 @@ export const template = {
                         ${this.renderFacts(job)}
                         <p class=${styles.poster}>
                           ${
-                            readUserId()
+                            isSignedIn
                               ? t("pay.youEarn", { pay: formatPay(job.pay) })
                               : t("pay.signInToSee")
                           }
