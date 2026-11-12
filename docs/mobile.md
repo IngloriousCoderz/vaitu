@@ -92,6 +92,19 @@ the Firebase files from the project root. See the
 Icons and splash screens come from `public/logo.svg`, on the colours of
 `native.assets`: run `pnpm mobile:assets` after changing either.
 
+## Store listing images
+
+`pnpm mobile:listing-assets` makes every image the store listings need into
+`listing-assets/`: screenshots for iPhone, Android phones and tablets, in
+English and Italian, then the feature graphic, header and search results card,
+and Play's 512px icon. The screens, the demo sign-in and the promo text are in
+`listing.config.js`.
+
+It runs against the local stack with the showcase data (`sara@showcase.local`
+and her colleagues), never production. Start the app on port 5200 first
+(`pnpm dev --port 5200`). The config refers to the showcase jobs by id, so
+update the ids after recreating that data.
+
 ## Links that open the app
 
 A link to `app.vaitu.net`, from an email or a chat, opens the installed app
