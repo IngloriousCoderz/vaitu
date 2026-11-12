@@ -1,5 +1,5 @@
 import { STATUS_CODE } from "jsr:@std/http@1/status"
-import { json } from "npm:@inglorious/supabase@^0.4.0/edge"
+import { json } from "npm:@inglorious/supabase@^0.10.0/edge"
 
 import { admin } from "./supabase.ts"
 

@@ -9,6 +9,7 @@ import { template } from "./template.js"
 
 const auth = createAuth({
   adapter: authAdapter,
+  methods: ["password", "code"],
   minPasswordLength: MIN_PASSWORD_LENGTH,
 })
 
@@ -50,6 +51,7 @@ export const Authentication = {
           onCheckEmail: () => api.notify(`#${id}:emailFormSubmit`),
           onLogin: () => api.notify(`#${id}:loginFormSubmit`),
           onForgotPassword: () => api.notify(`#${id}:resetRequest`),
+          onCodeRequest: () => api.notify(`#${id}:codeRequest`),
           onContinue: () => api.notify(`#${id}:signupFormSubmit`),
           onResend: () => api.notify(`#${id}:codeResend`),
           onVerifyCode: () => api.notify(`#${id}:codeFormSubmit`),

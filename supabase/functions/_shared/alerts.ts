@@ -1,4 +1,4 @@
-import { env } from "npm:@inglorious/supabase@^0.4.0/edge"
+import { env } from "npm:@inglorious/supabase@^0.10.0/edge"
 
 import { sendEmail } from "./email.ts"
 import {

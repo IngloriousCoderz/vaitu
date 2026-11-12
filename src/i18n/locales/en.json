@@ -288,7 +288,9 @@
     "resetTitle": "Choose a new password",
     "resetSent": "We sent a code to <strong>{{email}}</strong>. Enter it with your new password.",
     "newPassword": "New password",
-    "resetSubmit": "Save and log in"
+    "resetSubmit": "Save and log in",
+    "codeOffer": "Email me a code instead",
+    "signInCodeSent": "We sent a sign-in code to <strong>{{email}}</strong>."
   },
   "onboarding": {
     "title": "Complete your profile",

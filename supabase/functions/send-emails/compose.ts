@@ -225,10 +225,6 @@ ${more ? `<p style="margin: 0 0 16px; padding-top: 16px; border-top: 1px solid $
 </html>`
 }
 
-function anchor(url: string, label: string) {
-  return `<a href="${escape(url)}">${escape(label)}</a>`
-}
-
 function escape(text: string) {
   return text.replace(/[&<>"']/g, (char) => HTML_ESCAPES[char])
 }

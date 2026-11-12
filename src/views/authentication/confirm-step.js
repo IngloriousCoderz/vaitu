@@ -33,12 +33,17 @@ export const ConfirmStep = {
         >
           <h2 class=${styles.title}>${t("auth.checkInbox")}</h2>
           <p class=${styles.subtitle}>
-            ${trans("auth.confirmationSent", {
-              values: { email: getFieldValue(entity, "email", "") },
-              components: {
-                strong: (children) => html`<strong>${children}</strong>`,
+            ${trans(
+              entity.codeFor === "signIn"
+                ? "auth.signInCodeSent"
+                : "auth.confirmationSent",
+              {
+                values: { email: getFieldValue(entity, "email", "") },
+                components: {
+                  strong: (children) => html`<strong>${children}</strong>`,
+                },
               },
-            })}
+            )}
             ${Button.render({
               children: t("auth.changeEmail"),
               variant: "ghost",

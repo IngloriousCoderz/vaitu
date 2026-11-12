@@ -7,7 +7,7 @@ import {
   json,
   serve,
   upstreamError,
-} from "npm:@inglorious/supabase@^0.4.0/edge"
+} from "npm:@inglorious/supabase@^0.10.0/edge"
 
 import { alertProviderLimit } from "../_shared/alerts.ts"
 import { admin } from "../_shared/supabase.ts"

@@ -18,6 +18,7 @@ export const LoginStep = {
     onField,
     onLogin,
     onForgotPassword,
+    onCodeRequest,
     onBackToEmail,
     onTogglePassword,
   }) {
@@ -69,6 +70,16 @@ export const LoginStep = {
           ${FormActions.render({
             children: [
               SubmitButton.render({ isBusy, label: t("auth.logIn") }),
+              Button.render({
+                children: t("auth.codeOffer"),
+                variant: "ghost",
+                color: "primary",
+                shape: "pill",
+                size: "md",
+                isFullWidth: true,
+                isDisabled: isBusy,
+                onClick: onCodeRequest,
+              }),
               Button.render({
                 children: t("auth.forgotPassword"),
                 variant: "ghost",
