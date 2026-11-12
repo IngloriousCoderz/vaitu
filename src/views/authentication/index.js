@@ -1,22 +1,25 @@
+import { createAuth } from "@inglorious/web/auth"
 import { Form } from "@inglorious/web/form"
 
+import { authAdapter } from "../../api/auth.js"
+import { MIN_PASSWORD_LENGTH } from "../../constants/index.js"
 import * as handlers from "./handlers.js"
 import { clearAuthErrors } from "./handlers.js"
 import { template } from "./template.js"
 
-const { emailCheck, login, signup, resend, verify, ...syncHandlers } = handlers
+const auth = createAuth({
+  adapter: authAdapter,
+  minPasswordLength: MIN_PASSWORD_LENGTH,
+})
 
 export const Authentication = {
+  ...auth,
   ...Form,
-  ...syncHandlers,
-  ...emailCheck,
-  ...login,
-  ...signup,
-  ...resend,
-  ...verify,
+  ...handlers,
   ...template,
 
   create(entity) {
+    auth.create(entity)
     entity.initialValues = {
       email: "",
       password: "",
@@ -25,14 +28,9 @@ export const Authentication = {
       code: "",
     }
     Form.create(entity)
-    entity.step ??= "email"
-    entity.mode ??= "login"
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
-    entity.isResent ??= false
     entity.tokenHash ??= null
-    entity.status ??= "idle"
-    entity.error ??= null
   },
 
   routeChange(entity, payload) {
@@ -49,12 +47,15 @@ export const Authentication = {
         callbacks: {
           onField: ({ field, value }) =>
             api.notify(`#${id}:fieldChange`, { path: field, value }),
-          onCheckEmail: () => api.notify(`#${id}:emailSubmit`),
-          onLogin: () => api.notify(`#${id}:loginSubmit`),
-          onContinue: () => api.notify(`#${id}:signupSubmit`),
-          onResend: () => api.notify(`#${id}:resendSubmit`),
-          onVerifyCode: () => api.notify(`#${id}:codeSubmit`),
-          onVerifyLink: () => api.notify(`#${id}:linkSubmit`),
+          onCheckEmail: () => api.notify(`#${id}:emailFormSubmit`),
+          onLogin: () => api.notify(`#${id}:loginFormSubmit`),
+          onForgotPassword: () => api.notify(`#${id}:resetRequest`),
+          onContinue: () => api.notify(`#${id}:signupFormSubmit`),
+          onResend: () => api.notify(`#${id}:codeResend`),
+          onVerifyCode: () => api.notify(`#${id}:codeFormSubmit`),
+          onReset: () => api.notify(`#${id}:resetFormSubmit`),
+          onVerifyLink: () =>
+            api.notify(`#${id}:linkSubmit`, { tokenHash: entity.tokenHash }),
           onBackToEmail: () => api.notify(`#${id}:emailBack`),
           onTogglePassword: (inputId) => {
             api.notify(`#${id}:passwordToggle`)
@@ -80,15 +81,15 @@ function restoreCursor(inputId) {
   })
 }
 
+// A link from a confirmation email opens on its own step, behind a tap: mail
+// scanners follow links too.
 function open(entity, tokenHash) {
   entity.step = tokenHash ? "link" : "email"
   entity.tokenHash = tokenHash ?? null
-  entity.mode = "login"
+  entity.codeFor = null
   entity.status = "idle"
   entity.error = null
-  entity.isResent = false
-  entity.password = ""
-  entity.confirmPassword = ""
+  entity.isCodeResent = false
   clearAuthErrors(entity)
   Form.reset(entity)
 }

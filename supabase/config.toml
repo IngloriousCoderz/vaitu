@@ -254,6 +254,10 @@ otp_expiry = 3600
 subject = "{{ if and .Data.locale (eq .Data.locale \"it\") }}Conferma la tua email Vaitu{{ else }}Confirm your Vaitu email{{ end }}"
 content_path = "./supabase/templates/confirmation.html"
 
+[auth.email.template.recovery]
+subject = "{{ if and .Data.locale (eq .Data.locale \"it\") }}Il tuo codice per Vaitu{{ else }}Your Vaitu code{{ end }}"
+content_path = "./supabase/templates/recovery.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"

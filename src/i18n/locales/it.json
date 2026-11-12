@@ -253,7 +253,11 @@
     "captcha": "Non siamo riusciti a verificare che tu sia una persona. Riprova.",
     "weakPassword": "Questa password è comparsa in una fuga di dati o è troppo facile da indovinare. Scegline un'altra.",
     "verify": "Non siamo riusciti a confermare la tua email. Riprova.",
-    "codeExpired": "Questo codice o link è errato o scaduto. Chiedi una nuova email."
+    "codeExpired": "Questo codice o link è errato o scaduto. Chiedi una nuova email.",
+    "invalidCredentials": "Email o password sbagliate.",
+    "accountExists": "Esiste già un account con questa email.",
+    "rateLimited": "Troppi tentativi. Riprova tra qualche minuto.",
+    "resetPassword": "Non siamo riusciti a cambiare la password. Riprova."
   },
   "auth": {
     "welcome": "Benvenuto su Vaitu",
@@ -283,7 +287,12 @@
     "confirm": "Conferma",
     "confirmTitle": "Conferma la tua email",
     "confirmLink": "Tocca il pulsante per attivare il tuo account.",
-    "backToLogin": "Torna all'accesso"
+    "backToLogin": "Torna all'accesso",
+    "forgotPassword": "Password dimenticata?",
+    "resetTitle": "Scegli una nuova password",
+    "resetSent": "Abbiamo mandato un codice a <strong>{{email}}</strong>. Inseriscilo con la nuova password.",
+    "newPassword": "Nuova password",
+    "resetSubmit": "Salva e accedi"
   },
   "onboarding": {
     "title": "Completa il tuo profilo",

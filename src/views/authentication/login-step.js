@@ -14,8 +14,10 @@ export const LoginStep = {
   render({
     entity,
     isBusy,
+    error,
     onField,
     onLogin,
+    onForgotPassword,
     onBackToEmail,
     onTogglePassword,
   }) {
@@ -63,9 +65,21 @@ export const LoginStep = {
               onToggle: onTogglePassword,
             })}
           </div>
-          ${ErrorAlert.render({ error: entity.error, className: styles.error })}
+          ${ErrorAlert.render({ error, className: styles.error })}
           ${FormActions.render({
-            children: SubmitButton.render({ isBusy, label: t("auth.logIn") }),
+            children: [
+              SubmitButton.render({ isBusy, label: t("auth.logIn") }),
+              Button.render({
+                children: t("auth.forgotPassword"),
+                variant: "ghost",
+                color: "primary",
+                shape: "pill",
+                size: "md",
+                isFullWidth: true,
+                isDisabled: isBusy,
+                onClick: onForgotPassword,
+              }),
+            ],
           })}
         </form>
       </div>
