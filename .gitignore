@@ -67,3 +67,6 @@ landing/dist
 
 # Security scan builds and reports (pnpm security:scan)
 .security-scan/
+
+# Store listing images (pnpm mobile:listing-assets)
+/listing-assets/

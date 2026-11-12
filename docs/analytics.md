@@ -21,7 +21,9 @@ What that means in practice:
 - The native apps start with collection off (`AndroidManifest.xml`,
   `Info.plist`, which also keep the advertising IDs out), and "Allow" turns it
   on.
-- Advertising consents are always denied.
+- Advertising consents are always denied, and the Android app has no
+  advertising ID permission: in Play Console, the advertising ID declaration
+  is "No".
 
 The privacy policy has to say all this, and name Google as the processor.
 
