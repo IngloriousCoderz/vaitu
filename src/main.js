@@ -13,11 +13,17 @@ import "./styles/list-stagger.css"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
-import { clearUser, endSession, stampLogin, writeUser } from "./api/session.js"
+import { endSession, stampLogin } from "./api/session.js"
 import { App } from "./app"
+import { sessionUser } from "./common/session/index.js"
 import { ready } from "./i18n/index.js"
+import { paths } from "./routes.js"
 import { store } from "./store"
-import { isPreLoginPath, signInTarget } from "./store/guards.js"
+import {
+  isPreLoginPath,
+  landingForSession,
+  signInTarget,
+} from "./store/guards.js"
 
 ready.then(() => {
   mount(store, (api) => App.render(null, api), document.getElementById("root"))
@@ -28,14 +34,14 @@ store.notify("#jobList:load")
 
 function trackSession(session) {
   if (session) {
-    writeUser(session.user)
+    store.notify("sessionChange", { user: sessionUser(session.user) })
     stampLogin().then((isReactivated) => {
       if (isReactivated) store.notify("#shell:reactivatedShow")
     })
     store.notify("sessionStart")
     return
   }
-  clearUser()
+  store.notify("sessionChange", { user: null })
   store.notify("sessionEnd")
 
   // A session ending is not a route change, so the guard alone would leave the
@@ -53,6 +59,17 @@ supabase.auth
   .then(({ data, error }) => {
     if (error) return endSession()
     trackSession(data.user ? { user: data.user } : null)
+    // Signed in without the app knowing, as when the stored user was cleared:
+    // the sign-in page has nothing to offer.
+    if (data.user && window.location.pathname === paths.login) {
+      const query = Object.fromEntries(
+        new URLSearchParams(window.location.search),
+      )
+      store.notify("#router:navigate", {
+        to: landingForSession({ query }),
+        replace: true,
+      })
+    }
   })
   .catch(() => endSession())
 

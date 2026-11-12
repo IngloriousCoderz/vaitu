@@ -25,7 +25,6 @@ import {
 } from "../validation/jobs.js"
 import { supabase } from "./client.js"
 import { deleteImage, imageRefFromUrl } from "./images.js"
-import { readUserId } from "./session.js"
 
 const NO_APPLICATIONS = 0
 const NO_ROWS = 0
@@ -245,12 +244,12 @@ const FEED_JOB_COLUMNS =
  * you won until their day. Your own are left out: they live in My jobs.
  * @param {ReturnType<typeof import("../views/job-list/query.js").feedQuery>} feed
  * @param {{ from: number, to: number }} range - Row indexes, both inclusive.
+ * @param {string | null} userId - Who is signed in, if anyone.
  */
-export async function fetchOpenJobsPage(feed, { from, to }) {
+export async function fetchOpenJobsPage(feed, { from, to }, userId) {
   if (feed.regions?.length === NO_ROWS) return { jobs: [], total: NO_ROWS }
   const scope = scopeFilter(feed.scope)
   if (!scope) return { jobs: [], total: NO_ROWS }
-  const userId = readUserId()
   let query = supabase
     .from("jobs")
     .select(

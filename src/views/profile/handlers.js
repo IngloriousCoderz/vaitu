@@ -12,7 +12,7 @@ import {
   uploadAvatar,
 } from "../../api/images.js"
 import { fetchProfileStats } from "../../api/reputation.js"
-import { endSession, setOnboardingDue } from "../../api/session.js"
+import { endSession } from "../../api/session.js"
 import { createImageFile } from "../../common/image.js"
 import { tiersFromConfig } from "../../common/tiers.js"
 import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
@@ -67,7 +67,7 @@ export const load = handleRequest(
       })
 
       if (!profile.onboarded_at) {
-        setOnboardingDue(true)
+        api.notify("sessionChange", { isOnboardingDue: true })
         if (api.getEntity("router").route !== "onboarding") {
           api.notify("#router:navigate", {
             to: paths.onboarding,

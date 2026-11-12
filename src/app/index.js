@@ -9,7 +9,6 @@ import { IconButton } from "@inglorious/ui/icon-button"
 import { html, nothing } from "@inglorious/web"
 import { when } from "@inglorious/web/directives/when"
 
-import { readUser } from "../api/session.js"
 import { BackButton } from "../common/back-button/index.js"
 import { Logo } from "../common/logo/index.js"
 import { NotificationsPanel, pathFor } from "../common/notifications/index.js"
@@ -241,7 +240,10 @@ export const App = {
   renderGlobalActions(api, route) {
     const notifications = api.getEntity("notifications")
     const profile = api.getEntity("profile").profile
-    const name = profile?.full_name || readUser()?.email || t("nav.account")
+    const name =
+      profile?.full_name ||
+      api.getEntity("session").user?.email ||
+      t("nav.account")
 
     return Flex.render({
       align: "center",

@@ -3,7 +3,7 @@ import { handleAsync, handleRequest } from "@inglorious/store/async"
 import { errorKey } from "../../api/errors.js"
 import { fetchMyPreferences, savePreferences } from "../../api/preferences.js"
 import { fetchMyBlocks, unblockUser } from "../../api/safety.js"
-import { readUserId } from "../../api/session.js"
+import { signedInId } from "../../common/session/index.js"
 import { withMuted } from "../../data/notification-types.js"
 import {
   favoriteRegionOptions,
@@ -123,8 +123,8 @@ export const unblock = handleRequest(
 )
 
 export const localeSave = handleAsync("localeSave", {
-  run(locale) {
-    return readUserId() ? savePreferences({ locale }) : null
+  run(locale, api) {
+    return signedInId(api) ? savePreferences({ locale }) : null
   },
   error(_, err) {
     console.warn("[preferences] language not saved:", err)

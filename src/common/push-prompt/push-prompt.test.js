@@ -11,18 +11,16 @@ vi.mock("../../api/push.js", () => ({
 
 import { createStore } from "@inglorious/store"
 
-import { PUSH_DECLINE_KEY } from "../../constants/index.js"
+import { PUSH_STORAGE_KEY } from "../../constants/index.js"
 import { PushPrompt } from "./index.js"
 
 let stored
 
 beforeEach(() => {
   stored = new Map()
-  vi.stubGlobal("window", {
-    localStorage: {
-      getItem: (key) => stored.get(key) ?? null,
-      setItem: (key, value) => stored.set(key, value),
-    },
+  vi.stubGlobal("localStorage", {
+    getItem: (key) => stored.get(key) ?? null,
+    setItem: (key, value) => stored.set(key, value),
   })
 })
 
@@ -48,11 +46,18 @@ describe("PushPrompt", () => {
     expect(store.getState().pushPrompt.isOpen).toBe(false)
   })
 
-  it("remembers a decline under the app's key", async () => {
+  it("keeps a decline under the app's key, and stays closed next time", async () => {
     const store = storeWithPrompt()
     store.notify("sessionStart")
     await settle()
     store.notify("#pushPrompt:pushDecline")
-    expect(stored.get(PUSH_DECLINE_KEY)).toBe("true")
+    expect(JSON.parse(stored.get(PUSH_STORAGE_KEY))).toEqual({
+      isDeclined: true,
+    })
+
+    const next = storeWithPrompt()
+    next.notify("sessionStart")
+    await settle()
+    expect(next.getEntity("pushPrompt").isOpen).toBe(false)
   })
 })

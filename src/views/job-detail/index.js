@@ -1,9 +1,9 @@
 import { Form } from "@inglorious/web/form"
 import { pageRouteChange } from "@inglorious/web/router"
 
-import { readUserId } from "../../api/session.js"
 import { stopTick } from "../../api/ticker.js"
 import { isProfileComplete } from "../../common/profile.js"
+import { signedInId } from "../../common/session/index.js"
 import { paths } from "../../routes.js"
 import * as handlers from "./handlers.js"
 import { template } from "./template.js"
@@ -51,10 +51,11 @@ export const JobDetail = {
     close,
   }),
 
-  renderHeader(entity) {
+  renderHeader(entity, api) {
     return {
       title: entity.job?.title ?? "",
-      back: entity.job?.posterId === readUserId() ? paths.myJobs : paths.jobs,
+      back:
+        entity.job?.posterId === signedInId(api) ? paths.myJobs : paths.jobs,
     }
   },
 
@@ -63,6 +64,7 @@ export const JobDetail = {
     return this.renderJobDetail(
       {
         entity,
+        isSignedIn: Boolean(signedInId(api)),
         profileComplete: isProfileComplete(api.getEntity("profile").profile),
         onOpenJobs: () => api.notify("#router:navigate", paths.jobs),
         onField: ({ field, value }) =>
@@ -73,7 +75,7 @@ export const JobDetail = {
         onPhotoClose: () => api.notify(`#${id}:photoClose`),
         onPhotoStep: (delta) => api.notify(`#${id}:photoStep`, delta),
         onReport:
-          entity.job && entity.job.posterId !== readUserId()
+          entity.job && entity.job.posterId !== signedInId(api)
             ? () =>
                 api.notify("#safety:safetyOpen", {
                   type: "job",
@@ -82,7 +84,7 @@ export const JobDetail = {
                 })
             : undefined,
         onOpenApplications:
-          entity.job?.posterId === readUserId()
+          entity.job?.posterId === signedInId(api)
             ? () =>
                 api.notify(
                   "#router:navigate",

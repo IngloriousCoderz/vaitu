@@ -1,6 +1,6 @@
 import { withDebounce } from "@inglorious/web/decorators/with-debounce"
 
-import { readUserId } from "../../api/session.js"
+import { signedInId } from "../../common/session/index.js"
 import {
   jobTypeById,
   offeredSettings,
@@ -133,7 +133,7 @@ export const JobList = {
         periods,
         statuses,
         activeStatus: entity.activeStatus,
-        isStatusVisible: Boolean(readUserId()),
+        isStatusVisible: Boolean(signedInId(api)),
         query: entity.query,
         activeDetails: entity.activeDetails,
         activeRegion: regionInEffect(
