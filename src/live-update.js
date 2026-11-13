@@ -1,7 +1,7 @@
 import { App } from "@capacitor/app"
 import { LiveUpdate } from "@capawesome/capacitor-live-update"
 import { liveUpdateManifestUrl } from "@inglorious/supabase"
-import { watchLiveUpdate } from "@inglorious/web/live-update"
+import { watchLiveUpdate } from "@inglorious/web/native/live-update"
 
 import { store } from "./store"
 

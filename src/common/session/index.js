@@ -1,5 +1,5 @@
 import { withStorage } from "@inglorious/store/storage"
-import { isNative } from "@inglorious/web/mobile"
+import { isNative } from "@inglorious/web/native"
 
 import { preferences } from "../../api/storage.js"
 import {

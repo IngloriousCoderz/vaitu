@@ -1,5 +1,5 @@
 import { createCaptcha } from "@inglorious/supabase"
-import { isNative } from "@inglorious/web/mobile"
+import { isNative } from "@inglorious/web/native"
 import { createClient } from "@supabase/supabase-js"
 
 import { CAPTCHA_ELEMENT_ID, SUPABASE_API_PORT } from "../constants/index.js"

@@ -1,5 +1,5 @@
 import { Preferences } from "@capacitor/preferences"
-import { createNativeStorage } from "@inglorious/web/mobile"
+import { createNativeStorage } from "@inglorious/web/native"
 
 /**
  * Where the app keeps what outlives a visit: Capacitor Preferences in the

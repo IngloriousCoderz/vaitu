@@ -1,5 +1,5 @@
 import { supabaseNativeUpdate } from "@inglorious/supabase"
-import { createNativeUpdate } from "@inglorious/web/native-update"
+import { createNativeUpdate } from "@inglorious/web/native/update"
 
 import { supabase } from "../../api/client.js"
 import { REQUEST_TIMEOUT_MS } from "../../constants/index.js"

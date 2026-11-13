@@ -103,10 +103,10 @@
     "@inglorious/i18n": "^2.1.0",
     "@inglorious/motion": "^9.0.18",
     "@inglorious/store": "^12.6.2",
-    "@inglorious/supabase": "^0.10.0",
-    "@inglorious/ui": "^9.20.0",
+    "@inglorious/supabase": "^0.10.1",
+    "@inglorious/ui": "^9.20.1",
     "@inglorious/utils": "^5.4.0",
-    "@inglorious/web": "^6.27.1",
+    "@inglorious/web": "^6.28.0",
     "@supabase/supabase-js": "^2.119.0",
     "firebase": "^13.2.0",
     "fix-webm-duration": "^1.0.6"
