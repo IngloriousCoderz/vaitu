@@ -85,9 +85,18 @@ native projects pick it up.
 Don't edit `android/` and `ios/` by hand for what the `native` key in
 `package.json` covers: after every `cap sync`, `inglorious-capacitor configure`
 applies it. It sets the signing team, links that open the app, push, Analytics
-off until consent, permissions, Info.plist entries, iOS swipe back, and copies
-the Firebase files from the project root. See the
+off until consent, permissions, Info.plist entries, iOS swipe back, the iOS
+privacy manifest, and copies the Firebase files from the project root.
+`NSCameraUsageDescription` is there because the photo buttons offer the camera
+on iOS, which closes an app that has no such description. See the
 [`@inglorious/capacitor` README](https://www.npmjs.com/package/@inglorious/capacitor).
+
+What outlives a visit, the Supabase session, the signed-in user, analytics
+consent and a declined push prompt, is kept in Capacitor Preferences in the app
+(`src/api/storage.js`), since iOS and Android can clear a WebView's
+localStorage when space runs low. Preferences answers asynchronously, so the app
+mounts once the session is back (`sessionRestored` in `src/common/session`).
+Started offline, the stored session stands until the server can check it.
 
 Icons and splash screens come from `public/logo.svg`, on the colours of
 `native.assets`: run `pnpm mobile:assets` after changing either.

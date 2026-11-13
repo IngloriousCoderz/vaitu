@@ -1,12 +1,15 @@
 import { createCaptcha } from "@inglorious/supabase"
+import { isNative } from "@inglorious/web/mobile"
 import { createClient } from "@supabase/supabase-js"
 
 import { CAPTCHA_ELEMENT_ID, SUPABASE_API_PORT } from "../constants/index.js"
 import { currentLocale } from "../i18n/index.js"
+import { preferences } from "./storage.js"
 
 export const supabase = createClient(
   supabaseUrl(),
   import.meta.env.VITE_SUPABASE_ANON_KEY,
+  { auth: { storage: isNative() ? preferences : undefined } },
 )
 
 export const captcha = createCaptcha({

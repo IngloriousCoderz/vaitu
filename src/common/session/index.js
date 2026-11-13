@@ -1,5 +1,7 @@
 import { withStorage } from "@inglorious/store/storage"
+import { isNative } from "@inglorious/web/mobile"
 
+import { preferences } from "../../api/storage.js"
 import {
   ONBOARDING_STORAGE_KEY,
   USER_STORAGE_KEY,
@@ -12,12 +14,16 @@ const SESSION = "session"
  * is a `sessionChange` event, so a handler later in the same update, like the
  * route guard, keeps what it was told: `api.getEntity` would still show the
  * session from before the update.
+ *
+ * In the native app the user comes back from Preferences a moment after
+ * creation: `isRestored` says it has, so the app mounts only then.
  */
 export const Session = [
   {
     create(entity, _, api) {
       entity.user ??= null
       entity.isOnboardingDue ??= false
+      entity.isRestored ??= !isNative()
       api.notify("sessionChange", {
         user: entity.user,
         isOnboardingDue: entity.isOnboardingDue,
@@ -27,8 +33,13 @@ export const Session = [
     sessionChange(entity, change) {
       Object.assign(entity, change)
     },
+
+    storageRestore(entity, _, api) {
+      entity.isRestored = true
+      api.notify("sessionChange", { user: entity.user })
+    },
   },
-  withStorage(["user"], { key: USER_STORAGE_KEY }),
+  withStorage(["user"], { key: USER_STORAGE_KEY, storage: () => preferences }),
   withStorage(["isOnboardingDue"], {
     key: ONBOARDING_STORAGE_KEY,
     storage: () => globalThis.sessionStorage,
@@ -51,4 +62,22 @@ export function sessionUser(user) {
  */
 export function signedInId(api) {
   return api.getEntity(SESSION)?.user?.id ?? null
+}
+
+/**
+ * Settles once the session is restored: at once in a browser, after
+ * Preferences answers in the native app.
+ * @param {{ getState: () => any, subscribe: (listener: () => void) => () => void }} store
+ * @returns {Promise<void>}
+ */
+export function sessionRestored(store) {
+  const isRestored = () => Boolean(store.getState()[SESSION]?.isRestored)
+  return new Promise((resolve) => {
+    if (isRestored()) return resolve()
+    const unsubscribe = store.subscribe(() => {
+      if (!isRestored()) return
+      unsubscribe()
+      resolve()
+    })
+  })
 }

@@ -70,6 +70,7 @@
       "swipeBack": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Vaitu uses the camera to take the photos for your jobs and your profile.",
         "NSMicrophoneUsageDescription": "Vaitu uses the microphone to record the voice message that fills in your job."
       }
     },
@@ -94,17 +95,18 @@
     "@capacitor-firebase/messaging": "^8.6.0",
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
+    "@capacitor/preferences": "^8.0.1",
     "@capacitor/share": "^8.0.3",
     "@capawesome/capacitor-live-update": "^8.8.1",
     "@iconify-icons/material-symbols": "^2.0.8",
     "@inglorious/firebase": "^0.1.1",
     "@inglorious/i18n": "^2.1.0",
     "@inglorious/motion": "^9.0.18",
-    "@inglorious/store": "^12.5.0",
+    "@inglorious/store": "^12.6.2",
     "@inglorious/supabase": "^0.10.0",
     "@inglorious/ui": "^9.20.0",
-    "@inglorious/utils": "^5.1.0",
-    "@inglorious/web": "^6.26.2",
+    "@inglorious/utils": "^5.4.0",
+    "@inglorious/web": "^6.27.1",
     "@supabase/supabase-js": "^2.119.0",
     "firebase": "^13.2.0",
     "fix-webm-duration": "^1.0.6"
@@ -114,7 +116,7 @@
     "@capacitor/cli": "^8.6.0",
     "@capacitor/ios": "^8.6.0",
     "@changesets/cli": "^3.0.3",
-    "@inglorious/capacitor": "^0.2.0",
+    "@inglorious/capacitor": "^0.3.0",
     "@inglorious/eslint-config": "^1.2.0",
     "@inglorious/vite-plugin-hmr": "^1.1.0",
     "@vite-pwa/assets-generator": "^2.0.0",
