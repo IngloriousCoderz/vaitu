@@ -78,5 +78,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Vaitu uses the camera to take the photos for your jobs and your profile.</string>
 </dict>
 </plist>

@@ -2,6 +2,7 @@ import { withStorage } from "@inglorious/store/storage"
 import { createPushPrompt } from "@inglorious/web/push"
 
 import { push } from "../../api/push.js"
+import { preferences } from "../../api/storage.js"
 import { PUSH_STORAGE_KEY } from "../../constants/index.js"
 
 const prompt = createPushPrompt({ adapter: push })
@@ -12,5 +13,8 @@ export const PushPrompt = [
     sessionStart: prompt.pushStart,
     sessionEnd: prompt.pushStop,
   },
-  withStorage(["isDeclined"], { key: PUSH_STORAGE_KEY }),
+  withStorage(["isDeclined"], {
+    key: PUSH_STORAGE_KEY,
+    storage: () => preferences,
+  }),
 ]

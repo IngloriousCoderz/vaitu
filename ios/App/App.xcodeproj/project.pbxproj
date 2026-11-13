@@ -18,6 +18,7 @@
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		B4EB774FA6CF4050B4B6B9DC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 509043E3F84040EBA0367BD4 /* GoogleService-Info.plist */; };
 		CE12A3F80880457F851CA090 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167C03A836D34695A1D9ADB5 /* MainViewController.swift */; };
+		BC2818628C3B4E81B1BD4DC2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9A349BD2938F4F35A70A1CE7 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		509043E3F84040EBA0367BD4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; name = "GoogleService-Info.plist"; path = "GoogleService-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
 		167C03A836D34695A1D9ADB5 /* MainViewController.swift */ = {isa = PBXFileReference; name = "MainViewController.swift"; path = "MainViewController.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		9A349BD2938F4F35A70A1CE7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; name = "PrivacyInfo.xcprivacy"; path = "PrivacyInfo.xcprivacy"; sourceTree = "<group>"; lastKnownFileType = text.xml; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 				50B271D01FEDC1A000F3C39B /* public */,
 				509043E3F84040EBA0367BD4 /* GoogleService-Info.plist */,
 				167C03A836D34695A1D9ADB5 /* MainViewController.swift */,
+				9A349BD2938F4F35A70A1CE7 /* PrivacyInfo.xcprivacy */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -158,6 +161,7 @@
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
 				B4EB774FA6CF4050B4B6B9DC /* GoogleService-Info.plist in Resources */,
+				BC2818628C3B4E81B1BD4DC2 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

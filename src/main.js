@@ -10,12 +10,13 @@ import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./styles/list-stagger.css"
 
+import { isNetworkError } from "@inglorious/supabase"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
 import { endSession, stampLogin } from "./api/session.js"
 import { App } from "./app"
-import { sessionUser } from "./common/session/index.js"
+import { sessionRestored, sessionUser } from "./common/session/index.js"
 import { ready } from "./i18n/index.js"
 import { paths } from "./routes.js"
 import { store } from "./store"
@@ -25,7 +26,8 @@ import {
   signInTarget,
 } from "./store/guards.js"
 
-ready.then(() => {
+// The guard runs on the first route at mount, so it needs the session first.
+Promise.all([ready, sessionRestored(store)]).then(() => {
   mount(store, (api) => App.render(null, api), document.getElementById("root"))
   document.getElementById("boot-splash")?.remove()
 })
@@ -53,11 +55,12 @@ function trackSession(session) {
   }
 }
 
-// Asks the server: a reset backend leaves a stale token in storage.
+// Asks the server: a reset backend leaves a stale token in storage. Offline,
+// the stored session stands until the server can say otherwise.
 supabase.auth
   .getUser()
   .then(({ data, error }) => {
-    if (error) return endSession()
+    if (error) return isNetworkError(error) ? undefined : endSession()
     trackSession(data.user ? { user: data.user } : null)
     // Signed in without the app knowing, as when the stored user was cleared:
     // the sign-in page has nothing to offer.
@@ -71,6 +74,8 @@ supabase.auth
       })
     }
   })
-  .catch(() => endSession())
+  .catch((error) => {
+    if (!isNetworkError(error)) endSession()
+  })
 
 supabase.auth.onAuthStateChange((_event, session) => trackSession(session))
