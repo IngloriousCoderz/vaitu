@@ -173,7 +173,7 @@ answer. It never blocks someone because a check failed. It also means an
 install that has only ever run offline isn't blocked until it gets a
 connection.
 
-The check is `@inglorious/web/native-update` with the `supabaseNativeUpdate` adapter, wired in `src/native-update.js`; the page is `src/common/update-required/`.
+The check is `@inglorious/web/native/update` with the `supabaseNativeUpdate` adapter, wired in `src/native-update.js`; the page is `src/common/update-required/`.
 
 ### Store links
 

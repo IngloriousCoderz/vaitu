@@ -1,5 +1,5 @@
 import { App } from "@capacitor/app"
-import { watchAppLinks } from "@inglorious/web/app-links"
+import { watchAppLinks } from "@inglorious/web/native/app-links"
 
 import { store } from "./store"
 

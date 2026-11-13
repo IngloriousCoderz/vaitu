@@ -198,22 +198,22 @@ importers:
         version: 2.1.0(typescript@7.0.2)
       '@inglorious/motion':
         specifier: ^9.0.18
-        version: 9.0.18(@inglorious/web@6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
+        version: 9.0.18(@inglorious/web@6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
       '@inglorious/store':
         specifier: ^12.6.2
         version: 12.6.2(@inglorious/utils@5.4.0)
       '@inglorious/supabase':
-        specifier: ^0.10.0
-        version: 0.10.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))
+        specifier: ^0.10.1
+        version: 0.10.1(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))
       '@inglorious/ui':
-        specifier: ^9.20.0
-        version: 9.20.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))(@inglorious/utils@5.4.0)(@inglorious/web@6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
+        specifier: ^9.20.1
+        version: 9.20.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))(@inglorious/utils@5.4.0)(@inglorious/web@6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
       '@inglorious/utils':
         specifier: ^5.4.0
         version: 5.4.0
       '@inglorious/web':
-        specifier: ^6.27.1
-        version: 6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
+        specifier: ^6.28.0
+        version: 6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
       '@supabase/supabase-js':
         specifier: ^2.119.0
         version: 2.119.0(@opentelemetry/api@1.9.1)
@@ -1511,20 +1511,20 @@ packages:
     peerDependencies:
       '@inglorious/utils': ^5.4.0
 
-  '@inglorious/supabase@0.10.0':
-    resolution: {integrity: sha512-cBQ3N7iNNBERseTBLaoy4NH+Kzdp1dicCljTiye3BVvnXxvEUv7y/Qk/zknyAXPStGKpgZg++D7pTIDYPtBO2A==}
+  '@inglorious/supabase@0.10.1':
+    resolution: {integrity: sha512-d9Tkke55H9gHgcdrDLLFQIBYXgapAJcmotalISVmqtavRM2azObKTaFgDaQRVpudjqt3udmbxP7PFCVNOwUnKw==}
     engines: {node: '>= 26'}
     hasBin: true
     peerDependencies:
       '@supabase/supabase-js': ^2.119.0
 
-  '@inglorious/ui@9.20.0':
-    resolution: {integrity: sha512-8iSVWiZ+jk4dCsRYaYpt0DI4qqN0HUkCy1MtdxFkipzdtUGOwEpP3t2iApq6owJ/rRmyY/dZzVJATRrdb01tAg==}
+  '@inglorious/ui@9.20.1':
+    resolution: {integrity: sha512-pfRB6NYZtHDKBEyXYG+ly5O4jpQ5faOUKSr1NbPLFfr/nrU3B452ddvJCSJn/UP2tGK84mIIKMjyo0DZuO1Frw==}
     engines: {node: '>= 26'}
     peerDependencies:
-      '@inglorious/store': ^12.3.0
-      '@inglorious/utils': ^5.3.0
-      '@inglorious/web': ^6.23.0
+      '@inglorious/store': ^12.6.2
+      '@inglorious/utils': ^5.4.0
+      '@inglorious/web': ^6.28.0
 
   '@inglorious/utils@5.4.0':
     resolution: {integrity: sha512-F9KrKDJ5bofo1S0hm29bQ9RDFrm1nT358c/8Th9hU9c+EZageXRFSMQObkzIZwtoadfBStJYA4jsf4ZzfHV1xw==}
@@ -1536,11 +1536,11 @@ packages:
     peerDependencies:
       vite: ^7.1.3 || ^8.0.0
 
-  '@inglorious/web@6.27.1':
-    resolution: {integrity: sha512-fquC7oyzOFrx2Gmq+xjKWAjL5lI18FuE9vm23GD6EW3TItgO/m4c89hVj1j10pY48/9Cr4zfEVQLkjOrmTtDZw==}
+  '@inglorious/web@6.28.0':
+    resolution: {integrity: sha512-z47RMTNmtPAMTa94avoHxUE1VZBpgAKudyH7CfP7ckmw4/o3RgV6mrB4jVi/UjgUlvytCPdld230w/0TJc5UEw==}
     engines: {node: '>= 26'}
     peerDependencies:
-      '@inglorious/store': ^12.6.1
+      '@inglorious/store': ^12.6.2
 
   '@ionic/cli-framework-output@2.2.8':
     resolution: {integrity: sha512-TshtaFQsovB4NWRBydbNFawql6yul7d5bMiW1WYYf17hd99V6xdDdk3vtF51bw6sLkxON3bDQpWsnUc9/hVo3g==}
@@ -5757,25 +5757,25 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@inglorious/motion@9.0.18(@inglorious/web@6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))':
+  '@inglorious/motion@9.0.18(@inglorious/web@6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))':
     dependencies:
-      '@inglorious/web': 6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
+      '@inglorious/web': 6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
 
   '@inglorious/store@12.6.2(@inglorious/utils@5.4.0)':
     dependencies:
       '@inglorious/utils': 5.4.0
       mutative: 2.0.2
 
-  '@inglorious/supabase@0.10.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))':
+  '@inglorious/supabase@0.10.1(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))':
     dependencies:
       '@supabase/supabase-js': 2.119.0(@opentelemetry/api@1.9.1)
       fflate: 0.8.3
 
-  '@inglorious/ui@9.20.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))(@inglorious/utils@5.4.0)(@inglorious/web@6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))':
+  '@inglorious/ui@9.20.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))(@inglorious/utils@5.4.0)(@inglorious/web@6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))':
     dependencies:
       '@inglorious/store': 12.6.2(@inglorious/utils@5.4.0)
       '@inglorious/utils': 5.4.0
-      '@inglorious/web': 6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
+      '@inglorious/web': 6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
 
   '@inglorious/utils@5.4.0': {}
 
@@ -5785,7 +5785,7 @@ snapshots:
       magic-string: 1.4.5
       vite: 8.3.6(@types/node@26.6.6)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
 
-  '@inglorious/web@6.27.1(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))':
+  '@inglorious/web@6.28.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))':
     dependencies:
       '@inglorious/store': 12.6.2(@inglorious/utils@5.4.0)
       '@inglorious/utils': 5.4.0

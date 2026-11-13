@@ -1,4 +1,4 @@
-import { isNative } from "@inglorious/web/mobile"
+import { isNative } from "@inglorious/web/native"
 import { watchPwaUpdate } from "@inglorious/web/pwa"
 import { registerSW } from "virtual:pwa-register"
 
