@@ -1,3 +1,3 @@
-import { watchKeyboard } from "@inglorious/web/keyboard"
+import { watchKeyboard } from "@inglorious/web/device/keyboard"
 
 watchKeyboard()

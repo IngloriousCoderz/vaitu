@@ -91,10 +91,13 @@ privacy manifest, and copies the Firebase files from the project root.
 on iOS, which closes an app that has no such description. See the
 [`@inglorious/capacitor` README](https://www.npmjs.com/package/@inglorious/capacitor).
 
-What outlives a visit, the Supabase session, the signed-in user, analytics
-consent and a declined push prompt, is kept in Capacitor Preferences in the app
-(`src/api/storage.js`), since iOS and Android can clear a WebView's
-localStorage when space runs low. Preferences answers asynchronously, so the app
+What outlives a visit is kept outside the WebView's localStorage, which iOS and
+Android can clear when space runs low (`src/api/storage.js`). The Supabase
+session's tokens go in the Keychain (iOS) or Keystore (Android), through
+`@capgo/capacitor-native-biometric`; the signed-in user, analytics consent and a
+declined push prompt go in Capacitor Preferences. On iOS the Keychain survives
+uninstalling the app, so a reinstall comes back signed in while the server still
+accepts the session. Preferences answers asynchronously, so the app
 mounts once the session is back (`sessionRestored` in `src/common/session`).
 Started offline, the stored session stands until the server can check it.
 

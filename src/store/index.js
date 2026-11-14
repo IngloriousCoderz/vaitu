@@ -1,11 +1,11 @@
 import { Share as SharePlugin } from "@capacitor/share"
 import { LiveUpdate as LiveUpdatePlugin } from "@capawesome/capacitor-live-update"
 import { createStore } from "@inglorious/store"
+import { NetworkStatus } from "@inglorious/web/device/network-status"
+import { createShare } from "@inglorious/web/device/share"
 import { createLiveUpdate } from "@inglorious/web/native/live-update"
-import { createShare } from "@inglorious/web/native/share"
 import { PwaUpdate } from "@inglorious/web/pwa"
 import { Router, setRoutes } from "@inglorious/web/router"
-import { NetworkStatus } from "@inglorious/web/sensors/network-status"
 
 import { liveAlways, livePage, liveSession } from "../api/live.js"
 import { Shell } from "../app/shell.js"

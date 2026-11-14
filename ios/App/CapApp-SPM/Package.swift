@@ -17,7 +17,8 @@ let package = Package(
         .package(name: "CapacitorApp", path: "../../../node_modules/.pnpm/@capacitor+app@8.1.2_@capacitor+core@8.6.0/node_modules/@capacitor/app"),
         .package(name: "CapacitorPreferences", path: "../../../node_modules/.pnpm/@capacitor+preferences@8.0.1_@capacitor+core@8.6.0/node_modules/@capacitor/preferences"),
         .package(name: "CapacitorShare", path: "../../../node_modules/.pnpm/@capacitor+share@8.0.3_@capacitor+core@8.6.0/node_modules/@capacitor/share"),
-        .package(name: "CapawesomeCapacitorLiveUpdate", path: "../../../node_modules/.pnpm/@capawesome+capacitor-live-update@8.8.1_@capacitor+core@8.6.0/node_modules/@capawesome/capacitor-live-update")
+        .package(name: "CapawesomeCapacitorLiveUpdate", path: "../../../node_modules/.pnpm/@capawesome+capacitor-live-update@8.8.1_@capacitor+core@8.6.0/node_modules/@capawesome/capacitor-live-update"),
+        .package(name: "CapgoCapacitorNativeBiometric", path: "../../../node_modules/.pnpm/@capgo+capacitor-native-biometric@8.9.3_@capacitor+core@8.6.0/node_modules/@capgo/capacitor-native-biometric")
     ],
     targets: [
         .target(
@@ -30,7 +31,8 @@ let package = Package(
                 .product(name: "CapacitorApp", package: "CapacitorApp"),
                 .product(name: "CapacitorPreferences", package: "CapacitorPreferences"),
                 .product(name: "CapacitorShare", package: "CapacitorShare"),
-                .product(name: "CapawesomeCapacitorLiveUpdate", package: "CapawesomeCapacitorLiveUpdate")
+                .product(name: "CapawesomeCapacitorLiveUpdate", package: "CapawesomeCapacitorLiveUpdate"),
+                .product(name: "CapgoCapacitorNativeBiometric", package: "CapgoCapacitorNativeBiometric")
             ]
         )
     ]
