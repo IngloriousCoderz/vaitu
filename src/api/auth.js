@@ -8,6 +8,7 @@ const STATUS_TOO_MANY_REQUESTS = 429
 const auth = supabaseAuth(supabase, {
   captcha,
   accountExistsFunction: "check-email",
+  codeCreatesAccount: false,
 })
 
 /**
@@ -19,14 +20,6 @@ const auth = supabaseAuth(supabase, {
  */
 export const authAdapter = {
   ...auth,
-
-  sendCode,
-
-  resendCode(email, purpose) {
-    return purpose === "signIn"
-      ? sendCode(email)
-      : auth.resendCode(email, purpose)
-  },
 
   accountExists(email) {
     return Promise.race([auth.accountExists(email), timeout()])
@@ -51,17 +44,6 @@ export const authAdapter = {
     }
     return auth.errorCode(error)
   },
-}
-
-async function sendCode(email) {
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: false,
-      captchaToken: await captcha.token("sendCode"),
-    },
-  })
-  if (error) throw error
 }
 
 async function withOnboarding(user) {

@@ -99,7 +99,6 @@ export const APPLICATION_DEADLINE_LEAD_DAYS = 45
 export const DEADLINE_END_OF_DAY = "23:59"
 export const MIN_AUDIO_BYTES = 1024
 export const SUPABASE_API_PORT = 54321
-export const VITE_DEV_PORT = 5173
 export const NOTIFICATION_BADGE_MAX = 9
 export const FEED_LIMIT = 50
 // Where the tab bar gives way to the drawer; keep in step with the CSS.
