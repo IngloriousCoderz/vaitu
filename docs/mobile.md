@@ -54,15 +54,15 @@ pnpm mobile:ios
 
 No manual IP needed for dev. The app derives the Supabase host from the
 page that serves it, and live reload auto-detects your LAN IP
-(`CAP_SERVER_URL` overrides it for VPNs / multiple NICs).
+(`--host <ip>` overrides it for VPNs / multiple NICs).
 
 ```bash
 # production install (uses bundled dist, no dev server needed)
 pnpm mobile:android   # or pnpm mobile:ios
 
-# live reload on a physical device (needs pnpm dev running, same Wi-Fi)
-pnpm mobile:android:dev
-# Windows (cmd): set CAP_LIVE=1 && pnpm mobile:android:dev
+# live reload on a device or emulator (starts the dev server too, same Wi-Fi)
+pnpm mobile:dev:android   # or pnpm mobile:dev:ios
+# pick a device: pnpm mobile:dev:ios --target <id> (pnpm cap run ios --list)
 ```
 
 ⚠️ `VITE_SUPABASE_URL` is baked into `dist` at **build time** — this only

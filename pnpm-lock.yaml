@@ -200,14 +200,14 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(typescript@7.0.2)
       '@inglorious/motion':
-        specifier: ^9.0.18
-        version: 9.0.18(@inglorious/web@6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
+        specifier: ^9.0.19
+        version: 9.0.19(@inglorious/web@6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
       '@inglorious/store':
         specifier: ^12.6.2
         version: 12.6.2(@inglorious/utils@5.4.0)
       '@inglorious/supabase':
-        specifier: ^0.10.1
-        version: 0.10.1(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))
+        specifier: ^0.11.0
+        version: 0.11.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))
       '@inglorious/ui':
         specifier: ^9.20.2
         version: 9.20.2(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))(@inglorious/utils@5.4.0)(@inglorious/web@6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
@@ -240,8 +240,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@inglorious/capacitor':
-        specifier: ^0.3.0
-        version: 0.3.0(@types/node@26.6.6)
+        specifier: ^0.4.0
+        version: 0.4.0(@types/node@26.6.6)
       '@inglorious/eslint-config':
         specifier: ^1.2.0
         version: 1.2.0(@eslint/js@10.0.1(eslint@10.14.0(jiti@2.7.0)))(eslint-plugin-simple-import-sort@14.0.0(eslint@10.14.0(jiti@2.7.0)))(eslint@10.14.0(jiti@2.7.0))
@@ -1464,8 +1464,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@inglorious/capacitor@0.3.0':
-    resolution: {integrity: sha512-UAPLAQSGPdAYIV67R+1ylvAvjeOpiBEqL+DaTkMk0mnuyoXkNi4aQlz5DzV93g2bHBLxCT+yX6mICFjJ8wPmmA==}
+  '@inglorious/capacitor@0.4.0':
+    resolution: {integrity: sha512-b2ArtyN8Q5+CpR6Z3efNSfTbSsDZbbz2KcTuQDcjUNzeDEXXlcG1qrg6nkDeIHpAVvO+YzdD87xZ1/nVYjFo5w==}
     engines: {node: '>= 26'}
     hasBin: true
 
@@ -1507,11 +1507,11 @@ packages:
     resolution: {integrity: sha512-BBs+9mJo6t3nNHokiWMHYfGneQFmBvgwAbOiyW9ixOMCM9x1ee9GKJXpY2Kb5eTPa3Isnk0G98pm08m75MKNYg==}
     engines: {node: '>= 26'}
 
-  '@inglorious/motion@9.0.18':
-    resolution: {integrity: sha512-ZA2L5rjxYlX9yvufCyDAjNdJbgx6vblxuVNF20wJocCCn5Kc44GZZhw0YbqMdg3iR94dgbm86UIhugU4+VPSyA==}
-    engines: {node: '>= 22'}
+  '@inglorious/motion@9.0.19':
+    resolution: {integrity: sha512-jpFj/5BqYl1/vJXYTpLL5CGGpM+TZ8+e768GhayCUY67pD3taSljef9Mp0W/Zn5CrX4Qe/+1M8jSMdw/NzRpLQ==}
+    engines: {node: '>= 26'}
     peerDependencies:
-      '@inglorious/web': ^6.10.2
+      '@inglorious/web': ^6.13.1
 
   '@inglorious/store@12.6.2':
     resolution: {integrity: sha512-pwedsQkYu4EeqSsq20/CF889a0fLasJNPmphj9ONrwR9VIJp7iLnSH8+7kBbI0sg2t5npAVgN8RuXZ/O2ucSBA==}
@@ -1519,8 +1519,8 @@ packages:
     peerDependencies:
       '@inglorious/utils': ^5.4.0
 
-  '@inglorious/supabase@0.10.1':
-    resolution: {integrity: sha512-d9Tkke55H9gHgcdrDLLFQIBYXgapAJcmotalISVmqtavRM2azObKTaFgDaQRVpudjqt3udmbxP7PFCVNOwUnKw==}
+  '@inglorious/supabase@0.11.0':
+    resolution: {integrity: sha512-nIWpF8tZUw+J443jX8JInU1mTxFY69uhUM9gZjJImYNp+c67c23zbEJ0eqzUv+OmoCSIUKYdV7XywaDQnG5JxQ==}
     engines: {node: '>= 26'}
     hasBin: true
     peerDependencies:
@@ -5734,7 +5734,7 @@ snapshots:
   '@img/sharp-win32-x64@0.35.5':
     optional: true
 
-  '@inglorious/capacitor@0.3.0(@types/node@26.6.6)':
+  '@inglorious/capacitor@0.4.0(@types/node@26.6.6)':
     dependencies:
       '@capacitor/assets': 4.0.0(@types/node@26.6.6)
       '@trapezedev/project': 7.1.11
@@ -5769,7 +5769,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@inglorious/motion@9.0.18(@inglorious/web@6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))':
+  '@inglorious/motion@9.0.19(@inglorious/web@6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))':
     dependencies:
       '@inglorious/web': 6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))
 
@@ -5778,7 +5778,7 @@ snapshots:
       '@inglorious/utils': 5.4.0
       mutative: 2.0.2
 
-  '@inglorious/supabase@0.10.1(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))':
+  '@inglorious/supabase@0.11.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))':
     dependencies:
       '@supabase/supabase-js': 2.119.0(@opentelemetry/api@1.9.1)
       fflate: 0.8.3
