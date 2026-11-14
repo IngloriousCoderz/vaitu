@@ -86,7 +86,7 @@ the README, and `seed-local.sql`, which holds the local stack's Vault values.
 
 The trigger that wakes `push-notify` reads the project URL and the legacy
 `service_role` key from Vault, so neither is in a migration or a seed.
-`pnpm vault:push` (`scripts/push-vault-secrets.mjs`) sets both on the linked
+`pnpm vault:push` (`inglorious-supabase vault`) sets both on the linked
 project, taking the key from the Supabase CLI's login, so it is never written
 down. It must be the legacy key, the one starting `eyJ`: `push-notify` reads
 the caller's role out of it, which the newer `sb_secret_` keys do not carry.

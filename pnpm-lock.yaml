@@ -206,8 +206,8 @@ importers:
         specifier: ^12.6.2
         version: 12.6.2(@inglorious/utils@5.4.0)
       '@inglorious/supabase':
-        specifier: ^0.11.0
-        version: 0.11.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))
+        specifier: ^0.12.0
+        version: 0.12.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))
       '@inglorious/ui':
         specifier: ^9.20.2
         version: 9.20.2(@inglorious/store@12.6.2(@inglorious/utils@5.4.0))(@inglorious/utils@5.4.0)(@inglorious/web@6.29.0(@inglorious/store@12.6.2(@inglorious/utils@5.4.0)))
@@ -240,8 +240,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@inglorious/capacitor':
-        specifier: ^0.4.0
-        version: 0.4.0(@types/node@26.6.6)
+        specifier: ^0.5.0
+        version: 0.5.0(@types/node@26.6.6)
       '@inglorious/eslint-config':
         specifier: ^1.2.0
         version: 1.2.0(@eslint/js@10.0.1(eslint@10.14.0(jiti@2.7.0)))(eslint-plugin-simple-import-sort@14.0.0(eslint@10.14.0(jiti@2.7.0)))(eslint@10.14.0(jiti@2.7.0))
@@ -1464,8 +1464,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@inglorious/capacitor@0.4.0':
-    resolution: {integrity: sha512-b2ArtyN8Q5+CpR6Z3efNSfTbSsDZbbz2KcTuQDcjUNzeDEXXlcG1qrg6nkDeIHpAVvO+YzdD87xZ1/nVYjFo5w==}
+  '@inglorious/capacitor@0.5.0':
+    resolution: {integrity: sha512-twdiX1RkxTqQsJCnjgslTbOVTT5wYy6A0IiLru/EhHwDnpFWzqI13B2PLiLhbVNXLJFwoIo9IRcgEEeVs58fLw==}
     engines: {node: '>= 26'}
     hasBin: true
 
@@ -1519,8 +1519,8 @@ packages:
     peerDependencies:
       '@inglorious/utils': ^5.4.0
 
-  '@inglorious/supabase@0.11.0':
-    resolution: {integrity: sha512-nIWpF8tZUw+J443jX8JInU1mTxFY69uhUM9gZjJImYNp+c67c23zbEJ0eqzUv+OmoCSIUKYdV7XywaDQnG5JxQ==}
+  '@inglorious/supabase@0.12.0':
+    resolution: {integrity: sha512-o1otP63byzgrz89Rs6039XClZJyeqDejQcTZ/Urp0eFe9/efDwK1sDnLgogkF6FmczY8sAfMZrsN5OHH8nJDVQ==}
     engines: {node: '>= 26'}
     hasBin: true
     peerDependencies:
@@ -5734,7 +5734,7 @@ snapshots:
   '@img/sharp-win32-x64@0.35.5':
     optional: true
 
-  '@inglorious/capacitor@0.4.0(@types/node@26.6.6)':
+  '@inglorious/capacitor@0.5.0(@types/node@26.6.6)':
     dependencies:
       '@capacitor/assets': 4.0.0(@types/node@26.6.6)
       '@trapezedev/project': 7.1.11
@@ -5778,7 +5778,7 @@ snapshots:
       '@inglorious/utils': 5.4.0
       mutative: 2.0.2
 
-  '@inglorious/supabase@0.11.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))':
+  '@inglorious/supabase@0.12.0(@supabase/supabase-js@2.119.0(@opentelemetry/api@1.9.1))':
     dependencies:
       '@supabase/supabase-js': 2.119.0(@opentelemetry/api@1.9.1)
       fflate: 0.8.3
