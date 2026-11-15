@@ -61,12 +61,13 @@ export function isPreLoginPath(pathname) {
  * Turns the visitor away from a route they may not see, or from a pre-login one
  * they have no reason to be on. Navigates rather than returning a verdict, so
  * nothing downstream renders a page that is about to be replaced.
- * @param {object} entity - The router entity, with the `session` it was told of.
+ * A sign-in earlier in the same chain of events is already in the session.
+ * @param {object} entity - The router entity.
  * @param {{route: string, path: string, query?: object}} payload - The resolved route.
  * @param {object} api - The application API.
  */
 export function routeGuard(entity, payload, api) {
-  const { user, isOnboardingDue } = entity.session ?? {}
+  const { user, isOnboardingDue } = api.getEntity("session") ?? {}
 
   if (PUBLIC_ROUTES.has(payload.route)) return
 
@@ -89,19 +90,8 @@ export function routeGuard(entity, payload, api) {
   api.notify("#router:navigate", landingForSession(payload))
 }
 
-/**
- * Keeps what the session announces: the guard runs in the same update as a
- * sign-in's navigation, when the session entity still shows the visitor signed
- * out.
- * @param {object} entity - The router entity.
- * @param {{user?: object | null, isOnboardingDue?: boolean}} change
- */
-export function sessionChange(entity, change) {
-  entity.session = { ...entity.session, ...change }
-}
-
 export const guards = {
-  Router: [Router, { sessionChange, routeChange: routeGuard }],
+  Router: [Router, { routeChange: routeGuard }],
 }
 
 function isPreLogin(route) {

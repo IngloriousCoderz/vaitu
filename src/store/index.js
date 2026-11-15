@@ -111,4 +111,6 @@ export const store = createStore({
   entities,
   middlewares,
   autoCreateEntities: true,
+  // Freezes the state in development, so a write outside a handler throws.
+  devMode: import.meta.env.DEV,
 })

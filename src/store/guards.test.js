@@ -1,4 +1,5 @@
 import { createStore } from "@inglorious/store"
+import { createMockApi } from "@inglorious/store/test"
 import { describe, expect, it, vi } from "vitest"
 
 import { Session } from "../common/session/index.js"
@@ -8,7 +9,6 @@ import {
   isPreLoginRoute,
   landingForSession,
   routeGuard,
-  sessionChange,
   signInTarget,
 } from "./guards.js"
 
@@ -55,12 +55,11 @@ describe("pre-login routes", () => {
 
 describe("routeGuard, signed out", () => {
   function guard(route, path, { isOnboardingDue }) {
-    const notify = vi.fn()
-    routeGuard(
-      { session: { user: null, isOnboardingDue } },
-      { route, path },
-      { notify },
-    )
+    const api = createMockApi({
+      session: { type: "Session", user: null, isOnboardingDue },
+    })
+    const notify = vi.spyOn(api, "notify")
+    routeGuard({ id: "router" }, { route, path }, api)
     return notify
   }
 
@@ -91,15 +90,22 @@ describe("routeGuard, signed out", () => {
 
 describe("routeGuard, signed in", () => {
   it("sends a visitor who opens the sign-in page back where they were headed", () => {
-    const notify = vi.fn()
+    const api = createMockApi({
+      session: {
+        type: "Session",
+        user: { id: "user-1" },
+        isOnboardingDue: false,
+      },
+    })
+    const notify = vi.spyOn(api, "notify")
     routeGuard(
-      { session: { user: { id: "user-1" }, isOnboardingDue: false } },
+      { id: "router" },
       {
         route: "authentication",
         path: paths.login,
         query: { from: "/profile" },
       },
-      { notify },
+      api,
     )
     expect(notify).toHaveBeenCalledWith("#router:navigate", "/profile")
   })
@@ -108,7 +114,7 @@ describe("routeGuard, signed in", () => {
 describe("the guard in a store", () => {
   it("lets a new account onto onboarding in the update that signs it in", () => {
     const store = createStore({
-      types: { Session, Guard: { sessionChange, routeChange: routeGuard } },
+      types: { Session, Guard: { routeChange: routeGuard } },
       entities: {
         session: { type: "Session" },
         router: { type: "Guard", query: {} },
@@ -128,7 +134,7 @@ describe("the guard in a store", () => {
     })
     store.update()
 
-    expect(store.getEntity("router").session).toEqual({
+    expect(store.getEntity("session")).toMatchObject({
       user: { id: "user-1", email: "a@b.c" },
       isOnboardingDue: true,
     })

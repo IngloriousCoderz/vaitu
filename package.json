@@ -103,7 +103,7 @@
     "@inglorious/firebase": "^0.1.1",
     "@inglorious/i18n": "^2.1.0",
     "@inglorious/motion": "^9.0.19",
-    "@inglorious/store": "^12.7.0",
+    "@inglorious/store": "^12.8.0",
     "@inglorious/supabase": "^0.12.0",
     "@inglorious/ui": "^9.20.3",
     "@inglorious/utils": "^5.4.0",

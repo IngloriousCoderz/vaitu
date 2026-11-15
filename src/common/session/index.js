@@ -11,9 +11,7 @@ const SESSION = "session"
 
 /**
  * Who is signed in, and whether onboarding is still owed this tab. Every change
- * is a `sessionChange` event, so a handler later in the same update, like the
- * route guard, keeps what it was told: `api.getEntity` would still show the
- * session from before the update.
+ * is a `sessionChange` event, which the session applies and anyone else may hear.
  *
  * In the native app the user comes back from Preferences a moment after
  * creation: `isRestored` says it has, so the app mounts only then.
