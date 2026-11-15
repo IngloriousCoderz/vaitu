@@ -1,3 +1,4 @@
+import { App } from "@capacitor/app"
 import { supabaseNativeUpdate } from "@inglorious/supabase"
 import { createNativeUpdate } from "@inglorious/web/native/update"
 
@@ -8,6 +9,7 @@ import { template } from "./template.js"
 export const NativeUpdate = {
   ...createNativeUpdate({
     adapter: supabaseNativeUpdate(supabase, { timeoutMs: REQUEST_TIMEOUT_MS }),
+    plugin: App,
   }),
   ...template,
 

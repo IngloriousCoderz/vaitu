@@ -1,10 +1,17 @@
+import { App as AppPlugin } from "@capacitor/app"
+import { SystemBars as SystemBarsPlugin } from "@capacitor/core"
 import { Share as SharePlugin } from "@capacitor/share"
 import { LiveUpdate as LiveUpdatePlugin } from "@capawesome/capacitor-live-update"
 import { createStore } from "@inglorious/store"
+import { liveUpdateManifestUrl } from "@inglorious/supabase"
+import { Keyboard } from "@inglorious/web/device/keyboard"
 import { NetworkStatus } from "@inglorious/web/device/network-status"
 import { createShare } from "@inglorious/web/device/share"
+import { createAppLinks } from "@inglorious/web/native/app-links"
+import { createBackButton } from "@inglorious/web/native/back-button"
 import { createLiveUpdate } from "@inglorious/web/native/live-update"
-import { PwaUpdate } from "@inglorious/web/pwa"
+import { createSystemBars } from "@inglorious/web/native/system-bars"
+import { createPwaUpdate } from "@inglorious/web/pwa"
 import { Router, setRoutes } from "@inglorious/web/router"
 
 import { liveAlways, livePage, liveSession } from "../api/live.js"
@@ -71,8 +78,19 @@ export const store = createStore({
     CoverCropper,
     TranslatedCombobox,
     LanguageSelect,
-    PwaUpdate,
-    LiveUpdate: createLiveUpdate({ plugin: LiveUpdatePlugin }),
+    PwaUpdate: createPwaUpdate(),
+    // Only release builds carry a release: a development build must not
+    // turn into production.
+    LiveUpdate: createLiveUpdate({
+      plugin: LiveUpdatePlugin,
+      app: AppPlugin,
+      manifestUrl: liveUpdateManifestUrl(import.meta.env.VITE_SUPABASE_URL),
+      release: Number(import.meta.env.VITE_LIVE_UPDATE_RELEASE),
+    }),
+    AppLinks: createAppLinks({ plugin: AppPlugin }),
+    BackButton: createBackButton({ plugin: AppPlugin }),
+    SystemBars: createSystemBars({ plugin: SystemBarsPlugin }),
+    Keyboard,
     NetworkStatus,
     NativeUpdate,
     PushPrompt,

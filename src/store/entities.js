@@ -1,3 +1,4 @@
+import { ROOT_PATHS } from "../app"
 import { countries } from "../data/countries.js"
 import {
   availableJobTypes,
@@ -18,6 +19,8 @@ const countryOptions = countries.map((country) => ({
 const regionOptions = italianRegions.map(regionOption)
 
 export const entities = {
+  // Back from a top-level page closes the app on Android.
+  backButton: { type: "BackButton", rootPaths: ROOT_PATHS },
   safety: { type: "Safety" },
   analytics: { type: "AnalyticsConsent" },
   i18n: { type: "I18n" },
