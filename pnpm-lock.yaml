@@ -240,8 +240,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       '@inglorious/capacitor':
-        specifier: ^0.5.0
-        version: 0.5.0(@types/node@26.6.6)
+        specifier: ^0.5.1
+        version: 0.5.1(@types/node@26.6.6)
       '@inglorious/eslint-config':
         specifier: ^1.2.0
         version: 1.2.0(@eslint/js@10.0.1(eslint@10.14.0(jiti@2.7.0)))(eslint-plugin-simple-import-sort@14.0.0(eslint@10.14.0(jiti@2.7.0)))(eslint@10.14.0(jiti@2.7.0))
@@ -1464,8 +1464,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@inglorious/capacitor@0.5.0':
-    resolution: {integrity: sha512-twdiX1RkxTqQsJCnjgslTbOVTT5wYy6A0IiLru/EhHwDnpFWzqI13B2PLiLhbVNXLJFwoIo9IRcgEEeVs58fLw==}
+  '@inglorious/capacitor@0.5.1':
+    resolution: {integrity: sha512-exp6r24Gk/IwnCu2o8igIyuY7N7KUwdLiA9fRmQwo7up/YCZPcweoOZq1S8CDVmb73CkBwwIoyqAA0bUJ7fEAQ==}
     engines: {node: '>= 26'}
     hasBin: true
 
@@ -3575,6 +3575,10 @@ packages:
   plist@3.1.1:
     resolution: {integrity: sha512-ZIfcLJC+7E7FBFnDxm9MPmt7D+DidyQ26lewieO75AdhA2ayMtsJSES0iWzqJQbcVRSrTufQoy0DR94xHue0oA==}
     engines: {node: '>=10.4.0'}
+
+  plist@5.1.1:
+    resolution: {integrity: sha512-n55fGiwWNHf6zFdP9qvtr1x7P898lfJ/rbDvB3pYqVRcO+iG3sl5SSkGSLiIoAI9ZZc2F3Ga/5wPtM8EqhgSqA==}
+    engines: {node: '>=18'}
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -5734,12 +5738,12 @@ snapshots:
   '@img/sharp-win32-x64@0.35.5':
     optional: true
 
-  '@inglorious/capacitor@0.5.0(@types/node@26.6.6)':
+  '@inglorious/capacitor@0.5.1(@types/node@26.6.6)':
     dependencies:
       '@capacitor/assets': 4.0.0(@types/node@26.6.6)
       '@trapezedev/project': 7.1.11
       playwright-core: 1.65.0
-      plist: 3.1.1
+      plist: 5.1.1
       sharp: 0.35.5(@types/node@26.6.6)
     transitivePeerDependencies:
       - '@types/node'
@@ -7808,6 +7812,11 @@ snapshots:
     dependencies:
       '@xmldom/xmldom': 0.9.12
       base64-js: 1.5.1
+      xmlbuilder: 15.1.1
+
+  plist@5.1.1:
+    dependencies:
+      '@xmldom/xmldom': 0.9.12
       xmlbuilder: 15.1.1
 
   possible-typed-array-names@1.1.0: {}
