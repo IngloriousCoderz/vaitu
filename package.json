@@ -1,6 +1,6 @@
 {
   "name": "vaitu",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "private": true,
   "description": "Pass on the jobs you can't take, and find the ones you can",
@@ -45,7 +45,7 @@
     "prepare": "husky"
   },
   "liveUpdate": {
-    "minBuild": 3
+    "minBuild": 6
   },
   "native": {
     "appLinks": {
