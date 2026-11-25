@@ -77,14 +77,13 @@ export const CAPTCHA_ELEMENT_ID = "captcha"
 // transcribe-audio refuses more than MAX_AUDIO_BYTES, which this keeps clear of.
 export const AUDIO_BITS_PER_SECOND = 64000
 export const MAX_JOB_IMAGES = 6
-export const IMAGE_MAX_BYTES = 5242880
+export const GALLERY_OUTPUT_SIZE = 1920
 export const MIN_PHOTOS_TO_NAVIGATE = 2
 export const COVER_ASPECT_WIDTH = 21
 export const COVER_ASPECT_HEIGHT = 9
 export const COVER_ASPECT_RATIO = COVER_ASPECT_WIDTH / COVER_ASPECT_HEIGHT
 export const COVER_OUTPUT_WIDTH = 1680
 export const COVER_OUTPUT_HEIGHT = 720
-export const AVATAR_MAX_BYTES = 2097152
 export const AVATAR_SIZE = 512
 export const IMAGE_JPEG_TYPE = "image/jpeg"
 export const UUID_RANDOM_BYTES = 16

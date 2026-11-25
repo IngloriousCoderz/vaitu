@@ -15,7 +15,7 @@ import { fetchProfileStats } from "../../api/reputation.js"
 import { endSession } from "../../api/session.js"
 import { createImageFile } from "../../common/image.js"
 import { tiersFromConfig } from "../../common/tiers.js"
-import { AVATAR_MAX_BYTES, AVATAR_SIZE } from "../../constants/index.js"
+import { AVATAR_SIZE } from "../../constants/index.js"
 import { paths } from "../../routes.js"
 import { AVATAR_CROPPER } from "./avatar-cropper.js"
 
@@ -152,10 +152,6 @@ export function avatarCropOpen(entity, file, api) {
   entity.avatarError = null
   if (!imageExtension(file?.type)) {
     entity.avatarError = "errors.imageType"
-    return
-  }
-  if (file.size > AVATAR_MAX_BYTES) {
-    entity.avatarError = "errors.avatarSize"
     return
   }
   revokeAvatarPreview(entity)

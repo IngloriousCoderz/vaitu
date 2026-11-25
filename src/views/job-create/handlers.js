@@ -33,8 +33,8 @@ import {
   DEADLINE_END_OF_DAY,
   DEFAULT_MAX_APPLICANTS,
   FIRST_INDEX,
+  GALLERY_OUTPUT_SIZE,
   IMAGE_JPEG_TYPE,
-  IMAGE_MAX_BYTES,
   MAX_JOB_IMAGES,
   MIN_AUDIO_BYTES,
   MONTH_INDEX_OFFSET,
@@ -582,10 +582,6 @@ export function coverCropOpen(entity, { file, rect = null } = {}, api) {
     entity.image_error = "errors.imageType"
     return
   }
-  if (file.size > IMAGE_MAX_BYTES) {
-    entity.image_error = "errors.imageSize"
-    return
-  }
   revokeCropPreview(entity)
   cropSessionFile = file
   entity.cropPreviewUrl = URL.createObjectURL(file)
@@ -855,10 +851,6 @@ function readImageFile(entity, file) {
     entity.image_error = "errors.imageType"
     return null
   }
-  if (file.size > IMAGE_MAX_BYTES) {
-    entity.image_error = "errors.imageSize"
-    return null
-  }
   const id = randomId()
   rememberPendingFiles(id, { file })
   return {
@@ -901,9 +893,9 @@ async function savedImageUrls(job) {
 
     const galleryUploads = []
     for (const item of job.pending_gallery ?? []) {
-      const blob = pendingFile(item.id)
-      if (!blob) continue
-      const file = await uploadJobImage(blob)
+      const original = pendingFile(item.id)
+      if (!original) continue
+      const file = await uploadJobImage(await shrinkGalleryImage(original))
       galleryUploads.push(file)
       uploaded.push(file)
     }
@@ -921,6 +913,21 @@ async function savedImageUrls(job) {
     await forgetImages(uploaded.map((file) => file.path))
     throw err
   }
+}
+
+// Phone cameras take photos far larger than the bucket allows: the whole
+// photo goes up, re-encoded at a size a job page can show.
+async function shrinkGalleryImage(file) {
+  let blob
+  try {
+    blob = await cropImage(file, null, {
+      maxWidth: GALLERY_OUTPUT_SIZE,
+      maxHeight: GALLERY_OUTPUT_SIZE,
+    })
+  } catch {
+    throw new Error("errors.imageCrop")
+  }
+  return createImageFile(blob, "photo.jpg")
 }
 
 function writeJob(job, payload) {
