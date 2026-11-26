@@ -124,7 +124,7 @@ describe("the guard in a store", () => {
     store.update()
     const notify = vi.spyOn(store._api, "notify")
 
-    store.notify("sessionChange", {
+    store.notify("sessionUpdate", {
       user: { id: "user-1", email: "a@b.c" },
       isOnboardingDue: true,
     })

@@ -2,10 +2,18 @@ import { createAuth } from "@inglorious/web/auth"
 import { Form } from "@inglorious/web/form"
 
 import { authAdapter } from "../../api/auth.js"
+import { sessionUser } from "../../common/session/index.js"
 import { MIN_PASSWORD_LENGTH } from "../../constants/index.js"
+import {
+  isPreLoginPath,
+  landingForSession,
+  signInTarget,
+} from "../../store/guards.js"
 import * as handlers from "./handlers.js"
 import { clearAuthErrors } from "./handlers.js"
 import { template } from "./template.js"
+
+const ROUTER = "router"
 
 const auth = createAuth({
   adapter: authAdapter,
@@ -19,8 +27,8 @@ export const Authentication = {
   ...handlers,
   ...template,
 
-  create(entity) {
-    auth.create(entity)
+  create(entity, payload, api) {
+    auth.create(entity, payload, api)
     entity.initialValues = {
       email: "",
       password: "",
@@ -32,11 +40,43 @@ export const Authentication = {
     entity.isPasswordVisible ??= false
     entity.isConfirmPasswordVisible ??= false
     entity.tokenHash ??= null
+    entity.announcedId ??= null
   },
 
   routeChange(entity, payload) {
     if (payload.route !== entity.id) return
     open(entity, payload.query?.token_hash)
+  },
+
+  // The one place the app learns who is signed in: Supabase's session as
+  // supabaseAuth reports it, with a restored one checked with the server and
+  // a failed read retried, never taken for a sign-out. Each new user, or
+  // none, is announced once: the session applies it, and the rest hear
+  // `sessionStart` or `sessionEnd`.
+  sessionChange(entity, user, api) {
+    const wasReady = entity.isReady
+    auth.sessionChange(entity, user)
+    const id = user?.id ?? null
+    if (wasReady && id === entity.announcedId) return
+    entity.announcedId = id
+    api.notify("sessionUpdate", { user: user ? sessionUser(user) : null })
+    api.notify(user ? "sessionStart" : "sessionEnd")
+    // At launch the guard decides on mount. Later, a session that ends leaves
+    // the page for sign-in, and one that starts by itself, as when a refresh
+    // succeeds back online, leaves the sign-in page: one started from it has
+    // already moved on.
+    if (!wasReady) return
+    const router = api.getEntity(ROUTER)
+    const { pathname, search } = window.location
+    if (!user && !isPreLoginPath(pathname)) {
+      api.notify("#router:navigate", signInTarget(pathname + search))
+    }
+    if (user && router?.route === entity.id) {
+      api.notify("#router:navigate", {
+        to: landingForSession(router),
+        replace: true,
+      })
+    }
   },
 
   render(entity, api) {

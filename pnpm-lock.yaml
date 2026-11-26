@@ -206,8 +206,8 @@ importers:
         specifier: ^12.9.1
         version: 12.9.1(@inglorious/utils@5.4.1)
       '@inglorious/supabase':
-        specifier: ^0.12.0
-        version: 0.12.0(@supabase/supabase-js@2.119.2(@opentelemetry/api@1.10.0))
+        specifier: ^0.13.3
+        version: 0.13.3(@supabase/supabase-js@2.119.2(@opentelemetry/api@1.10.0))
       '@inglorious/ui':
         specifier: ^9.20.3
         version: 9.20.3(@inglorious/store@12.9.1(@inglorious/utils@5.4.1))(@inglorious/utils@5.4.1)(@inglorious/web@6.31.3(@inglorious/store@12.9.1(@inglorious/utils@5.4.1)))
@@ -1528,12 +1528,12 @@ packages:
     peerDependencies:
       '@inglorious/utils': ^5.4.1
 
-  '@inglorious/supabase@0.12.0':
-    resolution: {integrity: sha512-o1otP63byzgrz89Rs6039XClZJyeqDejQcTZ/Urp0eFe9/efDwK1sDnLgogkF6FmczY8sAfMZrsN5OHH8nJDVQ==}
+  '@inglorious/supabase@0.13.3':
+    resolution: {integrity: sha512-aL3hZS+IBAbMhIoCeFEm/ZSinq/IvPYJjK6YTJ9N9clTL4EjLgFjhXJzvqgRfrj6Np1hdwDj9ERVMWoj2YZUAw==}
     engines: {node: '>= 26'}
     hasBin: true
     peerDependencies:
-      '@supabase/supabase-js': ^2.119.0
+      '@supabase/supabase-js': ^2.119.2
 
   '@inglorious/ui@9.20.3':
     resolution: {integrity: sha512-kzwMTBMqApWm2w+xKjeh/QPLbKHs/0qJTuD0S2KvHcDmwRqmazqyxMOaeLjy+wNsObhM4Bsb3HmXz9x5kM1AEQ==}
@@ -5787,7 +5787,7 @@ snapshots:
       '@inglorious/utils': 5.4.1
       mutative: 2.0.2
 
-  '@inglorious/supabase@0.12.0(@supabase/supabase-js@2.119.2(@opentelemetry/api@1.10.0))':
+  '@inglorious/supabase@0.13.3(@supabase/supabase-js@2.119.2(@opentelemetry/api@1.10.0))':
     dependencies:
       '@supabase/supabase-js': 2.119.2(@opentelemetry/api@1.10.0)
       fflate: 0.8.3

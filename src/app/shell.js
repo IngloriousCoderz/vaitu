@@ -1,3 +1,5 @@
+import { stampLogin } from "../api/session.js"
+
 export const Shell = {
   create(entity) {
     entity.isDrawerOpen = false
@@ -25,6 +27,13 @@ export const Shell = {
 
   reactivatedDismiss(entity) {
     entity.isReactivated = false
+  },
+
+  // Records the sign-in, and says so if it brought a deactivated account back.
+  sessionStart(_entity, _, api) {
+    stampLogin().then((isReactivated) => {
+      if (isReactivated) api.notify("#shell:reactivatedShow")
+    })
   },
 
   sessionEnd(entity) {

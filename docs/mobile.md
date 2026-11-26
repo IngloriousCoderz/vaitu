@@ -94,12 +94,18 @@ on iOS, which closes an app that has no such description. See the
 What outlives a visit is kept outside the WebView's localStorage, which iOS and
 Android can clear when space runs low (`src/api/storage.js`). The Supabase
 session's tokens go in the Keychain (iOS) or Keystore (Android), through
-`@capgo/capacitor-native-biometric`; the signed-in user, analytics consent and a
-declined push prompt go in Capacitor Preferences. On iOS the Keychain survives
-uninstalling the app, so a reinstall comes back signed in while the server still
-accepts the session. Preferences answers asynchronously, so the app
-mounts once the session is back (`sessionRestored` in `src/common/session`).
-Started offline, the stored session stands until the server can check it.
+`@capgo/capacitor-native-biometric`; analytics consent and a declined push
+prompt go in Capacitor Preferences. On iOS the Keychain survives uninstalling
+the app, so a reinstall comes back signed in while the server still accepts the
+session. Who is signed in comes from Supabase alone: `supabaseAuth`'s
+`onSessionChange` reports it to the `authentication` entity, which hands it to
+the session, and the app mounts once it has answered (`sessionRestored` in
+`src/common/session`). A restored session is checked with the server; only the
+server's refusal signs out. A Keychain or Keystore read that fails, as can
+happen while a live update reloads the WebView, is retried rather than taken
+for a sign-out. Offline, the stored session stands while its access token is
+valid; with an expired one the sign-in page shows until the app is back online
+and the token is refreshed, which leaves it by itself.
 
 Icons and splash screens come from `public/logo.svg`, on the colours of
 `native.assets`: run `pnpm mobile:assets` after changing either.

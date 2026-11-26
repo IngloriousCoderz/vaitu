@@ -67,7 +67,7 @@ export const load = handleRequest(
       })
 
       if (!profile.onboarded_at) {
-        api.notify("sessionChange", { isOnboardingDue: true })
+        api.notify("sessionUpdate", { isOnboardingDue: true })
         if (api.getEntity("router").route !== "onboarding") {
           api.notify("#router:navigate", {
             to: paths.onboarding,

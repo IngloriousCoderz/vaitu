@@ -35,7 +35,7 @@ export function clearAuthErrors(entity) {
 }
 
 export function onboardingFinish(entity, _, api) {
-  api.notify("sessionChange", { isOnboardingDue: false })
+  api.notify("sessionUpdate", { isOnboardingDue: false })
   api.notify("#router:navigate", paths.jobs)
 }
 
@@ -93,7 +93,7 @@ export function resetFormSubmit(entity, _, api) {
 // where the visitor was heading.
 export function signedIn(entity, { user, isNew }, api) {
   const isOnboardingDue = isNew || !user.isOnboarded
-  api.notify("sessionChange", { user: sessionUser(user), isOnboardingDue })
+  api.notify("sessionUpdate", { user: sessionUser(user), isOnboardingDue })
   Form.reset(entity)
   if (!isNew) {
     api.notify("#jobList:load")

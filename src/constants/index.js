@@ -14,7 +14,6 @@ export const REQUEST_TIMEOUT_MS = 15000
 export const PUSH_STORAGE_KEY = "vaitu-push"
 export const PUSH_TOKEN_KEY = "vaitu-push-token"
 export const ANALYTICS_STORAGE_KEY = "vaitu-analytics"
-export const USER_STORAGE_KEY = "vaitu-user"
 export const ONBOARDING_STORAGE_KEY = "vaitu-onboarding"
 export const MIN_PASSWORD_LENGTH = 10
 export const MIN_TEXT_LENGTH = 1

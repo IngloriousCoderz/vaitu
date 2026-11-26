@@ -1,43 +1,29 @@
 import { withStorage } from "@inglorious/store/storage"
-import { isNative } from "@inglorious/web/native"
 
-import { preferences } from "../../api/storage.js"
-import {
-  ONBOARDING_STORAGE_KEY,
-  USER_STORAGE_KEY,
-} from "../../constants/index.js"
+import { ONBOARDING_STORAGE_KEY } from "../../constants/index.js"
 
 const SESSION = "session"
 
 /**
  * Who is signed in, and whether onboarding is still owed this tab. Every change
- * is a `sessionChange` event, which the session applies and anyone else may hear.
- *
- * In the native app the user comes back from Preferences a moment after
- * creation: `isRestored` says it has, so the app mounts only then.
+ * is a `sessionUpdate` event, which the session applies and anyone else may
+ * hear. The user comes from the authentication entity, which follows
+ * Supabase's session: `isRestored` says it has answered once, so the app
+ * mounts only then, with the guard deciding on the real session.
  */
 export const Session = [
   {
-    create(entity, _, api) {
+    create(entity) {
       entity.user ??= null
       entity.isOnboardingDue ??= false
-      entity.isRestored ??= !isNative()
-      api.notify("sessionChange", {
-        user: entity.user,
-        isOnboardingDue: entity.isOnboardingDue,
-      })
+      entity.isRestored ??= false
     },
 
-    sessionChange(entity, change) {
+    sessionUpdate(entity, change) {
       Object.assign(entity, change)
-    },
-
-    storageRestore(entity, _, api) {
-      entity.isRestored = true
-      api.notify("sessionChange", { user: entity.user })
+      if ("user" in change) entity.isRestored = true
     },
   },
-  withStorage(["user"], { key: USER_STORAGE_KEY, storage: () => preferences }),
   withStorage(["isOnboardingDue"], {
     key: ONBOARDING_STORAGE_KEY,
     storage: () => globalThis.sessionStorage,
@@ -63,8 +49,8 @@ export function signedInId(api) {
 }
 
 /**
- * Settles once the session is restored: at once in a browser, after
- * Preferences answers in the native app.
+ * Settles once Supabase has said whether anyone is signed in: from storage,
+ * so offline too.
  * @param {{ getState: () => any, subscribe: (listener: () => void) => () => void }} store
  * @returns {Promise<void>}
  */
