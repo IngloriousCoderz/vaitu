@@ -18,9 +18,12 @@ let stored
 
 beforeEach(() => {
   stored = new Map()
-  vi.stubGlobal("localStorage", {
-    getItem: (key) => stored.get(key) ?? null,
-    setItem: (key, value) => stored.set(key, value),
+  // The app's storage reads window.localStorage, never Node's own.
+  vi.stubGlobal("window", {
+    localStorage: {
+      getItem: (key) => stored.get(key) ?? null,
+      setItem: (key, value) => stored.set(key, value),
+    },
   })
 })
 
