@@ -64,6 +64,11 @@ pnpm test:integration         # includes the *.integration.test.js that call the
 while editing one or to read its logs. The integration tests need the local
 stack running.
 
+`pnpm edge` takes the functions over from the stack, and stopping it takes
+them away: from then on every call to `/functions/v1/` answers 503, and the
+integration tests that call a function fail, until you start `pnpm edge`
+again or restart the stack (`supabase stop && supabase start`).
+
 ## Adding a function
 
 1. Create `supabase/functions/<name>/index.ts` from this skeleton. Don't use

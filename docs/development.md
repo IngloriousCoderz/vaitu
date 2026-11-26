@@ -38,7 +38,11 @@ passes.
 Three terminals:
 
 1. Supabase stack (already up after `supabase start`)
-2. `pnpm edge` — serves all edge functions (hot-reload while editing)
+2. `pnpm edge` — serves all edge functions (hot-reload while editing).
+   Optional, since `supabase start` serves them too, but once started keep it
+   running: stopping it leaves the stack without functions until
+   `supabase stop && supabase start` (see
+   [Edge functions](edge-functions.md#run-check-test)).
 3. `pnpm dev --host` — frontend (phone/emulator loads it via LAN IP,
    configured in `capacitor.config.ts`)
 
