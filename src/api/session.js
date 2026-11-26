@@ -1,5 +1,28 @@
+import { isAuthApiError } from "@supabase/supabase-js"
+
 import { supabase } from "./client.js"
 import { push } from "./push.js"
+
+const STATUS_UNAUTHORIZED = 401
+const STATUS_FORBIDDEN = 403
+const STATUS_NOT_FOUND = 404
+
+/**
+ * Whether the Auth server itself turned the token down: the only failure that
+ * proves a session dead. Anything else, a fetch that never left the device, a
+ * storage read that came back empty while the WebView was reloading, says
+ * nothing about the session, and ending it there signs out a valid user.
+ * @param {unknown} error
+ * @returns {boolean}
+ */
+export function isSessionRejected(error) {
+  return (
+    isAuthApiError(error) &&
+    [STATUS_UNAUTHORIZED, STATUS_FORBIDDEN, STATUS_NOT_FOUND].includes(
+      error.status,
+    )
+  )
+}
 
 /**
  * Ends the session everywhere: Supabase's sign-out announces it, and the app

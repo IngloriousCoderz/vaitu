@@ -12,7 +12,7 @@ import {
   uploadAvatar,
 } from "../../api/images.js"
 import { fetchProfileStats } from "../../api/reputation.js"
-import { endSession } from "../../api/session.js"
+import { endSession, isSessionRejected } from "../../api/session.js"
 import { createImageFile } from "../../common/image.js"
 import { tiersFromConfig } from "../../common/tiers.js"
 import { AVATAR_SIZE } from "../../constants/index.js"
@@ -83,7 +83,10 @@ export const load = handleRequest(
 async function fetchProfile() {
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser()
+  // The real reason, so a failed fetch isn't read as a dead session.
+  if (userError) throw userError
   if (!user) throw new Error("errors.notLoggedIn")
   const { data: profile, error } = await supabase
     .from("profiles")
@@ -311,12 +314,14 @@ export const logout = handleRequest(
 )
 
 // Only a rejected token or a missing row logs out, never a network blip.
+// Only the server's word: Auth refusing the token, or PostgREST finding no
+// profile for a user Auth just vouched for (an erased account). A missing
+// local session or an unreachable server proves nothing.
 function isSessionDead(err) {
   if (!err) return false
-  if (err.code === "PGRST116") return true
-  return /not ?logged ?in|jwt|expired|invalid.*token|user not found/i.test(
-    err.message ?? "",
-  )
+  if (isSessionRejected(err)) return true
+  if (err.code === "PGRST116" || err.code === "PGRST301") return true
+  return false
 }
 
 function revokeAvatarPreview(entity) {

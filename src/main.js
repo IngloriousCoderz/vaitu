@@ -4,11 +4,10 @@ import "./styles/theme.css"
 import "./styles/tokens.css"
 import "./styles/list-stagger.css"
 
-import { isNetworkError } from "@inglorious/supabase"
 import { mount } from "@inglorious/web"
 
 import { supabase } from "./api/client.js"
-import { endSession, stampLogin } from "./api/session.js"
+import { endSession, isSessionRejected, stampLogin } from "./api/session.js"
 import { App } from "./app"
 import { sessionRestored, sessionUser } from "./common/session/index.js"
 import { ready } from "./i18n/index.js"
@@ -49,12 +48,15 @@ function trackSession(session) {
   }
 }
 
-// Asks the server: a reset backend leaves a stale token in storage. Offline,
-// the stored session stands until the server can say otherwise.
+// Asks the server: a reset backend leaves a stale token in storage. Only the
+// server's own refusal ends the session. Offline, or with nothing read from
+// storage (as when a live update reloads the WebView), the stored session
+// stands: Supabase's INITIAL_SESSION already says whether there is one, and
+// signing out here would revoke a session a later read finds intact.
 supabase.auth
   .getUser()
   .then(({ data, error }) => {
-    if (error) return isNetworkError(error) ? undefined : endSession()
+    if (error) return isSessionRejected(error) ? endSession() : undefined
     trackSession(data.user ? { user: data.user } : null)
     // Signed in without the app knowing, as when the stored user was cleared:
     // the sign-in page has nothing to offer.
@@ -69,7 +71,7 @@ supabase.auth
     }
   })
   .catch((error) => {
-    if (!isNetworkError(error)) endSession()
+    if (isSessionRejected(error)) endSession()
   })
 
 supabase.auth.onAuthStateChange((_event, session) => trackSession(session))
