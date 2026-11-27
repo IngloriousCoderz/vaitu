@@ -200,7 +200,11 @@
     "payAmount": "Enter an amount above zero",
     "payRange": "Enter a top amount above the bottom one",
     "payCurrency": "Choose a currency",
-    "codeInvalid": "Enter the code from the email"
+    "codeInvalid": "Enter the code from the email",
+    "pickSeeking": "Pick substitute or assistant",
+    "pickFee": "Pick a fee",
+    "feeAmount": "Enter a fee above zero",
+    "feePercent": "Enter a percentage between 0 and 100"
   },
   "errors": {
     "notLoggedIn": "Not logged in",
@@ -725,31 +729,73 @@
     "body": "Your Vaitu account has been deactivated. To come back, just sign in again.\n\nIf you want to erase it for good, use this link within 30 days:\n{{link}}\n\nIf you didn't ask for this, sign in and change your password."
   },
   "pay": {
-    "title": "What the colleague earns",
-    "hint": "What they receive for the job, not what the client pays you. Signed-in users can see it, the public can't.",
+    "title": {
+      "substitute": "What the client pays",
+      "assistant": "What the colleague earns"
+    },
+    "hint": {
+      "substitute": "Whoever takes over the job gets paid by the client directly. Signed-in users can see it, the public can't.",
+      "assistant": "What you pay them for the job. Signed-in users can see it, the public can't."
+    },
     "amount": "Amount",
     "min": "From",
     "max": "To",
     "currency": "Currency",
     "toAgree": "To be agreed",
     "unpaid": "Unpaid",
-    "youEarn": "You earn: {{pay}}",
+    "youEarn": {
+      "substitute": "The client pays you: {{pay}}",
+      "assistant": "The poster pays you: {{pay}}"
+    },
     "signInToSee": "Sign in to see what this job pays.",
     "kinds": {
       "to_agree": "To be agreed",
       "fixed": "A set amount",
       "range": "A range",
       "unpaid": "Unpaid (a favour or an exchange)"
-    }
+    },
+    "seeking": "Who you're looking for",
+    "seekingKinds": {
+      "substitute": "Substitute",
+      "assistant": "Assistant"
+    },
+    "seekingHint": {
+      "substitute": "They take the job over, client included: the client pays them. Make sure your client agrees.",
+      "assistant": "They work alongside you: you keep the client and pay them."
+    },
+    "seekingIntro": {
+      "substitute": "Looking for a substitute: you take the job over, client included.",
+      "assistant": "Looking for an assistant: you work alongside the poster, who keeps the client."
+    },
+    "feeTitle": "Your fee",
+    "feeHint": "What the colleague gives you for passing on the client, if anything.",
+    "feeKinds": {
+      "none": "No fee",
+      "percent": "A percentage",
+      "fixed": "A set amount",
+      "to_agree": "To be agreed"
+    },
+    "feePercent": "Percentage",
+    "feePercentOf": "{{percent}} of what the client pays",
+    "feeToPoster": "Fee to the poster: {{fee}}"
   },
   "deal": {
     "title": "What you agreed",
-    "amountLabel": "Agreed amount",
-    "amountHint": "What the colleague earns. They'll be asked to confirm it. You can also add it later.",
+    "amountLabel": {
+      "substitute": "Agreed fee",
+      "assistant": "Agreed amount"
+    },
+    "amountHint": {
+      "substitute": "What the colleague gives you for the client. They'll be asked to confirm it. You can also add it later.",
+      "assistant": "What you pay the colleague. They'll be asked to confirm it. You can also add it later."
+    },
     "propose": "Ask them to confirm",
     "waiting": "Waiting for them to confirm {{amount}}.",
     "confirmed": "Agreed and confirmed by both: {{amount}}.",
-    "confirmQuestion": "The poster says you agreed {{amount}}. Is that right?",
+    "confirmQuestion": {
+      "substitute": "The poster says you agreed to give them {{amount}} for the client. Is that right?",
+      "assistant": "The poster says you agreed they pay you {{amount}}. Is that right?"
+    },
     "yesAgreed": "Yes, that's right",
     "notAgreed": "No, that's not what we agreed",
     "rejectedPoster": "They said {{amount}} isn't what you agreed. Talk to them and enter the right amount.",

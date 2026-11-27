@@ -24,6 +24,7 @@ import { ProfessionRequest } from "../../common/profession-request/index.js"
 import {
   AUDIO_MAX_SECONDS,
   COVER_IMAGES,
+  DEFAULT_SEEKING,
   MAX_JOB_IMAGES,
   NO_TIME_RECORDED,
   PAD_LENGTH,
@@ -32,11 +33,13 @@ import {
 import { CURRENCIES, DEFAULT_CURRENCY } from "../../data/currencies.js"
 import { ITALY } from "../../data/regions/resolve.js"
 import { currentLocale, localized, t } from "../../i18n/index.js"
+import { SEEKING } from "../../validation/jobs.js"
 import { detailsFor, settingById } from "../job-list/job-settings.js"
 import { COVER_CROPPER } from "./cover-cropper.js"
 import styles from "./style.module.css"
 
 const PAY_KINDS = ["to_agree", "fixed", "range", "unpaid"]
+const FEE_KINDS = ["none", "percent", "fixed", "to_agree"]
 
 export const template = {
   render(props, api) {
@@ -93,6 +96,7 @@ export const template = {
           <div class=${styles.field}>
             ${api.render("jobTypeCreate")} ${ProfessionRequest.render()}
           </div>
+          ${this.renderSeeking({ entity, onField })}
           ${identityFields.map((spec) =>
             this.renderDetailField({
               spec,
@@ -232,7 +236,27 @@ export const template = {
     })
   },
 
+  renderSeeking({ entity, onField }) {
+    const seeking = getFieldValue(entity, "seeking", DEFAULT_SEEKING)
+    return html`
+      <div class=${styles.field}>
+        ${RadioGroup.render({
+          id: "seeking",
+          label: t("pay.seeking"),
+          value: seeking,
+          options: SEEKING.map((value) => ({
+            value,
+            label: t(`pay.seekingKinds.${value}`),
+          })),
+          onChange: (value) => onField({ field: "seeking", value }),
+        })}
+        <p class=${styles.hint}>${t(`pay.seekingHint.${seeking}`)}</p>
+      </div>
+    `
+  },
+
   renderPay({ entity, onField }) {
+    const seeking = getFieldValue(entity, "seeking", DEFAULT_SEEKING)
     const kind = getFieldValue(entity, "pay_kind", "to_agree")
     const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
     const currencyNames = new Intl.DisplayNames(currentLocale(), {
@@ -242,7 +266,7 @@ export const template = {
       <div class=${styles.field}>
         ${RadioGroup.render({
           id: "pay-kind",
-          label: t("pay.title"),
+          label: t(`pay.title.${seeking}`),
           value: kind,
           options: PAY_KINDS.map((value) => ({
             value,
@@ -250,7 +274,7 @@ export const template = {
           })),
           onChange: (value) => onField({ field: "pay_kind", value }),
         })}
-        <p class=${styles.hint}>${t("pay.hint")}</p>
+        <p class=${styles.hint}>${t(`pay.hint.${seeking}`)}</p>
       </div>
       ${when(
         kind === "fixed" || kind === "range",
@@ -289,6 +313,39 @@ export const template = {
             })}
           </div>
         `,
+      )}
+      ${when(seeking === "substitute", () =>
+        this.renderFee({ entity, onField }),
+      )}
+    `
+  },
+
+  renderFee({ entity, onField }) {
+    const kind = getFieldValue(entity, "fee_kind", "none")
+    return html`
+      <div class=${styles.field}>
+        ${RadioGroup.render({
+          id: "fee-kind",
+          label: t("pay.feeTitle"),
+          value: kind,
+          options: FEE_KINDS.map((value) => ({
+            value,
+            label: t(`pay.feeKinds.${value}`),
+          })),
+          onChange: (value) => onField({ field: "fee_kind", value }),
+        })}
+        <p class=${styles.hint}>${t("pay.feeHint")}</p>
+      </div>
+      ${when(kind === "fixed" || kind === "percent", () =>
+        this.renderTextField({
+          label: kind === "percent" ? t("pay.feePercent") : t("pay.amount"),
+          field: "fee_amount",
+          value: getFieldValue(entity, "fee_amount", ""),
+          type: "number",
+          error: t(getFieldError(entity, "fee_amount")),
+          isRequired: true,
+          onField,
+        }),
       )}
     `
   },

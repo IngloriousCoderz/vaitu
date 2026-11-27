@@ -11,6 +11,7 @@ import {
   submitJobReview,
 } from "../../api/reputation.js"
 import { jobTypeTags } from "../../common/job-card/index.js"
+import { suggestedDealAmount } from "../../common/pay.js"
 import {
   DATETIME_LOCAL_LENGTH,
   FIRST_INDEX,
@@ -65,8 +66,7 @@ export function reviewSubmit(entity, application_id, api) {
 
 export function assignAsk(entity, application_id) {
   entity.confirming_assign = application_id
-  entity.assign_amount =
-    entity.pay?.kind === "fixed" ? String(entity.pay.amount_min) : ""
+  entity.assign_amount = suggestedDealAmount(entity.seeking, entity.pay)
   entity.confirming_reopen = false
 }
 
@@ -121,7 +121,7 @@ export const load = handleRequest(
       const { data: job, error: jobError } = await supabase
         .from("jobs")
         .select(
-          "id, setting, title, profession, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency)",
+          "id, setting, title, profession, seeking, status, max_applicants, application_deadline, location, country, region, job_date, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency, fee_kind, fee_amount)",
         )
         .eq("id", job_id)
         .single()
@@ -157,6 +157,7 @@ export const load = handleRequest(
     success(entity, { job, items }) {
       entity.job_title = job.title
       entity.pay = job.job_pay ?? null
+      entity.seeking = job.seeking
       entity.job_status = job.status
       entity.job_deadline = job.application_deadline
       entity.max_applicants = job.max_applicants

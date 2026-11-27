@@ -8,7 +8,7 @@
   "highlights": [
     {
       "lead": "Indisponible ?",
-      "text": "Transmettez la mission, choisissez qui y va et gardez une marge si vous le souhaitez"
+      "text": "Transmettez la mission, choisissez qui y va et demandez une commission si vous voulez"
     },
     {
       "lead": "Vous cherchez du travail ?",
@@ -58,7 +58,7 @@
     {
       "title": "Quand vous ne pouvez pas y être",
       "points": [
-        "Gardez une marge si vous le souhaitez : c'est vous qui fixez ce que gagne le collègue",
+        "Demandez une commission si vous voulez : un montant fixe ou un pourcentage de ce que paie le client",
         "Ne décevez pas votre client et gardez sa confiance",
         "C'est vous qui choisissez à qui confier la mission",
         "Voyez le niveau et les avis de chaque candidat"
@@ -139,7 +139,7 @@
     },
     {
       "question": "Puis-je gagner sur une mission que je transmets ?",
-      "answer": "Si vous le souhaitez. C'est vous qui fixez ce que gagne le collègue, et ce que le client vous paie en plus vous revient. Le collègue ne voit que sa rémunération, jamais le prix du client, et Vaitu ne prend rien. Garder une marge, et la convenir avec le collègue, c'est votre choix."
+      "answer": "Si vous le souhaitez. Un remplaçant reprend la mission, client compris : c'est le client qui le paie, et il vous reverse la commission que vous avez fixée, un montant ou un pourcentage. Si vous cherchez plutôt un assistant, vous gardez le client et c'est vous qui le payez. Vaitu ne prend rien, et la commission se convient entre vous."
     },
     {
       "question": "Comment se contacter ?",

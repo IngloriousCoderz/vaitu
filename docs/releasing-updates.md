@@ -67,10 +67,8 @@ Every push to `main` does it, from `.husky/pre-push`, which reads git's refs
 first:
 
 ```sh
-#!/bin/sh
 refs=$(cat)
-pnpm typecheck
-pnpm test:unit
+pnpm typecheck && pnpm test
 printf '%s\n' "$refs" | pnpm exec inglorious-live-update release --on-push
 ```
 
@@ -137,6 +135,37 @@ against.
 
 At this point the update is optional: the stores offer it, and users take it
 when their phone does.
+
+### Releasing from GitHub Actions
+
+`.github/workflows/store-release.yml` does steps 2 and 3 without a Mac or
+Android Studio. It runs by itself when a push to `main` raises the version in
+`package.json`, so a release is `pnpm release:version`, a commit and a push.
+Pushes that change `package.json` without raising the version, such as
+dependency updates, don't start one. To upload another build of the same
+version, run **Store release** from the repository's **Actions** tab, choosing
+both stores or one. It raises the build number and commits it, then builds the
+iOS app on a macOS runner and uploads it to TestFlight, and builds the Android
+app bundle and uploads it to Google Play's internal testing track. Submitting
+for review (step 4) stays in App Store Connect and Play Console.
+
+It needs these repository secrets (**Settings → Secrets and variables →
+Actions**):
+
+| Secret                        | Value                                                                                                                                                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ENV_FILE`                    | The contents of `.env`, the production values the app is built with                                                                                       |
+| `APP_STORE_CONNECT_KEY`       | The `.p8` file of an App Store Connect API key with the **Admin** role (**Users and Access → Integrations**), which signs with certificates Apple manages |
+| `APP_STORE_CONNECT_KEY_ID`    | That key's ID                                                                                                                                             |
+| `APP_STORE_CONNECT_ISSUER_ID` | The Issuer ID above the list of keys                                                                                                                      |
+| `ANDROID_KEYSTORE_BASE64`     | The upload keystore, as `base64 -i upload.jks` prints it                                                                                                  |
+| `ANDROID_KEYSTORE_PASSWORD`   | Its password                                                                                                                                              |
+| `ANDROID_KEY_ALIAS`           | The key's alias in it                                                                                                                                     |
+| `ANDROID_KEY_PASSWORD`        | The key's password                                                                                                                                        |
+| `PLAY_SERVICE_ACCOUNT_JSON`   | The JSON key of a Google Cloud service account invited in Play Console (**Users and permissions**) with the right to release to testing tracks            |
+
+If `main` is protected, let `github-actions[bot]` push to it, so the workflow
+can commit the build number.
 
 ### Making it mandatory
 

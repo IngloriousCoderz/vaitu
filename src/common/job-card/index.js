@@ -63,6 +63,9 @@ export const Card = {
         <div class=${styles.tagRow}>
           ${jobTypeTags(job).map((tag) => Chip.render({ children: tag }))}
           ${when(job.filterValues.length, () => Chip.render({ children: jobTag(job) }))}
+          ${when(job.seeking, () =>
+            Chip.render({ children: t(`pay.seekingKinds.${job.seeking}`) }),
+          )}
           ${when(job.pay && job.pay.kind !== "to_agree", () =>
             Chip.render({ children: formatPay(job.pay), color: "info" }),
           )}

@@ -160,6 +160,11 @@ create table public.jobs (
     check (setting in ('wedding', 'festival', 'concert', 'apartment', 'house', 'office')),
   profession text not null,
   job_type text generated always as (setting || '_' || profession) stored,
+  -- A substitute takes the job over, client included: the client pays them,
+  -- and they may owe the poster a fee. An assistant works alongside the
+  -- poster, who keeps the client and pays them.
+  seeking text not null default 'substitute'
+    check (seeking in ('substitute', 'assistant')),
   title text not null,
   location text not null,
   country text not null,
@@ -1280,6 +1285,7 @@ grant insert on public.jobs to authenticated;
 grant update (
   setting,
   profession,
+  seeking,
   title,
   location,
   country,
@@ -1685,20 +1691,73 @@ end;
 $$;
 
 -- What a job pays. Apart from jobs, which anyone can read and realtime
--- broadcasts: a client must not be able to find what their photographer keeps.
--- What the colleague earns, never the client's price or the poster's margin.
+-- broadcasts: what passes between colleagues is theirs, not the client's.
+-- The amounts are what the colleague earns: from the client when they take
+-- over as a substitute, from the poster when they assist. The fee is what a
+-- substitute gives the poster for the client, a set amount or a percentage
+-- of what the client pays, and only substitute jobs have one.
 create table public.job_pay (
   job_id uuid primary key references public.jobs (id) on delete cascade,
   kind text not null default 'to_agree' check (kind in ('fixed', 'range', 'to_agree', 'unpaid')),
   amount_min numeric check (amount_min > 0),
   amount_max numeric check (amount_max > 0),
   currency text not null default 'EUR' check (char_length(currency) = 3),
+  fee_kind text not null default 'none'
+    check (fee_kind in ('none', 'fixed', 'percent', 'to_agree')),
+  fee_amount numeric check (fee_amount > 0),
   check (
     (kind in ('to_agree', 'unpaid') and amount_min is null and amount_max is null)
     or (kind = 'fixed' and amount_min is not null and amount_max is null)
     or (kind = 'range' and amount_min is not null and amount_max > amount_min)
+  ),
+  check (
+    (fee_kind in ('none', 'to_agree') and fee_amount is null)
+    or (fee_kind = 'fixed' and fee_amount is not null)
+    or (fee_kind = 'percent' and fee_amount is not null and fee_amount <= 100)
   )
 );
+
+create or replace function public.enforce_job_pay_fee()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.fee_kind <> 'none' and exists (
+    select 1 from public.jobs e
+    where e.id = new.job_id and e.seeking = 'assistant'
+  ) then
+    raise exception 'Only a substitute owes the poster a fee.';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger trg_job_pay_fee
+  before insert or update on public.job_pay
+  for each row execute function public.enforce_job_pay_fee();
+
+-- An assistant owes nothing: a job that turns into one drops its fee.
+create or replace function public.drop_assistant_fee()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.job_pay
+  set fee_kind = 'none', fee_amount = null
+  where job_id = new.id and fee_kind <> 'none';
+  return new;
+end;
+$$;
+
+create trigger trg_jobs_assistant_fee
+  after update of seeking on public.jobs
+  for each row
+  when (new.seeking = 'assistant' and old.seeking <> 'assistant')
+  execute function public.drop_assistant_fee();
 
 alter table public.job_pay enable row level security;
 
@@ -1725,7 +1784,9 @@ revoke all on public.job_pay from anon, authenticated;
 grant select, insert, update on public.job_pay to authenticated;
 
 -- What the poster and the winner say they agreed. The poster proposes,
--- the winner confirms, and a confirmed amount no longer changes.
+-- the winner confirms, and a confirmed amount no longer changes. It's what
+-- passes between them: what the poster pays an assistant, or the fee a
+-- substitute gives the poster.
 create table public.job_agreements (
   application_id uuid primary key references public.applications (id) on delete cascade,
   amount numeric not null check (amount > 0),
@@ -1770,10 +1831,15 @@ begin
   if exists (
     select 1
     from public.applications a
-    join public.job_pay p on p.job_id = a.job_id
-    where a.id = p_application_id and p.kind = 'unpaid'
+    join public.jobs e on e.id = a.job_id
+    left join public.job_pay p on p.job_id = a.job_id
+    where a.id = p_application_id
+      and (
+        (e.seeking = 'assistant' and p.kind = 'unpaid')
+        or (e.seeking = 'substitute' and coalesce(p.fee_kind, 'none') = 'none')
+      )
   ) then
-    raise exception 'This job is unpaid.';
+    raise exception 'Nothing passes between you on this job.';
   end if;
 
   insert into public.job_agreements (application_id, amount, currency)

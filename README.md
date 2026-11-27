@@ -9,6 +9,7 @@ The name comes from the Italian "vai tu" ("you go"), but it's short, easy to pro
 - **Publish a job** you can't take, with all the details a colleague needs to decide.
 - **Apply to jobs** as a professional, with a pre-filled profile.
 - **Choose the best candidate** and pass the job to them.
+- **Substitute or assistant**: a substitute takes the job over, client included, and may give you a fee (a set amount or a percentage); an assistant works alongside you and you pay them. See [Reputation](docs/reputation.md).
 - **Voice-to-form**: instead of filling in the whole job form by hand, record a voice message and the fields are filled in automatically. See [Voice AI](docs/voice-ai.md).
 - **PWA and native apps**: runs in the browser as a PWA and as a hybrid Android/iOS app via Capacitor.
 - **Notifications**: a bell in the app, and pushes to the browser and the phone even when the app is closed, for new jobs, applications, decisions and changes to jobs. See [Notifications](docs/notifications.md).
@@ -37,7 +38,7 @@ You need [pnpm](https://pnpm.io/), Docker Desktop (running) and the Supabase CLI
    pnpm install
    ```
 
-   This also installs the git hooks: before a commit, ESLint and Prettier run on the staged files; before a push, the type check and the unit tests run.
+   This also installs the git hooks: before a commit, ESLint and Prettier fix the staged files and the commit stops while a warning is left; before a push, the type check and all the tests must pass, the integration ones included, so keep the local backend running.
 
 2. **Start the local backend**:
 

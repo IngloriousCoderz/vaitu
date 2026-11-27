@@ -70,7 +70,12 @@ describe("the pay fields", () => {
       amount_min: 300,
       amount_max: undefined,
       currency: "EUR",
+      fee_kind: undefined,
+      fee_amount: undefined,
     })
+    expect(
+      payFromForm({ pay_kind: "fixed", fee_kind: "percent", fee_amount: "15" }),
+    ).toMatchObject({ fee_kind: "percent", fee_amount: 15 })
   })
 
   it("start as to be agreed when the job has no pay yet", () => {
@@ -79,6 +84,8 @@ describe("the pay fields", () => {
       pay_min: "",
       pay_max: "",
       pay_currency: "EUR",
+      fee_kind: "none",
+      fee_amount: "",
     })
   })
 
@@ -89,12 +96,16 @@ describe("the pay fields", () => {
         amount_min: 500,
         amount_max: null,
         currency: "CHF",
+        fee_kind: "fixed",
+        fee_amount: 100,
       }),
     ).toEqual({
       pay_kind: "fixed",
       pay_min: 500,
       pay_max: "",
       pay_currency: "CHF",
+      fee_kind: "fixed",
+      fee_amount: 100,
     })
   })
 })

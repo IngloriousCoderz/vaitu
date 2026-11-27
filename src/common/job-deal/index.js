@@ -19,9 +19,11 @@ export function isSettlementOpen({ agreement, status, job_date, review }) {
 
 export const JobDeal = {
   /**
-   * The amount both sides agreed, and later whether it was settled.
+   * The amount both sides agreed, and later whether it was settled: what the
+   * poster pays an assistant, or the fee a substitute gives the poster.
    * @param {{
    *   role: "poster" | "winner",
+   *   seeking: string,
    *   agreement?: { amount: number, currency: string, status: string } | null,
    *   settlements?: { role: string, is_settled: boolean }[],
    *   isSettlementDue: boolean,
@@ -36,6 +38,7 @@ export const JobDeal = {
    */
   render({
     role,
+    seeking,
     agreement,
     settlements = [],
     isSettlementDue,
@@ -66,7 +69,7 @@ export const JobDeal = {
         ${when(
           status === "proposed" && role === "winner",
           () => html`
-            <p>${t("deal.confirmQuestion", { amount })}</p>
+            <p>${t(`deal.confirmQuestion.${seeking}`, { amount })}</p>
             <div class=${styles.actions}>
               ${Button.render({
                 children: t("deal.yesAgreed"),
@@ -108,7 +111,7 @@ export const JobDeal = {
           () => html`
             ${Input.render({
               id: "deal-amount",
-              label: t("deal.amountLabel"),
+              label: t(`deal.amountLabel.${seeking}`),
               inputType: "number",
               value: draft,
               isFullWidth: true,

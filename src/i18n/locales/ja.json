@@ -197,7 +197,11 @@
     "payAmount": "0より大きい金額を入力してください",
     "payRange": "最低額より高い最高額を入力してください",
     "payCurrency": "通貨を選んでください",
-    "codeInvalid": "メールに記載されたコードを入力してください"
+    "codeInvalid": "メールに記載されたコードを入力してください",
+    "pickSeeking": "代理かアシスタントを選んでください",
+    "pickFee": "紹介料を選んでください",
+    "feeAmount": "0より大きい紹介料を入力してください",
+    "feePercent": "0から100の割合を入力してください"
   },
   "errors": {
     "notLoggedIn": "ログインしていません",
@@ -713,31 +717,73 @@
     "body": "Vaituアカウントは無効化されました。戻るには再度サインインするだけです。\n\n完全に消去する場合は、30日以内にこのリンクを使ってください：\n{{link}}\n\n心当たりがない場合は、サインインしてパスワードを変更してください。"
   },
   "pay": {
-    "title": "同業者の報酬",
-    "hint": "お客様があなたに支払う額ではなく、担当者が受け取る額です。サインインした人にのみ表示され、一般には公開されません。",
+    "title": {
+      "substitute": "お客様が支払う額",
+      "assistant": "同業者の報酬"
+    },
+    "hint": {
+      "substitute": "仕事を引き継ぐ人は、お客様から直接支払いを受けます。サインインした人にのみ表示され、一般には公開されません。",
+      "assistant": "この仕事であなたが支払う額です。サインインした人にのみ表示され、一般には公開されません。"
+    },
     "amount": "金額",
     "min": "最低",
     "max": "最高",
     "currency": "通貨",
     "toAgree": "要相談",
     "unpaid": "無報酬",
-    "youEarn": "報酬：{{pay}}",
+    "youEarn": {
+      "substitute": "お客様からの報酬：{{pay}}",
+      "assistant": "投稿者からの報酬：{{pay}}"
+    },
     "signInToSee": "この仕事の報酬を見るにはサインインしてください。",
     "kinds": {
       "to_agree": "要相談",
       "fixed": "固定額",
       "range": "金額の幅",
       "unpaid": "無報酬（好意や交換として）"
-    }
+    },
+    "seeking": "募集する人",
+    "seekingKinds": {
+      "substitute": "代理",
+      "assistant": "アシスタント"
+    },
+    "seekingHint": {
+      "substitute": "お客様ごと仕事を引き継ぎ、お客様から報酬を受け取ります。お客様の了承を得てください。",
+      "assistant": "あなたと一緒に働きます。お客様はあなたのままで、報酬はあなたが支払います。"
+    },
+    "seekingIntro": {
+      "substitute": "代理を募集中：お客様ごと仕事を引き継ぎます。",
+      "assistant": "アシスタントを募集中：お客様を担当する投稿者と一緒に働きます。"
+    },
+    "feeTitle": "紹介料",
+    "feeHint": "お客様を紹介した対価として同業者から受け取る額です（任意）。",
+    "feeKinds": {
+      "none": "紹介料なし",
+      "percent": "割合",
+      "fixed": "固定額",
+      "to_agree": "要相談"
+    },
+    "feePercent": "割合（%）",
+    "feePercentOf": "お客様の支払額の{{percent}}",
+    "feeToPoster": "投稿者への紹介料：{{fee}}"
   },
   "deal": {
     "title": "合意した内容",
-    "amountLabel": "合意した金額",
-    "amountHint": "同業者の報酬です。相手に確認を依頼します。後から追加することもできます。",
+    "amountLabel": {
+      "substitute": "合意した紹介料",
+      "assistant": "合意した金額"
+    },
+    "amountHint": {
+      "substitute": "お客様の紹介料として同業者から受け取る額です。相手に確認を依頼します。後から追加することもできます。",
+      "assistant": "同業者に支払う額です。相手に確認を依頼します。後から追加することもできます。"
+    },
     "propose": "確認を依頼",
     "waiting": "{{amount}}の確認を待っています。",
     "confirmed": "双方が確認済み：{{amount}}。",
-    "confirmQuestion": "投稿者は{{amount}}で合意したとしています。正しいですか？",
+    "confirmQuestion": {
+      "substitute": "投稿者は、紹介料として{{amount}}を支払うことで合意したとしています。正しいですか？",
+      "assistant": "投稿者は、あなたに{{amount}}を支払うことで合意したとしています。正しいですか？"
+    },
     "yesAgreed": "はい、正しいです",
     "notAgreed": "いいえ、合意した内容と違います",
     "rejectedPoster": "{{amount}}は合意した額ではないとの回答です。話し合って正しい金額を入力してください。",

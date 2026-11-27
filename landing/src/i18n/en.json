@@ -8,7 +8,7 @@
   "highlights": [
     {
       "lead": "Can't make it?",
-      "text": "Pass the job on, choose who goes, and keep a margin if you want"
+      "text": "Pass the job on, choose who goes, and ask a fee if you want"
     },
     {
       "lead": "Looking for work?",
@@ -58,7 +58,7 @@
     {
       "title": "When you can't make it",
       "points": [
-        "Keep a margin if you want: you set what the colleague earns",
+        "Ask a fee if you want: a set amount or a percentage of what the client pays",
         "Don't let your client down or lose their trust",
         "You decide who gets the job",
         "See each applicant's rank and reviews"
@@ -139,7 +139,7 @@
     },
     {
       "question": "Can I earn from a job I pass on?",
-      "answer": "If you want to. You set what the colleague earns, and what the client pays you beyond that is yours. The colleague sees only their pay, never the client's price, and Vaitu takes nothing. Whether to keep a margin is up to you, and so is agreeing it with the colleague."
+      "answer": "If you want to. A substitute takes the job over, client included: the client pays them, and they give you the fee you set, a set amount or a percentage. If you're looking for an assistant instead, you keep the client and pay them. Vaitu takes nothing, and the fee is yours to agree with the colleague."
     },
     {
       "question": "How do we get in touch?",

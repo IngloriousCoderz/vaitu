@@ -314,6 +314,8 @@ describe("the pay of a job", () => {
       amount_min: null,
       amount_max: null,
       currency: "EUR",
+      fee_kind: "none",
+      fee_amount: null,
     })
     expect(
       normalizePay({ kind: "fixed", amount_min: 5, amount_max: 9 }).amount_max,
@@ -323,7 +325,55 @@ describe("the pay of a job", () => {
       amount_min: null,
       amount_max: null,
       currency: "EUR",
+      fee_kind: "none",
+      fee_amount: null,
     })
     expect(normalizePay()).toHaveProperty("kind", "to_agree")
+  })
+})
+
+describe("substitutes and assistants", () => {
+  const job = (values) => validateJob({ ...validWedding, ...values })
+
+  it("looks for a substitute unless it says otherwise", () => {
+    expect(normalizeJob(validWedding).seeking).toBe("substitute")
+    expect(
+      normalizeJob({ ...validWedding, seeking: "assistant" }).seeking,
+    ).toBe("assistant")
+    expect(job({ seeking: "partner" })).toHaveProperty("seeking")
+  })
+
+  it("lets a substitute owe a set fee or a percentage", () => {
+    const fee = (fee_kind, fee_amount) =>
+      job({ pay: { kind: "to_agree", fee_kind, fee_amount } })
+    expect(fee("none")).toEqual({})
+    expect(fee("to_agree")).toEqual({})
+    expect(fee("fixed", 300)).toEqual({})
+    expect(fee("percent", 15)).toEqual({})
+    expect(fee("fixed")).toHaveProperty("fee_amount")
+    expect(fee("percent", 0)).toHaveProperty("fee_amount")
+    expect(fee("percent", 101)).toHaveProperty("fee_amount")
+    expect(fee("tip")).toHaveProperty("fee_kind")
+  })
+
+  it("never writes a fee for an assistant", () => {
+    const pay = {
+      kind: "fixed",
+      amount_min: 500,
+      currency: "EUR",
+      fee_kind: "percent",
+      fee_amount: 10,
+    }
+    expect(
+      job({ seeking: "assistant", pay: { ...pay, fee_amount: 500 } }),
+    ).toEqual({})
+    expect(normalizePay(pay, "assistant")).toMatchObject({
+      fee_kind: "none",
+      fee_amount: null,
+    })
+    expect(normalizePay(pay, "substitute")).toMatchObject({
+      fee_kind: "percent",
+      fee_amount: 10,
+    })
   })
 })

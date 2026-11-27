@@ -35,6 +35,8 @@ export function payFromForm(values) {
     amount_min: toAmount(values.pay_min),
     amount_max: toAmount(values.pay_max),
     currency: values.pay_currency,
+    fee_kind: values.fee_kind,
+    fee_amount: toAmount(values.fee_amount),
   }
 }
 
@@ -44,6 +46,8 @@ export function payToForm(pay) {
     pay_min: pay?.amount_min ?? "",
     pay_max: pay?.amount_max ?? "",
     pay_currency: pay?.currency ?? DEFAULT_CURRENCY,
+    fee_kind: pay?.fee_kind ?? "none",
+    fee_amount: pay?.fee_amount ?? "",
   }
 }
 

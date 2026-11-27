@@ -203,7 +203,11 @@
     "payAmount": "Inserisci un importo maggiore di zero",
     "payRange": "Inserisci un massimo superiore al minimo",
     "payCurrency": "Scegli una valuta",
-    "codeInvalid": "Inserisci il codice ricevuto per email"
+    "codeInvalid": "Inserisci il codice ricevuto per email",
+    "pickSeeking": "Scegli sostituto o assistente",
+    "pickFee": "Scegli una commissione",
+    "feeAmount": "Inserisci una commissione maggiore di zero",
+    "feePercent": "Inserisci una percentuale tra 0 e 100"
   },
   "errors": {
     "notLoggedIn": "Non hai effettuato l'accesso",
@@ -738,31 +742,73 @@
     "body": "Il tuo account Vaitu è stato disattivato. Per tornare, ti basta accedere di nuovo.\n\nSe vuoi cancellarlo definitivamente, usa questo link entro 30 giorni:\n{{link}}\n\nSe non l'hai chiesto tu, accedi e cambia la password."
   },
   "pay": {
-    "title": "Quanto guadagna il collega",
-    "hint": "Quello che riceve per il lavoro, non quello che ti paga il cliente. Lo vede chi ha un account, non il pubblico.",
+    "title": {
+      "substitute": "Quanto paga il cliente",
+      "assistant": "Quanto guadagna il collega"
+    },
+    "hint": {
+      "substitute": "Chi subentra viene pagato direttamente dal cliente. Lo vede chi ha un account, non il pubblico.",
+      "assistant": "Quanto gli paghi per il lavoro. Lo vede chi ha un account, non il pubblico."
+    },
     "amount": "Importo",
     "min": "Da",
     "max": "A",
     "currency": "Valuta",
     "toAgree": "Da concordare",
     "unpaid": "Senza compenso",
-    "youEarn": "Guadagni: {{pay}}",
+    "youEarn": {
+      "substitute": "Il cliente ti paga: {{pay}}",
+      "assistant": "L'inserzionista ti paga: {{pay}}"
+    },
     "signInToSee": "Accedi per vedere quanto paga questo lavoro.",
     "kinds": {
       "to_agree": "Da concordare",
       "fixed": "Importo definito",
       "range": "Una fascia",
       "unpaid": "Senza compenso (un favore o uno scambio)"
-    }
+    },
+    "seeking": "Chi cerchi",
+    "seekingKinds": {
+      "substitute": "Sostituto",
+      "assistant": "Assistente"
+    },
+    "seekingHint": {
+      "substitute": "Subentra nel lavoro, cliente compreso: è il cliente a pagarlo. Assicurati che il tuo cliente sia d'accordo.",
+      "assistant": "Lavora con te: il cliente resta tuo e lo paghi tu."
+    },
+    "seekingIntro": {
+      "substitute": "Cerca un sostituto: subentri nel lavoro, cliente compreso.",
+      "assistant": "Cerca un assistente: lavori con l'inserzionista, che resta il riferimento del cliente."
+    },
+    "feeTitle": "La tua commissione",
+    "feeHint": "Quello che il collega ti riconosce per avergli passato il cliente, se vuoi qualcosa.",
+    "feeKinds": {
+      "none": "Nessuna commissione",
+      "percent": "Una percentuale",
+      "fixed": "Importo definito",
+      "to_agree": "Da concordare"
+    },
+    "feePercent": "Percentuale",
+    "feePercentOf": "{{percent}} di quanto paga il cliente",
+    "feeToPoster": "Commissione all'inserzionista: {{fee}}"
   },
   "deal": {
     "title": "Quello che avete concordato",
-    "amountLabel": "Importo concordato",
-    "amountHint": "Quanto guadagna il collega. Gli chiederemo di confermarlo. Puoi anche aggiungerlo dopo.",
+    "amountLabel": {
+      "substitute": "Commissione concordata",
+      "assistant": "Importo concordato"
+    },
+    "amountHint": {
+      "substitute": "Quanto ti riconosce il collega per il cliente. Gli chiederemo di confermarlo. Puoi anche aggiungerlo dopo.",
+      "assistant": "Quanto paghi al collega. Gli chiederemo di confermarlo. Puoi anche aggiungerlo dopo."
+    },
     "propose": "Chiedi conferma",
     "waiting": "In attesa che confermi {{amount}}.",
     "confirmed": "Concordato e confermato da entrambi: {{amount}}.",
-    "confirmQuestion": "L'inserzionista dice che avete concordato {{amount}}. È corretto?",
+    "confirmQuestion": {
+      "substitute": "L'inserzionista dice che avete concordato una commissione di {{amount}} da dargli per il cliente. È corretto?",
+      "assistant": "L'inserzionista dice che avete concordato che ti paga {{amount}}. È corretto?"
+    },
     "yesAgreed": "Sì, è corretto",
     "notAgreed": "No, non è quanto concordato",
     "rejectedPoster": "Ha risposto che {{amount}} non è quanto concordato. Parlatene e inserisci l'importo giusto.",

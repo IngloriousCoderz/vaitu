@@ -1,5 +1,3 @@
-#!/bin/sh
 refs=$(cat)
-pnpm typecheck
-pnpm test:unit
+pnpm typecheck && pnpm test
 printf '%s\n' "$refs" | pnpm exec inglorious-live-update release --on-push

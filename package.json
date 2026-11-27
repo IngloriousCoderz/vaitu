@@ -10,7 +10,6 @@
     "format": "prettier --write .",
     "lint": "eslint . --fix",
     "typecheck": "node scripts/typecheck.mjs",
-    "lint-staged": "lint-staged",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:integration": "vitest run --project integration",
@@ -135,7 +134,7 @@
     "workbox-window": "^7.4.1"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+    "*.{js,jsx,ts,tsx,mjs,cjs,vue,ijs,its}": [
       "eslint --fix --max-warnings=0 --no-warn-ignored",
       "prettier --write"
     ],

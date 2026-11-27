@@ -69,6 +69,8 @@ const WEEKDAYS = [
 ]
 const NO_AMOUNT = 0
 const MIN_PLACES = 1
+const PERCENT_MAX = 100
+const SEEKING = ["substitute", "assistant"]
 
 export function offeredJobTypes(requested: unknown) {
   if (!Array.isArray(requested)) return JOB_TYPES
@@ -92,11 +94,12 @@ export function systemPrompt(
     ? `The form is set to "${current}": keep it unless the transcript clearly describes another of the listed job types.`
     : "Pick the listed job type the transcript describes, or null when it does not say."
 
-  return `A professional is passing on a job they cannot take. You extract the job's data from their voice transcript, which can be in any language.
+  return `A professional is passing on a job they cannot take, to a substitute, or looking for an assistant. You extract the job's data from their voice transcript, which can be in any language.
 Today is ${weekday(today)} ${today}.
 Respond with JSON only, no other text, using exactly these keys (null when unknown):
 {
   "job_type": ${jobTypes.map((id) => `"${id}"`).join(" | ")} | null,
+  "seeking": "substitute" | "assistant" | null,
   "title": string | null,
   "location": string | null,
   "country": string | null,
@@ -106,7 +109,8 @@ Respond with JSON only, no other text, using exactly these keys (null when unkno
   "max_applicants": integer | null,
   "details": object,
   "description": string | null,
-  "pay": { "kind": "fixed" | "range" | "unpaid", "amount_min": number | null, "amount_max": number | null, "currency": string | null } | null
+  "pay": { "kind": "fixed" | "range" | "unpaid", "amount_min": number | null, "amount_max": number | null, "currency": string | null } | null,
+  "fee": { "kind": "none" | "fixed" | "percent", "amount": number | null } | null
 }
 A job type is its setting, an underscore and the profession. "details" depends on the setting:
 ${detailShapes()}
@@ -116,12 +120,14 @@ Rules:
 - ${Object.keys(OPTIONS).join(", ")}: every one that was said, [] when none was. moments: the parts of the wedding day the job covers.${detailRules(jobTypes)}
 - First names only, no surnames, as they were said. Location as it was said. Country and region in English ("Italy", "Tuscany").
 - For ${and(homes())}, location is only the neighborhood or town, never a street address: this is published, and it is someone's home.
-- pay: what the colleague taking the job earns, never the client's total price. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max; "unpaid", with no amounts, when the job is said to be unpaid, a favour or an exchange. null when no amount is said.
+- seeking: "substitute" when the colleague takes the job over in their place, client included; "assistant" when the colleague works alongside them ("a second shooter", "someone to help me"). null when it is not clear.
+- pay: what the colleague taking the job earns: what the client pays for a substitute, what the poster pays an assistant. "fixed" for one amount, in amount_min; "range" for two, in amount_min and amount_max; "unpaid", with no amounts, when the job is said to be unpaid, a favour or an exchange. null when no amount is said.
+- fee: only for a substitute, what they give the poster for passing on the client. "percent" with the percentage in amount ("10%" is 10); "fixed" with the amount; "none" when the poster says they want nothing. null when not said or for an assistant.
 - currency: the ISO 4217 code of the currency that was said ("EUR", "AUD"), or null when none was.
 - Values from a list must be among the listed values.
 - application_deadline: when applications close, in local time. Resolve weekdays and relative days ("next Friday", "tomorrow") from today; use 23:59 when only a day is said. null when no deadline is said.
 - max_applicants: how many applicants the poster will shortlist before choosing one ("I'll pick among 3", "a shortlist of five"). Not the number of people the job needs. null when not said.
-- description: everything else the colleague taking the job should know that no other key holds, never repeating the date, deadline, shortlist size, place or pay (requests, equipment, constraints, timings, the client's wishes), as short bullet points, one per line, each starting with "- ". Rewrite what was said into clear, correct sentences in the transcript's language, dropping hesitations, repetitions and small talk. Never include phone numbers, email addresses, street addresses or surnames: this is published. null when nothing is left to say.
+- description: everything else the colleague taking the job should know that no other key holds, never repeating the date, deadline, shortlist size, place, pay or fee (requests, equipment, constraints, timings, the client's wishes), as short bullet points, one per line, each starting with "- ". Rewrite what was said into clear, correct sentences in the transcript's language, dropping hesitations, repetitions and small talk. Never include phone numbers, email addresses, street addresses or surnames: this is published. null when nothing is left to say.
 - job_date: use the stated year when given, otherwise the next upcoming occurrence of that day and month relative to today (never a past date); null only when no day and month can be determined.`
 }
 
@@ -196,6 +202,9 @@ export function toJobFields(
   const [setting] = (job_type ?? "").split("_")
   return {
     job_type,
+    seeking: SEEKING.includes(answer?.seeking as string)
+      ? (answer.seeking as string)
+      : null,
     title: SETTINGS[setting]?.isTitled ? text(answer?.title) : null,
     location: text(answer?.location),
     country: text(answer?.country),
@@ -207,7 +216,20 @@ export function toJobFields(
     description:
       text(answer?.description)?.slice(0, DESCRIPTION_MAX_LENGTH) ?? null,
     pay: pay(answer?.pay),
+    fee: answer?.seeking === "assistant" ? null : fee(answer?.fee),
   }
+}
+
+function fee(answer: unknown) {
+  const given = (answer ?? {}) as Record<string, unknown>
+  if (given.kind === "none") return { kind: "none", amount: null }
+  const value = amount(given.amount)
+  if (value === null) return null
+  if (given.kind === "fixed") return { kind: "fixed", amount: value }
+  if (given.kind === "percent" && value <= PERCENT_MAX) {
+    return { kind: "percent", amount: value }
+  }
+  return null
 }
 
 function pay(answer: unknown) {

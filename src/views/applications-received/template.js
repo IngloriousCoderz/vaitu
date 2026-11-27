@@ -21,7 +21,7 @@ import { ErrorAlert } from "../../common/error-alert/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { formatPay, isUnpaid } from "../../common/pay.js"
+import { formatFee, formatPay, hasDeal } from "../../common/pay.js"
 import { telUrl, websiteLabel } from "../../common/profile.js"
 import { ProfileAvatar } from "../../common/profile-avatar/index.js"
 import { SafetyButton } from "../../common/safety/index.js"
@@ -156,6 +156,7 @@ export const template = {
               entity.job_recap,
               selected_count,
               entity.max_applicants,
+              entity.seeking,
               entity.pay,
               onPhotoOpen,
             ),
@@ -179,7 +180,8 @@ export const template = {
                     max_reached,
                     confirming_assign: entity.confirming_assign === item.id,
                     assign_amount: entity.assign_amount,
-                    is_unpaid: isUnpaid(entity.pay),
+                    seeking: entity.seeking,
+                    has_deal: hasDeal(entity.seeking, entity.pay),
                     deal_draft: entity.deal_draft,
                     is_deal_busy: entity.dealStatus === "loading",
                     deal_error: entity.dealError,
@@ -224,7 +226,8 @@ export const template = {
     })
   },
 
-  renderRecap(recap, shortlisted, maxApplicants, pay, onPhotoOpen) {
+  renderRecap(recap, shortlisted, maxApplicants, seeking, pay, onPhotoOpen) {
+    const fee = seeking === "substitute" ? formatFee(pay) : null
     const photos = recap.image_urls ?? []
     const rows = [
       [t("received.status"), translatedValue("status.", recap.status)],
@@ -237,10 +240,12 @@ export const template = {
           ? [[detail.label, values.map(detailLabel).join(", ")]]
           : []
       }),
+      [t("pay.seeking"), t(`pay.seekingKinds.${seeking}`)],
       [t("received.location"), recap.location || "—"],
       [t("received.jobDate"), formatDay(recap.job_date)],
       [t("received.deadline"), formatDeadline(recap.application_deadline)],
-      [t("pay.title"), formatPay(pay)],
+      [t(`pay.title.${seeking}`), formatPay(pay)],
+      ...(fee ? [[t("pay.feeTitle"), fee]] : []),
       [t("received.shortlist"), `${shortlisted}/${maxApplicants ?? "—"}`],
       [
         t("received.created"),
@@ -301,7 +306,8 @@ export const template = {
     max_reached,
     confirming_assign,
     assign_amount,
-    is_unpaid,
+    seeking,
+    has_deal,
     deal_draft,
     is_deal_busy,
     deal_error,
@@ -403,9 +409,10 @@ export const template = {
                 }),
               )}
               <p class=${styles.motivation}>${item.motivation}</p>
-              ${when(item.status === "selected" && !is_unpaid, () =>
+              ${when(item.status === "selected" && has_deal, () =>
                 JobDeal.render({
                   role: "poster",
+                  seeking,
                   agreement: item.job_agreements,
                   settlements: item.job_settlements,
                   isSettlementDue: isSettlementOpen({
@@ -495,17 +502,17 @@ export const template = {
                     id: `assign-confirm-${item.id}`,
                     isOpen: confirming_assign,
                     message: t("received.assignConfirm"),
-                    children: is_unpaid
-                      ? nothing
-                      : Input.render({
+                    children: has_deal
+                      ? Input.render({
                           id: `assign-amount-${item.id}`,
-                          label: t("deal.amountLabel"),
-                          hint: t("deal.amountHint"),
+                          label: t(`deal.amountLabel.${seeking}`),
+                          hint: t(`deal.amountHint.${seeking}`),
                           inputType: "number",
                           value: assign_amount,
                           isFullWidth: true,
                           onChange: onAssignAmount,
-                        }),
+                        })
+                      : nothing,
                     error: status === "error" ? error : null,
                     confirmLabel: t("received.yesAssign"),
                     busyLabel: t("received.assigning"),

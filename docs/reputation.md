@@ -87,16 +87,28 @@ they don't.
 
 ## Pay and what was agreed
 
-Passing on a job often means keeping part of the fee, so a job says what the
-colleague would earn: a set amount, a range, or to be agreed. It's the colleague's
-amount only, never the client's price or the poster's margin, and it lives in
-`job_pay` rather than `jobs`, because jobs are public and broadcast by
-realtime. Signed-in users can read it; visitors and clients can't.
+A job looks for one of two people (`jobs.seeking`):
+
+- **A substitute** takes the job over, client included. The client pays them,
+  and they may give the poster a fee for the client: none, a set amount, a
+  percentage of what the client pays, or to be agreed.
+- **An assistant** works alongside the poster, who keeps the client and pays
+  them.
+
+Either way a job says what the colleague would earn (a set amount, a range, to
+be agreed or unpaid), and a substitute job also says the fee. They live in
+`job_pay` rather than `jobs`, because jobs are public and broadcast by realtime:
+signed-in users can read them, visitors and clients can't. Only substitute jobs
+have a fee: a trigger refuses one on an assistant job, and a job that turns into
+an assistant one drops it.
 
 Vaitu handles no money and takes no commission. It only keeps a record:
 
-1. **Agreeing.** The poster enters the amount when assigning the winner, or
-   later, and the winner confirms it. A rejected amount can be proposed again; a
+1. **Agreeing.** What passes between the two of them: what the poster pays an
+   assistant, or the fee a substitute gives the poster. A job with nothing to
+   pass (an unpaid assistant, a substitute with no fee) has no agreement. The
+   poster enters the amount when assigning the winner, or later, and the
+   winner confirms it. A rejected amount can be proposed again; a
    confirmed one can't change (`job_agreements`).
 2. **Settling.** From the job date, if the amount was confirmed and the job took
    place, each side says once whether it was settled (`job_settlements`). It never

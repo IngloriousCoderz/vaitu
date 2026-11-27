@@ -23,7 +23,7 @@ import {
 } from "../../common/job-card/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { formatPay } from "../../common/pay.js"
+import { formatFee, formatPay } from "../../common/pay.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import {
   COVER_IMAGES,
@@ -156,13 +156,7 @@ export const template = {
                         )}
                         ${this.renderGallery(job, onPhotoOpen)}
                         ${this.renderFacts(job)}
-                        <p class=${styles.poster}>
-                          ${
-                            isSignedIn
-                              ? t("pay.youEarn", { pay: formatPay(job.pay) })
-                              : t("pay.signInToSee")
-                          }
-                        </p>
+                        ${this.renderPay(job, isSignedIn)}
                         <p class=${styles.poster}>
                           ${t("detail.postedBy", { name: entity.posterName })}
                         </p>
@@ -268,6 +262,25 @@ export const template = {
           </button>`,
       ),
     })
+  },
+
+  renderPay(job, isSignedIn) {
+    const fee = job.seeking === "substitute" ? formatFee(job.pay) : null
+    return html`
+      <p class=${styles.poster}>${t(`pay.seekingIntro.${job.seeking}`)}</p>
+      <p class=${styles.poster}>
+        ${
+          isSignedIn
+            ? t(`pay.youEarn.${job.seeking}`, { pay: formatPay(job.pay) })
+            : t("pay.signInToSee")
+        }
+      </p>
+      ${when(
+        isSignedIn && fee,
+        () =>
+          html`<p class=${styles.poster}>${t("pay.feeToPoster", { fee })}</p>`,
+      )}
+    `
   },
 
   renderFacts(job) {

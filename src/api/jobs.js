@@ -42,6 +42,7 @@ export function toViewModel(row) {
     id: row.id,
     setting: row.setting,
     profession: row.profession,
+    seeking: row.seeking,
     status: row.status,
     region,
     job_date: row.job_date,
@@ -123,7 +124,7 @@ export async function fetchJobDetail(id) {
   const { data: job, error } = await supabase
     .from("jobs")
     .select(
-      "id, setting, profession, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
+      "id, setting, profession, seeking, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
     )
     .eq("id", id)
     .single()
@@ -187,7 +188,7 @@ export async function fetchMyJobs() {
   const { data: jobs, error } = await supabase
     .from("jobs")
     .select(
-      "id, setting, profession, title, location, region, job_date, application_deadline, status, created_at, image_urls, details",
+      "id, setting, profession, seeking, title, location, region, job_date, application_deadline, status, created_at, image_urls, details",
     )
     .eq("poster_id", user.id)
     .order("job_date", { ascending: true })
@@ -215,9 +216,10 @@ export async function fetchMyJobs() {
   }))
 }
 
-const PAY_COLUMNS = "kind, amount_min, amount_max, currency"
+const PAY_COLUMNS =
+  "kind, amount_min, amount_max, currency, fee_kind, fee_amount"
 
-// Signed-in only: a client must not find what their photographer keeps.
+// Signed-in only: what passes between colleagues is not the client's business.
 async function fetchJobPay(job_id) {
   const { data, error } = await supabase
     .from("job_pay")
@@ -228,15 +230,15 @@ async function fetchJobPay(job_id) {
   return data
 }
 
-async function savePay(job_id, pay) {
+async function savePay(job_id, pay, seeking) {
   const { error } = await supabase
     .from("job_pay")
-    .upsert({ job_id, ...normalizePay(pay) })
+    .upsert({ job_id, ...normalizePay(pay, seeking) })
   if (error) throw error
 }
 
 const FEED_JOB_COLUMNS =
-  "id, setting, profession, status, title, location, region, job_date, application_deadline, created_at, image_urls, details"
+  "id, setting, profession, seeking, status, title, location, region, job_date, application_deadline, created_at, image_urls, details"
 
 /**
  * One page of the jobs a feed query matches (see feedQuery in
@@ -362,7 +364,7 @@ export async function createJob(payload) {
     .select("id")
     .single()
   if (error) throw error
-  await savePay(data.id, payload.pay)
+  await savePay(data.id, payload.pay, row.seeking)
   return true
 }
 
@@ -374,7 +376,7 @@ export async function fetchJobForEdit(job_id) {
   const { data, error } = await supabase
     .from("jobs")
     .select(
-      "id, setting, profession, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, description, job_pay(kind, amount_min, amount_max, currency)",
+      "id, setting, profession, seeking, title, location, country, region, job_date, application_deadline, max_applicants, image_urls, details, description, job_pay(kind, amount_min, amount_max, currency, fee_kind, fee_amount)",
     )
     .eq("id", job_id)
     .eq("poster_id", user.id)
@@ -390,7 +392,7 @@ export async function updateJob(job_id, payload) {
     .update({ ...row, updated_at: new Date().toISOString() })
     .eq("id", job_id)
   if (error) throw error
-  if (payload.pay) await savePay(job_id, payload.pay)
+  if (payload.pay) await savePay(job_id, payload.pay, row.seeking)
   return true
 }
 

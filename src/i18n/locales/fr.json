@@ -203,7 +203,11 @@
     "payAmount": "Saisissez un montant supérieur à zéro",
     "payRange": "Saisissez un maximum supérieur au minimum",
     "payCurrency": "Choisissez une devise",
-    "codeInvalid": "Saisissez le code reçu par e-mail"
+    "codeInvalid": "Saisissez le code reçu par e-mail",
+    "pickSeeking": "Choisissez remplaçant ou assistant",
+    "pickFee": "Choisissez une commission",
+    "feeAmount": "Saisissez une commission supérieure à zéro",
+    "feePercent": "Saisissez un pourcentage entre 0 et 100"
   },
   "errors": {
     "notLoggedIn": "Vous n'êtes pas connecté",
@@ -738,31 +742,73 @@
     "body": "Votre compte Vaitu a été désactivé. Pour revenir, il suffit de vous reconnecter.\n\nPour l'effacer définitivement, utilisez ce lien dans les 30 jours :\n{{link}}\n\nSi vous n'êtes pas à l'origine de cette demande, connectez-vous et changez votre mot de passe."
   },
   "pay": {
-    "title": "Ce que gagne le collègue",
-    "hint": "Ce qu'il reçoit pour la mission, pas ce que le client vous paie. Visible par les utilisateurs connectés, pas par le public.",
+    "title": {
+      "substitute": "Ce que paie le client",
+      "assistant": "Ce que gagne le collègue"
+    },
+    "hint": {
+      "substitute": "Celui qui reprend la mission est payé directement par le client. Visible par les utilisateurs connectés, pas par le public.",
+      "assistant": "Ce que vous lui payez pour la mission. Visible par les utilisateurs connectés, pas par le public."
+    },
     "amount": "Montant",
     "min": "De",
     "max": "À",
     "currency": "Devise",
     "toAgree": "À convenir",
     "unpaid": "Non rémunéré",
-    "youEarn": "Vous gagnez : {{pay}}",
+    "youEarn": {
+      "substitute": "Le client vous paie : {{pay}}",
+      "assistant": "L'annonceur vous paie : {{pay}}"
+    },
     "signInToSee": "Connectez-vous pour voir ce que paie cette mission.",
     "kinds": {
       "to_agree": "À convenir",
       "fixed": "Montant fixe",
       "range": "Une fourchette",
       "unpaid": "Non rémunéré (un service ou un échange)"
-    }
+    },
+    "seeking": "Qui vous cherchez",
+    "seekingKinds": {
+      "substitute": "Remplaçant",
+      "assistant": "Assistant"
+    },
+    "seekingHint": {
+      "substitute": "Il reprend la mission, client compris : c'est le client qui le paie. Assurez-vous que votre client est d'accord.",
+      "assistant": "Il travaille avec vous : vous gardez le client et c'est vous qui le payez."
+    },
+    "seekingIntro": {
+      "substitute": "Recherche un remplaçant : vous reprenez la mission, client compris.",
+      "assistant": "Recherche un assistant : vous travaillez avec l'annonceur, qui garde le client."
+    },
+    "feeTitle": "Votre commission",
+    "feeHint": "Ce que le collègue vous reverse pour vous avoir transmis le client, si vous le souhaitez.",
+    "feeKinds": {
+      "none": "Aucune commission",
+      "percent": "Un pourcentage",
+      "fixed": "Montant fixe",
+      "to_agree": "À convenir"
+    },
+    "feePercent": "Pourcentage",
+    "feePercentOf": "{{percent}} de ce que paie le client",
+    "feeToPoster": "Commission pour l'annonceur : {{fee}}"
   },
   "deal": {
     "title": "Ce que vous avez convenu",
-    "amountLabel": "Montant convenu",
-    "amountHint": "Ce que gagne le collègue. Il lui sera demandé de le confirmer. Vous pouvez aussi l'ajouter plus tard.",
+    "amountLabel": {
+      "substitute": "Commission convenue",
+      "assistant": "Montant convenu"
+    },
+    "amountHint": {
+      "substitute": "Ce que le collègue vous reverse pour le client. Il lui sera demandé de le confirmer. Vous pouvez aussi l'ajouter plus tard.",
+      "assistant": "Ce que vous payez au collègue. Il lui sera demandé de le confirmer. Vous pouvez aussi l'ajouter plus tard."
+    },
     "propose": "Demander confirmation",
     "waiting": "En attente de la confirmation de {{amount}}.",
     "confirmed": "Convenu et confirmé par les deux : {{amount}}.",
-    "confirmQuestion": "L'annonceur indique que vous avez convenu de {{amount}}. Est-ce exact ?",
+    "confirmQuestion": {
+      "substitute": "L'annonceur indique que vous avez convenu de lui reverser {{amount}} pour le client. Est-ce exact ?",
+      "assistant": "L'annonceur indique que vous avez convenu qu'il vous paie {{amount}}. Est-ce exact ?"
+    },
     "yesAgreed": "Oui, c'est exact",
     "notAgreed": "Non, ce n'est pas ce que nous avons convenu",
     "rejectedPoster": "Il a répondu que {{amount}} n'est pas le montant convenu. Parlez-en et saisissez le bon montant.",

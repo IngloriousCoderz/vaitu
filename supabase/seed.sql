@@ -119,5 +119,8 @@ begin
       '{}', now() - interval '1 day'),
     (v_giada_id, 'house', 'electrician', 'Replace the sockets on one floor', 'Fiesole', 'Italy', 'Tuscany', '2026-12-02', now() + interval '10 days', 5, 'open',
       '{}', now() - interval '1 day');
+
+  update public.jobs set seeking = 'assistant'
+  where poster_id = v_giada_id and setting = 'festival';
 end;
 $$;

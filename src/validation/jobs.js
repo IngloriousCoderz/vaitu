@@ -1,8 +1,10 @@
 import {
   DEFAULT_JOB_SETTING,
   DEFAULT_MAX_APPLICANTS,
+  DEFAULT_SEEKING,
   DESCRIPTION_MAX_LENGTH,
   MIN_TEXT_LENGTH,
+  PERCENT_MAX,
 } from "../constants/index.js"
 import { CURRENCIES, DEFAULT_CURRENCY } from "../data/currencies.js"
 import {
@@ -16,6 +18,9 @@ import { canonicalRegion } from "../data/regions/resolve.js"
 
 const MIN_PLACES = 1
 const NO_AMOUNT = 0
+
+export const SEEKING = ["substitute", "assistant"]
+const FEE_KINDS = ["none", "fixed", "percent", "to_agree"]
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 const INSTANT =
@@ -38,6 +43,7 @@ export function normalizeJob(payload = {}) {
   return {
     setting: payload.setting ?? DEFAULT_JOB_SETTING,
     profession: payload.profession,
+    seeking: payload.seeking ?? DEFAULT_SEEKING,
     title: payload.title?.trim(),
     location: payload.location?.trim(),
     country: payload.country?.trim(),
@@ -53,7 +59,30 @@ export function normalizeJob(payload = {}) {
   }
 }
 
-export function normalizePay(pay = {}) {
+/**
+ * What gets written to job_pay. Only a substitute gives the poster a fee.
+ * @param {Record<string, any>} [pay]
+ * @param {string} [seeking]
+ */
+export function normalizePay(pay = {}, seeking = DEFAULT_SEEKING) {
+  return {
+    ...normalizeAmounts(pay),
+    ...(seeking === "substitute" ? normalizeFee(pay) : NO_FEE),
+  }
+}
+
+const NO_FEE = { fee_kind: "none", fee_amount: null }
+
+function normalizeFee(pay) {
+  if (pay.fee_kind === "fixed" || pay.fee_kind === "percent") {
+    return { fee_kind: pay.fee_kind, fee_amount: pay.fee_amount }
+  }
+  if (pay.fee_kind === "to_agree")
+    return { fee_kind: "to_agree", fee_amount: null }
+  return NO_FEE
+}
+
+function normalizeAmounts(pay) {
   const currency = pay.currency ?? DEFAULT_CURRENCY
   if (pay.kind === "fixed") {
     return {
@@ -86,6 +115,12 @@ export function validateJob(values = {}) {
     errors,
     "setting",
     DETAIL_VALIDATORS[setting] ? undefined : "validation.pickSetting",
+  )
+  const seeking = values.seeking ?? DEFAULT_SEEKING
+  fail(
+    errors,
+    "seeking",
+    SEEKING.includes(seeking) ? undefined : "validation.pickSeeking",
   )
   if (
     DETAIL_VALIDATORS[setting] &&
@@ -131,6 +166,7 @@ export function validateJob(values = {}) {
   }
 
   validatePay(errors, values.pay)
+  if (seeking === "substitute") validateFee(errors, values.pay)
 
   const validateDetails = DETAIL_VALIDATORS[setting]
   if (validateDetails) {
@@ -225,6 +261,23 @@ function validatePay(errors, pay) {
   if (pay.kind !== "range") return
   if (!isAmount(pay.amount_max) || pay.amount_max <= pay.amount_min) {
     fail(errors, "pay_max", "validation.payRange")
+  }
+}
+
+function validateFee(errors, pay) {
+  const kind = pay?.fee_kind ?? "none"
+  if (!FEE_KINDS.includes(kind)) {
+    fail(errors, "fee_kind", "validation.pickFee")
+    return
+  }
+  if (kind === "fixed" && !isAmount(pay.fee_amount)) {
+    fail(errors, "fee_amount", "validation.feeAmount")
+  }
+  if (
+    kind === "percent" &&
+    !(isAmount(pay.fee_amount) && pay.fee_amount <= PERCENT_MAX)
+  ) {
+    fail(errors, "fee_amount", "validation.feePercent")
   }
 }
 

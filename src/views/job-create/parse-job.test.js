@@ -114,6 +114,7 @@ describe("toJobFields", () => {
   it("keeps a wedding's fields, and no title", () => {
     expect(toJobFields(answer, JOB_TYPES, null)).toEqual({
       job_type: "wedding_photographer",
+      seeking: null,
       title: null,
       location: "Firenze",
       country: "Italy",
@@ -130,6 +131,7 @@ describe("toJobFields", () => {
       },
       description: null,
       pay: null,
+      fee: null,
     })
   })
 
@@ -257,6 +259,35 @@ describe("toJobFields", () => {
     expect(pay(null)).toBeNull()
   })
 
+  it("keeps whether it's a substitute or an assistant", () => {
+    const seeking = (given) =>
+      toJobFields({ seeking: given }, JOB_TYPES, null).seeking
+    expect(seeking("substitute")).toBe("substitute")
+    expect(seeking("assistant")).toBe("assistant")
+    expect(seeking("partner")).toBeNull()
+  })
+
+  it("keeps a substitute's fee, and never an assistant's", () => {
+    const fee = (given, seeking) =>
+      toJobFields({ fee: given, seeking }, JOB_TYPES, null).fee
+    expect(fee({ kind: "percent", amount: 15 })).toEqual({
+      kind: "percent",
+      amount: 15,
+    })
+    expect(fee({ kind: "fixed", amount: 300 }, "substitute")).toEqual({
+      kind: "fixed",
+      amount: 300,
+    })
+    expect(fee({ kind: "none", amount: 5 })).toEqual({
+      kind: "none",
+      amount: null,
+    })
+    expect(fee({ kind: "percent", amount: 150 })).toBeNull()
+    expect(fee({ kind: "fixed", amount: 0 })).toBeNull()
+    expect(fee({ kind: "fixed", amount: 300 }, "assistant")).toBeNull()
+    expect(fee(null)).toBeNull()
+  })
+
   it("keeps a local deadline, and drops anything else", () => {
     const deadline = (given) =>
       toJobFields({ application_deadline: given }, JOB_TYPES, null)
@@ -295,6 +326,7 @@ describe("toJobFields", () => {
     ).toBeNull()
     expect(toJobFields({}, JOB_TYPES, null)).toEqual({
       job_type: null,
+      seeking: null,
       title: null,
       location: null,
       country: null,
@@ -305,6 +337,7 @@ describe("toJobFields", () => {
       details: {},
       description: null,
       pay: null,
+      fee: null,
     })
   })
 })

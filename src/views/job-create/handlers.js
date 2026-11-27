@@ -32,6 +32,7 @@ import {
   DATETIME_LOCAL_LENGTH,
   DEADLINE_END_OF_DAY,
   DEFAULT_MAX_APPLICANTS,
+  DEFAULT_SEEKING,
   FIRST_INDEX,
   GALLERY_OUTPUT_SIZE,
   IMAGE_JPEG_TYPE,
@@ -67,6 +68,8 @@ import { COVER_CROPPER } from "./cover-cropper.js"
 import { droppedImageUrls, mergeParsedDetails, payToForm } from "./helpers.js"
 
 const NO_ROOM = 0
+const PAY_FIELDS = ["pay_kind", "pay_min", "pay_max", "pay_currency"]
+const FEE_FIELDS = ["fee_kind", "fee_amount"]
 // WebKit records WebM but cannot play it back from a blob, so Apple devices
 // record MP4. Elsewhere WebM keeps the duration fix below.
 const RECORDING_TYPES = ["audio/webm", "audio/mp4"]
@@ -430,10 +433,23 @@ export const audioParse = handleRequest(
       }
       Form.fieldChange(entity, { path: "details", value: details })
       const currency = getFieldValue(entity, "pay_currency", DEFAULT_CURRENCY)
+      if (fields.seeking) {
+        Form.fieldChange(entity, { path: "seeking", value: fields.seeking })
+      }
       if (fields.pay) {
         const pay = { ...fields.pay, currency: fields.pay.currency ?? currency }
-        for (const [path, value] of Object.entries(payToForm(pay))) {
-          Form.fieldChange(entity, { path, value })
+        const values = payToForm(pay)
+        for (const path of PAY_FIELDS) {
+          Form.fieldChange(entity, { path, value: values[path] })
+        }
+      }
+      if (fields.fee) {
+        const fee = payToForm({
+          fee_kind: fields.fee.kind,
+          fee_amount: fields.fee.amount,
+        })
+        for (const path of FEE_FIELDS) {
+          Form.fieldChange(entity, { path, value: fee[path] })
         }
       }
       const previousCountry = getFieldValue(entity, "country", "")
@@ -690,6 +706,7 @@ export const save = handleRequest(
       const payload = {
         setting: job.setting,
         profession: job.profession,
+        seeking: job.seeking,
         title: job.title,
         location: job.location,
         country: job.country,
@@ -741,6 +758,7 @@ export const editLoad = handleRequest(
       entity.values = {
         setting: row.setting ?? "wedding",
         profession: row.profession ?? "",
+        seeking: row.seeking ?? DEFAULT_SEEKING,
         title: row.title ?? "",
         location: row.location ?? "",
         country,

@@ -3,6 +3,7 @@ import { pageRouteChange } from "@inglorious/web/router"
 
 import {
   DEFAULT_MAX_APPLICANTS,
+  DEFAULT_SEEKING,
   NO_TIME_RECORDED,
 } from "../../constants/index.js"
 import { t } from "../../i18n/index.js"
@@ -46,6 +47,7 @@ export const JobCreate = {
     entity.initialValues = {
       setting: "wedding",
       profession: "photographer",
+      seeking: DEFAULT_SEEKING,
       title: "",
       location: "",
       country: "",
@@ -106,6 +108,7 @@ export const JobCreate = {
       editing_job_id: entity.editing_job_id,
       setting: values.setting,
       profession: values.profession,
+      seeking: values.seeking,
       title,
       location: values.location,
       country: values.country,

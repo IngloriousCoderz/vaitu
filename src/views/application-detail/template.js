@@ -11,7 +11,7 @@ import { Card } from "../../common/job-card/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { isUnpaid } from "../../common/pay.js"
+import { hasDeal } from "../../common/pay.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import { StatusChip } from "../../common/status-chip/index.js"
 import { t } from "../../i18n/index.js"
@@ -103,10 +103,11 @@ export const template = {
                   )}
                   ${when(
                     application.applicationStatus === "selected" &&
-                      !isUnpaid(application.pay),
+                      hasDeal(application.seeking, application.pay),
                     () =>
                       JobDeal.render({
                         role: "winner",
+                        seeking: application.seeking,
                         agreement: application.agreement,
                         settlements: application.settlements,
                         isSettlementDue: isSettlementOpen({

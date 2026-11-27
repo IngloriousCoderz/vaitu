@@ -76,6 +76,7 @@ async function postJob(owner) {
       .insert({
         ...jobPayload(crypto.randomUUID()),
         poster_id: owner.userId,
+        seeking: "assistant",
         status: "open",
       })
       .select("id")

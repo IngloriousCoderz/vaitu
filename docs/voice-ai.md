@@ -28,6 +28,7 @@ that isn't a valid value for the result, whatever the model answered:
 ```json
 {
   "job_type": "festival_dj",
+  "seeking": "substitute",
   "title": "Sundance Beats",
   "location": "Parco Sempione",
   "country": "Italy",
@@ -39,7 +40,8 @@ that isn't a valid value for the result, whatever the model answered:
     "amount_min": 500,
     "amount_max": null,
     "currency": "EUR"
-  }
+  },
+  "fee": { "kind": "percent", "amount": 10 }
 }
 ```
 

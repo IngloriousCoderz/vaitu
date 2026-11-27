@@ -8,7 +8,7 @@
   "highlights": [
     {
       "lead": "Non puoi esserci?",
-      "text": "Passa il lavoro, scegli chi ci va e, se vuoi, tieni un margine"
+      "text": "Passa il lavoro, scegli chi ci va e, se vuoi, chiedi una commissione"
     },
     {
       "lead": "Cerchi lavoro?",
@@ -58,7 +58,7 @@
     {
       "title": "Quando non puoi esserci",
       "points": [
-        "Se vuoi, tieni un margine: decidi tu quanto guadagna il collega",
+        "Se vuoi, chiedi una commissione: un importo o una percentuale di quanto paga il cliente",
         "Non deludi il cliente e non perdi la sua fiducia",
         "Scegli tu a chi affidare il lavoro",
         "Vedi livello e recensioni di chi si candida"
@@ -139,7 +139,7 @@
     },
     {
       "question": "Posso guadagnare da un lavoro che passo?",
-      "answer": "Se vuoi, sì. Decidi tu quanto guadagna il collega, e quello che il cliente ti paga in più resta a te. Il collega vede solo il suo compenso, mai il prezzo del cliente, e Vaitu non trattiene nulla. Se tenere un margine, e accordarlo con il collega, lo decidi tu."
+      "answer": "Se vuoi, sì. Un sostituto subentra nel lavoro, cliente compreso: è il cliente a pagarlo, e lui ti riconosce la commissione che hai indicato, un importo o una percentuale. Se invece cerchi un assistente, il cliente resta tuo e lo paghi tu. Vaitu non trattiene nulla, e la commissione la concordi tu con il collega."
     },
     {
       "question": "Come ci mettiamo in contatto?",

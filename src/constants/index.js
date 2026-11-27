@@ -20,6 +20,7 @@ export const MIN_TEXT_LENGTH = 1
 export const DESCRIPTION_MAX_LENGTH = jobLimits.descriptionMaxLength
 export const DEFAULT_MAX_APPLICANTS = 5
 export const DEFAULT_JOB_SETTING = "wedding"
+export const DEFAULT_SEEKING = "substitute"
 export const CLOSING_MAX_DAYS = 1
 export const DATE_PAD_LENGTH = 2
 export const WEEK_DAYS = 7

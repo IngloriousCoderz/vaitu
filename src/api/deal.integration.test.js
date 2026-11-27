@@ -42,13 +42,13 @@ async function account(label) {
 async function winJob(
   poster,
   winner,
-  { amount, jobDate = PAST_DATE, pay = OFFER },
+  { amount, jobDate = PAST_DATE, pay = OFFER, seeking = "assistant" },
 ) {
   const jobId = await createJobAs(
     poster.login,
     crypto.randomUUID(),
     undefined,
-    { pay },
+    { pay, seeking },
   )
   await signIn(winner.login)
   const { data, error } = await supabase
@@ -240,12 +240,71 @@ describe("what they agreed, and whether it was settled", () => {
       await signIn(poster.login)
       await expect(
         proposeAgreement(unpaid.applicationId, AGREED),
-      ).rejects.toThrow("unpaid")
+      ).rejects.toThrow("Nothing passes")
       const { error } = await supabase
         .from("job_pay")
         .update({ kind: "fixed", amount_min: 0 })
         .eq("job_id", unpaid.jobId)
       expect(error?.message).toContain("check constraint")
+    },
+    TEST_TIMEOUT_MS,
+  )
+
+  test(
+    "a substitute agrees the fee they give the poster, when there is one",
+    async () => {
+      const noFee = await winJob(poster, winner, {
+        amount: null,
+        seeking: "substitute",
+      })
+      await signIn(poster.login)
+      await expect(
+        proposeAgreement(noFee.applicationId, AGREED),
+      ).rejects.toThrow("Nothing passes")
+
+      const withFee = await winJob(poster, winner, {
+        amount: null,
+        seeking: "substitute",
+        pay: { ...OFFER, fee_kind: "percent", fee_amount: 10 },
+      })
+      await signIn(poster.login)
+      await proposeAgreement(withFee.applicationId, 45)
+      await signIn(winner.login)
+      await answerAgreement(withFee.applicationId, true)
+      const detail = await fetchApplicationDetail(withFee.applicationId)
+      expect(detail.seeking).toBe("substitute")
+      expect(detail.pay).toMatchObject({ fee_kind: "percent" })
+      expect(detail.agreement).toMatchObject({ status: "confirmed" })
+    },
+    TEST_TIMEOUT_MS,
+  )
+
+  test(
+    "an assistant never owes the poster a fee",
+    async () => {
+      const job = await winJob(poster, winner, {
+        amount: null,
+        seeking: "substitute",
+        pay: { ...OFFER, fee_kind: "fixed", fee_amount: 100 },
+      })
+      await signIn(poster.login)
+      const { error } = await supabase
+        .from("jobs")
+        .update({ seeking: "assistant" })
+        .eq("id", job.jobId)
+      expect(error).toBeNull()
+      const { data } = await supabase
+        .from("job_pay")
+        .select("fee_kind, fee_amount")
+        .eq("job_id", job.jobId)
+        .single()
+      expect(data).toEqual({ fee_kind: "none", fee_amount: null })
+
+      const { error: feeError } = await supabase
+        .from("job_pay")
+        .update({ fee_kind: "fixed", fee_amount: 100 })
+        .eq("job_id", job.jobId)
+      expect(feeError?.message).toContain("Only a substitute")
     },
     TEST_TIMEOUT_MS,
   )
