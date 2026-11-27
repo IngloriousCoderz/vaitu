@@ -53,9 +53,10 @@ and `supabase-js` reports it as `TypeError: Failed to fetch`.
 
 ### Small schema changes
 
-To keep the history short, a small change can go in the initial migration
-instead of a new file. `db push` skips that file, so run the equivalent SQL once
-on production, in the dashboard's SQL Editor:
+To keep the history short, a small change can go in the initial file of its
+part (`supabase/migrations/20261028120001_*` to `20261028120019_*`, one per
+concern) instead of a new file. `db push` skips those files, so run the
+equivalent SQL once on production, in the dashboard's SQL Editor:
 
 ```sql
 alter table public.jobs drop constraint jobs_setting_check;
@@ -71,8 +72,8 @@ matches the migrations. Data stays in place, unless the change itself removes it
 
 ⚠️ This deletes every account and all data, so it is only for a project with
 nothing worth keeping: before a launch, or when starting a new app from this
-code. A schema change then goes in the initial migration, and production
-starts over from it:
+code. A schema change then goes in the initial files, and production starts
+over from them:
 
 ```bash
 supabase db reset --linked --no-seed

@@ -4,7 +4,7 @@ When something happens that a user should hear about, the database writes a
 row in `notifications` for them: a new job for their trades and regions, an
 application to their job, a decision on their application, a change to a
 job they applied to, a job waiting for their report. Triggers write these
-rows (the notifications section of `supabase/migrations/20261028120000_initial_schema.sql`), so no client
+rows (`supabase/migrations/20261028120008_notifications.sql`), so no client
 can make one up, and a row is all the app needs to tell the user in three ways:
 
 - **The bell** in the app shows the newest rows and counts the unread ones,

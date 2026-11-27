@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs"
 
 const SOURCE = "supabase/functions/_shared/job-taxonomy.json"
-const SCHEMA = "supabase/migrations/20261028120000_initial_schema.sql"
+const SCHEMA = "supabase/migrations/20261028120006_job_taxonomy.sql"
 const COPY = /\$taxonomy\$\n[\s\S]*?\n\$taxonomy\$/
 const DATE_LENGTH = 8
 const INDENTATION = 2

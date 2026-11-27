@@ -10,7 +10,7 @@ options. It lives in one file,
 | ----------- | ---------------------------------------------------------------- | ------------------------------------------- |
 | The app     | `src/data/job-taxonomy.js`, `src/views/job-list/job-settings.js` | The create form, filters, job cards         |
 | `parse-job` | `supabase/functions/parse-job/schema.ts`                         | The model's prompt, and checking its answer |
-| Postgres    | The `job_taxonomy` table, a copy kept in the initial migration   | Refusing jobs the form would not allow      |
+| Postgres    | The `job_taxonomy` table, a copy kept in its migration           | Refusing jobs the form would not allow      |
 
 ## The file
 

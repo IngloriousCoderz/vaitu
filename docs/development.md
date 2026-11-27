@@ -70,18 +70,23 @@ tests sign up.
 
 ### Migrations
 
+The initial schema is split by concern rather than by history: the
+`20261028120001_*` to `20261028120019_*` files each hold one part (profiles,
+jobs, applications, notifications…), in the order they depend on one another.
+`20261028120001_foundation.sql` states the rules all of them follow.
+
 ⚠️ `db reset` deletes everything not in the seeds (`seed.sql`,
 `seed-local.sql`). Production keeps its data, and it never re-runs a migration
 it has applied, so a schema change takes one of two paths:
 
 - **A big change**, or one that moves data, is a new file in
   `supabase/migrations/`, which `supabase db push` applies.
-- **A small one**, like a constraint, can go in the initial migration to keep
-  the history short, with the equivalent SQL run once on production (see
+- **A small one**, like a constraint, can go in the initial file of its part to
+  keep the history short, with the equivalent SQL run once on production (see
   [Deploying](deploying.md#small-schema-changes)).
 
-A project with nothing worth keeping can instead change the initial migration
-and reset from it (see [Deploying](deploying.md#starting-over)).
+A project with nothing worth keeping can instead change the initial files and
+reset from them (see [Deploying](deploying.md#starting-over)).
 
 Older native builds keep running against the new schema until they are
 updated, so a migration that removes or renames something they use needs the

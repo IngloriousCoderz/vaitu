@@ -83,7 +83,7 @@ errors, not against who can see what: the authorization tests cover that.
 
 ## What the review found
 
-All fixed, in the initial migration and in production.
+All fixed, in the initial migrations and in production.
 
 | Hole                                                                                     | What it allowed                                                                      |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
