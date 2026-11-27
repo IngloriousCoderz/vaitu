@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, test } from "vitest"
 
 import {
+  DAY_MS,
   DESCRIPTION_MAX_LENGTH,
   REQUEST_TIMEOUT_MS,
 } from "../constants/index.js"
@@ -13,8 +14,10 @@ import {
   deleteOwnedJobByTitle,
   GIADA,
   jobPayload,
+  readJobAsService,
   signIn,
   signOut,
+  updateAsService,
 } from "../testing/index.js"
 import { settings } from "../views/job-list/job-settings.js"
 import { supabase } from "./client.js"
@@ -117,6 +120,56 @@ describe("deleting a job", () => {
         mine.some((job) => job.id === ownedJobId),
         "the other account deleted the job",
       ).toBe(true)
+    },
+    TEST_TIMEOUT_MS,
+  )
+})
+
+describe("reopening a job", () => {
+  let jobId = null
+
+  afterAll(async () => {
+    try {
+      if (jobId) await deleteOwnedJob(jobId)
+    } finally {
+      await signOut()
+    }
+  }, TEST_TIMEOUT_MS)
+
+  test(
+    "the poster reopens a closed job, with a new deadline once it passed",
+    async () => {
+      jobId = await createJobAs(ANTONY, crypto.randomUUID())
+      const past = new Date(Date.now() - DAY_MS).toISOString()
+      const future = new Date(Date.now() + DAY_MS).toISOString()
+      await updateAsService("jobs", "id", jobId, {
+        status: "closed",
+        application_deadline: past,
+      })
+      const reopen = (deadline) =>
+        supabase.rpc("reopen_job", {
+          p_job_id: jobId,
+          p_application_deadline: deadline,
+        })
+
+      await signIn(GIADA)
+      expect((await reopen(future)).error?.message).toContain("Only the poster")
+
+      await signIn(ANTONY)
+      expect((await reopen(null)).error?.message).toContain("in the future")
+      const { error: statusError } = await supabase
+        .from("jobs")
+        .update({ status: "open" })
+        .eq("id", jobId)
+      expect(statusError?.message).toContain("permission denied")
+
+      expect((await reopen(future)).error).toBeNull()
+      const job = await readJobAsService(jobId)
+      expect(job.status).toBe("open")
+      expect(new Date(job.application_deadline).getTime()).toBeGreaterThan(
+        Date.now(),
+      )
+      expect((await reopen(null)).error?.message).toContain("already open")
     },
     TEST_TIMEOUT_MS,
   )

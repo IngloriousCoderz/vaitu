@@ -293,21 +293,20 @@ export const jobReopen = handleRequest(
   "jobReopen",
   {
     async run({ job_id, application_deadline }) {
-      const patch = { status: "open" }
+      let deadline = null
       if (application_deadline) {
-        const iso =
+        deadline =
           application_deadline.length === DATETIME_LOCAL_LENGTH
             ? new Date(application_deadline).toISOString()
             : application_deadline
-        if (new Date(iso).getTime() <= Date.now()) {
+        if (new Date(deadline).getTime() <= Date.now()) {
           throw new Error("validation.futureDeadline")
         }
-        patch.application_deadline = iso
       }
-      const { error } = await supabase
-        .from("jobs")
-        .update(patch)
-        .eq("id", job_id)
+      const { error } = await supabase.rpc("reopen_job", {
+        p_job_id: job_id,
+        p_application_deadline: deadline,
+      })
       if (error) throw error
       return job_id
     },

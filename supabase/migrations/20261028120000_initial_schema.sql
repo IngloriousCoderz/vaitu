@@ -994,6 +994,52 @@ $$;
 
 grant execute on function public.assign_winner(uuid, uuid, numeric) to authenticated;
 
+-- Posters can't write a job's status: only this moves a closed or assigned
+-- job back to open, with a new deadline when the old one has passed.
+create or replace function public.reopen_job(
+  p_job_id uuid,
+  p_application_deadline timestamptz default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_job public.jobs%rowtype;
+begin
+  select * into v_job
+  from public.jobs
+  where id = p_job_id and deleted_at is null
+  for update;
+
+  if not found or v_job.poster_id is distinct from auth.uid() then
+    raise exception 'Only the poster can reopen this job.';
+  end if;
+
+  if not public.is_active_profile(auth.uid()) then
+    raise exception 'Only an active account can reopen a job.';
+  end if;
+
+  if v_job.status not in ('closed', 'assigned') then
+    raise exception 'This job is already open.';
+  end if;
+
+  if coalesce(p_application_deadline, v_job.application_deadline) <= now() then
+    raise exception 'The deadline must be in the future.';
+  end if;
+
+  update public.jobs
+  set status = 'open',
+      application_deadline =
+        coalesce(p_application_deadline, v_job.application_deadline),
+      updated_at = now()
+  where id = p_job_id;
+end;
+$$;
+
+grant execute on function public.reopen_job(uuid, timestamptz) to authenticated;
+
 -- Applicants cannot update jobs (RLS), so the reopen lives here. Only the
 -- winner's own withdrawal reopens: deleting the job or deactivating an
 -- account must not.
