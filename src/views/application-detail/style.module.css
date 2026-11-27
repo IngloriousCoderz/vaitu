@@ -1,3 +1,23 @@
+.job {
+  margin-bottom: var(--iw-space-4);
+}
+
+.seeking {
+  margin: var(--iw-space-4) 0 0;
+  font-weight: var(--iw-font-weight-semibold);
+}
+
+.description {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.poster {
+  margin: var(--iw-space-4) 0 0;
+  font-size: var(--iw-font-size-sm);
+  color: var(--vmuted-text);
+}
+
 .statusRow {
   display: flex;
   align-items: center;
@@ -48,6 +68,7 @@
   .story {
     min-width: 0;
     display: flex;
+    flex-direction: column;
   }
 
   .panel {

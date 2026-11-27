@@ -67,8 +67,9 @@ schema_paths = []
 enabled = true
 # Specifies an ordered list of seed files to load during db reset.
 # Supports glob patterns relative to supabase directory: "./seeds/*.sql"
-# seed-local.sql holds values only the local stack may have: a production
-# reset passes `--sql-paths ./seed.sql` (docs/deploying.md).
+# Both are for the local stack only: seed.sql has test accounts whose
+# password is in the README, seed-local.sql the local Vault values. A
+# production reset passes `--no-seed` (docs/deploying.md).
 sql_paths = ["./seed.sql", "./seed-local.sql"]
 
 [db.network_restrictions]

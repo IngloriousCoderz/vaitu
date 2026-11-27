@@ -547,7 +547,17 @@
     "terms": "Terms of Service"
   },
   "facts": {
-    "spouses": "Spouses"
+    "spouses": "Spouses",
+    "seeking": "Looking for",
+    "place": "Where",
+    "jobDate": "When",
+    "deadline": "Apply by",
+    "pay": {
+      "substitute": "The client pays",
+      "assistant": "The poster pays"
+    },
+    "fee": "Fee to the poster",
+    "shortlist": "Shortlist places"
   },
   "card": {
     "applied": "✓ Applied"

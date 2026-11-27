@@ -555,7 +555,17 @@
     "terms": "Conditions d'utilisation"
   },
   "facts": {
-    "spouses": "Mariés"
+    "spouses": "Mariés",
+    "seeking": "Recherche",
+    "place": "Où",
+    "jobDate": "Quand",
+    "deadline": "Candidatures jusqu'au",
+    "pay": {
+      "substitute": "Le client paie",
+      "assistant": "L'annonceur paie"
+    },
+    "fee": "Commission pour l'annonceur",
+    "shortlist": "Places dans la sélection"
   },
   "card": {
     "applied": "✓ Candidaté"

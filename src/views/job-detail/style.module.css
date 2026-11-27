@@ -72,24 +72,8 @@
   color: var(--vmuted-text);
 }
 
-.facts {
+.seeking {
   margin: var(--iw-space-4) 0 0;
-  border-top: 1px solid var(--vline);
-}
-
-:global(.iw-flex.iw-flex-gap-none.iw-flex-padding-none).fact {
-  gap: var(--iw-space-3);
-  padding: 0.625rem 0;
-  border-bottom: 1px solid var(--vline);
-  font-size: var(--iw-font-size-sm);
-}
-
-.fact dt {
-  color: var(--vmuted-text);
-}
-
-.fact dd {
-  margin: 0;
   font-weight: var(--iw-font-weight-semibold);
 }
 
@@ -260,23 +244,6 @@
   .panel .closedBox,
   .panel .actions {
     margin-top: 0;
-  }
-
-  .facts {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    gap: var(--iw-space-3);
-    border-top: none;
-  }
-
-  :global(.iw-flex.iw-flex-gap-none.iw-flex-padding-none).fact {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--iw-space-1);
-    border: 1px solid var(--vline);
-    border-radius: var(--iw-radius-xl);
-    padding: var(--iw-space-3) var(--iw-space-4);
-    background: var(--vsurface);
   }
 
   .submitted {

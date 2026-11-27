@@ -555,7 +555,17 @@
     "terms": "Termini di servizio"
   },
   "facts": {
-    "spouses": "Sposi"
+    "spouses": "Sposi",
+    "seeking": "Cerca",
+    "place": "Dove",
+    "jobDate": "Quando",
+    "deadline": "Candidature entro",
+    "pay": {
+      "substitute": "Il cliente paga",
+      "assistant": "L'inserzionista paga"
+    },
+    "fee": "Commissione all'inserzionista",
+    "shortlist": "Posti in shortlist"
   },
   "card": {
     "applied": "✓ Candidato"

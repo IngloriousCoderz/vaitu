@@ -21,9 +21,9 @@ import {
   jobTypeTags,
   thumbGradient,
 } from "../../common/job-card/index.js"
+import { JobFacts } from "../../common/job-facts/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
-import { formatFee, formatPay } from "../../common/pay.js"
 import { SafetyButton } from "../../common/safety/index.js"
 import {
   COVER_IMAGES,
@@ -126,6 +126,9 @@ export const template = {
                           gap: "sm",
                           wrap: "wrap",
                           children: [
+                            Chip.render({
+                              children: t(`pay.seekingKinds.${job.seeking}`),
+                            }),
                             ...jobTypeTags(job).map((tag) =>
                               Chip.render({ children: tag }),
                             ),
@@ -155,8 +158,7 @@ export const template = {
                           `,
                         )}
                         ${this.renderGallery(job, onPhotoOpen)}
-                        ${this.renderFacts(job)}
-                        ${this.renderPay(job, isSignedIn)}
+                        ${this.renderFacts(job, isSignedIn)}
                         <p class=${styles.poster}>
                           ${t("detail.postedBy", { name: entity.posterName })}
                         </p>
@@ -264,39 +266,14 @@ export const template = {
     })
   },
 
-  renderPay(job, isSignedIn) {
-    const fee = job.seeking === "substitute" ? formatFee(job.pay) : null
+  renderFacts(job, isSignedIn) {
     return html`
-      <p class=${styles.poster}>${t(`pay.seekingIntro.${job.seeking}`)}</p>
-      <p class=${styles.poster}>
-        ${
-          isSignedIn
-            ? t(`pay.youEarn.${job.seeking}`, { pay: formatPay(job.pay) })
-            : t("pay.signInToSee")
-        }
-      </p>
+      <p class=${styles.seeking}>${t(`pay.seekingIntro.${job.seeking}`)}</p>
+      ${JobFacts.render({ job })}
       ${when(
-        isSignedIn && fee,
-        () =>
-          html`<p class=${styles.poster}>${t("pay.feeToPoster", { fee })}</p>`,
+        !isSignedIn,
+        () => html`<p class=${styles.poster}>${t("pay.signInToSee")}</p>`,
       )}
-    `
-  },
-
-  renderFacts(job) {
-    return html`
-      <dl class=${styles.facts}>
-        ${job.facts.map((fact) =>
-          Flex.render({
-            justify: "between",
-            className: styles.fact,
-            children: html`
-              <dt>${t(fact.label)}</dt>
-              <dd>${fact.value}</dd>
-            `,
-          }),
-        )}
-      </dl>
     `
   },
 

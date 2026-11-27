@@ -52,6 +52,10 @@ export function toViewModel(row) {
       (new Date(row.job_date).getTime() - Date.now()) / DAY_MS,
     ),
     place: [row.location, region].filter(Boolean).join(" • "),
+    location: row.location ?? null,
+    country: row.country ?? null,
+    details: row.details ?? {},
+    maxApplicants: row.max_applicants ?? null,
     imageUrls: row.image_urls ?? [],
     description: row.description ?? null,
     pay: row.job_pay ?? null,
@@ -124,7 +128,7 @@ export async function fetchJobDetail(id) {
   const { data: job, error } = await supabase
     .from("jobs")
     .select(
-      "id, setting, profession, seeking, status, poster_id, title, location, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
+      "id, setting, profession, seeking, status, poster_id, title, location, country, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description",
     )
     .eq("id", id)
     .single()

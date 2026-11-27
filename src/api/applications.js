@@ -68,15 +68,21 @@ export async function fetchApplicationDetail(application_id) {
   const { data, error } = await supabase
     .from("applications")
     .select(
-      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), jobs!inner(id, setting, profession, seeking, status, title, location, region, job_date, application_deadline, created_at, image_urls, details, job_pay(kind, amount_min, amount_max, currency, fee_kind, fee_amount))",
+      "id, status, motivation, created_at, job_reviews(outcome, rating, comment), job_agreements(amount, currency, status), job_settlements(role, is_settled), jobs!inner(id, setting, profession, seeking, status, poster_id, title, location, country, region, job_date, application_deadline, max_applicants, created_at, image_urls, details, description, job_pay(kind, amount_min, amount_max, currency, fee_kind, fee_amount))",
     )
     .eq("id", application_id)
     .eq("applicant_id", user.id)
     .maybeSingle()
   if (error) throw error
   if (!data) throw new Error("errors.applicationGone")
+  const { data: posterName, error: posterError } = await supabase.rpc(
+    "job_poster_name",
+    { p_job_id: data.jobs.id },
+  )
+  if (posterError) throw posterError
   return {
     ...toViewModel(data.jobs),
+    posterName,
     application_id: data.id,
     applicationStatus: data.status,
     posterId: data.jobs.poster_id,

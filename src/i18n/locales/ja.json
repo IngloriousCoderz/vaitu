@@ -540,7 +540,17 @@
     "terms": "利用規約"
   },
   "facts": {
-    "spouses": "新郎新婦"
+    "spouses": "新郎新婦",
+    "seeking": "募集",
+    "place": "場所",
+    "jobDate": "日時",
+    "deadline": "応募締切",
+    "pay": {
+      "substitute": "お客様の支払額",
+      "assistant": "投稿者の支払額"
+    },
+    "fee": "投稿者への紹介料",
+    "shortlist": "候補枠"
   },
   "card": {
     "applied": "✓ 応募済み"

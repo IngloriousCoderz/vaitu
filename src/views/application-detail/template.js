@@ -9,6 +9,7 @@ import { ConfirmDialog } from "../../common/confirm-dialog/index.js"
 import { ErrorAlert } from "../../common/error-alert/index.js"
 import { Card } from "../../common/job-card/index.js"
 import { isSettlementOpen, JobDeal } from "../../common/job-deal/index.js"
+import { JobFacts } from "../../common/job-facts/index.js"
 import { LoadStatus } from "../../common/load-status/index.js"
 import { Page } from "../../common/page/index.js"
 import { hasDeal } from "../../common/pay.js"
@@ -71,6 +72,7 @@ export const template = {
                     cover: true,
                     hero: true,
                   })}
+                  ${this.renderJob(application)}
                 </div>
                 <div class=${styles.panel}>
                   <div class=${styles.statusRow}>
@@ -224,6 +226,29 @@ export const template = {
         `,
       ],
     })
+  },
+
+  renderJob(job) {
+    return html`
+      <section class=${styles.job}>
+        <p class=${styles.seeking}>${t(`pay.seekingIntro.${job.seeking}`)}</p>
+        ${JobFacts.render({ job })}
+        ${when(
+          job.description,
+          () => html`
+            <h3 class=${styles.sectionTitle}>${t("detail.description")}</h3>
+            <p class=${styles.description}>${job.description}</p>
+          `,
+        )}
+        ${when(
+          job.posterName,
+          () =>
+            html`<p class=${styles.poster}>
+              ${t("detail.postedBy", { name: job.posterName })}
+            </p>`,
+        )}
+      </section>
+    `
   },
 
   renderReview(review, onReportReview) {
